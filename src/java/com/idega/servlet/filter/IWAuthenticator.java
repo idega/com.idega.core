@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.34 2008/07/28 10:51:18 anton Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.35 2008/07/29 11:05:10 valdas Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -14,7 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -41,7 +40,6 @@ import com.idega.core.accesscontrol.business.AuthenticationBusiness;
 import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.ServletFilterChainInterruptException;
-import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.jaas.IWCallbackHandler;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
 import com.idega.core.builder.business.BuilderService;
@@ -52,11 +50,13 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.ImplementorRepository;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CypherText;
 import com.idega.util.RequestUtil;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -65,10 +65,10 @@ import com.idega.util.RequestUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2008/07/28 10:51:18 $ by $Author: anton $
+ * Last modified: $Date: 2008/07/29 11:05:10 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -230,33 +230,28 @@ public class IWAuthenticator extends BaseFilter {
 	
 	protected boolean processRedirectsToUserHome(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness, boolean isLoggedOn) throws IOException, RemoteException {
 		if(isLoggedOn) {
-			User user = loginBusiness.getCurrentUser(session);
 			int homePageID = -1;
 			
-			ICRole userPrefferedRole = user.getPreferredRole();
+			User user = loginBusiness.getCurrentUser(session);
 			IWMainApplication app = getIWMainApplication(request);
-			if(userPrefferedRole != null) {
-				IWApplicationContext iwac = app.getIWApplicationContext();
-				Collection<Group> userGroups = app.getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwac, user);
-				for(Group userGroup : userGroups) {
-					if((homePageID = userGroup.getHomePageID()) > 0)
-						break;
+			IWApplicationContext iwac = app.getIWApplicationContext();
+			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+			String homePageUri = userBusiness.getPageUriByUserPreferredRole(user);
+			if (StringUtil.isEmpty(homePageUri)) {
+				homePageID = user.getHomePageID();
+				if (homePageID > 0) {
+					homePageUri = getBuilderService(iwac).getPageURI(homePageID);
 				}
 			}
-			if (homePageID <= 0) {
-				homePageID = user.getHomePageID();
-			}
-			if (homePageID > 0) {
-				IWApplicationContext iwac = app.getIWApplicationContext();
-				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
+			if (!StringUtil.isEmpty(homePageUri)) {
+				response.sendRedirect(homePageUri);
 				return true;
 			}
 			
 			Group prmg = user.getPrimaryGroup(); 
 			if (prmg != null) {
-				homePageID = prmg.getHomePageID();
+				prmg.getHomePageID();
 				if (homePageID > 0) {
-					IWApplicationContext iwac = app.getIWApplicationContext();
 					response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 					return true;
 				}
