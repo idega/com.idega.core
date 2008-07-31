@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthenticator.java,v 1.35 2008/07/29 11:05:10 valdas Exp $ Created on 31.7.2004
+ * $Id: IWAuthenticator.java,v 1.36 2008/07/31 13:08:54 valdas Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -65,10 +65,10 @@ import com.idega.util.StringUtil;
  * When the user has a "remember me" cookie set then this filter reads that and
  * logs the user into the system.
  * </p>
- * Last modified: $Date: 2008/07/29 11:05:10 $ by $Author: valdas $
+ * Last modified: $Date: 2008/07/31 13:08:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public class IWAuthenticator extends BaseFilter {
 
@@ -238,6 +238,7 @@ public class IWAuthenticator extends BaseFilter {
 			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
 			String homePageUri = userBusiness.getPageUriByUserPreferredRole(user);
 			if (StringUtil.isEmpty(homePageUri)) {
+				log.log(Level.INFO, "Didn't find user's " + user.getName() + " home page id from preferred role");
 				homePageID = user.getHomePageID();
 				if (homePageID > 0) {
 					homePageUri = getBuilderService(iwac).getPageURI(homePageID);
@@ -250,12 +251,14 @@ public class IWAuthenticator extends BaseFilter {
 			
 			Group prmg = user.getPrimaryGroup(); 
 			if (prmg != null) {
-				prmg.getHomePageID();
+				homePageID = prmg.getHomePageID();
 				if (homePageID > 0) {
 					response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
 					return true;
 				}
 			}
+			
+			log.log(Level.INFO, "Didn't find user's " + user.getName() + " home page");
 		}
 		return false;
 	}
