@@ -1548,7 +1548,6 @@ function isCorrectFileType(id, fileType, noFileMsg, invalidFileTypeMsg) {
 var LazyLoader = {};		//	Namespace
 LazyLoader.timer = {};		//	Contains timers for resources
 LazyLoader.resources = [];	//	Contains called resources references
-LazyLoader.callbacks = [];	//	Contains called callbacks when uri is undefined
 LazyLoader.loading = false;
 LazyLoader.loadMultiple = function(urls, callback) {
 	try {
@@ -1569,13 +1568,11 @@ LazyLoader.loadMultiple = function(urls, callback) {
 		}
 		
 		removeElementFromArray(urls, url);
-		//console.log('REMOVED url: ' + url + ', left to load: ' + urls + ', urls length: ' + urls.length + ', callback: ' + callback);
 		LazyLoader.load(url, urls.length == 0 ? callback : function() {
 			LazyLoader.loadMultiple(urls, callback);
 		});
 	} catch(e) {
 		LazyLoader.loading = false;
-		//alert('Exception using LazyLoader.loadMultiple: ' + e.message);
 		//console.log('ERROR in: LazyLoader.loadMultiple: ' + e.message);
 	}
 }
@@ -1583,18 +1580,21 @@ LazyLoader.loadMultiple = function(urls, callback) {
 LazyLoader.load = function(url, callback) {
 	try {
 		if (url == null || url == '') {
-			//console.log('UNDEFINED: ' + url + ', callback: ' + callback);
 			LazyLoader.executeCallback(callback);
 			return false;
 		}
-	
+		
 		if (LazyLoader.loading) {
-			LazyLoader.timer[url + '_loading'] = setInterval(function() {
+			var intervalId = 'loading_' + url + '_and_executing_' + callback;
+			if (LazyLoader.timer[intervalId] != null) {
+				window.clearInterval(LazyLoader.timer[intervalId]);
+			}
+			LazyLoader.timer[intervalId] = window.setInterval(function() {
 				if (!LazyLoader.loading) {
-					clearInterval(LazyLoader.timer[url + '_loading']);
+					window.clearInterval(LazyLoader.timer[intervalId]);
 					LazyLoader.doRealLoading(url, callback);
 				}
-			}, 10);
+			}, 100);
 		}
 		else {
 			LazyLoader.doRealLoading(url, callback);
@@ -1703,7 +1703,6 @@ LazyLoader.doRealLoading = function(url, callback) {
 		}
 	} catch (e) {
 		LazyLoader.loading = false;
-		//alert('Exception using LazyLoader.load: ' + e.message);
 		//console.log('ERROR in: LazyLoader.doRealLoading: ' + e.message);
 	}
 }
@@ -1714,19 +1713,7 @@ LazyLoader.executeCallback = function(callback) {
 		if (!callback) {
 			return false;
 		}
-		
-		var callbackKey = callback + '_key';
-		if (LazyLoader.callbacks[callbackKey] == null) {
-			LazyLoader.callbacks[callbackKey] = callback;
-			var changedCallback = function () {
-				callback();
-				return false;
-			}
-			changedCallback();
-		}
-		/*else {
-			console.log('EXECUTED ALREADY: ' + callback);
-		}*/
+		callback();
 	} catch(e) {
 		LazyLoader.loading = false;
 	}
