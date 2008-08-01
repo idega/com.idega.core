@@ -1548,13 +1548,13 @@ function isCorrectFileType(id, fileType, noFileMsg, invalidFileTypeMsg) {
 var LazyLoader = {};		//	Namespace
 LazyLoader.timer = {};		//	Contains timers for resources
 LazyLoader.resources = [];	//	Contains called resources references
+LazyLoader.callbacks = [];	//	Contains called callbacks when uri is undefined
 LazyLoader.loading = false;
 LazyLoader.loadMultiple = function(urls, callback) {
 	try {
 		if (urls == null || urls.length == 0) {
-			if (callback) {
-				callback();
-			}
+			LazyLoader.executeCallback(callback);
+			return false;
 		}
 		
 		if (typeof urls == 'string') {
@@ -1563,27 +1563,45 @@ LazyLoader.loadMultiple = function(urls, callback) {
 		}
 		
 		var url = urls[0];
+		if (url == null || url == '') {
+			LazyLoader.executeCallback(callback);
+			return false;
+		}
+		
 		removeElementFromArray(urls, url);
+		//console.log('REMOVED url: ' + url + ', left to load: ' + urls + ', urls length: ' + urls.length + ', callback: ' + callback);
 		LazyLoader.load(url, urls.length == 0 ? callback : function() {
 			LazyLoader.loadMultiple(urls, callback);
 		});
 	} catch(e) {
 		LazyLoader.loading = false;
 		//alert('Exception using LazyLoader.loadMultiple: ' + e.message);
+		//console.log('ERROR in: LazyLoader.loadMultiple: ' + e.message);
 	}
 }
 
 LazyLoader.load = function(url, callback) {
-	if (LazyLoader.loading) {
-		LazyLoader.timer[url + '_loading'] = setInterval(function() {
-			if (!LazyLoader.loading) {
-				clearInterval(LazyLoader.timer[url + '_loading']);
-				LazyLoader.doRealLoading(url, callback);
-			}
-		}, 10);
-	}
-	else {
-		LazyLoader.doRealLoading(url, callback);
+	try {
+		if (url == null || url == '') {
+			//console.log('UNDEFINED: ' + url + ', callback: ' + callback);
+			LazyLoader.executeCallback(callback);
+			return false;
+		}
+	
+		if (LazyLoader.loading) {
+			LazyLoader.timer[url + '_loading'] = setInterval(function() {
+				if (!LazyLoader.loading) {
+					clearInterval(LazyLoader.timer[url + '_loading']);
+					LazyLoader.doRealLoading(url, callback);
+				}
+			}, 10);
+		}
+		else {
+			LazyLoader.doRealLoading(url, callback);
+		}
+	} catch(e) {
+		LazyLoader.loading = false;
+		//console.log('ERROR in: LazyLoader.load: ' + e.message);
 	}
 }
 
@@ -1637,6 +1655,9 @@ LazyLoader.doRealLoading = function(url, callback) {
 			//	Note that we loaded already
 			LazyLoader.resources.push(url);
 			
+			//	To avoid caching (that possibly may do browser)
+			url += '?LazyLoaderFlag=' + new Date().getTime();
+			
 			var resource = null;
 			if (isCSS) {
 				resource = document.createElement('link');
@@ -1683,5 +1704,30 @@ LazyLoader.doRealLoading = function(url, callback) {
 	} catch (e) {
 		LazyLoader.loading = false;
 		//alert('Exception using LazyLoader.load: ' + e.message);
+		//console.log('ERROR in: LazyLoader.doRealLoading: ' + e.message);
+	}
+}
+
+LazyLoader.executeCallback = function(callback) {
+	try {
+		LazyLoader.loading = false;
+		if (!callback) {
+			return false;
+		}
+		
+		var callbackKey = callback + '_key';
+		if (LazyLoader.callbacks[callbackKey] == null) {
+			LazyLoader.callbacks[callbackKey] = callback;
+			var changedCallback = function () {
+				callback();
+				return false;
+			}
+			changedCallback();
+		}
+		/*else {
+			console.log('EXECUTED ALREADY: ' + callback);
+		}*/
+	} catch(e) {
+		LazyLoader.loading = false;
 	}
 }
