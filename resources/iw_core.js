@@ -1140,6 +1140,15 @@ IWCORE.insertHtml = function(html, container) {
 };
 /** End **/
 
+IWCORE.stopEventBubbling = function(event) {
+	if (event) {
+		if (event.stopPropagation) {
+			event.stopPropagation();
+		}
+		event.cancelBubble = true;
+	}
+}
+
 function getNeededElements(element, className) {
 	if (element == null) {
 		return null;
@@ -1619,7 +1628,7 @@ LazyLoader.doRealLoading = function(url, callback) {
 		var loadedResources = LazyLoader.resources;
 		if (loadedResources != null && loadedResources.length > 0) {
 			for (var i = 0; (i < loadedResources.length && !foundRequiredResource); i++) {
-				if (url == loadedResources[i]) {
+				if (url == loadedResources[i] || loadedResources[i].indexOf(url) == 0) {
 					foundRequiredResource = true;
 				}
 			}
@@ -1711,7 +1720,7 @@ LazyLoader.existsResourceInElement = function(elementTagName, url, isCSS) {
 		var resourceElement = currentResources[i];
 		resourceUri = resourceElement.getAttribute(isCSS ? 'href' : 'src');
 		if (resourceUri != null && resourceUri != '') {
-			if (url == resourceUri) {
+			if (url == resourceUri || resourceUri.indexOf(url) == 0) {
 				return true;
 			}
 		}
