@@ -2,8 +2,9 @@ package com.idega.builder.bean;
 
 public class AdvancedProperty {
 	
-	private String id = null;
-	private String value = null;
+	private boolean selected = false;
+	private String id;
+	private String value;
 	
 	public AdvancedProperty() {}
 	
@@ -31,4 +32,11 @@ public class AdvancedProperty {
 		this.value = value;
 	}
 
+	public boolean isSelected() {
+		return selected;
+	}
+
+	public void setSelected(boolean selected) {
+		this.selected = selected;
+	}
 }
