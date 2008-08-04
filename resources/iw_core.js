@@ -1628,29 +1628,13 @@ LazyLoader.doRealLoading = function(url, callback) {
 		var resourceEnd = url.substring(url.lastIndexOf('.') + 1);
 		var isCSS = resourceEnd.toLowerCase() == 'css';
 		
-		var head = document.getElementsByTagName('head')[0];
 		if (!foundRequiredResource) {
-			var currentResources = isCSS ? head.getElementsByTagName('link') : head.getElementsByTagName('script');
-			if (currentResources != null && currentResources.length > 0) {
-				var resourceUri = null;
-				for (var i = 0; (i < currentResources.length && !foundRequiredResource); i++) {
-					var resourceElement = currentResources[i];
-					resourceUri = isCSS ? resourceElement.getAttribute('href') : resourceElement.getAttribute('src');
-					if (resourceUri != null && resourceUri != '') {
-						if (url == resourceUri) {
-							foundRequiredResource = true;
-						}
-					}
-				}
-			}
+			foundRequiredResource = LazyLoader.existsResourceInDocument(url, isCSS);
 		}
 		
 		//	Make sure we only load once
 		if (foundRequiredResource) {
-			LazyLoader.loading = false;
-			if (callback) {
-				callback();
-			}
+			LazyLoader.executeCallback(callback);
 		} else {
 			//	Note that we loaded already
 			LazyLoader.resources.push(url);
@@ -1672,7 +1656,7 @@ LazyLoader.doRealLoading = function(url, callback) {
 				resource.src = url;
 				resource.type = 'text/javascript';
 			}
-			head.appendChild(resource);	//	Add resource tag to head element
+			document.getElementsByTagName('head')[0].appendChild(resource);	//	Add resource tag to head element
 			
 			//	Was a callback requested?
 			if (callback) {
@@ -1705,6 +1689,34 @@ LazyLoader.doRealLoading = function(url, callback) {
 		LazyLoader.loading = false;
 		//console.log('ERROR in: LazyLoader.doRealLoading: ' + e.message);
 	}
+}
+
+LazyLoader.existsResourceInDocument = function(url, isCSS) {
+	if (LazyLoader.existsResourceInElement('head', url, isCSS)) {
+		return true;
+	}
+	
+	return LazyLoader.existsResourceInElement('body', url, isCSS)
+}
+
+LazyLoader.existsResourceInElement = function(elementTagName, url, isCSS) {
+	var element = document.getElementsByTagName(elementTagName)[0];
+	var currentResources = element.getElementsByTagName(isCSS ? 'link' : 'script');
+	if (currentResources == null || currentResources.length == 0) {
+		return false;
+	}
+	
+	var resourceUri = null;
+	for (var i = 0; i < currentResources.length; i++) {
+		var resourceElement = currentResources[i];
+		resourceUri = resourceElement.getAttribute(isCSS ? 'href' : 'src');
+		if (resourceUri != null && resourceUri != '') {
+			if (url == resourceUri) {
+				return true;
+			}
+		}
+	}
+	return false;
 }
 
 LazyLoader.executeCallback = function(callback) {
