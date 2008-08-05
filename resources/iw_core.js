@@ -1739,3 +1739,17 @@ LazyLoader.executeCallback = function(callback) {
 		LazyLoader.loading = false;
 	}
 }
+
+IWCORE.getSelectedFromAdvancedProperties = function(handlerUsers) {
+	
+	if(handlerUsers != null) {
+		
+		for(var index = 0; index < handlerUsers.length; index++) {
+			
+			if(handlerUsers[index].selected)
+                return handlerUsers[index].id;
+		}
+	}
+	
+	return null;
+}
