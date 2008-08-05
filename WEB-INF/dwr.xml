@@ -15,6 +15,11 @@
 			<param name="class" value="com.idega.user.business.UserBusiness" />
 			<include method="setPreferredRoleAndGetHomePageUri"/>
 		</create>
+		<create creator="jsf" javascript="GroupsFilterEngine">
+			<param name="managedBeanName" value="groupsFilterEngine"></param>
+			<param name="class" value="com.idega.group.business.GroupsFilterEngine"></param>
+			<include method="getFilteredGroups"/>
+		</create>
 	</allow>
 	<signatures>
 		<![CDATA[
