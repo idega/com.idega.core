@@ -416,7 +416,7 @@
                             <key>
                               <name>iw_method_param_handler</name>
                               <type>java.lang.String</type>
-                              <value/>
+                              <value />
                             </key>
                             <key>
                               <name>iw_method_param_desc</name>
