@@ -48,4 +48,12 @@ public class ArrayUtil  {
 		
 		return array;
 	}
+	
+	public static final boolean isEmpty(Object[] array) {
+		if (array == null || array.length == 0) {
+			return true;
+		}
+		
+		return false;
+	}
 }
