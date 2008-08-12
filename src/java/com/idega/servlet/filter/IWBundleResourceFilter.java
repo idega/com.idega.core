@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.44 2008/06/11 19:01:35 tryggvil Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.45 2008/08/12 13:38:48 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -32,7 +32,9 @@ import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
+import com.idega.util.StringHandler;
 
 /**
  * <p>
@@ -44,10 +46,10 @@ import com.idega.util.FileUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/06/11 19:01:35 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/08/12 13:38:48 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -141,6 +143,15 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 	protected static String getBundleFromRequest(String requestUriWithoutContextPath) {
 		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
+		if (index == -1) {
+			requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, BUNDLES_STANDARD_DIR, CoreConstants.EMPTY);
+			int firstSlashIndex = requestUriWithoutContextPath.indexOf(CoreConstants.SLASH);
+			if (firstSlashIndex == -1) {
+				return requestUriWithoutContextPath;
+			}
+			return requestUriWithoutContextPath.substring(0, firstSlashIndex);
+		}
+		
 		return requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length(), index);
 	}
 
