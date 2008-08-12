@@ -1,5 +1,5 @@
 /*
- * $Id: GroupHomeImpl.java,v 1.30 2005/12/05 17:17:20 sigtryggur Exp $
+ * $Id: GroupHomeImpl.java,v 1.31 2008/08/12 13:52:55 valdas Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -10,8 +10,11 @@
 package com.idega.user.data;
 
 import java.util.Collection;
+import java.util.Locale;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
@@ -19,14 +22,16 @@ import com.idega.data.IDOFactory;
 
 /**
  * 
- *  Last modified: $Date: 2005/12/05 17:17:20 $ by $Author: sigtryggur $
+ *  Last modified: $Date: 2008/08/12 13:52:55 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.30 $
+ * @version $Revision: 1.31 $
  */
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
-	protected Class getEntityInterfaceClass() {
+	private static final long serialVersionUID = -2368235582273397196L;
+
+	protected Class<Group> getEntityInterfaceClass() {
 		return Group.class;
 	}
 
@@ -268,5 +273,12 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		Object pk = ((GroupBMPBean) entity).ejbFindBoardGroupByClubIDAndLeagueID(clubID, leagueID);
 		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
+	}
+
+	public Collection<Group> findAllByNamePhrase(String phrase, Locale locale) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids  = ((GroupBMPBean) entity).ejbFindAllByNamePhrase(phrase, locale);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 }

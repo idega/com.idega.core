@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.119 2008/04/17 23:09:17 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.120 2008/08/12 13:52:57 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -32,6 +33,7 @@ import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICDomain;
@@ -59,6 +61,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.bean.AddressData;
 import com.idega.user.bean.GroupDataBean;
@@ -81,6 +84,7 @@ import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.datastructures.NestedSetsContainer;
 
 /**
@@ -94,7 +98,7 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.119 $
+ * @version $Revision: 1.120 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2586,13 +2590,54 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		addressData.setCity(address.getCity());
 		return addressData;
 	}
+	
+	public Collection<Group> getUserGroupsByPhrase(IWContext iwc, String phrase) {
+		if (iwc == null || StringUtil.isEmpty(phrase)) {
+			return null;
+		}
+		
+		User currentUser = null;
+		try {
+			currentUser = iwc.getCurrentUser();
+		} catch(NotLoggedOnException e) {
+			log(Level.WARNING, "Error getting user's groups by phrase: user is not logged!");
+			log(e);
+		}
+		if (currentUser == null) {
+			return null;
+		}
+		
+		Collection<Group> groups = null;
+		try {
+			groups = getGroupHome().findAllByNamePhrase(phrase, iwc.getCurrentLocale());
+		} catch (FinderException e) {
+			log(e);
+		}
+		if (ListUtil.isEmpty(groups)) {
+			return null;
+		}
+		
+		UserBusiness userBusiness = getUserBusiness();
+		Collection<Group> userGroupsByPhrase = new ArrayList<Group>();
+		for (Group group: groups) {
+			try {
+				if (userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser)) {
+					userGroupsByPhrase.add(group);
+				}
+			} catch (RemoteException e) {
+				log(e);
+			}
+		}
+		
+		return userGroupsByPhrase;
+	}
 
 	/**
 	 * 
-	 * Last modified: $Date: 2008/04/17 23:09:17 $ by $Author: valdas $
+	 * Last modified: $Date: 2008/08/12 13:52:57 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.119 $
+	 * @version $Revision: 1.120 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 

@@ -45,6 +45,7 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
@@ -57,6 +58,8 @@ import com.idega.util.ListUtil;
  */
 public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 
+	private static final long serialVersionUID = -5276962419455614341L;
+	
 	private static final int PREFETCH_SIZE = 100;
 	public static final int GROUP_ID_EVERYONE = -7913;
 	public static final int GROUP_ID_USERS = -1906;
@@ -1961,6 +1964,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	public String getId(){
 		return getPrimaryKey().toString();
+	}
+	
+	public Collection ejbFindAllByNamePhrase(String phrase, Locale locale) throws FinderException {
+		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName()).appendWhere().append("lower(");
+		query.append(getNameColumnName()).append(")").appendLike().appendSingleQuote().append(CoreConstants.PERCENT).append(phrase.toLowerCase(locale));
+		query.append(CoreConstants.PERCENT).appendSingleQuote().appendGroupBy(getIDColumnName());
+		return idoFindPKsByQuery(query);
 	}
 	
 } // Class Group
