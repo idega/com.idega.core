@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.57.2.8 2008/06/12 00:45:59 gimmi Exp $
+ * $Id: IDOTableCreator.java,v 1.57.2.9 2008/08/13 10:58:02 laddi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/12 00:45:59 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/08/13 10:58:02 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57.2.8 $
+ * @version $Revision: 1.57.2.9 $
  */
 public class IDOTableCreator {
 
@@ -328,7 +328,7 @@ public class IDOTableCreator {
         		  BufferedInputStream bis = null;
         		  MemoryOutputStream bos = null;
         		  MemoryInputStream mis = null;
-        		  GenericEntity sourceEnt = (GenericEntity) i.next();;
+        		  GenericEntity sourceEnt = (GenericEntity) i.next();
         		  try {
 //        			  Object pk = (Object) i.next();
 //        			  GenericEntity sourceEnt = (GenericEntity) sourceHome.findByPrimaryKeyIDO(pk);
@@ -350,7 +350,7 @@ public class IDOTableCreator {
 	        			  mis = new MemoryInputStream(buffer);
 	        			  sourceEnt.setColumn(sourceEnt.getLobColumnName(), mis);
 	        		  }
-	        		  ((GenericEntity) sourceEnt).store();
+	        		  sourceEnt.store();
         		  } catch (Exception e) {
         			  logCopyError(sourceEnt, e, "data copying");
 //        			  e.printStackTrace();
