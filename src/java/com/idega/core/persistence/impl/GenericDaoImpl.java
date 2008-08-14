@@ -19,9 +19,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  *
- * Last modified: $Date: 2008/07/11 07:50:09 $ by $Author: civilis $
+ * Last modified: $Date: 2008/08/14 14:15:03 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 @Transactional(readOnly=true)
@@ -93,10 +93,11 @@ public class GenericDaoImpl implements GenericDao {
 	@SuppressWarnings("unchecked")
 	protected <Expected>List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
 
-		for (Param param : params) {
-			
-			q.setParameter(param.getParamName(), param.getParamValue());
-		}
+		if(params != null)
+			for (Param param : params) {
+				
+				q.setParameter(param.getParamName(), param.getParamValue());
+			}
 		
 		final List<Expected> fresult;
 		
