@@ -12,10 +12,10 @@ import com.idega.util.CoreConstants;
  */
 public interface PDFGenerator {
 	
-	public boolean generatePDF(IWContext iwc, UIComponent component, String fileName, String uploadPath, boolean replaceInputs);
+	public boolean generatePDF(IWContext iwc, UIComponent component, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
 	
-	public boolean generatePDFFromComponent(String componentUUID, String fileName, String uploadPath, boolean replaceInputs);
+	public boolean generatePDFFromComponent(String componentUUID, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
 	
-	public boolean generatePDFFromPage(String pageUri, String fileName, String uploadPath, boolean replaceInputs);
+	public boolean generatePDFFromPage(String pageUri, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
 
 }
