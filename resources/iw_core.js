@@ -1027,7 +1027,9 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 				var splittedExpression = expression.split(DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR);
 				if (splittedExpression.length == 2) {
 					var elementFunction = function() {
-						window.eval(splittedExpression[1]);
+						try {
+							window.eval(splittedExpression[1]);
+						} catch(e) {}
 					};
 					registerEvent(result, splittedExpression[0], elementFunction);
 				}
