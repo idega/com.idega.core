@@ -27,6 +27,7 @@ import com.idega.presentation.text.AnchorLink;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeComparator;
+import com.idega.util.StringUtil;
 
 /**
  * Title:        idegaWeb
@@ -108,6 +109,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	private Map _extraHeadings;
 	private Map _extraWidths;
 	private String _headingColor;
+	
+	private String closeOrOpenNodesHref = null;
+	
 	public AbstractTreeViewer() {
 		super();
 
@@ -788,6 +792,9 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 
 		l.addEventModel(event);
+		if (!StringUtil.isEmpty(closeOrOpenNodesHref)) {
+			l.setURL(closeOrOpenNodesHref);
+		}
 		return l;
 	}
 	
@@ -931,6 +938,14 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	 */
 	public void setNowrap(boolean nowrap) {
 		this._nowrap = nowrap;
+	}
+
+	public String getCloseOrOpenNodesHref() {
+		return closeOrOpenNodesHref;
+	}
+
+	public void setCloseOrOpenNodesHref(String closeOrOpenNodesHref) {
+		this.closeOrOpenNodesHref = closeOrOpenNodesHref;
 	}
 
 }

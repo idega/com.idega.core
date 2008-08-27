@@ -12,6 +12,8 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.ui.util.AbstractChooserBlock;
+import com.idega.util.StringUtil;
 
 /**
  * Title:        idegaWeb
@@ -290,7 +292,12 @@ public class TreeViewer extends AbstractTreeViewer {
 			this._linkPrototype.setFontStyle(this._linkStyle);
 		}
 
-		return (Link) this._linkPrototype.clone();
+		Link clonedLink = (Link) this._linkPrototype.clone();
+		String onClickAction = clonedLink.getOnClick();
+		if (!StringUtil.isEmpty(onClickAction)) {
+			clonedLink.setMarkupAttribute("onclick", AbstractChooserBlock.getNormalizedAction(onClickAction, clonedLink.getId()));
+		}
+		return clonedLink;
 	}
 
 	public Layer getNoWrapLayer() {
