@@ -18,6 +18,7 @@ import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.StringUtil;
 
 public class ChooserServiceBean extends IBOServiceBean implements ChooserService {
 
@@ -91,19 +92,25 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		return getBuilderService(iwc).setProperty(iwc, pageKey, moduleId, propertyName, properties);
 	}
 	
-	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, String chooserObject, boolean cleanHtml) {
+	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, String chooserObject, String value, String displayValue,
+			boolean cleanHtml) {
 		Object o = getObjectInstance(className);
 		
-		if (hiddenInputAttribute != null) {
-			if (o instanceof AbstractChooserBlock) {
-				((AbstractChooserBlock) o).setHiddenInputAttribute(hiddenInputAttribute);
+		if (o instanceof AbstractChooserBlock) {
+			AbstractChooserBlock chooser = (AbstractChooserBlock) o;
+		
+			if (!StringUtil.isEmpty(hiddenInputAttribute)) {
+				chooser.setHiddenInputAttribute(hiddenInputAttribute);
 			}
-		}
-		if ((chooserObject != null) && (o instanceof AbstractChooserBlock)) {
-			((AbstractChooserBlock) o).setChooserObject(chooserObject);
+			if (!StringUtil.isEmpty(chooserObject)) {
+				chooser.setChooserObject(chooserObject);
+			}
+			chooser.setValue(value);
+			
+			return getRenderedPresentationObject(chooser, cleanHtml);
 		}
 		
-		return getRenderedPresentationObject(o, cleanHtml);
+		return null;
 	}
 	
 	private Document getRenderedPresentationObject(Object object, boolean cleanHtml) {

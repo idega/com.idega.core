@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.45 2008/06/26 08:34:10 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.46 2008/08/27 13:33:05 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -349,7 +349,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 				action.append("', '").append(getHiddenInputAttribute()).append("', '");
 			}
 			action.append(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE).append("', '");
-			action.append(getResourceBundle().getLocalizedString("loading", "Loading...")).append("');");
+			action.append(getResourceBundle().getLocalizedString("loading", "Loading...")).append("', ")
+			.append(_stringValue == null ? "null" : new StringBuilder("'").append(_stringValue).append("'").toString()).append(", ")
+			.append(_stringDisplay == null ? "null" : new StringBuilder("'").append(_stringDisplay).append("'").toString()).append(");");
 			chooser.setOnClick(action.toString());
 			
 			container.add(chooser);

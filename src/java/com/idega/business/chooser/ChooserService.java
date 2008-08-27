@@ -23,6 +23,7 @@ public interface ChooserService extends IBOService {
 	/**
 	 * @see	ChooserServiceBean#getRenderedPresentationObject
 	 */
-	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, String chooserObject, boolean cleanHtml);
+	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, String chooserObject, String value, String displayValue,
+			boolean cleanHtml);
 	
 }

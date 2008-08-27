@@ -26,8 +26,8 @@ public class ICBuilderConstants {
 	public static final String TEMPLATE_NAME_ATTRIBUTE = "templateName";
 	public static final String TEMPLATE_ID_ATTRIBUTE = "templateId";
 	
-	public static final String GROUP_NAME_ATTRIBUTE = "groupName";
-	public static final String GROUP_ID_ATTRIBUTE = "groupId";
+	public static final String GROUP_NAME_ATTRIBUTE = "groupname";
+	public static final String GROUP_ID_ATTRIBUTE = "groupid";
 	
 	public static final String CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE = "chooser_value_viewer_id";
 	

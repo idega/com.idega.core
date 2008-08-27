@@ -83,7 +83,7 @@ function addActionBeforeClosingMoodalBox(reloadMessage) {
 	addActionForMoodalBoxOnCloseEvent(actionOnClose);
 }
 
-addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueViewerId, message) {
+addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueViewerId, message, value, displayValue) {
 	var chooserObject = document.getElementById(id);
 	if (chooserObject == null) {
 		return false;
@@ -118,7 +118,7 @@ addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueV
 	}
 	if (chooser == null) {
 		showLoadingMessage(message);
-		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, chooserObjectName, true, {
+		ChooserService.getRenderedPresentationObject(objectClass, hiddenInputAttribute, chooserObjectName, value, displayValue, true, {
 			callback: function(renderedObject) {
 				closeAllLoadingMessages();
 				insertNodesToContainer(renderedObject, container);
@@ -140,7 +140,8 @@ addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueV
 	}
 }
 
-ChooserHelper.prototype.chooseObject = function(element, attributeId, attributeValue) {
+ChooserHelper.prototype.chooseObject = function(elementId, attributeId, attributeValue) {
+	var element = document.getElementById(elementId);
 	if (element == null) {
 		return null;
 	}
@@ -148,26 +149,26 @@ ChooserHelper.prototype.chooseObject = function(element, attributeId, attributeV
 	if (attributes == null) {
 		return null;
 	}
-	var id = attributeId;
 	var value = null;
-	if (attributes.getNamedItem(attributeId) != null) {
-		value = attributes.getNamedItem(attributeId).value;
+	var attribute = attributes.getNamedItem(attributeId);
+	if (attribute != null) {
+		value = attribute.value == null ? attribute.nodeValue : attribute.value;
 	}
 	
 	if (value == null) {
 		return null;
 	}
 	
-	this.addAdvancedProperty(id, value);
-	
 	return value;
 }
 
-ChooserHelper.prototype.chooseObjectWithHidden = function(element, attributeId, attributeValue, hiddenName) {
-	var value = this.chooseObject(element, attributeId, attributeValue);
+ChooserHelper.prototype.chooseObjectWithHidden = function(elementId, attributeId, attributeValue, hiddenName) {
+	var value = this.chooseObject(elementId, attributeId, attributeValue);
 	if (value == null) {
 		return;
 	}
+	this.addAdvancedProperty(attributeId, value);
+	
 	var forms = document.getElementsByTagName('form');
 	if (forms == null) {
 		return;
@@ -192,20 +193,13 @@ ChooserHelper.prototype.chooseObjectWithHidden = function(element, attributeId, 
 	hidden.setAttribute('value', value);
 }
 
-ChooserHelper.prototype.setChooserView = function(element, attributeValue) {
-	if (element == null || attributeValue == null || this.CHOOSER_VALUE_VIEWER_ID == null) {
+ChooserHelper.prototype.setChooserView = function(elementId, attributeValue) {
+	if (elementId == null || attributeValue == null || this.CHOOSER_VALUE_VIEWER_ID == null) {
 		return;
 	}
-	var attributes = element.attributes;
-	if (attributes == null) {
-		return;
-	}
-	var value = null;
-	if (attributes.getNamedItem(attributeValue) != null) {
-		value = attributes.getNamedItem(attributeValue).value;
-	}
+	var value = this.chooseObject(elementId, attributeValue, attributeValue);
 	if (value == null) {
-		alert('Error: no value found to set!');
+		alert('ChooserHelper.js: Error: no value found to set!');
 		return;
 	}
 	
