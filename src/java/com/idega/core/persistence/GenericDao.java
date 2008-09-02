@@ -6,9 +6,9 @@ import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  *
- * Last modified: $Date: 2008/05/26 11:04:37 $ by $Author: civilis $
+ * Last modified: $Date: 2008/09/02 12:41:29 $ by $Author: civilis $
  */
 public interface GenericDao {
 
@@ -21,6 +21,12 @@ public interface GenericDao {
 	public abstract Query createNamedQuery(String queryName);
 
 	public abstract void remove(Object obj);
+	
+	/**
+	 * first merges and then removed detached entity. This can be used in non transactional method
+	 * @param obj
+	 */
+	public abstract void mergeRemove(Object obj);
 	
 	public abstract void flush();
 	

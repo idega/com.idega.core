@@ -19,9 +19,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  *
- * Last modified: $Date: 2008/08/14 14:15:03 $ by $Author: civilis $
+ * Last modified: $Date: 2008/09/02 12:41:29 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 @Transactional(readOnly=true)
@@ -73,6 +73,12 @@ public class GenericDaoImpl implements GenericDao {
 	}
 	
 	@Transactional(readOnly=false)
+	public void mergeRemove(Object obj) {
+		
+		entityManager.remove(entityManager.merge(obj));
+	}
+	
+	@Transactional(readOnly=false)
 	public void flush() {
 		entityManager.flush();
 	}
@@ -103,7 +109,6 @@ public class GenericDaoImpl implements GenericDao {
 		
 		if(Long.class.equals(expectedReturnType)) {
 
-			@SuppressWarnings("unchecked")
 			List<Object> result = q.getResultList();
 			
 			if(result != null) {
