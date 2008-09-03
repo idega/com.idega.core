@@ -56,6 +56,7 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.user.business.UserStatusBusinessBean;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
@@ -172,7 +173,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	@Override
 	public String getGroupTypeDescription() {
-		return "";
+		return CoreConstants.EMPTY;
 	}
 
 	@Override
