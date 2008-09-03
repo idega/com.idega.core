@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.121 2008/07/25 14:40:31 anton Exp $
+ * $Id: AccessControl.java,v 1.122 2008/09/03 07:22:08 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -61,10 +61,12 @@ import com.idega.user.business.GroupBusiness;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.User;
+import com.idega.user.data.UserBMPBean;
 import com.idega.user.data.UserHome;
 import com.idega.util.EncryptionType;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.reflect.FieldAccessor;
 
 /**
@@ -73,12 +75,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/07/25 14:40:31 $ by $Author: anton $
+ * Last modified: $Date: 2008/09/03 07:22:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.121 $
+ * @version $Revision: 1.122 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -90,7 +92,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private List standardGroups = null;
 
 	private static final String _APPADDRESS_ADMINISTRATOR_USER = "ic_super_admin";
-	private static final String _ADMINISTRATOR_NAME = "Administrator";
 
 	private static final int _GROUP_ID_EVERYONE = com.idega.user.data.GroupBMPBean.GROUP_ID_EVERYONE;
 	private static final int _GROUP_ID_USERS = com.idega.user.data.GroupBMPBean.GROUP_ID_USERS;
@@ -2051,7 +2052,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	private User createAdministratorUser() throws Exception {
 		User adminUser = ((com.idega.user.data.UserHome) com.idega.data.IDOLookup.getHome(User.class)).create();
-		adminUser.setFirstName(_ADMINISTRATOR_NAME);
+		adminUser.setFirstName(UserBMPBean.getAdminDefaultName());
 		adminUser.store();
 		int adminUserID = adminUser.getID();
 //pretty weird, but I guess it is still needed since the super admin is not a role yet
@@ -2063,7 +2064,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		//System.out.println("Creating login for user with id="+adminUserID);
 		LoginDBHandler.createLogin(
 			adminUserID,
-			"Administrator",
+			UserBMPBean.getAdminDefaultName(),
 			"idega",
 			Boolean.TRUE,
 			IWTimestamp.RightNow(),
@@ -2077,13 +2078,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	private void initAdministratorUser() throws Exception {
 		UserHome home = (UserHome) IDOLookup.getHome(User.class);
-		List list = new ArrayList(home.findByNames(_ADMINISTRATOR_NAME, null, null));
+		Collection<User> users = null;
+		try {
+			users = home.findByNames(UserBMPBean.getAdminDefaultName(), null, null);
+		} catch(FinderException e) {
+			e.printStackTrace();
+		}
 		User adminUser = null;
-		if (list == null || list.size() < 1) {
+		if (ListUtil.isEmpty(users)) {
 			adminUser = createAdministratorUser();
 		}
 		else {
-			adminUser = (User) list.get(0);
+			adminUser = users.iterator().next();
 		}
 		getApplication().setAttribute(_APPADDRESS_ADMINISTRATOR_USER, adminUser);
 	}
@@ -2162,7 +2168,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static boolean isValidUsersFirstName(String name) {
-		return !_ADMINISTRATOR_NAME.equals(name);
+		return !UserBMPBean.getAdminDefaultName().equals(name);
 	}
 
 	public String[] getICObjectPermissionKeys(Class ICObject) {
@@ -2752,11 +2758,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return returnCol;	
 	}
 	
-	public Set getAllRolesForCurrentUser(IWUserContext iwc) {
+	public Set<String> getAllRolesForCurrentUser(IWUserContext iwc) {
 		return getAllRolesForUser(iwc.getCurrentUser());
 	}
 	
-	public Set getAllRolesForUser(User user) {
+	public Set<String> getAllRolesForUser(User user) {
 		try {
 			Collection c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
 			if(c!=null){
@@ -2774,6 +2780,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			e.printStackTrace();
 		}
 		return Collections.EMPTY_SET;
+	}
+	
+	public boolean hasRole(User user, String roleKey) {
+		if (user == null || StringUtil.isEmpty(roleKey)) {
+			return false;
+		}
+		
+		Set<String> allUserRoles = getAllRolesForUser(user);
+		if (ListUtil.isEmpty(allUserRoles)) {
+			return false;
+		}
+		
+		return allUserRoles.contains(roleKey);
 	}
 	
 	/**

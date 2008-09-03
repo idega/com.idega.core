@@ -1,5 +1,5 @@
 /*
- * $Id: AccessController.java,v 1.35 2008/09/02 12:40:53 civilis Exp $
+ * $Id: AccessController.java,v 1.36 2008/09/03 07:22:08 valdas Exp $
  * 
  * Created in 2001 by gummi
  * 
@@ -32,10 +32,10 @@ import com.idega.user.data.Group;
  * This is the main service interface for the old generation permission system
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
- * Last modified: $Date: 2008/09/02 12:40:53 $ by $Author: civilis $
+ * Last modified: $Date: 2008/09/03 07:22:08 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.35 $
+ * @version $Revision: 1.36 $
  */
 public interface AccessController extends com.idega.idegaweb.IWService{
 
@@ -139,6 +139,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc);
   public boolean hasRole(String roleKey, IWUserContext iwuc);
   public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
+  public boolean hasRole(User user, String roleKey);
   public boolean isRoleMaster(IWUserContext iwuc);
   public void addGroupAsRoleMaster(Group group, IWApplicationContext iwac);
   public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );
@@ -157,8 +158,8 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public ICRole createRoleWithRoleKey(String roleKey);
   public ICRole getRoleByRoleKey(String roleKey) throws FinderException;
   public String getRoleIdentifier();
-  public Set getAllRolesForCurrentUser(IWUserContext iwc);
-  public Set getAllRolesForUser(User user);
+  public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
+  public Set<String> getAllRolesForUser(User user);
   public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user);
 
 /*
