@@ -1972,5 +1972,15 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.append(CoreConstants.PERCENT).appendSingleQuote().appendGroupBy(getIDColumnName());
 		return idoFindPKsByQuery(query);
 	}
+
+	public User getModerator() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	public void setModerator(User moderator) {
+		// TODO Auto-generated method stub
+		
+	}
 	
 } // Class Group

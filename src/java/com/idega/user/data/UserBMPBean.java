@@ -2643,4 +2643,14 @@ public void delete() throws SQLException {
 		return home;
 	}
 
+	public User getModerator() {
+		//	TODO:	maybe should return primary group's moderator?
+		throw new UnsupportedOperationException("Method getModerator() is not implemented yet");
+	}
+
+	public void setModerator(User moderator) {
+		//	TODO:	maybe should set moderator for user's primary groupr?
+		throw new UnsupportedOperationException("Method setModerator() is not implemented yet");
+	}
+
 }
