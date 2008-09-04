@@ -105,7 +105,8 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   /**
    * @deprecated
    */
-  public IDOEntity idoCreate() throws CreateException{
+  @Deprecated
+public IDOEntity idoCreate() throws CreateException{
     return createIDO();
   }
 
@@ -120,7 +121,8 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   /**
    * @deprecated
    */
-  public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
+  @Deprecated
+public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     return findByPrimaryKeyIDO(primaryKey);
   }
 
