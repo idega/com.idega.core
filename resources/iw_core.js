@@ -248,6 +248,7 @@ var windowinfo = {
   		this.width = document.body.clientWidth;
   		//alert('getWindowWidth: body');
   	}
+  	return this.width;
   },
   
   getWindowHeight: function () {
@@ -266,6 +267,7 @@ var windowinfo = {
   		this.height = document.body.clientHeight;
   		//alert('getWindowHeight: body');
   	}
+  	return this.height;
   },
   
   getScrollX: function () {
