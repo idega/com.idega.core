@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.109 2008/07/29 11:04:20 valdas Exp $
+ * $Id: UserBusiness.java,v 1.110 2008/09/10 11:59:07 juozas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -55,10 +55,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2008/07/29 11:04:20 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.109 $
+ * @version $Revision: 1.110 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -889,4 +889,18 @@ public interface UserBusiness extends IBOService {
 	public String getPageUriByUserPreferredRole(User user);
 	
 	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user);
+	
+	/**
+	 * returns  moderator(company and admin) of the user
+	 * 
+	 * @param user
+	 * @param iwc
+	 * @return
+	 * @throws RemoteException
+	 */
+	public User getModeratorForUser(User user);
+	
+	public void setPreferedCompany(String companyId, User user);
+	
+	public Group getPreferedCompany(User user) throws RemoteException;
 }

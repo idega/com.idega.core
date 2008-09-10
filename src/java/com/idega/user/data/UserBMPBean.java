@@ -86,7 +86,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public final static String SQL_RELATION_ADDRESS = "IC_USER_ADDRESS";
 	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	public final static String TABLE_NAME = SQL_TABLE_NAME;
- 	public static final String COLUMN_NAME_USER_PROPERTIES_FILE_ID = "USER_PROPERTIES_FILE_ID";
+ 	public static final String COLUMN_NAME_USER_PROPERTIES_FILE_ID = "USER_PROPERTIES_FILE_ID"; 
   
 	static final String META_DATA_HOME_PAGE = "homepage";
   
@@ -2642,6 +2642,7 @@ public void delete() throws SQLException {
 		}
 		return home;
 	}
+
 
 	public User getModerator() {
 		//	TODO:	maybe should return primary group's moderator?

@@ -1,5 +1,5 @@
 /*
- * $Id: Group.java,v 1.50 2008/09/03 15:51:23 valdas Exp $
+ * $Id: Group.java,v 1.51 2008/09/10 11:59:07 juozas Exp $
  * Created on Nov 16, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -39,10 +39,10 @@ import com.idega.idegaweb.IWApplicationContext;
 
 /**
  * 
- *  Last modified: $Date: 2008/09/03 15:51:23 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
 
@@ -547,8 +547,10 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getSelectQueryConstraints
 	 */
 	public SelectQuery getSelectQueryConstraints();
+
 	
 	public User getModerator();
 	
 	public void setModerator(User moderator);
+
 }

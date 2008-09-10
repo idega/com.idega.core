@@ -83,6 +83,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	static final String COLUMN_IS_PERMISSION_CONTROLLING_GROUP = "IS_PERM_CONTROLLING";
 	static final String COLUMN_SHORT_NAME = "SHORT_NAME";
 	static final String COLUMN_ABBREVATION = "ABBR";
+	static final String COLUMN_GROUP_MODERATOR_ID = "GROUP_MODERATOR_ID";
 
 	static final String META_DATA_HOME_PAGE = "homepage";
 
@@ -98,7 +99,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		setNullable(getColumnNameHomePageID(), true);
 		addAttribute(COLUMN_SHORT_NAME, "Short name", true, true, String.class);
 		addAttribute(COLUMN_ABBREVATION, "Abbrevation", true, true, String.class);
+		
+		//addAttribute(COLUMN_GROUP_MODERATOR_ID,"Moderator Id", true,true, Integer.class);
 
+		addManyToOneRelationship(COLUMN_GROUP_MODERATOR_ID, User.class);
 		// adds a unique id string column to this entity that is set when the entity
 		// is first stored.
 		addUniqueIDColumn();
@@ -1972,15 +1976,13 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.append(CoreConstants.PERCENT).appendSingleQuote().appendGroupBy(getIDColumnName());
 		return idoFindPKsByQuery(query);
 	}
-
-	public User getModerator() {
-		// TODO Auto-generated method stub
-		return null;
+	
+	public void setModerator(User moderator){
+		setColumn(COLUMN_GROUP_MODERATOR_ID, moderator);
 	}
-
-	public void setModerator(User moderator) {
-		// TODO Auto-generated method stub
-		
+	
+	public User getModerator(){
+		return (User) getColumnValue(COLUMN_GROUP_MODERATOR_ID);
 	}
 	
 } // Class Group

@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.120 2008/08/12 13:52:57 valdas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.121 2008/09/10 11:59:07 juozas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -93,12 +93,12 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2006/02/20
- * 11:04:35 $ by $Author: valdas $
+ * 11:04:35 $ by $Author: juozas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.120 $
+ * @version $Revision: 1.121 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2631,13 +2631,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		
 		return userGroupsByPhrase;
 	}
+		
 
 	/**
 	 * 
-	 * Last modified: $Date: 2008/08/12 13:52:57 $ by $Author: valdas $
+	 * Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.120 $
+	 * @version $Revision: 1.121 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
@@ -2668,6 +2669,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 
 	}
+	
 
 } // Class
 
