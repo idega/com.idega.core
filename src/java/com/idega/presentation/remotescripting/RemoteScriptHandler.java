@@ -1,9 +1,13 @@
 package com.idega.presentation.remotescripting;
 
+import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
+import com.idega.block.web2.business.Web2Business;
+import com.idega.business.IBOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
@@ -14,6 +18,7 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.TextInput;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.PresentationUtil;
 
 
 
@@ -34,6 +39,14 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	private String iframeName;
 	private RemoteScriptCollection remoteScriptCollection;
 	
+	private Web2Business web2Business;
+	
+	public Web2Business getWeb2Business(IWContext iwc) throws RemoteException {
+		if(web2Business == null) {
+			web2Business = (Web2Business) IBOLookup.getServiceInstance(iwc, Web2Business.class);
+		}
+		return web2Business;
+	}
 	private boolean sourceIsTrigger = true;
 	/**
 	 * Default construction should never be used unless
@@ -292,9 +305,17 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	}
 	
 	private void handleRemoteCall(IWContext iwc) throws InstantiationException, IllegalAccessException, ClassNotFoundException {
+		
 		String rscClassName = iwc.getParameter(PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS);
 		RemoteScriptCollection rsc = (RemoteScriptCollection) RefactorClassRegistry.forName(rscClassName).newInstance();
-		this.getParentPage().setOnLoad("if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document)");
+		
+		try {
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, getWeb2Business(iwc).getBundleURIToMootoolsLib());
+			PresentationUtil.addJavaScriptActionToBody(iwc, "window.addEvent('domready', function() {if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document);});");
+		} catch(RemoteException e) {
+			e.printStackTrace();
+		}
+		
 		add(rsc.getResults(iwc));
 	}
 
