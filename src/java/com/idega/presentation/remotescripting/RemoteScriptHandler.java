@@ -6,8 +6,11 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 
+import javax.faces.context.FacesContext;
+
 import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
+import com.idega.presentation.IFrameContent;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
@@ -21,12 +24,12 @@ import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.PresentationUtil;
 
 
-
 /**
  * A class for handling remote scripting between two objects.
+ * @deprecated Use DWR for remote calls
  * @author gimmi
  */
-public class RemoteScriptHandler extends PresentationObjectContainer { //implements RemoteScriptable {
+public class RemoteScriptHandler extends PresentationObjectContainer implements IFrameContent { //implements RemoteScriptable {
 	
 	private static final String PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS = "prc";
 	private static final String PARAMETER_SOURCE_NAME = "psn";
@@ -40,6 +43,13 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	private RemoteScriptCollection remoteScriptCollection;
 	
 	private Web2Business web2Business;
+	
+	public void setOwnerInstance(PresentationObject obj) {
+		
+	}
+	public PresentationObject getOwnerInstance() {
+		return null;
+	}
 	
 	public Web2Business getWeb2Business(IWContext iwc) throws RemoteException {
 		if(web2Business == null) {
@@ -308,13 +318,12 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 		
 		String rscClassName = iwc.getParameter(PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS);
 		RemoteScriptCollection rsc = (RemoteScriptCollection) RefactorClassRegistry.forName(rscClassName).newInstance();
-		
-		try {
-			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, getWeb2Business(iwc).getBundleURIToMootoolsLib());
-			PresentationUtil.addJavaScriptActionToBody(iwc, "window.addEvent('domready', function() {if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document);});");
-		} catch(RemoteException e) {
-			e.printStackTrace();
-		}
+//		Script script = new Script();
+//		script.addFunction("loadSchools", "function loadSchools() {   if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document); }");
+//		add(script);
+//		this.setOnLoad("if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document)");
+		PresentationUtil.addJavaScriptActionOnLoad(iwc, "alert('sdfsdfsdf'); if (parent != self) parent.handleResponse_"+iwc.getParameter(PARAMETER_SOURCE_NAME)+"(document);");
+//		PresentationUtil.addJavaScriptActionOnLoad(iwc, "callIt();");
 		
 		add(rsc.getResults(iwc));
 	}
@@ -398,6 +407,33 @@ public class RemoteScriptHandler extends PresentationObjectContainer { //impleme
 	 */
 	public void setToClear(PresentationObject po, String emptyValue) {
 		this.toClear.put(po, emptyValue);
+	}
+	
+	@Override
+	public void restoreState(FacesContext context, Object state) {
+		Object values[] = (Object[])state;
+		/*try{
+			super.restoreState(context, values[0]);
+		}
+		catch(ClassCastException cce){
+			cce.printStackTrace();
+		}*/
+		super.restoreState(context, values[0]);
+		//this.goneThroughMain = ((Boolean) values[1]).booleanValue();
+		this.source = (InterfaceObject) values[1];
+		this.target = (PresentationObject) values[2];
+	}
+	/* (non-Javadoc)
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
+	@Override
+	public Object saveState(FacesContext context) {
+		Object values[] = new Object[3];
+		values[0] = super.saveState(context);
+		//values[1] = Boolean.valueOf(this.goneThroughMain);
+		values[1] = this.source;
+		values[2] = this.target;
+		return values;
 	}
 	
 }

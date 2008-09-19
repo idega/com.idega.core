@@ -57,6 +57,22 @@ public class PresentationUtil {
 		return addJavaScriptActionToBody(iwc, adder, action);
 	}
 	
+	public static boolean addJavaScriptActionOnLoad(IWContext iwc, String action) {
+		if (iwc == null || action == null) {
+			return false;
+		}
+		
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			manageCientResource(iwc, ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY, action);
+		
+			return true;
+		}
+		
+		AddResource adder = AddResourceFactory.getInstance(iwc);
+		adder.addInlineScriptAtPosition(iwc, AddResource.BODY_ONLOAD, action);
+		return true;
+	}
+	
 	public static boolean addJavaScriptActionsToBody(IWContext iwc, List<String> actions) {
 		if (iwc == null || actions == null) {
 			return false;
