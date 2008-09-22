@@ -9,7 +9,7 @@ import com.idega.user.data.User;
 
 public interface UserCompanyBusiness {
 
-	public static final String SPRING_BEAN_IDENTIFIER = "userCompanyBusinessInNavigation";
+	public static final String SPRING_BEAN_IDENTIFIER = "userCompanyBusinessBean";
 
 	public Collection<Group> getUsersCompanies(IWContext iwc, User user) throws RemoteException;
 	
