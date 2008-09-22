@@ -1,18 +1,34 @@
 package com.idega.util.xml;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.jdom.input.DOMBuilder;
+import org.w3c.dom.Document;
+import org.xml.sax.InputSource;
+
+import com.idega.util.CoreConstants;
+import com.idega.util.StringHandler;
+
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/01/07 15:05:55 $ by $Author: civilis $
+ * Last modified: $Date: 2008/09/22 14:18:09 $ by $Author: valdas $
  */
 public class XmlUtil {
 
 	private XmlUtil() { }
+	
+	private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
 	
 	private static DocumentBuilderFactory factory;
 	private static DocumentBuilderFactory factoryNoNamespace;
@@ -60,5 +76,61 @@ public class XmlUtil {
 			"org.apache.xerces.dom.DocumentImpl");
 		}
 		return factoryNoNamespace;
+	}
+	
+	public static Document getXMLDocument(String source) {
+		InputStream stream = null;
+		try {
+			stream = StringHandler.getStreamFromString(source);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Error getting InputStream from source: " + source, e);
+			return null;
+		}
+		
+		Reader reader = null;
+		try {
+			reader = new InputStreamReader(stream, CoreConstants.ENCODING_UTF8);
+			return getDocumentBuilder().parse(new InputSource(reader));
+		} catch(Exception e) {
+			logger.log(Level.SEVERE, "Error generating XML document from source: " + source, e);
+		} finally {
+			closeStream(stream);
+			closeReader(reader);
+		}
+		
+		return null;
+	}
+	
+	public static org.jdom.Document getJDOMXMLDocument(String source) {
+		Document document = getXMLDocument(source);
+		if (document == null) {
+			return null;
+		}
+		
+		DOMBuilder domBuilder = new DOMBuilder();
+		return domBuilder.build(document);
+	}
+	
+	private static void closeStream(InputStream stream) {
+		if (stream == null) {
+			return;
+		}
+		try {
+			stream.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private static void closeReader(Reader reader) {
+		if (reader == null) {
+			return;
+		}
+		
+		try {
+			reader.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
