@@ -1714,7 +1714,12 @@ LazyLoader.existsResourceInDocument = function(url, isCSS) {
 
 LazyLoader.existsResourceInElement = function(elementTagName, url, isCSS) {
 	var element = document.getElementsByTagName(elementTagName)[0];
-	var currentResources = element.getElementsByTagName(isCSS ? 'link' : 'script');
+	var currentResources = null;
+	try {
+		currentResources = element.getElementsByTagName(isCSS ? 'link' : 'script');
+	} catch(e) {
+		return false;
+	}
 	if (currentResources == null || currentResources.length == 0) {
 		return false;
 	}
