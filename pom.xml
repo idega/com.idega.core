@@ -12,10 +12,10 @@
   <version>4.0.2-SNAPSHOT</version>
   <name>idegaWeb Core</name>
   
-  
+  <scm>
     <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
     <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection>
-  
+  </scm>
   <!--
   <scm>
     <connection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
