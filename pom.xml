@@ -3,17 +3,17 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.platform</artifactId>
-  	<version>4.0.3-SNAPSHOT</version>
+  	<version>4.0.2-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.faces</artifactId>
-  <version>4.0.3-SNAPSHOT</version>
+  <version>4.0.2-SNAPSHOT</version>
   <name>idegaWeb JavaServer Faces</name>
   <scm>
     
-    <connection>scm:cvs:ext:alexis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.faces/</connection>
-    <developerConnection>scm:cvs:ext:alexis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.faces/</developerConnection> 
+    <connection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</connection>
+    <developerConnection>scm:cvs:ext:${user.name}@code.idega.com:/idega/cvs:${groupId}/${artifactId}/</developerConnection> 
     
     <!--
     <connection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.faces/</connection>
