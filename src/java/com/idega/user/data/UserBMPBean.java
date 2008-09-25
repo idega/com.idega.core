@@ -112,6 +112,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	    addAttribute(getColumnNameDeletedWhen(), "Deleted when", true, true, Timestamp.class);
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
+    	addAttribute(User.FIELD_JURIDICAL_PERSON, "Juridical person", true, true, Boolean.class);
+    	
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
 
@@ -2652,6 +2654,14 @@ public void delete() throws SQLException {
 	public void setModerator(User moderator) {
 		//	TODO:	maybe should set moderator for user's primary groupr?
 		throw new UnsupportedOperationException("Method setModerator() is not implemented yet");
+	}
+
+	public boolean isJuridicalPerson() {
+		return getBooleanColumnValue(User.FIELD_JURIDICAL_PERSON);
+	}
+
+	public void setJuridicalPerson(boolean juridicalPerson) {
+		setColumn(User.FIELD_JURIDICAL_PERSON, Boolean.valueOf(juridicalPerson));
 	}
 
 }
