@@ -306,6 +306,8 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 						"BEGIN "+
 						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_LANGUAGE=''" + language + "'''); "+
 						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TERRITORY=''" + country + "''');"+
+						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_DATE_FORMAT=''YYYY-MM-DD HH24:MI:SS'''); "+
+						"EXECUTE IMMEDIATE ('ALTER SESSION SET NLS_TIMESTAMP_FORMAT=''YYYY-MM-DD HH24:MI:SS''');"+
 						"END;");
 				stmt.close();
 				System.out.println("OracleDatastoreInterface: Creating logon trigger 'set_nls_language' for setting NLS_LANGUAGE='" + language + "' and NLS_TERRITORY='" + country + "'");
