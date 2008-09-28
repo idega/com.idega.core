@@ -1,5 +1,5 @@
 /*
- * $Id: IFrame.java,v 1.20 2006/04/09 12:13:16 laddi Exp $
+ * $Id: IFrame.java,v 1.21 2008/09/28 14:36:27 juozas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,8 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+import java.util.Map;
+
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.LocaleSwitcher;
@@ -20,10 +22,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * Component to render out an "iframe" or Inline Frame element.
  * </p>
- *  Last modified: $Date: 2006/04/09 12:13:16 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/09/28 14:36:27 $ by $Author: juozas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  */
 public class IFrame extends InterfaceObject {
 
@@ -45,6 +47,7 @@ public class IFrame extends InterfaceObject {
 	private boolean addLocaleID = false;
 	private Class classToInstanciate;
 	private boolean addLanguageParameter = true;
+	private Map<String, String> parameters;
 
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[6];
@@ -132,6 +135,12 @@ public class IFrame extends InterfaceObject {
 		this.classToInstanciate = classToAdd;
 	}
 
+	public Map<String, String> getParameters() {
+		return parameters;
+	}
+	public void setParameters(Map<String, String> parameters) {
+		this.parameters = parameters;
+	}
 	private void setClassToInstanciateAsSource(IWContext iwc) {
 		if (this.classToInstanciate != null) {
 			this.setSrc(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate));
@@ -216,6 +225,16 @@ public class IFrame extends InterfaceObject {
 					langAddition = "?" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString();
 				}
 			}
+			if(parameters != null){
+				for(String parameterKey : parameters.keySet()){
+					if(src.indexOf("?") != -1 || langAddition.indexOf("?") != -1){
+						langAddition += "&" + parameterKey + "=" + parameters.get(parameterKey);
+					}else{
+						langAddition += "?" + parameterKey + "=" + parameters.get(parameterKey);
+					}
+				}
+			}
+			
 			setMarkupAttribute("src", src + langAddition);
 		}
 
