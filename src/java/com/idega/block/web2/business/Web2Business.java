@@ -353,4 +353,8 @@ public interface Web2Business extends IBOService {
 	//	Humanized messages
 	public String getBundleUriToHumanizedMessagesScript();
 	public String getBundleUriToHumanizedMessagesStyleSheet();
+	
+	//	GreyBox
+	public String getBundleUtiToGreyBoxScript();
+	public String getBundleUtiToGreyBoxStyleSheet();
 }
