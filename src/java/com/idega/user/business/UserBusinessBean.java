@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.242 2008/09/10 11:59:07 juozas Exp $
+ * $Id: UserBusinessBean.java,v 1.243 2008/09/30 12:02:55 anton Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -105,6 +105,7 @@ import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.LocaleUtil;
@@ -118,10 +119,10 @@ import com.idega.util.text.Name;
  * <p>
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
- * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
+ * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2008/09/30 12:02:55 $ by $Author: anton $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.242 $
+ * @version $Revision: 1.243 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3907,5 +3908,31 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return null;
 	}
+	
+	public String changeUserPassword(String newPassword) {
+		try {
+			IWContext iwc = CoreUtil.getIWContext();
+			User currentUser = iwc.getCurrentUser();
+			
+			LoginTable loginTable = LoginDBHandler.getUserLogin(currentUser);
+			// encrypted new password
+			String encryptedPassword = Encrypter.encryptOneWay(newPassword);
+			// store new password
+			loginTable.setUserPassword(encryptedPassword, newPassword);
+			loginTable.store();
+			
+			Boolean accountEnabled = Boolean.TRUE;
+			Boolean passwordNeverExpires = Boolean.FALSE;
+			Boolean userAllowedToChangePassword = Boolean.TRUE;
+			Boolean mustChangePasswordNextTime = Boolean.FALSE;
+			int passwordValidityPeriod = 365;
 
+			
+			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, IWTimestamp.RightNow(), 5000, passwordNeverExpires, userAllowedToChangePassword, mustChangePasswordNextTime, null);
+			return "success";
+		} catch(Exception ex) {
+			ex.printStackTrace();
+			return "failure";
+		}	
+	}
 } // Class UserBusiness

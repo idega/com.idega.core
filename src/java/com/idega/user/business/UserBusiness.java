@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.110 2008/09/10 11:59:07 juozas Exp $
+ * $Id: UserBusiness.java,v 1.111 2008/09/30 12:02:55 anton Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -55,10 +55,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
+ *  Last modified: $Date: 2008/09/30 12:02:55 $ by $Author: anton $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.110 $
+ * @version $Revision: 1.111 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -903,4 +903,6 @@ public interface UserBusiness extends IBOService {
 	public void setPreferedCompany(String companyId, User user);
 	
 	public Group getPreferedCompany(User user) throws RemoteException;
+	
+	public String changeUserPassword(String newPassword);
 }

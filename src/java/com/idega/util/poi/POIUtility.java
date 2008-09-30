@@ -60,8 +60,6 @@ public class POIUtility {
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
-
-		
 		
 		Collection hRows = table.createHeaderRowGroup().getChildren();
 		int row = addTableRows(sheet, hRows, 0);

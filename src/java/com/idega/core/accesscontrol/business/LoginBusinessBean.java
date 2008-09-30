@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.69 2008/07/02 19:27:34 civilis Exp $
+ * $Id: LoginBusinessBean.java,v 1.70 2008/09/30 12:02:55 anton Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -64,11 +64,11 @@ import com.idega.util.expression.ELUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2008/07/02 19:27:34 $ by $Author: civilis $
+ * Last modified: $Date: 2008/09/30 12:02:55 $ by $Author: anton $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.69 $
+ * @version $Revision: 1.70 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -95,6 +95,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String LOGIN_EVENT_TRYAGAIN = "tryagain";
 	public static final String PARAMETER_USERNAME = "login";
 	public static final String PARAMETER_PASSWORD = "password";
+	public static final String PARAMETER_PASSWORD2 = "password2";
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM = false;
 	public static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
@@ -336,6 +337,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	// protected void onLoginFailed(IWContext iwc, int loginState, String
 	// username) {
+	@Deprecated
 	protected void onLoginFailed(IWContext iwc, LoginState loginState, String username) throws RemoteException {
 		onLoginFailed(iwc.getRequest(), loginState, username);
 		// internalSetState(iwc, loginState);
@@ -358,6 +360,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * 
 	 * @deprecated Replaced with onLoginSuccesful(HttpServletRequest);
 	 */
+	@Deprecated
 	protected void onLoginSuccessful(IWContext iwc) throws RemoteException {
 		// internalSetState(iwc, "loggedon");
 		// internalSetState(iwc, STATE_LOGGED_ON);
