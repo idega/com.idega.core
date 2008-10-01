@@ -1,5 +1,7 @@
 package com.idega.graphics.generator.business;
 
+import java.io.InputStream;
+
 import javax.faces.component.UIComponent;
 
 import com.idega.presentation.IWContext;
@@ -17,5 +19,7 @@ public interface PDFGenerator {
 	public boolean generatePDFFromComponent(String componentUUID, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
 	
 	public boolean generatePDFFromPage(String pageUri, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
+	
+	public InputStream getStreamToGeneratedPDF(IWContext iwc, UIComponent component, boolean replaceInputs, boolean checkCustomTags);
 
 }
