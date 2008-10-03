@@ -108,10 +108,10 @@
 			com.idega.servlet.filter.IWBlockFilter
 		</filter-class>
 	</filter>
-	<filter-mapping>
+	<!-- filter-mapping>
 		<filter-name>IWBlockFilter</filter-name>
 		<url-pattern>*.properties</url-pattern>
-	</filter-mapping>
+	</filter-mapping-->
 	<filter-mapping>
 		<filter-name>IWBlockFilter</filter-name>
 		<url-pattern>*.pxml</url-pattern>
