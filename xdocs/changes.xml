@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+    	<release version="3.1.92" date="2008-10-06">
+      		<action dev="laddi" type="update">
+      			Fixed trigger creation problem when using JNDI with Oracle databases.
+      		</action>
+    	</release>
     	<release version="3.1.91" date="2008-06-18">
       		<action dev="gimmi" type="update">
       			base-dependencies now uses web2.0 v3.1.7
