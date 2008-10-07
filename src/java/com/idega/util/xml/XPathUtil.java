@@ -15,11 +15,14 @@ import org.w3c.dom.NodeList;
  * when using xpath variables, access to XPathUtil instance needs to be synchronized
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/07/10 07:18:37 $ by $Author: civilis $
+ * Last modified: $Date: 2008/10/07 13:34:11 $ by $Author: civilis $
  */
 public class XPathUtil {
+	
+	private static final String xformsNS = "http://www.w3.org/2002/xforms";
+	private static final String xhtmlNS = "http://www.w3.org/1999/xhtml";
 
 	private XPathExpression xpathExpression;
 	private XPathVariableResolverImpl variableResolver;
@@ -27,8 +30,28 @@ public class XPathUtil {
 	public XPathUtil(String xpathExpressionStr) {
 		
 		NamespaceContextImpl nmspcContext = new NamespaceContextImpl();
-		nmspcContext.addPrefix("xf", "http://www.w3.org/2002/xforms");
-		nmspcContext.addPrefix("h", "http://www.w3.org/1999/xhtml");
+		nmspcContext.addPrefix("xf", xformsNS);
+		nmspcContext.addPrefix("h", xhtmlNS);
+		
+		compileXPathExpression(xpathExpressionStr, nmspcContext);
+	}
+	
+	public XPathUtil(String xpathExpressionStr, Prefix... prefixes) {
+		
+		NamespaceContextImpl nmspcContext = new NamespaceContextImpl();
+		
+		if(prefixes != null) {
+			
+			for (Prefix prefix : prefixes) {
+				nmspcContext.addPrefix(prefix.getPrefix(), prefix.getNamespace());
+			}
+		}
+		
+		if(nmspcContext.getPrefix(xformsNS) == null)
+			nmspcContext.addPrefix("xf", xformsNS);
+		
+		if(nmspcContext.getPrefix(xhtmlNS) == null)
+			nmspcContext.addPrefix("h", xhtmlNS);
 		
 		compileXPathExpression(xpathExpressionStr, nmspcContext);
 	}
