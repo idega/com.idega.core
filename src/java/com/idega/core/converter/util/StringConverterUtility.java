@@ -51,7 +51,7 @@ public class StringConverterUtility {
 
 	}
 	
-	private static String saveConvert(String theString, boolean escapeSpace) {
+	public static String saveConvert(String theString, boolean escapeSpace) {
 		if(theString == null) {theString="";}
 		
 		int len = theString.length();
