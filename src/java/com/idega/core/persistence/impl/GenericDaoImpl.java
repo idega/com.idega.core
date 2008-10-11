@@ -19,9 +19,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  *
- * Last modified: $Date: 2008/09/02 12:41:29 $ by $Author: civilis $
+ * Last modified: $Date: 2008/10/11 11:24:18 $ by $Author: valdas $
  */
 @Repository("genericDAO")
 @Transactional(readOnly=true)
@@ -142,6 +142,7 @@ public class GenericDaoImpl implements GenericDao {
 			fresult = q.getResultList();
 		}
 		
+		logger.log(Level.INFO, "Results for query: " + fresult);
 		return fresult;
 	}
 	
