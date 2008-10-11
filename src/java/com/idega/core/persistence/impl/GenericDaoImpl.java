@@ -19,9 +19,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  *
- * Last modified: $Date: 2008/10/11 14:27:28 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/11 14:30:39 $ by $Author: valdas $
  */
 @Repository("genericDAO")
 @Transactional(readOnly=true)
@@ -129,9 +129,11 @@ public class GenericDaoImpl implements GenericDao {
 						logger.log(Level.INFO, "Converting BigDecimal: " + item + " to Long");
 						longsResult.add(Long.valueOf(((BigDecimal) item).longValue()));
 					} else if (item instanceof Integer) {
+						
 						logger.log(Level.INFO, "Converting Integer: " + item + " to Long");
 						longsResult.add(Long.valueOf(((Integer) item)));
 					} else {
+						
 						logger.log(Level.WARNING, "Unsupported -expected long- type="+item.getClass().getName()+", item="+item);
 					}
 				}
