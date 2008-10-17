@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.57 2008/04/24 21:03:25 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.58 2008/10/17 10:41:42 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -46,10 +46,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2008/04/24 21:03:25 $ by $Author: laddi $
+ * Last modified: $Date: 2008/10/17 10:41:42 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.57 $
+ * @version $Revision: 1.58 $
  */
 
 
@@ -378,21 +378,26 @@ public class IWMainApplicationSettings implements MutableClass {
 			if(!getApplication().isInDatabaseLessMode()){
 				List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
 				//if it is a legal locale depending on the users settings then set that as the default otherwise use the first in the list
-				if(localesInUse.contains(locale)){
-					if(firstTimeSave){
-						setDefaultLocale(locale);
-					}
+				if (localesInUse.isEmpty()) {
+					locale = englishLocal;
 				}
-				else{
-					if(localesInUse.contains(englishLocal)){
-						//try to use the english one
-						locale = englishLocal;
+				else {
+					if(localesInUse.contains(locale)){
+						if(firstTimeSave){
+							setDefaultLocale(locale);
+						}
 					}
 					else{
-						//else just the first we find
-						locale = (Locale)localesInUse.iterator().next();
+						if(localesInUse.contains(englishLocal)){
+							//try to use the english one
+							locale = englishLocal;
+						}
+						else{
+							//else just the first we find
+							locale = (Locale)localesInUse.iterator().next();
+						}
+						setDefaultLocale(locale);//to fix the default locale or set it for the first time
 					}
-					setDefaultLocale(locale);//to fix the default locale or set it for the first time
 				}
 			}
 			this.cachedDefaultLocale=locale;

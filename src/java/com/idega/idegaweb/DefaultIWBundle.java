@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.47 2008/10/17 07:21:38 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.48 2008/10/17 10:41:42 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -944,7 +944,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 */
 	public String getBundleName()
 	{
-		return this.getBundleIdentifier();
+		String theReturn = getProperty("name");
+		if (theReturn == null)
+		{
+			theReturn = this.getBundleIdentifier();
+		}
+		return theReturn;
 	}
 	
 	/*
@@ -1662,7 +1667,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @see com.idega.idegaweb.IWModule#getModuleVendor()
 	 */
 	public String getModuleVendor() {
-		return "idega Software";
+		String theReturn = getProperty("vendor");
+		if (theReturn == null)
+		{
+			theReturn = "idega Software";
+		}
+		return theReturn;
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVersion()
