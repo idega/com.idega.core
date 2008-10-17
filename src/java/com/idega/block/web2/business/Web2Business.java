@@ -2,6 +2,7 @@ package com.idega.block.web2.business;
 
 
 import java.rmi.RemoteException;
+import java.util.List;
 
 import com.idega.business.IBOService;
 import com.idega.business.SpringBeanName;
@@ -357,4 +358,12 @@ public interface Web2Business extends IBOService {
 	//	GreyBox
 	public String getBundleUtiToGreyBoxScript();
 	public String getBundleUtiToGreyBoxStyleSheet();
+	
+	// jQuery plugins
+	public String getBundleURIToJQueryPlugin(JQueryPlugin plugin);
+	
+	//	jsTree (based on jQuery)
+	public List<String> getBundleURIsToJSTreeScriptFiles();
+	public List<String> getBundleURIsToJSTreeScriptFiles(boolean addStylesManager, boolean usesXmlDataTypes, boolean usesMetadataRules, boolean usesCookies);
+	public String getBundleURIToJSTreeStyleFile();
 }
