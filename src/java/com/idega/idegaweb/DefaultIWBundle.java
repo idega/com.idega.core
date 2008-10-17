@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.46 2008/05/24 20:50:10 eiki Exp $
+ * $Id: DefaultIWBundle.java,v 1.47 2008/10/17 07:21:38 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -589,7 +589,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			IWResourceBundle item = (IWResourceBundle) iter.next();
 			item.removeString(key);
 		}
-		return getLocalizableStringsProperties().remove(key) != null ? true : false;
+		boolean success = getLocalizableStringsProperties().remove(key) != null ? true : false;
+		storeLocalizableStrings();
+		storeResourceBundles();
+		return success;
 	}
 	protected Properties getLocalizableStringsProperties()
 	{
@@ -1026,6 +1029,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Returns null if there is an exception
 	 * @deprecated Replaced with getICObjectsList()
 	 */
+	@Deprecated
 	public ICObject[] getICObjects()
 	{
 		try
@@ -1051,6 +1055,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Returns null if there is an exception
 	 * @deprecated replaced with getICObjectsList(componentType);
 	 */
+	@Deprecated
 	public ICObject[] getICObjects(String componentType)
 	{
 		try
@@ -1391,6 +1396,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param propertyName
 	 * @param propertyValue
 	 */
+	@Deprecated
 	private void setComponentProperty(IWProperty component, String propertyName, String propertyValue)
 	{
 		IWPropertyList list = component.getPropertyList();
@@ -1520,6 +1526,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
 	}
+	@Override
 	public String toString(){
 		return this.getBundleIdentifier();
 	}
