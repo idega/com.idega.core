@@ -15,15 +15,16 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2008/07/03 13:08:53 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/21 10:41:28 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
 	private Date date = null;
+	private Date dateTo = null;
 	
 	private boolean dateRange = false;
 	private boolean useCurrentDateIfNotSet = true;
@@ -47,6 +48,7 @@ public class IWDatePicker extends TextInput {
 		String language = locale.getLanguage();
 		
 		IWTimestamp iwDate = null;
+		IWTimestamp iwDateTo = null;
 		if (date == null && useCurrentDateIfNotSet) {
 			date = new Date(System.currentTimeMillis());
 		}
@@ -54,7 +56,14 @@ public class IWDatePicker extends TextInput {
 			iwDate = new IWTimestamp(date);
 		}
 		if (iwDate != null) {
-			setValue(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
+			StringBuilder value = new StringBuilder(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
+			
+			if (isDateRange()) {
+				iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
+				value.append(" - ").append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+			}
+			
+			setValue(value.toString());
 		}
 		
 		boolean canUseLocalizedText = language != null  && !CoreConstants.EMPTY.equals(language) && !Locale.ENGLISH.getLanguage().equals(language);
@@ -78,6 +87,8 @@ public class IWDatePicker extends TextInput {
 			if (onSelectAction != null) {
 				initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
 			}
+			
+			initAction.append(", buttonText: '").append(getResourceBundle(iwc).getLocalizedString("select_date", "Select date")).append("'");
 			
 			//	Localization
 			if (canUseLocalizedText) {
@@ -161,6 +172,14 @@ public class IWDatePicker extends TextInput {
 
 	public void setInputName(String inputName) {
 		this.inputName = inputName;
+	}
+
+	public Date getDateTo() {
+		return dateTo;
+	}
+
+	public void setDateTo(Date dateTo) {
+		this.dateTo = dateTo;
 	}
 	
 }

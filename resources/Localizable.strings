@@ -134,6 +134,7 @@ search_results.no_results=Din s\u00F6kning gav inget resultat
 searcher.button=S\u00F6k
 searching=Searching...
 select_all=Select all
+select_date=Select date
 select_group=Select group
 select_or_deselect_group=Select/deselect group
 slide_role_root=slide_role_root
