@@ -366,4 +366,9 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleURIsToJSTreeScriptFiles();
 	public List<String> getBundleURIsToJSTreeScriptFiles(boolean addStylesManager, boolean usesXmlDataTypes, boolean usesMetadataRules, boolean usesCookies);
 	public String getBundleURIToJSTreeStyleFile();
+	
+	//	SexyLightBox (based on MooTools)
+	public List<String> getBundleURIsToSexyLightBoxScriptFiles();
+	public List<String> getBundleURIsToSexyLightBoxScriptFiles(boolean useCompressedScript);
+	public String getBundleURIToSexyLightBoxStyleFile();
 }
