@@ -1,5 +1,5 @@
 /*
- * $Id: LoginDBHandler.java,v 1.71 2007/11/13 09:31:07 laddi Exp $
+ * $Id: LoginDBHandler.java,v 1.72 2008/10/22 14:58:14 civilis Exp $
  * 
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
  * 
@@ -366,9 +366,8 @@ public class LoginDBHandler {
 			return getLoginTableHome().findLoginForUser(userId);
 		}
 		catch (FinderException ex) {
-			ex.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 
 	/**
@@ -384,9 +383,8 @@ public class LoginDBHandler {
 			return getLoginTableHome().findLoginForUser(user);
 		}
 		catch (FinderException ex) {
-			ex.printStackTrace();
+			return null;
 		}
-		return null;
 	}
 	
 	/**
