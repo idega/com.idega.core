@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.45 2008/08/12 13:38:48 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.46 2008/10/22 15:46:50 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -46,10 +46,10 @@ import com.idega.util.StringHandler;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/08/12 13:38:48 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/22 15:46:50 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -177,8 +177,22 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * </p>
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
+	 * @param isDirectory
 	 */
-	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
+	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath) {
+		return copyResourceFromJarToWebapp(iwma, requestUriWithoutContextPath, false);
+	}
+	
+	/**
+	 * <p>
+	 * Copies a resource (if not directory) from within a Jar File into the webapp folder if it doesn't
+	 * already exists
+	 * </p>
+	 * @param iwma
+	 * @param requestUriWithoutContextPath
+	 * @param isDirectory
+	 */
+	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath, boolean isDirectory) {
 		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
@@ -189,9 +203,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
 		if (webappFile.exists()) {
 			long webappLastModified = webappFile.lastModified();
-			if (webappLastModified > bundleLastModified) {
+			if (!isDirectory && webappLastModified > bundleLastModified) {
 				return null;
 			}
+			return webappFile;
 		}
 		
 		try {
@@ -204,8 +219,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 			}
 			
 			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
-			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
-			FileUtil.streamToFile(input, webappFile);
+			if (!isDirectory) {
+				InputStream input = bundle.getResourceInputStream(pathWithinBundle);
+				FileUtil.streamToFile(input, webappFile);
+			}
 			webappFile.setLastModified(bundleLastModified);
 			return webappFile;
 		}
