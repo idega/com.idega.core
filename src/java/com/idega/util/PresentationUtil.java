@@ -15,50 +15,40 @@ public class PresentationUtil {
 	public static final String ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY = "javaScriptActionForBodyAttribute";
 	public static final String ATTRIBUTE_CSS_SOURCE_LINE_FOR_HEADER = "cssSourceLineForHeaderAttribute";
 	
-	public static boolean addJavaScriptSourceLineToHeader(IWContext iwc, String scriptUri) {
-		if (iwc == null || scriptUri == null) {
-			return false;
-		}
-		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
-		return addJavaScriptSourceLineToHeader(iwc, adder, scriptUri);
-	}
-	
 	public static boolean addJavaScriptSourcesLinesToHeader(IWContext iwc, List<String> scriptsUris) {
 		if (iwc == null || scriptsUris == null) {
 			return false;
 		}
 		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
 		for (int i = 0; i < scriptsUris.size(); i++) {
-			addJavaScriptSourceLineToHeader(iwc, adder, scriptsUris.get(i));
+			addJavaScriptSourceLineToHeader(iwc, scriptsUris.get(i));
 		}
 		
 		return true;
 	}
 	
-	private static boolean addJavaScriptSourceLineToHeader(IWContext iwc, AddResource adder, String scriptUri) {
+	public static boolean addJavaScriptSourceLineToHeader(IWContext iwc, String scriptUri) {
+		if (iwc == null || StringUtil.isEmpty(scriptUri)) {
+			return false;
+		}
+		
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			manageCientResource(iwc, ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_HEADER, scriptUri);
 		
 			return true;
 		}
 		
+		AddResource adder = getResourceAdder(iwc);
+		if (adder == null) {
+			return false;
+		}
+		
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, scriptUri);
 		return true;
 	}
 	
-	public static boolean addJavaScriptActionToBody(IWContext iwc, String action) {
-		if (iwc == null || action == null) {
-			return false;
-		}
-		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
-		return addJavaScriptActionToBody(iwc, adder, action);
-	}
-	
 	public static boolean addJavaScriptActionOnLoad(IWContext iwc, String action) {
-		if (iwc == null || action == null) {
+		if (iwc == null || StringUtil.isEmpty(action)) {
 			return false;
 		}
 		
@@ -68,7 +58,11 @@ public class PresentationUtil {
 			return true;
 		}
 		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
+		AddResource adder = getResourceAdder(iwc);
+		if (adder == null) {
+			return false;
+		}
+		
 		adder.addInlineScriptAtPosition(iwc, AddResource.BODY_ONLOAD, action);
 		return true;
 	}
@@ -78,9 +72,8 @@ public class PresentationUtil {
 			return false;
 		}
 		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
 		for (int i = 0; i < actions.size(); i++) {
-			addJavaScriptActionToBody(iwc, adder, actions.get(i));
+			addJavaScriptActionToBody(iwc, actions.get(i));
 		}
 		
 		return true;
@@ -104,18 +97,27 @@ public class PresentationUtil {
 		}
 	}
 	
-	private static boolean addJavaScriptActionToBody(IWContext iwc, AddResource adder, String action) {
+	public static boolean addJavaScriptActionToBody(IWContext iwc, String action) {
+		if (iwc == null || StringUtil.isEmpty(action)) {
+			return false;
+		}
+		
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			manageCientResource(iwc, ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY, action);
 		
 			return true;
 		}
+		
+		AddResource adder = getResourceAdder(iwc);
+		if (adder == null) {
+			return false;
+		}
+		
 		adder.addInlineScriptAtPosition(iwc, AddResource.BODY_END, action);
 		return true;
 	}
 	
 	public static String getJavaScriptSourceLine(String scriptUri) {
-		
 		return getJavaScriptSourceLine(scriptUri, false);
 	}
 	
@@ -205,13 +207,13 @@ public class PresentationUtil {
 		return allActions.toString();
 	}
 	
-	public static boolean addStyleSheetToHeader(IWContext iwc, String styleSheetUri) {
-		if (iwc == null || styleSheetUri == null) {
-			return false;
+	private static AddResource getResourceAdder(IWContext iwc) {
+		try {
+			return AddResourceFactory.getInstance(iwc);
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
-		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
-		return addStyleSheetToHeader(iwc, adder, styleSheetUri);
+		return null;
 	}
 	
 	public static boolean addStyleSheetsToHeader(IWContext iwc, List<String> styleSheetsUris) {
@@ -219,20 +221,29 @@ public class PresentationUtil {
 			return false;
 		}
 		
-		AddResource adder = AddResourceFactory.getInstance(iwc);
 		for (int i = 0; i < styleSheetsUris.size(); i++) {
-			addStyleSheetToHeader(iwc, adder, styleSheetsUris.get(i));
+			addStyleSheetToHeader(iwc, styleSheetsUris.get(i));
 		}
 		
 		return true;
 	}
 	
-	private static boolean addStyleSheetToHeader(IWContext iwc, AddResource adder, String styleSheetUri) {
+	public static boolean addStyleSheetToHeader(IWContext iwc, String styleSheetUri) {
+		if (iwc == null || StringUtil.isEmpty(styleSheetUri)) {
+			return false;
+		}
+		
 		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			manageCientResource(iwc, ATTRIBUTE_CSS_SOURCE_LINE_FOR_HEADER, styleSheetUri);
 			
 			return true;
 		}
+		
+		AddResource adder = getResourceAdder(iwc);
+		if (adder == null) {
+			return false;
+		}
+		
 		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, styleSheetUri);
 		return true;
 	}
