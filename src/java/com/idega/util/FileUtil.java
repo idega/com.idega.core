@@ -491,7 +491,7 @@ public class FileUtil {
 	    		file = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), pathToFile.substring(virtualPathStart));
 	    	}
 	    }
-	    if (file.exists()) {
+	    if (file != null && file.exists()) {
 	    	return file;
 	    }
 	    
