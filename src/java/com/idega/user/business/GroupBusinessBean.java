@@ -1,5 +1,5 @@
 /*
- * $Id: GroupBusinessBean.java,v 1.121 2008/09/10 11:59:07 juozas Exp $ Created
+ * $Id: GroupBusinessBean.java,v 1.122 2008/10/22 14:51:16 valdas Exp $ Created
  * in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -93,12 +93,12 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * removing, lookups and manipulating Groups.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2006/02/20
- * 11:04:35 $ by $Author: juozas $
+ * 11:04:35 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.121 $
+ * @version $Revision: 1.122 $
  */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
@@ -2618,10 +2618,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 		
 		UserBusiness userBusiness = getUserBusiness();
+		Collection<Group> allUserGroups = getUserGroups(iwc, currentUser, userBusiness);
 		Collection<Group> userGroupsByPhrase = new ArrayList<Group>();
 		for (Group group: groups) {
 			try {
-				if (userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser)) {
+				if (userBusiness.isGroupUnderUsersTopGroupNode(iwc, group, currentUser, allUserGroups)) {
 					userGroupsByPhrase.add(group);
 				}
 			} catch (RemoteException e) {
@@ -2631,14 +2632,52 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		
 		return userGroupsByPhrase;
 	}
+	
+	private Collection<Group> getUserGroups(IWContext iwc, User currentUser, UserBusiness userBusiness) {
+		Collection<Group> groupsByPermissions = null;
+		try {
+			groupsByPermissions = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(currentUser, iwc);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 		
+		Collection<Group> directGroups = null;
+		try {
+			directGroups = userBusiness.getUserGroups(currentUser);
+		} catch (EJBException e) {
+			e.printStackTrace();
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		
+		if (ListUtil.isEmpty(groupsByPermissions) && ListUtil.isEmpty(directGroups)) {
+			return null;
+		}
+		if (ListUtil.isEmpty(groupsByPermissions)) {
+			return directGroups;
+		}
+		if (ListUtil.isEmpty(directGroups)) {
+			return groupsByPermissions;
+		}
+		
+		List<Group> userGroups = new ArrayList<Group>(directGroups);
+		for (Group group: groupsByPermissions) {
+			if (!userGroups.contains(group)) {
+				userGroups.add(group);
+			}
+		}
+		
+		return userGroups;
+	}
 
 	/**
 	 * 
-	 * Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
+	 * Last modified: $Date: 2008/10/22 14:51:16 $ by $Author: valdas $
 	 * 
 	 * @author <a href="mailto:gummi@idega.com">gummi</a>
-	 * @version $Revision: 1.121 $
+	 * @version $Revision: 1.122 $
 	 */
 	public class GroupTreeRefreshThread extends Thread {
 
