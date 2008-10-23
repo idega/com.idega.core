@@ -12,6 +12,7 @@ ROLE.can_administer_salaries.name=can_administer_salaries
 ROLE.content_author.name=content_author
 ROLE.content_editor.name=content_editor
 ROLE.developer.name=developer
+ROLE.multidomain_admin.name=ROLE.multidomain_admin.name
 ROLE.role_master.name=role_master
 ROLE.schools_admin.name=ROLE.schools_admin.name
 ROLE.userapplication.name=userapplication

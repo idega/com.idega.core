@@ -26,6 +26,11 @@
 			<rtexprvalue>false</rtexprvalue>
 		</attribute>
 		<attribute>
+			<name>stylesheeturls</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+		<attribute>
 			<name>onload</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
