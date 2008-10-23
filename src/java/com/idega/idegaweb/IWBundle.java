@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.97 2007/07/27 15:44:44 civilis Exp $
+ * $Id: IWBundle.java,v 1.98 2008/10/23 12:26:04 valdas Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2007/07/27 15:44:44 $ by $Author: civilis $
+ * Last modified: $Date: 2008/10/23 12:26:04 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.97 $
+ * @version $Revision: 1.98 $
  */
 public interface IWBundle extends IWModule{
 	/**
@@ -97,6 +97,8 @@ public interface IWBundle extends IWModule{
 	public abstract void setProperty(String propertyName);
 
 	public abstract void setRootVirtualPath(String path);
+	
+	public String getRootVirtualPath();
 
 	public abstract Image getLocalizedImage(String name, Locale locale);
 

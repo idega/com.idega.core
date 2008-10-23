@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.48 2008/10/17 10:41:42 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.49 2008/10/23 12:26:04 valdas Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -449,7 +449,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return this.rootRealPath;
 	}
-	protected String getRootVirtualPath()
+	public String getRootVirtualPath()
 	{
 		return this.rootVirtualPath;
 	}
