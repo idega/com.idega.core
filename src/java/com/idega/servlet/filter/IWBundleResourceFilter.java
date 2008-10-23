@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.47 2008/10/23 12:27:31 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.48 2008/10/23 14:11:15 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -55,10 +55,10 @@ import com.idega.util.StringUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/10/23 12:27:31 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/23 14:11:15 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -290,19 +290,28 @@ public class IWBundleResourceFilter extends BaseFilter {
 		String realDirectoryForExtractedFiles = applicationPath + bundleRootPath;
 		InputStream stream = null;
 		File file = null;
+		boolean needToCopyFile = true;
 		List<File> copiedFiles = new ArrayList<File>();
+		String realPathToFile = null;
 		try {
 			for (ZipEntry entry = null; (entry = jarStream.getNextEntry()) != null;) {
 				if (entry.getName().startsWith((pathInBundle))) {
 					if (!entry.isDirectory()) {
-						file = FileUtil.getFileAndCreateRecursiveIfNotExists(realDirectoryForExtractedFiles + entry.getName());
+						realPathToFile = new StringBuilder(realDirectoryForExtractedFiles).append(entry.getName()).toString();
 						
-						stream = IOUtil.getStreamFromCurrentZipEntry(jarStream);
-						FileUtil.streamToFile(stream, file);
-						file.setLastModified(bundle.getResourceTime(pathInBundle));
+						file = new File(realPathToFile);
+						//	If file doesn't exist OR modified LATER than file copied into web application - need to re-copy file
+						needToCopyFile = !file.exists() || bundle.getResourceTime(entry.getName()) > file.lastModified();
+						
+						if (needToCopyFile) {
+							file = FileUtil.getFileAndCreateRecursiveIfNotExists(realPathToFile);
+							stream = IOUtil.getStreamFromCurrentZipEntry(jarStream);
+							FileUtil.streamToFile(stream, file);
+							file.setLastModified(bundle.getResourceTime(pathInBundle));
+							IOUtil.closeInputStream(stream);
+						}
+						
 						copiedFiles.add(file);
-						
-						IOUtil.closeInputStream(stream);
 					}
 				}
 			}
