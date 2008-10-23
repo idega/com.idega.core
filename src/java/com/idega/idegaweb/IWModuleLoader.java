@@ -1,5 +1,5 @@
 /*
- * $Id: IWModuleLoader.java,v 1.10 2008/07/29 15:54:43 tryggvil Exp $ Created on
+ * $Id: IWModuleLoader.java,v 1.11 2008/10/23 12:25:51 valdas Exp $ Created on
  * 31.5.2005 in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -26,10 +26,10 @@ import javax.servlet.ServletContext;
  * This is the class responsible for loading the bundles (the new jar method)
  * for the IWMainApplication instance.
  * </p>
- * Last modified: $Date: 2008/07/29 15:54:43 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/10/23 12:25:51 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWModuleLoader {
 
@@ -39,7 +39,7 @@ public class IWModuleLoader {
 	//ServletContext _externalContext;
 	private List<JarLoader> jarLoaders;
 
-	private String defaultLibPath = "/WEB-INF/lib/";
+	public static final String DEFAULT_LIB_PATH = "/WEB-INF/lib/";
 
 	/**
 	 * @deprecated
@@ -61,7 +61,7 @@ public class IWModuleLoader {
 		if (jars != null) {
 			for (Iterator it = jars.iterator(); it.hasNext();) {
 				String path = (String) it.next();
-				String pathMinusPrefix = path.substring(defaultLibPath.length(),path.length());
+				String pathMinusPrefix = path.substring(DEFAULT_LIB_PATH.length(),path.length());
 				if (pathMinusPrefix.startsWith(bundleIdentifier)&&pathMinusPrefix.toLowerCase().endsWith(".jar")) {
 					loadJar(path);
 				}
@@ -83,7 +83,7 @@ public class IWModuleLoader {
 	
 	protected Set getJarSet(){
 //		Set jars = getExternalContext().getResourcePaths(defaultLibPath);
-		Set jars = iwma.getResourcePaths(defaultLibPath);
+		Set jars = iwma.getResourcePaths(DEFAULT_LIB_PATH);
 		return jars;
 	}
 
