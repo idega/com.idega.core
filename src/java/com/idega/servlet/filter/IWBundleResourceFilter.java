@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.46 2008/10/22 15:46:50 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.47 2008/10/23 12:27:31 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -16,9 +16,13 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
+import java.util.jar.JarInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.zip.ZipEntry;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.FilterChain;
@@ -28,13 +32,18 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.file.business.FileIconSupplier;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWModuleLoader;
 import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -46,10 +55,10 @@ import com.idega.util.StringHandler;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/10/22 15:46:50 $ by $Author: valdas $
+ * Last modified: $Date: 2008/10/23 12:27:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -177,22 +186,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * </p>
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
-	 * @param isDirectory
 	 */
-	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath) {
-		return copyResourceFromJarToWebapp(iwma, requestUriWithoutContextPath, false);
-	}
-	
-	/**
-	 * <p>
-	 * Copies a resource (if not directory) from within a Jar File into the webapp folder if it doesn't
-	 * already exists
-	 * </p>
-	 * @param iwma
-	 * @param requestUriWithoutContextPath
-	 * @param isDirectory
-	 */
-	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath, boolean isDirectory) {
+	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
 		
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
@@ -203,10 +198,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
 		if (webappFile.exists()) {
 			long webappLastModified = webappFile.lastModified();
-			if (!isDirectory && webappLastModified > bundleLastModified) {
+			if (webappLastModified > bundleLastModified) {
 				return null;
 			}
-			return webappFile;
 		}
 		
 		try {
@@ -219,10 +213,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 			}
 			
 			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
-			if (!isDirectory) {
-				InputStream input = bundle.getResourceInputStream(pathWithinBundle);
-				FileUtil.streamToFile(input, webappFile);
-			}
+			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
+			FileUtil.streamToFile(input, webappFile);
 			webappFile.setLastModified(bundleLastModified);
 			return webappFile;
 		}
@@ -233,7 +225,98 @@ public class IWBundleResourceFilter extends BaseFilter {
 		return null;
 	}
 	
-
+	/**
+	 * Loads ALL resources (if any found) from bundle's JAR directory to real web app's directory
+	 * 
+	 * @param iwma
+	 * @param bundle
+	 * @param pathInBundle - like 'resources/resourcesToLoadDirectory/'
+	 */
+	@SuppressWarnings("unchecked")
+	public synchronized static final List<File> copyAllFilesFromJarDirectory(IWMainApplication iwma, IWBundle bundle, String pathInBundle) {
+		Set<String> paths = iwma.getResourcePaths(IWModuleLoader.DEFAULT_LIB_PATH);
+		if (ListUtil.isEmpty(paths)) {
+			return null;
+		}
+		
+		String expectedBundleJar = new StringBuilder(bundle.getBundleIdentifier()).append("-").toString();
+		String bundleJar = null;
+		for (Iterator<String> pathsIter = paths.iterator(); (pathsIter.hasNext() && bundleJar == null);) {
+			bundleJar = pathsIter.next();
+			
+			if (bundleJar.indexOf(expectedBundleJar) == -1) {
+				bundleJar = null;	//	Not bundle's JAR file
+			}
+		}
+		if (StringUtil.isEmpty(bundleJar)) {
+			return null;
+		}
+		
+		if (bundleJar.startsWith(File.separator)) {
+			bundleJar = bundleJar.replaceFirst(File.separator, CoreConstants.EMPTY);
+		}
+		String jarPath = IWMainApplication.getDefaultIWMainApplication().getApplicationRealPath() + bundleJar;
+		JarInputStream jarStream = null;
+		try {
+			jarStream = new JarInputStream(new FileInputStream(new File(jarPath)));
+		} catch (FileNotFoundException e) {
+			e.printStackTrace();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+		if (jarStream == null) {
+			return null;
+		}
+		
+		if (pathInBundle.startsWith(File.separator)) {
+			pathInBundle = pathInBundle.replaceFirst(File.separator, CoreConstants.EMPTY);
+		}
+		String badBundlePathStart = "bundle" + File.separator;
+		if (pathInBundle.startsWith(badBundlePathStart)) {
+			pathInBundle = pathInBundle.replaceFirst(badBundlePathStart, CoreConstants.EMPTY);
+		}
+		
+		String applicationPath = iwma.getApplicationRealPath();
+		if (!applicationPath.endsWith(File.separator)) {
+			applicationPath += File.separator; 
+		}
+		String bundleRootPath = bundle.getRootVirtualPath();
+		if (bundleRootPath.startsWith(File.separator)) {
+			bundleRootPath = bundleRootPath.replaceFirst(File.separator, CoreConstants.EMPTY);
+		}
+		if (!bundleRootPath.endsWith(File.separator)) {
+			bundleRootPath += File.separator;
+		}
+		String realDirectoryForExtractedFiles = applicationPath + bundleRootPath;
+		InputStream stream = null;
+		File file = null;
+		List<File> copiedFiles = new ArrayList<File>();
+		try {
+			for (ZipEntry entry = null; (entry = jarStream.getNextEntry()) != null;) {
+				if (entry.getName().startsWith((pathInBundle))) {
+					if (!entry.isDirectory()) {
+						file = FileUtil.getFileAndCreateRecursiveIfNotExists(realDirectoryForExtractedFiles + entry.getName());
+						
+						stream = IOUtil.getStreamFromCurrentZipEntry(jarStream);
+						FileUtil.streamToFile(stream, file);
+						file.setLastModified(bundle.getResourceTime(pathInBundle));
+						copiedFiles.add(file);
+						
+						IOUtil.closeInputStream(stream);
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			IOUtil.closeInputStream(stream);
+			IOUtil.closeInputStream(jarStream);
+		}
+		
+		return copiedFiles;
+	}
+	
 	/**
 	 * @param realFile
 	 */
