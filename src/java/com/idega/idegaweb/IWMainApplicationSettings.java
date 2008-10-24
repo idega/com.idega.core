@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.58 2008/10/17 10:41:42 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.59 2008/10/24 07:05:36 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -46,14 +46,19 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2008/10/17 10:41:42 $ by $Author: laddi $
+ * Last modified: $Date: 2008/10/24 07:05:36 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.58 $
+ * @version $Revision: 1.59 $
  */
 
 
 public class IWMainApplicationSettings implements MutableClass {
+
+	/**
+	 * Comment for <code>USE_PREPARED_STATEMENT</code>
+	 */
+	public static final String USE_PREPARED_STATEMENT = "PreparedStatement";
 
 	private static final int MAX_KEY_LENGTH = ICApplicationBindingBMPBean.MAX_KEY_LENGTH; 
 	
@@ -82,9 +87,9 @@ public class IWMainApplicationSettings implements MutableClass {
 	private static final String IDEGAWEB_PROPERTY_FILE_NAME = "idegaweb.pxml";
 
 	private static final String CHARACTER_ENCODING_KEY = "character_encoding";
-	private static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
-	private static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
-	private static final String SESSION_POLLING_KEY = "session_polling";
+	public static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
+	public static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
+	public static final String SESSION_POLLING_KEY = "session_polling";
 	
 	// the following three properties seem not to be set but  
 	// they are read BEFORE the database is initialized, that is
@@ -94,7 +99,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	private static final String JDBC_DATASOURCE_DEFAULT_URL = "JDBC_DATASOURCE_DEFAULT_URL";
 	
 	// very special property
-	private static final String ENTITY_AUTO_CREATE =  "entity-auto-create";
+	public static final String ENTITY_AUTO_CREATE =  "entity-auto-create";
+	public static final String USE_DEBUG_MODE =  "debug";
 	
 	//sets if to cache the properties into an application map
 	private boolean cache=true;
@@ -237,6 +243,18 @@ public class IWMainApplicationSettings implements MutableClass {
 				String key = property.getKey();
 				keysFromApplicationBinding.add(key);
 			}
+			
+			keysFromApplicationBinding.remove(ENTITY_AUTO_CREATE);
+			keysFromApplicationBinding.remove(IDO_ENTITY_BEAN_CACHING_KEY);
+			keysFromApplicationBinding.remove(IDO_ENTITY_QUERY_CACHING_KEY);
+			keysFromApplicationBinding.remove(SESSION_POLLING_KEY);
+			keysFromApplicationBinding.remove(USE_PREPARED_STATEMENT);
+			keysFromApplicationBinding.remove(AUTO_CREATE_LOCALIZED_STRINGS_KEY);
+			keysFromApplicationBinding.remove(AUTO_CREATE_PROPERTIES_KEY);
+			keysFromApplicationBinding.remove(USE_DEBUG_MODE);
+			keysFromApplicationBinding.remove(DEFAULT_LOCALE_KEY);
+			keysFromApplicationBinding.remove(DEFAULT_MARKUP_LANGUAGE_KEY);
+			
 			return keysFromApplicationBinding;
 		}
 		catch (IOException e) {
@@ -494,22 +512,22 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 	
 	public void setDebug(boolean ifDebug) {
-		putInApplicationBinding("debug", Boolean.toString(ifDebug));
+		putInApplicationBinding(USE_DEBUG_MODE, Boolean.toString(ifDebug));
 		setDebugMode(ifDebug);
 	}
 	
 	public boolean getIfDebug() {
-		String value = getFromApplicationBinding("debug");
+		String value = getFromApplicationBinding(USE_DEBUG_MODE);
 		return Boolean.valueOf(value).booleanValue();
 	}
 	
 	public void setUsePreparedStatement(boolean usage) {
-		putInApplicationBinding("PreparedStatement", Boolean.toString(usage));
+		putInApplicationBinding(USE_PREPARED_STATEMENT, Boolean.toString(usage));
 		com.idega.data.DatastoreInterface.usePreparedStatement = usage;
 	}
 	
 	public boolean getIfUsePreparedStatement() {
-		String value = getFromApplicationBinding("PreparedStatement");
+		String value = getFromApplicationBinding(USE_PREPARED_STATEMENT);
 		boolean	ret = Boolean.valueOf(value).booleanValue();
 		com.idega.data.DatastoreInterface.usePreparedStatement = ret;
 		return ret;
