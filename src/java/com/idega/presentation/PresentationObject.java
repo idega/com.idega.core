@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.173 2008/06/19 15:17:49 laddi Exp $
+ * $Id: PresentationObject.java,v 1.174 2008/10/28 07:41:44 anton Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/06/19 15:17:49 $ by $Author: laddi $
+ * Last modified: $Date: 2008/10/28 07:41:44 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.173 $
+ * @version $Revision: 1.174 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1385,22 +1385,27 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return null;
 	}
 	public String getLocalizedString(String key, IWUserContext iwuc)
-	{
-		IWResourceBundle bundle = getResourceBundle(iwuc);
-		if (bundle != null)
-		{
-			return bundle.getLocalizedString(key);
-		}
-		return null;
+	{	
+		//TODO use such method everywhere for getting localised messages
+		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, null, getBundleIdentifier());
+		
+//		IWResourceBundle bundle = getResourceBundle(iwuc);
+//		if (bundle != null)
+//		{
+//			return bundle.getLocalizedString(key);
+//		}
+//		return null;
 	}
 	public String getLocalizedString(String key, String defaultValue, IWUserContext iwuc)
 	{
-		IWResourceBundle bundle = getResourceBundle(iwuc);
-		if (bundle != null)
-		{
-			return bundle.getLocalizedString(key, defaultValue);
-		}
-		return null;
+		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, defaultValue, getBundleIdentifier());
+				
+//		IWResourceBundle bundle = getResourceBundle(iwuc);
+//		if (bundle != null)
+//		{
+//			return bundle.getLocalizedString(key, defaultValue);
+//		}
+//		return null;
 	}
 	public void setUseBuilderObjectControl(boolean use)
 	{

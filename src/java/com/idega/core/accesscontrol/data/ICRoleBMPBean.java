@@ -26,10 +26,12 @@ public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,Treea
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityBean#getPrimaryKeyClass()
 	 */
+	@Override
 	public Class getPrimaryKeyClass() {
 		return String.class;
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName(),"The roles system name or key", java.lang.String.class,50);
 		addAttribute(getDescriptionLocalizableKeyColumnName(), "a localizable key for a description", true, true, java.lang.String.class);
@@ -39,10 +41,12 @@ public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,Treea
 	}
 	
 	
+	@Override
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}
 	
+	@Override
 	public String getIDColumnName(){
 		return getRoleKeyColumnName();
 	}
@@ -86,10 +90,4 @@ public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,Treea
 	public String getRoleNameLocalizableKey(){
 		return getStringColumnValue(getNameLocalizableKeyColumnName());
 	}
-	
-	
-	
-	
-	
-	
-} // Class ends
+} 

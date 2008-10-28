@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.188 2008/07/29 15:54:44 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.189 2008/10/28 07:41:45 anton Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -58,6 +58,8 @@ import javax.faces.validator.Validator;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.appserver.AppServer;
@@ -89,6 +91,9 @@ import com.idega.util.Executer;
 import com.idega.util.FileUtil;
 import com.idega.util.ThreadContext;
 import com.idega.util.dbschema.SQLSchemaAdapter;
+import com.idega.util.expression.ELUtil;
+import com.idega.util.messages.MessageResource;
+import com.idega.util.messages.MessageResourceFactory;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
 import com.idega.util.text.TextSoap;
@@ -99,10 +104,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/07/29 15:54:44 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2008/10/28 07:41:45 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.188 $
+ * @version $Revision: 1.189 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -219,6 +224,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	private String defKey = "Wwo2Y4qTTDTuRe+OjPpql0Hhoxhrf2P75XvHSSyLWTRmdsGHApCHzVHl1xlChPdQcqTAM0C6HNAn\nwXvqJj7newW7I+u4dVh4YJVI+miCOwt3/sn3Rk9mnV5MnE+hND4mR67SojlrT7+v/8kufV88DDmm\n4ALga+8/O8S/xWroxMKBnvcDKgBsMzdsB+/hy5FANkj2IauJ+pYcXrCZIDt3NAjYJG/md0QL4mQr\nzQt3FlGnL61Y34aSd3wG6Hq9GzojeO31SVsK6+mUZ8uWJNQz9aeHurPWIFE5yRdYPnakQ0DrpReQ\n2Sg5gfJeOKtK0ghX1p06CFU+nqaql6fu75FNm7ScpLDNSxXIyIOtKRoMUGQ5bV07Ej/74UXIRDql\ntWZrbXWXvdHNwUO4yX2dSkxQ1TQrWWSrrvZLE1li21qZK+3ZOPmGXAm6AB3WZ4N6tLqZ2Mw6f/x6\nTSJtto0m/DaHlsVKTliuFpV9RcTetnYgOcTBFfMLBs2DrJTtJ0LX0Ss0E/6lp3L3TnioBxPfy1e5\nkTD7ksRwFZkMdMndqI3hUmq9+D1U+VAJf6A+uCJQCyXDguZzZrYH+Uu22kyBCdsPWHE3JqxbPNeC\nIn+3aGqMbOjHoob+eyb/VANNGD34YbZW";
 
 	private IWModuleLoader moduleLoader;
+	@Autowired private MessageResourceFactory messageFactory;
 
 	//Flag to set if bundles should be loaded the older way by reading /idegaweb/bundles folder
 	public static boolean loadBundlesLegacy=false;
@@ -2403,4 +2409,29 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return messagingSettings;
 	}
 	
+	/**
+	 * <p>
+	 * Gets localised String message from one of many messageResources
+	 * </p>
+	 * @param key - message key
+	 * @param valueIfNotFound - value that is set to message resource (if autoinsert is enabled) and/or returned in case if not found
+	 * @param bundleIdentifier - bundleIdentifier for which message should belong
+	 */
+	public String getLocalisedStringMessage(String key, String valueIfNotFound, String bundleIdentifier) {
+		Object foundValue = getMessageFactory().getLocalisedMessage(key, valueIfNotFound, bundleIdentifier);
+		return String.valueOf(foundValue);
+	}
+	
+	public List<MessageResource> getAvailableMessageStorageResources() {
+		return getMessageFactory().getResourceList();
+	}
+	
+	public MessageResourceFactory getMessageFactory() {
+		if(messageFactory == null) {
+			ELUtil.getInstance().autowire(this);
+			return messageFactory;
+		} else {
+			return messageFactory;
+		}
+	}
 }
