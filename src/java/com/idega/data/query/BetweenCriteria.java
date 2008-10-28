@@ -62,7 +62,7 @@ public class BetweenCriteria extends Criteria {
 
 	public BetweenCriteria(Column column, DateRange range) {
 		this.column = column;
-		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss.S");
+		DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
 		this.range = new StringRange("'" + dateFormat.format(range.getStart()) + "'", "'" + dateFormat.format(range.getEnd()) + "'");
 	}
 
@@ -136,10 +136,12 @@ public class BetweenCriteria extends Criteria {
 	 * @see com.idega.data.query.Criteria#write(com.idega.data.query.output.Output)
 	 */
 
+	@Override
 	public void write(Output out) {
 		out.print(column).print(" BETWEEN ").print(range.getStart()).print(" AND ").print(range.getEnd());
 	}
 
+	@Override
 	public Set getTables() {
 		Set s = new HashSet();
 		s.add(this.column.getTable());
