@@ -7,6 +7,8 @@ import java.util.Locale;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -22,7 +24,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope(BeanDefinition.SCOPE_SINGLETON)
-public class MessageResourceFactoryImpl implements MessageResourceFactory {
+public class MessageResourceFactoryImpl implements MessageResourceFactory, ApplicationListener {
 	
 	private List<MessageResource> resources;
 	
@@ -112,5 +114,11 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			}
 		}
 		return null;
+	}
+
+	public void onApplicationEvent(ApplicationEvent applicationEvent) {
+		if(applicationEvent instanceof ResourceLevelChangeEvent) {
+			sortResourcesByImportance();
+		}
 	}
 }
