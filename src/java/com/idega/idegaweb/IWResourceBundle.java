@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.44 2008/10/28 07:41:44 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.45 2008/10/28 10:48:59 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -52,10 +52,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/10/28 07:41:44 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/10/28 10:48:59 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.44 $
+ * @version $Revision: 1.45 $
  */
 
 @Service
@@ -572,7 +572,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 * @return object that was found in resource or set to it, autoInsertValue - if there are no values with specified key
 	 */
 	public Object getMessage(Object key, Object autoInsertValue, String bundleIdentifier) {
-		if(bundleIdentifier.equals(MessageResource.NO_BUNDLE))
+		if(bundleIdentifier.equals(NO_BUNDLE))
 			return autoInsertValue;
 		try {
 			initialize(bundleIdentifier, null);
@@ -586,7 +586,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 * @return object that was found in resource or set to it, autoInsertValue - if there are no values with specified key
 	 */
 	public Object getMessage(Object key, Object autoInsertValue,String bundleIdentifier, Locale locale) {
-		if(bundleIdentifier.equals(MessageResource.NO_BUNDLE))
+		if(bundleIdentifier.equals(NO_BUNDLE))
 			return autoInsertValue;
 		try {
 			initialize(bundleIdentifier, locale);

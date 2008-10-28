@@ -34,6 +34,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	 * 		   or autoinserted
 	 */
 	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier) {
+		if(bundleIdentifier == null)
+			bundleIdentifier = MessageResource.NO_BUNDLE;
 		for(MessageResource resource : resources) {
 			if(!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
 				Object message = resource.getMessage(key, valueIfNotFound, bundleIdentifier);
@@ -51,6 +53,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	 * 		   or autoinserted
 	 */
 	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale) {
+		if(bundleIdentifier == null)
+			bundleIdentifier = MessageResource.NO_BUNDLE;
 		for(MessageResource resource : resources) {
 			if(!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
 				Object message = resource.getMessage(key, valueIfNotFound, bundleIdentifier, locale);
