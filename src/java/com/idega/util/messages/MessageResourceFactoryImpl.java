@@ -96,7 +96,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		return resources;
 	}
 	
-	private class ResourceComparatorByLevel implements Comparator<MessageResource> {
+	protected class ResourceComparatorByLevel implements Comparator<MessageResource> {
 		private static final int LESS = -1;
 		private static final int EQUAL = 0;
 		private static final int GREATER = 1;
