@@ -4,6 +4,11 @@
     <author email="tryggvi@idega.com">Tryggvi Larusson</author>
   </properties>
   <body>
+    	<release version="3.1.93" date="2008-11-05">
+      		<action dev="laddi" type="update">
+      			Changed the POIUtility so that when excel sheets are created from tables all texts in a cell are added to the sheet (and not just the first one like it was before).
+      		</action>
+    	</release>
     	<release version="3.1.92" date="2008-10-06">
       		<action dev="laddi" type="update">
       			Fixed trigger creation problem when using JNDI with Oracle databases.
