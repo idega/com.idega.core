@@ -1,5 +1,5 @@
 /*
- * $Id: IWApplicationStarter.java,v 1.5 2006/04/09 12:13:14 laddi Exp $
+ * $Id: IWApplicationStarter.java,v 1.6 2008/11/05 16:39:41 laddi Exp $
  *
  * Created by Tryggvi Larusson in 2004
  *
@@ -13,6 +13,8 @@ package com.idega.idegaweb;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.logging.Logger;
+
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
@@ -32,10 +34,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * this class calls IWMainApplicationStarter for starting up.
  * </p>
  * Copyright: Copyright (c) 2004-2005 idega software<br/>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
+ * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class IWApplicationStarter implements ServletContextListener {
 
@@ -45,7 +47,7 @@ public class IWApplicationStarter implements ServletContextListener {
 	 * initialize jsf environment
 	 */
 	public void contextInitialized(ServletContextEvent event) {
-		System.out.println("IWApplicationStarter.contextInitialized");
+		Logger.getLogger(this.getClass().getName()).info("IWApplicationStarter.contextInitialized");
 		//getDefaultLifecycle().addPhaseListener(new IWPhaseListener());
 		ServletContext sContext = event.getServletContext();
 		//installViewHandler(sContext);

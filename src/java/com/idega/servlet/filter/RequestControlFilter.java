@@ -10,6 +10,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -111,7 +112,7 @@ public class RequestControlFilter implements Filter {
 	 *          Configuration from web.xml file
 	 */
 	public void init(FilterConfig config) throws ServletException {
-		System.out.println("[idegaWebApp] : Starting RequestControlFilter");
+		Logger.getLogger(this.getClass().getName()).info("[idegaWebApp] : Starting RequestControlFilter");
 		// parse all of the initialization parameters, collecting the exclude
 		// patterns and the max wait parameters
 		Enumeration enumer = config.getInitParameterNames();

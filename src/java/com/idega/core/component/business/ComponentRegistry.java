@@ -1,5 +1,5 @@
 /*
- * $Id: ComponentRegistry.java,v 1.16 2008/07/29 15:54:45 tryggvil Exp $ Created on 8.9.2005
+ * $Id: ComponentRegistry.java,v 1.17 2008/11/05 16:39:41 laddi Exp $ Created on 8.9.2005
  * in project com.idega.core
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -13,6 +13,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
@@ -34,13 +36,15 @@ import com.idega.idegaweb.IWModuleLoader;
  * This means user interface components (such as Elements,Blocks, JSF UIComponents and JSP tags) but also
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
- * Last modified: $Date: 2008/07/29 15:54:45 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.16 $
+ * @version $Revision: 1.17 $
  */
 public class ComponentRegistry {
 
+	private Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	public final static String BEAN_KEY = "ComponentRegistry";
 	private List<ComponentInfo> allComponents;
 	private boolean loadedOldIWComponents=false;
@@ -199,7 +203,7 @@ public class ComponentRegistry {
 			return info;
 		} 
 		catch (ClassNotFoundException e) {
-			System.out.println("[ComponentRegistry] Class not found : "+ico.getClassName());
+			logger.warning("[ComponentRegistry] Class not found : "+ico.getClassName());
 			if (!hasReferenceToICObjectInstance(ico)) {
 				try {
 					ico.remove();
@@ -211,7 +215,7 @@ public class ComponentRegistry {
 		}
 		catch (Exception e) {
 			//e.printStackTrace();
-			System.err.println("ComponentRegistry Error: "+e.getClass().getName()+" "+e.getMessage());
+			logger.log(Level.SEVERE, "ComponentRegistry Error: "+e.getClass().getName(), e);
 		}
 		return null;
 	}

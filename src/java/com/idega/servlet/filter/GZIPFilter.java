@@ -4,6 +4,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -52,7 +53,7 @@ public class GZIPFilter extends BaseFilter implements Filter {
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	public void init(FilterConfig arg0) throws ServletException {
-		System.out.println("[idegaWebApp] : Starting GZIPFilter");
+		Logger.getLogger(this.getClass().getName()).info("[idegaWebApp] : Starting GZIPFilter");
 	}
 
 	/*

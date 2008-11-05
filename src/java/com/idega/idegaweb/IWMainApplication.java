@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.189 2008/10/28 07:41:45 anton Exp $
+ * $Id: IWMainApplication.java,v 1.190 2008/11/05 16:39:41 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -104,10 +104,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/10/28 07:41:45 $ by $Author: anton $
+ *  Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.189 $
+ * @version $Revision: 1.190 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -1116,7 +1116,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			}
 		}
 		String realBundleDir = getBundleRealPath(bundleIdentifier);
-		log.info("Loading bundle " + bundleIdentifier + " (from " + realBundleDir + ")");
+		log.fine("Loading bundle " + bundleIdentifier + " (from " + realBundleDir + ")");
 		bundle = new DefaultIWBundle(realBundleDir, getBundleVirtualPath(bundleIdentifier), bundleIdentifier, this,
 				autoCreate);
 		return bundle;
@@ -1196,8 +1196,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         unloadInstanceAndClass();
 
         String prePath = System.getProperty("user.dir");//return /tomcat/bin
-        System.out
-                .println("IWMainApplication: restarting application server at : "
+        log.info("IWMainApplication: restarting application server at : "
                         + prePath);
 
         try {//windows
@@ -1492,7 +1491,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
                     .getIWApplicationContext());
             fs.initialize();
         } catch (Exception e) {
-            System.err.println("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
+            log.warning("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
         }
     }
 

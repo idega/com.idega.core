@@ -1,5 +1,5 @@
 /*
- * $Id: CacheFilter.java,v 1.3 2006/01/12 17:04:29 tryggvil Exp $
+ * $Id: CacheFilter.java,v 1.4 2008/11/05 16:39:28 laddi Exp $
  * Created on 7.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.idegaweb.IWMainApplication;
  * The rule is that this filter when enabled caches output of all GET requests when the user
  * is not authenticated into the idegaWeb user system.
  * </p>
- * Last modified: $Date: 2006/01/12 17:04:29 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/11/05 16:39:28 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  */
 public class CacheFilter extends SimplePageCachingFilter {
 	
@@ -60,6 +60,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#doFilter(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws ServletException {
 		HttpServletRequest request = (HttpServletRequest)sRequest;
 		HttpServletResponse response = (HttpServletResponse)sResponse;
@@ -84,7 +85,8 @@ public class CacheFilter extends SimplePageCachingFilter {
      * @throws CacheException The most likely cause is that a cache has not been
      *                        configured in ehcache's configuration file ehcache.xml for the filter name
      */
-    public void doInit() throws CacheException {
+    @Override
+		public void doInit() throws CacheException {
     		//overriding from superclass
 
 		int cacheSize = DEFAULT_CACHE_SIZE;
@@ -100,11 +102,9 @@ public class CacheFilter extends SimplePageCachingFilter {
 			defaultEnabled = Boolean.valueOf(propEnabled).booleanValue();
 			if(defaultEnabled){
 				log.info("CacheFilter is enabled");
-				System.out.println("CacheFilter is enabled");
 			}
 			else{
 				log.info("CacheFilter is disabled");
-				System.out.println("CacheFilter is disabled");
 			}
 		}
 		catch(Exception e){}
@@ -190,6 +190,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 	 * 
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#getCacheName()
 	 */
+	@Override
 	protected String getCacheName() {
 		return DEFAULT_CACHE_NAME;
 	}
@@ -199,6 +200,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 	 * 
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#calculateKey(javax.servlet.http.HttpServletRequest)
 	 */
+	@Override
 	protected String calculateKey(HttpServletRequest request) {
 		return super.calculateKey(request);
 	}

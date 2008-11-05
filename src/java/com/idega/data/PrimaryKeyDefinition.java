@@ -6,6 +6,8 @@
  */
 package com.idega.data;
 
+import java.util.logging.Logger;
+
 /**
  * Title:		PrimaryKeyDefinition
  * Description:
@@ -96,7 +98,7 @@ public class PrimaryKeyDefinition implements IDOPrimaryKeyDefinition {
 			try {
 				return getFields()[0];
 			} catch (ArrayIndexOutOfBoundsException e) {
-				System.err.println("PrimaryKey has not been defined");
+				Logger.getLogger(this.getClass().getName()).severe("PrimaryKey has not been defined");
 				throw e;
 			}
 		} else {

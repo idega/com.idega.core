@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.13 2008/06/30 11:51:31 eiki Exp $
+ * $Id: FacesConfigDeployer.java,v 1.14 2008/11/05 16:39:41 laddi Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -12,7 +12,6 @@ package com.idega.core.component.business;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.Enumeration;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
 import java.util.logging.Logger;
@@ -36,10 +35,10 @@ import com.idega.util.xml.XmlUtil;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2008/06/30 11:51:31 $ by $Author: eiki $
+ * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -66,7 +65,7 @@ public class FacesConfigDeployer implements JarLoader {
 		if(entry!=null){
 			InputStream stream = null;
 			try {
-				log.info("Found JSF Description file in bundle: " + jarPath + ", file: " + entry.getName());
+				log.fine("Found JSF Description file in bundle: " + jarPath + ", file: " + entry.getName());
 				stream = jarFile.getInputStream(entry);
 				processFacesConfig(jarFile, stream);
 			}

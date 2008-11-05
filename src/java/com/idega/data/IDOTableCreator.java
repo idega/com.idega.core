@@ -1,5 +1,5 @@
 /*
- * $Id: IDOTableCreator.java,v 1.61 2008/06/09 13:31:57 eiki Exp $
+ * $Id: IDOTableCreator.java,v 1.62 2008/11/05 16:39:41 laddi Exp $
  * 
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -48,10 +48,10 @@ import com.idega.util.logging.LoggingHelper;
  * Class that handles the creation and generation of the (DDL) commands for creating and
  * updating database tables for IDO Entity beans.
  * </p>
- * Last modified: $Date: 2008/06/09 13:31:57 $ by $Author: eiki $
+ * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.61 $
+ * @version $Revision: 1.62 $
  */
 public class IDOTableCreator {
 
@@ -349,7 +349,7 @@ public class IDOTableCreator {
 	        			  mis = new MemoryInputStream(buffer);
 	        			  sourceEnt.setColumn(sourceEnt.getLobColumnName(), mis);
 	        		  }
-	        		  ((GenericEntity) sourceEnt).store();
+	        		  (sourceEnt).store();
         		  } catch (Exception e) {
         			  logCopyError(entity, e, "data copying");
 //        			  e.printStackTrace();
@@ -421,7 +421,7 @@ public class IDOTableCreator {
 	      		while (iter.hasNext()) {
 	        		GenericEntity tmpEnt = (GenericEntity) iter.next();
 	        			try{
-	        				System.out.println("IDOTableCreator : Inserting start data for entity : "+tmpEnt.getEntityName());
+	        				debug("[IDOTableCreator] : Inserting start data for entity : "+tmpEnt.getEntityName());
 		      				tmpEnt.insertStartData();
 	        			}
 	        			catch(Exception e){
@@ -1107,7 +1107,7 @@ public class IDOTableCreator {
 //							this.createIndex(entity, indexName, (String[]) map.get(indexName));
 						}
 						catch (Exception e1) {
-							System.out.println("IDOTableCreator : failed to create index : "+indexName+" ("+e1.getMessage()+")");
+							logError("[IDOTableCreator] : failed to create index : "+indexName+" ("+e1.getMessage()+")");
 						}
 					}
 					// REMOVING - Not active since it tries to removed the PRIMARY_KEY index....
@@ -1355,7 +1355,7 @@ public class IDOTableCreator {
 
 				System.out.println(">>>> COPY ERROR, logged to "+file.getAbsolutePath());
 			} else {
-				exception.printStackTrace();
+				getLogger().log(getErrorLogLevel(), "Error", exception);
 			}
 		}catch (Exception e){//Catch exception if any
 			System.err.println("Error: " + e.getMessage());

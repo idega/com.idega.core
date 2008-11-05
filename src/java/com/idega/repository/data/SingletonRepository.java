@@ -9,6 +9,7 @@ package com.idega.repository.data;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
 
 
 /**
@@ -41,15 +42,15 @@ public class SingletonRepository {
 		// empty
 	}
 	
-	public static synchronized void start() {
+  public static synchronized void start() {
 		if (singletonRepository != null) {
 			// nothing to do, start already called!
-			System.out.println("["+ SingletonRepository.class.getName()+"] Note: Tried to start Repository again but it is already running (this is usually not an  error or problem)");
+			Logger.getLogger(singletonRepository.getClass().getName()).info("["+ SingletonRepository.class.getName()+"] Note: Tried to start Repository again but it is already running (this is usually not an  error or problem)");
 			return;
 		}
 		singletonRepository = new SingletonRepository();
 		hasBeenStopped=false;
-		System.out.println("["+ SingletonRepository.class.getName()+"] Repository started");
+		Logger.getLogger(singletonRepository.getClass().getName()).info("["+ SingletonRepository.class.getName()+"] Repository started");
 	}
 	
 	public static synchronized void stop() {
@@ -60,7 +61,7 @@ public class SingletonRepository {
 		}
 		singletonRepository.destroy();
 		singletonRepository = null;
-		System.out.println("["+ SingletonRepository.class.getName()+"] Repository stopped");
+		Logger.getLogger(singletonRepository.getClass().getName()).info("["+ SingletonRepository.class.getName()+"] Repository stopped");
 	}
 	
 	/**

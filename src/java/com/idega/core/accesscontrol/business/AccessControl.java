@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.122 2008/09/03 07:22:08 valdas Exp $
+ * $Id: AccessControl.java,v 1.123 2008/11/05 16:39:40 laddi Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -75,12 +76,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/09/03 07:22:08 $ by $Author: valdas $
+ * Last modified: $Date: 2008/11/05 16:39:40 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.122 $
+ * @version $Revision: 1.123 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -106,7 +107,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private ArrayList rolesList;
 
 	
-	private PermissionCacher getPermissionCacher(){
+  protected Logger getLogger(){
+  	return Logger.getLogger(this.getClass().getName());
+  }
+
+  private PermissionCacher getPermissionCacher(){
 		if(this.permissionCacher==null){
 			this.permissionCacher=new PermissionCacher();
 		}
@@ -338,6 +343,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * 
 	 * @deprecated only used in idegaWeb Project removed in next major version
 	 */
+	@Deprecated
 	public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwuc) throws Exception {
 		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
@@ -1220,6 +1226,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @param groupsToRemove
 	 * @return
 	 */
+	@Deprecated
 	public static boolean removePermissionRecords(
 		int permissionCategory,
 		IWUserContext iwc,
@@ -2094,6 +2101,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		getApplication().setAttribute(_APPADDRESS_ADMINISTRATOR_USER, adminUser);
 	}
 
+	@Override
 	public void executeService() {
 
 		try {
@@ -2163,6 +2171,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	}
 
+	@Override
 	public String getServiceName() {
 		return "AccessControl";
 	}
@@ -3253,7 +3262,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 			catch (FinderException e) {
 				if(roleKey!=null){
-					System.out.println("AccessControl: the role "+roleKey+" does not exist creating it!");
+					getLogger().info("AccessControl: the role "+roleKey+" does not exist creating it!");
 					
 					if(createRoleWithRoleKey(roleKey)!=null){
 						this.rolesList.add(roleKey);
@@ -3416,7 +3425,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  			return hasViewPermissionForPageKey(pageKey,iwuc);
 	  		}
 	  		else{
-	  			System.err.println("No pageKey for : "+pageUri);
+	  			getLogger().info("No pageKey for : "+pageUri);
 	  			return false;
 	  		}
 		}
@@ -3484,6 +3493,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return roleObject;
 		}
 
+		@Override
 		public String toString() {
 			return ROLE_STRING;
 		}

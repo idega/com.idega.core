@@ -1,5 +1,5 @@
 /*
- * $Id: IWPropertyList.java,v 1.36 2008/02/01 16:48:40 gimmi Exp $
+ * $Id: IWPropertyList.java,v 1.37 2008/11/05 16:39:40 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -20,6 +20,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.idega.util.FileUtil;
 import com.idega.util.ListUtil;
 import com.idega.xml.XMLDocument;
@@ -36,10 +39,10 @@ import com.idega.xml.XMLParser;
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2008/02/01 16:48:40 $ by $Author: gimmi $
+ * Last modified: $Date: 2008/11/05 16:39:40 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public class IWPropertyList {
 	protected XMLDocument xmlDocument;
@@ -61,6 +64,8 @@ public class IWPropertyList {
 	static String stringTag = "string";
 	static String stringString = "java.lang.String";
 	static String backupEnding = ".bak";
+	
+	private static final Logger logger = Logger.getLogger(IWPropertyList.class.getName());
 
 	IWPropertyList() {
 	}
@@ -124,7 +129,7 @@ public class IWPropertyList {
 			// added 08.02.2002 by aron: was before
 			// if(!file.exists() )
 			if (!file.exists() || file.length() == 0) {
-				System.err.println("Creating new " + fileNameWithoutFullPath);
+				logger.fine("Creating new " + fileNameWithoutFullPath);
 				file = FileUtil.getFileAndCreateIfNotExists(path, fileNameWithoutFullPath);
 				FileOutputStream stream = new FileOutputStream(file);
 				char[] array = ("<" + rootElementTag + "></" + rootElementTag + ">").toCharArray();
@@ -376,12 +381,11 @@ public class IWPropertyList {
 				load(new FileInputStream(file));
 			}
 			catch (FileNotFoundException e) {
-				System.err.println("Property file does not exist : "+this.xmlFile);
-				e.printStackTrace();
+				logger.log(Level.SEVERE, "Property file does not exist : "+this.xmlFile, e);
 			}
 		}
 		else{
-			System.err.println("Property file does not exist : "+this.xmlFile);
+			logger.fine("Property file does not exist : "+this.xmlFile);
 		}
 	}
 	
@@ -469,7 +473,7 @@ public class IWPropertyList {
 
 	public void store() {
 		if (this.xmlFile == null) {
-			System.err.println("IWPropertyList is not storable, it is not loaded from a file");
+			logger.severe("IWPropertyList is not storable, it is not loaded from a file");
 			return;
 		}
 		try {
@@ -484,7 +488,7 @@ public class IWPropertyList {
 				FileUtil.delete(tempXMLFile);
 			}
 			catch (IOException io) {
-				System.err.println("Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
+				logger.log(Level.SEVERE, "Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName(), io);
 			}
 		}
 		catch (FileNotFoundException e) {
@@ -499,7 +503,7 @@ public class IWPropertyList {
 			XMLFile.delete();
 		}
 		catch (Exception io) {
-			System.err.println("Error deleting " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
+			logger.log(Level.SEVERE, "Error deleting " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName(), io);
 		}
 	}
 			

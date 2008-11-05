@@ -5,6 +5,8 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -37,6 +39,7 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 		load(file);
 	}
 	
+	@Override
 	protected File createFile(String path, String fileNameWithoutFullPath) {
 		File file = null;
 		try {
@@ -51,7 +54,7 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 				// added 08.02.2002 by aron: was before
 				// if(!file.exists() )
 				if (!file.exists() || file.length() == 0) {
-					System.err.println("Creating new " + fileNameWithoutFullPath);
+					Logger.getLogger(this.getClass().getName()).info("Creating new " + fileNameWithoutFullPath);
 					file = FileUtil.getFileAndCreateIfNotExists(path, fileNameWithoutFullPath);
 					FileOutputStream stream = new FileOutputStream(file);
 					char[] array = ("<" + rootElementTag + "></" + rootElementTag + ">").toCharArray();
@@ -106,6 +109,7 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 		store();
 	}
 	
+	@Override
 	public void store() {
 		try {
 			String fileName = this.xmlFile.getName();
@@ -126,9 +130,10 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 				}
 			}
 			catch (IOException io) {
-				System.err.println("Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName() + " " + io.getMessage());
-			} catch (FinderException e) {
-				System.err.println("Error storing user properties file " + e.getMessage());
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error storing " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName(), io);
+			}
+			catch (FinderException e) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Error storing user properties file", e);
 			}
 		}
 		catch (FileNotFoundException e) {

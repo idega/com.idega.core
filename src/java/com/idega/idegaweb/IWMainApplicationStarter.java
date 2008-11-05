@@ -100,6 +100,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		this.iwma=_iwma;
 		this.context=context;
 		
+		this.startLogManager();
+		
 		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
 		//sendStartMessage("Initializing IWMainApplicationStarter");
 		String serverInfo = context.getServerInfo();
@@ -107,10 +109,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String appServerVersion = appServer.getVersion();
 		if(appServer.isOfficiallySupported()){
 			if(appServerVersion!=null){
-			    log.info("Detected supported application server '"+appServerName+"' (version "+appServerVersion+")");
+			    log.fine("Detected supported application server '"+appServerName+"' (version "+appServerVersion+")");
 			}
 			else{
-				log.info("Detected supported application server '"+appServerName+"' (unknown version)");
+				log.fine("Detected supported application server '"+appServerName+"' (unknown version)");
 			}
 		}
 		else{
@@ -346,8 +348,6 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	public void startIdegaWebApplication() {
 		long start = System.currentTimeMillis();
 
-		this.startLogManager();
-		
 		try {
 			addToClassPath();
 		}
@@ -382,11 +382,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		*/		
 		// cleaning, maintaining, updating
 		if(!this.iwma.isInDatabaseLessMode()){
-			log.info("Cleaning and updating database...");
+			log.fine("Cleaning and updating database...");
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
 			cleanEmailData();
-			log.info("...cleaning and updating database done");
+			log.fine("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();
 		

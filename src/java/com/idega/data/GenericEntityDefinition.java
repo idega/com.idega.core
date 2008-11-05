@@ -10,6 +10,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Title:		GenericEntityDefinition
@@ -35,6 +37,9 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private boolean allRecordsCached=false;
 	private boolean useFinderCollectionPrefetch=false;
 	private int finderCollectionPrefetchSize=1000;
+	
+	Logger logger = Logger.getLogger(this.getClass().getName());
+	
 	/**
 	 * 
 	 */
@@ -81,10 +86,10 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 				}
 				this._fields = tempArray;
 			} else {
-				System.err.println(this.getUniqueEntityName() + ": already contains equivalent field \"" + field.getSQLFieldName() + "\"");
+				logger.warning(this.getUniqueEntityName() + ": already contains equivalent field \"" + field.getSQLFieldName() + "\"");
 			}
 		} catch (ClassCastException e) {
-			System.err.println("ClassCastException: "+this.getClass()+" only supports "+ EntityAttribute.class +" as "+IDOEntityField.class);
+			logger.log(Level.SEVERE, "ClassCastException: "+this.getClass()+" only supports "+ EntityAttribute.class +" as "+IDOEntityField.class);
 			throw e;
 		}
 	}
@@ -252,6 +257,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/* 
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof IDOEntityDefinition) {
 			IDOEntityDefinition compareObject = (IDOEntityDefinition) obj;

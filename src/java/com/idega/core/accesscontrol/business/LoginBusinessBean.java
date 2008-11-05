@@ -1,5 +1,5 @@
 /*
- * $Id: LoginBusinessBean.java,v 1.70 2008/09/30 12:02:55 anton Exp $
+ * $Id: LoginBusinessBean.java,v 1.71 2008/11/05 16:39:33 laddi Exp $
  * 
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
  * 
@@ -64,11 +64,11 @@ import com.idega.util.expression.ELUtil;
  * and the default Login module for logging users into the system.<br/>
  * </p>
  * 
- * Last modified: $Date: 2008/09/30 12:02:55 $ by $Author: anton $
+ * Last modified: $Date: 2008/11/05 16:39:33 $ by $Author: laddi $
  * 
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.70 $
+ * @version $Revision: 1.71 $
  */
 public class LoginBusinessBean implements IWPageEventListener {
 
@@ -1276,7 +1276,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public void reserveLoginInformation(HttpServletRequest request) throws RemoteException {
-		HttpSession session = request.getSession();
 		if (LoginBusinessBean.getLoginSessionBean() != null) {
 			UserProperties properties = LoginBusinessBean.getLoginSessionBean().getUserProperties();
 			if (properties != null) {

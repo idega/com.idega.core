@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.10 2006/10/18 13:12:34 gediminas Exp $
+ * $Id: IWBundleLoader.java,v 1.11 2008/11/05 16:39:41 laddi Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -19,10 +19,10 @@ import java.util.logging.Logger;
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/10/18 13:12:34 $ by $Author: gediminas $
+ *  Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public class IWBundleLoader implements JarLoader {
 
@@ -43,7 +43,7 @@ public class IWBundleLoader implements JarLoader {
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
 		JarEntry bundleConfigFile = jarFile.getJarEntry("properties/bundle.pxml");
 		if (bundleConfigFile != null) {
-			LOGGER.info("Found bundle at " + jarPath);
+			LOGGER.fine("Found bundle at " + jarPath);
 			JarModule module = (JarModule) jarFile;
 			String moduleIdentifier = module.getModuleIdentifier();
 			if (moduleIdentifier != null) {

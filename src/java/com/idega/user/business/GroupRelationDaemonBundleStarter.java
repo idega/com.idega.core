@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -53,6 +54,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 //	public static final String GROUP_TREE_TIMER_THREAD_NAME = "user_fetch_grouptree";
 //	private static final String BUNDLE_PROPERTY_NAME_FETCH_GROUPTREE_INTERVAL = "user_fetch_grouptree_interval";
 
+	Logger logger = Logger.getLogger(this.getClass().getName());
 	
 	public GroupRelationDaemonBundleStarter() {
 	}
@@ -64,7 +66,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 		//Starts the thread while waiting for 3 mins. before the idegaWebApp starts up.
 		// -- Fix for working properly on Interebase with entity-auto-create-on.
 		this.timer.start(3 * 60 * 1000);
-		System.out.println("Group Relation Daemon Bundle Starter: starting");
+		logger.fine("Group Relation Daemon Bundle Starter: starting");
 		
 //		try {
 //			//System.out.println("[USER]: com.idega.user bundle starter starting...");
@@ -83,7 +85,7 @@ public class GroupRelationDaemonBundleStarter implements IWBundleStartable, Acti
 	public void actionPerformed(ActionEvent event) {
 		try {	
 			if (event.getActionCommand().equalsIgnoreCase(TIMER_THREAD_NAME)) {
-				System.out.println("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
+				logger.fine("[Group Relation Daemon - "+IWTimestamp.RightNow().toString()+" ] - Checking for pending relations");
 				String removeDuplicatedEmails = this.bundle.getProperty(REMOVE_DUPLICATED_EMAILS_FROM_USERS, "false");
 				if (removeDuplicatedEmails != null && removeDuplicatedEmails.equalsIgnoreCase("true")) {
 				    removeDuplicatedEmailsFromUsers();
