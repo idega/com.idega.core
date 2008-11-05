@@ -87,6 +87,9 @@ public interface Web2Business extends IBOService {
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToMootoolsLib
 	 */
 	public String getBundleURIToMootoolsLib(String mootoolsLibraryVersion) throws RemoteException;
+	public List<String> getBundleURIsToMooToolsLib(String version, boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
+	public List<String> getBundleURIsToMooToolsLib(boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
+	public List<String> getBundleURIsToMooToolsLib();
 	
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToJQueryLib
@@ -371,4 +374,10 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleURIsToSexyLightBoxScriptFiles();
 	public List<String> getBundleURIsToSexyLightBoxScriptFiles(boolean useCompressedScript);
 	public String getBundleURIToSexyLightBoxStyleFile();
+	public String getSexyLightBoxInitAction(IWContext iwc, String variableName);
+	public void insertSexyLightBoxIntoPage(IWContext iwc);
+	public String getSexyLightBoxVariableName();
+	
+	//	http://browserplus.yahoo.com/
+	public String getBrowserPlusScriptFile();
 }
