@@ -60,8 +60,8 @@ public class SingletonRepository {
 			return;
 		}
 		singletonRepository.destroy();
-		singletonRepository = null;
 		Logger.getLogger(singletonRepository.getClass().getName()).info("["+ SingletonRepository.class.getName()+"] Repository stopped");
+		singletonRepository = null;
 	}
 	
 	/**

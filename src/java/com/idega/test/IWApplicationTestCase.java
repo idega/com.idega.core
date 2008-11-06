@@ -21,6 +21,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.context.support.GenericWebApplicationContext;
 
+import com.idega.core.test.base.IdegaBaseTest;
 import com.idega.idegaweb.IWMainApplicationStarter;
 import com.idega.util.FileUtil;
 
@@ -30,14 +31,14 @@ import com.idega.util.FileUtil;
  * Test case that set-ups an embedded IdegaWeb application and loads up all
  * necessary resources before running a test case.
  * </p>
- *  Last modified: $Date: 2008/07/02 19:26:57 $ by $Author: civilis $
+ *  Last modified: $Date: 2008/11/06 22:00:24 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-public class IWApplicationTestCase extends TestCase {
+public class IWApplicationTestCase extends IdegaBaseTest {
 
 	IWMainApplicationStarter starter;
 	File baseDir;
