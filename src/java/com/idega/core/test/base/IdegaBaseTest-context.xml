@@ -11,4 +11,6 @@
         ">
         
         <context:annotation-config/>
+        
+        <bean class="com.idega.util.expression.ELUtil" />
 </beans>
