@@ -8,12 +8,20 @@
  */
 package com.idega.presentation.text;
 
+import java.io.IOException;
+import java.util.Collection;
+
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIParameter;
+import javax.faces.context.FacesContext;
+
 import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.DownloadWriter;
 import com.idega.io.MediaWritable;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.StringUtil;
 
 /**
  * @author aron
@@ -21,6 +29,10 @@ import com.idega.presentation.PresentationObject;
  * DownloadLink used to download files with
  */
 public class DownloadLink extends Link {
+	public static final String COMPONENT_TYPE = "DownloadLink";
+	
+	public static final String DOWNLOAD_WRITER_PROPERTY = "downloadWriter";
+	public static final String LINK_TEXT = "value";
     
     private Class<?> writerClass = null;
     
@@ -83,17 +95,42 @@ public class DownloadLink extends Link {
         // TODO Auto-generated constructor stub
     }
     
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+    	Class<?> mediaWriterClass = getMediaWriter(context);
+    	String text = getValue(context);
+
+    	if(mediaWriterClass != null)
+    		setMediaWriterClass(mediaWriterClass);
+    	if(!StringUtil.isEmpty(text))
+    		setText(text);
+    	
+    	Collection<UIComponent> children = this.getChildren();
+    	for(UIComponent child : children) {
+    		if (child instanceof UIParameter) {
+    			UIParameter param = (UIParameter) child;
+				addParameter(param.getId(), String.valueOf(param.getValue()));
+			}
+    	}
+    	
+    	
+    	super.encodeBegin(context);
+    }
+    
+    
     /* (non-Javadoc)
      * @see com.idega.presentation.text.Link#setFile(com.idega.core.file.data.ICFile)
      */
-    public void setFile(ICFile file) {
+    @Override
+	public void setFile(ICFile file) {
         addParameter(DownloadWriter.PRM_FILE_ID,((Integer)file.getPrimaryKey()).intValue());
     }
     
     /* (non-Javadoc)
      * @see com.idega.presentation.text.Link#setFile(int)
      */
-    public void setFile(int fileId) {
+    @Override
+	public void setFile(int fileId) {
         addParameter(DownloadWriter.PRM_FILE_ID,fileId);
     }
     
@@ -102,7 +139,19 @@ public class DownloadLink extends Link {
         this.writerClass = writerClass;
     }
     
-    public void main(IWContext iwc)throws Exception{
+    public Class<?> getMediaWriter(FacesContext context) {
+    	Class<?> writer = getValueBinding(DOWNLOAD_WRITER_PROPERTY) != null ? (Class<?>)getValueBinding(DOWNLOAD_WRITER_PROPERTY).getValue(context) : (Class<?>)context.getExternalContext().getRequestParameterMap().get(DOWNLOAD_WRITER_PROPERTY);
+		return writer;
+	}
+    
+    private String getValue(FacesContext context) {
+    	@SuppressWarnings("unused")
+    	String text = getValueBinding(LINK_TEXT) != null ? (String)getValueBinding(LINK_TEXT).getValue(context) : (String)context.getExternalContext().getRequestParameterMap().get(LINK_TEXT);
+		return text;
+	}
+    
+    @Override
+	public void main(IWContext iwc)throws Exception{
         super.main(iwc);
         setURL(iwc.getIWMainApplication().getMediaServletURI());
         if(this.writerClass!=null){
@@ -124,7 +173,8 @@ public class DownloadLink extends Link {
     }
     
 
-    public void print(IWContext iwc) throws Exception{
+    @Override
+	public void print(IWContext iwc) throws Exception{
     	//because of jsf problems
     		main(iwc);
     		super.print(iwc);

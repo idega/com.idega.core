@@ -21,6 +21,16 @@
 		<component-class>com.idega.idegaweb.help.presentation.Help</component-class>
 	</component>
 	
+	<component>
+	    <component-type>DownloadLink</component-type>
+	    <component-class>com.idega.presentation.text.DownloadLink</component-class>
+	    <property>
+	      <display-name>Download link download writer class object</display-name>
+		      <property-name>downloadWriter</property-name>
+		      <property-class>java.lang.Class</property-class>
+	    </property>
+	</component>
+	
 	<managed-bean>
 		<managed-bean-name>pageSessionPoller</managed-bean-name>
 		<managed-bean-class>com.idega.business.PageSessionPoller</managed-bean-class>
