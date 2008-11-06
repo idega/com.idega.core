@@ -14,9 +14,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.regex.Pattern;
 
 import javax.ejb.CreateException;
+import javax.faces.component.UIComponent;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -29,6 +31,7 @@ import com.idega.data.IDOLookupException;
 import com.idega.presentation.Table;
 import com.idega.presentation.Table2;
 import com.idega.presentation.TableBodyRowGroup;
+import com.idega.presentation.TableCell;
 import com.idega.presentation.TableCell2;
 import com.idega.presentation.TableRow;
 import com.idega.presentation.text.Text;
@@ -60,6 +63,8 @@ public class POIUtility {
 		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
+
+		
 		
 		Collection hRows = table.createHeaderRowGroup().getChildren();
 		int row = addTableRows(sheet, hRows, 0);
@@ -133,7 +138,7 @@ public class POIUtility {
 		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
 
 		Text obj;
-		String text;
+		String text = null;
 		
 		Pattern sp = Pattern.compile(Text.NON_BREAKING_SPACE, Pattern.CASE_INSENSITIVE);
 		Pattern br = Pattern.compile(Text.BREAK, Pattern.CASE_INSENSITIVE);
@@ -142,16 +147,38 @@ public class POIUtility {
 			HSSFRow row = sheet.createRow((x-1));
 			sheet.setRowSumsBelow(true);
 			for (int y = 1; y <= cols; y++) {// has to start on 1, because getCellAt does (x-1, y-1)
-				obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
-				if (obj != null) {
-					text = obj.toString();
-					if (text == null) {
-						text = "";
+				TableCell cell = table.getCellAt(y, x);
+				if (cell.getChildCount() > 1) {
+					List children = cell.getChildren();
+					Iterator it = children.iterator();
+					boolean firstText = true;
+					StringBuffer buffer = new StringBuffer("");
+					while (it.hasNext()) {
+						Object element = it.next();
+						if (element.getClass() == Text.class) {
+							if (firstText) {
+								firstText = false;
+							} else {
+								buffer.append(", ");								
+							}
+							buffer.append(((Text)element).getText());
+						}
 					}
-					text = sp.matcher(text).replaceAll(" ");
-					text = br.matcher(text).replaceAll("\n");
-					row.createCell((short)(y-1)).setCellValue(text);
+					text = buffer.toString();
+				} else {
+					obj = (Text) table.getCellAt(y, x).getContainedObject(Text.class);
+					if (obj != null) {
+						text = obj.toString();
+					}
 				}
+
+				if (text == null) {
+					text = "";
+				}
+
+				text = sp.matcher(text).replaceAll(" ");
+				text = br.matcher(text).replaceAll("\n");
+				row.createCell((short)(y-1)).setCellValue(text);
 			}
 		}
 		// Write the output to a file
