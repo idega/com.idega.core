@@ -20,9 +20,9 @@ import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.3 $
+ * @version $Revision: 1.4 $
  *
- * Last modified: $Date: 2008/09/22 14:18:09 $ by $Author: valdas $
+ * Last modified: $Date: 2008/11/07 08:06:29 $ by $Author: valdas $
  */
 public class XmlUtil {
 
@@ -102,7 +102,10 @@ public class XmlUtil {
 	}
 	
 	public static org.jdom.Document getJDOMXMLDocument(String source) {
-		Document document = getXMLDocument(source);
+		return getJDOMXMLDocument(getXMLDocument(source));
+	}
+	
+	public static org.jdom.Document getJDOMXMLDocument(Document document) {
 		if (document == null) {
 			return null;
 		}
