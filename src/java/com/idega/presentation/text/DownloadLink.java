@@ -21,6 +21,7 @@ import com.idega.io.DownloadWriter;
 import com.idega.io.MediaWritable;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
 /**
@@ -102,8 +103,10 @@ public class DownloadLink extends Link {
 
     	if(mediaWriterClass != null)
     		setMediaWriterClass(mediaWriterClass);
-    	if(!StringUtil.isEmpty(text))
-    		setText(text);
+    	
+    	setText(StringUtil.isEmpty(text) ? CoreConstants.EMPTY : text);
+    	
+    	this._parameterString = new StringBuffer();
     	
     	Collection<UIComponent> children = this.getChildren();
     	for(UIComponent child : children) {
