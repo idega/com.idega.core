@@ -3,6 +3,7 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.util.Collection;
 
+import com.idega.core.builder.data.ICPage;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
@@ -16,4 +17,8 @@ public interface UserCompanyBusiness {
 	public void setPreferedCompanyForCurrentUser(String companyId) throws RemoteException;
 
 	public Group getPreferedCompanyForUser(IWContext iwc, User user) throws RemoteException;
+	
+	public String getCurrentCompanyAttributeId();
+	
+	public ICPage getHomePageForCompany(Group group);
 }
