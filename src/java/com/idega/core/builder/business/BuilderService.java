@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.61 2008/06/19 08:29:58 valdas Exp $
+ * $Id: BuilderService.java,v 1.62 2008/11/11 15:58:48 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -13,6 +13,7 @@ import java.io.InputStream;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
@@ -359,4 +360,6 @@ public interface BuilderService extends IBOService
 	public String getFullPageUrlByPageType(IWContext iwc, String pageType, boolean checkFirstlyNearestPages);
 	
 	public ICPage getNearestPageForCurrentPageByPageType(IWContext iwc, String pageType);
+	
+	public String getLocalizedPageName(String pageKey, Locale locale);
 }
