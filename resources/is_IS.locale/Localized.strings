@@ -149,3 +149,11 @@ search=Search
 search_for_groups=Search for groups
 searching=Searching...
 select_or_deselect_group=Select/deselect group
+
+role_home_page.admin=Administrator
+role_home_page.builder=Vefstj\u00F3ri
+role_home_page.developer=Developer
+role_home_page.userapplication=Umsj\u00F3narma\u00F0ur notenda og h\u00F3pa
+role_home_page.content_editor=Vefstj\u00F3ri
+role_home_page.content_author=H\u00F6fundur efnis
+role_home_page.form_editor=Formsmi\u00F0ur
