@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.45 2008/10/28 10:48:59 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.46 2008/11/11 12:35:27 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -52,10 +52,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/10/28 10:48:59 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/11/11 12:35:27 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.45 $
+ * @version $Revision: 1.46 $
  */
 
 @Service
@@ -75,7 +75,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	private static String slash = "/";
 	
 	private Level usagePriorityLevel = MessageResourceImportanceLevel.LAST_ORDER;
-	private boolean autoInsert = true;
+	private boolean autoInsert = false;
 
 	// private IWResourceBundle parentResourceBundle;
 
