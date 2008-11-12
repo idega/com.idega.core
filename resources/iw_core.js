@@ -373,8 +373,8 @@ function setWindowSizeCentered(width,height){
 //
 //************************************************//
 
-
-window.onload=function(){tableruler();}
+IWCORE.windowLoaded = false;
+window.onload=function(){ IWCORE.windowLoaded = true; tableruler();}
 
 function tableruler()
 {
@@ -907,8 +907,10 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 	
 	//	Script
 	if (element.nodeName == 'script') {
+		
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
+			
 			if (action.indexOf('<!--') == -1 && action.indexOf('//-->') == -1) {
 				if (scriptsToEval == null) {
 					scriptsToEval = new Array();
@@ -930,12 +932,20 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 		}
 		
 		if (element.childNodes != null) {
+
 			var allActions = '';
 			for (var i = 0; i < element.childNodes.length; i++) {
 				var scriptNodeValue = element.childNodes[i].nodeValue;
-				if (scriptNodeValue.indexOf('<!--') == -1 && scriptNodeValue.indexOf('//-->') == -1) {
-					allActions += scriptNodeValue;
+				
+				if(scriptNodeValue.indexOf('<!--') != -1) {
+					scriptNodeValue = scriptNodeValue.replace(/<!--/g, '');
 				}
+				
+				if(scriptNodeValue.indexOf('//-->') != -1) {
+                    scriptNodeValue = scriptNodeValue.replace(/\/\/-->/g, '');
+                }
+                
+                allActions += scriptNodeValue;
 			}
 			if (allActions != null && allActions != '') {
 				allActions = allActions.replace('\n//', '');
@@ -1049,6 +1059,7 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 };
 
 IWCORE.includeResourcesAndExecuteActions = function(resourcesToAdd, scriptsToEval) {
+	
 	var actionsToExecute = null;
 	if (scriptsToEval != null && scriptsToEval.length > 0) {
 		actionsToExecute = '';
