@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.171 2008/06/17 13:19:25 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.172 2008/11/12 14:51:30 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -16,13 +16,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import com.idega.block.web2.business.Web2Business;
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
+import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDynamicPageTrigger;
 import com.idega.core.builder.data.ICPage;
@@ -34,6 +37,7 @@ import com.idega.event.IWFrameBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWStyleManager;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.include.ExternalLink;
@@ -41,6 +45,8 @@ import com.idega.idegaweb.include.GlobalIncludeManager;
 import com.idega.idegaweb.include.StyleSheetLink;
 import com.idega.io.serialization.FileObjectReader;
 import com.idega.presentation.text.Link;
+import com.idega.presentation.text.ListItem;
+import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.ImplementorRepository;
@@ -55,6 +61,7 @@ import com.idega.util.IWColor;
 import com.idega.util.PresentationUtil;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
@@ -67,10 +74,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/06/17 13:19:25 $ by $Author: valdas $
+ * Last modified: $Date: 2008/11/12 14:51:30 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.171 $
+ * @version $Revision: 1.172 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -824,6 +831,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param myScript
 	 *          The new associatedScript value
 	 */
+	@Override
 	public void setAssociatedScript(Script myScript) {
 		getFacets().put("page_associated_script", myScript);
 		// _theAssociatedScript = myScript;
@@ -846,6 +854,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * @return The associatedScript value
 	 */
+	@Override
 	public Script getAssociatedScript() {
 		initializeAssociatedScript();
 		// return _theAssociatedScript;
@@ -1031,6 +1040,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 */
+	@Override
 	public boolean doPrint(IWContext iwc) {
 		boolean returnBoole;
 		if (iwc.getParameter("idegaspecialrequesttype") == null) {
@@ -1125,6 +1135,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param newObjToCreate
 	 *          Description of the Parameter
 	 */
+	@Override
 	protected void prepareClone(PresentationObject newObjToCreate) {
 		super.prepareClone(newObjToCreate);
 		Page newPage = (Page) newObjToCreate;
@@ -1150,6 +1161,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 */
+	@Override
 	public Object clonePermissionChecked(IWUserContext iwuc, boolean askForPermission) {
 		// return this.clone(iwc,true);
 		if (askForPermission) {
@@ -1205,6 +1217,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *          Description of the Parameter
 	 * @return Description of the Return Value
 	 */
+	@Override
 	public Object clone(IWUserContext iwc, boolean askForPermission) {
 		Page obj = null;
 		try {
@@ -1256,6 +1269,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @exception Exception
 	 *              Description of the Exception
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		if (this.forwardPage != null) {
 			iwc.forwardToIBPage(this, this.forwardPage);
@@ -1274,6 +1288,46 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			ICFileSystem fsystem = getICFileSystem(iwc);
 			String styleSheetURL = fsystem.getFileURI(((Integer) this.styleFile.getPrimaryKey()).intValue());
 			setStyleSheetURL(styleSheetURL);
+		}
+		
+		if (iwc.getApplicationSettings().getBoolean(CoreConstants.PROP_SHOW_ADMIN_TOOLBAR, false) && iwc.getRequestURI().indexOf("/workspace/") == -1 && iwc.getRequestURI().indexOf("/pages") != -1 && (iwc.hasRole(StandardRoles.ROLE_KEY_ADMIN) || iwc.hasRole(StandardRoles.ROLE_KEY_AUTHOR) || iwc.hasRole(StandardRoles.ROLE_KEY_EDITOR))) {
+			IWResourceBundle iwrb = getResourceBundle(iwc);
+			Web2Business business = ELUtil.getInstance().getBean(Web2Business.class);
+			PresentationUtil.addStyleSheetToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("style/admin-core.css"));
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, business.getBundleURIToJQueryLib());
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("javascript/AdminCore.js"));
+			
+			Layer layer = new Layer();
+			layer.setID("adminTopLayer");
+			add(layer);
+			
+			try{
+				UIComponent login = (UIComponent) Class.forName("com.idega.block.login.presentation.Login2").newInstance();
+				layer.add(login);
+			}
+			catch(ClassNotFoundException cnfe){
+				this.getLogger().log(Level.SEVERE, cnfe.getMessage(), cnfe);
+			}
+			
+			Lists list = new Lists();
+			layer.add(list);
+			
+			ListItem edit = new ListItem();
+			edit.setStyleClass("adminEditMode");
+			edit.add(new Text(iwrb.getLocalizedString("admin_mode.edit", "Edit")));
+			list.add(edit);
+			
+			ListItem content = new ListItem();
+			content.setStyleClass("adminContentMode");
+			content.add(new Text(iwrb.getLocalizedString("admin_mode.content", "Content")));
+			list.add(content);
+			
+			ListItem preview = new ListItem();
+			preview.setStyleClass("adminPreviewMode");
+			preview.add(new Text(iwrb.getLocalizedString("admin_mode.preview", "Preview")));
+			list.add(preview);
+			
+			this.setStyleClass("isAdmin");
 		}
 	}
 
@@ -1439,6 +1493,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * 
 	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void initVariables(IWContext iwc) throws IOException {
 		super.initVariables(iwc);
 		setDefaultValues();
@@ -1470,6 +1525,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @exception Exception
 	 *              Description of the Exception
 	 */
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		this.printBegin(iwc);
 		// Catch all exceptions that are thrown in print functions of objects
@@ -1491,6 +1547,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		this.printEnd(iwc);
 	}
 
+	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		callMain(context);
 		this.printBegin(IWContext.getIWContext(context));
@@ -1573,6 +1630,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		}
 	}
 
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
 		List children = getChildren();
 		// This is a temporary workaround, because of iterator
@@ -1599,6 +1657,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		 */
 	}
 
+	@Override
 	public void encodeEnd(FacesContext context) throws IOException {
 		this.printEnd(IWContext.getIWContext(context));
 		resetGoneThroughMain();
@@ -1647,6 +1706,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param values
 	 *          The new property value
 	 */
+	@Override
 	public void setProperty(String key, String values[]) {
 		if (key.equalsIgnoreCase("title")) {
 			setTitle(values[0]);
@@ -2037,6 +2097,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param id
 	 *          The new templateId value
 	 */
+	@Override
 	public void setTemplateId(String id) {
 		this._templateId = id;
 	}
@@ -2046,6 +2107,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * 
 	 * @return The templateId value
 	 */
+	@Override
 	public String getTemplateId() {
 		return (this._templateId);
 	}
@@ -2246,6 +2308,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * 
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(context, values[0]);
@@ -2297,6 +2360,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * 
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[42];
 		values[0] = super.saveState(context);
