@@ -12,6 +12,8 @@ import com.idega.util.CoreConstants;
 
 public interface BuilderLogicWrapper {
 
+	public static final String SPRING_BEAN_NAME_BUILDER_LOGIC_WRAPPER = "builderLogicWrapperBeanId";
+
 	public BuilderService getBuilderService(IWApplicationContext iwac);
 	
 	public boolean reloadGroupsInCachedDomain(IWApplicationContext iwac, String serverName);
