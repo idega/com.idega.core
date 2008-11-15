@@ -2,8 +2,10 @@ package com.idega.util.messages;
 
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -38,10 +40,17 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 			bundleIdentifier = MessageResource.NO_BUNDLE;
 		for(MessageResource resource : resources) {
 			if(!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
-				Object message = resource.getMessage(key, valueIfNotFound, bundleIdentifier);
+				Object message = resource.getMessage(key, bundleIdentifier);
 				if(message != null) {
 					return message;
 				}
+			}
+		}
+		
+		//Autoinserting message in case none of resources has it
+		for(MessageResource resource : resources) {
+			if(resource.isAutoInsert()) {
+				resource.setMessage(key, valueIfNotFound, bundleIdentifier);
 			}
 		}
 		return valueIfNotFound;
@@ -57,10 +66,16 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 			bundleIdentifier = MessageResource.NO_BUNDLE;
 		for(MessageResource resource : resources) {
 			if(!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
-				Object message = resource.getMessage(key, valueIfNotFound, bundleIdentifier, locale);
+				Object message = resource.getMessage(key, bundleIdentifier, locale);
 				if(message != null) {
 					return message;
 				}
+			}
+		}
+		//Autoinserting message in case none of resources has it
+		for(MessageResource resource : resources) {
+			if(resource.isAutoInsert()) {
+				resource.setMessage(key, valueIfNotFound, bundleIdentifier);
 			}
 		}
 		return valueIfNotFound;
@@ -78,6 +93,29 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 			resource.setMessage(key, value, bundleIdentifier, locale);
 		}
 		return value;
+	}
+	
+	public Map<String, Object> setLocalisedMessageToAutoInsertRes(Object key, Object value, String bundleIdentifier, Locale locale) {
+		Map<String, Object> setMessages = new HashMap<String, Object>(resources.size());
+		
+		for(MessageResource resource : resources) {
+			if(resource.isAutoInsert()) {
+				Object setValue = resource.setMessage(key, value, bundleIdentifier, locale);
+				
+				if(setValue != null) {
+					setMessages.put(resource.getIdentifier(), setValue);
+				}
+			}
+		}
+		return setMessages;
+	}
+	
+	public void removeLocalisedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale) {
+		for(MessageResource resource : resources) {
+			if(resource.isAutoInsert()) {
+				resource.removeMessage(key, bundleIdentifier, locale);
+			}
+		}
 	}
 	
 	@SuppressWarnings("unchecked")

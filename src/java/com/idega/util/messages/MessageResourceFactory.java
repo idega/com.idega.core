@@ -2,6 +2,7 @@ package com.idega.util.messages;
 
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 /**
  *
@@ -32,5 +33,7 @@ public interface MessageResourceFactory {
 	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale);
 	public Object setLocalisedMessage(Object key, Object value, String bundleIdentifier);
 	public Object setLocalisedMessage(Object key, Object value, String bundleIdentifier, Locale locale);
+	public Map<String, Object> setLocalisedMessageToAutoInsertRes(Object key, Object value, String bundleIdentifier, Locale locale);
+	public void removeLocalisedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale);
 	public MessageResource getResourceByIdentifier(String identifier);
 }

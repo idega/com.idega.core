@@ -39,19 +39,17 @@ public interface MessageResource {
 	
 	/**
 	 * @param key - message key
-	 * @param autoInsertValue - value to be inserted in case if nothing is found and autoInsert is enabled
 	 * @param bundleIdentifier - bundle in which messages should be located
-	 * @return object that was found in resource or set to it, null - if there are no values with specified key
+	 * @return object that was found in resource, null - if there are no values with specified key
 	 */
-	public Object getMessage(Object key, Object autoInsertValue, String bundleIdentifier);
+	public Object getMessage(Object key, String bundleIdentifier);
 	
 	/**
 	 * @param key - message key
-	 * @param autoInsertValue - value to be inserted in case if nothing is found and autoInsert is enabled
 	 * @param bundleIdentifier - bundle in which messages should be located
-	 * @return object that was found in resource or set to it, null - if there are no values with specified key
+	 * @return object that was found in resource, null - if there are no values with specified key
 	 */	
-	public Object getMessage(Object key, Object autoInsertValue, String bundleIdentifier, Locale locale);
+	public Object getMessage(Object key, String bundleIdentifier, Locale locale);
 	
 	public void removeMessage(Object key, String bundleIdentifier, Locale locale);
 	

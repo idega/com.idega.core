@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.46 2008/11/11 12:35:27 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.47 2008/11/15 15:34:39 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -40,7 +40,6 @@ import com.idega.util.CoreConstants;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
-import com.idega.util.StringHandler;
 import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceImportanceLevel;
 
@@ -52,10 +51,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/11/11 12:35:27 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/11/15 15:34:39 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.46 $
+ * @version $Revision: 1.47 $
  */
 
 @Service
@@ -65,8 +64,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
 	
 	// ==================privates====================
-	TreeMap lookup;
-	private Properties properties = new SortedProperties();
+	Map<String, String> lookup;
+	private Properties properties;
 	// private Properties properties = new Properties();
 	private Locale locale;
 	private File file;
@@ -140,6 +139,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		setLocale(locale);
 		this.file = file;
 		try {
+			this.properties = new SortedProperties();
 			this.properties.load(streamForRead);
 		}
 		catch (FileNotFoundException e) {
@@ -283,22 +283,29 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	/**
+	 * Uses factory to get localisedMessage from all available message resources
+	 * @deprecated IWMainApplication.getgetLocalisedStringMessage should be used instead
+	 * @param key
+	 * @return
+	 */
+	@Deprecated
+	public String getLocalizedString(String key) {
+		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
+		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, null, bundleIdentifier);
+	}
+	
+	/**
 	 * Uses getString but returns null if resource is not found
 	 * 
 	 * @param key
 	 * @return
 	 */
-	public String getLocalizedString(String key) {
+	protected String getBundleLocalizedString(String key) {
 
 		try {
 			return super.getString(key);
 		}
 		catch (MissingResourceException e) {
-			// if
-			// (getIWBundleParent().getApplication().getSettings().isAutoCreatePropertiesActive())
-			// {
-			// setLocalizedString(key, "");
-			// }
 			return null;
 		}
 	}
@@ -312,35 +319,35 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty. 
 	 */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
-		String returnString = getLocalizedString(key);
-		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null
-																																																												// IS
-																																																											// necessary
-			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
-				// if
-				// (getIWBundleParent().getApplication().getSettings().isDebugActive())
-				// System.out.println("Storing localized string: " + key);
-				// setLocalizedString(key, returnValueIfNotFound);
-				boolean hadToCreate = this.checkBundleLocalizedString(key, returnValueIfNotFound);
-				
-				//Localizable.strings always wins unless
-				if(!hadToCreate){
-					IWBundle bundle = getIWBundleParent();
-					String value = bundle.getLocalizableStringDefaultValue(key);
-					if( value==null || ("".equals(value) && (returnValueIfNotFound!=null)) ){
-						return returnValueIfNotFound;
-					}
-					else{
-						return value;
-					}
-				}
-				
-			}
-			return returnValueIfNotFound;
-		}
-		else {
-			return returnString;
-		}
+//		String returnString = getLocalizedString(key);
+//		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null ISnecessary
+////			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
+//				// if
+//				// (getIWBundleParent().getApplication().getSettings().isDebugActive())
+//				// System.out.println("Storing localized string: " + key);
+//				// setLocalizedString(key, returnValueIfNotFound);
+//				boolean hadToCreate = this.checkBundleLocalizedString(key, returnValueIfNotFound);
+//				
+//				//Localizable.strings always wins unless
+//				if(!hadToCreate){
+//					IWBundle bundle = getIWBundleParent();
+//					String value = bundle.getLocalizableStringDefaultValue(key);
+//					if( value==null || ("".equals(value) && (returnValueIfNotFound!=null)) ){
+//						return returnValueIfNotFound;
+//					}
+//					else{
+//						return value;
+//					}
+//				}
+//				
+////			}
+//			return returnValueIfNotFound;
+//		}
+//		else {
+//			return returnString;
+//		}
+		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
+		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier);
 	}
 
 	/**
@@ -432,7 +439,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	public boolean removeString(String key) {
-		if ((String) this.lookup.remove(key) != null) {
+		if (this.lookup.remove(key) != null) {
 			this.storeState();
 			return true;
 		}
@@ -499,9 +506,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		return this.resourcesURL;
 	}
 
-	/**
-	 * 
-	 */
 	public void setLocalizedString(String key, String value) {
 		this.setString(key, value);
 	}
@@ -548,10 +552,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		super.setParent(parentResourceBundle);
 	}
 
-	protected TreeMap getLookup() {
+	@SuppressWarnings("unchecked")
+	protected Map getLookup() {
 		return lookup;
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void setLookup(TreeMap lookup) {
 		this.lookup = lookup;
 	}
@@ -569,30 +575,30 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	/**
-	 * @return object that was found in resource or set to it, autoInsertValue - if there are no values with specified key
+	 * @return object that was found in resource or null if nothing is found
 	 */
-	public Object getMessage(Object key, Object autoInsertValue, String bundleIdentifier) {
+	public Object getMessage(Object key, String bundleIdentifier) {
 		if(bundleIdentifier.equals(NO_BUNDLE))
-			return autoInsertValue;
+			return null;
 		try {
 			initialize(bundleIdentifier, null);
-			return getLocalizedString(String.valueOf(key), String.valueOf(autoInsertValue));
+			return getBundleLocalizedString(String.valueOf(key));
 		} catch (Exception e) {
-			return autoInsertValue;
+			return null;
 		} 
 	}
 
 	/**
-	 * @return object that was found in resource or set to it, autoInsertValue - if there are no values with specified key
+	 * @return object that was found in resource or null if nothing is found
 	 */
-	public Object getMessage(Object key, Object autoInsertValue,String bundleIdentifier, Locale locale) {
+	public Object getMessage(Object key, String bundleIdentifier, Locale locale) {
 		if(bundleIdentifier.equals(NO_BUNDLE))
-			return autoInsertValue;
+			return null;
 		try {
 			initialize(bundleIdentifier, locale);
-			return getLocalizedString(String.valueOf(key), String.valueOf(autoInsertValue));
+			return getBundleLocalizedString(String.valueOf(key));
 		} catch (Exception e) {
-			return autoInsertValue;
+			return null;
 		}
 	}
 
@@ -655,6 +661,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		return "Localized.strings";
 	}
 
+	@SuppressWarnings("unchecked")
 	public Set<Object> getAllLocalisedKeys(String bundleIdentifier, Locale locale) {
 		if(bundleIdentifier.equals(MessageResource.NO_BUNDLE))
 			return new HashSet<Object>();
