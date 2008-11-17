@@ -1314,7 +1314,11 @@ function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) 
 		oldLocation += '/';
 	}
 	
-	window.location.href = oldLocation + separator + newHref;
+	if(newHref.indexOf('#') == 0) {
+		window.location.href = oldLocation + newHref;
+	} else {
+		window.location.href = oldLocation + separator + newHref;
+	}
 }
 
 function reloadPage() {
