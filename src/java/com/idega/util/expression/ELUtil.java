@@ -19,9 +19,9 @@ import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
- * Last modified: $Date: 2008/07/02 19:26:37 $ by $Author: civilis $
+ * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
  *
  */
 @Scope("singleton")
@@ -38,16 +38,17 @@ public class ELUtil implements ApplicationContextAware {
 	}
 	
 	public ELUtil() {
-		
-//		should be created by spring, so no need to synchronize
-		if(ELUtil.me == null)
+		//should be created by spring, so no need to synchronize
+		if(ELUtil.me == null) {
 			ELUtil.me = this;
-		else
+		}
+		else {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Tried to repeatedly create singleton instance");
+		}
 	}
 	
 	public <T>T getBean(String expression) {
-		
+
 		if(expression.contains(CoreConstants.DOT)) {
 			
 			FacesContext fctx = FacesContext.getCurrentInstance();
@@ -81,7 +82,6 @@ public class ELUtil implements ApplicationContextAware {
 	}
 	
 	public void autowire(Object obj) {
-
 		ApplicationContext ac = getApplicationContext();
 		ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
 	}
@@ -116,14 +116,14 @@ public class ELUtil implements ApplicationContextAware {
 	}
 	
 	public <T>T getBean(Class<T> clazz) {
-		
-		if(!clazz.isAnnotationPresent(SpringBeanName.class))
+		if(!clazz.isAnnotationPresent(SpringBeanName.class)) {
 			throw new RuntimeException("Interface is not annotated with "+SpringBeanName.class.getName()+" annotation");
+		}
 		
-		SpringBeanName bname = (SpringBeanName)clazz.getAnnotation(SpringBeanName.class);
+		SpringBeanName bname = clazz.getAnnotation(SpringBeanName.class);
 
 		@SuppressWarnings("unchecked")
-		T bean = (T)getBean(bname.value());
+		T bean = (T) getBean(bname.value());
 		return bean;
 	}
 }

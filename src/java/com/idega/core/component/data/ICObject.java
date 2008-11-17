@@ -1,13 +1,53 @@
 package com.idega.core.component.data;
 
 
-import com.idega.data.IDOEntity;
-import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWBundle;
+import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
+import com.idega.data.IDOEntity;
 
 public interface ICObject extends IDOEntity {
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#isWidget
+	 */
+	public Boolean isWidget();
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#setIsWidget
+	 */
+	public void setIsWidget(Boolean isWidget);
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#isBlock
+	 */
+	public Boolean isBlock();
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#setIsBlock
+	 */
+	public void setIsBlock(Boolean isBlock);
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#getIconURI
+	 */
+	public String getIconURI();
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#setIconURI
+	 */
+	public void setIconURI(String iconURI);
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#getDescription
+	 */
+	public String getDescription();
+
+	/**
+	 * @see com.idega.core.component.data.ICObjectBMPBean#setDescripton
+	 */
+	public void setDescripton(String description);
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getName
@@ -83,24 +123,4 @@ public interface ICObject extends IDOEntity {
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getID
 	 */
 	public int getID();
-	
-	/**
-	 * @see com.idega.core.component.data.ICObjectBMPBean#isWidget
-	 */
-	public Boolean isWidget();
-
-	/**
-	 * @see com.idega.core.component.data.ICObjectBMPBean#setIsWidget
-	 */
-	public void setIsWidget(Boolean isWidget);
-	
-	/**
-	 * @see com.idega.core.component.data.ICObjectBMPBean#isBlock
-	 */
-	public Boolean isBlock();
-	
-	/**
-	 * @see com.idega.core.component.data.ICObjectBMPBean#setIsBlock
-	 */
-	public void setIsBlock(Boolean isBlock);
 }

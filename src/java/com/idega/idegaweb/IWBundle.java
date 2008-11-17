@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.98 2008/10/23 12:26:04 valdas Exp $
+ * $Id: IWBundle.java,v 1.99 2008/11/17 08:40:07 laddi Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2008/10/23 12:26:04 $ by $Author: valdas $
+ * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.98 $
+ * @version $Revision: 1.99 $
  */
 public interface IWBundle extends IWModule{
 	/**
@@ -203,6 +203,7 @@ public interface IWBundle extends IWModule{
 	 * Returns null if there is an exception
 	 * @deprecated Replaced with getICObjectsList()
 	 */
+	@Deprecated
 	public abstract ICObject[] getICObjects();
 
 	/**
@@ -217,12 +218,13 @@ public interface IWBundle extends IWModule{
 	 * Returns null if there is an exception
 	 * @deprecated replaced with getICObjectsList(componentType);
 	 */
+	@Deprecated
 	public abstract ICObject[] getICObjects(String componentType);
 
-	public abstract void addComponent(String className, String componentType);
+	public abstract void addComponent(String className, String componentType, boolean block, boolean widget, String description, String iconURI);
 
 	public abstract void addComponent(String className, String componentType,
-			String componentName);
+			String componentName, boolean block, boolean widget, String description, String iconURI);
 
 	public abstract void setComponentProperty(String className,
 			String propertyName, String propertyValue);

@@ -1,5 +1,5 @@
 /*
- * $Id: ICObjectBMPBean.java,v 1.24 2008/05/09 18:43:14 valdas Exp $
+ * $Id: ICObjectBMPBean.java,v 1.25 2008/11/17 08:40:07 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  *
  * Copyright (C) 2001-2006 Idega Software hf. All Rights Reserved.
@@ -44,10 +44,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * time the application starts it updates the IC_OBJECT table with all components
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
- * Last modified: $Date: 2008/05/09 18:43:14 $ by $Author: valdas $
+ * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
 	/**
@@ -70,9 +70,11 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	private final static String BUNDLE_COLUMN_NAME = "BUNDLE";
 	private final static String class_value_column_name = "CLASS_VALUE";
 	private final static String icon_file = "ICON_FILE";
+	private final static String icon_uri = "ICON_URI";
 	private static final String COLUMN_OBJECT_NAME = "OBJECT_NAME";
 	private static final String WIDGET = "WIDGET";
 	private static final String BLOCK = "BLOCK";
+	private static final String COLUMN_DESCRIPTION = "description";
 	
 	private static boolean allCached = true;
 	private static int totalObjectsRegistered = -1;
@@ -86,6 +88,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	{
 		super(id);
 	}
+	@Override
 	public void initializeAttributes()
 	{
 		//par1: column name, par2: visible column name, par3-par4: editable/showable, par5 ...
@@ -98,6 +101,8 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		addManyToOneRelationship(getColumnIcon(), "Icon", ICFile.class);
 		addAttribute(getWidgetColumnName(),"Widget",true,true,Boolean.class);
 		addAttribute(getBlockColumnName(),"Block",true,true,Boolean.class);
+		addAttribute(getIconURIColumnName(),"Icon URI",true,true,String.class);
+		addAttribute(COLUMN_DESCRIPTION, "Description", String.class, 4000);
 		//addAttribute("settings_url","Sl?? stillingas??u",true,true,"java.lang.String");
 		//addAttribute("class_value","Klasi sj?lfur",true,true,"java.sql.Blob");
 		//addAttribute("small_icon_image_id","Icon 16x16 (.gif)",false,false,"java.lang.Integer","many-to-one","com.idega.data.genericentity.Image");
@@ -133,6 +138,10 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	
 	public static String getBlockColumnName() {
 		return BLOCK;
+	}
+	public static String getIconURIColumnName()
+	{
+		return icon_uri;
 	}
 	
 	private static List componentList;
@@ -195,6 +204,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		{
 		}
 	}*/
+	@Override
 	public void insertStartData() throws Exception
 	{
 		/*ICObject obj = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
@@ -227,10 +237,12 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		obj.setObjectType("iw.block");
 		obj.insert();*/
 	}
+	@Override
 	public String getEntityName()
 	{
 		return "IC_OBJECT";
 	}
+	@Override
 	public void setDefaultValues()
 	{
 		//setColumn("image_id",1);
@@ -252,10 +264,30 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		setColumn(getBlockColumnName(), isBlock);
 	}
 	
+	public String getIconURI()
+	{
+		return getStringColumnValue(getIconURIColumnName());
+	}
+	public void setIconURI(String iconURI)
+	{
+		setColumn(getIconURIColumnName(), iconURI);
+	}
+
+	public String getDescription()
+	{
+		return getStringColumnValue(COLUMN_DESCRIPTION);
+	}
+	public void setDescripton(String description)
+	{
+		setColumn(COLUMN_DESCRIPTION, description);
+	}
+
+	@Override
 	public String getName()
 	{
 		return getStringColumnValue(getColumnObjectName());
 	}
+	@Override
 	public void setName(String object_name)
 	{
 		setColumn(getColumnObjectName(), object_name);
@@ -525,6 +557,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	/* (non-Javadoc)
 	 * @see java.lang.Comparable#compareTo(java.lang.Object)
 	 */
+	@Override
 	public int compareTo(Object obj) {
 		if (obj instanceof ICObject) {
 			return Collator.getInstance().compare(this.getName(), ((ICObject)obj).getName());
@@ -532,6 +565,7 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 		return super.compareTo(obj);
 	}
 	
+	@Override
 	public int getID(){
 		return super.getID();
 	}

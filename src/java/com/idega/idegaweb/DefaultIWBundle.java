@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.49 2008/10/23 12:26:04 valdas Exp $
+ * $Id: DefaultIWBundle.java,v 1.50 2008/11/17 08:40:07 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -73,6 +73,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	static final String COMPONENTLIST_KEY = "iw_components";
 	private final static String COMPONENT_NAME_PROPERTY = "component_name";
 	private final static String COMPONENT_TYPE_PROPERTY = "component_type";
+	private final static String COMPONENT_BLOCK_PROPERTY = "is_block";
+	private final static String COMPONENT_WIDGET_PROPERTY = "is_widget";
+	private final static String COMPONENT_DESCRIPTION_PROPERTY = "description";
+	private final static String COMPONENT_ICON_URI_PROPERTY = "icon_uri";
 	private final static String COMPONENT_PROPERTY_FILE = "component_property_file";
 	private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
 	private static final String slash = "/";
@@ -426,10 +430,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			String className = (String) iter.next();
 			String componentName = getComponentName(className);
 			String componentType = this.getComponentType(className);
+			
+			String blockValue = getComponentProperty(className, COMPONENT_BLOCK_PROPERTY);
+			boolean isBlock = blockValue != null ? new Boolean(blockValue).booleanValue() : false;
+
+			String widgetValue = getComponentProperty(className, COMPONENT_WIDGET_PROPERTY);
+			boolean isWidget = widgetValue != null ? new Boolean(widgetValue).booleanValue() : false;
+
+			String description = getComponentProperty(className, COMPONENT_DESCRIPTION_PROPERTY);
+			String iconURI = getComponentProperty(className, COMPONENT_ICON_URI_PROPERTY);
 
 			if(className!=null && componentName != null && componentType!=null){
 				try{
-					addComponentToDatabase(className, componentType, componentName);
+					addComponentToDatabase(className, componentType, componentName, isBlock, isWidget, description, iconURI);
 				}
 				catch(Throwable e){
 					LOGGER.warning("Error registering component to database: "+e.getMessage());
@@ -1087,11 +1100,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return list;
 	}
-	public void addComponent(String className, String componentType)
+	public void addComponent(String className, String componentType, boolean block, boolean widget, String description, String iconURI)
 	{
-		addComponent(className, componentType, className.substring(className.lastIndexOf(".") + 1));
+		addComponent(className, componentType, className.substring(className.lastIndexOf(".") + 1), block, widget, description, iconURI);
 	}
-	public void addComponent(String className, String componentType, String componentName)
+	public void addComponent(String className, String componentType, String componentName, boolean block, boolean widget, String description, String iconURI)
 	{
 		IWProperty prop = getComponentList().getNewProperty();
 		prop.setName(className);
@@ -1100,9 +1113,17 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		IWPropertyList pl = initializeComponentPropertyList(className, componentPropertyFileName);
 		pl.setProperty(COMPONENT_NAME_PROPERTY, componentName);
 		pl.setProperty(COMPONENT_TYPE_PROPERTY, componentType);
+		pl.setProperty(COMPONENT_BLOCK_PROPERTY, Boolean.toString(block));
+		pl.setProperty(COMPONENT_WIDGET_PROPERTY, Boolean.toString(widget));
+		if (iconURI != null) {
+			pl.setProperty(COMPONENT_ICON_URI_PROPERTY, iconURI);
+		}
+		if (description != null) {
+			pl.setProperty(COMPONENT_DESCRIPTION_PROPERTY, description);
+		}
 		//setComponentProperty(prop, COMPONENT_NAME_PROPERTY, componentName);
 		//setComponentProperty(prop, COMPONENT_TYPE_PROPERTY, componentType);
-		addComponentToDatabase(className, componentType, componentName);
+		addComponentToDatabase(className, componentType, componentName, block, widget, description, iconURI);
 		this.propertyList.store();
 
 	}
@@ -1154,7 +1175,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			return className + IWPropertyList.DEFAULT_FILE_ENDING;
 		}
 	}
-	private void addComponentToDatabase(String className, String componentType, String componentName)
+	private void addComponentToDatabase(String className, String componentType, String componentName, boolean block, boolean widget, String description, String iconURI)
 	{
 		RefactorClassRegistry rfregistry = RefactorClassRegistry.getInstance();
 		boolean classIsRefactored = rfregistry.isClassRefactored(className);
@@ -1194,6 +1215,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 						}
 					}
 				}
+				ico.setIsBlock(new Boolean(block));
+				ico.setIsWidget(new Boolean(widget));
+				ico.setDescripton(description);
+				ico.setIconURI(iconURI);
+				ico.store();
 			}
 			//The object is not found by its class name in the database
 			catch (FinderException fe)
@@ -1214,6 +1240,10 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 						ico.setName(componentName);
 						ico.setObjectType(componentType);
 						ico.setBundle(this);
+						ico.setIsBlock(new Boolean(block));
+						ico.setIsWidget(new Boolean(widget));
+						ico.setDescripton(description);
+						ico.setIconURI(iconURI);
 						ico.store();
 						//Update the ComponentRegistry with the new component
 						ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
