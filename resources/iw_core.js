@@ -1164,6 +1164,80 @@ IWCORE.stopEventBubbling = function(event) {
 	}
 }
 
+IWCORE.insertRenderedComponent = function(component, container, callback) {
+	if (component == null) {
+		if (callback) {
+			callback();
+		}
+					
+		reloadPage();
+		return false;
+	}
+	
+	LazyLoader.loadMultiple(component.resources, function() {
+		if (component.errorMessage != null) {
+			humanMsg.displayMsg(component.errorMessage);
+			
+			if (callback) {
+				callback();
+			}
+			
+			return false;
+		}
+		
+		var parentContainer = null;
+		if (typeof(container) == 'string') {
+			parentContainer = jQuery('#' + container)
+		}
+		else {
+			parentContainer = jQuery(container);
+		}
+		if (parentContainer == null || parentContainer.length == 0) {
+			if (callback) {
+				callback();
+			}
+			
+			return false;
+		}
+		
+		parentContainer.html(component.html);
+		
+		if (callback) {
+			callback();
+		}
+	});
+}
+
+IWCORE.renderComponent = function(uuid, container, callback) {
+	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
+		BuilderService.getRenderedComponent(uuid, window.location.pathname, {
+			callback: function(component) {
+				IWCORE.insertRenderedComponent(component, container, callback);
+			},
+			errorHandler: function() {
+				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
+					reloadPage();
+				}
+			}
+		});
+	});
+}
+
+IWCORE.getRenderedComponentByClassName = function(className, properties, container, callback) {
+	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
+		BuilderService.getRenderedComponentByClassName(className, properties, {
+			callback: function(component) {
+				IWCORE.insertRenderedComponent(component, container, callback);
+			},
+			errorHandler: function() {
+				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
+					reloadPage();
+				}
+			}
+		});
+	});
+}
+
 function getNeededElements(element, className) {
 	if (element == null) {
 		return null;
@@ -1577,7 +1651,7 @@ var LazyLoader = {};		//	Namespace
 LazyLoader.timer = {};		//	Contains timers for resources
 LazyLoader.resources = [];	//	Contains called resources references
 LazyLoader.loading = false;
-LazyLoader.loadMultiple = function(urls, callback) {
+LazyLoader.loadMultiple = function(urls, callback, parameters) {
 	try {
 		if (urls == null || urls.length == 0) {
 			LazyLoader.executeCallback(callback);
@@ -1585,7 +1659,7 @@ LazyLoader.loadMultiple = function(urls, callback) {
 		}
 		
 		if (typeof urls == 'string') {
-			LazyLoader.load(urls, callback);
+			LazyLoader.load(urls, callback, parameters);
 			return false;
 		}
 		
@@ -1598,14 +1672,14 @@ LazyLoader.loadMultiple = function(urls, callback) {
 		removeElementFromArray(urls, url);
 		LazyLoader.load(url, urls.length == 0 ? callback : function() {
 			LazyLoader.loadMultiple(urls, callback);
-		});
+		}, parameters);
 	} catch(e) {
 		LazyLoader.loading = false;
 		//console.log('ERROR in: LazyLoader.loadMultiple: ' + e.message);
 	}
 }
 
-LazyLoader.load = function(url, callback) {
+LazyLoader.load = function(url, callback, parameters) {
 	try {
 		if (url == null || url == '') {
 			LazyLoader.executeCallback(callback);
@@ -1620,12 +1694,12 @@ LazyLoader.load = function(url, callback) {
 			LazyLoader.timer[intervalId] = window.setInterval(function() {
 				if (!LazyLoader.loading) {
 					window.clearInterval(LazyLoader.timer[intervalId]);
-					LazyLoader.doRealLoading(url, callback);
+					LazyLoader.doRealLoading(url, callback, parameters);
 				}
 			}, 100);
 		}
 		else {
-			LazyLoader.doRealLoading(url, callback);
+			LazyLoader.doRealLoading(url, callback, parameters);
 		}
 	} catch(e) {
 		LazyLoader.loading = false;
@@ -1633,10 +1707,10 @@ LazyLoader.load = function(url, callback) {
 	}
 }
 
-LazyLoader.doRealLoading = function(url, callback) {
+LazyLoader.doRealLoading = function(url, callback, parameters) {
 	if (LazyLoader.loading) {
 		//	Sending back to "synchronize"
-		LazyLoader.load(url, callback);
+		LazyLoader.load(url, callback, parameters);
 		return false;
 	}
 	LazyLoader.loading = true;
@@ -1682,7 +1756,14 @@ LazyLoader.doRealLoading = function(url, callback) {
 				//	Will treat as JavaScript
 				resource = document.createElement('script');
 				resource.src = url;
-				resource.type = 'text/javascript';
+				if (parameters) {
+					if (parameters.classValue) {
+						resource.setAttribute('class', parameters.classValue);
+					}
+				}
+				else {
+					resource.type = 'text/javascript';
+				}
 			}
 			document.getElementsByTagName('head')[0].appendChild(resource);	//	Add resource tag to head element
 			

@@ -3,6 +3,9 @@
 
 <dwr>
 	<allow>
+		<create creator="ibo" javascript="BuilderService" scope="application">
+			<param name="class" value="com.idega.core.builder.business.BuilderService"/>
+		</create>
 		<create creator="ibo" javascript="ChooserService" scope="application">
 			<param name="class" value="com.idega.business.chooser.ChooserService" />
 		</create>
@@ -10,19 +13,26 @@
 	    	<param name="managedBeanName" value="pageSessionPoller"/>
 	    	<param name="class" value="com.idega.business.PageSessionPoller"/>
     	</create>
-		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 		<create creator="ibo" javascript="UserBusiness" scope="application">
 			<param name="class" value="com.idega.user.business.UserBusiness" />
 			<include method="setPreferredRoleAndGetHomePageUri"/>
 			<include method="changeUserPassword"/>
 		</create>
+		
+		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
+		<convert match="com.idega.core.component.bean.RenderedComponent" converter="bean" />
 	</allow>
 	<signatures>
 		<![CDATA[
 			import java.util.List;
 			import com.idega.builder.bean.AdvancedProperty;
 
+			import com.idega.core.component.bean.RenderedComponent;
+			
 			ChooserService.setModuleProperty(String, String, List<AdvancedProperty>);
+			
+			RenderedComponent BuilderService.getRenderedComponent(String, String);
+			RenderedComponent BuilderService.getRenderedComponentByClassName(String, List<AdvancedProperty>);
 		]]>
 	</signatures>
 </dwr>
