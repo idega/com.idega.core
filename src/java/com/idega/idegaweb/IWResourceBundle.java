@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.47 2008/11/15 15:34:39 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.48 2008/11/18 11:04:39 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -40,6 +40,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringHandler;
 import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceImportanceLevel;
 
@@ -51,14 +52,14 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/11/15 15:34:39 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/11/18 11:04:39 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.47 $
+ * @version $Revision: 1.48 $
  */
 
-@Service
-@Scope(BeanDefinition.SCOPE_SINGLETON)
+@Service(IWResourceBundle.RESOURCE_IDENTIFIER)
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class IWResourceBundle extends ResourceBundle implements MessageResource {
 
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
@@ -286,7 +287,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 * Uses factory to get localisedMessage from all available message resources
 	 * @deprecated IWMainApplication.getgetLocalisedStringMessage should be used instead
 	 * @param key
-	 * @return
+	 * @return found string 
 	 */
 	@Deprecated
 	public String getLocalizedString(String key) {
@@ -319,13 +320,40 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty. 
 	 */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
-//		String returnString = getLocalizedString(key);
-//		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null ISnecessary
-////			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
-//				// if
-//				// (getIWBundleParent().getApplication().getSettings().isDebugActive())
-//				// System.out.println("Storing localized string: " + key);
-//				// setLocalizedString(key, returnValueIfNotFound);
+		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
+		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier);
+	}
+	
+	/**
+	 * Gets a localized string value and sets the value as returnValueIfNotFound if it is previously not found and returns it. <br/>
+	 * However if e.g. an english version does not exist for the english local the value from Localizable.strings is used, unless it is null or empty then returnValueIfNotFound is used<br/>
+	 * 
+	 * @param key
+	 * @param returnValueIfNotFound
+	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty. 
+	 */
+	private String getBundleLocalizedString(String key, String returnValueIfNotFound) {
+		String returnString = getBundleLocalizedString(key);
+		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString))) {
+			IWBundle bundle = getIWBundleParent();
+			String value = bundle.getLocalizableStringDefaultValue(key);
+			
+			if( value==null || ("".equals(value) && (returnValueIfNotFound!=null)) ){
+				return returnValueIfNotFound;
+			}
+			else{
+				return value;
+			}
+		} else {
+			return returnString;
+		}
+	}
+	
+//	private String getBundleLocalizedString(String key, String returnValueIfNotFound) {
+//		String returnString = getBundleLocalizedString(key);
+//		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null IS necessary
+//			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
+//
 //				boolean hadToCreate = this.checkBundleLocalizedString(key, returnValueIfNotFound);
 //				
 //				//Localizable.strings always wins unless
@@ -340,15 +368,19 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 //					}
 //				}
 //				
-////			}
+//			}
 //			return returnValueIfNotFound;
 //		}
 //		else {
 //			return returnString;
 //		}
-		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier);
-	}
+//	}
+	
+	
+//	public String getLocalizedString(String key, String returnValueIfNotFound) {
+//		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
+//		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier);
+//	}
 
 	/**
 	 * * Gets a localized stringvalue and sets the value as returnValueIfNotFound
@@ -582,7 +614,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			return null;
 		try {
 			initialize(bundleIdentifier, null);
-			return getBundleLocalizedString(String.valueOf(key));
+			return getBundleLocalizedString(String.valueOf(key), null);
 		} catch (Exception e) {
 			return null;
 		} 
@@ -596,7 +628,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			return null;
 		try {
 			initialize(bundleIdentifier, locale);
-			return getBundleLocalizedString(String.valueOf(key));
+			return getBundleLocalizedString(String.valueOf(key), null);
 		} catch (Exception e) {
 			return null;
 		}

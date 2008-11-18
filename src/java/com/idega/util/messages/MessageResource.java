@@ -9,9 +9,9 @@ import java.util.logging.Level;
  *
  * 
  * @author <a href="anton@idega.com">Anton Makarov</a>
- * @version Revision: 1.0 
+ * @version Revision: 1.1 
  *
- * Last modified: Oct 16, 2008 by Author: Anton 
+ * Last modified: Nov 16, 2008 by Author: Anton 
  *
  */
 
@@ -47,9 +47,19 @@ public interface MessageResource {
 	/**
 	 * @param key - message key
 	 * @param bundleIdentifier - bundle in which messages should be located
+	 * @param locale - message locale
 	 * @return object that was found in resource, null - if there are no values with specified key
 	 */	
 	public Object getMessage(Object key, String bundleIdentifier, Locale locale);
+	
+//	/**
+//	 * @param key - message key
+//	 * @param bundleIdentifier - bundle in which messages should be located
+//	 * @param locale - message locale
+//	 * @param defaultValue - value that can be automatically set to to the resource according t its implementation
+//	 * @return object that was found in resource, valueIfNotFound - if there are no values with specified key
+//	 */
+//	public Object getMessage(Object key, String defaultValue, String bundleIdentifier, Locale locale);
 	
 	public void removeMessage(Object key, String bundleIdentifier, Locale locale);
 	
