@@ -373,8 +373,7 @@ function setWindowSizeCentered(width,height){
 //
 //************************************************//
 
-IWCORE.windowLoaded = false;
-window.onload=function(){ IWCORE.windowLoaded = true; tableruler();}
+window.onload=function(){ tableruler();}
 
 function tableruler()
 {
