@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.173 2008/11/17 08:40:07 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.174 2008/11/18 09:09:42 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -67,10 +67,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
+ * Last modified: $Date: 2008/11/18 09:09:42 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.173 $
+ * @version $Revision: 1.174 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -316,7 +316,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	protected String getJavascriptURLs(IWContext iwc) {
-		if (this.addGlobalScript) {			
+		if (this.addGlobalScript) {
 			String iwCoreScript = iwc.getIWMainApplication().getCoreBundle().getResourcesURL() + "/iw_core.js";
 			StringBuffer buffer = null;
 			if (printScriptSourcesDirectly) {
@@ -327,13 +327,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			}
 			
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
-				Iterator iter = this._javascripts.values().iterator();
-				while (iter.hasNext()) {
+				for (Object source: this._javascripts.values()) {
 					if (printScriptSourcesDirectly) {
-						buffer.append(PresentationUtil.getJavaScriptSourceLine(iter.next().toString()));
+						buffer.append(PresentationUtil.getJavaScriptSourceLine(source.toString()));
 					}
 					else {
-						PresentationUtil.addJavaScriptSourceLineToHeader(iwc, iter.next().toString());
+						PresentationUtil.addJavaScriptSourceLineToHeader(iwc, source.toString());
 					}
 				}
 			}

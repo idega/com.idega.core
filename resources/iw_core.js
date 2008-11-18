@@ -1176,7 +1176,12 @@ IWCORE.insertRenderedComponent = function(component, container, callback) {
 	
 	LazyLoader.loadMultiple(component.resources, function() {
 		if (component.errorMessage != null) {
-			humanMsg.displayMsg(component.errorMessage);
+			if (component.resources == null || component.resources.length == 0) {
+				alert(component.errorMessage);
+			}
+			else {
+				humanMsg.displayMsg(component.errorMessage);
+			}
 			
 			if (callback) {
 				callback();
@@ -1199,8 +1204,8 @@ IWCORE.insertRenderedComponent = function(component, container, callback) {
 			
 			return false;
 		}
-		
-		parentContainer.html(component.html);
+
+		parentContainer.replaceWith(jQuery(component.html))
 		
 		if (callback) {
 			callback();
