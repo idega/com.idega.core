@@ -1215,7 +1215,7 @@ IWCORE.insertRenderedComponent = function(component, container, callback) {
 
 IWCORE.renderComponent = function(uuid, container, callback) {
 	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
-		BuilderService.getRenderedComponent(uuid, window.location.pathname, {
+		BuilderService.getRenderedComponentById(uuid, window.location.pathname, {
 			callback: function(component) {
 				IWCORE.insertRenderedComponent(component, container, callback);
 			},

@@ -2,11 +2,15 @@ package com.idega.util.reflect;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
+import com.idega.util.StringUtil;
 
 /**
  * A utility class to invoke methods by reflection.
@@ -20,7 +24,8 @@ import com.idega.repository.data.SingletonRepository;
 
 public class MethodInvoker implements Singleton {
 
-  private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new MethodInvoker();}};
+  private static Instantiator instantiator = new Instantiator() { @Override
+public Object getInstance() { return new MethodInvoker();}};
 
   protected MethodInvoker() {
   }
@@ -149,6 +154,47 @@ public class MethodInvoker implements Singleton {
 	String[] argarray = new String[]{arg0};
 	return invokeMethod(instance,MethodFinder.getInstance().getMethodWithNameAndOneParameter(instance.getClass(),methodName,String.class),argarray);
   }
+  
+  public Object invokeMethodWithParameter(Object instance, String methodName, String value) throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+	  Object realValue = getParameterValue(value);
+	  if (realValue instanceof Boolean) {
+		  return invokeMethodWithBooleanParameter(instance, methodName, (Boolean) realValue);
+	  }
+	  if (realValue instanceof Integer) {
+		  return invokeMethodWithIntParameter(instance, methodName, (Integer) realValue);
+	  }
+	  if (realValue instanceof String) {
+		  return invokeMethodWithStringParameter(instance, methodName, realValue.toString());
+	  }
+	  
+	  Logger.getLogger(MethodInvoker.class.getName()).log(Level.WARNING, "Method '" + methodName + "' was not invoked with value: " + value);
+	  return instance;
+  }
+  
+	private static Object getParameterValue(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return null;
+		}
+		
+		Boolean booleanValue = null;
+		try {
+			booleanValue = Boolean.valueOf(value);
+		} catch(Exception e) {}
+		if (booleanValue != null) {
+			return booleanValue;
+		}
+		
+		Integer intValue = null;
+		try {
+			intValue = Integer.valueOf(value);
+		} catch(Exception e) {}
+		if (intValue != null) {
+			return intValue;
+		}
+		
+		return value;
+	}
+  
   /**
    * Invoke a method of object instance of name methodName, where that method does take in one argument of type boolean
    * @param instance The instance of the object to invoke a method in.

@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.63 2008/11/17 18:00:12 valdas Exp $
+ * $Id: BuilderService.java,v 1.64 2008/11/18 11:09:05 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -364,7 +364,7 @@ public interface BuilderService extends IBOService
 	
 	public String getLocalizedPageName(String pageKey, Locale locale);
 
-	public RenderedComponent getRenderedComponent(String uuid, String uri);
+	public RenderedComponent getRenderedComponentById(String uuid, String uri);
 	
 	public RenderedComponent getRenderedComponentByClassName(String className, List<AdvancedProperty> properties);
 }
