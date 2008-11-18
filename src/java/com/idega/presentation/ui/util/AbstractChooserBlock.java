@@ -49,6 +49,7 @@ public abstract class AbstractChooserBlock extends Block {
 		this.chooserObject = chooserObject;
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		getChooserAttributes();
 		
@@ -93,7 +94,7 @@ public abstract class AbstractChooserBlock extends Block {
 	 */
 	public String getChooserObjectAction(String idAttribute, String valueAttribute) {
 		return new StringBuffer(getChooserObject()).append(".chooseObject('").append(ABSTRACT_CHOOSER_BLOCK_ACTIVE_ELEMENT_ID_PARAMETER).append("', '")
-			.append(idAttribute).append("', '").append(valueAttribute).append("');").toString();
+			.append(idAttribute).append("', '").append(valueAttribute).append("', true);").toString();
 	}
 	
 	/**

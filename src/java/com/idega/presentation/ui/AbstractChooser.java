@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.46 2008/08/27 13:33:05 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.47 2008/11/18 12:58:24 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -24,6 +24,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 
 /**
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>,
@@ -103,6 +104,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
+	@Override
 	public void setId(String id){
 	  super.setId(id);
 	  setChooserParameter(id);
@@ -158,6 +160,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 *
 	 */
+	@Override
 	public void setName(String name) {
 		this.displayInputName = name;
 		if (this.chooserParameter.equals(VALUE_PARAMETER)) {
@@ -168,6 +171,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 *
 	 */
+	@Override
 	public String getName() {
 		return (this.displayInputName);
 	}
@@ -175,6 +179,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 *
 	 */
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
 		
@@ -192,8 +197,6 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 
 		if (!isUseOldLogic()) {	// This is needed only for new choosers
-			CoreUtil.addJavaScriptForChooser(iwc);
-			
 			if (isAddSaveButton()) {	//	Some choosers may not need save button
 				add(getSaveButton());
 			}
@@ -327,8 +330,8 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 				chooserObject = AbstractChooserBlock.GLOBAL_HELPER_NAME;
 			}
 			else {
-				StringBuffer js = new StringBuffer("<script type=\"text/javascript\">var ").append(chooserObject).append(" = new ChooserHelper();</script>");
-				add(js.toString());
+				add(PresentationUtil.getJavaScriptAction(PresentationUtil.getJavaScriptLinesLoadedLazily(CoreUtil.getResourcesForChooser(iwc),
+																	new StringBuilder("var ").append(chooserObject).append(" = new ChooserHelper();").toString())));
 			}
 			
 			PresentationObject object = getPresentationObject(iwc);

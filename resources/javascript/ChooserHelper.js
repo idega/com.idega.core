@@ -140,7 +140,7 @@ addChooserObject = function(id, objectClass, hiddenInputAttribute, chooserValueV
 	}
 }
 
-ChooserHelper.prototype.chooseObject = function(elementId, attributeId, attributeValue) {
+ChooserHelper.prototype.chooseObject = function(elementId, attributeId, attributeValue, addToProperties) {
 	var element = document.getElementById(elementId);
 	if (element == null) {
 		return null;
@@ -159,11 +159,14 @@ ChooserHelper.prototype.chooseObject = function(elementId, attributeId, attribut
 		return null;
 	}
 	
+	if (addToProperties) {
+		this.addAdvancedProperty(attributeId, value);
+	}
 	return value;
 }
 
 ChooserHelper.prototype.chooseObjectWithHidden = function(elementId, attributeId, attributeValue, hiddenName) {
-	var value = this.chooseObject(elementId, attributeId, attributeValue);
+	var value = this.chooseObject(elementId, attributeId, attributeValue, false);
 	if (value == null) {
 		return;
 	}
@@ -197,7 +200,7 @@ ChooserHelper.prototype.setChooserView = function(elementId, attributeValue) {
 	if (elementId == null || attributeValue == null || this.CHOOSER_VALUE_VIEWER_ID == null) {
 		return;
 	}
-	var value = this.chooseObject(elementId, attributeValue, attributeValue);
+	var value = this.chooseObject(elementId, attributeValue, attributeValue, false);
 	if (value == null) {
 		alert('ChooserHelper.js: Error: no value found to set!');
 		return;

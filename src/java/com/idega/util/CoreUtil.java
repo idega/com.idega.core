@@ -1,12 +1,11 @@
 package com.idega.util;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.myfaces.renderkit.html.util.AddResource;
-import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -42,24 +41,24 @@ public class CoreUtil {
 		}
 	}
 	
-	public static void addJavaScriptForChooser(IWContext iwc) {
-		AddResource adder = AddResourceFactory.getInstance(iwc);
-		
+	public static final List<String> getResourcesForChooser(IWContext iwc) {
 		IWBundle iwb = getCoreBundle();
 		
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
-		
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.DWR_ENGINE_SCRIPT);
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, "/dwr/interface/ChooserService.js");
-		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		List<String> resources = new ArrayList<String>();
+		resources.add(iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
+		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
+		resources.add("/dwr/interface/ChooserService.js");
+		resources.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		
 		IWBundle userBundle = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		if (userBundle != null) {
-			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
-			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
-			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/groupTree.js"));
-			adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, userBundle.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
+			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
+			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/GroupHelper.js"));
+			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/groupTree.js"));
+			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
 		}
+		
+		return resources;
 	}
 	
 	public static String getEncodedValue(String originalValue) {

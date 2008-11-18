@@ -5,6 +5,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.help.presentation.Help;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
@@ -13,6 +14,7 @@ import com.idega.presentation.ui.Window;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.util.ICUserConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.PresentationUtil;
 
 public class StyledIWAdminWindow extends Window {
 
@@ -161,6 +163,7 @@ private Image helpImage = null;
 		}
 		return T;
 	}
+	@Override
 	public void _main(IWContext iwc)throws Exception{
 		this.iwb = getBundle(iwc);
 		this.userBusiness = getUserBusiness(iwc);
@@ -168,10 +171,13 @@ private Image helpImage = null;
 		this.styleSrc = this.userBusiness.getUserApplicationStyleSheetURL();
 		this.parentPage.addStyleSheetURL(this.styleSrc);
 		
-		CoreUtil.addJavaScriptForChooser(iwc);
+		Layer container = new Layer();
+		container.add(PresentationUtil.getJavaScriptAction(PresentationUtil.getJavaScriptLinesLoadedLazily(CoreUtil.getResourcesForChooser(iwc), null)));
+		add(container);
 		
 		super._main(iwc);
 	}
+	@Override
 	public void main(IWContext iwc)throws Exception{
 	}
 	public Help getHelp(String helpTextKey) {
@@ -214,6 +220,7 @@ private Image helpImage = null;
 		}
 
 
+	@Override
 	public String getBundleIdentifier(){
 		return IW_BUNDLE_IDENTIFIER;
 	}
