@@ -116,7 +116,6 @@ public class DownloadLink extends Link {
 			}
     	}
     	
-    	
     	super.encodeBegin(context);
     }
     
@@ -148,8 +147,8 @@ public class DownloadLink extends Link {
 	}
     
     private String getValue(FacesContext context) {
-    	@SuppressWarnings("unused")
-    	String text = getValueBinding(LINK_TEXT) != null ? (String)getValueBinding(LINK_TEXT).getValue(context) : (String)context.getExternalContext().getRequestParameterMap().get(LINK_TEXT);
+    	String text = getValueBinding(LINK_TEXT) != null ? (String) getValueBinding(LINK_TEXT).getValue(context) :
+    		(String) context.getExternalContext().getRequestParameterMap().get(LINK_TEXT);
 		return text;
 	}
     
