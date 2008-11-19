@@ -16,13 +16,14 @@ import org.w3c.dom.Document;
 import org.xml.sax.InputSource;
 
 import com.idega.util.CoreConstants;
+import com.idega.util.IOUtil;
 import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
- * Last modified: $Date: 2008/11/07 08:06:29 $ by $Author: valdas $
+ * Last modified: $Date: 2008/11/19 12:25:19 $ by $Author: valdas $
  */
 public class XmlUtil {
 
@@ -87,18 +88,30 @@ public class XmlUtil {
 			return null;
 		}
 		
+		return getXMLDocument(stream);
+	}
+	
+	public static Document getXMLDocument(InputStream stream) {
+		if (stream == null) {
+			return null;
+		}
+		
 		Reader reader = null;
 		try {
 			reader = new InputStreamReader(stream, CoreConstants.ENCODING_UTF8);
 			return getDocumentBuilder().parse(new InputSource(reader));
 		} catch(Exception e) {
-			logger.log(Level.SEVERE, "Error generating XML document from source: " + source, e);
+			logger.log(Level.SEVERE, "Error generating XML document", e);
 		} finally {
-			closeStream(stream);
+			IOUtil.closeInputStream(stream);
 			closeReader(reader);
 		}
 		
 		return null;
+	}
+	
+	public static org.jdom.Document getJDOMXMLDocument(InputStream stream) {
+		return getJDOMXMLDocument(getXMLDocument(stream));
 	}
 	
 	public static org.jdom.Document getJDOMXMLDocument(String source) {
@@ -112,17 +125,6 @@ public class XmlUtil {
 		
 		DOMBuilder domBuilder = new DOMBuilder();
 		return domBuilder.build(document);
-	}
-	
-	private static void closeStream(InputStream stream) {
-		if (stream == null) {
-			return;
-		}
-		try {
-			stream.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	private static void closeReader(Reader reader) {
