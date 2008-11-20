@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.175 2008/11/15 15:34:39 anton Exp $
+ * $Id: PresentationObject.java,v 1.176 2008/11/20 17:56:37 anton Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/11/15 15:34:39 $ by $Author: anton $
+ * Last modified: $Date: 2008/11/20 17:56:37 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.175 $
+ * @version $Revision: 1.176 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -1387,25 +1387,27 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public String getLocalizedString(String key, IWUserContext iwuc)
 	{	
 		//TODO use such method everywhere for getting localised messages
-//		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, null, getBundleIdentifier());
+		IWContext iwc = (IWContext)iwuc;
+		return iwc.getIWMainApplication().getLocalisedStringMessage(key, null, getBundleIdentifier(), iwc.getCurrentLocale());
 		
-		IWResourceBundle bundle = getResourceBundle(iwuc);
-		if (bundle != null)
-		{
-			return bundle.getLocalizedString(key);
-		}
-		return null;
+//		IWResourceBundle bundle = getResourceBundle(iwuc);
+//		if (bundle != null)
+//		{
+//			return bundle.getLocalizedString(key);
+//		}
+//		return null;
 	}
 	public String getLocalizedString(String key, String defaultValue, IWUserContext iwuc)
 	{
-//		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, defaultValue, getBundleIdentifier());
+		IWContext iwc = (IWContext)iwuc;
+		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, defaultValue, getBundleIdentifier(), iwc.getCurrentLocale());
 				
-		IWResourceBundle bundle = getResourceBundle(iwuc);
-		if (bundle != null)
-		{
-			return bundle.getLocalizedString(key, defaultValue);
-		}
-		return null;
+//		IWResourceBundle bundle = getResourceBundle(iwuc);
+//		if (bundle != null)
+//		{
+//			return bundle.getLocalizedString(key, defaultValue);
+//		}
+//		return null;
 	}
 	public void setUseBuilderObjectControl(boolean use)
 	{

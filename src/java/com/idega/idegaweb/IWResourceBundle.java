@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.49 2008/11/20 16:14:56 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.50 2008/11/20 17:56:38 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -54,10 +54,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/11/20 16:14:56 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/11/20 17:56:38 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 
 @Service(IWResourceBundle.RESOURCE_IDENTIFIER)
@@ -65,6 +65,9 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
 public class IWResourceBundle extends ResourceBundle implements MessageResource {
 
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
+	
+	private static final String AUTO_INSERT_PROPERTY = RESOURCE_IDENTIFIER + "_autoinsert";
+	private static final String PRIORITY_PROPERTY = RESOURCE_IDENTIFIER + "_property";
 	
 	// ==================privates====================
 	Map<String, String> lookup;
@@ -77,7 +80,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	private static String slash = "/";
 	
 	private Level usagePriorityLevel = MessageResourceImportanceLevel.LAST_ORDER;
-	private boolean autoInsert = false;
+	private boolean autoInsert;
 
 	// private IWResourceBundle parentResourceBundle;
 
@@ -171,6 +174,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			else {
 				file = new File(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
 			}
+			
+			setAutoInsert(iwc.getApplicationSettings().getBoolean(AUTO_INSERT_PROPERTY, false));
 	
 			initialize(bundle, new FileInputStream(file), file, newLocale);
 		}

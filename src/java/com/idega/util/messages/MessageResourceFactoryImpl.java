@@ -46,7 +46,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
 		if(bundleIdentifier == null)
 			bundleIdentifier = MessageResource.NO_BUNDLE;
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = IWCacheManager2.getInstance(getIWMA()).getCache(CASHED_RESOURCES);
+		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		
 		Map<Locale, List<MessageResource>> bundleResources;
 		if(cashResources.containsKey(bundleIdentifier)) {
@@ -151,7 +151,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	private void sortResourcesByImportance() {
 		ResourceComparatorByLevel resourceComparatorByLevel = new ResourceComparatorByLevel();
 		
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = IWCacheManager2.getInstance(getIWMA()).getCache(CASHED_RESOURCES);
+		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		
 		for(String bundleIdentifier : cashResources.keySet()) {
 			Map<Locale, List<MessageResource>> bundleResources = cashResources.get(bundleIdentifier);
@@ -173,7 +173,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	
 	@SuppressWarnings("unchecked")
 	public List<MessageResource> getResourceListByStorageIdentifier(String storageIdentifier) {
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = IWCacheManager2.getInstance(getIWMA()).getCache(CASHED_RESOURCES);
+		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		
 		List<MessageResource> storageResources = new ArrayList<MessageResource>();
 		for(String bundleIdentifier : cashResources.keySet()) {
@@ -234,5 +234,10 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 				return GREATER;
 			} else return EQUAL;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
+		return IWCacheManager2.getInstance(getIWMA()).getCache(CASHED_RESOURCES);
 	}
 }
