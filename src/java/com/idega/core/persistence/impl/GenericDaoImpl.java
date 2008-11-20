@@ -8,6 +8,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
+import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -19,157 +20,181 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.17 $
- *
- * Last modified: $Date: 2008/10/11 14:30:39 $ by $Author: valdas $
+ * @version $Revision: 1.18 $
+ * 
+ *          Last modified: $Date: 2008/11/20 16:29:06 $ by $Author: civilis $
  */
 @Repository("genericDAO")
-@Transactional(readOnly=true)
+@Transactional(readOnly = true)
 public class GenericDaoImpl implements GenericDao {
 
 	private EntityManager entityManager;
-	private static final Logger logger = Logger.getLogger(GenericDaoImpl.class.getName());
-	
+	private static final Logger logger = Logger.getLogger(GenericDaoImpl.class
+			.getName());
+
 	protected EntityManager getEntityManager() {
-		
+
 		return entityManager;
 	}
-	
+
 	@PersistenceContext
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
-	
-	@Transactional(readOnly=false)
+
+	@Transactional(readOnly = false)
 	public void persist(Object product) {
 		entityManager.persist(product);
 	}
-	
-	@Transactional(readOnly=false)
-	public <T>T merge(T product) {
-		
+
+	@Transactional(readOnly = false)
+	public <T> T merge(T product) {
+
 		return entityManager.merge(product);
 	}
-	
+
 	public void refresh(Object product) {
 		entityManager.refresh(product);
 	}
-	
-	@Transactional(readOnly=true)
-	public <T>T find(Class<T> clazz, Object primaryKey) {
-		
+
+	@Transactional(readOnly = true)
+	public <T> T find(Class<T> clazz, Object primaryKey) {
+
 		return entityManager.find(clazz, primaryKey);
 	}
-	
-	@Transactional(readOnly=true)
+
+	@Transactional(readOnly = true)
 	public Query createNamedQuery(String queryName) {
 		return entityManager.createNamedQuery(queryName);
 	}
-	
-	@Transactional(readOnly=false)
+
+	@Transactional(readOnly = false)
 	public void remove(Object obj) {
-		
+
 		entityManager.remove(obj);
 	}
-	
-	@Transactional(readOnly=false)
+
+	@Transactional(readOnly = false)
 	public void mergeRemove(Object obj) {
-		
+
 		entityManager.remove(entityManager.merge(obj));
 	}
-	
-	@Transactional(readOnly=false)
+
+	@Transactional(readOnly = false)
 	public void flush() {
 		entityManager.flush();
 	}
-	
-	protected <Expected>Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
-		
+
+	protected <Expected> Expected getSingleResultByQuery(Query q,
+			Class<Expected> expectedReturnType, Param... params) {
+
 		for (Param param : params) {
-			
+
 			q.setParameter(param.getParamName(), param.getParamValue());
 		}
 
 		@SuppressWarnings("unchecked")
-		Expected result = (Expected)q.getSingleResult();
-		
+		Expected result = (Expected) q.getSingleResult();
+
 		return result;
 	}
-	
-	@SuppressWarnings("unchecked")
-	protected <Expected>List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
 
-		if(params != null)
+	@SuppressWarnings("unchecked")
+	protected <Expected> List<Expected> getResultListByQuery(Query q,
+			Class<Expected> expectedReturnType, Param... params) {
+
+		if (params != null)
 			for (Param param : params) {
-				
+
 				q.setParameter(param.getParamName(), param.getParamValue());
 			}
-		
+
 		final List<Expected> fresult;
-		
-		if(Long.class.equals(expectedReturnType)) {
+
+		if (Long.class.equals(expectedReturnType)) {
 
 			List<Object> result = q.getResultList();
-			
-			if(result != null) {
-			
+
+			if (result != null) {
+
 				List<Long> longsResult = new ArrayList<Long>(result.size());
-				
+
 				for (Object item : result) {
-					
+
 					if (item instanceof Long) {
-						longsResult.add((Long)item);
-						
+						longsResult.add((Long) item);
+
 					} else if (item instanceof BigInteger) {
-						
-						logger.log(Level.INFO, "Converting BigInteger: " + item + " to Long");
-						longsResult.add(Long.valueOf(((BigInteger) item).longValue()));
+
+						logger.log(Level.INFO, "Converting BigInteger: " + item
+								+ " to Long");
+						longsResult.add(Long.valueOf(((BigInteger) item)
+								.longValue()));
 					} else if (item instanceof BigDecimal) {
-						
-						logger.log(Level.INFO, "Converting BigDecimal: " + item + " to Long");
-						longsResult.add(Long.valueOf(((BigDecimal) item).longValue()));
+
+						logger.log(Level.INFO, "Converting BigDecimal: " + item
+								+ " to Long");
+						longsResult.add(Long.valueOf(((BigDecimal) item)
+								.longValue()));
 					} else if (item instanceof Integer) {
-						
-						logger.log(Level.INFO, "Converting Integer: " + item + " to Long");
+
+						logger.log(Level.INFO, "Converting Integer: " + item
+								+ " to Long");
 						longsResult.add(Long.valueOf(((Integer) item)));
 					} else {
-						
-						logger.log(Level.WARNING, "Unsupported -expected long- type="+item.getClass().getName()+", item="+item);
+
+						logger.log(Level.WARNING,
+								"Unsupported -expected long- type="
+										+ item.getClass().getName() + ", item="
+										+ item);
 					}
 				}
-				
-				fresult = (List<Expected>)longsResult;
+
+				fresult = (List<Expected>) longsResult;
 			} else {
 				fresult = null;
 			}
-			
+
 		} else {
 			fresult = q.getResultList();
 		}
-		
+
 		return fresult;
 	}
-	
-	
-	public <Expected>Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
-		
-		Query q = getEntityManager().createQuery(query);
-		return getSingleResultByQuery(q, expectedReturnType, params);
-	}
-	
-	public <Expected>Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
 
-		Query q = getEntityManager().createNamedQuery(namedQueryName);
-		return getSingleResultByQuery(q, expectedReturnType, params);
+	public <Expected> Expected getSingleResultByInlineQuery(String query,
+			Class<Expected> expectedReturnType, Param... params) {
+
+		try {
+			Query q = getEntityManager().createQuery(query);
+			return getSingleResultByQuery(q, expectedReturnType, params);
+
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
-	
-	public <Expected>List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
+
+	public <Expected> Expected getSingleResult(String namedQueryName,
+			Class<Expected> expectedReturnType, Param... params) {
+
+		try {
+			Query q = getEntityManager().createNamedQuery(namedQueryName);
+			return getSingleResultByQuery(q, expectedReturnType, params);
+
+		} catch (NoResultException e) {
+			return null;
+		}
+	}
+
+	public <Expected> List<Expected> getResultListByInlineQuery(String query,
+			Class<Expected> expectedReturnType, Param... params) {
 
 		Query q = getEntityManager().createQuery(query);
 		return getResultListByQuery(q, expectedReturnType, params);
 	}
-	
-	public <Expected>List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
+
+	public <Expected> List<Expected> getResultList(String namedQueryName,
+			Class<Expected> expectedReturnType, Param... params) {
 
 		Query q = getEntityManager().createNamedQuery(namedQueryName);
 		return getResultListByQuery(q, expectedReturnType, params);
