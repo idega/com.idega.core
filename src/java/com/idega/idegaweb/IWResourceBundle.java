@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.48 2008/11/18 11:04:39 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.49 2008/11/20 16:14:56 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -18,7 +18,6 @@ import java.io.InputStream;
 import java.text.MessageFormat;
 import java.util.Enumeration;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
@@ -29,6 +28,8 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
+import javax.naming.OperationNotSupportedException;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -37,6 +38,7 @@ import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
@@ -52,10 +54,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/11/18 11:04:39 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/11/20 16:14:56 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 
 @Service(IWResourceBundle.RESOURCE_IDENTIFIER)
@@ -151,23 +153,27 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 	}
 	
-	protected void initialize(String bundleIdentifier, Locale newLocale) throws IOException {
-		IWContext iwc = IWContext.getCurrentInstance();
-
-		if(newLocale == null)
-			newLocale = iwc.getCurrentLocale();
-		
-		IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getApplicationContext().getIWMainApplication();
-		IWBundle bundle = iwma.getBundle(bundleIdentifier);
-
-		if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
-			file = FileUtil.getFileAndCreateIfNotExists(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
+	public void initialize(String bundleIdentifier, Locale newLocale) throws IOException, OperationNotSupportedException {
+		if(bundleIdentifier == null || bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
+			throw new OperationNotSupportedException("Empty bundle is not supported supported");
+		} else {
+			IWContext iwc = IWContext.getCurrentInstance();
+	
+			if(newLocale == null)
+				newLocale = iwc.getCurrentLocale();
+			
+			IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getApplicationContext().getIWMainApplication();
+			IWBundle bundle = iwma.getBundle(bundleIdentifier);
+	
+			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
+				file = FileUtil.getFileAndCreateIfNotExists(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
+			}
+			else {
+				file = new File(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
+			}
+	
+			initialize(bundle, new FileInputStream(file), file, newLocale);
 		}
-		else {
-			file = new File(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
-		}
-
-		initialize(bundle, new FileInputStream(file), file, newLocale);
 	}
 
 	/**
@@ -193,6 +199,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	/**
 	 * Implementation of ResourceBundle.getKeys.
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public Enumeration getKeys() {
 		Enumeration result = null;
@@ -292,7 +299,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	@Deprecated
 	public String getLocalizedString(String key) {
 		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, null, bundleIdentifier);
+		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
+		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, null, bundleIdentifier, locale);
 	}
 	
 	/**
@@ -321,7 +329,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier);
+		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
+		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier, locale);
 	}
 	
 	/**
@@ -459,7 +468,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	public void setString(String key, String value) {
 		this.lookup.put(key, value);
 		checkBundleLocalizedString(key, value);
-		this.storeState();
+		storeState();
 	}
 	
 	public void setStrings(Map<String, String> values) {
@@ -467,12 +476,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			this.lookup.put(key, values.get(key));
 			checkBundleLocalizedString(key, values.get(key));
 		}
-		this.storeState();
+		storeState();
 	}
 
 	public boolean removeString(String key) {
 		if (this.lookup.remove(key) != null) {
-			this.storeState();
+			storeState();
 			return true;
 		}
 		return false;
@@ -609,29 +618,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	/**
 	 * @return object that was found in resource or null if nothing is found
 	 */
-	public Object getMessage(Object key, String bundleIdentifier) {
-		if(bundleIdentifier.equals(NO_BUNDLE))
-			return null;
-		try {
-			initialize(bundleIdentifier, null);
-			return getBundleLocalizedString(String.valueOf(key), null);
-		} catch (Exception e) {
-			return null;
-		} 
-	}
-
-	/**
-	 * @return object that was found in resource or null if nothing is found
-	 */
-	public Object getMessage(Object key, String bundleIdentifier, Locale locale) {
-		if(bundleIdentifier.equals(NO_BUNDLE))
-			return null;
-		try {
-			initialize(bundleIdentifier, locale);
-			return getBundleLocalizedString(String.valueOf(key), null);
-		} catch (Exception e) {
-			return null;
-		}
+	public Object getMessage(Object key) {
+		return getBundleLocalizedString(String.valueOf(key), null);
 	}
 
 	public boolean isAutoInsert() {
@@ -649,9 +637,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	/**
 	 * @return object that was set or null if there was a failure setting object
 	 */
-	public Object setMessage(Object key, Object value, String bundleIdentifier) {
+	public Object setMessage(Object key, Object value) {
 		try {
-			initialize(bundleIdentifier, null);
 			setString(String.valueOf(key), String.valueOf(value));
 			return value;
 		} catch (Exception e) {
@@ -660,24 +647,10 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		} 
 	}
 
-	/**
-	 * @return object that was set or null if there was a failure setting object
-	 */
-	public Object setMessage(Object key, Object value, String bundleIdentifier, Locale locale) {
-		try {
-			initialize(bundleIdentifier, locale);
-			setString(String.valueOf(key), String.valueOf(value));
-			return value;
-		} catch (Exception e) {
-			e.printStackTrace();
-			return null;
-		} 
-	}
-
-	public void setMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale) {
+	public void setMessages(Map<Object, Object> values) {
 		try {
 			Map<String, String> stringMap = new HashMap<String, String>();
-			initialize(bundleIdentifier, locale);
+
 			for(Object key : values.keySet()) {
 				stringMap.put(String.valueOf(key), String.valueOf(values.get(key)));
 			}
@@ -694,23 +667,16 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Object> getAllLocalisedKeys(String bundleIdentifier, Locale locale) {
-		if(bundleIdentifier.equals(MessageResource.NO_BUNDLE))
-			return new HashSet<Object>();
-		try {
-			initialize(bundleIdentifier, locale);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public Set<Object> getAllLocalisedKeys() {
 		return getLookup().keySet();
 	}
 	
-	public void removeMessage(Object key, String bundleIdentifier, Locale locale) {
-		try {
-			initialize(bundleIdentifier, locale);
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+	public void removeMessage(Object key) {
+//		try {
+//			initialize(bundleIdentifier, locale);
+//		} catch (IOException e) {
+//			e.printStackTrace();
+//		}
 		getLookup().remove(key);
 		this.storeState();
 	}

@@ -15,15 +15,9 @@ import java.util.Map;
  */
 
 public interface MessageResourceFactory {
-	public void setResourceList(List<MessageResource> resources);
-	public List<MessageResource> getResourceList();
+	public void setUninitializedMessageResources(List<MessageResource> uninitializedMessageResources);
 	
-	/**
-	 * Gets localised message for specified locale
-	 * @return object that was found in resource and/or set to it or valueIfNotFound object in case no messages were found 
-	 * 		   or autoinserted
-	 */
-	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier);
+	public List<MessageResource> getUninitializedMessageResources();
 	
 	/**
 	 * Gets localised message for specified locale
@@ -31,9 +25,18 @@ public interface MessageResourceFactory {
 	 * 		   or autoinserted
 	 */
 	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale);
-	public Object setLocalisedMessage(Object key, Object value, String bundleIdentifier);
+	
 	public Object setLocalisedMessage(Object key, Object value, String bundleIdentifier, Locale locale);
+	
+	public void setLocalisedMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale);
+	
 	public Map<String, Object> setLocalisedMessageToAutoInsertRes(Object key, Object value, String bundleIdentifier, Locale locale);
+	
 	public void removeLocalisedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale);
-	public MessageResource getResourceByIdentifier(String identifier);
+	
+	public MessageResource getResource(String storageIdentifier, String bundleIdentifier, Locale locale);
+	
+	public List<MessageResource> getResourceListByStorageIdentifier(String storageIdentifier);
+	
+	public List<MessageResource> getResourceListByBundleAndLocale(String bundleIdentifier, Locale locale);
 }

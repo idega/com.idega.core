@@ -1,9 +1,12 @@
 package com.idega.util.messages;
 
+import java.io.IOException;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+
+import javax.naming.OperationNotSupportedException;
 
 /**
  *
@@ -25,32 +28,18 @@ public interface MessageResource {
 	/**
 	 * @return object that was set or null if there was a failure setting object
 	 */
-	public Object setMessage(Object key, Object value, String bundleIdentifier);
+	public Object setMessage(Object key, Object value);
 	
-	/**
-	 * @return object that was set or null if there was a failure setting object
-	 */
+	public void setMessages(Map<Object, Object> values);
 	
-	public Object setMessage(Object key, Object value, String bundleIdentifier, Locale locale);
+	public Set<Object> getAllLocalisedKeys();
 	
-	public void setMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale);
-	
-	public Set<Object> getAllLocalisedKeys(String bundleIdentifier, Locale locale);
-	
+
 	/**
 	 * @param key - message key
-	 * @param bundleIdentifier - bundle in which messages should be located
-	 * @return object that was found in resource, null - if there are no values with specified key
-	 */
-	public Object getMessage(Object key, String bundleIdentifier);
-	
-	/**
-	 * @param key - message key
-	 * @param bundleIdentifier - bundle in which messages should be located
-	 * @param locale - message locale
 	 * @return object that was found in resource, null - if there are no values with specified key
 	 */	
-	public Object getMessage(Object key, String bundleIdentifier, Locale locale);
+	public Object getMessage(Object key);
 	
 //	/**
 //	 * @param key - message key
@@ -61,11 +50,13 @@ public interface MessageResource {
 //	 */
 //	public Object getMessage(Object key, String defaultValue, String bundleIdentifier, Locale locale);
 	
-	public void removeMessage(Object key, String bundleIdentifier, Locale locale);
+	public void removeMessage(Object key);
 	
 	public boolean isAutoInsert();
 	
 	public void setAutoInsert(boolean value);
 	
 	public String getIdentifier();
+	
+	public void initialize(String bundleIdentifier, Locale locale) throws IOException, OperationNotSupportedException;
 }

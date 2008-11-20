@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.190 2008/11/05 16:39:41 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.191 2008/11/20 16:14:56 anton Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -104,10 +104,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
+ *  Last modified: $Date: 2008/11/20 16:14:56 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.190 $
+ * @version $Revision: 1.191 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2416,13 +2416,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @param valueIfNotFound - value that is set to message resource (if autoinsert is enabled) and/or returned in case if not found
 	 * @param bundleIdentifier - bundleIdentifier for which message should belong
 	 */
-	public String getLocalisedStringMessage(String key, String valueIfNotFound, String bundleIdentifier) {
-		Object foundValue = getMessageFactory().getLocalisedMessage(key, valueIfNotFound, bundleIdentifier);
+	public String getLocalisedStringMessage(String key, String valueIfNotFound, String bundleIdentifier, Locale locale) {
+		Object foundValue = getMessageFactory().getLocalisedMessage(key, valueIfNotFound, bundleIdentifier, locale);
 		return String.valueOf(foundValue);
 	}
 	
 	public List<MessageResource> getAvailableMessageStorageResources() {
-		return getMessageFactory().getResourceList();
+		return getMessageFactory().getUninitializedMessageResources();
 	}
 	
 	public MessageResourceFactory getMessageFactory() {
