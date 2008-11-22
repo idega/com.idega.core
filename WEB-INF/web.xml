@@ -326,6 +326,41 @@
 		</filter-mapping>
 		
 	<!-- End of GZIPFilter -->
+	
+	<!-- ResponseHeaderFilter , adds the defined headers to the response for the mapped URIs. 
+	     Here is an example where we set a cache-control header on all bundle resources 
+	<filter>
+	  <filter-name>ResponseHeaderFilter</filter-name>
+	  <filter-class>com.idega.servlet.filter.ResponseHeaderFilter</filter-class>
+	  <init-param>
+	    <param-name>Cache-Control</param-name>
+	    <param-value>max-age=3600</param-value>
+	  </init-param>
+	</filter>
+	
+
+	<filter-mapping>
+	  <filter-name>ResponseHeaderFilter</filter-name>
+	  <url-pattern>/idegaweb/bundles/*</url-pattern>
+	</filter-mapping>
+End of ResponseHeaderFilter -->
+
+
+	<filter> 
+	  <filter-name>ExpiresFilter</filter-name> 
+	  <filter-class>com.idega.servlet.filter.ExpiresFilter</filter-class> 
+	  <init-param> 
+	   <param-name>expires</param-name> 
+	   <param-value>1800</param-value> 
+	  </init-param> 
+	</filter>
+	
+	<filter-mapping>
+	  <filter-name>ExpiresFilter</filter-name>
+	  <url-pattern>/idegaweb/bundles/*</url-pattern>
+	</filter-mapping>
+	
+	
 
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
