@@ -39,4 +39,6 @@ public interface MessageResourceFactory {
 	public List<MessageResource> getResourceListByStorageIdentifier(String storageIdentifier);
 	
 	public List<MessageResource> getResourceListByBundleAndLocale(String bundleIdentifier, Locale locale);
+	
+	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale);
 }

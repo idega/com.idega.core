@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.50 2008/11/20 17:56:38 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.51 2008/11/22 10:11:45 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -54,13 +54,13 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/11/20 17:56:38 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/11/22 10:11:45 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 
-@Service(IWResourceBundle.RESOURCE_IDENTIFIER)
+@Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class IWResourceBundle extends ResourceBundle implements MessageResource {
 
@@ -77,7 +77,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	private File file;
 	private IWBundle iwBundleParent;
 	private String resourcesURL;
-	private static String slash = "/";
+	
+	private String identifier = RESOURCE_IDENTIFIER;
 	
 	private Level usagePriorityLevel = MessageResourceImportanceLevel.LAST_ORDER;
 	private boolean autoInsert;
@@ -522,26 +523,26 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	public Image getImage(String urlInBundle, String name, int width, int height) {
-		return new Image(getResourcesURL() + slash + urlInBundle, name, width, height);
+		return new Image(getResourcesURL() + CoreConstants.SLASH + urlInBundle, name, width, height);
 	}
 
 	public Image getImage(String urlInBundle, String overUrlInBundle, String imageName, String overImageName) {
-		return new Image(imageName, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
+		return new Image(imageName, getResourcesURL() + CoreConstants.SLASH + urlInBundle, getResourcesURL() + CoreConstants.SLASH + overUrlInBundle);
 	}
 
 	public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height) {
-		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
+		Image returnImage = new Image(name, getResourcesURL() + CoreConstants.SLASH + urlInBundle, getResourcesURL() + CoreConstants.SLASH + overUrlInBundle);
 		returnImage.setWidth(width);
 		returnImage.setHeight(height);
 		return returnImage;
 	}
 
 	public Image getImage(String urlInBundle, String name) {
-		return new Image(getResourcesURL() + slash + urlInBundle, name);
+		return new Image(getResourcesURL() + CoreConstants.SLASH + urlInBundle, name);
 	}
 
 	public Image getImage(String urlInBundle, String key, String defaultKeyValue) {
-		return new Image(getResourcesURL() + slash + urlInBundle, getLocalizedString(key, defaultKeyValue));
+		return new Image(getResourcesURL() + CoreConstants.SLASH + urlInBundle, getLocalizedString(key, defaultKeyValue));
 	}
 
 	private void setResourcesURL(String url) {
@@ -613,7 +614,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	public String getIdentifier() {
-		return RESOURCE_IDENTIFIER;
+		return identifier;
+	}
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
 	}
 
 	public Level getLevel() {

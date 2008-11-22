@@ -81,6 +81,11 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		}
 	}
 	
+	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale) {
+		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
+		cashResources.get(bundleIdentifier).get(locale).add(resource);
+	}
+	
 	/**
 	 * Gets localised message for current locale
 	 * @return object that was found in resource and/or set to it or valueIfNotFound object in case no messages were found 
