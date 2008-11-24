@@ -58,5 +58,7 @@ public interface MessageResource {
 	
 	public String getIdentifier();
 	
+	public void setIdentifier(String identifier);
+	
 	public void initialize(String bundleIdentifier, Locale locale) throws IOException, OperationNotSupportedException;
 }

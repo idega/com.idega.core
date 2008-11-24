@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.50 2008/11/17 08:40:07 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.51 2008/11/24 09:16:09 anton Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -49,8 +49,11 @@ import com.idega.presentation.Image;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.messages.MessageResource;
+import com.idega.util.messages.MessageResourceImportanceLevel;
 import com.idega.xml.XMLElement;
 /**
  * The Default implementation if the IWBundle class to serve as a wrapper for an idegaWeb Bundle.
@@ -673,20 +676,30 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
-		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
+		//TODO make creation of custom resource in resource factory, add to localizer.
+//		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
+		MessageResource theReturn = CoreUtil.getIWContext().getIWMainApplication().getMessageFactory().getResource("default_iwbundle_resource", getBundleIdentifier(), locale);
+		IWContext iwc = IWContext.getCurrentInstance();
+		
 		try
 		{
 			if (theReturn == null)
 			{
 				theReturn = initializeResourceBundle(locale);
-				getResourceBundles().put(locale, theReturn);
+				theReturn.setIdentifier("default_iwbundle_resource");
+				theReturn.setAutoInsert(false);
+				theReturn.setLevel(MessageResourceImportanceLevel.MIDDLE_ORDER);
+				
+				iwc.getIWMainApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
+				
+//				getResourceBundles().put(locale, theReturn);
 			}
 		}
 		catch (Exception ex)
 		{
 			LOGGER.log(Level.WARNING, null, ex);
 		}
-		return theReturn;
+		return (IWResourceBundle)theReturn;
 	}
 
 	/**

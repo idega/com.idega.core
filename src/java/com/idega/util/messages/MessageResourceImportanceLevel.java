@@ -16,6 +16,8 @@ import java.util.logging.Level;
 
 public class MessageResourceImportanceLevel extends Level {
 	public static final Level FIRST_ORDER = new MessageResourceImportanceLevel("FIRST_ORDER", 1000);
+	public static final Level SECOND_ORDER = new MessageResourceImportanceLevel("SECOND_ORDER", 900);
+	public static final Level THIRD_ORDER = new MessageResourceImportanceLevel("THIRD_ORDER", 800);
 	public static final Level MIDDLE_ORDER = new MessageResourceImportanceLevel("MIDDLE_ORDER", 500);
 	public static final Level LAST_ORDER = new MessageResourceImportanceLevel("LAST_ORDER", 1);
 	public static final Level OFF = Level.OFF;
@@ -29,6 +31,8 @@ public class MessageResourceImportanceLevel extends Level {
 	public static List<Level> levelList() {
 		List<Level> levels = new ArrayList<Level>(4);
 		levels.add(FIRST_ORDER);
+		levels.add(SECOND_ORDER);
+		levels.add(THIRD_ORDER);
 		levels.add(MIDDLE_ORDER);
 		levels.add(LAST_ORDER);
 		levels.add(OFF);

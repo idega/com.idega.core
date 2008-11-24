@@ -84,6 +84,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale) {
 		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		cashResources.get(bundleIdentifier).get(locale).add(resource);
+		sortResourcesByImportance();
 	}
 	
 	/**
