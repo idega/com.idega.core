@@ -6,6 +6,10 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
+ * 
+ * This should be used ONLY when gluing old ibo with spring. See LoginSession
+ * 
+ * 
  * <p>Annotates spring managed beans interfaces for the purpose to let legacy non-spring objects, 
  * which were previously depending on IBO beans, lookup spring beans, instead of IBO beans, using their interface.</p>
  * 
@@ -13,9 +17,9 @@ import java.lang.annotation.Target;
  * then <b>UnsupportedOperationException</b> will be thrown.</p>
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/07/02 19:25:49 $ by $Author: civilis $
+ * Last modified: $Date: 2008/11/30 08:05:22 $ by $Author: civilis $
  *
  */
 @Retention(RetentionPolicy.RUNTIME)
