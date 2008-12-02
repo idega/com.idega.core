@@ -7,6 +7,8 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -17,14 +19,15 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.IWDatePicker;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.StringUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
  * Handler for date (range) picker: converts date to storable format and user friendly format.
  *
- * Last modified: $Date: 2008/07/03 13:09:20 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/02 06:39:39 $ by $Author: valdas $
  */
 public class IWDatePickerHandler implements ICPropertyHandler {
 	
@@ -70,8 +73,12 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		return null;
 	}
 	
+	public static final Date getParsedDateByCurrentLocale(String source) {
+		return getParsedDateByCurrentLocale(source, null);
+	}
+	
 	private static final Date getParsedDateByCurrentLocale(String source, Locale locale) {
-		if (source == null || CoreConstants.EMPTY.equals(source)) {
+		if (StringUtil.isEmpty(source)) {
 			return null;
 		}
 		
@@ -88,6 +95,8 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		try {
 			return DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
 		} catch(Exception e) {
+			Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: " + source + " by locale: " +
+					locale.toString(), e);
 		}
 		return null;
 	}

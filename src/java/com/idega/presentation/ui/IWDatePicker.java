@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2008/10/21 10:41:28 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/02 06:39:39 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -73,8 +73,8 @@ public class IWDatePicker extends TextInput {
 			
 			//	Custom date
 			if (iwDate != null) {
-				initAction.append(", defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay())
-							.append(")");
+				initAction.append(", defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ")
+							.append(iwDate.getDay()).append(")");
 			}
 			
 			//	Calendar image
