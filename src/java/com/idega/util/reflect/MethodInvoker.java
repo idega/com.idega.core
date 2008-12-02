@@ -177,9 +177,12 @@ public Object getInstance() { return new MethodInvoker();}};
 		}
 		
 		Boolean booleanValue = null;
-		try {
-			booleanValue = Boolean.valueOf(value);
-		} catch(Exception e) {}
+		if (Boolean.TRUE.toString().equalsIgnoreCase(value)) {
+			booleanValue = Boolean.TRUE;
+		}
+		else if (Boolean.FALSE.toString().equalsIgnoreCase(value)) {
+			booleanValue = Boolean.FALSE;
+		}
 		if (booleanValue != null) {
 			return booleanValue;
 		}
