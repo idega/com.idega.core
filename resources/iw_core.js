@@ -1163,10 +1163,10 @@ IWCORE.stopEventBubbling = function(event) {
 	}
 }
 
-IWCORE.insertRenderedComponent = function(component, container, callback) {
+IWCORE.insertRenderedComponent = function(component, options) {
 	if (component == null) {
-		if (callback) {
-			callback();
+		if (options.callback) {
+			options.callback();
 		}
 					
 		reloadPage();
@@ -1181,32 +1181,44 @@ IWCORE.insertRenderedComponent = function(component, container, callback) {
 				alert(component.errorMessage);
 			}
 			
-			if (callback) {
-				callback();
+			if (options.callback) {
+				options.callback();
 			}
 			
 			return false;
 		}
 		
 		var parentContainer = null;
-		if (typeof(container) == 'string') {
-			parentContainer = jQuery('#' + container)
+		if (typeof(options.container) == 'string') {
+			parentContainer = jQuery('#' + options.container)
 		}
 		else {
-			parentContainer = jQuery(container);
+			parentContainer = jQuery(options.container);
 		}
 		if (parentContainer == null || parentContainer.length == 0) {
-			if (callback) {
-				callback();
+			if (options.callback) {
+				options.callback();
 			}
 			
 			return false;
 		}
 
-		parentContainer.html(jQuery(component.html))
+		try {
+			if (options.append) {
+				parentContainer.append(jQuery(component.html));
+			}
+			else if (options.rewrite) {
+				parentContainer.html(jQuery(component.html))
+			}
+			else {
+				parentContainer.replaceWith(jQuery(component.html));
+			}
+		} catch(e) {
+			parentContainer.replaceWith(jQuery(component.html));
+		}
 		
-		if (callback) {
-			callback();
+		if (options.callback) {
+			options.callback();
 		}
 	});
 }
@@ -1215,7 +1227,7 @@ IWCORE.renderComponent = function(uuid, container, callback) {
 	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
 		BuilderService.getRenderedComponentById(uuid, window.location.pathname, {
 			callback: function(component) {
-				IWCORE.insertRenderedComponent(component, container, callback);
+				IWCORE.insertRenderedComponent(component, {container: container, callback: callback, replace: true});
 			},
 			errorHandler: function() {
 				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
@@ -1226,11 +1238,11 @@ IWCORE.renderComponent = function(uuid, container, callback) {
 	});
 }
 
-IWCORE.getRenderedComponentByClassName = function(className, properties, container, callback) {
+IWCORE.getRenderedComponentByClassName = function(options) {
 	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
-		BuilderService.getRenderedComponentByClassName(className, properties, {
+		BuilderService.getRenderedComponentByClassName(options.className, options.properties, {
 			callback: function(component) {
-				IWCORE.insertRenderedComponent(component, container, callback);
+				IWCORE.insertRenderedComponent(component, options);
 			},
 			errorHandler: function() {
 				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
