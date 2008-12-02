@@ -144,9 +144,9 @@ public class PresentationUtil {
 		
 		StringBuffer action = new StringBuffer("LazyLoader.loadMultiple([");
 		for (int i = 0; i < scriptUris.size(); i++) {
-			action.append("'").append(scriptUris.get(i)).append("'");
+			action.append(CoreConstants.QOUTE_SINGLE_MARK).append(scriptUris.get(i)).append(CoreConstants.QOUTE_SINGLE_MARK);
 			if ((i + 1) < scriptUris.size()) {
-				action.append(", ");
+				action.append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 			}
 		}
 		
