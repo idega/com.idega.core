@@ -1,5 +1,5 @@
 /*
- * $Id: SearchResults.java,v 1.23 2007/10/03 22:59:20 eiki Exp $ Created on Jan
+ * $Id: SearchResults.java,v 1.24 2008/12/03 09:38:35 laddi Exp $ Created on Jan
  * 17, 2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -25,6 +25,7 @@ import com.idega.core.search.business.SearchQuery;
 import com.idega.core.search.business.SearchResult;
 import com.idega.core.search.data.AdvancedSearchQuery;
 import com.idega.core.search.data.SimpleSearchQuery;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.CSSSpacer;
@@ -33,9 +34,10 @@ import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
+import com.idega.util.PresentationUtil;
 
 /**
- * Last modified: $Date: 2007/10/03 22:59:20 $ by $Author: eiki $
+ * Last modified: $Date: 2008/12/03 09:38:35 $ by $Author: laddi $
  * 
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
@@ -48,7 +50,7 @@ import com.idega.presentation.text.Text;
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
  * 
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class SearchResults extends Block {
 
@@ -149,6 +151,7 @@ public class SearchResults extends Block {
 	/**
 	 * @return Returns the styleClass.
 	 */
+	@Override
 	public String getStyleClass() {
 		return this.styleClass;
 	}
@@ -157,6 +160,7 @@ public class SearchResults extends Block {
 	 * @param styleClass
 	 *          The styleClass to set.
 	 */
+	@Override
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
@@ -175,9 +179,13 @@ public class SearchResults extends Block {
 	 * 
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 		IWResourceBundle iwrb = IWContext.getInstance().getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
+		IWBundle iwb = IWContext.getInstance().getIWMainApplication().getCoreBundle();
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/search.css"));
+		
 		if (isSimpleSearch(iwc) || isAdvancedSearch(iwc)) {
 			CSSSpacer spacer = new CSSSpacer();
 			Layer container = new Layer();

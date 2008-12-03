@@ -1,5 +1,5 @@
 /*
- * $Id: ExpandContainer.java,v 1.7 2008/04/24 23:44:14 laddi Exp $
+ * $Id: ExpandContainer.java,v 1.8 2008/12/03 09:38:35 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -14,7 +14,10 @@ import java.io.IOException;
 import java.util.Iterator;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
+import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.text.Heading4;
+import com.idega.util.PresentationUtil;
 
 /**
  * <p>
@@ -114,6 +117,9 @@ public ExpandContainer() {
 	
 	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
+		IWContext iwc = IWContext.getIWContext(context);
+		IWBundle iwb = IWContext.getInstance().getIWMainApplication().getCoreBundle();
+		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/expandcontainer.css"));
 		
 //		Script script = new Script();
 //		script.addFunction("expandMinimize", getJavascript());
