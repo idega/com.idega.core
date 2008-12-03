@@ -14,6 +14,7 @@ public class PresentationUtil {
 	public static final String ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_HEADER = "javaScriptSourceLineForHeaderAttribute";
 	public static final String ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY = "javaScriptActionForBodyAttribute";
 	public static final String ATTRIBUTE_CSS_SOURCE_LINE_FOR_HEADER = "cssSourceLineForHeaderAttribute";
+	public static final String ATTRIBUTE_ADD_CSS_DIRECTLY = "addCSSFilesDirectlyToPage";
 	
 	public static boolean addJavaScriptSourcesLinesToHeader(IWContext iwc, List<String> scriptsUris) {
 		if (iwc == null || scriptsUris == null) {
