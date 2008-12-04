@@ -103,6 +103,10 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 				}
 			}
 		}
+
+		if(valueIfNotFound == null) {
+			return null;
+		}
 		
 		//Autoinserting message in case none of resources has it
 		for(MessageResource resource : resources) {
