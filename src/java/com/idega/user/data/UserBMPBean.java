@@ -1307,6 +1307,17 @@ public void delete() throws SQLException {
 		return idoFindPKsByQuery(query);
 	}
 	
+	public Collection ejbFindAllByPersonalId(String personalId) throws FinderException {
+		Table users = new Table(this);
+		
+		SelectQuery query = new SelectQuery(users);
+		query.addColumn(users.getColumn(getIDColumnName()));
+		
+		query.addCriteria(new MatchCriteria(users.getColumn(getColumnNamePersonalID()), MatchCriteria.EQUALS, personalId));
+		
+		return idoFindPKsByQuery(query);
+	}
+	
 	public Collection ejbFindUsersByEmail(String emailAddress, boolean useLoweredValue, boolean useLikeExpression) throws FinderException {
 		String sql = getUsersByEmailSqlQuery(emailAddress, useLoweredValue, useLikeExpression);
  		return idoFindPKsBySQL(sql);

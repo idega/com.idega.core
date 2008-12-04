@@ -309,4 +309,12 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+
+
+	public Collection<User> findAllByPersonalID(String personalId) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.util.Collection ids = ((UserBMPBean) entity).ejbFindAllByPersonalId(personalId);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }
