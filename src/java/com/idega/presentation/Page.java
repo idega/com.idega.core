@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.174 2008/11/18 09:09:42 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.175 2008/12/05 07:01:31 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -53,8 +53,10 @@ import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
 import com.idega.util.PresentationUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
@@ -67,10 +69,10 @@ import com.idega.util.datastructures.QueueMap;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/11/18 09:09:42 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/05 07:01:31 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.174 $
+ * @version $Revision: 1.175 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -635,9 +637,16 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *          The new styleSheetURL value
 	 */
 	public void setStyleSheetURL(String styleSheetURL) {
-		
-		if(styleSheetURL == null)
+		if (StringUtil.isEmpty(styleSheetURL)) {
 			return;
+		}
+		
+		try {
+			Object o = ELUtil.getInstance().evaluateExpression(styleSheetURL);
+			if (o instanceof String) {
+				styleSheetURL = o.toString();
+			}
+		} catch(Exception e) {}
 		
 		int index = styleSheetURL.indexOf(",");
 		while (index > -1) {
@@ -2243,16 +2252,25 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param urls
 	 */
 	public void setJavascriptURLs(String urls) {
-		if (urls != null) {
-			int index = urls.indexOf(",");
-			while (index > -1) {
-				String tmp = urls.substring(0, index);
-				addJavascriptURL(tmp.trim());
-				urls = urls.substring(index + 1);
-				index = urls.indexOf(",");
-			}
-			addJavascriptURL(urls.trim());
+		if (StringUtil.isEmpty(urls)) {
+			return;
 		}
+		
+		try {
+			Object o = ELUtil.getInstance().evaluateExpression(urls);
+			if (o instanceof String) {
+				urls = o.toString();
+			}
+		} catch(Exception e) {}
+		
+		int index = urls.indexOf(CoreConstants.COMMA);
+		while (index > -1) {
+			String tmp = urls.substring(0, index);
+			addJavascriptURL(tmp.trim());
+			urls = urls.substring(index + 1);
+			index = urls.indexOf(CoreConstants.COMMA);
+		}
+		addJavascriptURL(urls.trim());
 	}
 
 	/*
