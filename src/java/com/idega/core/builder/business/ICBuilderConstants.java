@@ -42,4 +42,10 @@ public class ICBuilderConstants {
 	/**	Calendar stuff **/
 	public static final String CALENDAR_EVENTS_ADVANCED_PROPERTY_KEY = "calendareventtype";
 	public static final String CALENDAR_LEDGERS_ADVANCED_PROPERTY_KEY = "calendarledgertype";
+	
+	/** Builder **/
+	public static final String IC_OBJECT_INSTANCE_ID_PARAMETER = "ic_object_instance_id_par";
+	public static final String IB_CONTROL_PARAMETER = "ib_control_par";
+	public static final String ACTION_EDIT = "ACTION_EDIT";
+	public static final String UI_COMPONENT_IS_IN_LIGHTBOX = "uiComponentIsInLightBox";
 }
