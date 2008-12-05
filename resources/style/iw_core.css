@@ -1,5 +1,14 @@
 /*** idegaWeb Core CSS classes ***/
 
+form {
+	margin-top: 0px;
+	margin-bottom: 0px;
+}
+
+img {
+	border: 0;
+}
+
 /** BEGIN: Style for com.idega.presentation.CSSSpacer element used in the beginning and end of containers that use float-ing elements**/
 
 .spacer {
