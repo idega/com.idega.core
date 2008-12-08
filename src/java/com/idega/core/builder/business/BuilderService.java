@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.65 2008/12/05 07:00:49 valdas Exp $
+ * $Id: BuilderService.java,v 1.66 2008/12/08 06:51:44 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -317,6 +317,8 @@ public interface BuilderService extends IBOService
 	public abstract void renameRegion(String pageKey, String region_id, String region_label, String new_region_id, String new_region_label);
 	
 	public boolean setModuleProperty(String pageKey, String moduleId, String propertyName, String[] properties);
+	
+	public boolean setLocalizedText(String pageUri, String moduleId, String text);
 	
 	public boolean removeAllBlockObjectsFromCache(IWContext iwc);
 	
