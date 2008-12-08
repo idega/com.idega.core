@@ -20,8 +20,6 @@ import org.springframework.stereotype.Service;
 
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
-import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -40,7 +38,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	@Autowired private List<MessageResource> uninitializedMessageResources;
 	
 	private static final String CASHED_RESOURCES = "cashed_resources";
-	private IWContext iwc;
 	
 	@SuppressWarnings("unchecked")
 	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
@@ -212,12 +209,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		}
 	}
 	
-	private IWMainApplication getIWMA() {
-		if(iwc == null) {
-			iwc = CoreUtil.getIWContext();
-		}
-
-		IWMainApplication iwma = iwc.getIWMainApplication();
+	private IWMainApplication getIWMainApplication() {
+		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		return iwma;
 	}
 
@@ -248,6 +241,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
-		return IWCacheManager2.getInstance(getIWMA()).getCache(CASHED_RESOURCES);
+		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);							//.getCache(CASHED_RESOURCES);
 	}
 }
