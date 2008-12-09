@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.178 2008/12/04 12:43:43 anton Exp $
+ * $Id: PresentationObject.java,v 1.179 2008/12/09 11:13:06 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -78,10 +78,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/12/04 12:43:43 $ by $Author: anton $
+ * Last modified: $Date: 2008/12/09 11:13:06 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.178 $
+ * @version $Revision: 1.179 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -429,17 +429,34 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		setMarkupAttribute("style",this._styler.getStyleString());
 		
 	}
-	public void setToolTip(String toolTip)
-	{
-		setMarkupAttribute("title", toolTip);
+	
+	public void setTitle(String title) {
+		setMarkupAttribute("title", title);
 	}
-	public String getToolTip()
-	{
+	
+	public String getTitle() {
 		if (isMarkupAttributeSet("title")) {
 			return this.getMarkupAttribute("title");
 		}
 		return "";
 	}
+	
+	/* @deprecated
+	 * Use setTitle(String) instead
+	 */
+	@Deprecated
+	public void setToolTip(String toolTip) {
+		setTitle(toolTip);
+	}
+	
+	/* @deprecated
+	 * Use setTitle(String) instead
+	 */
+	@Deprecated
+	public String getToolTip() {
+		return getTitle();
+	}
+	
 	/**
 	 * Copies all of the attribute mappings from the specified map to
 	 * attributes. These mappings will replace attibutes that this map had for

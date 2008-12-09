@@ -19,6 +19,11 @@ public interface Web2Business extends IBOService {
 	public void addTablesorterScriptFilesToPage(IWContext iwc, String className, String theme);
 	
 	/**
+	 * @see com.idega.block.web2.business.Web2BusinessBean#addWebAppFilesToPage
+	 */
+	public void addWebAppFilesToPage(IWContext iwc);
+	
+	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToBehaviourLib
 	 */
 	public String getBundleURIToBehaviourLib() throws RemoteException;
