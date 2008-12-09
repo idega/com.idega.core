@@ -1208,7 +1208,7 @@ IWCORE.insertRenderedComponent = function(component, options) {
 				parentContainer.append(jQuery(component.html));
 			}
 			else if (options.rewrite) {
-				parentContainer.html(jQuery(component.html))
+				parentContainer.html(component.html);
 			}
 			else {
 				parentContainer.replaceWith(jQuery(component.html));
