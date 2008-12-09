@@ -43,9 +43,20 @@ jQuery(document).ready(function() {
 		if (jQuery(this).hasClass('adminThemesMode')) {
 			AdminCoreHelper.currentMode = 'isThemesAdmin';
 			
-			jQuery('body').addClass('isThemesAdmin');
-			AdminToolbarSession.setMode('isThemesAdmin');
-			jQuery('body').append('<div id="themeSlider"></div>');
+			if (!jQuery('body').hasClass('isThemesAdmin')) {
+				jQuery('body').addClass('isThemesAdmin');
+				AdminToolbarSession.setMode('isThemesAdmin');
+				
+				jQuery('body').append('<div id="themeSlider" style="display: none;"></div>');
+				IWCORE.getRenderedComponentByClassName({
+					className: 'com.idega.content.themes.presentation.ThemesSliderViewer',
+					container: 'themeSlider',
+					properties: [{id: 'setInitAction', value: 'manageSlider(null);'}, {id: 'setHiddenOnLoad', value: 'true'}],
+					rewrite: true
+				});
+				jQuery('#themeSlider').show('fast');
+				
+			}
 		}
 
 		if (jQuery(this).hasClass('adminEditMode')) {
