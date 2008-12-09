@@ -2,8 +2,6 @@ if (AdminCoreHelper == null) var AdminCoreHelper = {};
 
 AdminCoreHelper.currentMode = null;
 
-jQuery.noConflict();
-
 jQuery(document).ready(function() {
 	if (!jQuery('body').hasClass('isContentAdmin')) {
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
