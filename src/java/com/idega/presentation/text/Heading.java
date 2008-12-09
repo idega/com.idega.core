@@ -36,9 +36,9 @@ public class Heading extends Text implements InlineEditableComponent {
 		
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(
-				iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("javascript/AdminCore.js"),
 				web2.getBundleURIToJQueryLib(),
-				web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EDITABLE)
+				web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EDITABLE),
+				iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("javascript/AdminCore.js")
 		));
 		
 		String action = "AdminCoreHelper.initializeInlineEditableComponents();";
