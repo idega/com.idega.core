@@ -9,7 +9,6 @@ import com.idega.block.web2.business.Web2Business;
 import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -40,13 +39,6 @@ public class Heading extends Text implements InlineEditableComponent {
 				web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EDITABLE),
 				iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("javascript/AdminCore.js")
 		));
-		
-		String action = "AdminCoreHelper.initializeInlineEditableComponents();";
-		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
-			action = new StringBuilder("jQuery(window).load(function() {").append(action).append("});").toString();
-		}
-		
-		PresentationUtil.addJavaScriptActionToBody(iwc, action);
 		
 		setStyleClass(InlineEditableComponent.class.getSimpleName());
 	}

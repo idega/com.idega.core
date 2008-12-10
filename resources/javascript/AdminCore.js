@@ -12,6 +12,9 @@ jQuery(document).ready(function() {
 	if (jQuery('body').hasClass('isThemesAdmin')) {
 		AdminCoreHelper.showThemes(true, false);
 	}
+	if (jQuery('body').hasClass('isContentAdmin')) {
+		AdminCoreHelper.initializeInlineEditableComponents();
+	}
 	jQuery('.applicationPropertyStyleClass').append("<span class=\"icon\"></span>");
 
 	jQuery('#adminTopLayer li').hover(
