@@ -79,6 +79,9 @@ jQuery(document).ready(function() {
 		}
 		
 		AdminCoreHelper.initializeInlineEditableComponents();
+		
+		jQuery('.themeTemplateChildrenContainerAsStackStyle').remove();
+		jQuery('.themeChooseStyle').remove();
 	})
 });
 
