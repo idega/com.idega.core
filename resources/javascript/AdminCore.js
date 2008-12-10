@@ -10,7 +10,7 @@ jQuery(document).ready(function() {
 		jQuery('.moduleName').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
 	}
 	if (jQuery('body').hasClass('isThemesAdmin')) {
-		jQuery('body').append('<div id="themeSlider"></div>');
+		AdminCoreHelper.showThemes(true, false);
 	}
 	jQuery('.applicationPropertyStyleClass').append("<span class=\"icon\"></span>");
 
@@ -43,20 +43,7 @@ jQuery(document).ready(function() {
 		if (jQuery(this).hasClass('adminThemesMode')) {
 			AdminCoreHelper.currentMode = 'isThemesAdmin';
 			
-			if (!jQuery('body').hasClass('isThemesAdmin')) {
-				jQuery('body').addClass('isThemesAdmin');
-				AdminToolbarSession.setMode('isThemesAdmin');
-				
-				jQuery('body').append('<div id="themeSlider" style="display: none;"></div>');
-				IWCORE.getRenderedComponentByClassName({
-					className: 'com.idega.content.themes.presentation.ThemesSliderViewer',
-					container: 'themeSlider',
-					properties: [{id: 'setInitAction', value: 'manageSlider(null);'}, {id: 'setHiddenOnLoad', value: 'true'}],
-					rewrite: true
-				});
-				jQuery('#themeSlider').show('fast');
-				
-			}
+			AdminCoreHelper.showThemes(false, true);
 		}
 
 		if (jQuery(this).hasClass('adminEditMode')) {
@@ -91,6 +78,25 @@ jQuery(document).ready(function() {
 		AdminCoreHelper.initializeInlineEditableComponents();
 	})
 });
+
+AdminCoreHelper.showThemes = function(forceToOpen, setMode) {
+	if (forceToOpen || !jQuery('body').hasClass('isThemesAdmin')) {
+		jQuery('body').addClass('isThemesAdmin');
+		
+		if (setMode) {
+			AdminToolbarSession.setMode('isThemesAdmin');
+		}	
+		
+		jQuery('body').append('<div id="themeSlider" style="display: none;"></div>');
+		IWCORE.getRenderedComponentByClassName({
+			className: 'com.idega.content.themes.presentation.ThemesSliderViewer',
+			container: 'themeSlider',
+			properties: [{id: 'setInitAction', value: 'manageSlider(null);'}, {id: 'setHiddenOnLoad', value: 'true'}],
+			rewrite: true
+		});
+		jQuery('#themeSlider').show('fast');
+	}
+}
 
 AdminCoreHelper.initializeInlineEditableComponents = function() {
 	jQuery.each(jQuery('.InlineEditableComponent'), function() {
