@@ -1411,7 +1411,8 @@ function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) 
 }
 
 function reloadPage() {
-	changeWindowLocationHrefAndCheckParameters('reloading=' + new Date().getTime(), true);	// changing href to be sure the page will be reloaded
+	window.location.reload();
+	//changeWindowLocationHrefAndCheckParameters('reloading=' + new Date().getTime(), true);	// changing href to be sure the page will be reloaded
 }
 
 function addActionForMoodalBoxOnCloseEvent(actionOnClose) {
