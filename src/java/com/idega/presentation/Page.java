@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.176 2008/12/11 08:03:35 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.177 2008/12/11 14:13:44 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/11 08:03:35 $ by $Author: laddi $
+ * Last modified: $Date: 2008/12/11 14:13:44 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.176 $
+ * @version $Revision: 1.177 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -319,13 +319,17 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	protected String getJavascriptURLs(IWContext iwc) {
 		if (this.addGlobalScript) {
-			String iwCoreScript = iwc.getIWMainApplication().getCoreBundle().getResourcesURL() + "/iw_core.js";
+			StringBuilder coreScript = new StringBuilder(iwc.getIWMainApplication().getCoreBundle().getResourcesURL()).append("/iw_core");
+			if (iwc.getApplicationSettings().getBoolean("use_compressed_core_script", Boolean.TRUE)) {
+				coreScript.append("-compressed");
+			}
+			coreScript.append(".js");
 			StringBuffer buffer = null;
 			if (printScriptSourcesDirectly) {
-				buffer = new StringBuffer(PresentationUtil.getJavaScriptSourceLine(iwCoreScript));
+				buffer = new StringBuffer(PresentationUtil.getJavaScriptSourceLine(coreScript.toString()));
 			}
 			else {
-				PresentationUtil.addJavaScriptSourceLineToHeader(iwc, iwCoreScript);
+				PresentationUtil.addJavaScriptSourceLineToHeader(iwc, coreScript.toString());
 			}
 			
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
