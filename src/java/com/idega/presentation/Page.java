@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.175 2008/12/05 07:01:31 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.176 2008/12/11 08:03:35 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/05 07:01:31 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/11 08:03:35 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.175 $
+ * @version $Revision: 1.176 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -730,6 +730,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * @param title
 	 *          The new title value
 	 */
+	@Override
 	public void setTitle(String title) {
 		this._title = title;
 		setName(title);
@@ -824,6 +825,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	/**
 	 * @return The title value
 	 */
+	@Override
 	public String getTitle() {
 		return this._title;
 	}
@@ -1552,7 +1554,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				println("\n</head>");
 				if (this._addBody) {
 					println("<body " + getMarkupAttributesString() + ">");
-					if (getAssociatedBodyScript() != null) {
+					if (!getAssociatedBodyScript().isEmpty()) {
 						// getAssociatedBodyScript()._print(iwc);
 						UIComponent script = getAssociatedBodyScript();
 						this.renderChild(iwc, script);
@@ -2391,6 +2393,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	protected void setPrintScriptSourcesDirectly(boolean printScriptSourcesDirectly) {
 		this.printScriptSourcesDirectly = printScriptSourcesDirectly;
+	}
+
+	
+	/**
+	 * @param addGlobalScript the addGlobalScript to set
+	 */
+	public void setAddGlobalScript(boolean addGlobalScript) {
+		this.addGlobalScript = addGlobalScript;
 	}
 
 // public void addWeb2JSLibrariesToPage(){

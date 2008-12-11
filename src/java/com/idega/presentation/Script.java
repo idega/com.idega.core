@@ -1,5 +1,5 @@
 /*
- * $Id: Script.java,v 1.31 2007/03/28 13:50:12 eiki Exp $ 
+ * $Id: Script.java,v 1.32 2008/12/11 08:03:30 laddi Exp $ 
  * Created in 2000 by Tryggvi Larusson
  * 
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -23,10 +23,10 @@ import com.idega.idegaweb.IWConstants;
  * An instance of this component can be used to define javascript functions and
  * add to a component or a page.
  * </p>
- * Last modified: $Date: 2007/03/28 13:50:12 $ by $Author: eiki $
+ * Last modified: $Date: 2008/12/11 08:03:30 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.31 $
+ * @version $Revision: 1.32 $
  */
 public class Script extends PresentationObject {
 
@@ -50,6 +50,10 @@ public class Script extends PresentationObject {
 		setType();
 		setTransient(false);
 		// scriptCode = new LinkedHashMap();
+	}
+	
+	public boolean isEmpty() {
+		return getScriptCode().isEmpty() && getMarkupAttribute(ATTRIBUTE_SOURCE) == null;
 	}
 
 	/*
@@ -223,6 +227,7 @@ public class Script extends PresentationObject {
 		return (String) getScriptCode().get(functionName);
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (doPrint(iwc)) {
 			if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
@@ -274,6 +279,7 @@ public class Script extends PresentationObject {
 		addVariable(variableName, variableValue);
 	}
 
+	@Override
 	public Object clone() {
 		Script obj = null;
 		try {
@@ -295,6 +301,7 @@ public class Script extends PresentationObject {
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext,
 	 *      java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(context, values[0]);
@@ -310,6 +317,7 @@ public class Script extends PresentationObject {
 	 * 
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(context);
@@ -321,11 +329,13 @@ public class Script extends PresentationObject {
 		return values;
 	}
 	
+	@Override
 	public void println(String str) {
 		String convertedString = convertStringToUnicode(str);
 		super.println(convertedString);
 	}
 	
+	@Override
 	public void print(String str) {
 		String convertedString = convertStringToUnicode(str);
 		super.print(convertedString);

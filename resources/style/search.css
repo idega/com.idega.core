@@ -1,118 +1,57 @@
 /** BEGIN: Searcher and SearchResults classes (com.idega.core.search) **/
 
-.iw_search_results {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
+.iw_search_results, .whatisnew {
+	margin-bottom: 16px;
 }
 
 .iw_search_name {
 	margin-top: 2px;
-	padding: 3px;
-	font-size: 11px;
+	padding: 4px 5px;
 	font-weight: bold;
 	background-color: #DFDFDF;
-	color: inherit;
 	display: block;
 	clear: both;
 }
 
-.iw_search_results_row_odd {
-	border-bottom: 1px #000 dotted;
-	border-color: black;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	margin: 0px;
-	width: 100%;
-}
-
-.iw_search_results_row_even {
-	border-bottom: 1px #000 dotted;
-	padding-top: 2px;
-	padding-bottom: 2px;
-	margin: 0px;
-	width: 100%;
+.iw_search_results_row_odd, .iw_search_results_row_even {
+	border-bottom: 1px #ccc solid;
+	padding: 4px 5px;
 }
 
 .iw_search_result_icon {
-	width: 10px;
-	height: 10px;
-	display: inline;
-	margin-right: 2px;
-	margin-top: 2px;
-	float: left;
-	background-image: url(images/search_bullet.gif);
-	background-repeat: no-repeat;
+	display: none;
 }
 
 .iw_search_result_link {
-	font-size: 11px;
 	font-weight: bold;
-	text-decoration: underline;
 	text-align: left;
 	display: inline;
 	float: left;
-	color: red;
-	background-color: inherit;
-	width: 45%;
 }
 
 .iw_search_result_link:hover {
-	font-size: 11px;
-	font-weight: bold;
-	font-style: italic;
 	text-decoration: underline;
-	text-align: left;
-	display: inline;
-	float: left;
-	color: red;
-	background-color: inherit;
-	width: 45%;
 }
 
 .iw_search_result_abstract {
-	text-align: left;
-	display: block;
-	padding-left: 12px;
-	clear: both;
+	float: right;
 }
 
 .iw_search_result_extra_info {
-	text-align: right;
-	float: right;
-	width: 45%;
+	display: none;
 }
 
 .iw_search_result_extra_attribute_odd {
-	text-align: left;
-	font-weight: bold;
-	float: left;
-	clear: left;
-	width: 45%;
 }
 
 .iw_search_result_extra_attribute_even {
-	text-align: right;
-	font-weight: bold;
-	float: right;
-	clear: right;
-	width: 45%;
 }
 
 .iw_searcher {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	margin: 5px;
 }
 
 .iw_searcher_input {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	width: 100px;
-	border: 1px solid #000000;
 }
 
 .iw_searcher_button {
-	font-family: Arial, Helvetica, sans-serif;
-	font-size: 10px;
-	font-weight: bold;
 }
