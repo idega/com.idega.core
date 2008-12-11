@@ -44,8 +44,6 @@ jQuery(document).ready(function() {
 		jQuery('body div#themeSlider').remove();
 
 		if (jQuery(this).hasClass('adminThemesMode')) {
-			AdminCoreHelper.currentMode = 'isThemesAdmin';
-			
 			AdminCoreHelper.showThemes(false, true);
 		}
 
@@ -79,13 +77,23 @@ jQuery(document).ready(function() {
 		}
 		
 		AdminCoreHelper.initializeInlineEditableComponents();
-		
+	});
+	
+	jQuery(document).click(function() {
 		jQuery('.themeTemplateChildrenContainerAsStackStyle').remove();
 		jQuery('.themeChooseStyle').remove();
-	})
+	});
+	
+	jQuery(window).resize(function() {
+		try {
+			ThemesSliderHelper.resizeSlider();
+		} catch(e) {}
+	});
 });
 
 AdminCoreHelper.showThemes = function(forceToOpen, setMode) {
+	AdminCoreHelper.currentMode = 'isThemesAdmin';
+	
 	if (forceToOpen || !jQuery('body').hasClass('isThemesAdmin')) {
 		jQuery('body').addClass('isThemesAdmin');
 		
