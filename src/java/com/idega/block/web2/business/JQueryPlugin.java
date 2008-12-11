@@ -31,6 +31,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".progressbar.js";
 		}
+	},
+	SCROLL_TO {
+		@Override
+		public String getFileName() {
+			return ".scrollTo.js";
+		}
 	};
 
 	public abstract String getFileName();
