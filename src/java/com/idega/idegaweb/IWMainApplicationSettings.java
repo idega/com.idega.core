@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.59 2008/10/24 07:05:36 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.60 2008/12/11 14:25:39 civilis Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -11,7 +11,6 @@
 package com.idega.idegaweb;
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -19,6 +18,8 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.Vector;
+import java.util.logging.Handler;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.mail.internet.MimeUtility;
@@ -46,10 +47,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2008/10/24 07:05:36 $ by $Author: laddi $
+ * Last modified: $Date: 2008/12/11 14:25:39 $ by $Author: civilis $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.59 $
+ * @version $Revision: 1.60 $
  */
 
 
@@ -156,14 +157,18 @@ public class IWMainApplicationSettings implements MutableClass {
 	 */
 	private void preloadCache() {
 		if(!this.preloadedCache){
-			Collection keys;
 			try {
-				keys = getApplicationBindingBusiness().keySet();
-				for (Iterator iter = keys.iterator(); iter.hasNext();) {
-					String key = (String) iter.next();
+
+				/*
+				@SuppressWarnings("unchecked")
+				Set<String> keys = getApplicationBindingBusiness().keySet();
+				
+				for (String key : keys) {
 					//cache
 					if(key!=null){}
 				}
+				*/
+				
 				this.preloadedCache=true;
 			}
 			catch (Exception e) {
@@ -543,6 +548,30 @@ public class IWMainApplicationSettings implements MutableClass {
 	public void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;
 		com.idega.data.EntityFinder.debug = debugFlag;
+		
+//		setting/unsetting finer level for root logger of all loggers
+//		info is default Level, so setting to that, when debug is false
+		Level levelToSet = debugFlag ? Level.FINER : Level.INFO;
+		
+		Logger parentLogger = Logger.global.getParent();
+		Logger rootLogger = parentLogger;
+		
+		while (parentLogger != null) {
+			rootLogger = parentLogger;
+			parentLogger = parentLogger.getParent();
+		}
+		
+		if(rootLogger.getLevel() != levelToSet) {
+			
+			Handler[] handlers =
+			      rootLogger.getHandlers();
+			
+			for (Handler handler : handlers) {
+				handler.setLevel(levelToSet);
+			}
+			
+			rootLogger.setLevel(levelToSet);
+		}
 	}
 	
 	public boolean isDebugActive() {
