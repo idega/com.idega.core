@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.151 2008/07/02 19:27:34 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.152 2008/12/12 11:15:20 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -82,10 +82,10 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2008/07/02 19:27:34 $ by $Author: civilis $
+ * Last modified: $Date: 2008/12/12 11:15:20 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.151 $
+ * @version $Revision: 1.152 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -116,6 +116,11 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	private static final String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	public static final String[] WML_USER_AGENTS = new String[] { "nokia", "ericsson", "wapman", "upg1", "symbian",
 			"wap" }; // NB: must be lowercase
+	
+	private static final String COLONSLASHSLASH = "://";
+	private static final String HTTP = "http";
+	private static final String HTTPS = "https";
+
 	/**
 	 * Default constructor
 	 */
@@ -584,6 +589,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * @deprecated Replaced with removeSessionAttribute()
 	 */
+	@Deprecated
 	public void removeAttribute(String attributeName) {
 		removeSessionAttribute(attributeName);
 	}
@@ -617,6 +623,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * @deprecated UNIMPLEMENTED
 	 */
+	@Deprecated
 	public void maintainParameter(Parameter parameter) {
 		Hashtable theParameters = (Hashtable) this.getSessionAttribute("idega_special_maintained_parameters");
 		if (theParameters == null) {
@@ -643,6 +650,19 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		else {
 			return getRequest().getRequestURI();
 		}
+	}
+	
+	public String getRequestURI(boolean https) {
+		String protocol = getProtocol().toLowerCase();
+		if (protocol.startsWith(HTTP)) {
+			if (protocol.startsWith(HTTPS) || https) {
+				return HTTPS + COLONSLASHSLASH + getRequest().getServerName() + (getRequest().getServerPort() > 0 ? ":" + getRequest().getServerPort() : "") + getRequestURI();
+			}
+			else {
+				return getRequestURI();
+			}
+		}
+		return getRequestURI();
 	}
 
 	public String getServerName() {
@@ -826,6 +846,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * @deprecated Replaced with getCurrentUser()
 	 */
+	@Deprecated
 	public User getUser() {
 		return (LoginBusinessBean.getUser(this));
 	}
@@ -1301,6 +1322,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#release()
 	 */
+	@Override
 	public void release() {
 		getRealFacesContext().release();
 	}
@@ -1310,6 +1332,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#renderResponse()
 	 */
+	@Override
 	public void renderResponse() {
 		getRealFacesContext().renderResponse();
 	}
@@ -1319,6 +1342,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#responseComplete()
 	 */
+	@Override
 	public void responseComplete() {
 		getRealFacesContext().responseComplete();
 	}
@@ -1338,6 +1362,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * @see javax.faces.context.FacesContext#addMessage(java.lang.String,
 	 *      javax.faces.application.FacesMessage)
 	 */
+	@Override
 	public void addMessage(String arg0, FacesMessage arg1) {
 		getRealFacesContext().addMessage(arg0, arg1);
 	}
@@ -1347,6 +1372,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getClientIdsWithMessages()
 	 */
+	@Override
 	public Iterator getClientIdsWithMessages() {
 		return getRealFacesContext().getClientIdsWithMessages();
 	}
@@ -1356,6 +1382,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getExternalContext()
 	 */
+	@Override
 	public ExternalContext getExternalContext() {
 		return getRealFacesContext().getExternalContext();
 	}
@@ -1365,6 +1392,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
 	 */
+	@Override
 	public Severity getMaximumSeverity() {
 		return getRealFacesContext().getMaximumSeverity();
 	}
@@ -1374,6 +1402,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getMessages()
 	 */
+	@Override
 	public Iterator getMessages() {
 		return getRealFacesContext().getMessages();
 	}
@@ -1383,6 +1412,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getMessages(java.lang.String)
 	 */
+	@Override
 	public Iterator getMessages(String arg0) {
 		return getRealFacesContext().getMessages(arg0);
 	}
@@ -1392,6 +1422,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getRenderKit()
 	 */
+	@Override
 	public RenderKit getRenderKit() {
 		return getRealFacesContext().getRenderKit();
 	}
@@ -1401,6 +1432,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getRenderResponse()
 	 */
+	@Override
 	public boolean getRenderResponse() {
 		return getRealFacesContext().getRenderResponse();
 	}
@@ -1410,6 +1442,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getResponseComplete()
 	 */
+	@Override
 	public boolean getResponseComplete() {
 		return getRealFacesContext().getResponseComplete();
 	}
@@ -1419,6 +1452,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getResponseStream()
 	 */
+	@Override
 	public ResponseStream getResponseStream() {
 		return getRealFacesContext().getResponseStream();
 	}
@@ -1428,6 +1462,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getResponseWriter()
 	 */
+	@Override
 	public ResponseWriter getResponseWriter() {
 		if (this.isCacheing() && this.cacheResponseWriter != null) {
 			return this.cacheResponseWriter;
@@ -1442,6 +1477,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getViewRoot()
 	 */
+	@Override
 	public UIViewRoot getViewRoot() {
 		return getRealFacesContext().getViewRoot();
 	}
@@ -1451,6 +1487,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#setResponseStream(javax.faces.context.ResponseStream)
 	 */
+	@Override
 	public void setResponseStream(ResponseStream arg0) {
 		getRealFacesContext().setResponseStream(arg0);
 	}
@@ -1460,6 +1497,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#setResponseWriter(javax.faces.context.ResponseWriter)
 	 */
+	@Override
 	public void setResponseWriter(ResponseWriter arg0) {
 		getRealFacesContext().setResponseWriter(arg0);
 	}
@@ -1469,6 +1507,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#setViewRoot(javax.faces.component.UIViewRoot)
 	 */
+	@Override
 	public void setViewRoot(UIViewRoot arg0) {
 		getRealFacesContext().setViewRoot(arg0);
 	}
@@ -1478,6 +1517,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @see javax.faces.context.FacesContext#getApplication()
 	 */
+	@Override
 	public Application getApplication() {
 		return getRealFacesContext().getApplication();
 	}
