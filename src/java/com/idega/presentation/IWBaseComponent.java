@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.20 2008/06/02 19:06:46 civilis Exp $
+ * $Id: IWBaseComponent.java,v 1.21 2008/12/13 15:24:44 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -38,10 +38,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/06/02 19:06:46 $ by $Author: civilis $
+ * Last modified: $Date: 2008/12/13 15:24:44 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -369,8 +369,8 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	}
 	
 	@Override
-	public Map<Object, UIComponent> getFacets() {
-		Map<Object, UIComponent> facets = super.getFacets();
+	public Map<String, UIComponent> getFacets() {
+		Map<String, UIComponent> facets = super.getFacets();
 		return facets;
 	}
 	
