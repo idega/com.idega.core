@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.8 2007/09/08 13:16:20 civilis Exp $
+ * $Id: CbpViewHandler.java,v 1.9 2008/12/13 15:31:12 civilis Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -49,10 +49,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2007/09/08 13:16:20 $ by $Author: civilis $
+ * Last modified: $Date: 2008/12/13 15:31:12 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -164,7 +164,16 @@ public class CbpViewHandler extends ViewHandler {
 	                    //String bodyStr = bodyContent.getString();
 	                    String bodyStr = getOutputAsString(bufferWriter);
 	                    int form_marker = bodyStr.indexOf(JspViewHandlerImpl.FORM_STATE_MARKER);
-	                    int url_marker = bodyStr.indexOf(HtmlLinkRendererBase.URL_STATE_MARKER);
+	                    
+//	                    TODO: myfaces commented this out with following comment, so behavior here should be changed (civilis)
+	                    /* this one is never used
+	                    public static final String URL_STATE_MARKER      = "JSF_URL_STATE_MARKER=DUMMY";
+	                    public static final int    URL_STATE_MARKER_LEN  = URL_STATE_MARKER.length();
+	                    */
+	                    String URL_STATE_MARKER      = "JSF_URL_STATE_MARKER=DUMMY";
+	                    int URL_STATE_MARKER_LEN      = URL_STATE_MARKER.length();
+//	                    int url_marker = bodyStr.indexOf(HtmlLinkRendererBase.URL_STATE_MARKER);
+	                    int url_marker = bodyStr.indexOf(URL_STATE_MARKER);
 	                    int lastMarkerEnd = 0;
 	                    while (form_marker != -1 || url_marker != -1)
 	                    {
@@ -189,8 +198,10 @@ public class CbpViewHandler extends ViewHandler {
 	                            {
 	                                log.error("Current StateManager is no MyfacesStateManager and does not support saving state in url parameters.");
 	                            }
-	                            lastMarkerEnd = url_marker + HtmlLinkRendererBase.URL_STATE_MARKER_LEN;
-	                            url_marker = bodyStr.indexOf(HtmlLinkRendererBase.URL_STATE_MARKER, lastMarkerEnd);
+//	                            lastMarkerEnd = url_marker + HtmlLinkRendererBase.URL_STATE_MARKER_LEN;
+//	                            url_marker = bodyStr.indexOf(HtmlLinkRendererBase.URL_STATE_MARKER, lastMarkerEnd);
+	                            lastMarkerEnd = url_marker + URL_STATE_MARKER_LEN;
+	                            url_marker = bodyStr.indexOf(URL_STATE_MARKER, lastMarkerEnd);
 	                        }
 	                    }
 	                    realWriter.write(bodyStr, lastMarkerEnd, bodyStr.length() - lastMarkerEnd);
