@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.192 2008/12/04 12:49:02 anton Exp $
+ * $Id: IWMainApplication.java,v 1.193 2008/12/13 15:24:30 civilis Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -33,11 +33,17 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
+import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ELContextListener;
+import javax.el.ELException;
+import javax.el.ELResolver;
+import javax.el.ExpressionFactory;
+import javax.el.ValueExpression;
 import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
@@ -104,10 +110,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/12/04 12:49:02 $ by $Author: anton $
+ *  Last modified: $Date: 2008/12/13 15:24:30 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.192 $
+ * @version $Revision: 1.193 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -202,7 +208,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	//Holds a map of Window classes to know its dimensions etc.
     private Map windowClassesStaticInstances;
     private Application facesApplication;
-    private ApplicationProductInfo applicationProductInfo;
+    
+
+	private ApplicationProductInfo applicationProductInfo;
 	private ApplicationInstallationInfo applicationInstallationInfo;
     private boolean inDatabaseLessMode=false;
     private boolean inSetupMode=false;
@@ -2436,5 +2444,56 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		} else {
 			return messageFactory;
 		}
+	}
+
+	@Override
+	public void addELResolver(ELResolver resolver) {
+		
+		getFacesApplication().addELResolver(resolver);
+	}
+	
+	@Override
+	public void addELContextListener(ELContextListener listener) {
+		getFacesApplication().addELContextListener(listener);
+	}
+
+	@Override
+	public UIComponent createComponent(ValueExpression componentExpression,
+			FacesContext facesContext, String componentType)
+			throws FacesException, NullPointerException {
+		return getFacesApplication().createComponent(componentExpression,
+				facesContext, componentType);
+	}
+
+	@Override
+	public Object evaluateExpressionGet(FacesContext context,
+			String expression, Class expectedType) throws ELException {
+		return getFacesApplication().evaluateExpressionGet(context, expression,
+				expectedType);
+	}
+
+	@Override
+	public ELContextListener[] getELContextListeners() {
+		return getFacesApplication().getELContextListeners();
+	}
+
+	public ELResolver getELResolver() {
+		return getFacesApplication().getELResolver();
+	}
+
+	@Override
+	public ExpressionFactory getExpressionFactory() {
+		return getFacesApplication().getExpressionFactory();
+	}
+
+	@Override
+	public ResourceBundle getResourceBundle(FacesContext ctx, String name)
+			throws FacesException, NullPointerException {
+		return getFacesApplication().getResourceBundle(ctx, name);
+	}
+
+	@Override
+	public void removeELContextListener(ELContextListener listener) {
+		getFacesApplication().removeELContextListener(listener);
 	}
 }
