@@ -14,6 +14,7 @@ import java.util.Collection;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
+import javax.faces.el.ValueBinding;
 
 import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWMainApplication;
@@ -142,8 +143,18 @@ public class DownloadLink extends Link {
     }
     
     public Class<?> getMediaWriter(FacesContext context) {
-    	Class<?> writer = getValueBinding(DOWNLOAD_WRITER_PROPERTY) != null ? (Class<?>)getValueBinding(DOWNLOAD_WRITER_PROPERTY).getValue(context) : (Class<?>)context.getExternalContext().getRequestParameterMap().get(DOWNLOAD_WRITER_PROPERTY);
-		return writer;
+//    	Class<?> writer = getValueBinding(DOWNLOAD_WRITER_PROPERTY) != null ? (Class<?>)getValueBinding(DOWNLOAD_WRITER_PROPERTY).getValue(context) : (Class<?>)context.getExternalContext().getRequestParameterMap().get(DOWNLOAD_WRITER_PROPERTY);
+    	
+    	ValueBinding vb = getValueBinding(DOWNLOAD_WRITER_PROPERTY);
+    	
+    	if(vb != null) {
+    		
+    		Class<?> writer = (Class<?>)getValueBinding(DOWNLOAD_WRITER_PROPERTY).getValue(context);
+    		return writer;
+    	} else {
+    	
+    		return null;
+    	}
 	}
     
     private String getValue(FacesContext context) {
