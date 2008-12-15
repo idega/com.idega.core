@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.177 2008/12/11 14:13:44 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.178 2008/12/15 13:10:55 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/11 14:13:44 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/15 13:10:55 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.177 $
+ * @version $Revision: 1.178 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -170,6 +170,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private boolean useIE7Extension = false;
 	private boolean useHtmlTag = true;
 	private boolean printScriptSourcesDirectly = true;
+	private boolean hideBuilder = false;
 
 	/**
 	 */
@@ -2405,6 +2406,22 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setAddGlobalScript(boolean addGlobalScript) {
 		this.addGlobalScript = addGlobalScript;
+	}
+
+	
+	/**
+	 * @return the hideBuilder
+	 */
+	public boolean isHideBuilder() {
+		return this.hideBuilder;
+	}
+
+	
+	/**
+	 * @param hideBuilder the hideBuilder to set
+	 */
+	public void setHideBuilder(boolean hideBuilder) {
+		this.hideBuilder = hideBuilder;
 	}
 
 // public void addWeb2JSLibrariesToPage(){
