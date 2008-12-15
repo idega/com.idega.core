@@ -37,6 +37,8 @@ import com.idega.util.expression.ELUtil;
 public class MessageResourceFactoryImpl implements MessageResourceFactory, ApplicationListener {
 	@Autowired private List<MessageResource> uninitializedMessageResources;
 	
+	private List<String> initializedStorageTypes = new ArrayList<String>();
+	
 	private static final String CASHED_RESOURCES = "cashed_resources";
 	
 	@SuppressWarnings("unchecked")
@@ -56,6 +58,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		if(bundleResources.containsKey(locale)) {
 			return bundleResources.get(locale);
 		} else {
+			//if there was no bundle with specified bundleIdentifier and locale
 			List<MessageResource> resources = getUninitializedMessageResources();
 			List<MessageResource> failedInitializationResources = new ArrayList<MessageResource>(resources.size());
 			for(MessageResource resource : resources) {
@@ -79,9 +82,15 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	}
 	
 	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale) {
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
-		cashResources.get(bundleIdentifier).get(locale).add(resource);
-		sortResourcesByImportance();
+		if(!initializedStorageTypes.contains(resource.getIdentifier())) {
+			initializedStorageTypes.add(resource.getIdentifier());
+		}
+//		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
+		List<MessageResource> cashedResources = getInitializedResourceList(locale, bundleIdentifier);
+		if(!cashedResources.contains(resource)) {
+			cashedResources.add(resource);
+			sortResourcesByImportance();
+		}
 	}
 	
 	/**
@@ -216,13 +225,20 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 
 	public List<MessageResource> getUninitializedMessageResources() {
 		ELUtil.getInstance().autowire(this);
+		
+		for(MessageResource resource : uninitializedMessageResources) {
+			if(!initializedStorageTypes.contains(resource.getIdentifier())) {
+				initializedStorageTypes.add(resource.getIdentifier());
+			}
+		}
+		
 		return uninitializedMessageResources;
 	}
-
-	public void setUninitializedMessageResources(
-			List<MessageResource> uninitializedMessageResources) {
-		this.uninitializedMessageResources = uninitializedMessageResources;
-	}
+	
+//	public void setUninitializedMessageResources(
+//			List<MessageResource> uninitializedMessageResources) {
+//		this.uninitializedMessageResources = uninitializedMessageResources;
+//	}
 	
 	protected class ResourceComparatorByLevel implements Comparator<MessageResource> {
 		private static final int LESS = -1;
@@ -241,6 +257,11 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
+		//TODO leave cache object noneternal but make changes to the code where cache is used
 		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);							//.getCache(CASHED_RESOURCES);
+	}
+	
+	public List<String> getInitializedMessageResourceTypes() {
+		return initializedStorageTypes;
 	}
 }

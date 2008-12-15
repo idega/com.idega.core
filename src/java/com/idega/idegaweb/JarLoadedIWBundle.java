@@ -12,6 +12,7 @@ import java.util.Properties;
 import java.util.jar.JarEntry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.idega.util.SortedProperties;
 
 
@@ -19,11 +20,12 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2008/06/05 15:21:12 $ by $Author: alexis $
+ *  Last modified: $Date: 2008/12/15 14:07:34 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  */
+
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
 	private static final Logger LOGGER = Logger.getLogger(JarLoadedIWBundle.class.getName());
@@ -49,6 +51,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 * @param pathWithinPropertiesFolder
 	 * @return
 	 */
+	@Override
 	protected IWPropertyList initializePropertyList(String pathWithinPropertiesFolder, boolean autocreate) {
 		IWPropertyList propList = null;
 		String filePathWithinBundle = "properties/"+pathWithinPropertiesFolder;
@@ -75,6 +78,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		return false;
 	}
 	
+	@Override
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
 		
@@ -90,6 +94,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 * @param pathWithinBundle resource path within jar file
 	 * @return modification time of an entry, 0 if not found, or -1 if not specified
 	 */
+	@Override
 	public long getResourceTime(String pathWithinBundle) {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
 		return (entry != null ? entry.getTime() : 0);
@@ -99,6 +104,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.DefaultIWBundle#unload(boolean)
 	 */
+	@Override
 	public synchronized void unload(boolean storeState) {
 		super.unload(storeState);
 		this.jarModule=null;	
@@ -112,11 +118,13 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.DefaultIWBundle#initializeResourceBundle(java.util.Locale)
 	 */
+	@Override
 	protected IWResourceBundle initializeResourceBundle(Locale locale) throws IOException {
 		IWResourceBundle theReturn;
 		try {
 			InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale) + "/" + getLocalizedStringsFileName());
-			IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, defaultInputStream, locale);
+			IWResourceBundle defaultLocalizedResourceBundle = new JarLoadedResourceBundle(this, defaultInputStream, locale);
+			
 			if (isUsingLocalVariants()) {
 				String variantPath = getLocalizedResourcePath(locale)+"/"+getLocalizedStringsVariantFileName();
 				if (doesResourceExist(variantPath)) {
@@ -124,16 +132,39 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantStream, locale);
 				}
 				else {
-					return defaultLocalizedResourceBundle;
+					theReturn = defaultLocalizedResourceBundle;
 				}
 			}
 			else {
-				return defaultLocalizedResourceBundle;
+				theReturn = defaultLocalizedResourceBundle;
 			}
 		}
 		catch (IOException e) {
 			// if any error occurs, try default way (autocreated resources in webapp's bundle directory)
 			theReturn = super.initializeResourceBundle(locale);
+		}
+		
+		//adding resourceBundle to localized message factory
+		theReturn.setBundleIdentifier(getBundleIdentifier());
+		getApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
+		return theReturn;
+	}
+	
+	@Override
+	public IWResourceBundle getResourceBundle(Locale locale)
+	{
+		IWResourceBundle theReturn = (IWResourceBundle)getApplication().getMessageFactory().getResource(JarLoadedResourceBundle.RESOURCE_IDENTIFIER, getBundleIdentifier(), locale);
+		
+		try
+		{
+			if (theReturn == null)
+			{
+				theReturn = initializeResourceBundle(locale);
+			}
+		}
+		catch (Exception ex)
+		{
+			LOGGER.log(Level.WARNING, null, ex);
 		}
 		return theReturn;
 	}
@@ -142,6 +173,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.DefaultIWBundle#initializeLocalizableStrings()
 	 */
+	@Override
 	protected Properties initializeLocalizableStrings() {
 		Properties locProps = new SortedProperties();
 		try {

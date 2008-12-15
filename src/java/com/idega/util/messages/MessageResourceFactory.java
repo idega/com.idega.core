@@ -15,7 +15,7 @@ import java.util.Map;
  */
 
 public interface MessageResourceFactory {
-	public void setUninitializedMessageResources(List<MessageResource> uninitializedMessageResources);
+//	public void setUninitializedMessageResources(List<MessageResource> uninitializedMessageResources);
 	
 	public List<MessageResource> getUninitializedMessageResources();
 	
@@ -41,4 +41,6 @@ public interface MessageResourceFactory {
 	public List<MessageResource> getResourceListByBundleAndLocale(String bundleIdentifier, Locale locale);
 	
 	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale);
+	
+	public List<String> getInitializedMessageResourceTypes();
 }

@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.51 2008/11/24 09:16:09 anton Exp $
+ * $Id: DefaultIWBundle.java,v 1.52 2008/12/15 14:07:35 anton Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -49,11 +49,8 @@ import com.idega.presentation.Image;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
-import com.idega.util.messages.MessageResource;
-import com.idega.util.messages.MessageResourceImportanceLevel;
 import com.idega.xml.XMLElement;
 /**
  * The Default implementation if the IWBundle class to serve as a wrapper for an idegaWeb Bundle.
@@ -85,11 +82,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private static final String slash = "/";
 	private static final String shared = "shared";
 	
+	
 	//Parameter that can be passed to the system to let it read bundles from another directory
 	//than directly under the webapp, e.g. an Eclipse workspace folder.
 	public static final String SYSTEM_BUNDLES_RESOURCE_DIR="idegaweb.bundles.resource.dir";
 	public static final String BUNDLE_FOLDER_STANDARD_SUFFIX = ".bundle";
-	
+
 	//Member variables:
 	private boolean autoMoveComponentPropertiesToFile = true;
 	private HashMap componentPropertyListMap;
@@ -676,38 +674,28 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	}
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
-		//TODO make creation of custom resource in resource factory, add to localizer.
-//		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
-		MessageResource theReturn = CoreUtil.getIWContext().getIWMainApplication().getMessageFactory().getResource("default_iwbundle_resource", getBundleIdentifier(), locale);
-		IWContext iwc = IWContext.getCurrentInstance();
+		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
 		
 		try
 		{
 			if (theReturn == null)
 			{
 				theReturn = initializeResourceBundle(locale);
-				theReturn.setIdentifier("default_iwbundle_resource");
-				theReturn.setAutoInsert(false);
-				theReturn.setLevel(MessageResourceImportanceLevel.MIDDLE_ORDER);
-				
-				iwc.getIWMainApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
-				
-//				getResourceBundles().put(locale, theReturn);
+				getResourceBundles().put(locale, theReturn);
 			}
 		}
 		catch (Exception ex)
 		{
 			LOGGER.log(Level.WARNING, null, ex);
 		}
-		return (IWResourceBundle)theReturn;
+		return theReturn;
 	}
 
 	/**
 	 * <p>
 	 * TODO tryggvil describe method initializeResourceBundle
 	 * </p>
-	 * @param locale
-	 * @return
+	 * @param loca(IWResourceBundle)theReturneturn
 	 * @throws IOException
 	 */
 	protected IWResourceBundle initializeResourceBundle(Locale locale) throws IOException {
@@ -1769,6 +1757,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	public long getResourceTime(String pathWithinBundle) {
 		File file = new File(getBundleBaseRealPath(), pathWithinBundle);
 		return file.lastModified();
+	}
+	
+	public static boolean isProductionEnvironment() {
+		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
+		return (directory == null) ? true : false;
 	}
 
 }

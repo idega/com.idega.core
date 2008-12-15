@@ -1,5 +1,5 @@
 /*
- * $Id: Form.java,v 1.100 2008/06/10 19:38:33 eiki Exp $
+ * $Id: Form.java,v 1.101 2008/12/15 14:07:35 anton Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -16,8 +16,10 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
@@ -37,10 +39,10 @@ import com.idega.presentation.Script;
  * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
- *  Last modified: $Date: 2008/06/10 19:38:33 $ by $Author: eiki $
+ *  Last modified: $Date: 2008/12/15 14:07:35 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.100 $
+ * @version $Revision: 1.101 $
  */
 public class Form
 // TODO: Move to extend UIForm
@@ -70,6 +72,7 @@ public class Form
 	private String loadingLayerLocalizationKey = "loading_text";
 	private String loadingLayerTextValue = "Loading...";
 
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[16];
 		values[0] = super.saveState(ctx);
@@ -90,6 +93,7 @@ public class Form
 		values[15] = this.loadingLayerTextValue;
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -165,6 +169,7 @@ public class Form
 		setTransient(false);
 	}
 
+	@Override
 	protected void setOnAction(String actionType, String action) {
 		/*
 		 * String attributeName = actionType; String previousAttribute =
@@ -229,10 +234,12 @@ public class Form
 		setOnAction("onreset", script);
 	}
 
+	@Override
 	public void setOnSubmit(String script) {
 		setOnAction("onsubmit", script);
 	}
 
+	@Override
 	public void setOnClick(String script) {
 		setOnAction("onclick", script);
 	}
@@ -277,6 +284,7 @@ public class Form
 		}
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		// Chech if there is some class set
 		setActionToInstanciatedClass(iwc);
@@ -458,6 +466,7 @@ public class Form
 		}
 	}
 
+	@Override
 	protected void setCheckSubmit() {
 		if (getScript().getFunction("checkSubmit") == null) {
 			getScript().addFunction("checkSubmit", "function checkSubmit"+getId()+"(inputs){\n\n}");
@@ -625,6 +634,7 @@ public class Form
 		return parameter;
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		String loadingText = iwc.getIWMainApplication().getCoreBundle().getResourceBundle(iwc).getLocalizedString(this.loadingLayerLocalizationKey, this.loadingLayerTextValue);
 		String loadingCall = "showLoadingMessage('"+loadingText+"');";
@@ -747,6 +757,7 @@ public class Form
 		// }
 	}
 
+	@Override
 	public Object clone() {
 		Form obj = null;
 		try {
@@ -799,6 +810,7 @@ public class Form
 	/**
 	 * @deprecated replaced with addControlParameter
 	 */
+	@Deprecated
 	protected void setControlParameter(String parameterName, String parameterValue) {
 		addControlParameter(new Parameter(parameterName, parameterValue));
 	}
@@ -806,6 +818,7 @@ public class Form
 	/**
 	 * @deprecated replaced with addControlParameter
 	 */
+	@Deprecated
 	protected void setControlParameter(Parameter parameter) {
 		addControlParameter(parameter);
 		/*
@@ -825,6 +838,7 @@ public class Form
 	 * @param enable
 	 *          Set to true to disable, false will enable.
 	 */
+	@Override
 	public void setToDisableOnAction(String action, String objectName, boolean disable) {
 		this._disableObject = true;
 		setOnAction(ACTION_ON_SUBMIT, "disableObject(findObj('" + objectName + "'),'" + String.valueOf(objectName) + "')");
@@ -1031,6 +1045,7 @@ public class Form
 			this.oldAssociatedScript=associatedScript;
 		}
 	}
+	@Override
 	protected Script getScript() {
 		return getAssociatedFormScript();
 	}
@@ -1056,6 +1071,7 @@ public class Form
 	 * 
 	 * @see com.idega.presentation.PresentationObject#getName()
 	 */
+	@Override
 	public String getName() {
 		return super.getID();
 	}
@@ -1065,6 +1081,7 @@ public class Form
 	 * 
 	 * @see com.idega.presentation.PresentationObject#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String name) {
 		super.setID(name);
 	}
@@ -1074,6 +1091,7 @@ public class Form
 	 * 
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 
@@ -1082,6 +1100,7 @@ public class Form
 	 * 
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return true;
 	}

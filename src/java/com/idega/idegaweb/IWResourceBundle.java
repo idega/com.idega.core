@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.51 2008/11/22 10:11:45 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.52 2008/12/15 14:07:34 anton Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -16,6 +16,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -26,6 +27,7 @@ import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import javax.naming.OperationNotSupportedException;
@@ -54,10 +56,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/11/22 10:11:45 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/12/15 14:07:34 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.51 $
+ * @version $Revision: 1.52 $
  */
 
 @Service
@@ -66,8 +68,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
 	
-	private static final String AUTO_INSERT_PROPERTY = RESOURCE_IDENTIFIER + "_autoinsert";
-	private static final String PRIORITY_PROPERTY = RESOURCE_IDENTIFIER + "_property";
+//	private static final String AUTO_INSERT_PROPERTY = RESOURCE_IDENTIFIER + "_autoinsert";
+//	private static final String PRIORITY_PROPERTY = RESOURCE_IDENTIFIER + "_property";
 	
 	// ==================privates====================
 	Map<String, String> lookup;
@@ -78,12 +80,21 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	private IWBundle iwBundleParent;
 	private String resourcesURL;
 	
-	private String identifier = RESOURCE_IDENTIFIER;
-	
-	private Level usagePriorityLevel = MessageResourceImportanceLevel.LAST_ORDER;
+	private String identifier;
+	private Level usagePriorityLevel;
 	private boolean autoInsert;
+	private String bundleIdentifier;
 
 	// private IWResourceBundle parentResourceBundle;
+	
+	
+	/**
+	 * Empty constructor for use in extending classes
+	 * 
+	 */
+	public IWResourceBundle() {
+		initProperities();
+	}
 
 	/**
 	 * Creates a IWResourceBundle for a specific Locale
@@ -96,17 +107,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 *          Locale to create from
 	 */
 	public IWResourceBundle(IWBundle parent, File file, Locale locale) throws IOException {
+		this();
 		initialize(parent, new FileInputStream(file), file, locale);
 	}
 	
-	/**
-	 * Empty constructor does nothing for use in extending classes
-	 * 
-	 */
-	public IWResourceBundle() {}
-
-	
 	public IWResourceBundle(IWBundle parent, InputStream stream, Locale locale) throws IOException {
+		this();
 		initialize(parent,stream,null,locale);
 	}
 
@@ -130,6 +136,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	public IWResourceBundle(IWResourceBundle parent, InputStream inputStream, Locale locale) throws IOException {
 		this(parent.getIWBundleParent(), inputStream, locale);
 		setParent(parent);
+	}
+	
+	protected void initProperities() {
+		setIdentifier(RESOURCE_IDENTIFIER);
+		setLevel(MessageResourceImportanceLevel.LAST_ORDER);
+		setAutoInsert(false);
 	}
 	
 	/**
@@ -161,13 +173,13 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		if(bundleIdentifier == null || bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
 			throw new OperationNotSupportedException("Empty bundle is not supported supported");
 		} else {
+			setBundleIdentifier(bundleIdentifier);
 			IWContext iwc = IWContext.getCurrentInstance();
 	
 			if(newLocale == null)
 				newLocale = iwc.getCurrentLocale();
 			
-			IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getApplicationContext().getIWMainApplication();
-			IWBundle bundle = iwma.getBundle(bundleIdentifier);
+			IWBundle bundle = getIWMainApplication().getBundle(bundleIdentifier);
 	
 			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
 				file = FileUtil.getFileAndCreateIfNotExists(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
@@ -176,10 +188,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 				file = new File(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
 			}
 			
-			setAutoInsert(iwc.getApplicationSettings().getBoolean(AUTO_INSERT_PROPERTY, false));
+//			setAutoInsert(iwc.getApplicationSettings().getBoolean(AUTO_INSERT_PROPERTY, false));
 	
 			initialize(bundle, new FileInputStream(file), file, newLocale);
 		}
+		
 	}
 
 	/**
@@ -298,7 +311,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 
 	/**
 	 * Uses factory to get localisedMessage from all available message resources
-	 * @deprecated IWMainApplication.getgetLocalisedStringMessage should be used instead
+	 * @deprecated IWMainApplication.getLocalisedStringMessage should be used instead
 	 * @param key
 	 * @return found string 
 	 */
@@ -336,7 +349,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
 		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
 		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
-		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier, locale);
+		IWMainApplication iwma = IWMainApplication.defaultIWMainApplication;
+		return iwma.getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier, locale);
 	}
 	
 	/**
@@ -613,36 +627,15 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		return properties;
 	}
 
-	public String getIdentifier() {
-		return identifier;
-	}
-	
-	public void setIdentifier(String identifier) {
-		this.identifier = identifier;
-	}
-
-	public Level getLevel() {
-		return usagePriorityLevel;
-	}
-
 	/**
 	 * @return object that was found in resource or null if nothing is found
 	 */
 	public Object getMessage(Object key) {
 		return getBundleLocalizedString(String.valueOf(key), null);
 	}
+	
 
-	public boolean isAutoInsert() {
-		return autoInsert;
-	}
 
-	public void setAutoInsert(boolean value) {
-		autoInsert = value;
-	}
-
-	public void setLevel(Level priorityLevel) {
-		usagePriorityLevel = priorityLevel;
-	}
 
 	/**
 	 * @return object that was set or null if there was a failure setting object
@@ -678,7 +671,13 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 
 	@SuppressWarnings("unchecked")
 	public Set<Object> getAllLocalisedKeys() {
-		return getLookup().keySet();
+		if(DefaultIWBundle.isProductionEnvironment() && !getBundleIdentifier().equals(MessageResource.NO_BUNDLE)) {
+			IWBundle bundle = getIWMainApplication().getBundle(getBundleIdentifier());
+			String[] str = bundle.getLocalizableStrings();
+			return new TreeSet(Arrays.asList(str));
+		} else {
+			return getLookup().keySet();
+		}
 	}
 	
 	public void removeMessage(Object key) {
@@ -689,5 +688,43 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 //		}
 		getLookup().remove(key);
 		this.storeState();
+	}
+	
+	private IWMainApplication getIWMainApplication() {
+		IWContext iwc = IWContext.getCurrentInstance();
+		IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getApplicationContext().getIWMainApplication();
+		return iwma;
+	}
+	
+	public String getIdentifier() {
+		return identifier;
+	}
+	
+	public void setIdentifier(String identifier) {
+		this.identifier = identifier;
+	}
+
+	public Level getLevel() {
+		return usagePriorityLevel;
+	}
+
+	public boolean isAutoInsert() {
+		return autoInsert;
+	}
+
+	public void setAutoInsert(boolean value) {
+		autoInsert = value;
+	}
+
+	public void setLevel(Level priorityLevel) {
+		usagePriorityLevel = priorityLevel;
+	}
+
+	public String getBundleIdentifier() {
+		return bundleIdentifier;
+	}
+
+	public void setBundleIdentifier(String bundleIdentifier) {
+		this.bundleIdentifier = bundleIdentifier;
 	}
 }

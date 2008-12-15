@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.193 2008/12/13 15:24:30 civilis Exp $
+ * $Id: IWMainApplication.java,v 1.194 2008/12/15 14:07:35 anton Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -98,7 +98,6 @@ import com.idega.util.FileUtil;
 import com.idega.util.ThreadContext;
 import com.idega.util.dbschema.SQLSchemaAdapter;
 import com.idega.util.expression.ELUtil;
-import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceFactory;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
@@ -110,10 +109,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/12/13 15:24:30 $ by $Author: civilis $
+ *  Last modified: $Date: 2008/12/15 14:07:35 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.193 $
+ * @version $Revision: 1.194 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2433,10 +2432,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 	}
 	
-	public List<MessageResource> getAvailableMessageStorageResources() {
-		return getMessageFactory().getUninitializedMessageResources();
+	public List<String> getAvailableMessageStorageTypes() {
+		return getMessageFactory().getInitializedMessageResourceTypes();
 	}
-	
+
 	public MessageResourceFactory getMessageFactory() {
 		if(messageFactory == null) {
 			ELUtil.getInstance().autowire(this);
