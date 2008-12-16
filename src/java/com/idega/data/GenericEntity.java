@@ -297,6 +297,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @see com.idega.data.GenericEntity#getName()
 	 * @see com.idega.data.GenericEntity#decode(String pkString)
 	 */
+	@Override
 	public String toString() {
 		// Object pk = this.getPrimaryKey();
 		// if (pk != null) {
@@ -333,6 +334,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
+	@Deprecated
 	protected void addColumnName(String columnName) {
 		addAttribute(columnName);
 	}
@@ -349,6 +351,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
+	@Deprecated
 	protected void addColumnName(String columnName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName) {
 		addAttribute(columnName, longName, ifVisible, ifEditable, storageClassName);
 	}
@@ -409,6 +412,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with addAttribute()
 	 */
+	@Deprecated
 	protected void addColumnName(String columnName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName, String relationShipType, String relationShipClassName) {
 		addAttribute(columnName, longName, ifVisible, ifEditable, storageClassName, relationShipType, relationShipClassName);
 	}
@@ -473,6 +477,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with getAttribute()
 	 */
+	@Deprecated
 	public EntityAttribute getColumn(String columnName) {
 		return getAttribute(columnName);
 	}
@@ -570,6 +575,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @deprecated Only IDOLegacyEntity method, does not work with pure IDOEntity
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] constructArray(String[] id_array) {
 		IDOLegacyEntity[] returnArr = null;
 		try {
@@ -730,6 +736,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @deprecated replaced with removeFromColumn(columnName) Sets a column value
 	 *             to null
 	 */
+	@Deprecated
 	public void setColumnAsNull(String columnName) throws SQLException {
 		Connection Conn = null;
 		try {
@@ -972,6 +979,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with getStorageClass
 	 */
+	@Deprecated
 	public int getStorageClassType(String columnName) {
 		EntityAttribute attribute = getColumn(columnName);
 		if (attribute != null) {
@@ -985,6 +993,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with getStorageClass
 	 */
+	@Deprecated
 	public String getStorageClassName(String columnName) {
 		String theReturn = "";
 		if (getColumn(columnName) != null) {
@@ -1004,6 +1013,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with setStorageClass
 	 */
+	@Deprecated
 	public void setStorageClassName(String columnName, String className) {
 		try {
 			getColumn(columnName).setStorageClass(RefactorClassRegistry.forName(className));
@@ -1020,6 +1030,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with setStorageClass
 	 */
+	@Deprecated
 	public void setStorageClassType(String columnName, int classType) {
 		getColumn(columnName).setStorageClassType(classType);
 	}
@@ -1390,7 +1401,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				DatastoreInterface.getInstance(this).crunchMetaData(this);
 			}
 			else {
-				System.err.println("IDOLegacyEntity: updateMetaData() getID = -1 !");
+				logWarning("[IDOLegacyEntity] updateMetaData(): getID == -1 (" + this.getTableName() + ")");
 			}
 		}
 		catch (Exception ex) {
@@ -1917,6 +1928,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoGetRelated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findRelated(IDOLegacyEntity entity) throws SQLException {
 		return findRelated(entity, "", "");
 	}
@@ -1924,6 +1936,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoGetRelated
 	 */
+	@Deprecated
 	public int[] findRelatedIDs(IDOLegacyEntity entity) throws SQLException {
 		return findRelatedIDs(entity, "", "");
 	}
@@ -2050,6 +2063,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoGetRelated()
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findRelated(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue) throws SQLException {
 
 		String SQLString = this.getFindRelatedSQLQuery(entity, entityColumnName, entityColumnValue);
@@ -2059,6 +2073,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findReverseRelated(IDOLegacyEntity entity) throws SQLException {
 		return findRelated(entity);
 	}
@@ -2066,6 +2081,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoGetRelated
 	 */
+	@Deprecated
 	protected IDOLegacyEntity[] findRelated(IDOLegacyEntity entity, String SQLString) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -2114,6 +2130,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoGetRelatedPKs
 	 */
+	@Deprecated
 	public int[] findRelatedIDs(IDOLegacyEntity entity, String entityColumnName, String entityColumnValue) throws SQLException {
 		String tableToSelectFrom = getNameOfMiddleTable(entity, this);
 		StringBuffer buffer = new StringBuffer();
@@ -2158,6 +2175,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoGetRelatedPKs
 	 */
+	@Deprecated
 	protected int[] findRelatedIDs(IDOLegacyEntity entity, String SQLString) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -2218,6 +2236,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAssociatedOrdered(IDOLegacyEntity otherEntity, String column_name) throws SQLException {
 		return otherEntity.findAll("select * from " + otherEntity.getEntityName() + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString() + " order by " + column_name);
 	}
@@ -2225,6 +2244,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAll() throws SQLException {
 		return findAll("select * from " + getEntityName());
 	}
@@ -2232,6 +2252,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllOrdered(String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " order by " + orderByColumnName);
 	}
@@ -2239,6 +2260,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName, String condition) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " " + condition + " '" + toFind + "' order by " + orderByColumnName);
 	}
@@ -2246,6 +2268,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName, String toFind, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " like '" + toFind + "' order by " + orderByColumnName);
 	}
@@ -2253,6 +2276,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEqualsOrdered(String columnName, String toFind, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " = '" + toFind + "' order by " + orderByColumnName);
 	}
@@ -2260,6 +2284,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName, String condition1, String condition2) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " " + condition1 + " '" + toFind1 + "' and " + columnName2 + " " + condition2 + " '" + toFind2 + "' order by " + orderByColumnName);
 	}
@@ -2267,6 +2292,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " like '" + toFind1 + "' and " + columnName2 + " like '" + toFind2 + "' order by " + orderByColumnName);
 	}
@@ -2274,6 +2300,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEqualsOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " = '" + toFind1 + "' and " + columnName2 + " = '" + toFind2 + "' order by " + orderByColumnName);
 	}
@@ -2281,6 +2308,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEqualsOrdered(String columnName1, int toFind1, String columnName2, int toFind2, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " = " + toFind1 + " and " + columnName2 + " = " + toFind2 + " order by " + orderByColumnName);
 	}
@@ -2288,6 +2316,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnDescendingOrdered(String columnName, String toFind, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " like '" + toFind + "' order by " + orderByColumnName + " desc");
 	}
@@ -2295,6 +2324,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnDescendingOrdered(String columnName1, String toFind1, String columnName2, String toFind2, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " like '" + toFind1 + "' and " + columnName2 + " like '" + toFind2 + "' order by " + orderByColumnName + " desc");
 	}
@@ -2302,6 +2332,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllDescendingOrdered(String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " order by " + orderByColumnName + " desc");
 	}
@@ -2309,6 +2340,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumn(String columnName, String toFind, String condition) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " " + condition + " '" + toFind + "'");
 	}
@@ -2316,6 +2348,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1, char condition1, String columnName2, String toFind2, char condition2) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " " + String.valueOf(condition1) + " '" + toFind1 + "' and " + columnName2 + " " + String.valueOf(condition2) + " '" + toFind2 + "'");
 	}
@@ -2323,6 +2356,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumn(String columnName, String toFind) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " like '" + toFind + "'");
 	}
@@ -2330,6 +2364,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEquals(String columnName, String toFind) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " = '" + toFind + "'");
 	}
@@ -2337,6 +2372,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumn(String columnName, int toFind) throws SQLException {
 		return findAllByColumn(columnName, Integer.toString(toFind));
 	}
@@ -2344,6 +2380,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEquals(String columnName, int toFind) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName + " = " + toFind + "");
 	}
@@ -2351,6 +2388,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1, String columnName2, String toFind2, String columnName3, String toFind3) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " like '" + toFind1 + "' and " + columnName2 + " like '" + toFind2 + "' and " + columnName3 + " like '" + toFind3 + "'");
 	}
@@ -2358,6 +2396,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEquals(String columnName1, String toFind1, String columnName2, String toFind2, String columnName3, String toFind3) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " = '" + toFind1 + "' and " + columnName2 + " = '" + toFind2 + "' and " + columnName3 + " = '" + toFind3 + "'");
 	}
@@ -2365,6 +2404,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumn(String columnName1, String toFind1, String columnName2, String toFind2) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " like '" + toFind1 + "' and " + columnName2 + " like '" + toFind2 + "'");
 	}
@@ -2372,6 +2412,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAllByColumnEquals(String columnName1, String toFind1, String columnName2, String toFind2) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " = '" + toFind1 + "' and " + columnName2 + " = '" + toFind2 + "'");
 	}
@@ -2379,6 +2420,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public int getNumberOfRecords(String columnName, String columnValue) throws SQLException {
 		return getNumberOfRecords("select count(*) from " + getEntityName() + " where " + columnName + " like '" + columnValue + "'");
 	}
@@ -2620,6 +2662,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAll(String SQLString) throws SQLException {
 		// System.out.println(SQLString);
 		return findAll(SQLString, -1);
@@ -2628,6 +2671,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public IDOLegacyEntity[] findAll(String SQLString, int returningNumberOfRecords) throws SQLException {
 		// System.err.println("com.idega.data.GenericEntity.findAll(\""+SQLString+"\");");
 		/*
@@ -2676,6 +2720,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with idoAddTo
 	 */
+	@Deprecated
 	public void addTo(IDOLegacyEntity entityToAddTo) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -2931,6 +2976,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with idoRemoveFrom
 	 */
+	@Deprecated
 	public void removeFrom(IDOLegacyEntity entityToRemoveFrom) throws SQLException {
 		removeFrom((IDOEntity) entityToRemoveFrom);
 	}
@@ -3007,6 +3053,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated Replaced with idoRemoveFrom
 	 */
+	@Deprecated
 	public void removeFrom(Class entityToRemoveFrom) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -3139,6 +3186,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * This method just calls equals(IDOEntity) by casting obj to IDOEntity
 	 */
+	@Override
 	public boolean equals(Object obj) {
 
 		boolean isEqual = false;
@@ -3234,6 +3282,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @deprecated Only for IDOLegacyEntity, does not work with pure IDOEntity,
 	 *             use getStaticInstanceIDO() instead
 	 */
+	@Deprecated
 	public static IDOLegacyEntity getStaticInstance(Class entityClass) {
 		// //return getStaticInstance(entityClass.getName());
 		// if (entityClass.isInterface()) {
@@ -3353,6 +3402,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @deprecated replaced with IDOLookup.findByPrimaryKeyLegacy();
 	 */
+	@Deprecated
 	public static IDOLegacyEntity getEntityInstance(Class entityClass, int id) {
 		IDOLegacyEntity entity = null;
 		try {
@@ -3369,6 +3419,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @deprecated Replaced with IDOLookup.instanciateEntity(entityClass);
 	 */
+	@Deprecated
 	public static GenericEntity getEntityInstance(Class entityClass) {
 		return (GenericEntity) IDOLookup.instanciateEntity(entityClass);
 	}
@@ -4041,6 +4092,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replacced with idoFindPKsBySQL
 	 */
+	@Deprecated
 	protected Collection idoFindIDsBySQL(String sqlQuery) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery);
 	}
@@ -4537,6 +4589,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * @deprecated replaced with idoFindPKsBySQL
 	 */
+	@Deprecated
 	protected Collection idoFindIDsBySQL(String SQLString, int returningNumberOfRecords) throws FinderException {
 		return idoFindPKsBySQL(SQLString, returningNumberOfRecords);
 	}
@@ -5284,6 +5337,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public int hashCode() {
 		StringBuffer buffer = new StringBuffer();
 		buffer.append(getEntityName());
