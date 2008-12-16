@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.175 2008/05/10 16:13:01 laddi Exp $
+ * $Id: Link.java,v 1.176 2008/12/16 13:09:09 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -493,6 +493,12 @@ public class Link extends Text {
 
 		if (this._obj != null) {
 			this._obj.main(iwc);
+		}
+		
+		try {
+			getInlineEditable().makeInlineEditable(iwc, this);
+		} catch(Exception e) {
+			e.printStackTrace();
 		}
 	}
 
