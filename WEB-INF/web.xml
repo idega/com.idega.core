@@ -251,13 +251,13 @@
 	</filter-mapping>
     <!-- extension mapping for adding <script/>, <link/>, and other resource tags to JSF-pages  -->
 	<filter-mapping>
-	    <filter-name>MyFacesExtensionsFilter</filter-name>
+	    <filter-name>extensionsFilter</filter-name>
 	    <!-- servlet-name must match the name of your javax.faces.webapp.FacesServlet entry -->
 	    <servlet-name>Faces Servlet</servlet-name>
 	</filter-mapping>
 	<!-- extension mapping for serving page-independent resources (javascript, stylesheets, images, etc.)  -->
 	<filter-mapping>
-	    <filter-name>MyFacesExtensionsFilter</filter-name>
+	    <filter-name>extensionsFilter</filter-name>
 	    <url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
 	</filter-mapping>
 	<!-- MyFaces MultiPart Filter MUST BE AFTER THE IWEncodingFilter -->
