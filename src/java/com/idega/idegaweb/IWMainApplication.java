@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.196 2008/12/16 13:31:39 anton Exp $
+ * $Id: IWMainApplication.java,v 1.197 2008/12/16 13:33:45 anton Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -110,10 +110,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/12/16 13:31:39 $ by $Author: anton $
+ *  Last modified: $Date: 2008/12/16 13:33:45 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.196 $
+ * @version $Revision: 1.197 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2423,6 +2423,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @param key - message key
 	 * @param valueIfNotFound - value that is set to message resource (if autoinsert is enabled) and/or returned in case if not found
 	 * @param bundleIdentifier - bundleIdentifier for which message should belong
+	 * @param locale - locale for string
 	 */
 	public String getLocalisedStringMessage(String key, String valueIfNotFound, String bundleIdentifier, Locale locale) {
 		Object foundValue = getMessageFactory().getLocalisedMessage(key, valueIfNotFound, bundleIdentifier, locale);
