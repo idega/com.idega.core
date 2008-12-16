@@ -81,6 +81,7 @@ jQuery(document).ready(function() {
 			AdminToolbarSession.setMode('preview');
 		}
 		
+		AdminCoreHelper.restoreInlineEditableComponents();
 		AdminCoreHelper.initializeInlineEditableComponents();
 	});
 	
@@ -121,8 +122,6 @@ AdminCoreHelper.initializeInlineEditableComponents = function() {
 	jQuery.each(jQuery('.InlineEditableComponent'), function() {
 		jQuery(this).click(function(event) {
 			if (!jQuery('body').hasClass('isContentAdmin')) {
-				AdminCoreHelper.restoreInlineEditableComponents();
-				
 				jQuery(this).replaceWith(jQuery(this).removeClass('inlineEditableInited').clone(false));
 				
 				if (this.tagName == 'a' || this.tagName == 'A') {
