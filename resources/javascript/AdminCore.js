@@ -28,10 +28,14 @@ jQuery(document).ready(function() {
 	
 	jQuery('.moduleContainer').hover(
 			function() {
-				jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
+				if (AdminCoreHelper.currentMode == 'isEditAdmin') {
+					jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
+				}
 			},
 			function() {
-				jQuery(this).children('.regionInfoImageContainer').removeShadow();
+				if (AdminCoreHelper.currentMode == 'isEditAdmin') {
+					jQuery(this).children('.regionInfoImageContainer').removeShadow();
+				}
 			}
 	);
 	
