@@ -89,9 +89,9 @@ jQuery(document).ready(function() {
 	});
 	
 	jQuery(window).resize(function() {
-		try {
+		if (AdminCoreHelper.currentMode == 'isThemesAdmin') {
 			ThemesSliderHelper.resizeSlider();
-		} catch(e) {}
+		}
 	});
 });
 
