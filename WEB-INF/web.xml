@@ -194,7 +194,7 @@
 		<url-pattern>/pages/*</url-pattern>
 	</filter-mapping>
 
-	<!-- MyFaces Extensions Filter -->
+	<!-- MyFaces Extensions Filter, is here because faces needs to be first in web.xml but iwencoding filter must before extensionsfilter (any filter) -->
 	<filter>
 		<filter-name>extensionsFilter</filter-name>
 		<filter-class>org.apache.myfaces.webapp.filter.ExtensionsFilter</filter-class>
@@ -249,7 +249,17 @@
 		<filter-name>extensionsFilter</filter-name>
 		<url-pattern>*.jsf</url-pattern>
 	</filter-mapping>
-
+    <!-- extension mapping for adding <script/>, <link/>, and other resource tags to JSF-pages  -->
+	<filter-mapping>
+	    <filter-name>MyFacesExtensionsFilter</filter-name>
+	    <!-- servlet-name must match the name of your javax.faces.webapp.FacesServlet entry -->
+	    <servlet-name>Faces Servlet</servlet-name>
+	</filter-mapping>
+	<!-- extension mapping for serving page-independent resources (javascript, stylesheets, images, etc.)  -->
+	<filter-mapping>
+	    <filter-name>MyFacesExtensionsFilter</filter-name>
+	    <url-pattern>/faces/myFacesExtensionResource/*</url-pattern>
+	</filter-mapping>
 	<!-- MyFaces MultiPart Filter MUST BE AFTER THE IWEncodingFilter -->
 
 	<!-- The IWActionHandlerFilter that redirects "action" urls like "/idegaweb/action/edit/files/cms/article/1.xml"-->
