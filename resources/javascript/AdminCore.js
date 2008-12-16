@@ -153,7 +153,7 @@ AdminCoreHelper.makeComponentEditable = function(component, oldValue) {
 			jQuery(component).append('<input id=\''+instanceId+'inlineEditingInProcess\' type=\'hidden\' />');
 			
 			LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
-				BuilderService.setLocalizedText(window.location.pathname, instanceId, newText, {
+				BuilderService.setLocalizedText(instanceId, newText, {
 					callback: function(result) {
 						if (!result) {
 							reloadPage();

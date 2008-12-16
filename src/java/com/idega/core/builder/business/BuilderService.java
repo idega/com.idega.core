@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.66 2008/12/08 06:51:44 valdas Exp $
+ * $Id: BuilderService.java,v 1.67 2008/12/16 11:25:04 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -318,7 +318,7 @@ public interface BuilderService extends IBOService
 	
 	public boolean setModuleProperty(String pageKey, String moduleId, String propertyName, String[] properties);
 	
-	public boolean setLocalizedText(String pageUri, String moduleId, String text);
+	public boolean setLocalizedText(String moduleId, String text);
 	
 	public boolean removeAllBlockObjectsFromCache(IWContext iwc);
 	

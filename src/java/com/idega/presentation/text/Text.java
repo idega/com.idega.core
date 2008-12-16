@@ -11,10 +11,14 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.business.text.InlineEditableComponent;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.text.StyleConstants;
 
 /**
@@ -68,7 +72,8 @@ public class Text extends PresentationObject {
 	protected boolean teletype;
 	private boolean addHTMLFontTag = true;
 
-
+	@Autowired
+	private InlineEditableComponent inlineEditable;
 
 	/**
 	 * *Constructor that creates the object with an empty string
@@ -99,6 +104,7 @@ public class Text extends PresentationObject {
 		}
 	}
 
+	@Override
 	public void setMarkupAttribute(String name, String value) {
 		this.attributeSet = true;
 		super.setMarkupAttribute(name, value);
@@ -107,6 +113,7 @@ public class Text extends PresentationObject {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#setStyleAttribute(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public void setStyleAttribute(String attribute, String value) {
 		this.attributeSet = true;
 		super.setStyleAttribute(attribute, value);
@@ -258,6 +265,7 @@ public class Text extends PresentationObject {
 		return this.text;
 	}
 
+	@Override
 	public String toString() {
 		return this.text;
 	}
@@ -302,6 +310,7 @@ public class Text extends PresentationObject {
 		this.addHTMLFontTag = addHTMLFontTag;
 	}
 
+	@Override
 	public Object clone() {
 		Text obj = null;
 		try {
@@ -352,6 +361,7 @@ public class Text extends PresentationObject {
 		return getLocalizedTextAsUnencodedString(iwc);
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			if (this.attributeSet || showTag()) {
@@ -409,6 +419,7 @@ public class Text extends PresentationObject {
 		return false;
 	}
 	
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
@@ -421,6 +432,7 @@ public class Text extends PresentationObject {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(context);
@@ -432,4 +444,14 @@ public class Text extends PresentationObject {
 		return values;
 	}	
 	
+	public InlineEditableComponent getInlineEditable() {
+		if (inlineEditable == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return inlineEditable;
+	}
+
+	public void setInlineEditable(InlineEditableComponent inlineEditable) {
+		this.inlineEditable = inlineEditable;
+	}
 }
