@@ -16,7 +16,11 @@ public class Heading extends Text {
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 		
-		getInlineEditable().makeInlineEditable(iwc, this);
+		try {
+			getInlineEditable().makeInlineEditable(iwc, this);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 	}
 	
 }

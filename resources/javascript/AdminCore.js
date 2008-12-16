@@ -1,6 +1,7 @@
 if (AdminCoreHelper == null) var AdminCoreHelper = {};
 
 AdminCoreHelper.currentMode = null;
+AdminCoreHelper.linksValues = [];
 
 jQuery(document).ready(function() {
 	if (!jQuery('body').hasClass('isContentAdmin')) {
@@ -120,8 +121,13 @@ AdminCoreHelper.initializeInlineEditableComponents = function() {
 	jQuery.each(jQuery('.InlineEditableComponent'), function() {
 		jQuery(this).click(function(event) {
 			if (!jQuery('body').hasClass('isContentAdmin')) {
+				AdminCoreHelper.restoreInlineEditableComponents();
+				
 				jQuery(this).replaceWith(jQuery(this).removeClass('inlineEditableInited').clone(false));
 				
+				if (this.tagName == 'a' || this.tagName == 'A') {
+					return true;
+				}
 				return false;
 			}
 		});
@@ -137,7 +143,24 @@ AdminCoreHelper.initializeInlineEditableComponents = function() {
 	}
 }
 
+AdminCoreHelper.restoreInlineEditableComponents = function() {
+	if (AdminCoreHelper.linksValues == null || AdminCoreHelper.linksValues.length == 0) {
+		return;
+	}
+	
+	jQuery.each(AdminCoreHelper.linksValues, function() {
+		jQuery('#' + this.id).attr('href', this.href);
+	});
+	
+	AdminCoreHelper.linksValues = [];
+}
+
 AdminCoreHelper.makeComponentEditable = function(component, oldValue) {
+	if (component.tagName == 'a' || component.tagName == 'A') {
+		AdminCoreHelper.linksValues.push({id: jQuery(component).attr('id'), href: jQuery(component).attr('href')});
+		jQuery(component).attr('href', 'javascript:void(0);');
+	}
+	
 	jQuery(component).editable(function(newText, settings) {
 		var instanceId = jQuery(component).attr('id');
 		if (instanceId == null || instanceId == '') {

@@ -11,8 +11,6 @@ import java.util.Map;
 
 import javax.faces.context.FacesContext;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.idega.business.text.InlineEditableComponent;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWConstants;
@@ -71,9 +69,6 @@ public class Text extends PresentationObject {
 	protected boolean attributeSet;
 	protected boolean teletype;
 	private boolean addHTMLFontTag = true;
-
-	@Autowired
-	private InlineEditableComponent inlineEditable;
 
 	/**
 	 * *Constructor that creates the object with an empty string
@@ -444,14 +439,7 @@ public class Text extends PresentationObject {
 		return values;
 	}	
 	
-	public InlineEditableComponent getInlineEditable() {
-		if (inlineEditable == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-		return inlineEditable;
-	}
-
-	public void setInlineEditable(InlineEditableComponent inlineEditable) {
-		this.inlineEditable = inlineEditable;
+	protected InlineEditableComponent getInlineEditable() throws Exception {
+		return ELUtil.getInstance().getBean(InlineEditableComponent.SPRING_BEAN_IDENTIFIER);
 	}
 }

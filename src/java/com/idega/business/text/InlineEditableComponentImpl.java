@@ -19,8 +19,8 @@ import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
-@Service
 @Scope("singleton")
+@Service(InlineEditableComponent.SPRING_BEAN_IDENTIFIER)
 public class InlineEditableComponentImpl implements InlineEditableComponent {
 
 	private static final long serialVersionUID = -749409164128200690L;
