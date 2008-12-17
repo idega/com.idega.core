@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.68 2008/12/16 13:08:47 valdas Exp $
+ * $Id: BuilderService.java,v 1.69 2008/12/17 16:01:53 civilis Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -31,6 +31,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
+import com.idega.user.data.User;
 
 /**
  * BuilderService: This is the interface to the iW Builder functions in idegaWeb
@@ -362,6 +363,8 @@ public interface BuilderService extends IBOService
 	
 	public String getFullPageUrlByPageType(IWContext iwc, String pageType, boolean checkFirstlyNearestPages);
 	
+	public abstract String getFullPageUrlByPageType(User user, IWContext iwc, String pageType, boolean checkFirstlyNearestPages);
+	
 	public ICPage getNearestPageForCurrentPageByPageType(IWContext iwc, String pageType);
 	
 	public String getLocalizedPageName(String pageKey, Locale locale);
@@ -373,6 +376,8 @@ public interface BuilderService extends IBOService
 	public String getUriToPagePermissionsWindow(List<AdvancedProperty> parameters);
 	
 	public String getUriToPagePropertiesWindow(List<AdvancedProperty> parameters);
+	
+	public abstract ICPage getNearestPageForUserHomePageOrCurrentPageByPageType(User currentUser, IWContext iwc, String pageType);
 	
 	public List<com.idega.core.component.business.ComponentProperty> getComponentProperties(IWContext iwc, String instanceId);
 }
