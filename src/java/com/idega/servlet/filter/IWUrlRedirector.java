@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.23 2008/02/13 14:07:32 valdas Exp $
+ * $Id: IWUrlRedirector.java,v 1.24 2008/12/18 13:55:08 valdas Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,6 +13,8 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Logger;
+
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -21,6 +23,7 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import com.idega.core.builder.business.BuilderPageException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
@@ -29,16 +32,18 @@ import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.DefaultErrorHandlingUriWindow;
 import com.idega.util.CoreConstants;
+import com.idega.util.RequestUtil;
+import com.idega.util.StringUtil;
 
 
 /**
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2008/02/13 14:07:32 $ by $Author: valdas $
+ *  Last modified: $Date: 2008/12/18 13:55:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -69,7 +74,15 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		}
 		catch(BuilderPageException pe){
 			if(pe.getCode().equals(BuilderPageException.CODE_NOT_FOUND)){
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				String redirectUri = RequestUtil.getRedirectUriByApplicationProperty(request, HttpServletResponse.SC_NOT_FOUND);
+				if (StringUtil.isEmpty(redirectUri)) {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				}
+				
+				Logger.getLogger(this.getClass().getName()).warning("Found default page for error 404, redirecting to: " + redirectUri);
+				response.sendRedirect(redirectUri);
+				return;
 			}
 			else{
 				throw pe;

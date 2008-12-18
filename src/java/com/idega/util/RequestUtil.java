@@ -1,5 +1,5 @@
 /*
- * $Id: RequestUtil.java,v 1.6 2006/05/23 15:17:32 tryggvil Exp $ Created on
+ * $Id: RequestUtil.java,v 1.7 2008/12/18 13:55:08 valdas Exp $ Created on
  * 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -11,13 +11,17 @@ package com.idega.util;
 
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 
 /**
  * 
- * Last modified: $Date: 2006/05/23 15:17:32 $ by $Author: tryggvil $
+ * Last modified: $Date: 2008/12/18 13:55:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class RequestUtil {
 
@@ -190,5 +194,44 @@ public class RequestUtil {
 	 */
 	public static String getAuthorizationHeader(HttpServletRequest request) {
 		return request.getHeader(HEADER_AUTHORIZATION);
+	}
+	
+	public static String getRedirectUriByApplicationProperty(HttpServletRequest request, int code) {
+		String requestedPage = request.getRequestURI();
+		if (!requestedPage.startsWith("/pages/")) {
+			return null;
+		}
+		
+		IWMainApplicationSettings settings = null;
+		try {
+			settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		if (settings == null) {
+			return null;
+		}
+		
+		boolean addLoginRedirectParameter = false;
+		String redirectUri = null;
+		switch(code) {
+			case HttpServletResponse.SC_FORBIDDEN : {
+				redirectUri = settings.getProperty(HttpServletResponse.SC_FORBIDDEN + "_PAGE_URI");
+				addLoginRedirectParameter = true;
+				
+				break;
+			}
+			case HttpServletResponse.SC_NOT_FOUND : {
+				redirectUri = settings.getProperty(HttpServletResponse.SC_NOT_FOUND + "_PAGE_URI");
+				
+				break;
+			}
+		}
+		if (StringUtil.isEmpty(redirectUri)) {
+			return null;
+		}
+		
+		return new StringBuilder(redirectUri).append(addLoginRedirectParameter ? new StringBuilder("?logon_redirect_uri=").append(requestedPage).toString() :
+													CoreConstants.EMPTY).toString();
 	}
 }

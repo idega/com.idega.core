@@ -1,5 +1,5 @@
 /*
- * $Id: IWAuthorizationFilter.java,v 1.15 2008/05/22 08:19:51 alexis Exp $ Created on 31.7.2004
+ * $Id: IWAuthorizationFilter.java,v 1.16 2008/12/18 13:55:08 valdas Exp $ Created on 31.7.2004
  * in project com.idega.core
  * 
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,6 +26,8 @@ import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
+import com.idega.util.RequestUtil;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -33,10 +36,10 @@ import com.idega.idegaweb.IWUserContextImpl;
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
- * Last modified: $Date: 2008/05/22 08:19:51 $ by $Author: alexis $
+ * Last modified: $Date: 2008/12/18 13:55:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
@@ -51,14 +54,10 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
-	public void doFilter(ServletRequest srequest, ServletResponse sresponse,
-			FilterChain chain) throws IOException, ServletException {
-		
-		
+	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
-		//IWContext iwc = new IWContext(request,response,request.getSession().getServletContext());
-		//boolean isLoggedOn = iwc.isLoggedOn();
+
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
 		boolean hasPermission = getIfUserHasPermission(request);
@@ -71,8 +70,20 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				response.sendRedirect(newUrl);
 			}
 			else{
-				//by default send a 403 error
-				response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				if (isLoggedOn) {
+					response.sendError(HttpServletResponse.SC_FORBIDDEN);
+					return;
+				}
+				
+				String redirectUri = RequestUtil.getRedirectUriByApplicationProperty(request, HttpServletResponse.SC_FORBIDDEN);
+				if (StringUtil.isEmpty(redirectUri)) {
+					//by default send a 403 error
+					response.sendError(HttpServletResponse.SC_FORBIDDEN);
+				}
+				else {
+					Logger.getLogger(this.getClass().getName()).warning("Found default page for error 403, redirecting to: " + redirectUri);
+					response.sendRedirect(redirectUri);
+				}
 			}
 		}
 		else{
@@ -87,7 +98,14 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 			}
 			
 			if(!viewNodeExists){
-				response.sendError(HttpServletResponse.SC_NOT_FOUND);
+				String redirectUri = RequestUtil.getRedirectUriByApplicationProperty(request, HttpServletResponse.SC_NOT_FOUND);
+				if (StringUtil.isEmpty(redirectUri)) {
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
+					return;
+				}
+				
+				Logger.getLogger(this.getClass().getName()).warning("Found default page for error 404, redirecting to: " + redirectUri);
+				response.sendRedirect(redirectUri);
 				return;
 			}
 			chain.doFilter(srequest,sresponse);
