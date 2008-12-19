@@ -1,5 +1,5 @@
 /*
- * $Id: RequestUtil.java,v 1.7 2008/12/18 13:55:08 valdas Exp $ Created on
+ * $Id: RequestUtil.java,v 1.8 2008/12/19 08:54:45 valdas Exp $ Created on
  * 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 
 /**
  * 
- * Last modified: $Date: 2008/12/18 13:55:08 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/19 08:54:45 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class RequestUtil {
 
@@ -216,13 +216,13 @@ public class RequestUtil {
 		String redirectUri = null;
 		switch(code) {
 			case HttpServletResponse.SC_FORBIDDEN : {
-				redirectUri = settings.getProperty(HttpServletResponse.SC_FORBIDDEN + "_PAGE_URI");
+				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_403_HANDLER_PORPERTY);
 				addLoginRedirectParameter = true;
 				
 				break;
 			}
 			case HttpServletResponse.SC_NOT_FOUND : {
-				redirectUri = settings.getProperty(HttpServletResponse.SC_NOT_FOUND + "_PAGE_URI");
+				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_404_HANDLER_PORPERTY);
 				
 				break;
 			}
