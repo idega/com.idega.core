@@ -16,28 +16,30 @@ jQuery(document).ready(function() {
 	if (jQuery('body').hasClass('isContentAdmin')) {
 		AdminCoreHelper.initializeInlineEditableComponents();
 	}
-	jQuery('.applicationPropertyStyleClass').append("<span class=\"icon\"></span>");
+	try {
+		jQuery('.applicationPropertyStyleClass').append('<span class=\'icon\'></span>');
+	} catch(e) {}
 
 	jQuery('#adminTopLayer li').hover(
-			function() {
-				jQuery(this).children('.modeHelper').fadeIn('fast');
-			},
-			function() {
-				jQuery(this).children('.modeHelper').fadeOut('fast');
-			}
+		function() {
+			jQuery(this).children('.modeHelper').fadeIn('fast');
+		},
+		function() {
+			jQuery(this).children('.modeHelper').fadeOut('fast');
+		}
 	);
 	
 	jQuery('.moduleContainer').hover(
-			function() {
-				if (AdminCoreHelper.currentMode == 'isEditAdmin') {
-					jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
-				}
-			},
-			function() {
-				if (AdminCoreHelper.currentMode == 'isEditAdmin') {
-					jQuery(this).children('.regionInfoImageContainer').removeShadow();
-				}
+		function() {
+			if (AdminCoreHelper.currentMode == 'isEditAdmin') {
+				jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
 			}
+		},
+		function() {
+			if (AdminCoreHelper.currentMode == 'isEditAdmin') {
+				jQuery(this).children('.regionInfoImageContainer').removeShadow();
+			}
+		}
 	);
 	
 	jQuery('#adminTopLayer li').click(function() {
@@ -92,7 +94,9 @@ jQuery(document).ready(function() {
 	
 	jQuery(window).resize(function() {
 		if (AdminCoreHelper.currentMode == 'isThemesAdmin') {
-			ThemesSliderHelper.resizeSlider();
+			try {
+				ThemesSliderHelper.resizeSlider();
+			} catch(e) {}
 		}
 	});
 });
