@@ -282,7 +282,8 @@ document.getElementsByTagName('head')[0].appendChild(resource);if(callback){if(i
 else{resource.onreadystatechange=function(){if(resource.readyState=='loaded'||resource.readyState=='complete'){LazyLoader.loading=false;callback();}}
 resource.onload=function(){LazyLoader.loading=false;callback();}}}
 if(callback==null){LazyLoader.loading=false;}}}catch(e){LazyLoader.loading=false;}}
-LazyLoader.existsResourceInDocument=function(url,isCSS){if(LazyLoader.existsResourceInElement('head',url,isCSS)){return true;}
+LazyLoader.existsResourceInDocument=function(url,isCSS){try{if(existsElementInArray(IdegaResourcesHandler,url)){return true;}}catch(e){}
+if(LazyLoader.existsResourceInElement('head',url,isCSS)){return true;}
 return LazyLoader.existsResourceInElement('body',url,isCSS)}
 LazyLoader.existsResourceInElement=function(elementTagName,url,isCSS){var element=document.getElementsByTagName(elementTagName)[0];var currentResources=null;try{currentResources=element.getElementsByTagName(isCSS?'link':'script');}catch(e){return false;}
 if(currentResources==null||currentResources.length==0){return false;}

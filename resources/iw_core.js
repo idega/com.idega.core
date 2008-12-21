@@ -1817,6 +1817,12 @@ LazyLoader.doRealLoading = function(url, callback, parameters) {
 }
 
 LazyLoader.existsResourceInDocument = function(url, isCSS) {
+	try {
+		if (existsElementInArray(IdegaResourcesHandler, url)) {
+			return true;
+		}
+	} catch(e) {}
+	
 	if (LazyLoader.existsResourceInElement('head', url, isCSS)) {
 		return true;
 	}

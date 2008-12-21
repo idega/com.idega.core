@@ -152,7 +152,7 @@ public class PresentationUtil {
 		}
 		
 		if (callbackFunction != null && !callbackFunction.startsWith("function()")) {
-			callbackFunction = new StringBuffer("function() { ").append(callbackFunction).append(" }").toString();
+			callbackFunction = new StringBuffer("\nfunction() {\n").append(callbackFunction).append("\n}").toString();
 		}
 		action.append("], ").append(callbackFunction == null ? "null" : callbackFunction).append(");");
 		return action.toString();

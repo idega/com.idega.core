@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.48 2008/10/23 14:11:15 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.49 2008/12/21 17:02:49 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -55,10 +55,10 @@ import com.idega.util.StringUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/10/23 14:11:15 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/21 17:02:49 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.48 $
+ * @version $Revision: 1.49 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -187,9 +187,15 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
 	 */
-	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma,String requestUriWithoutContextPath){
-		
+	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma, String requestUriWithoutContextPath) {
+		return copyResourceFromJarOrCustomContentToWebapp(iwma, requestUriWithoutContextPath, null);
+	}
+	
+	public synchronized static File copyResourceFromJarOrCustomContentToWebapp(IWMainApplication iwma, String requestUriWithoutContextPath, String fileContent) {
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
+		if (StringUtil.isEmpty(bundleIdentifier)) {
+			return null;
+		}
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
 		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
 		File webappFile = new File(webappFilePath);
@@ -203,23 +209,32 @@ public class IWBundleResourceFilter extends BaseFilter {
 			}
 		}
 		
+		return copyFileContentToWebApp(iwma, requestUriWithoutContextPath, fileContent, pathWithinBundle, bundle, bundleLastModified);
+	}
+	
+	private synchronized static File copyFileContentToWebApp(IWMainApplication iwma, String requestUriWithoutContextPath, String content, String pathWithinBundle,
+			IWBundle bundle, long lastModified) {
+		InputStream input = null;
+		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
 		try {
 			//Special Windows handling:
 			char separatorChar = File.separatorChar;
 			//This is to handle the case when the URI contains the '/' character (in requestUriWithoutContextPath)
 			// this '/' needs to be replaced with '\' for Windows
-			if(separatorChar==FileUtil.WINDOWS_FILE_SEPARATOR){
+			if (separatorChar == FileUtil.WINDOWS_FILE_SEPARATOR) {
 				webappFilePath = webappFilePath.replace(FileUtil.UNIX_FILE_SEPARATOR, FileUtil.WINDOWS_FILE_SEPARATOR);
 			}
 			
-			webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
-			InputStream input = bundle.getResourceInputStream(pathWithinBundle);
+			File webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
+			input = StringUtil.isEmpty(content) ? bundle.getResourceInputStream(pathWithinBundle) : StringHandler.getStreamFromString(content);
 			FileUtil.streamToFile(input, webappFile);
-			webappFile.setLastModified(bundleLastModified);
+			webappFile.setLastModified(lastModified);
 			return webappFile;
 		}
-		catch (IOException e) {
+		catch (Exception e) {
 			log.log(Level.WARNING, "Could not copy resource from jar to " + requestUriWithoutContextPath, e);
+		} finally {
+			IOUtil.closeInputStream(input);
 		}
 		
 		return null;

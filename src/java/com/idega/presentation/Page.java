@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.178 2008/12/15 13:10:55 laddi Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.179 2008/12/21 17:02:50 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/15 13:10:55 $ by $Author: laddi $
+ * Last modified: $Date: 2008/12/21 17:02:50 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.178 $
+ * @version $Revision: 1.179 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -326,21 +326,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			}
 			coreScript.append(".js");
 			StringBuffer buffer = null;
-			if (printScriptSourcesDirectly) {
-				buffer = new StringBuffer(PresentationUtil.getJavaScriptSourceLine(coreScript.toString()));
-			}
-			else {
-				PresentationUtil.addJavaScriptSourceLineToHeader(iwc, coreScript.toString());
-			}
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, coreScript.toString());
 			
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
 				for (Object source: this._javascripts.values()) {
-					if (printScriptSourcesDirectly) {
-						buffer.append(PresentationUtil.getJavaScriptSourceLine(source.toString()));
-					}
-					else {
-						PresentationUtil.addJavaScriptSourceLineToHeader(iwc, source.toString());
-					}
+					PresentationUtil.addJavaScriptSourceLineToHeader(iwc, source.toString());
 				}
 			}
 			return buffer == null ? CoreConstants.EMPTY : buffer.toString();
