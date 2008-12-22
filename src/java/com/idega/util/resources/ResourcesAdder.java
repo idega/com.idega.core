@@ -168,16 +168,16 @@ public class ResourcesAdder extends DefaultAddResource {
 			return;
 		}
 		
-		String concatinatedResourcesUri = getConcatinatedResources(resources, fileType, serverName);
+		String concatenatedResourcesUri = getConcatenatedResources(resources, fileType, serverName);
 		if (!ListUtil.isEmpty(resources)) {
 			//	Restoring original resources
 			for (String uri: resources) {
 				super.addJavaScriptAtPosition(facesContext, ResourcesAdder.HEADER_BEGIN, uri);
 			}
 		}
-		if (!StringUtil.isEmpty(concatinatedResourcesUri)) {
+		if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
 			//	Adding concatenated file to page
-			super.addJavaScriptAtPosition(facesContext, ResourcesAdder.HEADER_BEGIN, concatinatedResourcesUri);
+			super.addJavaScriptAtPosition(facesContext, ResourcesAdder.HEADER_BEGIN, concatenatedResourcesUri);
 		}
 	}
 	
@@ -191,7 +191,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		return uri;
 	}
             
-	private String getConcatinatedResources(List<String> resources, String fileType, String serverName) {
+	private String getConcatenatedResources(List<String> resources, String fileType, String serverName) {
 		if (ListUtil.isEmpty(resources)) {
 			return null;
 		}
@@ -218,13 +218,13 @@ public class ResourcesAdder extends DefaultAddResource {
 		for (String resourceUri: uris) {
 			cacheName.append(resourceUri);
 		}
-		String concatinatedResourcesUri = getCache("idegaCoreConcatinatedRecources").get(cacheName.toString());
-		if (!StringUtil.isEmpty(concatinatedResourcesUri)) {
-			concatinatedResourcesUri = copyConcatenatedResourcesToWebApp(getCache("idegaCoreConcatinatedRecources").get(new StringBuilder(cacheName.toString())
+		String concatenatedResourcesUri = getCache("idegaCoreConcatenatedRecources").get(cacheName.toString());
+		if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
+			concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(getCache("idegaCoreConcatenatedRecources").get(new StringBuilder(cacheName.toString())
 																															.append("_content").toString()),
-																															concatinatedResourcesUri, fileType);
-			if (!StringUtil.isEmpty(concatinatedResourcesUri)) {
-				return concatinatedResourcesUri;
+																															concatenatedResourcesUri, fileType);
+			if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
+				return concatenatedResourcesUri;
 			}
 		}
 		
@@ -246,14 +246,14 @@ public class ResourcesAdder extends DefaultAddResource {
 		for (String resource: uris) {
 			allResources.append("\n").append(addedResources.get(resource));
 		}
-		concatinatedResourcesUri = copyConcatenatedResourcesToWebApp(allResources.toString(), null, fileType);
-		if (StringUtil.isEmpty(concatinatedResourcesUri)) {
+		concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(allResources.toString(), null, fileType);
+		if (StringUtil.isEmpty(concatenatedResourcesUri)) {
 			return null;
 		}
-		getCache("idegaCoreConcatinatedRecources").put(cacheName.toString(), concatinatedResourcesUri);
-		getCache("idegaCoreConcatinatedRecources").put(cacheName.append("_content").toString(), allResources.toString());
+		getCache("idegaCoreConcatenatedRecources").put(cacheName.toString(), concatenatedResourcesUri);
+		getCache("idegaCoreConcatenatedRecources").put(cacheName.append("_content").toString(), allResources.toString());
 		
-		return concatinatedResourcesUri;
+		return concatenatedResourcesUri;
 	}
 	
 	private String copyConcatenatedResourcesToWebApp(String content, String uriToResources, String fileType) {
