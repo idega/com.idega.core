@@ -1,7 +1,12 @@
 package com.idega.util.resources;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
+import java.net.MalformedURLException;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -23,7 +28,10 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.RequestUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
 public class ResourcesAdder extends DefaultAddResource {
@@ -84,21 +92,21 @@ public class ResourcesAdder extends DefaultAddResource {
 	
 	@Override
 	public void writeMyFacesJavascriptBeforeBodyEnd(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		manageHeader();
+		manageHeader(RequestUtil.getServerURL(request));
 		
 		super.writeMyFacesJavascriptBeforeBodyEnd(request, response);
 	}
 	
 	@Override
 	public void writeResponse(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		manageHeader();
+		manageHeader(RequestUtil.getServerURL(request));
 		
 		super.writeResponse(request, response);
 	}
 	
 	@Override
 	public void writeWithFullHeader(HttpServletRequest request, HttpServletResponse response) throws IOException {
-		manageHeader();
+		manageHeader(RequestUtil.getServerURL(request));
 		
 		super.writeWithFullHeader(request, response);
 	}
@@ -107,7 +115,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("idega_core.optimize_resources", Boolean.TRUE);
 	}
 	
-	private synchronized void manageHeader() {
+	private synchronized void manageHeader(String serverName) {
 		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles())) {
 			return;
 		}
@@ -118,7 +126,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		
 		//	JavaScript
 		if (useOptimizer) {
-			addResources(facesContext, getJavaScriptResources(), ".js");
+			addResources(facesContext, getJavaScriptResources(), ".js", serverName);
 		}
 		else {
 			for (String uri: getJavaScriptResources()) {
@@ -128,7 +136,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		
 		//	CSS
 		if (useOptimizer) {
-			addResources(facesContext, getCSSFiles(), ".css");
+			addResources(facesContext, getCSSFiles(), ".css", serverName);
 		}
 		else {
 			for (String uri: getCSSFiles()) {
@@ -136,7 +144,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			}
 		}
 		
-		//	JS actions	//	TODO: make optimizer?
+		//	JS actions
 		for (String action: getJavaScriptActions()) {
 			super.addInlineScriptAtPosition(facesContext, AddResource.BODY_END, action);
 		}
@@ -146,7 +154,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		cssFiles.clear();
 	}
 	
-	private void addResources(FacesContext facesContext, List<String> resources, String fileType) {
+	private void addResources(FacesContext facesContext, List<String> resources, String fileType, String serverName) {
 		if (ListUtil.isEmpty(resources)) {
 			return;
 		}
@@ -160,7 +168,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			return;
 		}
 		
-		String concatinatedResourcesUri = getConcatinatedResources(resources, fileType);
+		String concatinatedResourcesUri = getConcatinatedResources(resources, fileType, serverName);
 		if (!ListUtil.isEmpty(resources)) {
 			//	Restoring original resources
 			for (String uri: resources) {
@@ -183,7 +191,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		return uri;
 	}
             
-	private String getConcatinatedResources(List<String> resources, String fileType) {
+	private String getConcatinatedResources(List<String> resources, String fileType, String serverName) {
 		if (ListUtil.isEmpty(resources)) {
 			return null;
 		}
@@ -193,7 +201,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		List<String> uris = new ArrayList<String>();
 		Map<String, String> addedResources = new HashMap<String, String>();
 		for (String resourceUri: resources) {
-			resourceContent = getResource("idegaCoreWebPageResources", resourceUri);
+			resourceContent = getResource("idegaCoreWebPageResources", resourceUri, serverName);
 			if (!StringUtil.isEmpty(resourceContent)) {
 				uris.add(resourceUri);
 				addedResources.put(resourceUri, resourceContent);
@@ -260,24 +268,49 @@ public class ResourcesAdder extends DefaultAddResource {
 		return IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication()).getCache(cacheName);
 	}
 	
-	private String getResource(String cacheName, String resourceUri) {
+	private String getResource(String cacheName, String resourceUri, String serverName) {
 		Map<String, String> cache = getCache(cacheName);
-		String resourceContent = cache.get(resourceUri);
-		if (!StringUtil.isEmpty(resourceContent)) {
-			return resourceContent;
+		String minifiedResource = cache.get(resourceUri);
+		if (!StringUtil.isEmpty(minifiedResource)) {
+			return minifiedResource;
 		}
 		
 		File resource = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), resourceUri);
-		if (resource == null) {
-			//	TODO: manage 3rd party resources
-		}
-		String minifiedResource = getMinifiedResource(resource);
+		minifiedResource = resource == null ? getMinifiedResource(serverName, resourceUri) : getMinifiedResource(resource);
 		if (StringUtil.isEmpty(minifiedResource)) {
 			return null;
 		}
 		
 		cache.put(resourceUri, minifiedResource);
 		return minifiedResource;
+	}
+	
+	private String getMinifiedResource(String serverURL, String resourceURI) {
+		if (resourceURI.startsWith(CoreConstants.SLASH)) {
+			resourceURI = resourceURI.replaceFirst(CoreConstants.SLASH, CoreConstants.EMPTY);
+		}
+		String fullLink = new StringBuilder(serverURL).append(resourceURI).toString();
+		URL url = null;
+		try {
+			url = new URL(fullLink);
+		} catch (MalformedURLException e) {
+			LOGGER.log(Level.WARNING, "Error getting resource from: " + fullLink, e);
+		}
+		if (url == null) {
+			return null;
+		}
+		
+		InputStream input = null;
+		try {
+			input = url.openStream();
+		} catch (IOException e) {
+			LOGGER.log(Level.WARNING, "Error getting resource from: " + fullLink, e);
+		}
+		if (input == null) {
+			return null;
+		}
+		
+		return getMinifiedResource(input);
 	}
 	
 	private String getMinifiedResource(File resource) {
@@ -300,7 +333,29 @@ public class ResourcesAdder extends DefaultAddResource {
 			content.append("\n").append(line);
 		}
 		
-		//	TODO: minimize file content
+		try {
+			return getMinifiedResource(StringHandler.getStreamFromString(content.toString()));
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error while minifying resource: " + resource.getName(), e);
+		}
+		
 		return content.toString();
+	}
+		
+	private String getMinifiedResource(InputStream input) {
+		OutputStream output = null;
+		try {
+			output = new ByteArrayOutputStream();
+			ResourceMinifier minifier = new ResourceMinifier(input, output);
+			minifier.minify();
+		} catch(Exception e) {
+			output = null;
+			LOGGER.log(Level.WARNING, "Error while minifying resource", e);
+		} finally {
+			IOUtil.closeInputStream(input);
+			IOUtil.closeOutputStream(output);
+		}
+		
+		return output == null ? null : output.toString();
 	}
 }
