@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.179 2008/12/21 17:02:50 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.180 2008/12/22 06:45:43 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/21 17:02:50 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/22 06:45:43 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.179 $
+ * @version $Revision: 1.180 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -320,12 +320,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	protected String getJavascriptURLs(IWContext iwc) {
 		if (this.addGlobalScript) {
-			StringBuilder coreScript = new StringBuilder(iwc.getIWMainApplication().getCoreBundle().getResourcesURL()).append("/iw_core");
-			if (iwc.getApplicationSettings().getBoolean("use_compressed_core_script", Boolean.TRUE)) {
-				coreScript.append("-compressed");
-			}
-			coreScript.append(".js");
-			StringBuffer buffer = null;
+			StringBuilder coreScript = new StringBuilder(iwc.getIWMainApplication().getCoreBundle().getResourcesURL()).append("/iw_core").append(".js");
 			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, coreScript.toString());
 			
 			if (this._javascripts != null && !this._javascripts.isEmpty()) {
@@ -333,7 +328,6 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 					PresentationUtil.addJavaScriptSourceLineToHeader(iwc, source.toString());
 				}
 			}
-			return buffer == null ? CoreConstants.EMPTY : buffer.toString();
 		}
 		return CoreConstants.EMPTY;
 	}
