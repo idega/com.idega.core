@@ -8,7 +8,7 @@ jQuery(document).ready(function() {
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
 	}
 	if (jQuery('body').hasClass('isEditAdmin')) {
-		jQuery('.moduleName').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
+		//jQuery('.moduleName').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
 	}
 	if (jQuery('body').hasClass('isThemesAdmin')) {
 		AdminCoreHelper.showThemes(true, false);
@@ -32,12 +32,12 @@ jQuery(document).ready(function() {
 	jQuery('.moduleContainer').hover(
 		function() {
 			if (AdminCoreHelper.currentMode == 'isEditAdmin') {
-				jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
+				//jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
 			}
 		},
 		function() {
 			if (AdminCoreHelper.currentMode == 'isEditAdmin') {
-				jQuery(this).children('.regionInfoImageContainer').removeShadow();
+				//jQuery(this).children('.regionInfoImageContainer').removeShadow();
 			}
 		}
 	);
@@ -59,10 +59,10 @@ jQuery(document).ready(function() {
 			
 			jQuery('body').addClass('isEditAdmin');
 			AdminToolbarSession.setMode('isEditAdmin');
-			jQuery('.moduleName').dropShadow({left: 0, top: 1, opacity: 0.5, blur: 2});
+			//jQuery('.moduleName').dropShadow({left: 0, top: 1, opacity: 0.5, blur: 2});
 		}
 		else {
-			jQuery('.moduleName').removeShadow();
+			//jQuery('.moduleName').removeShadow();
 		}
 		
 		if (jQuery(this).hasClass('adminContentMode')) {
