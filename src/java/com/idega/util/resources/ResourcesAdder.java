@@ -220,7 +220,12 @@ public class ResourcesAdder extends DefaultAddResource {
 		}
 		String concatinatedResourcesUri = getCache("idegaCoreConcatinatedRecources").get(cacheName.toString());
 		if (!StringUtil.isEmpty(concatinatedResourcesUri)) {
-			return concatinatedResourcesUri;
+			concatinatedResourcesUri = copyConcatenatedResourcesToWebApp(getCache("idegaCoreConcatinatedRecources").get(new StringBuilder(cacheName.toString())
+																															.append("_content").toString()),
+																															concatinatedResourcesUri, fileType);
+			if (!StringUtil.isEmpty(concatinatedResourcesUri)) {
+				return concatinatedResourcesUri;
+			}
 		}
 		
 		StringBuilder allResources = null;
@@ -241,23 +246,26 @@ public class ResourcesAdder extends DefaultAddResource {
 		for (String resource: uris) {
 			allResources.append("\n").append(addedResources.get(resource));
 		}
-		concatinatedResourcesUri = uploadConcatinatedResources(allResources.toString(), fileType);
+		concatinatedResourcesUri = copyConcatenatedResourcesToWebApp(allResources.toString(), null, fileType);
 		if (StringUtil.isEmpty(concatinatedResourcesUri)) {
 			return null;
 		}
 		getCache("idegaCoreConcatinatedRecources").put(cacheName.toString(), concatinatedResourcesUri);
+		getCache("idegaCoreConcatinatedRecources").put(cacheName.append("_content").toString(), allResources.toString());
 		
 		return concatinatedResourcesUri;
 	}
 	
-	private String uploadConcatinatedResources(String content, String fileType) {
+	private String copyConcatenatedResourcesToWebApp(String content, String uriToResources, String fileType) {
 		if (StringUtil.isEmpty(content)) {
 			return null;
 		}
 		
-		String fileName = new StringBuilder().append("resources_").append(System.currentTimeMillis()).append(fileType).toString();
-		String uriToResources = IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER)
-																														.getVirtualPathWithFileNameString(fileName);
+		if (StringUtil.isEmpty(uriToResources)) {
+			String fileName = new StringBuilder().append("resources_").append(System.currentTimeMillis()).append(fileType).toString();
+			uriToResources = IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER)
+																			.getVirtualPathWithFileNameString(fileName);
+		}
 		File file = IWBundleResourceFilter.copyResourceFromJarOrCustomContentToWebapp(IWMainApplication.getDefaultIWMainApplication(), uriToResources, content);
 		
 		return (file == null || !file.exists()) ? null : uriToResources;
