@@ -40,6 +40,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	
 	private static final String WEB_PAGE_RESOURCES = "idegaCoreWebPageResources";
 	private static final String CONCATENATED_RESOURCES = "idegaCoreConcatenatedRecources";
+	public static final String OPTIMIZIED_RESOURCES = "optimiziedResources_";
 	
 	private List<String> javaScriptActions;
 	private List<String> javaScriptResources;
@@ -193,43 +194,85 @@ public class ResourcesAdder extends DefaultAddResource {
 		}
 		return uri;
 	}
-            
+	
+	private String getCachedConcatenatedResources(String cacheName, String fileType) {
+		String concatenatedResourcesUri = getCachedResource(CONCATENATED_RESOURCES, cacheName);
+		if (StringUtil.isEmpty(concatenatedResourcesUri)) {
+			return null;
+		}
+		
+		String cachedContent = getCachedResource(CONCATENATED_RESOURCES, new StringBuilder(cacheName.toString()).append("_content").toString());
+		if (StringUtil.isEmpty(cachedContent)) {
+			return null;
+		}
+		
+		concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(cachedContent, concatenatedResourcesUri, fileType);
+		
+		return StringUtil.isEmpty(concatenatedResourcesUri) ? null : concatenatedResourcesUri;
+	}
+	
+	private String getUriToConcatenatedResourcesFromResources(List<String> resources, String fileType) {
+		if (ListUtil.isEmpty(resources) || StringUtil.isEmpty(fileType)) {
+			return null;
+		}
+		
+		//	Will try to get big file URI from requested resources
+		StringBuilder cacheName = new StringBuilder();
+		for (String resourceUri: resources) {
+			cacheName.append(resourceUri);
+		}
+		
+		String uriToConcatenatedResources = getCachedConcatenatedResources(cacheName.toString(), fileType);
+		if (!StringUtil.isEmpty(uriToConcatenatedResources)) {
+			LOGGER.info(new StringBuilder("Found uri ('").append(uriToConcatenatedResources).append("') for concatenated files: ").append(cacheName.toString())
+					.toString());
+			
+			resources.clear();
+		}
+		return uriToConcatenatedResources;
+	}
+	
 	private String getConcatenatedResources(List<String> resources, String fileType, String serverName) {
 		if (ListUtil.isEmpty(resources)) {
 			return null;
 		}
 		
-		//	Making one big file from all requested resources
+		//	Checking if ALL resources were concatenated already
+		String uriToAllConcatenatedResources = getUriToConcatenatedResourcesFromResources(resources, fileType);
+		if (!StringUtil.isEmpty(uriToAllConcatenatedResources)) {
+			return uriToAllConcatenatedResources;
+		}
+		
+		//	Didn't find concatenated file for ALL resources, will check every resource separately if it's available to be minified
 		String resourceContent = null;
 		List<String> uris = new ArrayList<String>();
 		Map<String, String> addedResources = new HashMap<String, String>();
 		for (String resourceUri: resources) {
 			resourceContent = getResource(WEB_PAGE_RESOURCES, resourceUri, serverName);
-			if (!StringUtil.isEmpty(resourceContent)) {
+			if (StringUtil.isEmpty(resourceContent)) {
+				LOGGER.warning(new StringBuilder("Impossible to concatenate file: ").append(resourceUri).toString());
+			}
+			else {
+				//	Resource is available to be concatenated
 				uris.add(resourceUri);
 				addedResources.put(resourceUri, resourceContent);
 			}
 		}
+		
 		if (ListUtil.isEmpty(addedResources.values())) {
-			return null;
+			return null;	//	Nothing to concatenate
 		}
 		
+		//	Removing AVAILABLE resources from request. Available resources will be concatenated to one big file
 		resources.removeAll(uris);
 		
-		//	Will make cache name from all resources URIs
-		StringBuilder cacheName = new StringBuilder();
-		for (String resourceUri: uris) {
-			cacheName.append(resourceUri);
-		}
-		String concatenatedResourcesUri = getCachedResource(CONCATENATED_RESOURCES, cacheName.toString());
+		//	Checking if there is concatenated resource from ONLY AVAILABLE resources
+		String concatenatedResourcesUri = getUriToConcatenatedResourcesFromResources(resources, fileType);
 		if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
-			concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(getCachedResource(CONCATENATED_RESOURCES, new StringBuilder(cacheName.toString()).append("_content").toString()),
-																		concatenatedResourcesUri, fileType);
-			if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
-				return concatenatedResourcesUri;
-			}
+			return concatenatedResourcesUri;
 		}
 		
+		//	Nothing found in cache, creating big file
 		StringBuilder allResources = null;
 		if (".js".equals(fileType)) {
 			allResources = new StringBuilder("var IdegaResourcesHandler = [");
@@ -245,14 +288,18 @@ public class ResourcesAdder extends DefaultAddResource {
 		if (allResources == null) {
 			allResources = new StringBuilder();
 		}
+		StringBuilder cacheName = new StringBuilder();
 		for (String resource: uris) {
 			allResources.append("\n").append(addedResources.get(resource));
+			
+			cacheName.append(resource);
 		}
 		concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(allResources.toString(), null, fileType);
 		if (StringUtil.isEmpty(concatenatedResourcesUri)) {
 			return null;
 		}
 
+		//	Putting in cache
 		setCachedResource(CONCATENATED_RESOURCES, cacheName.toString(), concatenatedResourcesUri);
 		setCachedResource(CONCATENATED_RESOURCES, cacheName.append("_content").toString(), allResources.toString());
 		
@@ -265,7 +312,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		}
 		
 		if (StringUtil.isEmpty(uriToResources)) {
-			String fileName = new StringBuilder().append("resources_").append(System.currentTimeMillis()).append(fileType).toString();
+			String fileName = new StringBuilder().append(OPTIMIZIED_RESOURCES).append(System.currentTimeMillis()).append(fileType).toString();
 			uriToResources = IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER)
 																			.getVirtualPathWithFileNameString(fileName);
 		}

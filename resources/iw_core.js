@@ -15,6 +15,7 @@
 //***********************************************************//
 
 if(IWCORE == null) var IWCORE = {};
+if(IdegaResourcesHandler == null) var IdegaResourcesHandler = [];
 
 var IE = document.all?true:false; 
 
