@@ -38,6 +38,9 @@ public class ResourcesAdder extends DefaultAddResource {
 	
 	private static final Logger LOGGER = Logger.getLogger(ResourcesAdder.class.getName());
 	
+	private static final String WEB_PAGE_RESOURCES = "idegaCoreWebPageResources";
+	private static final String CONCATENATED_RESOURCES = "idegaCoreConcatenatedRecources";
+	
 	private List<String> javaScriptActions;
 	private List<String> javaScriptResources;
 	private List<String> cssFiles;
@@ -115,7 +118,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("idega_core.optimize_resources", Boolean.TRUE);
 	}
 	
-	private synchronized void manageHeader(String serverName) {
+	private void manageHeader(String serverName) {
 		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles())) {
 			return;
 		}
@@ -201,7 +204,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		List<String> uris = new ArrayList<String>();
 		Map<String, String> addedResources = new HashMap<String, String>();
 		for (String resourceUri: resources) {
-			resourceContent = getResource("idegaCoreWebPageResources", resourceUri, serverName);
+			resourceContent = getResource(WEB_PAGE_RESOURCES, resourceUri, serverName);
 			if (!StringUtil.isEmpty(resourceContent)) {
 				uris.add(resourceUri);
 				addedResources.put(resourceUri, resourceContent);
@@ -218,11 +221,10 @@ public class ResourcesAdder extends DefaultAddResource {
 		for (String resourceUri: uris) {
 			cacheName.append(resourceUri);
 		}
-		String concatenatedResourcesUri = getCache("idegaCoreConcatenatedRecources").get(cacheName.toString());
+		String concatenatedResourcesUri = getCachedResource(CONCATENATED_RESOURCES, cacheName.toString());
 		if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
-			concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(getCache("idegaCoreConcatenatedRecources").get(new StringBuilder(cacheName.toString())
-																															.append("_content").toString()),
-																															concatenatedResourcesUri, fileType);
+			concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(getCachedResource(CONCATENATED_RESOURCES, new StringBuilder(cacheName.toString()).append("_content").toString()),
+																		concatenatedResourcesUri, fileType);
 			if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
 				return concatenatedResourcesUri;
 			}
@@ -250,8 +252,9 @@ public class ResourcesAdder extends DefaultAddResource {
 		if (StringUtil.isEmpty(concatenatedResourcesUri)) {
 			return null;
 		}
-		getCache("idegaCoreConcatenatedRecources").put(cacheName.toString(), concatenatedResourcesUri);
-		getCache("idegaCoreConcatenatedRecources").put(cacheName.append("_content").toString(), allResources.toString());
+
+		setCachedResource(CONCATENATED_RESOURCES, cacheName.toString(), concatenatedResourcesUri);
+		setCachedResource(CONCATENATED_RESOURCES, cacheName.append("_content").toString(), allResources.toString());
 		
 		return concatenatedResourcesUri;
 	}
@@ -273,12 +276,35 @@ public class ResourcesAdder extends DefaultAddResource {
 	
 	@SuppressWarnings("unchecked")
 	private Map<String, String> getCache(String cacheName) {
-		return IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication()).getCache(cacheName);
+		try {
+			return IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication()).getCache(cacheName);
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting cache!", e);
+		}
+		return null;
+	}
+	
+	private String getCachedResource(String cacheName, String resourceName) {
+		try {
+			return getCache(cacheName).get(resourceName);
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error putting resource to cache: " + cacheName, e);
+		}
+		return null;
+	}
+	
+	private boolean setCachedResource(String cacheName, String resourceName, String content) {
+		try {
+			getCache(cacheName).put(resourceName, content);
+			return true;
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error putting resource to cache: " + cacheName, e);
+		}
+		return false;
 	}
 	
 	private String getResource(String cacheName, String resourceUri, String serverName) {
-		Map<String, String> cache = getCache(cacheName);
-		String minifiedResource = cache.get(resourceUri);
+		String minifiedResource = getCachedResource(cacheName, resourceUri);
 		if (!StringUtil.isEmpty(minifiedResource)) {
 			return minifiedResource;
 		}
@@ -289,7 +315,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			return null;
 		}
 		
-		cache.put(resourceUri, minifiedResource);
+		setCachedResource(cacheName, resourceUri, minifiedResource);
 		return minifiedResource;
 	}
 	
