@@ -2,18 +2,24 @@ if (AdminCoreHelper == null) var AdminCoreHelper = {};
 
 AdminCoreHelper.currentMode = null;
 AdminCoreHelper.linksValues = [];
+AdminCoreHelper.modes = {
+	preview: 'preview',
+	content: 'isContentAdmin',
+	builder: 'isEditAdmin',
+	themes: 'isThemesAdmin'
+};
 
 jQuery(document).ready(function() {
-	if (!jQuery('body').hasClass('isContentAdmin')) {
+	if (!jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
 	}
-	if (jQuery('body').hasClass('isEditAdmin')) {
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.builder)) {
 		//jQuery('.moduleName').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
 	}
-	if (jQuery('body').hasClass('isThemesAdmin')) {
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.themes)) {
 		AdminCoreHelper.showThemes(true, false);
 	}
-	if (jQuery('body').hasClass('isContentAdmin')) {
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
 		AdminCoreHelper.initializeInlineEditableComponents();
 	}
 	try {
@@ -31,12 +37,12 @@ jQuery(document).ready(function() {
 	
 	jQuery('.moduleContainer').hover(
 		function() {
-			if (AdminCoreHelper.currentMode == 'isEditAdmin') {
+			if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.builder) {
 				//jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
 			}
 		},
 		function() {
-			if (AdminCoreHelper.currentMode == 'isEditAdmin') {
+			if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.builder) {
 				//jQuery(this).children('.regionInfoImageContainer').removeShadow();
 			}
 		}
@@ -45,7 +51,7 @@ jQuery(document).ready(function() {
 	jQuery('#adminTopLayer li').click(function() {
 		jQuery('#adminTopLayer li.selected').removeClass('selected');
 		jQuery(this).addClass('selected');
-		jQuery('body').removeClass('isThemesAdmin').removeClass('isEditAdmin').removeClass('isContentAdmin');
+		jQuery('body').removeClass(AdminCoreHelper.modes.themes).removeClass(AdminCoreHelper.modes.builder).removeClass(AdminCoreHelper.modes.content);
 		jQuery('.applicationPropertyStyleClass .icon').hide();
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
 		jQuery('body div#themeSlider').remove();
@@ -55,10 +61,10 @@ jQuery(document).ready(function() {
 		}
 
 		if (jQuery(this).hasClass('adminEditMode')) {
-			AdminCoreHelper.currentMode = 'isEditAdmin';
+			AdminCoreHelper.currentMode = AdminCoreHelper.modes.builder;
 			
-			jQuery('body').addClass('isEditAdmin');
-			AdminToolbarSession.setMode('isEditAdmin');
+			jQuery('body').addClass(AdminCoreHelper.modes.builder);
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.builder);
 			//jQuery('.moduleName').dropShadow({left: 0, top: 1, opacity: 0.5, blur: 2});
 		}
 		else {
@@ -66,21 +72,21 @@ jQuery(document).ready(function() {
 		}
 		
 		if (jQuery(this).hasClass('adminContentMode')) {
-			AdminCoreHelper.currentMode = 'isContentAdmin';
+			AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
 			
-			jQuery('body').addClass('isContentAdmin');
+			jQuery('body').addClass(AdminCoreHelper.modes.content);
 			jQuery('div.content_item_toolbar, div.commentsController').fadeIn('slow');
 			jQuery('.applicationPropertyStyleClass .icon').fadeIn('slow');
 			
-			AdminToolbarSession.setMode('isContentAdmin');
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.content);
 		}
 		else {
 		}
 		
 		if (jQuery(this).hasClass('adminPreviewMode')) {
-			AdminCoreHelper.currentMode = 'preview';
+			AdminCoreHelper.currentMode = AdminCoreHelper.modes.preview;
 			
-			AdminToolbarSession.setMode('preview');
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.preview);
 		}
 		
 		AdminCoreHelper.restoreInlineEditableComponents();
@@ -93,7 +99,7 @@ jQuery(document).ready(function() {
 	});
 	
 	jQuery(window).resize(function() {
-		if (AdminCoreHelper.currentMode == 'isThemesAdmin') {
+		if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.themes) {
 			try {
 				ThemesSliderHelper.resizeSlider();
 			} catch(e) {}
@@ -102,13 +108,13 @@ jQuery(document).ready(function() {
 });
 
 AdminCoreHelper.showThemes = function(forceToOpen, setMode) {
-	AdminCoreHelper.currentMode = 'isThemesAdmin';
+	AdminCoreHelper.currentMode = AdminCoreHelper.modes.themes;
 	
-	if (forceToOpen || !jQuery('body').hasClass('isThemesAdmin')) {
-		jQuery('body').addClass('isThemesAdmin');
+	if (forceToOpen || !jQuery('body').hasClass(AdminCoreHelper.modes.themes)) {
+		jQuery('body').addClass(AdminCoreHelper.modes.themes);
 		
 		if (setMode) {
-			AdminToolbarSession.setMode('isThemesAdmin');
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.themes);
 		}	
 		
 		jQuery('body').append('<div id="themeSlider" style="display: none;"></div>');
@@ -125,7 +131,7 @@ AdminCoreHelper.showThemes = function(forceToOpen, setMode) {
 AdminCoreHelper.initializeInlineEditableComponents = function() {
 	jQuery.each(jQuery('.InlineEditableComponent'), function() {
 		jQuery(this).click(function(event) {
-			if (!jQuery('body').hasClass('isContentAdmin')) {
+			if (!jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
 				jQuery(this).replaceWith(jQuery(this).removeClass('inlineEditableInited').clone(false));
 				
 				if (this.tagName == 'a' || this.tagName == 'A') {
@@ -136,7 +142,7 @@ AdminCoreHelper.initializeInlineEditableComponents = function() {
 		});
 	});
 	
-	if (jQuery('body').hasClass('isContentAdmin')) {
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
 		jQuery.each(jQuery('.InlineEditableComponent'), function() {
 			if (!jQuery(this).hasClass('inlineEditableInited')) {
 				AdminCoreHelper.makeComponentEditable(this, jQuery(this).text());
