@@ -6,9 +6,9 @@ import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  * 
- *          Last modified: $Date: 2008/12/05 08:24:42 $ by $Author: civilis $
+ *          Last modified: $Date: 2008/12/28 11:49:05 $ by $Author: civilis $
  */
 public interface GenericDao {
 
@@ -21,6 +21,8 @@ public interface GenericDao {
 	public abstract Query createNamedQuery(String queryName);
 
 	public abstract void remove(Object obj);
+
+	public abstract boolean contains(Object obj);
 
 	/**
 	 * first merges and then removed detached entity. This can be used in non

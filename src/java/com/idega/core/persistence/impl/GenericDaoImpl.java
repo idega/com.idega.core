@@ -20,9 +20,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  * 
- *          Last modified: $Date: 2008/12/05 08:24:42 $ by $Author: civilis $
+ *          Last modified: $Date: 2008/12/28 11:49:05 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 @Transactional(readOnly = true)
@@ -78,6 +78,11 @@ public class GenericDaoImpl implements GenericDao {
 	public void mergeRemove(Object obj) {
 
 		entityManager.remove(entityManager.merge(obj));
+	}
+
+	public boolean contains(Object obj) {
+
+		return getEntityManager().contains(obj);
 	}
 
 	@Transactional(readOnly = false)
