@@ -1254,6 +1254,18 @@ IWCORE.getRenderedComponentByClassName = function(options) {
 	});
 }
 
+IWCORE.addLoadedResources = function(uris) {
+	if (uris == null) {
+		return;
+	}
+	
+	for (var i = 0; i < uris.length; i++) {
+		if (!existsElementInArray(IdegaResourcesHandler, uris[i])) {
+			IdegaResourcesHandler.push(uris[i]);
+		}
+	}
+}
+
 function getNeededElements(element, className) {
 	if (element == null) {
 		return null;
@@ -1818,11 +1830,9 @@ LazyLoader.doRealLoading = function(url, callback, parameters) {
 }
 
 LazyLoader.existsResourceInDocument = function(url, isCSS) {
-	try {
-		if (existsElementInArray(IdegaResourcesHandler, url)) {
-			return true;
-		}
-	} catch(e) {}
+	if (existsElementInArray(IdegaResourcesHandler, url)) {
+		return true;
+	}
 	
 	if (LazyLoader.existsResourceInElement('head', url, isCSS)) {
 		return true;
