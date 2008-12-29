@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.180 2008/12/22 06:45:43 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.181 2008/12/29 09:18:19 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/22 06:45:43 $ by $Author: valdas $
+ * Last modified: $Date: 2008/12/29 09:18:19 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.180 $
+ * @version $Revision: 1.181 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -270,16 +270,16 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
 
 			if (sheet.getMedia() != null) {
-				addStyleSheet(buffer, markup, styleSheetURL, sheet.getMedia());
+				addStyleSheet(iwc, buffer, markup, styleSheetURL, sheet.getMedia());
 			}
 			else {
-				addStyleSheet(buffer, markup, styleSheetURL);
+				addStyleSheet(iwc, buffer, markup, styleSheetURL);
 			}
 		}
 		
 		String className = this.getClass().getName().toLowerCase();
 		if (className.indexOf(CoreConstants.WORKSPACE_VIEW_MANAGER_ID) != -1) {
-			addStyleSheet(buffer, markup, iwc.getIWMainApplication().getBundle(CoreConstants.WORKSPACE_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("style/workspace.css"));
+			addStyleSheet(iwc, buffer, markup, iwc.getIWMainApplication().getBundle(CoreConstants.WORKSPACE_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("style/workspace.css"));
 		}
 		
 		// Now the added style
@@ -287,7 +287,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			Iterator iter = this._styleSheets.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				addStyleSheet(buffer, markup, URL, ExternalLink.MEDIA_SCREEN);
+				addStyleSheet(iwc, buffer, markup, URL, ExternalLink.MEDIA_SCREEN);
 			}
 		}
 		// Now the added style for print
@@ -295,18 +295,23 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			Iterator iter = this._styleSheetsForPrint.values().iterator();
 			while (iter.hasNext()) {
 				String URL = (String) iter.next();
-				addStyleSheet(buffer, markup, URL, ExternalLink.MEDIA_PRINT);
+				addStyleSheet(iwc, buffer, markup, URL, ExternalLink.MEDIA_PRINT);
 			}
 		}
 		return buffer.toString();
 	}
 
-	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL) {
-		return addStyleSheet(buffer, markup, URL, ExternalLink.MEDIA_SCREEN);
+	private StringBuffer addStyleSheet(IWContext iwc, StringBuffer buffer, String markup, String URL) {
+		return addStyleSheet(iwc, buffer, markup, URL, ExternalLink.MEDIA_SCREEN);
 	}
 
-	private StringBuffer addStyleSheet(StringBuffer buffer, String markup, String URL, String media) {
-		return buffer.append("<link type=\"text/css\" href=\"" + URL + "\" rel=\"stylesheet\" media=\"" + media + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
+	private StringBuffer addStyleSheet(IWContext iwc, StringBuffer buffer, String markup, String URL, String media) {
+		if (ExternalLink.MEDIA_PRINT.equals(media)) {
+			return buffer.append("<link type=\"text/css\" href=\"").append(URL).append("\" rel=\"stylesheet\" media=\"").append(media).append("\" ")
+							.append((!markup.equals(HTML) ? CoreConstants.SLASH : CoreConstants.EMPTY)).append(">\n");
+		}
+		PresentationUtil.addStyleSheetToHeader(iwc, URL);
+		return buffer;
 	}
 
 	public void addJavascriptURL(String URL) {
