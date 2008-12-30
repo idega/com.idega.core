@@ -351,7 +351,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
 			return null;
 		}
 		
-		boolean compress = true;
+		boolean javaScript = true;
 		String resourceContent = null;
 		if (resourceUri.endsWith(ResourcesAdder.FILE_TYPE_JAVA_SCRIPT)) {
 			StringBuilder content = new StringBuilder();
@@ -361,7 +361,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
 			resourceContent = content.toString();
 		}
 		else {
-			compress = false;	//	TODO: find out what's wrong with CSS compressed code
+			javaScript = false;
 			resourceContent = getResourceScanner().getParsedContent(fileContent, resourceUri.substring(0, resourceUri.lastIndexOf(CoreConstants.SLASH) + 1));
 		}
 		
@@ -369,22 +369,29 @@ public class ResourcesManagerImpl implements ResourcesManager {
 			return null;
 		}
 		
-		if (compress) {
+		if (javaScript) {
 			try {
 				return getMinifiedResource(StringHandler.getStreamFromString(resourceContent));
 			} catch (Exception e) {
 				LOGGER.log(Level.WARNING, "Error while minifying resource: " + resource.getName(), e);
 			}
+		} else {
+			return getMinifiedResource(resourceContent);
 		}
 		
 		return resourceContent;
+	}
+	
+	private String getMinifiedResource(String content) {
+		CSSMinifier cssMinifier = new CSSMinifier();
+		return cssMinifier.minifyCSS(new StringBuffer(content)).toString();
 	}
 	
 	private String getMinifiedResource(InputStream input) {
 		OutputStream output = null;
 		try {
 			output = new ByteArrayOutputStream();
-			ResourceMinifier minifier = new ResourceMinifier(input, output);
+			JavaScriptMinifier minifier = new JavaScriptMinifier(input, output);
 			minifier.minify();
 		} catch(Exception e) {
 			output = null;

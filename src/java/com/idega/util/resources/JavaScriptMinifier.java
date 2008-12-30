@@ -5,7 +5,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
 
-public class ResourceMinifier {
+public class JavaScriptMinifier {
 	private static final int EOF = -1;
 
 	private PushbackInputStream in;
@@ -14,7 +14,7 @@ public class ResourceMinifier {
 	private int theA;
 	private int theB;
 	
-	public ResourceMinifier(InputStream in, OutputStream out) {
+	public JavaScriptMinifier(InputStream in, OutputStream out) {
 		this.in = new PushbackInputStream(in);
 		this.out = out;
 	}
