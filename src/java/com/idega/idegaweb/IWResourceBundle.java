@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.52 2008/12/15 14:07:34 anton Exp $
+ * $Id: IWResourceBundle.java,v 1.53 2008/12/30 09:04:36 valdas Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -56,10 +56,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2008/12/15 14:07:34 $ by $Author: anton $<br/>
+ * Last modified: $Date: 2008/12/30 09:04:36 $ by $Author: valdas $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.52 $
+ * @version $Revision: 1.53 $
  */
 
 @Service
@@ -347,8 +347,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty. 
 	 */
 	public String getLocalizedString(String key, String returnValueIfNotFound) {
+		return getLocalizedString(locale == null ? CoreUtil.getIWContext().getCurrentLocale() : locale, key, returnValueIfNotFound);
+	}
+	
+	public String getLocalizedString(Locale locale, String key, String returnValueIfNotFound) {
 		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
 		IWMainApplication iwma = IWMainApplication.defaultIWMainApplication;
 		return iwma.getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier, locale);
 	}
