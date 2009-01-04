@@ -11,17 +11,21 @@ AdminCoreHelper.modes = {
 
 jQuery(document).ready(function() {
 	if (!jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
-	}
-	if (jQuery('body').hasClass(AdminCoreHelper.modes.builder)) {
-		//jQuery('.moduleName').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
-	}
-	if (jQuery('body').hasClass(AdminCoreHelper.modes.themes)) {
-		AdminCoreHelper.showThemes(true, false);
-	}
-	if (jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
 		AdminCoreHelper.initializeInlineEditableComponents();
 	}
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.builder)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.builder;
+	}
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.themes)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.themes;
+		AdminCoreHelper.showThemes(true, false);
+	}
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.preview)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.preview;
+	}
+	
 	try {
 		jQuery('.applicationPropertyStyleClass').append('<span class=\'icon\'></span>');
 	} catch(e) {}
@@ -32,19 +36,6 @@ jQuery(document).ready(function() {
 		},
 		function() {
 			jQuery(this).children('.modeHelper').fadeOut('fast');
-		}
-	);
-	
-	jQuery('.moduleContainer').hover(
-		function() {
-			if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.builder) {
-				//jQuery(this).children('.regionInfoImageContainer').dropShadow({left: 0, top: 2, opacity: 0.5, blur: 2});
-			}
-		},
-		function() {
-			if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.builder) {
-				//jQuery(this).children('.regionInfoImageContainer').removeShadow();
-			}
 		}
 	);
 	
@@ -65,10 +56,6 @@ jQuery(document).ready(function() {
 			
 			jQuery('body').addClass(AdminCoreHelper.modes.builder);
 			AdminToolbarSession.setMode(AdminCoreHelper.modes.builder);
-			//jQuery('.moduleName').dropShadow({left: 0, top: 1, opacity: 0.5, blur: 2});
-		}
-		else {
-			//jQuery('.moduleName').removeShadow();
 		}
 		
 		if (jQuery(this).hasClass('adminContentMode')) {
