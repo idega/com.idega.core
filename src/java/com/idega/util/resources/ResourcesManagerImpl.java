@@ -299,7 +299,8 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		}
 		
 		File resource = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), resourceUri);
-		minifiedResource = resource == null ? getMinifiedResource(serverName, resourceUri) : getMinifiedResource(resource, resourceUri);
+		minifiedResource = (resource == null || !resource.exists()) ? getMinifiedResource(serverName, resourceUri)
+																	: getMinifiedResource(resource, resourceUri);
 		if (StringUtil.isEmpty(minifiedResource)) {
 			return null;
 		}
@@ -333,7 +334,19 @@ public class ResourcesManagerImpl implements ResourcesManager {
 			return null;
 		}
 		
-		return getMinifiedResource(input);
+		if (resourceURI.endsWith(ResourcesAdder.FILE_TYPE_JAVA_SCRIPT)) {
+			return getMinifiedResource(input);
+		}
+		
+		try {
+			return getMinifiedResource(StringHandler.getContentFromInputStream(input));
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting resource from stream!", e);
+		} finally {
+			IOUtil.closeInputStream(input);
+		}
+		
+		return null;
 	}
 	
 	private String getMinifiedResource(File resource, String resourceUri) {

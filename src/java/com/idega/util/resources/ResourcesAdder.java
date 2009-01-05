@@ -23,7 +23,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	
 	private static final Logger LOGGER = Logger.getLogger(ResourcesAdder.class.getName());
 	
-	public static final String OPTIMIZIED_RESOURCES = "optimiziedResources_";
+	public static final String OPTIMIZIED_RESOURCES = "optimizedResources_";
 	protected static final String FILE_TYPE_JAVA_SCRIPT = ".js";
 	private static final String FILE_TYPE_CSS = ".css";
 	
