@@ -208,7 +208,12 @@
       <artifactId>jsr250-api</artifactId>
       <version>${javax.annotation-jsr250-api-version}</version>
     </dependency>
-    
+    <dependency>
+      <groupId>jsr170</groupId>
+      <artifactId>jcr</artifactId>
+      <version>1.0</version>
+    </dependency>
+ 
     <!-- dependencies that excluded from other jars, and need to be added explicitlyvc -->
     <!--  
     <dependency>

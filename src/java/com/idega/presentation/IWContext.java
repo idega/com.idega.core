@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.152 2008/12/12 11:15:20 laddi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.153 2009/01/05 08:41:59 tryggvil Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -33,6 +33,9 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseStream;
 import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKit;
+import javax.jcr.Repository;
+import javax.jcr.Session;
+import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletContext;
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
@@ -49,6 +52,7 @@ import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
+import com.idega.core.content.IdegaRepository;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
@@ -82,10 +86,10 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2008/12/12 11:15:20 $ by $Author: laddi $
+ * Last modified: $Date: 2009/01/05 08:41:59 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.152 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.153 $
+$
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
 
@@ -1581,5 +1585,19 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			setSessionAttribute(IDEGA_SESSION_KEY, sessionId);
 		}
 		return sessionId;
+	}
+	
+	
+	public Repository getRepository(){
+		return (Repository)ELUtil.getInstance().getBean(IdegaRepository.class);
+	}
+	
+	public Session getRepositorySession() throws javax.jcr.RepositoryException{
+		if(this.isLoggedOn()){
+			return getRepository().login(new SimpleCredentials(getRemoteUser(),"".toCharArray()));
+		}
+		else{
+			return getRepository().login();
+		}	
 	}
 }
