@@ -1,0 +1,56 @@
+/*
+ * Menu: IdegaWeb > Delete all WEB-INF from classpath files
+ * Script-Path: /com.idega.core/monkey/FindReplaceWebINF.gm
+ * Kudos: Eirikur S. Hrafnsson (Idega Software)
+ * License: EPL 1.0
+ * DOM: http://groovy-monkey.sourceforge.net/update/plugins/net.sf.groovyMonkey.dom
+ */
+ 
+//function main() {
+	
+	
+//	var startLine = editor.getLineAtOffset(range.startingOffset);
+//	var endLine = editor.getLineAtOffset(range.endingOffset);
+   
+	def count = 0;
+	
+	def files = resources.filesMatching(".*\\.classpath");
+	
+	for( file in files ){
+	  for( line in file.lines ) {
+	      //if (line.string.contains("INF")) {
+	    	  //line.delete();
+	    	  Packages.java.lang.System.out.println(line.string);
+	    	  count++;
+	    //  }
+	  }
+		  
+//		Packages.java.lang.System.out.println( ((String)file.source)));
+//	    for( line in file.lines ){
+//	    	Packages.java.lang.System.out.println(line.string);
+//	           
+//	        if( line.string.contains( "src" )){
+//	        	count++;
+//	        	Packages.java.lang.System.out.println(line.string);
+//	            
+//	          
+//	        }
+//	    }
+	}
+	
+	
+	  Packages.org.eclipse.jface.dialogs.MessageDialog.openInformation( 	
+      		window.getShell(), 	
+      		"WEB-INF Replacer", 
+      		"Number of files changed : "+count	
+      		);
+      		
+	// determine if we're adding or removing comments
+	//var source = editor.source;
+
+	//editor.beginCompoundChange();
+		
+	//editor.applyEdit(offset, 0, comment);
+	
+	//editor.endCompoundChange();
+//}
