@@ -13,8 +13,6 @@ import javax.naming.OperationNotSupportedException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationEvent;
-import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -34,10 +32,10 @@ import com.idega.util.expression.ELUtil;
 
 @Service
 @Scope(BeanDefinition.SCOPE_SINGLETON)
-public class MessageResourceFactoryImpl implements MessageResourceFactory, ApplicationListener {
+public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	@Autowired private List<MessageResource> uninitializedMessageResources;
 	
-	private List<String> initializedStorageTypes = new ArrayList<String>();
+//	private List<String> initializedStorageTypes = new ArrayList<String>();
 	
 	private static final String CASHED_RESOURCES = "cashed_resources";
 	
@@ -56,7 +54,9 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		}
 		
 		if(bundleResources.containsKey(locale)) {
-			return bundleResources.get(locale);
+			List<MessageResource> resources = bundleResources.get(locale);
+			sortResourcesByImportance(resources);
+			return resources;
 		} else {
 			//if there was no bundle with specified bundleIdentifier and locale
 			List<MessageResource> resources = getUninitializedMessageResources();
@@ -77,19 +77,20 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 			}
 			
 			bundleResources.put(locale, resources);
+			sortResourcesByImportance(resources);
 			return resources;
 		}
 	}
 	
 	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale) {
-		if(!initializedStorageTypes.contains(resource.getIdentifier())) {
-			initializedStorageTypes.add(resource.getIdentifier());
-		}
+//		if(!initializedStorageTypes.contains(resource.getIdentifier())) {
+//			initializedStorageTypes.add(resource.getIdentifier());
+//		}
 //		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		List<MessageResource> cashedResources = getInitializedResourceList(locale, bundleIdentifier);
 		if(!cashedResources.contains(resource)) {
 			cashedResources.add(resource);
-			sortResourcesByImportance();
+//			sortResourcesByImportance();
 		}
 	}
 	
@@ -163,20 +164,26 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		}
 	}
 	
+//	@SuppressWarnings("unchecked")
+//	private void sortResourcesByImportance() {
+//		ResourceComparatorByLevel resourceComparatorByLevel = new ResourceComparatorByLevel();
+//		
+//		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
+//		
+//		for(String bundleIdentifier : cashResources.keySet()) {
+//			Map<Locale, List<MessageResource>> bundleResources = cashResources.get(bundleIdentifier);
+//			for(Locale locale : bundleResources.keySet()) {
+//				List<MessageResource> resources = bundleResources.get(locale);
+//				Collections.sort(resources, resourceComparatorByLevel);
+//			}			
+//		}
+//	}
+	
 	@SuppressWarnings("unchecked")
-	private void sortResourcesByImportance() {
+	private void sortResourcesByImportance(List<MessageResource> resources) {
 		ResourceComparatorByLevel resourceComparatorByLevel = new ResourceComparatorByLevel();
-		
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
-		
-		for(String bundleIdentifier : cashResources.keySet()) {
-			Map<Locale, List<MessageResource>> bundleResources = cashResources.get(bundleIdentifier);
-			for(Locale locale : bundleResources.keySet()) {
-				List<MessageResource> resources = bundleResources.get(locale);
-				Collections.sort(resources, resourceComparatorByLevel);
-			}			
-		}
-	}	
+		Collections.sort(resources, resourceComparatorByLevel);			
+	}
 
 	public MessageResource getResource(String identifier, String bundleIdentifier, Locale locale) {
 		for(MessageResource resource : getInitializedResourceList(locale, bundleIdentifier)) {
@@ -201,9 +208,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 						storageResources.add(resource);
 					}
 				}
-				
-			}
-			
+			}			
 		}
 		return storageResources;
 	}
@@ -212,28 +217,44 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		return getInitializedResourceList(locale, bundleIdentifier);
 	}
 
-	public void onApplicationEvent(ApplicationEvent applicationEvent) {
-		if(applicationEvent instanceof ResourceLevelChangeEvent) {
-			sortResourcesByImportance();
-		}
-	}
+//	public void onApplicationEvent(ApplicationEvent applicationEvent) {
+//		if(applicationEvent instanceof ResourceLevelChangeEvent) {
+//			sortResourcesByImportance();
+//		}
+//	}
 	
 	private IWMainApplication getIWMainApplication() {
 		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		return iwma;
 	}
 
-	public List<MessageResource> getUninitializedMessageResources() {
+	private List<MessageResource> getUninitializedMessageResources() {
 		ELUtil.getInstance().autowire(this);
 		
-		for(MessageResource resource : uninitializedMessageResources) {
-			if(!initializedStorageTypes.contains(resource.getIdentifier())) {
-				initializedStorageTypes.add(resource.getIdentifier());
-			}
-		}
+//		for(MessageResource resource : uninitializedMessageResources) {
+//			if(!initializedStorageTypes.contains(resource.getIdentifier())) {
+//				initializedStorageTypes.add(resource.getIdentifier());
+//			}
+//		}
 		
 		return uninitializedMessageResources;
 	}
+	
+	public List<MessageResource> getAvailableUninitializedMessageResources() {
+		List<MessageResource> allUninitializedResources = getUninitializedMessageResources();
+		
+		for(MessageResource resource : allUninitializedResources) {
+			List<MessageResource> availableResourcesOfType = getResourceListByStorageIdentifier(resource.getIdentifier());
+			
+			if(availableResourcesOfType.isEmpty()) {
+				allUninitializedResources.remove(resource);
+			}
+		}
+		
+		return allUninitializedResources;
+	}
+	
+	
 	
 //	public void setUninitializedMessageResources(
 //			List<MessageResource> uninitializedMessageResources) {
@@ -261,7 +282,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory, Appli
 		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);							//.getCache(CASHED_RESOURCES);
 	}
 	
-	public List<String> getInitializedMessageResourceTypes() {
-		return initializedStorageTypes;
-	}
+//	public List<String> getInitializedMessageResourceTypes() {
+//		return initializedStorageTypes;
+//	}
 }

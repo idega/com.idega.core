@@ -20,10 +20,10 @@ import com.idega.util.SortedProperties;
  * <p>
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
- *  Last modified: $Date: 2008/12/15 14:07:34 $ by $Author: anton $
+ *  Last modified: $Date: 2009/01/05 10:27:32 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 
 public class JarLoadedIWBundle extends DefaultIWBundle {
@@ -123,7 +123,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		IWResourceBundle theReturn;
 		try {
 			InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale) + "/" + getLocalizedStringsFileName());
-			IWResourceBundle defaultLocalizedResourceBundle = new JarLoadedResourceBundle(this, defaultInputStream, locale);
+			IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, defaultInputStream, locale);
 			
 			if (isUsingLocalVariants()) {
 				String variantPath = getLocalizedResourcePath(locale)+"/"+getLocalizedStringsVariantFileName();
@@ -146,15 +146,15 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		
 		//adding resourceBundle to localized message factory
 		theReturn.setBundleIdentifier(getBundleIdentifier());
-		getApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
+//		getApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
 		return theReturn;
 	}
 	
 	@Override
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
-		IWResourceBundle theReturn = (IWResourceBundle)getApplication().getMessageFactory().getResource(JarLoadedResourceBundle.RESOURCE_IDENTIFIER, getBundleIdentifier(), locale);
-		
+		JarLoadedResourceBundle jarReturn = (JarLoadedResourceBundle)getApplication().getMessageFactory().getResource(JarLoadedResourceBundle.RESOURCE_IDENTIFIER, getBundleIdentifier(), locale);
+		IWResourceBundle theReturn = jarReturn.getResource();
 		try
 		{
 			if (theReturn == null)

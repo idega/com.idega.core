@@ -13,9 +13,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.MissingResourceException;
 import java.util.ResourceBundle;
 import java.util.Set;
+
 import javax.faces.context.FacesContext;
 
 /**
@@ -25,10 +25,10 @@ import javax.faces.context.FacesContext;
  * The notation is #{localizedStrings['BUNDLE_IDENTIFIER']['LOCALIZATION_KEY']}, example:
  * #{localizedStrings['com.idega.manager']['store']}
  * </p>
- * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $<br/>
+ * Last modified: $Date: 2009/01/05 10:27:32 $ by $Author: anton $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  */
 public class BundleLocalizationMap implements Map {
 
@@ -40,22 +40,32 @@ public class BundleLocalizationMap implements Map {
 		this.bundle = bundle;
 	}
 
+	//Changed to support MessageResourceFactory
+	public Object get(Object key) {
+		return getIWMainAppliction().getLocalisedStringMessage(String.valueOf(key), String.valueOf(key), bundle.getBundleIdentifier());
+	}
+	
+	private IWMainApplication getIWMainAppliction() {
+		return IWMainApplication.getDefaultIWMainApplication();
+	}
+	
 	//Optimized methods
 
-	/**
-	 * Gets a value for a localized key in the idegaWeb bundle for this Map and the current (JSF) Locale.
-	 */
-	public Object get(Object key) {
-		try{
-			return getResourceBundle().getObject(key.toString());
-		}
-		catch(MissingResourceException msre){
-			//System.err.println(msre.getMessage());
-			//return null;
-			return handleKeyNotFound((String)key);
-			
-		}
-	}
+//	/**
+//	 * Gets a value for a localized key in the idegaWeb bundle for this Map and the current (JSF) Locale.
+//	 */
+//	public Object get(Object key) {
+//		try{
+//			return getResourceBundle().getObject(key.toString());
+//		}
+//		catch(MissingResourceException msre){
+//			//System.err.println(msre.getMessage());
+//			//return null;
+//			return handleKeyNotFound((String)key);
+//			
+//		}
+//	}
+	
 	/**
 	 * <p>
 	 * Block that handles if the key is not found in the resourcebundle:

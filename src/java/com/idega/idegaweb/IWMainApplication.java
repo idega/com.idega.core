@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.198 2008/12/16 17:57:57 laddi Exp $
+ * $Id: IWMainApplication.java,v 1.199 2009/01/05 10:27:33 anton Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -99,6 +99,7 @@ import com.idega.util.FileUtil;
 import com.idega.util.ThreadContext;
 import com.idega.util.dbschema.SQLSchemaAdapter;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceFactory;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
@@ -110,10 +111,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2008/12/16 17:57:57 $ by $Author: laddi $
+ *  Last modified: $Date: 2009/01/05 10:27:33 $ by $Author: anton $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.198 $
+ * @version $Revision: 1.199 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2453,7 +2454,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 	
 	public List<String> getAvailableMessageStorageTypes() {
-		return getMessageFactory().getInitializedMessageResourceTypes();
+		List<MessageResource> resources = getMessageFactory().getAvailableUninitializedMessageResources();
+		
+		List<String> stringTypes = new ArrayList<String>(resources.size());
+		for(MessageResource resource : resources) {
+			stringTypes.add(resource.getIdentifier());
+		}
+		return stringTypes;
 	}
 
 	public MessageResourceFactory getMessageFactory() {

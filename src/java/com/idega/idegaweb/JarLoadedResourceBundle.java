@@ -1,9 +1,10 @@
 package com.idega.idegaweb;
 
-import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
 import java.util.Locale;
+import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -20,91 +21,92 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * @author <a href="anton@idega.com">Anton Makarov</a>
  * @version Revision: 1.0 
  *
- * Last modified: $Date: 2008/12/15 14:07:34 $ by $Author: anton $
+ * Last modified: $Date: 2009/01/05 10:27:32 $ by $Author: anton $
  *
  */
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class JarLoadedResourceBundle extends IWResourceBundle implements MessageResource {
-//	private String bundleIdentifier;
-//	private Level usagePriorityLevel = MessageResourceImportanceLevel.MIDDLE_ORDER;
-//	private boolean autoInsert = false;
+public class JarLoadedResourceBundle implements MessageResource {
+	private Level usagePriorityLevel = MessageResourceImportanceLevel.MIDDLE_ORDER;
+	private boolean autoInsert = false;
 	
 	public static final String RESOURCE_IDENTIFIER = "jar_loaded_resource";
 	
-//	private String identifier = RESOURCE_IDENTIFIER;
-	
-	
-	public JarLoadedResourceBundle(IWBundle parent, File file, Locale locale) throws IOException {
-		super(parent, file, locale);
+	private IWResourceBundle resource;
+
+	public IWResourceBundle getResource() {
+		return resource;
 	}
 
-	public JarLoadedResourceBundle() {
-		super();
-	}
-
-	
-	public JarLoadedResourceBundle(IWBundle parent, InputStream stream, Locale locale) throws IOException {
-		super(parent,stream,locale);
-	}
-
-	public JarLoadedResourceBundle(IWResourceBundle parent, File file, Locale locale) throws IOException {
-		super(parent, file, locale);
-	}
-
-	public JarLoadedResourceBundle(IWResourceBundle parent, InputStream inputStream, Locale locale) throws IOException {
-		super(parent, inputStream, locale);
-	}
-	
-	@Override
 	protected void initProperities() {
 		setIdentifier(RESOURCE_IDENTIFIER);
-		setLevel(MessageResourceImportanceLevel.MIDDLE_ORDER);
-		setAutoInsert(false);
+		setLevel(usagePriorityLevel);
+		setAutoInsert(autoInsert);
 	}
 	
-	@Override
 	public void initialize(String bundleIdentifier, Locale locale) throws OperationNotSupportedException {
-		throw new OperationNotSupportedException("Not implemented");
+		if(DefaultIWBundle.isProductionEnvironment() && !bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
+			JarLoadedIWBundle bundle = (JarLoadedIWBundle) IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
+			try {
+				resource = bundle.initializeResourceBundle(locale);
+				initProperities();
+			} catch (IOException e) {
+				throw new OperationNotSupportedException("Initialization of this resource is not supported in test environment");
+			}
+		} else {
+			throw new OperationNotSupportedException("Initialization of this resource is not supported in test environment");
+		}
 	}
 
-//	@Override
-//	public String getBundleIdentifier() {
-//		return bundleIdentifier;
-//	}
-//
-//	@Override
-//	public void setBundleIdentifier(String bundleIdentifier) {
-//		this.bundleIdentifier = bundleIdentifier;
-//	}
-//
-//	@Override
-//	public Level getLevel() {
-//		return usagePriorityLevel;
-//	}
-//
-//	@Override
-//	public void setLevel(Level usagePriorityLevel) {
-//		this.usagePriorityLevel = usagePriorityLevel;
-//	}
-//
-//	@Override
-//	public boolean isAutoInsert() {
-//		return autoInsert;
-//	}
-//
-//	@Override
-//	public void setAutoInsert(boolean autoInsert) {
-//		this.autoInsert = autoInsert;
-//	}
-//
-//	@Override
-//	public String getIdentifier() {
-//		return identifier;
-//	}
-//
-//	@Override
-//	public void setIdentifier(String identifier) {
-//		this.identifier = identifier;
-//	}
+	public String getBundleIdentifier() {
+		String identifier = resource.getBundleIdentifier();
+		return identifier;
+	}
+
+	public String getIdentifier() {
+		if(resource != null) {
+			String identifier = resource.getIdentifier();
+			return identifier;
+		} else {
+			return RESOURCE_IDENTIFIER;
+		}
+	}
+
+	public Level getLevel() {
+		return resource.getLevel();
+	}
+
+	public boolean isAutoInsert() {
+		return resource.isAutoInsert();
+	}
+
+	public void removeMessage(Object key) {}
+
+	public void setAutoInsert(boolean value) {}
+
+	public void setBundleIdentifier(String identifier) {
+		resource.setBundleIdentifier(identifier);
+	}
+
+	public void setIdentifier(String identifier) {
+		resource.setIdentifier(identifier);
+	}
+
+	public void setLevel(Level priorityLevel) {
+		resource.setLevel(priorityLevel);	
+	}
+
+	public Object setMessage(Object key, Object value) {
+		return null;
+	}
+
+	public void setMessages(Map<Object, Object> values) {}
+
+	public Set<Object> getAllLocalisedKeys() {
+		return resource.getAllLocalisedKeys();
+	}
+
+	public Object getMessage(Object key) {
+		return resource.getMessage(key);
+	}
 }

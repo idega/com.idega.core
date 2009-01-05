@@ -17,7 +17,7 @@ import java.util.Map;
 public interface MessageResourceFactory {
 //	public void setUninitializedMessageResources(List<MessageResource> uninitializedMessageResources);
 	
-	public List<MessageResource> getUninitializedMessageResources();
+//	public List<MessageResource> getUninitializedMessageResources();
 	
 	/**
 	 * Gets localised message for specified locale
@@ -42,5 +42,7 @@ public interface MessageResourceFactory {
 	
 	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale);
 	
-	public List<String> getInitializedMessageResourceTypes();
+//	public List<String> getInitializedMessageResourceTypes();
+	
+	public List<MessageResource> getAvailableUninitializedMessageResources();
 }
