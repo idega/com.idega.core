@@ -87,8 +87,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
 			return null;
 		}
 		
-		concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(cachedContent, concatenatedResourcesUri, fileType);
-		
 		return StringUtil.isEmpty(concatenatedResourcesUri) ? null : concatenatedResourcesUri;
 	}
 	
@@ -105,9 +103,6 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		
 		String uriToConcatenatedResources = getCachedConcatenatedResources(cacheName.toString(), fileType);
 		if (!StringUtil.isEmpty(uriToConcatenatedResources)) {
-			LOGGER.info(new StringBuilder("Found uri ('").append(uriToConcatenatedResources).append("') for concatenated files: ").append(cacheName.toString())
-					.toString());
-			
 			resources.clear();
 		}
 		

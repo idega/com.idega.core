@@ -124,8 +124,8 @@ public class ResourcesAdder extends DefaultAddResource {
 		return manager == null ? null : manager.getJavaScriptActions();
 	}
 	
-	private boolean useOptimizer() {
-		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("idega_core.optimize_resources", Boolean.TRUE);
+	private boolean useOptimizer(String applicationPropertyName, Boolean defaultValue) {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean(applicationPropertyName, defaultValue);
 	}
 	
 	private void manageHeader(String serverName) {
@@ -133,12 +133,12 @@ public class ResourcesAdder extends DefaultAddResource {
 			return;
 		}
 		
-		boolean useOptimizer = useOptimizer();
+		boolean useOptimizer = useOptimizer("idega_core.optimize_resources", Boolean.TRUE);
 		getHeaderBeginInfos().clear();
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		
 		//	JavaScript
-		if (useOptimizer) {
+		if (useOptimizer && useOptimizer("idega_core.optimize_js", Boolean.TRUE)) {
 			addResources(facesContext, getJavaScriptResources(), FILE_TYPE_JAVA_SCRIPT, serverName);
 		}
 		else {
@@ -148,7 +148,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		}
 		
 		//	CSS
-		if (useOptimizer) {
+		if (useOptimizer && useOptimizer("idega_core.optimize_css", Boolean.TRUE)) {
 			addResources(facesContext, getCSSFiles(), FILE_TYPE_CSS, serverName);
 		}
 		else {
