@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.153 2009/01/05 08:41:59 tryggvil Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.154 2009/01/06 10:07:50 tryggvil Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -86,9 +86,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/01/05 08:41:59 $ by $Author: tryggvil $
+ * Last modified: $Date: 2009/01/06 10:07:50 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.153 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.154 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -1591,8 +1591,18 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public Repository getRepository(){
 		return (Repository)ELUtil.getInstance().getBean(IdegaRepository.class);
 	}
+	public static final String JCR_SESSION_REQUEST_KEY="jcrSession";
 	
 	public Session getRepositorySession() throws javax.jcr.RepositoryException{
+		 Session session = (Session) getExternalContext().getRequestMap().get(JCR_SESSION_REQUEST_KEY);
+		 if(session==null){
+			 session=createNewRepositorySession();
+			 getExternalContext().getRequestMap().put(JCR_SESSION_REQUEST_KEY, session);
+		 }
+		 return session;
+	}
+	
+	public Session createNewRepositorySession() throws javax.jcr.RepositoryException{
 		if(this.isLoggedOn()){
 			return getRepository().login(new SimpleCredentials(getRemoteUser(),"".toCharArray()));
 		}
