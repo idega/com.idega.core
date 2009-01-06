@@ -174,11 +174,11 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		}
 		StringBuilder cacheName = new StringBuilder();
 		for (String resource: resourcesToLoad) {
-			allResources/*.append("\n")*/.append(addedResources.get(resource));
+			allResources.append(addedResources.get(resource));
 			
 			cacheName.append(resource);
 		}
-		concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(allResources.toString(), null, fileType);
+		concatenatedResourcesUri = copyConcatenatedResourcesToWebApp(allResources.toString(), fileType);
 		if (StringUtil.isEmpty(concatenatedResourcesUri)) {
 			return null;
 		}
@@ -231,17 +231,15 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		return content;
 	}
 	
-	private String copyConcatenatedResourcesToWebApp(String content, String uriToResources, String fileType) {
+	private String copyConcatenatedResourcesToWebApp(String content, String fileType) {
 		if (StringUtil.isEmpty(content)) {
 			return null;
 		}
 		
-		if (StringUtil.isEmpty(uriToResources)) {
-			String fileName = new StringBuilder().append(getCachePrefix()).append(ResourcesAdder.OPTIMIZIED_RESOURCES).append(System.currentTimeMillis())
-													.append(fileType).toString();
-			uriToResources = IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER)
+		String fileName = new StringBuilder().append(getCachePrefix()).append(ResourcesAdder.OPTIMIZIED_RESOURCES).append(System.currentTimeMillis())
+											.append(fileType).toString();
+		String uriToResources = IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER)
 																			.getVirtualPathWithFileNameString(fileName);
-		}
 		
 		File file = IWBundleResourceFilter.copyResourceFromJarOrCustomContentToWebapp(IWMainApplication.getDefaultIWMainApplication(), uriToResources, content);
 		return (file == null || !file.exists()) ? null : uriToResources;

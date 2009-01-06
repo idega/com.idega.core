@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.49 2008/12/21 17:02:49 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.50 2009/01/06 00:30:45 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -44,6 +44,7 @@ import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.resources.ResourcesAdder;
 
 /**
  * <p>
@@ -55,10 +56,10 @@ import com.idega.util.StringUtil;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2008/12/21 17:02:49 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/06 00:30:45 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.49 $
+ * @version $Revision: 1.50 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -199,14 +200,21 @@ public class IWBundleResourceFilter extends BaseFilter {
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
 		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
 		File webappFile = new File(webappFilePath);
-		IWBundle bundle = iwma.getBundle(bundleIdentifier);
+		System.out.println("file in: " + webappFilePath + " exists: " + webappFilePath); //	TODO
 		
+		IWBundle bundle = iwma.getBundle(bundleIdentifier);
 		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
 		if (webappFile.exists()) {
 			long webappLastModified = webappFile.lastModified();
 			if (webappLastModified > bundleLastModified) {
+				System.out.println("Returning null: webappLastModified ("+webappLastModified+") > bundleLastModified ("+bundleLastModified+")"); //	TODO
 				return null;
 			}
+		}
+		
+		if (StringUtil.isEmpty(fileContent) && requestUriWithoutContextPath.indexOf(ResourcesAdder.OPTIMIZIED_RESOURCES) != -1) {
+			System.out.println("File '" + requestUriWithoutContextPath + "' must be copied to webapp by ResourcesAdder!"); //	TODO
+			return null;
 		}
 		
 		return copyFileContentToWebApp(iwma, requestUriWithoutContextPath, fileContent, pathWithinBundle, bundle, bundleLastModified);
