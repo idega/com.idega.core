@@ -20,6 +20,7 @@
     <property name="hibernate.connection.url">jdbc:hsqldb:mem:jbpm</property>
     <property name="hibernate.connection.username">sa</property>
     <property name="hibernate.connection.password"></property>
+    <property name="hibernate.bytecode.use_reflection_optimizer">true</property> 
 
     <property name="hibernate.cache.provider_class">org.hibernate.cache.HashtableCacheProvider</property>
     
