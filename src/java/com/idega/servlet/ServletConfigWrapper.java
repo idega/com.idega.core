@@ -1,5 +1,5 @@
 /*
- * $Id: ServletConfigWrapper.java,v 1.2 2006/06/08 07:47:42 laddi Exp $
+ * $Id: ServletConfigWrapper.java,v 1.3 2009/01/07 11:39:06 tryggvil Exp $
  * Created on 31.5.2006 in project com.idega.slide
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -19,21 +19,25 @@ import javax.servlet.ServletContext;
  * <p>
  * TODO tryggvil Describe Type ServletConfigWrapper
  * </p>
- *  Last modified: $Date: 2006/06/08 07:47:42 $ by $Author: laddi $
+ *  Last modified: $Date: 2009/01/07 11:39:06 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class ServletConfigWrapper implements ServletConfig {
 	
 	ServletContext context;
 	String servletName;
-	Hashtable parameters;
+	Hashtable parameters=new Hashtable();
+	
+	public ServletConfigWrapper(ServletContext context,String servletName){
+		this.context=context;
+		this.servletName=servletName;
+	}
 	
 	public ServletConfigWrapper(ServletConfig config){
 		this.context=config.getServletContext();
 		this.servletName=config.getServletName();
-		this.parameters = new Hashtable();
 		Enumeration params = config.getInitParameterNames();
 		while (params.hasMoreElements()) {
 			String param = (String) params.nextElement();
