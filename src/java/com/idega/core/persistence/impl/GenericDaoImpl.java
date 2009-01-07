@@ -20,9 +20,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.20 $
+ * @version $Revision: 1.21 $
  * 
- *          Last modified: $Date: 2008/12/28 11:49:05 $ by $Author: civilis $
+ *          Last modified: $Date: 2009/01/07 15:55:51 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 @Transactional(readOnly = true)
@@ -123,6 +123,8 @@ public class GenericDaoImpl implements GenericDao {
 			if (result != null) {
 
 				List<Long> longsResult = new ArrayList<Long>(result.size());
+				
+//				TODO: use Number here
 
 				for (Object item : result) {
 
