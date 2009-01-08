@@ -1,5 +1,7 @@
 package com.idega.builder.bean;
 
+import com.idega.util.CoreConstants;
+
 public class AdvancedProperty {
 	
 	private boolean selected = false;
@@ -38,5 +40,10 @@ public class AdvancedProperty {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+	
+	@Override
+	public String toString() {
+		return new StringBuilder(id).append(CoreConstants.COLON).append(CoreConstants.SPACE).append(value).toString();
 	}
 }
