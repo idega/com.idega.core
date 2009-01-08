@@ -1,7 +1,5 @@
 package com.idega.core.persistence.impl;
 
-import java.math.BigDecimal;
-import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -20,9 +18,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  * 
- *          Last modified: $Date: 2009/01/07 15:55:51 $ by $Author: civilis $
+ *          Last modified: $Date: 2009/01/08 10:11:38 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 @Transactional(readOnly = true)
@@ -123,35 +121,19 @@ public class GenericDaoImpl implements GenericDao {
 			if (result != null) {
 
 				List<Long> longsResult = new ArrayList<Long>(result.size());
-				
-//				TODO: use Number here
 
 				for (Object item : result) {
 
 					if (item instanceof Long) {
 						longsResult.add((Long) item);
 
-					} else if (item instanceof BigInteger) {
+					} else if (item instanceof Number) {
+						longsResult.add(((Number) item).longValue());
 
-						logger.log(Level.INFO, "Converting BigInteger: " + item
-								+ " to Long");
-						longsResult.add(Long.valueOf(((BigInteger) item)
-								.longValue()));
-					} else if (item instanceof BigDecimal) {
-
-						logger.log(Level.INFO, "Converting BigDecimal: " + item
-								+ " to Long");
-						longsResult.add(Long.valueOf(((BigDecimal) item)
-								.longValue()));
-					} else if (item instanceof Integer) {
-
-						logger.log(Level.INFO, "Converting Integer: " + item
-								+ " to Long");
-						longsResult.add(Long.valueOf(((Integer) item)));
 					} else {
 
-						logger.log(Level.WARNING,
-								"Unsupported -expected long- type="
+						logger.log(Level.SEVERE,
+								"Not a Number returned, when expected Long data type, returned = "
 										+ item.getClass().getName() + ", item="
 										+ item);
 					}
