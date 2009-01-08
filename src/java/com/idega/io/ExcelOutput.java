@@ -17,14 +17,18 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import com.idega.core.file.util.MimeTypeUtil;
+
 public class ExcelOutput extends HttpServlet
 {
-  public void init(ServletConfig config) throws ServletException
+  @Override
+public void init(ServletConfig config) throws ServletException
   {
     super.init(config);
   }
 
-  public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
+  @Override
+public void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException
   {
 
     try
@@ -46,7 +50,7 @@ public class ExcelOutput extends HttpServlet
       }
 
       // write ByteArrayOutputStream to the ServletOutputStream
-      response.setContentType("application/x-msexcel");
+      response.setContentType(MimeTypeUtil.MIME_TYPE_EXCEL_2);
       response.setContentLength(baos.size());
       ServletOutputStream out = response.getOutputStream();
       baos.writeTo(out);
@@ -59,7 +63,8 @@ public class ExcelOutput extends HttpServlet
     }
   }
 
-  public void destroy()
+  @Override
+public void destroy()
   {
   }
 }
