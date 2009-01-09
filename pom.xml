@@ -213,6 +213,12 @@
       <artifactId>jcr</artifactId>
       <version>1.0</version>
     </dependency>
+    
+    <dependency>
+    <!-- this dependency is here, because of maven exclusion mechanism not working correctly (civilis) -->
+        <groupId>org.hibernate</groupId>
+        <artifactId>hibernate-commons-annotations</artifactId>
+    </dependency>
  
     <!-- dependencies that excluded from other jars, and need to be added explicitlyvc -->
     <!--  
