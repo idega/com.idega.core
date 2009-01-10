@@ -1,5 +1,5 @@
 /*
- * $Id: IWBaseComponent.java,v 1.21 2008/12/13 15:24:44 civilis Exp $
+ * $Id: IWBaseComponent.java,v 1.22 2009/01/10 12:33:52 civilis Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
@@ -38,10 +39,10 @@ import com.idega.util.text.TextStyler;
  * such as the old style idegaWeb main(IWContext) and print(IWContext) methods and event systems.
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
- * Last modified: $Date: 2008/12/13 15:24:44 $ by $Author: civilis $
+ * Last modified: $Date: 2009/01/10 12:33:52 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  * 
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
@@ -410,6 +411,13 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
     		exp = EXPRESSION_BEGIN+beanReference+EXPRESSION_END;
     	}
     	return exp;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T>T getExpressionValue(FacesContext ctx, String expression) {
+    	
+    	ValueExpression vexp = getValueExpression(expression);
+    	return vexp != null ? (T)vexp.getValue(ctx.getELContext()) : null;
     }
     
     /**
