@@ -385,4 +385,8 @@ public interface Web2Business extends IBOService {
 	
 	//	http://browserplus.yahoo.com/
 	public String getBrowserPlusScriptFile();
+	
+	//	FancyBox
+	public List<String> getBundleURIsToFancyBoxScriptFiles();
+	public String getBundleURIToFancyBoxStyleFile();
 }
