@@ -7,6 +7,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import javax.activation.MimetypesFileTypeMap;
+
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
@@ -36,6 +39,8 @@ import com.idega.util.SortedProperties;
  * 
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.0
+ *
+ * Last modified: $Date: 2009/01/12 11:01:03 $ by $Author: anton $
  */
 public class MimeTypeUtil implements Singleton {
 
@@ -358,6 +363,10 @@ public class MimeTypeUtil implements Singleton {
 			return this.video;
 		}
 		return null;
+	}
+	
+	public static String resolveMimeTypeFromFileName(String fileName) {
+		return new MimetypesFileTypeMap().getContentType(fileName);
 	}
 
 }
