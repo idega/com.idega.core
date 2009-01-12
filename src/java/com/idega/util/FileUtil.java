@@ -127,7 +127,8 @@ public class FileUtil {
    * 
    * @deprecated Use File.separator
    */
-  public static String getFileSeparator(){
+  @Deprecated
+public static String getFileSeparator(){
     return File.separator;
   }
 
