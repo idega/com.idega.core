@@ -35,7 +35,7 @@ public class ArrayUtil  {
 	
 	@SuppressWarnings("unchecked")
 	public static final <T>T[] convertListToArray(Collection<T> collection) {
-		if (collection == null || collection.isEmpty()) {
+		if (ListUtil.isEmpty(collection)) {
 			return null;
 		}
 		
