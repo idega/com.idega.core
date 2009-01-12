@@ -47,6 +47,9 @@ jQuery(document).ready(function() {
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
 		jQuery('body div#themeSlider').remove();
 
+		closeAllLoadingMessages();
+		jQuery('.LocalLoadLayer').remove();
+
 		if (jQuery(this).hasClass('adminThemesMode')) {
 			AdminCoreHelper.showThemes(false, true);
 		}
