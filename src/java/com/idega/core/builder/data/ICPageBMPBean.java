@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.15 2008/06/17 15:30:39 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.16 2009/01/13 10:44:32 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -62,7 +62,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	private final static String DELETED_BY_COLUMN = "DELETED_BY";
 	private final static String DELETED_WHEN_COLUMN = "DELETED_WHEN";
 	private final static String TREE_ORDER = "TREE_ORDER";
-	private final static String IS_CATEGORY = "IS_CATEGORY";
+	public final static String IS_CATEGORY = "IS_CATEGORY";
 	private final static String PAGE_FORMAT="PAGE_FORMAT";
 	private final static String PAGE_URI="PAGE_URI";
 	private static final String DOMAIN_ID = "IB_DOMAIN_ID";
