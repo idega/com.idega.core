@@ -1,5 +1,5 @@
 /*
- * $Id: ICPageBMPBean.java,v 1.16 2009/01/13 10:44:32 valdas Exp $
+ * $Id: ICPageBMPBean.java,v 1.17 2009/01/14 15:12:24 tryggvil Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -87,9 +87,11 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public final static String DELETED = "Y";
 	public final static String NOT_DELETED = "N";
 	private static final String FORMAT_IBXML = "IBXML";
+	private static final String FORMAT_IBXML2 = "IBXML2";
 	private static final String FORMAT_HTML = "HTML";
 	private static final String FORMAT_JSP_1_2 = "JSP_1_2";
-
+	private static final String FORMAT_FACELET = "FACELET";
+	
 	/**
 	 *
 	 */
@@ -705,6 +707,14 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		return true;
 	}
 	
+	public boolean getIsFormattedInIBXML2(){
+		String format = getFormat();
+		if(format!=null){
+			return format.equals(FORMAT_IBXML2);
+		}
+		return true;
+	}
+	
 	public boolean getIsFormattedInHTML(){
 		String format = getFormat();
 		if(format!=null){
@@ -909,5 +919,20 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 		
 		return idoFindPKsByQuery(query);
+	}
+
+	public boolean getIsFormattedInFacelet() {
+		String format = getFormat();
+		if(format!=null){
+			return format.equals(FORMAT_FACELET);
+		}
+		return false;
+	}
+
+	public Collection ejbFindAllPagesAndTemplates() throws FinderException {
+	    Table table = new Table(this);
+    	SelectQuery query = new SelectQuery(table);
+    	query.addColumn(new Column(table, getIDColumnName()));
+    	return idoFindPKsByQuery(query);
 	}
 }

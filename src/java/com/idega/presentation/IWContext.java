@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.154 2009/01/06 10:07:50 tryggvil Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.155 2009/01/14 15:12:23 tryggvil Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -86,9 +86,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/01/06 10:07:50 $ by $Author: tryggvil $
+ * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.154 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.155 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -891,7 +891,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return this.getAccessController().hasRole(role,this);
 	}
 	
-	public boolean hasPermission(String permissionKey, PresentationObject obj) {
+	public boolean hasPermission(String permissionKey, Object obj) {
 		try {
 			return this.getAccessController().hasPermission(permissionKey, obj, this);
 		}
@@ -901,15 +901,15 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 	}
 
-	public boolean hasViewPermission(PresentationObject obj) {
+	public boolean hasViewPermission(Object obj) {
 		return this.hasPermission(AccessController.PERMISSION_KEY_VIEW, obj);
 	}
 
-	public boolean hasEditPermission(PresentationObject obj) {
+	public boolean hasEditPermission(Object obj) {
 		return this.hasPermission(AccessController.PERMISSION_KEY_EDIT, obj);
 	}
 
-	public boolean hasPermission(List groupIds, String permissionKey, PresentationObject obj) {
+	public boolean hasPermission(List groupIds, String permissionKey, Object obj) {
 		try {
 			return this.getAccessController().hasPermission(groupIds, permissionKey, obj, this);
 		}
@@ -1589,7 +1589,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	
 	
 	public Repository getRepository(){
-		return (Repository)ELUtil.getInstance().getBean(IdegaRepository.class);
+		return (Repository)ELUtil.getInstance().getBean(IdegaRepository.SPRING_BEAN_IDENTIFIER);
 	}
 	public static final String JCR_SESSION_REQUEST_KEY="jcrSession";
 	

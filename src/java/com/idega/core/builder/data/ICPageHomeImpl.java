@@ -13,10 +13,10 @@ import javax.ejb.FinderException;
  * <p>
  * TODO tryggvil Describe Type ICPageHomeImpl
  * </p>
- *  Last modified: $Date: 2008/06/17 15:30:37 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/01/14 15:12:24 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 
 public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome
@@ -128,6 +128,13 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
 	public Collection findAllByName(String name, boolean findOnlyNotDeleted) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids = ((ICPageBMPBean)entity).ejbFindAllByName(name, findOnlyNotDeleted);
+    	this.idoCheckInPooledEntity(entity);
+    	return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+	
+	public Collection<ICPage> findAllPagesAndTemplates() throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        java.util.Collection ids = ((ICPageBMPBean)entity).ejbFindAllPagesAndTemplates();
     	this.idoCheckInPooledEntity(entity);
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}

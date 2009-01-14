@@ -1,5 +1,5 @@
 /*
- * $Id: PageTag.java,v 1.6 2007/08/31 13:30:01 valdas Exp $
+ * $Id: PageTag.java,v 1.7 2009/01/14 15:12:24 tryggvil Exp $
  * Created on 17.01.2005 by Tryggvi Larusson
  * 
  * Copyright (C) 2004 Idega. All Rights Reserved.
@@ -20,10 +20,10 @@ import java.util.Iterator;
  * <p>
  * This is a JSP tag for the Page component.
  * </p>
- * Last modified: $Date: 2007/08/31 13:30:01 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/14 15:12:24 $ by $Author: tryggvil $
  *
  * @author tryggvil
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class PageTag extends UIComponentTag {
 	
@@ -32,6 +32,7 @@ public class PageTag extends UIComponentTag {
 	String onload;
 	String styleClass;
 	boolean logIds=false;
+	String type;
 	
 	/**
 	 * @see javax.faces.webapp.UIComponentTag#getRendererType()

@@ -21,6 +21,7 @@ import com.idega.util.CoreConstants;
 @Service(RepositoryHelper.SPRING_BEAN_IDENTIFIER)
 public class RepositoryHelper {
 
+
 	public static final String SPRING_BEAN_IDENTIFIER="repositoryHelper";
 	
 	public static String NODE_TYPE_FOLDER="nt:folder";

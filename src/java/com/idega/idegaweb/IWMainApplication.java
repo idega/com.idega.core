@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.199 2009/01/05 10:27:33 anton Exp $
+ * $Id: IWMainApplication.java,v 1.200 2009/01/14 15:12:25 tryggvil Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -111,10 +111,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/01/05 10:27:33 $ by $Author: anton $
+ *  Last modified: $Date: 2009/01/14 15:12:25 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.199 $
+ * @version $Revision: 1.200 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2121,9 +2121,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 
 	//TODO: Move this logic to the builder package.
-	static String BUILDER_PAGE_PREFIX="BuilderPage";
-	static String BUILDER_MODULE_PREFIX="BuilderModule";
-	static String BUILDER_PREFIX="Builder";
+	public static String BUILDER_PAGE_PREFIX="BuilderPage";
+	public static String BUILDER_MODULE_PREFIX="BuilderModule";
+	public static String BUILDER_PREFIX="Builder";
 	
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createComponent(java.lang.String)
@@ -2154,9 +2154,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				String[] parameters = componentType.split(separator);
 				String moduleId=parameters[1];
 				//String icObjectId=parameters[2];
-				String componentClass=parameters[3];
-
+				String componentClass;
 				
+				/*if(componentType.indexOf("uuid_")!=-1){
+					componentClass = parameters[4];
+				}
+				else{
+					componentClass = parameters[3];
+				}*/
+				componentClass=componentType.substring(componentType.lastIndexOf("_")+1);
 				try {
 					Object instance = RefactorClassRegistry.forName(componentClass).newInstance();
 					UIComponent uicomp = (UIComponent)instance;

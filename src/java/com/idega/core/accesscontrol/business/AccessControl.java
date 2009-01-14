@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.124 2008/11/17 22:07:18 laddi Exp $
+ * $Id: AccessControl.java,v 1.125 2009/01/14 15:12:23 tryggvil Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -76,12 +76,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2008/11/17 22:07:18 $ by $Author: laddi $
+ * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.124 $
+ * @version $Revision: 1.125 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3471,48 +3471,5 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  private String getRecurseParentsSettings(IWApplicationContext iwac) {
 		  return iwac.getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
 	  }
-	
-	/**
-	 * @author eiki
-	 * 
-	 * A helper class to enable working woth roles since hasPermission always needs something to check against (the obj Object in all the methods).
-	 */
-	static class RoleHelperObject {
-
-		private static RoleHelperObject roleObject = null;
-		private static final String ROLE_STRING = "role_permission";
-
-		public RoleHelperObject() {
-		}
-		public static RoleHelperObject getStaticInstance() {
-
-			if (roleObject == null) {
-				roleObject = new RoleHelperObject();
-			}
-
-			return roleObject;
-		}
-
-		@Override
-		public String toString() {
-			return ROLE_STRING;
-		}
-	}
-	
-	/**
-	 * @author eiki
-	 * 
-	 * A helper (flag) class to enable working with Page permissions since hasPermission always needs something to check against (the obj Object in all the methods).
-	 */
-	static class PagePermissionObject{
-		private String pageKey;
-		public PagePermissionObject(String pageKey) {
-			this.pageKey=pageKey;
-		}
-		public String getPageKey(){
-			return this.pageKey;
-		}
-
-	}
 
 } // Class AccessControl

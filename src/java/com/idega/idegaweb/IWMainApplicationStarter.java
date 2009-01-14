@@ -139,8 +139,13 @@ public class IWMainApplicationStarter implements ServletContextListener  {
     
 	public void startup() {
 		log.info("Initializing IdegaWeb");
-		startIdegaWebApplication();
-		fireAppStartedEvent();
+		try{
+			startIdegaWebApplication();
+			fireAppStartedEvent();
+		}
+		catch(Exception re){
+			re.printStackTrace();
+		}	
 	}
 	
 	protected void fireAppStartedEvent() {		

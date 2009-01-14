@@ -112,6 +112,10 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 
 	public boolean getIsFormattedInJSP();
 
+	public boolean getIsFormattedInFacelet();
+
+	public boolean getIsFormattedInIBXML2();
+	
 	/**
 	 * Gets the id/key of the page as a String
 	 * 

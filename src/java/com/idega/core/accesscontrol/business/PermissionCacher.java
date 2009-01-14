@@ -1,5 +1,5 @@
 /*
- * $Id: PermissionCacher.java,v 1.34 2006/04/09 12:13:20 laddi Exp $ Created
+ * $Id: PermissionCacher.java,v 1.35 2009/01/14 15:12:23 tryggvil Exp $ Created
  * in 2001
  * 
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -28,12 +28,12 @@ import com.idega.user.data.Group;
  * AccessControl.
  * </p>
  * 
- * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
+ * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
  * 
  * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.34 $
+ * @version $Revision: 1.35 $
  */
 class PermissionCacher {
 
@@ -121,8 +121,8 @@ class PermissionCacher {
 					Page page = (Page) obj;
 					identifier = Integer.toString(page.getPageID());
 				}
-				else if (obj instanceof AccessControl.PagePermissionObject) {
-					AccessControl.PagePermissionObject pageObj = (AccessControl.PagePermissionObject) obj;
+				else if (obj instanceof PagePermissionObject) {
+					PagePermissionObject pageObj = (PagePermissionObject) obj;
 					identifier = pageObj.getPageKey();
 				}
 			}
@@ -302,8 +302,8 @@ class PermissionCacher {
 			if (obj instanceof Page) {
 				identifier = Integer.toString(((Page) obj).getPageID());
 			}
-			else if (obj instanceof AccessControl.PagePermissionObject) {
-				AccessControl.PagePermissionObject page = (AccessControl.PagePermissionObject) obj;
+			else if (obj instanceof PagePermissionObject) {
+				PagePermissionObject page = (PagePermissionObject) obj;
 				return page.getPageKey();
 			}
 			else if (obj instanceof String) {
