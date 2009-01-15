@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.182 2008/12/30 09:09:06 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.183 2009/01/15 13:09:54 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2008/12/30 09:09:06 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/15 13:09:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.182 $
+ * @version $Revision: 1.183 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -306,6 +306,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	private StringBuffer addStyleSheet(IWContext iwc, StringBuffer buffer, String markup, String URL, String media) {
+		if (ExternalLink.MEDIA_PRINT.equals(media)) {
+			return buffer.append("<link type=\"text/css\" href=\"").append(URL).append("\" rel=\"stylesheet\" media=\"").append(media).append("\" ")
+							.append((!markup.equals(HTML) ? CoreConstants.SLASH : CoreConstants.EMPTY)).append(">\n");
+		}
 		PresentationUtil.addStyleSheetToHeader(iwc, URL);
 		return buffer;
 	}
