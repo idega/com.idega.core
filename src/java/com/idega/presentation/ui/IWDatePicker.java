@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2008/12/02 06:39:39 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/15 13:09:05 $ by $Author: laddi $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -32,6 +32,21 @@ public class IWDatePicker extends TextInput {
 	
 	private String onSelectAction = null;
 	private String inputName = null;
+
+  /**
+   * Constructs a new <code>TextInput</code> with the name "untitled".
+   */
+  public IWDatePicker() {
+      this("untitled");
+  }
+
+  /**
+   * Constructs a new <code>TextInput</code> with the given name.
+   */
+  public IWDatePicker(String name) {
+      super();
+      setInputName(name);
+  }
 
 	@Override
 	public void main(IWContext iwc) {
