@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.17 2008/06/26 08:35:10 valdas Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.18 2009/01/15 14:57:52 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -12,6 +12,12 @@ import java.io.Serializable;
 import java.lang.reflect.Method;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.el.ELContext;
+import javax.el.ValueExpression;
+import javax.faces.context.FacesContext;
 
 import com.idega.business.chooser.helper.CalendarsChooserHelper;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
@@ -36,10 +42,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2008/06/26 08:35:10 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/15 14:57:52 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.17 $
+ * @version $Revision: 1.18 $
  */
 public class Property implements Serializable{
 
@@ -186,71 +192,81 @@ public class Property implements Serializable{
 	//Moved from ComponentPropertyHandler (in builder)
 	protected Object convertStringToObject(Class<?> parameterType, String stringValue) throws Exception {
 		Object argument = null;
-		if (parameterType.equals(Integer.class) || parameterType.equals(Integer.TYPE)) {
-			argument = Integer.valueOf(stringValue);
-		}
-		else if (parameterType.equals(String.class)) {
-			argument = stringValue;
-		}
-		else if (parameterType.equals(Boolean.class) || parameterType.equals(Boolean.TYPE)) {
-			argument = CoreUtil.getBooleanValueFromString(stringValue);
-		}
-		else if (parameterType.equals(Float.class) || parameterType.equals(Float.TYPE)) {
-			argument = new Float(stringValue);
-		}
-		else if (parameterType.equals(ICPage.class)) {
-			argument = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHomeLegacy(ICPage.class)).findByPrimaryKeyLegacy(Integer.parseInt(stringValue));
-		}
-		else if (parameterType.equals(ICFile.class)) {
+		
+		if (stringValue != null && stringValue.startsWith("#{") && stringValue.endsWith("}")) {
 			try {
+				FacesContext fcContext = FacesContext.getCurrentInstance();
+				ELContext elContext = fcContext.getELContext();
+				ValueExpression ve = fcContext.getApplication().getExpressionFactory().createValueExpression(elContext, stringValue, parameterType);
+				argument = ve.getValue(elContext);
+			} catch(Exception e) {
+				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get by value from ValueExpression by expression: " + stringValue, e);
+			}
+		}
+		if (argument != null) {
+			return argument;
+		}
+		
+		try {
+			if (parameterType.equals(Integer.class) || parameterType.equals(Integer.TYPE)) {
+				argument = Integer.valueOf(stringValue);
+			}
+			else if (parameterType.equals(String.class)) {
+				argument = stringValue;
+			}
+			else if (parameterType.equals(Boolean.class) || parameterType.equals(Boolean.TYPE)) {
+				argument = CoreUtil.getBooleanValueFromString(stringValue);
+			}
+			else if (parameterType.equals(Float.class) || parameterType.equals(Float.TYPE)) {
+				argument = new Float(stringValue);
+			}
+			else if (parameterType.equals(ICPage.class)) {
+				argument = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHomeLegacy(ICPage.class)).findByPrimaryKeyLegacy(Integer.parseInt(stringValue));
+			}
+			else if (parameterType.equals(ICFile.class)) {
 				argument = ((com.idega.core.file.data.ICFileHome) com.idega.data.IDOLookup.getHome(ICFile.class)).findByPrimaryKey(new Integer(
-						stringValue));
+							stringValue));
 			}
-			catch (Exception ex) {
-				ex.printStackTrace(System.err);
+			else if (parameterType.equals(Image.class)) {
+				argument = new Image(Integer.parseInt(stringValue));
 			}
-		}
-		else if (parameterType.equals(Image.class)) {
-			argument = new Image(Integer.parseInt(stringValue));
-		}
-		//REMOVE AND MAKE GENERIC! ask tryggvi and eiki
-		else if (parameterType.equals(Group.class)) {
-			try {
+			//REMOVE AND MAKE GENERIC! ask tryggvi and eiki
+			else if (parameterType.equals(Group.class)) {
 				argument = ((GroupHome) com.idega.data.IDOLookup.getHome(Group.class)).findByPrimaryKey(new Integer(
-						stringValue.substring(stringValue.lastIndexOf('_') + 1, stringValue.length())));
+							stringValue.substring(stringValue.lastIndexOf('_') + 1, stringValue.length())));
 			}
-			catch (Exception ex) {
-				ex.printStackTrace(System.err);
+			// added because of JSF methods
+			else if (parameterType.equals(Object.class)) {
+				// nothing to cast
+				argument = stringValue;
 			}
-		}
-		// added because of JSF methods
-		else if (parameterType.equals(Object.class)) {
-			// nothing to cast
-			argument = stringValue;
-		}
-		else if (parameterType.equals(PasswordInput.class)) {
-			argument = new PasswordInput();
-			if (stringValue != null) {
-				((PasswordInput) argument).setContent(stringValue);
+			else if (parameterType.equals(PasswordInput.class)) {
+				argument = new PasswordInput();
+				if (stringValue != null) {
+					((PasswordInput) argument).setContent(stringValue);
+				}
 			}
+			else if (parameterType.equals(List.class)) {
+				argument = StringUtil.getValuesFromString(stringValue, ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR);
+			}
+			else if (parameterType.equals(PropertiesBean.class)) {
+				GroupsChooserHelper helper = new GroupsChooserHelper();
+				argument = helper.getExtractedPropertiesFromString(stringValue);
+			}
+			else if (parameterType.equals(CalendarPropertiesBean.class)) {
+				CalendarsChooserHelper helper = new CalendarsChooserHelper();
+				argument = helper.getExtractedPropertiesFromString(stringValue);
+			}
+			else if (parameterType.equals(Locale.class)) {
+				argument = ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
+			}
+			else if (parameterType.equals(java.util.Date.class)) {
+				argument = IWDatePickerHandler.getParsedDate(stringValue);
+			}
+		} catch(Exception e) {
+			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get value from expression: " + stringValue);
 		}
-		else if (parameterType.equals(List.class)) {
-			argument = StringUtil.getValuesFromString(stringValue, ICBuilderConstants.BUILDER_MODULE_PROPERTY_VALUES_SEPARATOR);
-		}
-		else if (parameterType.equals(PropertiesBean.class)) {
-			GroupsChooserHelper helper = new GroupsChooserHelper();
-			argument = helper.getExtractedPropertiesFromString(stringValue);
-		}
-		else if (parameterType.equals(CalendarPropertiesBean.class)) {
-			CalendarsChooserHelper helper = new CalendarsChooserHelper();
-			argument = helper.getExtractedPropertiesFromString(stringValue);
-		}
-		else if (parameterType.equals(Locale.class)) {
-			argument = ICLocaleBusiness.getLocaleFromLocaleString(stringValue);
-		}
-		else if (parameterType.equals(java.util.Date.class)) {
-			argument = IWDatePickerHandler.getParsedDate(stringValue);
-		}
+		
 		return argument;
 	}
 }
