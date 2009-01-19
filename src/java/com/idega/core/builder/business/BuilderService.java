@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.69 2008/12/17 16:01:53 civilis Exp $
+ * $Id: BuilderService.java,v 1.70 2009/01/19 13:11:53 anton Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -362,6 +362,8 @@ public interface BuilderService extends IBOService
 	public String getCleanedHtmlContent(InputStream htmlStream, boolean omitDocTypeDeclaration, boolean omitHtmlEnvelope, boolean omitComments);
 	
 	public String getFullPageUrlByPageType(IWContext iwc, String pageType, boolean checkFirstlyNearestPages);
+	
+	public String getFullPageUrlByPageType(User currentUser, String pageType, boolean checkFirstlyNearestPages);
 	
 	public abstract String getFullPageUrlByPageType(User user, IWContext iwc, String pageType, boolean checkFirstlyNearestPages);
 	

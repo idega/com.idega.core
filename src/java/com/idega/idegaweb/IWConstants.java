@@ -5,7 +5,7 @@
 
 package com.idega.idegaweb;
 
-import java.util.*;
+import java.util.HashMap;
 
 
 /**
@@ -75,6 +75,8 @@ public class IWConstants{
   public static final String BUILDER_FONT_STYLE_INTERFACE_SMALL = "font-family:Arial,Helvetica,sans-serif;font-size: 7pt; border: 1 solid #000000;";
 
   public static final String BUILDER_FONT_STYLE_LARGE_RED = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;font-weight:bold;color:#FF0000;";
+  
+  public static final String SERVER_URL_PROPERTY_NAME = "Server URL";
   
   public static HashMap getDefaultStyles() {
   	HashMap map = new HashMap();

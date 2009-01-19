@@ -1,5 +1,5 @@
 /*
- * $Id: IWApplicationStarter.java,v 1.6 2008/11/05 16:39:41 laddi Exp $
+ * $Id: IWApplicationStarter.java,v 1.7 2009/01/19 13:11:53 anton Exp $
  *
  * Created by Tryggvi Larusson in 2004
  *
@@ -24,6 +24,7 @@ import javax.faces.lifecycle.LifecycleFactory;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
+
 import com.idega.repository.data.RefactorClassRegistry;
 
 
@@ -34,10 +35,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * this class calls IWMainApplicationStarter for starting up.
  * </p>
  * Copyright: Copyright (c) 2004-2005 idega software<br/>
- * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
+ * Last modified: $Date: 2009/01/19 13:11:53 $ by $Author: anton $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  */
 public class IWApplicationStarter implements ServletContextListener {
 
