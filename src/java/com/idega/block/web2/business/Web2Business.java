@@ -389,4 +389,11 @@ public interface Web2Business extends IBOService {
 	//	FancyBox
 	public List<String> getBundleURIsToFancyBoxScriptFiles();
 	public String getBundleURIToFancyBoxStyleFile();
+
+	//	CodeMirror
+	public String getBundleURIToCodeMirrorScriptFile();
+	public String getBundleURIToCodeMirrorScriptFile(String scriptFile);
+	public String getBundleURIToCodeMirrorStyleFile(String styleFile);
+	public String getBundleURIToCodeMirrorFolder();
+	
 }
