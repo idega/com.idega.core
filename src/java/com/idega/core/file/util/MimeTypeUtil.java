@@ -40,7 +40,7 @@ import com.idega.util.SortedProperties;
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.0
  *
- * Last modified: $Date: 2009/01/12 11:01:03 $ by $Author: anton $
+ * Last modified: $Date: 2009/01/20 17:04:16 $ by $Author: valdas $
  */
 public class MimeTypeUtil implements Singleton {
 
@@ -51,6 +51,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_PDF_2 = "application/x-pdf";
 	public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	public static final String MIME_TYPE_ZIP = "application/zip";
+	public static final String MIME_TYPE_XML = "text/xml";
 
 	private String pathToConfigFile;
 	private Properties properties;
@@ -114,7 +115,7 @@ public class MimeTypeUtil implements Singleton {
 			"audio/x-mpequrl", "audio/x-nspaudio", "music/x-karaoke",
 			"x-music/x-midi", "x-conference/x-cooltalk" };
 
-	private String[] document = { "text/html", "text/plain", "text/xml",
+	private String[] document = { "text/html", "text/plain", MIME_TYPE_XML,
 			"text/richtext", "text/enriched",
 			CoreConstants.CONTENT_TYPE_TEXT_CSS, "application/postscript",
 			"application/rtf", MIME_TYPE_PDF_1, MIME_TYPE_PDF_2,
