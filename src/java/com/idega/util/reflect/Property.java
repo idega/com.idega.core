@@ -1,5 +1,5 @@
 /*
- * $Id: Property.java,v 1.18 2009/01/15 14:57:52 valdas Exp $ Created on 21.12.2004
+ * $Id: Property.java,v 1.19 2009/01/20 17:04:58 valdas Exp $ Created on 21.12.2004
  * 
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
  * 
@@ -42,10 +42,10 @@ import com.idega.util.StringUtil;
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
  * 
- * Last modified: $Date: 2009/01/15 14:57:52 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/20 17:04:58 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
- * @version $Revision: 1.18 $
+ * @version $Revision: 1.19 $
  */
 public class Property implements Serializable{
 
@@ -189,16 +189,20 @@ public class Property implements Serializable{
 		}
 	}
 	
+	public static Object getValueFromExpression(String expression, Class<?> parameterType) {
+		FacesContext fcContext = FacesContext.getCurrentInstance();
+		ELContext elContext = fcContext.getELContext();
+		ValueExpression ve = fcContext.getApplication().getExpressionFactory().createValueExpression(elContext, expression, parameterType);
+		return ve.getValue(elContext);
+	}
+	
 	//Moved from ComponentPropertyHandler (in builder)
 	protected Object convertStringToObject(Class<?> parameterType, String stringValue) throws Exception {
 		Object argument = null;
 		
 		if (stringValue != null && stringValue.startsWith("#{") && stringValue.endsWith("}")) {
 			try {
-				FacesContext fcContext = FacesContext.getCurrentInstance();
-				ELContext elContext = fcContext.getELContext();
-				ValueExpression ve = fcContext.getApplication().getExpressionFactory().createValueExpression(elContext, stringValue, parameterType);
-				argument = ve.getValue(elContext);
+				argument = getValueFromExpression(stringValue, parameterType);
 			} catch(Exception e) {
 				Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get by value from ValueExpression by expression: " + stringValue, e);
 			}
