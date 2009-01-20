@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.176 2008/12/16 13:09:09 valdas Exp $
+ * $Id: Link.java,v 1.177 2009/01/20 17:05:30 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -687,6 +687,9 @@ public class Link extends Text {
 
 			if (this._parameterString == null) {
 				this._parameterString = new StringBuffer();
+			}
+			
+			if (this._parameterString.toString().length() == 0) {
 				this._parameterString.append("?");
 			}
 			else {
