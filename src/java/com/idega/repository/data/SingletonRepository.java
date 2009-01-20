@@ -6,9 +6,9 @@
  */
 package com.idega.repository.data;
 
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import java.util.logging.Logger;
 
 
@@ -27,16 +27,12 @@ import java.util.logging.Logger;
 
 public class SingletonRepository {
 
-	private static SingletonRepository singletonRepository = null;
+	private static volatile SingletonRepository singletonRepository = null;
 
-	private static boolean hasBeenStopped=false;
+	private static volatile boolean hasBeenStopped = false;
 	
-	// key: classname value: instance
-	private HashMap singletonMap = new HashMap();
-	// key: classname value: instantiator
-	private HashMap instantiatorMap = new HashMap();
-
-
+	//Singleton holder map implementation changed to ConcurrentHashMap to improve synchronization.
+	private ConcurrentMap<String, SingletonInstantiatorBean> map = new ConcurrentHashMap<String, SingletonInstantiatorBean>();
 	
 	private SingletonRepository() {
 		// empty
@@ -71,115 +67,112 @@ public class SingletonRepository {
 	 * @return An instance of the SingletonRepository if it is correctly initialized
 	 * @throws RuntimeException if no instance is initialized.
 	 */
-	public static synchronized SingletonRepository getRepository()	{
-		if(singletonRepository==null){
-			if(hasBeenStopped){
-				throw new RuntimeException("SingletonRepsitory has been stopped so no instance exists.");
+	public static SingletonRepository getRepository() {
+		if (singletonRepository == null) {
+			synchronized (SingletonRepository.class) {
+				if (hasBeenStopped) {
+					throw new RuntimeException(
+							"SingletonRepsitory has been stopped so no instance exists.");
+				}
+				start();
 			}
-			start();
 		}
 		return singletonRepository;
 	}
 	
-	public synchronized Object getInstance(Class singletonClass, Instantiator instantiator) {
-		Object singleton = null;
+	public Object getInstance(Class singletonClass, Instantiator instantiator) {
 		String singletonName = singletonClass.getName();
-		if (this.singletonMap.containsKey(singletonName)) {
-			singleton = this.singletonMap.get(singletonName);
+		SingletonInstantiatorBean bean = map.get(singletonName);
+		if (bean != null) {
+			return bean.getSingleton();
 		}
-		else {
-			singleton = instantiator.getInstance();
-			this.singletonMap.put(singletonName, singleton);
-			this.instantiatorMap.put(singletonName, instantiator);
-		}
-		return singleton;
+		bean = map.putIfAbsent(singletonName, 
+				new SingletonInstantiatorBean(instantiator.getInstance(), instantiator));
+		//if bean == null, then it's first time it is added, else - another thread put it.
+		return bean != null ? bean.getSingleton() : map.get(singletonName).getSingleton(); 
+
 	}
 	
 	
-	public synchronized Object getInstanceUsingIdentifier(Class singletonClass, Instantiator instantiator, Object parameter, Object identfier) {
-		Map instancesOfSingletons = null;
-		Object singleton = null;
+	public Object getInstanceUsingIdentifier(Class singletonClass, Instantiator instantiator, Object parameter, String identifier) {
+		String singletonName = singletonClass.getName() + "_" + identifier;
+		SingletonInstantiatorBean bean = map.get(singletonName);
+		if (bean != null) {
+			return bean.getSingleton();
+		}
+		bean = map.putIfAbsent(singletonName, 
+				new SingletonInstantiatorBean(instantiator.getInstance(parameter), instantiator));
+		return bean != null ? bean.getSingleton() : map.get(singletonName).getSingleton();
+	}
+	
+	public Object getInstance(Class singletonClass, Instantiator instantiator, Object parameter) {
 		String singletonName = singletonClass.getName();
-		if (this.singletonMap.containsKey(singletonName)) {
-			instancesOfSingletons = (Map) this.singletonMap.get(singletonName);
+		SingletonInstantiatorBean bean = map.get(singletonName);
+		if (bean != null) {
+			return bean.getSingleton();
 		}
-		else {
-			instancesOfSingletons = new HashMap();
-		}
-		if (instancesOfSingletons.containsKey(identfier)) {
-			// existing singleton found
-			singleton = instancesOfSingletons.get(identfier);
-		}
-		// create singleton 
-		else {
-			// create and store singleton
-			singleton = instantiator.getInstance(parameter);
-			instancesOfSingletons.put(identfier, singleton);
-			this.singletonMap.put(singletonName, instancesOfSingletons);
-			// store instantiator
-			Map instantiators = null;
-			if (this.instantiatorMap.containsKey(singletonName)) {
-				instantiators = (Map) this.instantiatorMap.get(singletonName);
-			}
-			else {
-				instantiators = new HashMap();
-			}
-			instantiators.put(identfier, instantiator);
-			this.instantiatorMap.put(singletonName, instantiators);
-		}
-		return singleton;
+		bean = map.putIfAbsent(singletonName, 
+				new SingletonInstantiatorBean(instantiator.getInstance(parameter), instantiator));
+		return bean != null ? bean.getSingleton() : map.get(singletonName).getSingleton();
 	}
 	
-	public synchronized Object getInstance(Class singletonClass, Instantiator instantiator, Object parameter) {
-		Object singleton = null;
+	public Object getExistingInstanceOrNull(Class singletonClass) {
+		SingletonInstantiatorBean singletonInstantiatorBean = map.get(singletonClass.getName());
+		return singletonInstantiatorBean != null ? singletonInstantiatorBean.getSingleton() : null;
+	}
+	
+	public void unloadInstance(Class singletonClass) {
 		String singletonName = singletonClass.getName();
-		if (this.singletonMap.containsKey(singletonName)) {
-			singleton = this.singletonMap.get(singletonName);
-		}
-		else {
-			singleton = instantiator.getInstance(parameter);
-			this.singletonMap.put(singletonName, singleton);
-			this.instantiatorMap.put(singletonName, instantiator);
-		}
-		return singleton;
-	}
-	
-	public synchronized Object getExistingInstanceOrNull(Class singletonClass) {
-		return this.singletonMap.get(singletonClass.getName());
-	}
-	
-	public synchronized void unloadInstance(Class singletonClass) {
-		String singletonName = singletonClass.getName();
-		if (this.singletonMap.containsKey(singletonName)) {
-			// can be a map or instantiator
-			Object mapOrInstantiator = this.instantiatorMap.get(singletonName);
-			unload(mapOrInstantiator);
-			// remove the instance
-			this.singletonMap.remove(singletonName);
+		SingletonInstantiatorBean bean = map.remove(singletonName);
+		if (bean != null) {
+			unload(bean.getInstantiator());
 		}
 	}
 	
-	private synchronized void destroy() {
-		Iterator iterator = this.instantiatorMap.values().iterator();
+	public void unloadInstance(Class singletonClass, String identifier) {
+		String singletonName = singletonClass.getName() + "_" + identifier;
+		SingletonInstantiatorBean bean = map.remove(singletonName);
+		if (bean != null) {
+			unload(bean.getInstantiator());
+		}
+	}
+	
+	private void destroy() {
+		Iterator<SingletonInstantiatorBean> iterator = this.map.values().iterator();
 		while (iterator.hasNext()) {
-			// can be a map or instantiator
-			Object mapOrInstantiator = iterator.next();
-			unload(mapOrInstantiator);
+			SingletonInstantiatorBean bean = iterator.next();
+			unload(bean.getInstantiator());
 		}
 	}
 	
-	private void unload(Object mapOrInstantiator) {
-		if (mapOrInstantiator instanceof Instantiator) {
-			((Instantiator) mapOrInstantiator).unload();
+	private void unload(Instantiator instantiator) {
+		instantiator.unload();
+	}
+	
+	
+	/**
+	 * Class for storing singleton/instantiator data.
+	 *
+	 */
+	private static class SingletonInstantiatorBean {
+		
+		private Object singleton;
+		
+		private Instantiator instantiator;
+		
+		public SingletonInstantiatorBean(Object singleton, Instantiator instantiator) {
+			this.singleton = singleton;
+			this.instantiator = instantiator;
 		}
-		else {
-			// it is a map, go further
-			Iterator iterator = ((Map) mapOrInstantiator).values().iterator();
-			while (iterator.hasNext()) {
-				Object tempMapOrInstantiator = iterator.next();
-				unload(tempMapOrInstantiator);
-			}
+
+		public Object getSingleton() {
+			return singleton;
 		}
+
+		public Instantiator getInstantiator() {
+			return instantiator;
+		}
+		
 	}
 
 }
