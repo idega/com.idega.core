@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.183 2009/01/15 13:09:54 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.184 2009/01/21 10:03:33 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -56,7 +56,7 @@ import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
-import com.idega.util.expression.ELUtil;
+import com.idega.util.reflect.Property;
 
 /**
  * <p>
@@ -69,10 +69,10 @@ import com.idega.util.expression.ELUtil;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2009/01/15 13:09:54 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/21 10:03:33 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.183 $
+ * @version $Revision: 1.184 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -635,14 +635,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			return;
 		}
 		
-		try {
-			Object o = ELUtil.getInstance().evaluateExpression(styleSheetURL);
-			if (o instanceof String) {
-				styleSheetURL = o.toString();
-			}
-		} catch(Exception e) {}
+		String sources = Property.getValueFromExpression(styleSheetURL, String.class);
+		if (!StringUtil.isEmpty(sources)) {
+			styleSheetURL = sources;
+		}
 		
-		int index = styleSheetURL.indexOf(",");
+		int index = styleSheetURL.indexOf(CoreConstants.COMMA);
 		while (index > -1) {
 			addStyleSheetURL(styleSheetURL.substring(0, index));
 			try {
@@ -652,7 +650,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				styleSheetURL = styleSheetURL.substring(index);
 			}
 			styleSheetURL.trim();
-			index = styleSheetURL.indexOf(",");
+			index = styleSheetURL.indexOf(CoreConstants.COMMA);
 		}
 		addStyleSheetURL(styleSheetURL);
 	}
@@ -2252,12 +2250,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			return;
 		}
 		
-		try {
-			Object o = ELUtil.getInstance().evaluateExpression(urls);
-			if (o instanceof String) {
-				urls = o.toString();
-			}
-		} catch(Exception e) {}
+		String sources = Property.getValueFromExpression(urls, String.class);
+		if (!StringUtil.isEmpty(sources)) {
+			urls = sources;
+		}
 		
 		int index = urls.indexOf(CoreConstants.COMMA);
 		while (index > -1) {
