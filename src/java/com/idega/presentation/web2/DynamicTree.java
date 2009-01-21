@@ -98,7 +98,7 @@ public class DynamicTree extends Block {
 	private void addRequiredLibraries(IWContext iwc) {
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJSTreeStyleFile());
-		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, web2.getBundleURIsToJSTreeScriptFiles(isAddStylesManager(), isUsesXmlDataTypes(),
+		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, web2.getBundleURIsToJSTreeScriptFiles(isUsesXmlDataTypes(),
 				isUsesMetadataRules(), isUsesCookies()));
 	}
 
