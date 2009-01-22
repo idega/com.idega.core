@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.156 2009/01/19 13:11:53 anton Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.157 2009/01/22 12:44:12 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -86,9 +86,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/01/19 13:11:53 $ by $Author: anton $
+ * Last modified: $Date: 2009/01/22 12:44:12 $ by $Author: civilis $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.156 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.157 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -1391,7 +1391,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 */
 	@Override
 	public ExternalContext getExternalContext() {
-		return getRealFacesContext().getExternalContext();
+		return getRealFacesContext() != null ? getRealFacesContext().getExternalContext() : null;
 	}
 
 	/*
