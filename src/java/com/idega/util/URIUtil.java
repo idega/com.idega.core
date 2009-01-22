@@ -42,7 +42,7 @@ public class URIUtil {
 			try {
 				String query = new URI(uri).getQuery();
 				
-				if(query == null || CoreConstants.EMPTY.equals(query))
+				if(StringUtil.isEmpty(query))
 					return parameters;
 				
 				StringTokenizer st = new StringTokenizer(query, CoreConstants.AMP, false);
