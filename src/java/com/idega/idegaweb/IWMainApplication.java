@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.201 2009/01/23 11:49:28 valdas Exp $
+ * $Id: IWMainApplication.java,v 1.202 2009/01/23 13:08:53 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -111,10 +111,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/01/23 11:49:28 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/01/23 13:08:53 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.201 $
+ * @version $Revision: 1.202 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -416,7 +416,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		Map<String, String> bundleResolver = new WebResourceResolver(bundle.getBundleIdentifier());
     		resources.put(bundle.getBundleIdentifier(), bundleResolver);
     	}
-    	IWMainApplication.getDefaultIWMainApplication().setAttribute("idegaWebResourceResolver", resources);
+    	IWMainApplication.getDefaultIWMainApplication().setAttribute("iwResourceResolver", resources);
     }
 
     public void loadViewManager(){
