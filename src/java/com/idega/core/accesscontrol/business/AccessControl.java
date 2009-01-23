@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.125 2009/01/14 15:12:23 tryggvil Exp $
+ * $Id: AccessControl.java,v 1.126 2009/01/23 13:23:51 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -76,12 +76,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
+ * Last modified: $Date: 2009/01/23 13:23:51 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.125 $
+ * @version $Revision: 1.126 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3457,6 +3457,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			if (!page.isPublished()) {
 				boolean permissionForNotPublishedPage = hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 				return permissionForNotPublishedPage;
+			}
+			if (page.isLocked()) {
+				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}
 			
 			return permission;
