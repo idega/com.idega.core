@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.200 2009/01/14 15:12:25 tryggvil Exp $
+ * $Id: IWMainApplication.java,v 1.201 2009/01/23 11:49:28 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -111,10 +111,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/01/14 15:12:25 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2009/01/23 11:49:28 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.200 $
+ * @version $Revision: 1.201 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -356,6 +356,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		loadBundlesLegacy();
     	loadBundlesFromJars();
         loadBundlesLocalizationsForJSF();
+        loadBundlesResourcesResolvers();
         this.setAttribute("bundles",getLoadedBundles());
         
     }
@@ -407,6 +408,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			bundleForLocalizations.put(bundle.getBundleIdentifier(),bLocalizationMap);
     	}
     	this.setAttribute("localizedStrings",bundleForLocalizations);
+    }
+    
+    private void loadBundlesResourcesResolvers() {
+    	Map<String, Map<String, String>> resources = new HashMap<String, Map<String,String>>();
+    	for (IWBundle bundle: getLoadedBundles().values()) {
+    		Map<String, String> bundleResolver = new WebResourceResolver(bundle.getBundleIdentifier());
+    		resources.put(bundle.getBundleIdentifier(), bundleResolver);
+    	}
+    	IWMainApplication.getDefaultIWMainApplication().setAttribute("idegaWebResourceResolver", resources);
     }
 
     public void loadViewManager(){
