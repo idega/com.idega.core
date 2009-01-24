@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.126 2009/01/23 13:23:51 valdas Exp $
+ * $Id: AccessControl.java,v 1.127 2009/01/24 02:48:55 eiki Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -76,12 +76,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2009/01/23 13:23:51 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/24 02:48:55 $ by $Author: eiki $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.126 $
+ * @version $Revision: 1.127 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3446,19 +3446,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		try {
 			boolean permission = hasPermission(PERMISSION_KEY_VIEW, pageKeyObject, iwuc);
 			if (!permission) {
-				return false;
+				//if regular user check fails do extra check for content roles
+				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}
 			
+			//even if you have the view rights the page might not be published yet.
+			//extra check for unpublished pages
 			ICPageHome pageHome = (ICPageHome) IDOLookup.getHome(ICPage.class);
 			ICPage page = pageHome.findByPrimaryKey(pageKey);
-			if (page == null) {
-				return permission;
-			}
+			
 			if (!page.isPublished()) {
-				boolean permissionForNotPublishedPage = hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
-				return permissionForNotPublishedPage;
-			}
-			if (page.isLocked()) {
+				//only editors can view unpublished pages.
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}
 			
