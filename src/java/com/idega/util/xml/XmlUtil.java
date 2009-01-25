@@ -3,6 +3,7 @@ package com.idega.util.xml;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -10,9 +11,16 @@ import java.util.logging.Logger;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jdom.input.DOMBuilder;
 import org.w3c.dom.Document;
+import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
 import com.idega.util.CoreConstants;
@@ -21,9 +29,9 @@ import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  *
- * Last modified: $Date: 2008/11/19 12:25:19 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/25 15:22:33 $ by $Author: civilis $
  */
 public class XmlUtil {
 
@@ -31,16 +39,12 @@ public class XmlUtil {
 	
 	private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
 	
-	private static DocumentBuilderFactory factory;
-	private static DocumentBuilderFactory factoryNoNamespace;
+	private volatile static DocumentBuilderFactory factory;
+	private volatile static DocumentBuilderFactory factoryNoNamespace;
 	
 	public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
 		
-		DocumentBuilderFactory factory = getDocumentBuilderFactory();
-		
-		synchronized (factory) {
-			return factory.newDocumentBuilder();
-		}
+		return getDocumentBuilder(true);
 	}
 	
 	public static DocumentBuilder getDocumentBuilder(boolean namespaceAware) throws ParserConfigurationException {
@@ -52,29 +56,43 @@ public class XmlUtil {
 		}
 	}
 	
-	private static synchronized DocumentBuilderFactory getDocumentBuilderFactory() {
+	private static DocumentBuilderFactory getDocumentBuilderFactoryNSAware() {
 	
 		if(factory == null) {
-			factory = DocumentBuilderFactory.newInstance();
-		    factory.setNamespaceAware(true);
-		    factory.setValidating(false);
-		    factory.setAttribute("http://apache.org/xml/properties/dom/document-class-name",
-			"org.apache.xerces.dom.DocumentImpl");
+			
+			synchronized (XmlUtil.class) {
+				
+				if(factory == null) {
+			
+					factory = DocumentBuilderFactory.newInstance();
+				    factory.setNamespaceAware(true);
+				    factory.setValidating(false);
+				    factory.setAttribute("http://apache.org/xml/properties/dom/document-class-name",
+					"org.apache.xerces.dom.DocumentImpl");
+				}
+			}
 		}
 		return factory;
 	}
 	
-	private static synchronized DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware) {
+	private static DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware) {
 		
 		if(namespaceAware)
-			return getDocumentBuilderFactory();
+			return getDocumentBuilderFactoryNSAware();
 		
 		if(factoryNoNamespace == null) {
-			factoryNoNamespace = DocumentBuilderFactory.newInstance();
-			factoryNoNamespace.setNamespaceAware(false);
-			factoryNoNamespace.setValidating(false);
-			factoryNoNamespace.setAttribute("http://apache.org/xml/properties/dom/document-class-name",
-			"org.apache.xerces.dom.DocumentImpl");
+			
+			synchronized (XmlUtil.class) {
+				
+				if(factoryNoNamespace == null) {
+			
+					factoryNoNamespace = DocumentBuilderFactory.newInstance();
+					factoryNoNamespace.setNamespaceAware(false);
+					factoryNoNamespace.setValidating(false);
+					factoryNoNamespace.setAttribute("http://apache.org/xml/properties/dom/document-class-name",
+					"org.apache.xerces.dom.DocumentImpl");
+				}
+			}
 		}
 		return factoryNoNamespace;
 	}
@@ -138,4 +156,35 @@ public class XmlUtil {
 			e.printStackTrace();
 		}
 	}
+	
+	/**
+	 * <p>taken from org.chiba.xml.dom.DOMUtil</p>
+	 * <p>prints out formatted node content to System.out stream</p>
+	 * 
+	 * 
+	 * @param node
+	 */
+	public static void prettyPrintDOM(Node node) {
+        try {
+            prettyPrintDOM(node, System.out);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+   
+    /**
+     * <p>taken from org.chiba.xml.dom.DOMUtil</p>
+     * Serializes the specified node to the given stream. Serialization is achieved by an identity transform.
+     *
+     * @param node   the node to serialize
+     * @param stream the stream to serialize to.
+     * @throws TransformerException if any error ccurred during the identity transform.
+     */
+    public static void prettyPrintDOM(Node node, OutputStream stream) throws TransformerException {
+        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.transform(new DOMSource(node), new StreamResult(stream));
+    }
 }
