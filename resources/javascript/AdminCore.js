@@ -9,94 +9,6 @@ AdminCoreHelper.modes = {
 	themes: 'isThemesAdmin'
 };
 
-jQuery(document).ready(function() {
-	if (!jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
-		AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
-		jQuery('div.content_item_toolbar, div.commentsController').hide();
-		AdminCoreHelper.initializeInlineEditableComponents();
-	}
-	if (jQuery('body').hasClass(AdminCoreHelper.modes.builder)) {
-		AdminCoreHelper.currentMode = AdminCoreHelper.modes.builder;
-	}
-	if (jQuery('body').hasClass(AdminCoreHelper.modes.themes)) {
-		AdminCoreHelper.currentMode = AdminCoreHelper.modes.themes;
-		AdminCoreHelper.showThemes(true, false);
-	}
-	if (jQuery('body').hasClass(AdminCoreHelper.modes.preview)) {
-		AdminCoreHelper.currentMode = AdminCoreHelper.modes.preview;
-	}
-	
-	try {
-		jQuery('.applicationPropertyStyleClass').append('<span class=\'icon\'></span>');
-	} catch(e) {}
-
-	jQuery('#adminTopLayer li').hover(
-		function() {
-			jQuery(this).children('.modeHelper').fadeIn('fast');
-		},
-		function() {
-			jQuery(this).children('.modeHelper').fadeOut('fast');
-		}
-	);
-	
-	jQuery('#adminTopLayer li').click(function() {
-		jQuery('#adminTopLayer li.selected').removeClass('selected');
-		jQuery(this).addClass('selected');
-		jQuery('body').removeClass(AdminCoreHelper.modes.themes).removeClass(AdminCoreHelper.modes.builder).removeClass(AdminCoreHelper.modes.content);
-		jQuery('.applicationPropertyStyleClass .icon').hide();
-		jQuery('div.content_item_toolbar, div.commentsController').hide();
-		jQuery('body div#themeSlider').remove();
-
-		closeAllLoadingMessages();
-		jQuery('.LocalLoadLayer').remove();
-
-		if (jQuery(this).hasClass('adminThemesMode')) {
-			AdminCoreHelper.showThemes(false, true);
-		}
-
-		if (jQuery(this).hasClass('adminEditMode')) {
-			AdminCoreHelper.currentMode = AdminCoreHelper.modes.builder;
-			
-			jQuery('body').addClass(AdminCoreHelper.modes.builder);
-			AdminToolbarSession.setMode(AdminCoreHelper.modes.builder);
-		}
-		
-		if (jQuery(this).hasClass('adminContentMode')) {
-			AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
-			
-			jQuery('body').addClass(AdminCoreHelper.modes.content);
-			jQuery('div.content_item_toolbar, div.commentsController').fadeIn('slow');
-			jQuery('.applicationPropertyStyleClass .icon').fadeIn('slow');
-			
-			AdminToolbarSession.setMode(AdminCoreHelper.modes.content);
-		}
-		else {
-		}
-		
-		if (jQuery(this).hasClass('adminPreviewMode')) {
-			AdminCoreHelper.currentMode = AdminCoreHelper.modes.preview;
-			
-			AdminToolbarSession.setMode(AdminCoreHelper.modes.preview);
-		}
-		
-		AdminCoreHelper.restoreInlineEditableComponents();
-		AdminCoreHelper.initializeInlineEditableComponents();
-	});
-	
-	jQuery(document).click(function() {
-		jQuery('.themeTemplateChildrenContainerAsStackStyle').remove();
-		jQuery('.themeChooseStyle').remove();
-	});
-	
-	jQuery(window).resize(function() {
-		if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.themes) {
-			try {
-				ThemesSliderHelper.resizeSlider();
-			} catch(e) {}
-		}
-	});
-});
-
 AdminCoreHelper.showThemes = function(forceToOpen, setMode) {
 	AdminCoreHelper.currentMode = AdminCoreHelper.modes.themes;
 	
@@ -192,3 +104,91 @@ AdminCoreHelper.makeComponentEditable = function(component, oldValue) {
 		onblur:		'submit'
 	});
 }
+
+jQuery(document).ready(function() {
+	if (!jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
+		jQuery('div.content_item_toolbar, div.commentsController').hide();
+		AdminCoreHelper.initializeInlineEditableComponents();
+	}
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.builder)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.builder;
+	}
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.themes)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.themes;
+		AdminCoreHelper.showThemes(true, false);
+	}
+	if (jQuery('body').hasClass(AdminCoreHelper.modes.preview)) {
+		AdminCoreHelper.currentMode = AdminCoreHelper.modes.preview;
+	}
+	
+	try {
+		jQuery('.applicationPropertyStyleClass').append('<span class=\'icon\'></span>');
+	} catch(e) {}
+
+	jQuery('#adminTopLayer li').hover(
+		function() {
+			jQuery(this).children('.modeHelper').fadeIn('fast');
+		},
+		function() {
+			jQuery(this).children('.modeHelper').fadeOut('fast');
+		}
+	);
+	
+	jQuery('#adminTopLayer li').click(function() {
+		jQuery('#adminTopLayer li.selected').removeClass('selected');
+		jQuery(this).addClass('selected');
+		jQuery('body').removeClass(AdminCoreHelper.modes.themes).removeClass(AdminCoreHelper.modes.builder).removeClass(AdminCoreHelper.modes.content);
+		jQuery('.applicationPropertyStyleClass .icon').hide();
+		jQuery('div.content_item_toolbar, div.commentsController').hide();
+		jQuery('body div#themeSlider').remove();
+
+		closeAllLoadingMessages();
+		jQuery('.LocalLoadLayer').remove();
+
+		if (jQuery(this).hasClass('adminThemesMode')) {
+			AdminCoreHelper.showThemes(false, true);
+		}
+
+		if (jQuery(this).hasClass('adminEditMode')) {
+			AdminCoreHelper.currentMode = AdminCoreHelper.modes.builder;
+			
+			jQuery('body').addClass(AdminCoreHelper.modes.builder);
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.builder);
+		}
+		
+		if (jQuery(this).hasClass('adminContentMode')) {
+			AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
+			
+			jQuery('body').addClass(AdminCoreHelper.modes.content);
+			jQuery('div.content_item_toolbar, div.commentsController').fadeIn('slow');
+			jQuery('.applicationPropertyStyleClass .icon').fadeIn('slow');
+			
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.content);
+		}
+		else {
+		}
+		
+		if (jQuery(this).hasClass('adminPreviewMode')) {
+			AdminCoreHelper.currentMode = AdminCoreHelper.modes.preview;
+			
+			AdminToolbarSession.setMode(AdminCoreHelper.modes.preview);
+		}
+		
+		AdminCoreHelper.restoreInlineEditableComponents();
+		AdminCoreHelper.initializeInlineEditableComponents();
+	});
+	
+	jQuery(document).click(function() {
+		jQuery('.themeTemplateChildrenContainerAsStackStyle').remove();
+		jQuery('.themeChooseStyle').remove();
+	});
+	
+	jQuery(window).resize(function() {
+		if (AdminCoreHelper.currentMode == AdminCoreHelper.modes.themes) {
+			try {
+				ThemesSliderHelper.resizeSlider();
+			} catch(e) {}
+		}
+	});
+});

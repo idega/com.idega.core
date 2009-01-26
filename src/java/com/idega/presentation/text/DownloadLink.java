@@ -22,7 +22,6 @@ import com.idega.io.DownloadWriter;
 import com.idega.io.MediaWritable;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
-import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
 /**
@@ -109,10 +108,6 @@ public class DownloadLink extends Link {
     		setText(text);
     	}
     	
-    	//setText(StringUtil.isEmpty(text) ? CoreConstants.EMPTY : text);
-    	
-    	//this._parameterString = new StringBuffer();
-    	
     	Collection<UIComponent> children = this.getChildren();
     	for(UIComponent child : children) {
     		if (child instanceof UIParameter) {
@@ -147,8 +142,6 @@ public class DownloadLink extends Link {
     }
     
     public Class<?> getMediaWriter(FacesContext context) {
-//    	Class<?> writer = getValueBinding(DOWNLOAD_WRITER_PROPERTY) != null ? (Class<?>)getValueBinding(DOWNLOAD_WRITER_PROPERTY).getValue(context) : (Class<?>)context.getExternalContext().getRequestParameterMap().get(DOWNLOAD_WRITER_PROPERTY);
-    	
     	ValueBinding vb = getValueBinding(DOWNLOAD_WRITER_PROPERTY);
     	
     	if(vb != null) {
@@ -189,16 +182,14 @@ public class DownloadLink extends Link {
 		addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,absoluteFilePath);
     }
     
-
     @Override
-	public void print(IWContext iwc) throws Exception{
-    	//because of jsf problems
-    		//main(iwc);
-	        setURL(iwc.getIWMainApplication().getMediaServletURI());
-	        if(this.writerClass!=null){
-	            addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(this.writerClass));
-	        }
-
-    		super.print(iwc);
+    public void print(IWContext iwc) throws Exception {
+		setURL(iwc.getIWMainApplication().getMediaServletURI());
+		if (this.writerClass!=null) {
+			addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(this.writerClass));
+		}
+		
+		super.print(iwc);
+		this._parameterString = new StringBuffer();	//	Because parameters are not updated if there are more than 1 link used in JSP/facelet
     }
 }
