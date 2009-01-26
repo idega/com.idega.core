@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.157 2009/01/22 12:44:12 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.158 2009/01/26 09:18:30 laddi Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -86,9 +86,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/01/22 12:44:12 $ by $Author: civilis $
+ * Last modified: $Date: 2009/01/26 09:18:30 $ by $Author: laddi $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.157 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.158 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -665,7 +665,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		String protocol = getProtocol().toLowerCase();
 		if (protocol.startsWith(HTTP)) {
 			if (protocol.startsWith(HTTPS) || https) {
-				return HTTPS + COLONSLASHSLASH + getRequest().getServerName() + (getRequest().getServerPort() > 0 ? ":" + getRequest().getServerPort() : "") + getRequestURI();
+				return HTTPS + COLONSLASHSLASH + getRequest().getServerName() + getRequestURI();
 			}
 			else {
 				return getRequestURI();
