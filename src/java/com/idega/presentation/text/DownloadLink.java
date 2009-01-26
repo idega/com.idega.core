@@ -105,9 +105,13 @@ public class DownloadLink extends Link {
     	if(mediaWriterClass != null)
     		setMediaWriterClass(mediaWriterClass);
     	
-    	setText(StringUtil.isEmpty(text) ? CoreConstants.EMPTY : text);
+    	if (!StringUtil.isEmpty(text)) {
+    		setText(text);
+    	}
     	
-    	this._parameterString = new StringBuffer();
+    	//setText(StringUtil.isEmpty(text) ? CoreConstants.EMPTY : text);
+    	
+    	//this._parameterString = new StringBuffer();
     	
     	Collection<UIComponent> children = this.getChildren();
     	for(UIComponent child : children) {
@@ -189,7 +193,12 @@ public class DownloadLink extends Link {
     @Override
 	public void print(IWContext iwc) throws Exception{
     	//because of jsf problems
-    		main(iwc);
+    		//main(iwc);
+	        setURL(iwc.getIWMainApplication().getMediaServletURI());
+	        if(this.writerClass!=null){
+	            addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(this.writerClass));
+	        }
+
     		super.print(iwc);
     }
 }
