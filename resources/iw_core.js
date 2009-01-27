@@ -1737,7 +1737,7 @@ LazyLoader.load = function(url, callback, parameters) {
 }
 
 LazyLoader.doRealLoading = function(url, callback, parameters) {
-	if (LazyLoader.loading) {
+	if (LazyLoader.loading == true) {
 		//	Sending back to "synchronize"
 		LazyLoader.load(url, callback, parameters);
 		return false;
