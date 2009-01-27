@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.243 2008/09/30 12:02:55 anton Exp $
+ * $Id: UserBusinessBean.java,v 1.244 2009/01/27 16:01:24 civilis Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -119,10 +120,10 @@ import com.idega.util.text.Name;
  * <p>
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
- * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2008/09/30 12:02:55 $ by $Author: anton $
+ * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2009/01/27 16:01:24 $ by $Author: civilis $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.243 $
+ * @version $Revision: 1.244 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -582,6 +583,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			throw new CreateException(e.getMessage());
 		}
+	}
+	
+	public void createUserLogin(User newUser, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) {
+		
+		if (newUser != null && !StringUtil.isEmpty(userLogin) && !StringUtil.isEmpty(password)) {
+		
+			try {
+				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
+				
+			} catch (Exception e) {
+				getLogger().log(Level.SEVERE, "Exception while creating user login for userLogin="+userLogin+", user="+newUser.getPrimaryKey(), e);
+			}
+		} else
+			throw new IllegalArgumentException("Tried to create login for user="+(newUser != null ? newUser.getPrimaryKey().toString() : null)+", but insufficient parameters provided: userLogin="+userLogin+", password="+password);
 	}
 
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws CreateException {

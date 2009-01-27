@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.111 2008/09/30 12:02:55 anton Exp $
+ * $Id: UserBusiness.java,v 1.112 2009/01/27 16:01:24 civilis Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -55,10 +55,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2008/09/30 12:02:55 $ by $Author: anton $
+ *  Last modified: $Date: 2009/01/27 16:01:24 $ by $Author: civilis $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.111 $
+ * @version $Revision: 1.112 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -905,4 +905,19 @@ public interface UserBusiness extends IBOService {
 	public Group getPreferedCompany(User user) throws RemoteException;
 	
 	public String changeUserPassword(String newPassword);
+	
+	/**
+	 * creates login for user account provided
+	 * @param newUser mandatory
+	 * @param userLogin mandatory
+	 * @param password mandatory
+	 * @param accountEnabled
+	 * @param modified
+	 * @param daysOfValidity
+	 * @param passwordExpires
+	 * @param userAllowedToChangePassw
+	 * @param changeNextTime
+	 * @param encryptionType
+	 */
+	public abstract void createUserLogin(User newUser, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType);
 }
