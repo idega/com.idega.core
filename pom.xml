@@ -18,8 +18,8 @@
   </scm>
   <!--
   <scm>
-    <connection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
-    <developerConnection>scm:cvs:ext:civilis@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
+    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
+    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
   </scm>
   -->
 	<developers>
