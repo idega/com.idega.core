@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2009/01/27 16:17:47 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/27 16:37:05 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -127,14 +127,13 @@ public class IWDatePicker extends TextInput {
 		
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		scripts.add(web2.getBundleURIToJQueryLib());
-		scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5/", "ui.core.js"));
-		scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5/", "ui.datepicker.js"));
+		scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/core", "ui.datepicker.js"));
 		if (language != null) {
-			scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5/datepicker/i18n", "ui.datepicker-" + language + ".js"));
+			scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 		
-		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.all.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.5b/datepicker/core", "ui.datepicker.css"));
 	}
 
 	@Override
