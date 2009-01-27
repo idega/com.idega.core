@@ -11,12 +11,14 @@ import java.util.logging.Logger;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.idega.util.CoreConstants;
+
 /**
  * 
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  *
- * Last modified: $Date: 2008/06/30 13:34:13 $ by $Author: civilis $
+ * Last modified: $Date: 2009/01/27 18:17:53 $ by $Author: anton $
  *
  */
 @Service
@@ -37,14 +39,22 @@ public class FilesystemFileURIHandler implements FileURIHandler {
 	}
 
 	public FileInfo getFileInfo(URI uri) {
-		
 		final File f = new File(uri);
 		
 		if(!f.exists())
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "File doesn't exist by uri provided="+uri);
 		
 		final FileInfo fi = new FileInfo();
-		fi.setFileName(f.getName());
+		
+		String fileName = f.getName();
+		
+		//		replace windows absolute path filename with just filename
+		if(fileName.contains(CoreConstants.BACK_SLASH)) {
+			int lastBackSlashIndex = fileName.lastIndexOf(CoreConstants.BACK_SLASH);
+			fileName = fileName.substring(lastBackSlashIndex + 1);
+		}
+		
+		fi.setFileName(fileName);
 		fi.setContentLength(f.length());
 		
 		return fi;
