@@ -1,0 +1,731 @@
+    <document>
+  <properties>
+    <title>Core changes</title>
+    <author email='tryggvi@idega.com'>Tryggvi Larusson</author>
+  </properties>
+  <body>
+    	<release date='2009-01-27' description='First 4.1.x Release' version='4.1.0'>
+          <action type='add' dev='tryggvil'>First 4.1.x Release</action>
+        </release>
+        <release date='2008-11-05' version='3.1.93'>
+      		<action type='update' dev='laddi'>
+      			Changed the POIUtility so that when excel sheets are created from tables all texts in a cell are added to the sheet (and not just the first one like it was before).
+      		</action>
+    	</release>
+    	<release date='2008-10-06' version='3.1.92'>
+      		<action type='update' dev='laddi'>
+      			Fixed trigger creation problem when using JNDI with Oracle databases.
+      		</action>
+    	</release>
+    	<release date='2008-06-18' version='3.1.91'>
+      		<action type='update' dev='gimmi'>
+      			base-dependencies now uses web2.0 v3.1.7
+      		</action>
+    	</release>
+    	<release date='2008-06-05' version='3.1.90'>
+      		<action type='update' dev='eiki'>
+      			Better implementation of database copying with two datasources. All changes in com.idega.data.
+      		</action>
+    	</release>
+    	
+  		<release date='2008-05-29' version='3.1.89'>
+      		<action type='update' dev='gimmi'>
+      			SendMail method fixed
+      		</action>
+    	</release>
+  		<release date='2008-05-27' version='3.1.88'>
+      		<action type='update' dev='alexis'>
+      			Merged some methods from HEAD to IWBundleResourceFilter, IWBundle, FileUtil and DefaultIWBundle
+      		</action>
+    	</release>
+  		<release date='2008-05-07' version='3.1.87'>
+      		<action type='update' dev='laddi'>
+      			Changed so that the logon direct URI can contain parameters.
+      		</action>
+    	</release>
+  		<release date='2008-04-29' version='3.1.86'>
+      		<action type='update' dev='gimmi'>
+      			EntityControl fix
+      		</action>
+    	</release>
+   		<release date='2008-04-02' version='3.1.85'>
+      		<action type='update' dev='gimmi'>
+      			New method in Table2, for getting TableBodyRowGroup
+      			New method in POIUtil for making an Excel document from a Table2 object
+      		</action>
+    	</release>
+  		<release date='2008-03-20' version='3.1.84'>
+      		<action type='update' dev='valdas'>
+				New method in UserBusiness to get user's date of birth from personal id
+      		</action>
+      		<action type='update' dev='valdas'>
+				New constant in CoreConstants
+      		</action>
+      		<action type='update' dev='valdas'>
+				New class PresentationUtil to add JavaScript, CSS stuff in page's HTML
+      		</action>
+    	</release>
+  		<release date='2008-03-10' version='3.1.83'>
+      		<action type='update' dev='gimmi'>
+				fixed scrolltable to propertly set the width in the lower table
+      		</action>
+    	</release>
+  		<release date='2008-02-22' version='3.1.82'>
+      		<action type='update' dev='alexis'>
+      			Added static DWR_ENGINE_SCRIPT constant to CoreConstants
+      		</action>
+    	</release>
+  		<release date='2008-02-19' version='3.1.81'>
+      		<action type='update' dev='alexis'>
+      			Changed the way the session polling property is fetched in Page
+      		</action>
+    	</release>
+  		<release date='2008-02-15' version='3.1.80'>
+      		<action type='update' dev='alexis'>
+      			Added session polling logic to both site pages and workspace pages
+      		</action>
+    	</release>
+  		<release date='2008-01-26' version='3.1.78'>
+      		<action type='update' dev='valdas'>
+      			New methods to get all user's groups (UserBusiness)
+      		</action>
+    	</release>
+  		<release date='2008-01-16' version='3.1.77'>
+      		<action type='update' dev='civilis'>
+      			Changes to Wizard 
+      		</action>
+    	</release>
+  		<release date='2008-01-07' version='3.1.76'>
+      		<action type='update' dev='civilis'>
+      			UIDateInput showDay property added 
+      		</action>
+    	</release>
+  		<release date='2008-01-03' version='3.1.75'>
+      		<action type='update' dev='civilis'>
+      			(Wizard) checking if no errors occurred in invoke application phase 
+      		</action>
+    	</release>
+  		<release date='2008-01-03' version='3.1.74'>
+      		<action type='update' dev='civilis'>
+      			base-project DefaultFacesMessages*.properties resource added and couple of localized messages added 
+      		</action>
+    	</release>
+  		<release date='2008-01-03' version='3.1.73'>
+      		<action type='update' dev='laddi'>
+      			Fixed NoSuchMethodError in DateInput.
+      		</action>
+    	</release>
+  		<release date='2007-12-31' version='3.1.72'>
+      		<action type='update' dev='civilis'>
+      			Wizard, IWBaseInputComponent components added 
+      		</action>
+    	</release>
+    	<release date='2007-12-04' version='3.1.71'>
+      		<action type='update' dev='gimmi'>
+      			SendMail now accepts ; delimiter between the email addresses
+      		</action>
+    	</release>
+    	<release date='2007-11-30' version='3.1.70'>
+      		<action type='update' dev='thomas'>
+      			Added new column real_estate_unit to RealEstate.
+				Changed and added find methods accordingly.
+      		</action>
+    	</release>
+  		<release date='2007-11-13' version='3.1.69'>
+      		<action type='update' dev='valdas'>
+				Changed methods in UserBusiness and GroupBusiness beans to get info about users and groups - now these methods need only unique ids
+      		</action>
+    	</release>
+  
+  		<release date='2007-10-18' version='3.1.68'>
+      		<action type='update' dev='gimmi'>
+				Added a new construction to the InCriteria, to handle char[]
+      		</action>
+    	</release>
+
+  		<release date='2007-10-13' version='3.1.67'>
+      		<action type='update' dev='tryggvil'>
+      			Updated handling of authentication to let slide be able to run on a separate server and authenticate correctly.
+      			<br/>This was done for the golf application.
+      		</action>
+    	</release>
+  
+  		<release date='2007-10-12' version='3.1.66'>
+      		<action type='update' dev='sigtryggur'>
+      			Fixed EmailValidator so that it validates 'valid' emails.
+      		</action>
+    	</release>
+    	
+  		<release date='2007-09-27' version='3.1.65'>
+      		<action type='fix' dev='laddi'>
+      			Fixed getting users preferred locale so it doesn't throw a NullPointerException when there is no value in the User bean for preferred locale.
+      		</action>
+      		<action type='update' dev='eiki'>
+      			Added the option to allow access to webservices for all IP numbers if you specify "*" in the WS_VALID_IP application property
+      		</action>
+    	</release>
+    	
+  		<release date='2007-09-24' version='3.1.64'>
+      		<action type='fix' dev='gimmi'>
+      			Fixed datepicker to use with different text encodings.
+      			Fixed getting users preferred locale
+      		</action>
+    	</release>
+    	
+  		<release date='2007-09-03' version='3.1.63'>
+      		<action type='update' dev='alexis'>
+				Added a processRedirectsToUserHome method in IWAuthenticator
+      		</action>
+    	</release>
+    	
+  		 <release date='2007-08-30' version='3.1.62'>
+      		<action type='fix' dev='eiki'>
+				Fixed a bug in UserBusinessBean when getting the users preferred locale.
+				Fixed a bug in getting a users age by his SocialSecurityNumber.getAge...
+      		</action>
+    	</release>
+    	
+		  <release date='2007-08-14' version='3.1.61'>
+      		<action type='update' dev='civilis'>
+				LoginInfoBMPBean creation type field added
+      		</action>
+    	</release>
+  		<release date='2007-08-07' version='3.1.60'>
+      		<action type='update' dev='valdas'>
+				Made method (to get instanceId of UIComponent) accessible through BuilderService
+      		</action>
+    	</release>
+      	<release date='2007-07-22' version='3.1.59'>
+      		<action type='fix' dev='laddi'>
+				DatePicker: fixed something that was wrong...
+      		</action>
+    	</release>
+      	<release date='2007-07-20' version='3.1.58'>
+      		<action type='fix' dev='thomas'>
+				StringHandler: fixed compile version with version 1.4 (replace method does not exist)
+      		</action>
+    	</release>
+    	<release date='2007-07-20' version='3.1.57'>
+      		<action type='add' dev='sigtryggur'>
+				Added in co-operation with Gimmi gotoNextInput-logic to TextInput 
+      		</action>
+    	</release>
+    	<release date='2007-07-18' version='3.1.56'>
+      		<action type='add' dev='thomas'>
+				StringHandler: added method for convertng wildcard expressions to regular expressions
+      		</action>
+    	</release>
+  
+  		<release date='2007-07-11' version='3.1.55'>
+      		<action type='update' dev='valdas'>
+				Backed DWR to 1.1
+      		</action>
+    	</release>
+  		
+  		<release date='2007-07-04' version='3.1.54'>
+			<action type='update' dev='valdas'>
+				Made multiple changes that was needed for Simple user application
+			</action>
+			<action type='update' dev='valdas'>
+				Added one more compare option (by personal id) in User comparator
+			</action>
+		</release>
+
+    	<release date='2007-07-02' version='3.1.53'>
+			<action type='update' dev='laddi'>
+				Added possibility to forward to a special page when user has multiple roles and home pages.
+			</action>
+			<action type='update' dev='laddi'>
+				Changed DatePicker to use layers instead of tables.
+			</action>
+			<action type='update' dev='laddi'>
+				Added support for company personal IDs.
+			</action>
+		</release>
+
+    	<release date='2007-06-27' version='3.1.52'>
+			<action type='add' dev='tryggvil'>
+				Added new simplified API for doing Messaging/Emailing, based around 
+				com.idega.core.messaging.SimpleMessage com.idega.core.messaging.EmailMessage
+			</action>
+			<action type='add' dev='tryggvil'>
+				Created new com.idega.presentation.ui.FormItem component to make accessible 
+				forms.
+			</action>
+		</release>
+
+    	<release date='2007-06-16' version='3.1.51'>
+			<action type='add' dev='eiki'>
+            	Valdas and I merged DWR beans for the usersystem from HEAD. 
+            	These beans enable data about users to be sent over a network with dwr.
+            	Added an ordering column to Status bmp bean
+			</action>
+		</release>
+		
+  		<release date='2007-06-13' version='3.1.50'>
+			<action type='add' dev='thomas'>
+             Added land register map number attribute in RealEstate
+			</action>
+		</release>
+
+		<release date='2007-06-12' version='3.1.49'>
+			<action type='update' dev='laddi'>
+				Changed Group so that it is stored on creation.
+				Added count method to User to find number of users with given birth year range and Commune.
+				Added find method to PostalCode to find codes by Commune.
+			</action>
+		</release>
+		
+		<release date='2007-05-30' version='3.1.48'>
+			<action type='update' dev='eiki'>
+				Removed inactive clone method from Table that was rendered unusable with JSF. "Fixed" Scrolltable to hide the extra header in the table.
+				Added new method : public boolean hasUserAccess(IWUserContext iwuc); to ViewNode to support custom permission logic in ViewNodes. Also refactored the wrong spelling from hasUserAcess to hasUserAccess
+				Updated base-dependencies.xml to add newer version of web2.0 bundle
+			</action>
+		</release>
+		
+		<release date='2007-05-20' version='3.1.47'>
+			<action type='fix' dev='tryggvil'>
+				Improved handing of Slide authentication, disabled Slide authentication by default for GET and POST requests.
+			</action>
+		</release>
+        
+        <release date='2007-05-11' version='3.1.46'>
+      	  <action type='fix' dev='thomas'>
+      	  + fixed bug with the application identifier that was not the same in InEventDispatcher and OutEventDispatcher but should be.
+      	  (this bug was not a problem at the moment but could be in the future)
+		</action>
+		</release>
+        	<release date='2007-05-05' version='3.1.45'>
+      	  <action type='fix' dev='thomas'>
+			SingletonRepository was started twice (there were two instances of a singleton running)
+		</action>
+		</release>
+      	<release date='2007-05-03' version='3.1.44'>
+      	  <action type='add' dev='thomas'>
+			The cahces homeQueryCache and findQueryCache in class IDOBeanCache are now using ehcache.
+			In that way those caches are now 
+			connected to the event system of the 
+			cluster environment that synchronizes the caches.
+			(this add is crucial for cluster environment)
+		</action>
+      <action type='fix' dev='thomas'>
+			Method findPrimaryKey was calling put method of the bean cache in the wrong way 
+			((this fix is crucial for cluster environment)
+		</action>
+		<action type='fix' dev='thomas'>
+			Some update and delete methods in GenericEntity fixed (notification of bean cache forgotten).
+			(this fix is crucial for cluster environment)
+		</action>
+		<action type='fix' dev='thomas'>
+			Bug fixed with Derby database when setting UNIQUE constraint (is only allowed to set  when NOT NULL constraint is set)
+			(see DatastoreInterface, DerbyDatastoreInterface) 
+		</action>
+	</release>
+    
+    <release date='2007-04-30' version='3.1.43'>
+		<action type='update' dev='thomas'>
+			Minor change to WriterToFile (Strings are now allowed as folder identifiers)
+		</action>
+		<action type='fix' dev='eiki'>
+			Removed the adding of the "standard" style.css file from idegaweb/style/... it has long been deprecated and causes style problems in safari when not found.
+		</action>
+		<action type='add' dev='thomas'>
+			Added package com.idega.core.event.
+			Added EventClients extensions for IWCacheManager and IWMainApplicationSettings that is
+			IWCacheManagerClientEvent and IWMainAppicationSettingsClientEvent.
+			Changed CacheMapListener (keys are allowed to be Objects not only Strings).
+			package com.idega.core.event is used by the com.idega.cluster bundle.
+			Actually those changes seems to be included since version 3.1.32.
+		</action>
+		<action type='update' dev='tryggvil'>
+			Adding synchronization of first request to each page (by URI), done in IWWelcomeFilter.<br/>
+			This is to make the system cache each pages up once before other requests can access each page, and
+			is necessary for high volume sites such as golf.is.
+		</action>
+	</release>
+	
+  	<release date='2007-03-30' version='3.1.42'>
+		<action type='fix' dev='palli'>
+			Fixed the IWAuthenticator so that the commune redirect works again. Now the listeners are called.
+		</action>
+	</release>
+  
+  	<release date='2007-03-19' version='3.1.41'>
+		<action type='fix' dev='eiki'>
+			Changed the default creation of UUIDs to use a random generator rather than a time based method (could be safer, switch back if not).
+			Did it to avoid getting the same uuid if created at the exact same time.
+			Also added validation methods for Icelandic SSN's to UserBusiness, see TODO on those methods for more info
+			Changed HttpClient to v. 3.0.1 and Lucene to v. 2.1.0.
+			Fixed stack overflow error in Quicktime PresentationObject.
+			Fixed MSSQLDatastoreInterface so it now creates UNIQUE_ID columns even if htere is data in the table.
+		</action>
+	</release>
+  
+	<release date='2007-03-20' version='3.1.40'>
+		<action type='update' dev='gimmi'>
+			added a setTextInputId method
+		</action>
+	</release>
+
+	<release date='2007-03-06' version='3.1.39'>
+		<action type='update' dev='tryggvil'>
+			Updates and modifications to implement Icelandic PKI Authentication inside is.idega.block.pki module.
+		</action>
+		<action type='fix' dev='tryggvil'>
+			Fixing and correcting encoding in all java files to be Unicode UTF-8.
+		</action>
+	</release>
+  
+	<release date='2007-02-23' version='3.1.38'>
+		<action type='fix' dev='tryggvil'>
+			Better handling of requests to the slide repository when the property 'slide.authenticator.enable' is set to false.<br/>
+			This was done by making the IWAuthenticator aware of the 'slide.authenticator.enable' and disable some functionality if it is set to 'false'
+			for http requests that are made to slide, that is if they begin with /content/*.
+		</action>
+	</release>
+  
+	<release date='2007-02-16' version='3.1.37'>
+		<action type='update' dev='eiki'>
+			Change the UserLoginTab in com.idega.user to fix a security hole along with Login and user classes in core.
+			Now only the user himself, admin or the first person or the persons group that changes the users password for the first time can change it again.
+			Removed a lot of old stuff from com.idega.core.user.
+		</action>
+	</release>
+
+	<release date='2007-02-14' version='3.1.36'>
+		<action type='fix' dev='gimmi'>
+			Fixed DatePicker's javascript to make html objects reappear after the calendar has been closed.
+		</action>
+	</release>
+
+	<release date='2007-02-09' version='3.1.35'>
+		<action type='fix' dev='tryggvil'>
+			Corrected behaviour in CacheMap.size() and CacheMap.isEmpty().<br/>
+			This corrects the behaviour that the builder page tree was expiring and not rebuilding again (NavigationList displaying empty).
+		</action>
+	</release>
+
+	<release date='2007-02-08' version='3.1.34'>
+		<action type='update' dev='laddi'>
+			Changed so that ICObject values that have no corresponding class are removed.
+		</action>
+	</release>
+	
+	<release date='2007-02-06' version='3.1.33'>
+		<action type='update' dev='gimmi'>
+			minor adjustment to SmallCalendar
+		</action>
+		<action type='fix' dev='eiki'>
+			Fixed problem with IWResourceBundle not returning the default value from Localizable.strings
+		</action>
+	</release>
+	
+	<release date='2007-02-05' version='3.1.32'>
+		<action type='fix' dev='sigtryggur'>
+			General javascript fix for methods commonly used in the platform
+		</action>
+	</release>
+
+	<release date='2007-02-01' version='3.1.31'>
+		<action type='fix' dev='gediminas'>
+			Fixed character substitution for non-letter chars
+		</action>
+	</release>
+	
+	<release date='2007-02-01' version='3.1.30'>
+		<action type='fix' dev='eiki'>
+			Fixed locale error in userbusinessbean
+		</action>
+	</release>
+	
+	<release date='2007-01-30' version='3.1.29'>
+		<action type='update' dev='eiki'>
+			Added a new column to ICUser (User) PREFERRED_LOCALE and get and set methods to the data bean and UserBusiness.
+		</action>
+	</release>
+	
+	<release date='2007-01-29' version='3.1.28'>
+		<action type='update' dev='sigtryggur'>
+			Added the option to set size for SelectionBox, so number of elements can be configured
+		</action>
+	</release>
+	
+	<release date='2007-01-26' version='3.1.27'>
+		<action type='update' dev='sigtryggur'>
+			Added mailto-link object
+		</action>
+	</release>
+	
+	<release date='2007-01-25' version='3.1.26'>
+		<action type='update' dev='laddi'>
+			Fixed loading layer for better support of IE6 and under.
+		</action>
+	</release>
+  
+	<release date='2007-01-22' version='3.1.25'>
+		<action type='update' dev='tryggvil'>
+			Moved security filter for Web-Services, WebServiceAuthorizationFilter, from the block com.idega.block.process.webservice to
+			be standard part of com.idega.core.
+		</action>
+		<action type='update' dev='tryggvil'>
+			Updated JAAS LoginModule implementation and added a standard PersonalIdCredential object that is always initialized for
+			all users that login-in and have a personalId set. This was updated because of requirements from VUF - Reykjavik.
+		</action>
+	</release>
+  
+	<release date='2007-01-05' version='3.1.24'>
+		<action type='update' dev='laddi'>
+			Changed DayOfWeekAndDate so that it doesn't display the day of week twice for locales other than Icelandic.
+		</action>
+		<action type='update' dev='laddi'>
+			Added locale as style class for all widgets.
+		</action>
+	</release>
+    
+	<release date='2006-12-13' version='3.1.23'>
+		<action type='update' dev='laddi'>
+			Fixed implementation of compareTo(IDOEntity) in GenericEntity so that it doesn't throw a ClassCastException when primary key is not a String.
+		</action>
+	</release>
+    
+	<release date='2006-11-23' version='3.1.22'>
+		<action type='update' dev='laddi'>
+			Changed print implementation in Page to accomodate for different types of bundle style sheets.
+		</action>
+	</release>
+    
+	<release date='2006-11-20' version='3.1.21'>
+		<action type='update' dev='palli'>
+			Added a reply to parameter to the send methods in SendMail.
+		</action>
+		<action type='update' dev='eiki'>
+			Changed all timed threads I found to daemon threads to ensure that they can be killed on a shutdown. 
+			Classes changed: IBOTimedServiceBean, EventTimer,ConnectionRefresher and TimerManager.
+		</action>
+	</release>
+    
+	<release date='2006-11-15' version='3.1.20'>
+		<action type='fix' dev='laddi'>
+			Fixed loading layer so that it displays correctly cross-browser.
+		</action>
+	</release>
+
+	<release date='2006-11-09' version='3.1.19'>
+		<action type='update' dev='gimmi'>
+			SearchResults can now be set to open links in a new window
+		</action>
+	</release>
+
+	<release date='2006-11-09' version='3.1.18'>
+		<action type='update' dev='laddi'>
+			Added displaying of Loading Layer on click when using Link to submit Form.
+		</action>
+	</release>
+
+   	<release date='2006-11-06' version='3.1.17'>
+		<action type='update' dev='gimmi'>
+			Small update to SearchResults, making is more flexible to being extended
+		</action>
+	</release>
+	   	<release date='2006-11-02' version='3.1.16'>
+		<action type='fix' dev='laddi'>
+			Fixed incorrect cache handling of application bindings with keys larger than max value.
+		</action>
+		<action type='update' dev='laddi'>
+			Added possibility to include style sheets with specific media type through GlobalIncludeManager.
+		</action>
+	</release>
+   
+   	<release date='2006-10-25' version='3.1.15'>
+		<action type='fix' dev='gimmi'>
+			Added saveState and restoreState to Link.
+		</action>
+	</release>
+   
+  	<release date='2006-10-24' version='3.1.14'>
+		<action type='add' dev='gimmi'>
+			added a method for getting extra row elements for the search result.
+		</action>
+	</release>
+  
+	<release date='2006-10-19' version='3.1.13'>
+		<action type='update' dev='laddi'>
+		Fixed getting reflection properties for rebuilding the blocks.
+		</action>
+	</release>
+
+	<release date='2006-10-04' version='3.1.12'>
+		<action type='update' dev='laddi'>
+			Changed so that when using Link to submit a Form it is impossible to double click (only works when using setToFormSubmit method).
+		</action>
+	</release>
+
+	<release date='2006-09-20' version='3.1.11'>
+		<action type='fix' dev='gimmi'>
+			Added an addTrigger to ResultOutput
+		</action>
+	</release>
+
+	<release date='2006-09-07' version='3.1.10'>
+		<action type='fix' dev='gimmi'>
+			Some major fixes in InterfaceObject regarding setting object values onclick... keep your eyes open.
+		</action>
+	</release>
+
+	<release date='2006-09-07' version='3.1.9'>
+		<action type='fix' dev='gimmi'>
+			Fixed for and InterfaceObject to allow for 2 forms in the same page with different form input checks.
+		</action>
+	</release>
+
+	<release date='2006-08-01' version='3.1.8'>
+		<action type='add' dev='gimmi'>
+			New class, PageInfoWriter prints page info into the out log
+		</action>
+	</release>
+
+	<release date='2006-08-01' version='3.1.7'>
+		<action type='add' dev='gimmi'>
+			Added some getPublicWindow methods to Window and GenericButton
+		</action>
+	</release>
+
+	<release date='2006-07-27' version='3.1.6'>
+		<action type='fix' dev='laddi'>
+			Changed pop up window in Help to public window.
+		</action>
+	</release>
+  
+	<release date='2006-07-20' version='3.1.5'>
+		<action type='fix' dev='gimmi'>
+			Reimplemented exporting pages
+		</action>
+	</release>
+  
+  	<release date='2006-07-07' version='3.1.4'>
+     <action type='add' dev='eiki'>
+      Added new class, SearchResultComparator, a comparator that can sort by any property in SearchResult and its attribute map properties (String,Number and Date).
+     </action>
+      <action type='fix' dev='eiki'>
+      	SearchResults , bugfix uses toString now instead of requiring searchresult attributes to be strings
+		</action>
+    </release>
+    
+   <release date='2006-07-06' version='3.1.3'>
+      <action type='fix' dev='eiki'>
+      	Fixes and addons for SearchResults so you can show or hide extra search result parameters.
+      </action>
+    </release>
+    
+   <release date='2006-07-03' version='3.1.2'>
+      <action type='fix' dev='tryggvil'>
+        	Fixed and addons for SmallCalendar (HTML, setting class and dateParameterName)
+      </action>
+    </release>
+  
+  
+   <release date='2006-06-30' version='3.1.1'>
+      <action type='fix' dev='tryggvil'>
+      	Fix for HSQLDB database where front page with ib_page_id=0 was causing a permission bug (not displayed).
+      </action>
+      <action type='fix' dev='tryggvil'>
+     	Bugfix for NullpointerException caused in ICObjectBMPBean where objectType or bundle was null. (Travel)
+      </action>
+      <action type='update' dev='eiki'>
+      	Refactored and improved SearchResult to be more extendable. See new module WhatIsNew in the com.idega.content bundle for an example.
+      </action>
+    </release>
+      
+    <release date='2006-06-16' version='3.1.0'>
+      <action type='update' dev='tryggvil'>
+      	 New Cache sub-system. IWCacheManager2, which builds on the Open source ehCache project.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Caching support for rendered content general general JSF UIComponents (Content Caching). Builds on the IWCacheManager2.
+      </action>
+      <action type='update' dev='tryggvil'>
+     	 IDO Persistence framework updates. Updates to facilitate usage of caching of entity beans
+     	 and better control of pre-loading large collection of beans from finder methods.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Performance optimizations and caching implemented for beans ICObject,ICObjectInstance,ICLocale
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Added experimental support for the H2 (http://www.h2database.com/) database engine.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	New ComponentRegstry object which manages all available components to the system. Addition of
+      	a reader for faces-config.xml documents embedded into the jar files of installed modules to read all
+      	JSF components registered into these descriptors into the ComponentRegistry.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Misc. updates to unify look-and-feel of UI components (IWAdminWindow) and adjusting to newer ePlatform look.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Better Unit test support. Base classes to develop JUnit tests for idegaWeb applications.
+      	Simple Application unit test now included in the com.idega.core module which is integrated 
+      	into the maven build lifecycle.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Adding inclusion of LogDriver standard with the system.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Locale variants now supported, which can be used to implement customer specific localizations.
+      </action>
+      <action type='update' dev='tryggvil'>
+      	Update to the most recent myfaces 1.1.3 release.
+      </action>
+      <action type='fix' dev='tryggvil'>
+      	Misc. other small bugfixes.
+      </action>
+    </release>
+  
+    <release date='2005-09-15' version='3.0.6'>
+      <action type='update' dev='thomas'>
+      	This version is used for the ePlatform 3.0.
+      </action>              
+    </release>
+    
+    <release date='2005-05-24' version='3.0.5'>
+      <action type='update' dev='tryggvil'>
+      	This version is used for the nacka 24 app.
+      </action>              
+    </release>
+    
+    <release date='2005-04-06' version='3.0.4'>
+      <action type='update' dev='tryggvil'>
+      	This version is the very first one with a correct iwbar.
+        Declaration of version for use in new systems based on JSF.
+      </action>              
+    </release>
+    
+    <release date='2005-03-10' version='3.0.0'>
+      <action type='update' dev='tryggvil'>
+        Declaration of version for use in new systems based on JSF.
+      </action>              
+    </release>
+
+    <release date='2005-01-13' version='2.0.0'>
+      <action type='update' dev='tryggvil'>
+        Declaration of version for use in old style systems before a 3.0 release is declared.
+      </action>              
+    </release>
+
+    <release date='2004-09-07' version='1.9'>
+      <action type='update' dev='tryggvil'>
+        Declaring a 1.9 version before much of the maven refactoring is done.
+      </action>
+                <!--     
+      <action dev="tryggvil" type="fix" issue="JIRA-XXX">
+        Corrected bug blah blah.
+      </action>              
+      <action dev="vmassol" type="remove" due-to="John Doe" due-to-email="john@doe.com">
+        Removed blah blah.
+      </action>
+      
+          -->
+    </release>
+  </body>
+</document>
+
