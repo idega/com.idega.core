@@ -163,7 +163,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		if (isJavaScriptFile(fileType)) {
 			allResources = new StringBuilder("var IdegaResourcesHandler = [");
 			allResources = addResourcesToList(allResources, resourcesToLoad);
-			allResources.append("\n];\n");
+			allResources.append("];\n");
 		}
 		else {
 			addNotifierAboutLoadedCSSFiles(resourcesToLoad, fileType);
@@ -225,7 +225,7 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		for (Iterator<String> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
 			content.append(CoreConstants.QOUTE_SINGLE_MARK).append(resourcesIter.next()).append(CoreConstants.QOUTE_SINGLE_MARK);
 			if (resourcesIter.hasNext()) {
-				content.append(CoreConstants.COMMA).append("\n");
+				content.append(CoreConstants.COMMA);
 			}
 		}
 		return content;
