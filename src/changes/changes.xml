@@ -1,4 +1,4 @@
-    <document>
+    <document xmlns="http://maven.apache.org/changes/1.0.0">
   <properties>
     <title>Core changes</title>
     <author email='tryggvi@idega.com'>Tryggvi Larusson</author>
@@ -146,7 +146,8 @@
   		<release date='2007-10-13' version='3.1.67'>
       		<action type='update' dev='tryggvil'>
       			Updated handling of authentication to let slide be able to run on a separate server and authenticate correctly.
-      			<br/>This was done for the golf application.
+      			
+This was done for the golf application.
       		</action>
     	</release>
   
@@ -339,7 +340,8 @@
 			Actually those changes seems to be included since version 3.1.32.
 		</action>
 		<action type='update' dev='tryggvil'>
-			Adding synchronization of first request to each page (by URI), done in IWWelcomeFilter.<br/>
+			Adding synchronization of first request to each page (by URI), done in IWWelcomeFilter.
+
 			This is to make the system cache each pages up once before other requests can access each page, and
 			is necessary for high volume sites such as golf.is.
 		</action>
@@ -379,7 +381,8 @@
   
 	<release date='2007-02-23' version='3.1.38'>
 		<action type='fix' dev='tryggvil'>
-			Better handling of requests to the slide repository when the property 'slide.authenticator.enable' is set to false.<br/>
+			Better handling of requests to the slide repository when the property 'slide.authenticator.enable' is set to false.
+
 			This was done by making the IWAuthenticator aware of the 'slide.authenticator.enable' and disable some functionality if it is set to 'false'
 			for http requests that are made to slide, that is if they begin with /content/*.
 		</action>
@@ -401,7 +404,8 @@
 
 	<release date='2007-02-09' version='3.1.35'>
 		<action type='fix' dev='tryggvil'>
-			Corrected behaviour in CacheMap.size() and CacheMap.isEmpty().<br/>
+			Corrected behaviour in CacheMap.size() and CacheMap.isEmpty().
+
 			This corrects the behaviour that the builder page tree was expiring and not rebuilding again (NavigationList displaying empty).
 		</action>
 	</release>
