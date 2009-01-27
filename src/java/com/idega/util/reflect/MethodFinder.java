@@ -540,7 +540,7 @@ public class MethodFinder implements Singleton
 	public Map getMapOfClassMethodsRecursive(Class methodClass, Class lastSuperClassToReflect,String[] filters){
 		Map map = new HashMap();
 		boolean noStopClass = lastSuperClassToReflect ==null;
-		while(!methodClass.equals(lastSuperClassToReflect)){
+		while(methodClass != null && !methodClass.equals(lastSuperClassToReflect)){
 			Method[] methods = methodClass.getMethods();
 			for (int i = 0; i < filters.length; i++) {
 				for (int j = 0; j < methods.length; j++) {
