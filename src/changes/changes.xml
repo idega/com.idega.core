@@ -1,4 +1,4 @@
-    <document>
+    <document xmlns="http://maven.apache.org/changes/1.0.0">
   <properties>
     <title>Faces changes</title>
     <author email='tryggvi@idega.com'>Tryggvi Larusson</author>
