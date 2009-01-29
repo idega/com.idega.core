@@ -134,7 +134,6 @@ public class ResourcesAdder extends DefaultAddResource {
 		}
 		
 		boolean useOptimizer = useOptimizer("idega_core.optimize_resources", Boolean.TRUE);
-		getHeaderBeginInfos().clear();
 		FacesContext facesContext = FacesContext.getCurrentInstance();
 		
 		//	JavaScript
