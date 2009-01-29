@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2009/01/29 08:27:52 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/29 08:33:52 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -141,7 +141,9 @@ public class IWDatePicker extends TextInput {
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 		
-		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.all.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.core.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.theme.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.datepicker.css"));
 	}
 
 	@Override
