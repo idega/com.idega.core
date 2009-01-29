@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2009/01/27 16:37:05 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/29 07:36:55 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -32,6 +32,8 @@ public class IWDatePicker extends TextInput {
 	
 	private String onSelectAction = null;
 	private String inputName = null;
+	
+	private String dateRangeSeparator = " - ";
 
   /**
    * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -64,18 +66,25 @@ public class IWDatePicker extends TextInput {
 		
 		IWTimestamp iwDate = null;
 		IWTimestamp iwDateTo = null;
-		if (date == null && useCurrentDateIfNotSet) {
+		if (date == null || useCurrentDateIfNotSet) {
 			date = new Date(System.currentTimeMillis());
+		}
+		else {
+			useCurrentDateIfNotSet = false;
 		}
 		if (date != null) {
 			iwDate = new IWTimestamp(date);
+			
+			if (isDateRange() && useCurrentDateIfNotSet) {
+				iwDate.setDay(1);
+			}
 		}
 		if (iwDate != null) {
 			StringBuilder value = new StringBuilder(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
 			
 			if (isDateRange()) {
 				iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
-				value.append(" - ").append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+				value.append(dateRangeSeparator).append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
 			}
 			
 			setValue(value.toString());
@@ -83,18 +92,18 @@ public class IWDatePicker extends TextInput {
 		
 		boolean canUseLocalizedText = language != null  && !CoreConstants.EMPTY.equals(language) && !Locale.ENGLISH.getLanguage().equals(language);
 		StringBuffer initAction = new StringBuffer("jQuery('#").append(this.getId()).append("').datepicker({");
-			// Is date range?
-			initAction.append("rangeSelect: ").append(isDateRange());
+			//	Is date range?
+			initAction.append("rangeSelect: ").append(isDateRange()).append(", rangeSeparator: '").append(dateRangeSeparator).append("', ");
 			
 			//	Custom date
 			if (iwDate != null) {
-				initAction.append(", defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ")
+				initAction.append("defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ")
 							.append(iwDate.getDay()).append(")");
 			}
 			
 			//	Calendar image
 			if (isShowCalendarImage()) {
-				initAction.append(", showOn: 'both', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif"))
+				initAction.append(", showOn: 'button', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif"))
 							.append("', buttonImageOnly: true");
 			}
 			
@@ -127,13 +136,14 @@ public class IWDatePicker extends TextInput {
 		
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		scripts.add(web2.getBundleURIToJQueryLib());
-		scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/core", "ui.datepicker.js"));
+		scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5", "ui.datepicker.js"));
+
 		if (language != null) {
-			scripts.add(web2.getBundleURIToJQueryUILib("1.5b/datepicker/i18n", "ui.datepicker-" + language + ".js"));
+			scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5/datepicker/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 		
-		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.5b/datepicker/core", "ui.datepicker.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.all.css"));
 	}
 
 	@Override
