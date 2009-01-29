@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.179 2008/12/09 11:13:06 laddi Exp $
+ * $Id: PresentationObject.java,v 1.180 2009/01/29 07:33:39 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -68,6 +68,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.reflect.Property;
 import com.idega.util.reflect.PropertyCache;
@@ -78,10 +79,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2008/12/09 11:13:06 $ by $Author: laddi $
+ * Last modified: $Date: 2009/01/29 07:33:39 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.179 $
+ * @version $Revision: 1.180 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -209,9 +210,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return setID(generateID());
 	}
 	
-	public String getID(){
+	public String getID() {
 		String theReturn = getMarkupAttribute("id");
-		if (theReturn == null || emptyString.equals(theReturn)){
+		if (StringUtil.isEmpty(theReturn)) {
 			return setID();
 		}
 		

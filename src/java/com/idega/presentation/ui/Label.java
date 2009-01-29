@@ -8,7 +8,6 @@
  */
 package com.idega.presentation.ui;
 
-import java.util.Iterator;
 import java.util.List;
 
 import javax.faces.component.UIComponent;
@@ -18,6 +17,7 @@ import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Text;
+import com.idega.util.ListUtil;
 
 /**
  * <p>
@@ -30,11 +30,13 @@ import com.idega.presentation.text.Text;
  */
 public class Label extends InterfaceObject {
 		
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[1];
 		values[0] = super.saveState(ctx);
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -58,7 +60,7 @@ public class Label extends InterfaceObject {
 	}
 	
 	public Label(String label, InterfaceObject object) {
-		setFor(object.getID());
+		setFor(object.getId());
 		initialize(label);
 	}
 	
@@ -86,16 +88,15 @@ public class Label extends InterfaceObject {
 		setMarkupAttribute("for", forId);
 	}
 	
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<label "+getMarkupAttributesString()+" >");
 
-			List children = this.getChildren();
-			if (children != null) {
-				Iterator iter = children.iterator();
-				while (iter.hasNext()) {
-					UIComponent item = (UIComponent) iter.next();
-					renderChild(iwc,item);
+			List<UIComponent> children = this.getChildren();
+			if (!ListUtil.isEmpty(children)) {
+				for (UIComponent item: children) {
+					renderChild(iwc, item);
 				}
 			}
 
@@ -106,6 +107,7 @@ public class Label extends InterfaceObject {
 		}
 	}	
 	
+	@Override
 	public void setLabel(String label) {
 		add(new Text(label));
 	}
@@ -113,12 +115,14 @@ public class Label extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 	
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return true;
 	}
