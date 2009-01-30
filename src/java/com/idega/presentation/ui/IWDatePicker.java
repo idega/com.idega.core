@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.11 $
+ * @version $Revision: 1.12 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2009/01/29 08:33:52 $ by $Author: valdas $
+ * Last modified: $Date: 2009/01/30 07:30:37 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -66,14 +66,17 @@ public class IWDatePicker extends TextInput {
 		
 		IWTimestamp iwDate = null;
 		IWTimestamp iwDateTo = null;
+		
+		boolean setManualDate = false;
 		if (date == null) {
 			date = new Date(System.currentTimeMillis());
+			setManualDate = true;
 		}
 		
 		if (date != null) {
 			iwDate = new IWTimestamp(date);
 			
-			if (isDateRange()) {
+			if (isDateRange() && setManualDate) {
 				iwDate.setDay(1);
 			}
 		}

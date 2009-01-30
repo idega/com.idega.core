@@ -18,7 +18,6 @@ import com.idega.util.expression.ELUtil;
 
 public class DynamicTree extends Block {
 
-	private boolean addStylesManager;
 	private boolean usesXmlDataTypes;
 	private boolean usesMetadataRules;
 	private boolean usesCookies;
@@ -35,11 +34,9 @@ public class DynamicTree extends Block {
 		container.add(treeContainer);
 		String treeContainerId = treeContainer.getId();
 		
-		String treeVariable = new StringBuilder("jsTree").append(treeContainerId).toString();
-		StringBuilder initAction = new StringBuilder("var ").append(treeVariable).append(" = new tree_component();\n");
-		initAction.append(treeVariable).append(".init(jQuery('#").append(treeContainerId).append("'), ").append(getOptions()).append(");");
+		StringBuilder initAction = new StringBuilder("jQuery('#").append(treeContainerId).append("').tree(").append(getOptions()).append(");");
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
-			initAction = new StringBuilder("jQuery(window).load(function() {\n").append(initAction.toString()).append("\n});");
+			initAction = new StringBuilder("jQuery(window).load(function() {").append(initAction.toString()).append("});");
 		}
 		PresentationUtil.addJavaScriptActionToBody(iwc, initAction.toString());
 		
@@ -98,16 +95,7 @@ public class DynamicTree extends Block {
 	private void addRequiredLibraries(IWContext iwc) {
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJSTreeStyleFile());
-		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, web2.getBundleURIsToJSTreeScriptFiles(isUsesXmlDataTypes(),
-				isUsesMetadataRules(), isUsesCookies()));
-	}
-
-	public boolean isAddStylesManager() {
-		return addStylesManager;
-	}
-
-	public void setAddStylesManager(boolean addStylesManager) {
-		this.addStylesManager = addStylesManager;
+		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, web2.getBundleURIsToJSTreeScriptFiles(isUsesXmlDataTypes(), isUsesMetadataRules(), isUsesCookies()));
 	}
 
 	public boolean isUsesXmlDataTypes() {
