@@ -31,7 +31,7 @@
 			
 			ChooserService.setModuleProperty(String, String, List<AdvancedProperty>);
 			
-			RenderedComponent BuilderService.getRenderedComponentById(String, String);
+			RenderedComponent BuilderService.getRenderedComponentById(String, String, List<AdvancedProperty>);
 			RenderedComponent BuilderService.getRenderedComponentByClassName(String, List<AdvancedProperty>);
 		]]>
 	</signatures>

@@ -1224,9 +1224,13 @@ IWCORE.insertRenderedComponent = function(component, options) {
 	});
 }
 
-IWCORE.renderComponent = function(uuid, container, callback) {
+IWCORE.renderComponent = function(uuid, container, callback, properties) {
 	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
-		BuilderService.getRenderedComponentById(uuid, window.location.pathname, {
+		if (!properties) {
+			properties = null;
+		}
+		
+		BuilderService.getRenderedComponentById(uuid, window.location.pathname, properties, {
 			callback: function(component) {
 				IWCORE.insertRenderedComponent(component, {container: container, callback: callback, replace: true});
 			},
