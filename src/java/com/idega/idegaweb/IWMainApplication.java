@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.202 2009/01/23 13:08:53 valdas Exp $
+ * $Id: IWMainApplication.java,v 1.203 2009/01/30 07:34:09 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -103,6 +103,7 @@ import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceFactory;
 import com.idega.util.reflect.MethodFinder;
 import com.idega.util.reflect.MethodInvoker;
+import com.idega.util.reflect.Property;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -111,10 +112,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/01/23 13:08:53 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/01/30 07:34:09 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.202 $
+ * @version $Revision: 1.203 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -2163,6 +2164,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				String separator = "_";
 				String[] parameters = componentType.split(separator);
 				String moduleId=parameters[1];
+				if (moduleId.startsWith("#{") && moduleId.endsWith("}")) {
+					moduleId = Property.getValueFromExpression(moduleId, String.class);
+				}
+				
 				//String icObjectId=parameters[2];
 				String componentClass;
 				
