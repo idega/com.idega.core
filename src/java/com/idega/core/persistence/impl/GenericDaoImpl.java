@@ -18,9 +18,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.22 $
+ * @version $Revision: 1.23 $
  * 
- *          Last modified: $Date: 2009/01/08 10:11:38 $ by $Author: civilis $
+ *          Last modified: $Date: 2009/02/02 13:34:53 $ by $Author: donatas $
  */
 @Repository("genericDAO")
 @Transactional(readOnly = true)
@@ -186,6 +186,13 @@ public class GenericDaoImpl implements GenericDao {
 			String query, Class<Expected> expectedReturnType, Param... params) {
 
 		Query q = getEntityManager().createNativeQuery(query);
+		return getResultListByQuery(q, expectedReturnType, params);
+	}
+	
+	public <Expected> List<Expected> getResultListByInlineNativeQuery(
+			String query, Class<Expected> expectedReturnType, String mappingName, Param... params) {
+
+		Query q = getEntityManager().createNativeQuery(query, mappingName);
 		return getResultListByQuery(q, expectedReturnType, params);
 	}
 

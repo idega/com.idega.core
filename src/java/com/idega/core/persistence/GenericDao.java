@@ -6,9 +6,9 @@ import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  * 
- *          Last modified: $Date: 2008/12/28 11:49:05 $ by $Author: civilis $
+ *          Last modified: $Date: 2009/02/02 13:34:53 $ by $Author: donatas $
  */
 public interface GenericDao {
 
@@ -51,4 +51,7 @@ public interface GenericDao {
 
 	public abstract <Expected> List<Expected> getResultListByInlineNativeQuery(
 			String query, Class<Expected> expectedReturnType, Param... params);
+	
+	public abstract <Expected> List<Expected> getResultListByInlineNativeQuery(
+			String query, Class<Expected> expectedReturnType, String mappingName, Param... params);
 }
