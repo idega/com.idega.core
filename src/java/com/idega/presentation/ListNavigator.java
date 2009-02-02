@@ -1,5 +1,5 @@
 /*
- * $Id: ListNavigator.java,v 1.5 2006/05/18 11:16:17 laddi Exp $
+ * $Id: ListNavigator.java,v 1.6 2009/02/02 13:42:35 donatas Exp $
  * Created on Oct 12, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -8,6 +8,8 @@
  * Use is subject to license terms.
  */
 package com.idega.presentation;
+
+import javax.faces.component.UIComponent;
 
 import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWException;
@@ -20,10 +22,10 @@ import com.idega.presentation.ui.Form;
 
 
 /**
- * Last modified: $Date: 2006/05/18 11:16:17 $ by $Author: laddi $
+ * Last modified: $Date: 2009/02/02 13:42:35 $ by $Author: donatas $
  * 
  * @author <a href="mailto:laddi@idega.com">laddi</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public class ListNavigator extends Block implements IWPageEventListener {
 
@@ -39,6 +41,13 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	private int iSize = 0;
 	private int iNumberOfEntriesPerPage = 10;
 	
+	private String navigationFunction;
+	
+	private String dropdownFunction;
+	
+	private int currentPage = 1;
+	private int pageSize = -1;
+	
 	public ListNavigator() {
 		this("default", 0);
 	}
@@ -49,12 +58,17 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	}
 	
 	public void main(IWContext iwc) throws Exception {
-		Form form = new Form();
-		form.setEventListener(ListNavigator.class);
-		form.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
+		UIComponent container = null;
+		if (navigationFunction == null) {
+			container = new Form();
+			((Form)container).setEventListener(ListNavigator.class);
+			((Form)container).addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
+		} else {
+			container = new Layer();
+		}
 		
 		Lists list = new Lists();
-		form.add(list);
+		container.getChildren().add(list);
 		
 		if (this.firstItemText != null) {
 			ListItem item = new ListItem();
@@ -70,7 +84,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		if (numberOfPages == 0) {
 			numberOfPages++;
 		}
-		int start = getStartFromCurrentPage(currentPage);
+		int start = getStartFromCurrentPage(currentPage, numberOfPages);
 		int end = start + 9;
 		if (end > numberOfPages) {
 			end = numberOfPages;
@@ -78,10 +92,14 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		if (currentPage > 1) {
 			ListItem item = new ListItem();
 			Link link = new Link("&lt;");
-			link.addParameter(getCurrentPageParameter(), (currentPage - 1));
-			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
-			link.setEventListener(ListNavigator.class);
-			
+			if (navigationFunction != null) {
+				link.setURL("javascript:void(0);");
+				link.setOnClick(getNavigationFunction(currentPage - 1));
+			} else {
+				link.addParameter(getCurrentPageParameter(), (currentPage - 1));
+				link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
+				link.setEventListener(ListNavigator.class);
+			}
 			item.add(link);
 			list.add(item);
 		}
@@ -91,19 +109,29 @@ public class ListNavigator extends Block implements IWPageEventListener {
 			if (i == currentPage) {
 				link.setStyleClass("currentPage");
 			}
-			link.addParameter(getCurrentPageParameter(), i);
-			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
-			link.setEventListener(ListNavigator.class);
 			
+			if (navigationFunction != null) {
+				link.setURL("javascript:void(0);");
+				link.setOnClick(getNavigationFunction(i));
+			} else {
+				link.addParameter(getCurrentPageParameter(), i);
+				link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
+				link.setEventListener(ListNavigator.class);
+			}
 			item.add(link);
 			list.add(item);
 		}
-		if (currentPage < end) {
+		if (currentPage < numberOfPages) {
 			ListItem item = new ListItem();
 			Link link = new Link("&gt;");
-			link.addParameter(getCurrentPageParameter(), (currentPage + 1));
-			link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
-			link.setEventListener(ListNavigator.class);
+			if (navigationFunction != null) {
+				link.setURL("javascript:void(0);");
+				link.setOnClick(getNavigationFunction(currentPage + 1));
+			} else {
+				link.addParameter(getCurrentPageParameter(), (currentPage + 1));
+				link.addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
+				link.setEventListener(ListNavigator.class);
+			}
 			
 			item.add(link);
 			list.add(item);
@@ -115,13 +143,17 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		menu.addMenuElement(20, "20 " + this.dropdownEntryName);
 		menu.addMenuElement(50, "50 " + this.dropdownEntryName);
 		menu.setSelectedElement(getNumberOfEntriesPerPage(iwc));
-		menu.setToSubmit();
-		form.add(menu);
+		if (dropdownFunction != null) {
+			menu.setOnChange(dropdownFunction);
+		} else {
+			menu.setToSubmit();
+		}
+		container.getChildren().add(menu);
 		
-		add(form);
+		add(container);
 	}
 	
-	private int getStartFromCurrentPage(int currentPage) {
+	private int getStartFromCurrentPage(int currentPage, int pageCount) {
 		int start = currentPage - 9;
 		if (start < 1) {
 			start = 1;
@@ -134,7 +166,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		if (currentPage != null) {
 			return currentPage.intValue();
 		}
-		return 1;
+		return this.currentPage > 0 ? this.currentPage : 1;
 	}
 	
 	public int getStartingEntry(IWContext iwc) {
@@ -142,6 +174,9 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	}
 	
 	public int getNumberOfEntriesPerPage(IWContext iwc) {
+		if (pageSize > 0) {
+			return pageSize;
+		}
 		Integer numberOfEntries = (Integer) iwc.getSessionAttribute(getNumberOfEntriesParameter());
 		if (numberOfEntries != null) {
 			return numberOfEntries.intValue();
@@ -169,6 +204,10 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		return true;
 	}
 	
+	private String getNavigationFunction(int page) {
+		return navigationFunction.replace("#PAGE#", String.valueOf(page));
+	}
+	
 	public void setSize(int size) {
 		this.iSize = size;
 	}
@@ -181,7 +220,6 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	public void setDropdownEntryName(String dropdownEntryName) {
 		this.dropdownEntryName = dropdownEntryName;
 	}
-
 	
 	public void setFirstItemText(String firstItemText) {
 		this.firstItemText = firstItemText;
@@ -190,4 +228,38 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	public void setNumberOfEntriesPerPage(int numberOfEntriesPerPage) {
 		this.iNumberOfEntriesPerPage = numberOfEntriesPerPage;
 	}
+
+	public String getNavigationFunction() {
+		return navigationFunction;
+	}
+
+	public void setNavigationFunction(String navigationFunction) {
+		this.navigationFunction = navigationFunction;
+	}
+
+	public String getDropdownFunction() {
+		return dropdownFunction;
+	}
+
+	public void setDropdownFunction(String dropdownFunction) {
+		this.dropdownFunction = dropdownFunction;
+	}
+
+	public int getCurrentPage() {
+		return currentPage;
+	}
+
+	public void setCurrentPage(int currentPage) {
+		this.currentPage = currentPage;
+	}
+
+	public int getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(int pageSize) {
+		this.pageSize = pageSize;
+	}
+	
+	
 }
