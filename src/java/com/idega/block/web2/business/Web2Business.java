@@ -396,4 +396,8 @@ public interface Web2Business extends IBOService {
 	public String getBundleURIToCodeMirrorStyleFile(String styleFile);
 	public String getBundleURIToCodeMirrorFolder();
 	
+	public String getBundleUriToLinkLinksWithFilesScriptFile();
+	public String getActionToLinkLinksWithFiles(String containerId, boolean executeOnLoad, boolean addStyleForNonFileLinks);
+	public String getBundleUriToLinkLinksWithFilesStyleFile();
+	
 }
