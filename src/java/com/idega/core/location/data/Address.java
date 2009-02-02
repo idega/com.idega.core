@@ -1,66 +1,200 @@
 package com.idega.core.location.data;
 
 
+import java.rmi.RemoteException;
 
-public interface Address extends com.idega.data.IDOLegacyEntity
-{
+import com.idega.data.IDOLegacyEntity;
+
+public interface Address extends IDOLegacyEntity {
 	String FIELD_STREET_NAME = "StreetName";
 	String FIELD_STREET_NUMBER = "StreetNumber";
-	public void setPOBox(java.lang.String p0);
-	public java.lang.String getPOBox();
-	public int getAddressTypeID();
-	public void setPostalCodeID(int p0);
-	public void setDefaulValues();
-	public void setStreetNumber(java.lang.String p0);
-	public com.idega.core.location.data.AddressType getAddressType();
-	public void setPostalCode(com.idega.core.location.data.PostalCode p0);
-	public java.lang.String getCity();
-	public void setCountry(com.idega.core.location.data.Country p0);
-	public void setAddressTypeID(int p0);
-	public void setCountryId(int p0);
-	public void setStreetNumber(int p0);
-	public java.lang.String getName();
-	public java.lang.String getStreetNumber();
-	public com.idega.core.location.data.AddressTypeHome getAddressTypeHome()throws java.rmi.RemoteException;
-	public java.lang.String getStreetName();
-	public com.idega.core.location.data.PostalCode getPostalCode();
-	public void setAddressType(com.idega.core.location.data.AddressType p0);
 	/**
-	 * All names are stored in uppercase, uses String.toUpperCase();
-	 * To get the unchaged street name use the method <code>getStreetNameOriginal()</code>
+	 * @see com.idega.core.location.data.AddressBMPBean#setDefaulValues
 	 */
-	public void setStreetName(java.lang.String p0);
-	public void setProvince(java.lang.String p0);
-	public com.idega.core.location.data.Country getCountry();
-	public int getCountryId();
-	public int getPostalCodeID();
-	public void setCity(java.lang.String p0);
-	public java.lang.String getProvince();
-	public Commune getCommune();
-	public int getCommuneID();
-	public void setCommuneID(int communeId);
-	public boolean isEqualTo(Address address);
-	
-	public AddressCoordinate getCoordinate();
-	public void setCoordinate(AddressCoordinate coordinate);
+	public void setDefaulValues();
+
 	/**
-	 * @return The street name as it was entered/save, before it was uppercased
+	 * @see com.idega.core.location.data.AddressBMPBean#getName
+	 */
+	public String getName();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getStreetAddressNominative
+	 */
+	public String getStreetAddressNominative();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setStreetAddressNominative
+	 */
+	public void setStreetAddressNominative(String address);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getStreetNameOriginal
 	 */
 	public String getStreetNameOriginal();
-	
+
 	/**
-	 * Gets the street name together with the number
+	 * @see com.idega.core.location.data.AddressBMPBean#getStreetName
 	 */
-	public String getStreetAddress();
-	
+	public String getStreetName();
+
 	/**
-	 * Gets the postal code together with its name
+	 * @see com.idega.core.location.data.AddressBMPBean#setStreetName
 	 */
-	public String getPostalAddress();
-	
+	public void setStreetName(String street_name);
+
 	/**
-	 * Sets the Commune (Municipality) for this address
-	 * @param commune
+	 * @see com.idega.core.location.data.AddressBMPBean#getStreetNumber
+	 */
+	public String getStreetNumber();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setStreetNumber
+	 */
+	public void setStreetNumber(String street_number);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setStreetNumber
+	 */
+	public void setStreetNumber(int street_number);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getCity
+	 */
+	public String getCity();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setCity
+	 */
+	public void setCity(String city);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getProvince
+	 */
+	public String getProvince();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setProvince
+	 */
+	public void setProvince(String province);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getPOBox
+	 */
+	public String getPOBox();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setPOBox
+	 */
+	public void setPOBox(String p_o_box);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getPostalCode
+	 */
+	public PostalCode getPostalCode();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getPostalCodeID
+	 */
+	public int getPostalCodeID();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setPostalCode
+	 */
+	public void setPostalCode(PostalCode postalCode);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setPostalCodeID
+	 */
+	public void setPostalCodeID(int postal_code_id);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getAddressType
+	 */
+	public AddressType getAddressType();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setAddressTypeID
+	 */
+	public void setAddressTypeID(int address_type_id);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setAddressType
+	 */
+	public void setAddressType(AddressType type);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getAddressTypeID
+	 */
+	public int getAddressTypeID();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getCoordinate
+	 */
+	public AddressCoordinate getCoordinate();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setCoordinate
+	 */
+	public void setCoordinate(AddressCoordinate coordinate);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getCountry
+	 */
+	public Country getCountry();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getCountryId
+	 */
+	public int getCountryId();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setCountry
+	 */
+	public void setCountry(Country country);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setCountryId
+	 */
+	public void setCountryId(int country_id);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getCommuneID
+	 */
+	public int getCommuneID();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setCommuneID
+	 */
+	public void setCommuneID(int communeId);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#setCommune
 	 */
 	public void setCommune(Commune commune);
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getCommune
+	 */
+	public Commune getCommune();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getAddressTypeHome
+	 */
+	public AddressTypeHome getAddressTypeHome() throws RemoteException;
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getStreetAddress
+	 */
+	public String getStreetAddress();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#getPostalAddress
+	 */
+	public String getPostalAddress();
+
+	/**
+	 * @see com.idega.core.location.data.AddressBMPBean#isEqualTo
+	 */
+	public boolean isEqualTo(Address address);
 }

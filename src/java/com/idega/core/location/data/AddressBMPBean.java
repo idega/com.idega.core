@@ -30,6 +30,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private transient AddressTypeHome addressTypeHome;
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
+	private static final String STREET_ADDRESS_NOMINATIVE = "street_address_nominative";
 
 	public AddressBMPBean() {
 		super();
@@ -61,6 +62,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		this.addManyToOneRelationship(getColumnNameCommuneID(), Commune.class);
 		addAttribute(ORIGINAL_STREET_NAME, "Original Street Name (before uppercase)", true, true, String.class, 150);
 		
+		addAttribute(STREET_ADDRESS_NOMINATIVE, "Address in nominative form", String.class);
+		
 		this.addManyToOneRelationship(COORDINATE_ID, AddressCoordinate.class);
 		
 		addIndex("IDX_ADDRESS_TYPE", getColumnNameAddressTypeId());
@@ -87,6 +90,14 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		return getStreetAddress();
 	}
 
+	public String getStreetAddressNominative() {
+		return getStringColumnValue(STREET_ADDRESS_NOMINATIVE);
+	}
+	
+	public void setStreetAddressNominative(String address) {
+		setColumn(STREET_ADDRESS_NOMINATIVE, address);
+	}
+	
 	/**
 	 * @return The street name as it was entered/save, before it was uppercased
 	 */
