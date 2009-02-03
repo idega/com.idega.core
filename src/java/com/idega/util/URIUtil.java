@@ -94,7 +94,7 @@ public class URIUtil {
 		String query;
 
 		try {
-			query = new URI(uri).getQuery();
+			query = new URI(uri).getRawQuery();
 			
 		} catch (URISyntaxException e) {
 			throw new RuntimeException(e);
