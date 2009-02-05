@@ -1235,10 +1235,12 @@ IWCORE.renderComponent = function(uuid, container, callback, properties) {
 				IWCORE.insertRenderedComponent(component, {container: container, callback: callback, replace: true});
 			},
 			errorHandler: function() {
+				closeAllLoadingMessages();
 				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
 					reloadPage();
 				}
-			}
+			},
+			timeout: 30000
 		});
 	});
 }
@@ -1250,10 +1252,12 @@ IWCORE.getRenderedComponentByClassName = function(options) {
 				IWCORE.insertRenderedComponent(component, options);
 			},
 			errorHandler: function() {
+				closeAllLoadingMessages();
 				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
 					reloadPage();
 				}
-			}
+			},
+			timeout: 30000
 		});
 	});
 }
