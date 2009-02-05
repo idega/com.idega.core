@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2009/01/30 07:30:37 $ by $Author: valdas $
+ * Last modified: $Date: 2009/02/05 11:47:22 $ by $Author: valdas $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -68,7 +68,7 @@ public class IWDatePicker extends TextInput {
 		IWTimestamp iwDateTo = null;
 		
 		boolean setManualDate = false;
-		if (date == null) {
+		if (date == null && useCurrentDateIfNotSet) {
 			date = new Date(System.currentTimeMillis());
 			setManualDate = true;
 		}
@@ -96,11 +96,9 @@ public class IWDatePicker extends TextInput {
 			//	Is date range?
 			initAction.append("rangeSelect: ").append(isDateRange()).append(", rangeSeparator: '").append(dateRangeSeparator).append("', ");
 			
-			//	Custom date
-			if (iwDate != null) {
-				initAction.append("defaultDate: new Date(").append(iwDate.getYear()).append(", ").append(iwDate.getMonth() - 1).append(", ")
-							.append(iwDate.getDay()).append(")");
-			}
+			//	Default date
+			initAction.append("defaultDate: ").append(iwDate == null ? "null" : new StringBuilder("new Date(").append(iwDate.getYear()).append(", ")
+					.append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay()).append(")").toString());
 			
 			//	Calendar image
 			if (isShowCalendarImage()) {
