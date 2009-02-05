@@ -1807,22 +1807,19 @@ LazyLoader.doRealLoading = function(url, callback, parameters) {
 			//	Was a callback requested?
 			if (callback) {
 				if (isCSS) {
-					LazyLoader.loading = false;
-					callback();	//	TODO: is it better way?
+					LazyLoader.executeCallback(callback);
 				}
 				else {
 					//	IE
 					resource.onreadystatechange = function () {
 						if (resource.readyState == 'loaded' || resource.readyState == 'complete') {
-							LazyLoader.loading = false;
-							callback();
+							LazyLoader.executeCallback(callback);
 						}
 					}
 					
 					//	FF, Safari...
 					resource.onload = function () {
-						LazyLoader.loading = false;
-						callback();
+						LazyLoader.executeCallback(callback);
 					}
 				}
 			}
