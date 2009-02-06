@@ -18,12 +18,11 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.23 $
+ * @version $Revision: 1.24 $
  * 
- *          Last modified: $Date: 2009/02/02 13:34:53 $ by $Author: donatas $
+ *          Last modified: $Date: 2009/02/06 18:59:59 $ by $Author: civilis $
  */
 @Repository("genericDAO")
-@Transactional(readOnly = true)
 public class GenericDaoImpl implements GenericDao {
 
 	private EntityManager entityManager;
@@ -51,6 +50,7 @@ public class GenericDaoImpl implements GenericDao {
 		return entityManager.merge(product);
 	}
 
+	@Transactional(readOnly = true)
 	public void refresh(Object product) {
 		entityManager.refresh(product);
 	}
@@ -151,6 +151,7 @@ public class GenericDaoImpl implements GenericDao {
 		return fresult;
 	}
 
+	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResultByInlineQuery(String query,
 			Class<Expected> expectedReturnType, Param... params) {
 
@@ -163,6 +164,7 @@ public class GenericDaoImpl implements GenericDao {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName,
 			Class<Expected> expectedReturnType, Param... params) {
 
@@ -175,6 +177,7 @@ public class GenericDaoImpl implements GenericDao {
 		}
 	}
 
+	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineQuery(String query,
 			Class<Expected> expectedReturnType, Param... params) {
 
@@ -182,6 +185,7 @@ public class GenericDaoImpl implements GenericDao {
 		return getResultListByQuery(q, expectedReturnType, params);
 	}
 
+	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineNativeQuery(
 			String query, Class<Expected> expectedReturnType, Param... params) {
 
@@ -189,6 +193,7 @@ public class GenericDaoImpl implements GenericDao {
 		return getResultListByQuery(q, expectedReturnType, params);
 	}
 	
+	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineNativeQuery(
 			String query, Class<Expected> expectedReturnType, String mappingName, Param... params) {
 
@@ -196,6 +201,7 @@ public class GenericDaoImpl implements GenericDao {
 		return getResultListByQuery(q, expectedReturnType, params);
 	}
 
+	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(String namedQueryName,
 			Class<Expected> expectedReturnType, Param... params) {
 
