@@ -1,13 +1,13 @@
 package com.idega.core.persistence;
 
-import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  *
- * Last modified: $Date: 2008/04/26 02:29:01 $ by $Author: civilis $
+ * Last modified: $Date: 2009/02/06 19:00:13 $ by $Author: civilis $
  */
 public class Param {
 
@@ -16,7 +16,7 @@ public class Param {
 	
 	public Param(String paramName, Object paramValue) {
 		
-		if(paramName == null || CoreConstants.EMPTY.equals(paramName) || paramValue == null)
+		if(StringUtil.isEmpty(paramName) || paramValue == null)
 			throw new IllegalArgumentException("Empty argument(s): paramName="+paramName+", paramValue="+paramValue);
 		
 		this.paramName = paramName;
@@ -41,6 +41,11 @@ public class Param {
 	public int hashCode() {
 		
 		return getParamName().hashCode();
+	}
+	
+	@Override
+	public String toString() {
+		return "param ("+getParamName()+" : "+getParamValue()+")";
 	}
 
 	public Object getParamValue() {
