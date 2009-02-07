@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.14 2008/11/05 16:39:41 laddi Exp $
+ * $Id: FacesConfigDeployer.java,v 1.15 2009/02/07 14:32:58 valdas Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -27,6 +27,7 @@ import org.xml.sax.SAXException;
 
 import com.idega.idegaweb.IWModule;
 import com.idega.idegaweb.JarLoader;
+import com.idega.util.StringUtil;
 import com.idega.util.xml.XPathUtil;
 import com.idega.util.xml.XmlUtil;
 
@@ -35,10 +36,10 @@ import com.idega.util.xml.XmlUtil;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
+ * Last modified: $Date: 2009/02/07 14:32:58 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.14 $
+ * @version $Revision: 1.15 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -244,6 +245,7 @@ public class FacesConfigDeployer implements JarLoader {
 			String description = null;
 			String icon = null;
 			String suggestedValue = null;
+			String propertyHandler = null;
 			if (nProperty instanceof Element) {
 				Element property = (Element) nProperty;
 				NodeList lPropertyAttributes = property.getChildNodes();
@@ -269,6 +271,12 @@ public class FacesConfigDeployer implements JarLoader {
 						else if (elem.getNodeName().equals("suggested-value")) {
 							suggestedValue = getNodeTextValue(elem);
 						}
+						else if (elem.getNodeName().equals("property-extension")) {
+							NodeList propertyResolvers = elem.getElementsByTagName("property-resolver");
+							if (propertyResolvers != null && propertyResolvers.getLength() > 0) {
+								propertyHandler = getNodeTextValue(propertyResolvers.item(0));
+							}
+						}
 					}
 				}
 				DefaultComponentProperty prop = new DefaultComponentProperty(info);
@@ -278,6 +286,9 @@ public class FacesConfigDeployer implements JarLoader {
 				prop.setDescription(description);
 				prop.setIcon(icon);
 				prop.setSuggestedValue(suggestedValue);
+				if (!StringUtil.isEmpty(propertyHandler)) {
+					prop.setHandlerClass(propertyHandler);
+				}
 
 				info.getProperties().add(prop);
 
