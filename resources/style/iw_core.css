@@ -211,3 +211,13 @@ div#idegaThemeExpandRegion {
 li.hiddenPageInNavigationMenu {
 	display: none !important;
 }
+
+span.blockedContentWithLoadingLayer {
+	background: transparent url(images/loading.gif) no-repeat scroll left center;
+	color: inherit;
+	font-family: Arial,Helvetica,sans-serif;
+	font-size: 12pt;
+	font-weight: bold;
+	line-height: 54px;
+	padding-left: 30px;
+}

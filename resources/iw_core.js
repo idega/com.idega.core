@@ -400,6 +400,15 @@ function tableruler()
 	}
 }
 
+IWCORE.canUsejQuery = function() {
+	var canUserjQuery = false;
+	try {
+		if (jQuery) {
+			canUserjQuery = true;
+		}
+	} catch(e) {}
+	return canUserjQuery;
+}
 
 /*Loading Layer function: */
 	
@@ -416,7 +425,17 @@ function tableruler()
 	var image4 = new Image();
 	image4.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/ajax-loader.gif';
 
-	function showLoadingMessage(sLoadingText){
+	function showLoadingMessage(sLoadingText) {
+		if (IWCORE.canUsejQuery()) {
+			if (!sLoadingText) {
+				sLoadingText = '';
+			}
+			LazyLoader.load('/idegaweb/bundles/com.idega.block.web2.0.bundle/resources/javascript/jquery-plugins/jquery.block.js', function() {
+				var blockingMessage = '<span class="blockedContentWithLoadingLayer">'+sLoadingText+'</span>';
+				jQuery.blockUI({message: blockingMessage});
+			}, null);
+			return;
+		}
 	
 		var outer = document.createElement('div');
 		outer.setAttribute('id', 'busybuddy'); 
@@ -531,6 +550,8 @@ function setLoadingLayerForElement(id, removeContent, size, position) {
 }
 	
 function closeLoadingMessage() {
+	closeBlockedContentWithLayer();
+	
 	var busyMessage = document.getElementById("busybuddy");
 	if (busyMessage == null) {
 		return;
@@ -554,7 +575,17 @@ function closeLoadingMessage() {
 	}
 }
 
+function closeBlockedContentWithLayer() {
+	if (IWCORE.canUsejQuery()) {
+		LazyLoader.load('/idegaweb/bundles/com.idega.block.web2.0.bundle/resources/javascript/jquery-plugins/jquery.block.js', function() {
+			jQuery.unblockUI();
+		}, null);
+	}
+}
+
 function closeAllLoadingLayers(className) {
+	closeBlockedContentWithLayer();
+	
 	var layers = getElementsByClassName(document.body, '*', className);
 	if (layers == null) {
 		return;

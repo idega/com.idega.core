@@ -37,6 +37,13 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".scrollTo.js";
 		}
+	},
+	BLOCK {
+		@Override
+		public String getFileName() {
+			return ".block.js";
+		}
+		
 	};
 
 	public abstract String getFileName();
