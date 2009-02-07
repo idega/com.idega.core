@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusiness.java,v 1.112 2009/01/27 16:01:24 civilis Exp $
+ * $Id: UserBusiness.java,v 1.113 2009/02/07 14:34:57 valdas Exp $
  * Created on Nov 18, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -41,6 +41,7 @@ import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Image;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.data.Gender;
 import com.idega.user.data.Group;
@@ -55,10 +56,10 @@ import com.idega.util.IWTimestamp;
 
 /**
  * 
- *  Last modified: $Date: 2009/01/27 16:01:24 $ by $Author: civilis $
+ *  Last modified: $Date: 2009/02/07 14:34:57 $ by $Author: valdas $
  * 
  * @author <a href="mailto:eiki@idega.com">eiki</a>
- * @version $Revision: 1.112 $
+ * @version $Revision: 1.113 $
  */
 public interface UserBusiness extends IBOService {
 
@@ -919,5 +920,8 @@ public interface UserBusiness extends IBOService {
 	 * @param changeNextTime
 	 * @param encryptionType
 	 */
-	public abstract void createUserLogin(User newUser, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType);
+	public abstract void createUserLogin(User newUser, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity,
+			Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType);
+	
+	public Image getUserImage(User user);
 }

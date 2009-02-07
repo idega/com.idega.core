@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.244 2009/01/27 16:01:24 civilis Exp $
+ * $Id: UserBusinessBean.java,v 1.245 2009/02/07 14:34:57 valdas Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -120,10 +120,10 @@ import com.idega.util.text.Name;
  * <p>
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
- * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2009/01/27 16:01:24 $ by $Author: civilis $
+ * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2009/02/07 14:34:57 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.244 $
+ * @version $Revision: 1.245 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3438,7 +3438,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return userInfoBusiness;
 	}
 
-	private Image getUserImage(User user) {
+	public Image getUserImage(User user) {
 		if (user == null) {
 			return null;
 		}
@@ -3450,8 +3450,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		} else {
 			try {
 				image = new Image(imageId);
-			} catch (SQLException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
+				return null;
 			}
 		}
 		return image;
@@ -3940,9 +3941,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			Boolean passwordNeverExpires = Boolean.FALSE;
 			Boolean userAllowedToChangePassword = Boolean.TRUE;
 			Boolean mustChangePasswordNextTime = Boolean.FALSE;
-			int passwordValidityPeriod = 365;
-
-			
 			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, IWTimestamp.RightNow(), 5000, passwordNeverExpires, userAllowedToChangePassword, mustChangePasswordNextTime, null);
 			return "success";
 		} catch(Exception ex) {
