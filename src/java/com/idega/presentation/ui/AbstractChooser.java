@@ -1,5 +1,5 @@
 /*
- * $Id: AbstractChooser.java,v 1.47 2008/11/18 12:58:24 valdas Exp $
+ * $Id: AbstractChooser.java,v 1.48 2009/02/07 14:33:35 valdas Exp $
  * Copyright (C) 2001 Idega hf. All Rights Reserved. This software is the
  * proprietary information of Idega hf. Use is subject to license terms.
  */
@@ -331,7 +331,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			}
 			else {
 				add(PresentationUtil.getJavaScriptAction(PresentationUtil.getJavaScriptLinesLoadedLazily(CoreUtil.getResourcesForChooser(iwc),
-																	new StringBuilder("var ").append(chooserObject).append(" = new ChooserHelper();").toString())));
+					new StringBuilder("if (!").append(chooserObject).append(") var ").append(chooserObject).append(" = new ChooserHelper();").toString())));
 			}
 			
 			PresentationObject object = getPresentationObject(iwc);
