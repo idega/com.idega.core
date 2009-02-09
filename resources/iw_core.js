@@ -425,18 +425,7 @@ IWCORE.canUsejQuery = function() {
 	var image4 = new Image();
 	image4.src='/idegaweb/bundles/com.idega.core.bundle/resources/style/images/ajax-loader.gif';
 
-	function showLoadingMessage(sLoadingText) {
-		if (IWCORE.canUsejQuery()) {
-			if (!sLoadingText) {
-				sLoadingText = '';
-			}
-			LazyLoader.load('/idegaweb/bundles/com.idega.block.web2.0.bundle/resources/javascript/jquery-plugins/jquery.block.js', function() {
-				var blockingMessage = '<span class="blockedContentWithLoadingLayer">'+sLoadingText+'</span>';
-				jQuery.blockUI({message: blockingMessage});
-			}, null);
-			return;
-		}
-	
+	function showLoadingMessage(sLoadingText) {	
 		var outer = document.createElement('div');
 		outer.setAttribute('id', 'busybuddy'); 
 		outer.setAttribute('class', 'LoadLayer');
@@ -550,8 +539,6 @@ function setLoadingLayerForElement(id, removeContent, size, position) {
 }
 	
 function closeLoadingMessage() {
-	closeBlockedContentWithLayer();
-	
 	var busyMessage = document.getElementById("busybuddy");
 	if (busyMessage == null) {
 		return;
@@ -575,17 +562,7 @@ function closeLoadingMessage() {
 	}
 }
 
-function closeBlockedContentWithLayer() {
-	if (IWCORE.canUsejQuery()) {
-		LazyLoader.load('/idegaweb/bundles/com.idega.block.web2.0.bundle/resources/javascript/jquery-plugins/jquery.block.js', function() {
-			jQuery.unblockUI();
-		}, null);
-	}
-}
-
 function closeAllLoadingLayers(className) {
-	closeBlockedContentWithLayer();
-	
 	var layers = getElementsByClassName(document.body, '*', className);
 	if (layers == null) {
 		return;
