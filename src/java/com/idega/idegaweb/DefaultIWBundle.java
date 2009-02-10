@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.52 2008/12/15 14:07:35 anton Exp $
+ * $Id: DefaultIWBundle.java,v 1.53 2009/02/10 14:14:28 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -298,11 +298,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				}
 				catch (InstantiationException e)
 				{
-					LOGGER.log(Level.WARNING, null, e);
+					LOGGER.log(Level.WARNING, e.getMessage());
 				}
 				catch (IllegalAccessException e)
 				{
-					LOGGER.log(Level.WARNING, null, e);
+					LOGGER.log(Level.WARNING, e.getMessage());
 				}
 			}
 		}
