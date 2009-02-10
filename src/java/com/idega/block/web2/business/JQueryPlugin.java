@@ -42,8 +42,19 @@ public enum JQueryPlugin {
 		@Override
 		public String getFileName() {
 			return ".block.js";
+		}	
+	},
+	TABLE_SORTER {
+		@Override
+		public String getFileName() {
+			return ".tablesorter.js";
 		}
-		
+	},
+	TABLE_SORTER_PAGER {
+		@Override
+		public String getFileName() {
+			return ".tablesorter.pager.js";
+		}
 	};
 
 	public abstract String getFileName();
