@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.177 2009/01/20 17:05:30 valdas Exp $
+ * $Id: Link.java,v 1.178 2009/02/10 16:38:29 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -10,7 +10,9 @@
 package com.idega.presentation.text;
 
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -47,6 +49,8 @@ import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreConstants;
+import com.idega.util.StringHandler;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -122,6 +126,9 @@ public class Link extends Text {
 	private Map _ImageLocalizationMap;
 	private Map _toolTipLocalizationMap;
 	private boolean usePublicOjbectInstanciator = false;
+	
+	private String charEncoding = CoreConstants.ENCODING_UTF8;
+	private boolean forceToReplaceAfterEncoding;
 	
 	/**
 	 *
@@ -648,8 +655,8 @@ public class Link extends Text {
 	 */
 	public void addFirstParameter(String parameterName, String parameterValue) {
 		if ((parameterName != null) && (parameterValue != null)) {
-			parameterName = java.net.URLEncoder.encode(parameterName);
-			parameterValue = java.net.URLEncoder.encode(parameterValue);
+			parameterName = getEncodedValue(parameterName);
+			parameterValue = getEncodedValue(parameterValue);
 
 			if (this._parameterString == null) {
 				this._parameterString = new StringBuffer();
@@ -668,10 +675,10 @@ public class Link extends Text {
 			}
 		}
 		else if (parameterName != null) {
-			parameterName = java.net.URLEncoder.encode(parameterName);
+			parameterName = getEncodedValue(parameterName);
 		}
 		else if (parameterValue != null) {
-			parameterValue = java.net.URLEncoder.encode(parameterValue);
+			parameterValue = getEncodedValue(parameterValue);
 		}
 	}
 
@@ -680,9 +687,9 @@ public class Link extends Text {
 	 */
 	public void addParameter(String parameterName, String parameterValue) {
 		if ((parameterName != null)) {
-			parameterName = java.net.URLEncoder.encode(parameterName);
+			parameterName = getEncodedValue(parameterName);
 			if (parameterValue != null) {
-				parameterValue = java.net.URLEncoder.encode(parameterValue);
+				parameterValue = getEncodedValue(parameterValue);
 			}
 
 			if (this._parameterString == null) {
@@ -703,8 +710,22 @@ public class Link extends Text {
 			}
 		}
 		else if (parameterValue != null) {
-			parameterValue = java.net.URLEncoder.encode(parameterValue);
+			parameterValue = getEncodedValue(parameterValue);
 		}
+	}
+	
+	private String getEncodedValue(String value) {
+		try {
+			value = URLEncoder.encode(value, charEncoding);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		if (forceToReplaceAfterEncoding) {
+			value = StringHandler.replace(value, "+", CoreConstants.SPACE);
+		}
+		
+		return value;
 	}
 
 	/**
@@ -2419,6 +2440,21 @@ public void setWindowToOpen(String className) {
 		return getMarkupAttribute("accesskey");
 	}
 	
+	public String getCharEncoding() {
+		return charEncoding;
+	}
+
+	public void setCharEncoding(String charEncoding) {
+		this.charEncoding = charEncoding;
+	}
+
+	public boolean isForceToReplaceAfterEncoding() {
+		return forceToReplaceAfterEncoding;
+	}
+
+	public void setForceToReplaceAfterEncoding(boolean forceToReplaceAfterEncoding) {
+		this.forceToReplaceAfterEncoding = forceToReplaceAfterEncoding;
+	}
 	
 	@Override
 	public void restoreState(FacesContext context, Object state) {
@@ -2537,11 +2573,13 @@ public void setWindowToOpen(String className) {
 		_toolTipLocalizationMap = (Map) values[42];
 		usePublicOjbectInstanciator = ((Boolean) values[43]).booleanValue();
 		datasource = (String) values[44];
+		charEncoding = values[45].toString();
+		forceToReplaceAfterEncoding = (values[46] instanceof Boolean) ? (Boolean) values[46] : Boolean.FALSE;
 	}
 
 	@Override
 	public Object saveState(FacesContext context) {
-		Object values[] = new Object[45];
+		Object values[] = new Object[47];
 		values[0] = super.saveState(context);
 		if (_obj != null) {
 			Object objState = _obj.saveState(context);
@@ -2602,6 +2640,8 @@ public void setWindowToOpen(String className) {
 		values[42] = _toolTipLocalizationMap;
 		values[43] = new Boolean(usePublicOjbectInstanciator);
 		values[44] = datasource;
+		values[45] = charEncoding;
+		values[46] = Boolean.valueOf(forceToReplaceAfterEncoding);
 		return values;
-	}	
+	}
 }
