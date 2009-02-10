@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.53 2009/02/10 14:14:28 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.54 2009/02/10 14:15:41 laddi Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -298,11 +298,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 				}
 				catch (InstantiationException e)
 				{
-					LOGGER.log(Level.WARNING, e.getMessage());
+					LOGGER.log(Level.SEVERE, e.getMessage());
 				}
 				catch (IllegalAccessException e)
 				{
-					LOGGER.log(Level.WARNING, e.getMessage());
+					LOGGER.log(Level.SEVERE, e.getMessage());
 				}
 			}
 		}
@@ -1282,19 +1282,19 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 					}
 					catch (InstantiationException e)
 					{
-						LOGGER.log(Level.WARNING, null, e);
+						LOGGER.log(Level.SEVERE, e.getMessage());
 					}
 					catch (IllegalAccessException e)
 					{
-						LOGGER.log(Level.WARNING, null, e);
+						LOGGER.log(Level.SEVERE, e.getMessage());
 					}
 					catch (RegisterException e)
 					{
-						LOGGER.log(Level.WARNING, null, e);
+						LOGGER.log(Level.SEVERE, e.getMessage());
 					}
 					catch (Exception e)
 					{
-						LOGGER.log(Level.WARNING, null, e);
+						LOGGER.log(Level.SEVERE, e.getMessage());
 					}
 				}
 			}
