@@ -106,6 +106,9 @@ AdminCoreHelper.makeComponentEditable = function(component, oldValue) {
 }
 
 jQuery(document).ready(function() {
+	var toolbar = jQuery('#adminTopLayer').remove();
+	jQuery('body').prepend(toolbar);
+	
 	if (!jQuery('body').hasClass(AdminCoreHelper.modes.content)) {
 		AdminCoreHelper.currentMode = AdminCoreHelper.modes.content;
 		jQuery('div.content_item_toolbar, div.commentsController').hide();
