@@ -8,6 +8,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -34,7 +36,7 @@ import com.idega.util.expression.ELUtil;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	@Autowired private List<MessageResource> uninitializedMessageResources;
-	
+	private final Logger logger = Logger.getLogger(getClass().getName());
 //	private List<String> initializedStorageTypes = new ArrayList<String>();
 	
 	private static final String CASHED_RESOURCES = "cashed_resources";
@@ -64,10 +66,11 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			for(MessageResource resource : resources) {
 				try {
 					resource.initialize(bundleIdentifier, locale);
+					
 				} catch (IOException e) {
 					e.printStackTrace();
 					failedInitializationResources.add(resource);
-					//return null;
+					logger.log(Level.SEVERE,"Error initializing bundle : "+bundleIdentifier);
 				} catch (OperationNotSupportedException e) {
 					failedInitializationResources.add(resource);
 				}
