@@ -66,7 +66,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 					resource.initialize(bundleIdentifier, locale);
 				} catch (IOException e) {
 					e.printStackTrace();
-					return null;
+					failedInitializationResources.add(resource);
+					//return null;
 				} catch (OperationNotSupportedException e) {
 					failedInitializationResources.add(resource);
 				}
