@@ -18,9 +18,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  * 
- *          Last modified: $Date: 2009/02/17 20:26:03 $ by $Author: civilis $
+ *          Last modified: $Date: 2009/02/17 21:47:26 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 public class GenericDaoImpl implements GenericDao {
@@ -163,19 +163,6 @@ public class GenericDaoImpl implements GenericDao {
 			return null;
 		}
 	}
-	
-	@Transactional(readOnly = true)
-	public <Expected> Expected getSingleResultByInlineNativeQuery(String query,
-			Class<Expected> expectedReturnType, Param... params) {
-
-		try {
-			Query q = getEntityManager().createNativeQuery(query, expectedReturnType);
-			return getSingleResultByQuery(q, expectedReturnType, params);
-
-		} catch (NoResultException e) {
-			return null;
-		}
-	}
 
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName,
@@ -205,13 +192,28 @@ public class GenericDaoImpl implements GenericDao {
 		Query q = getEntityManager().createNativeQuery(query);
 		return getResultListByQuery(q, expectedReturnType, params);
 	}
-	
+
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineNativeQuery(
-			String query, Class<Expected> expectedReturnType, String mappingName, Param... params) {
+			String query, Class<Expected> expectedReturnType,
+			String mappingName, Param... params) {
 
 		Query q = getEntityManager().createNativeQuery(query, mappingName);
 		return getResultListByQuery(q, expectedReturnType, params);
+	}
+
+	@Transactional(readOnly = true)
+	public <Expected> Expected getSingleResultByInlineNativeQuery(String query,
+			Class<Expected> expectedReturnType, String mappingName,
+			Param... params) {
+
+		try {
+			Query q = getEntityManager().createNativeQuery(query, mappingName);
+			return getSingleResultByQuery(q, expectedReturnType, params);
+
+		} catch (NoResultException e) {
+			return null;
+		}
 	}
 
 	@Transactional(readOnly = true)
