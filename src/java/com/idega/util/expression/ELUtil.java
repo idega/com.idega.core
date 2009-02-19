@@ -23,9 +23,9 @@ import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  *
- * Last modified: $Date: 2008/11/27 12:42:11 $ by $Author: juozas $
+ * Last modified: $Date: 2009/02/19 13:19:04 $ by $Author: juozas $
  *
  */
 @Scope("singleton")
@@ -87,7 +87,8 @@ public class ELUtil implements ApplicationContextAware {
 	
 	public void autowire(Object obj) {
 		ApplicationContext ac = getApplicationContext();
-		ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
+		ac.getAutowireCapableBeanFactory().autowireBean(obj);
+		//ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
 	}
 	
 	private static String cleanupExp(String exp) {
