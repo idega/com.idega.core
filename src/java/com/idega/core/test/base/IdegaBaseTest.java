@@ -1,5 +1,7 @@
 package com.idega.core.test.base;
 
+import java.util.logging.Logger;
+
 import junit.framework.TestCase;
 
 import org.junit.Before;
@@ -12,9 +14,9 @@ import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  *
- * Last modified: $Date: 2008/08/07 17:27:17 $ by $Author: civilis $
+ * Last modified: $Date: 2009/02/20 14:26:40 $ by $Author: civilis $
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
@@ -22,6 +24,8 @@ public abstract class IdegaBaseTest extends TestCase implements ApplicationConte
 	
 	public static final String testSystemProp = "idega-test";
 	public static final String trueVal = "true";
+	
+	protected static final Logger logger = Logger.getLogger(IdegaBaseTest.class.getName());
 
 	private ApplicationContext applicationContext;
 	
