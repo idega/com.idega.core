@@ -68,6 +68,10 @@ public class PresentationUtil {
 		return true;
 	}
 	
+	public static boolean addJavascriptAlertOnLoad(IWContext iwc, String alert) {
+		return addJavaScriptActionOnLoad(iwc, "alert('" + alert + "');");
+	}
+	
 	public static boolean addJavaScriptActionsToBody(IWContext iwc, List<String> actions) {
 		if (iwc == null || actions == null) {
 			return false;
