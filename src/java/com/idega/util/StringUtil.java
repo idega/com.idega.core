@@ -198,4 +198,38 @@ public class StringUtil {
 	    String number = padding + aIdx.toString();
 	    aBuilder.append("&#" + number + ";");
 	}
+
+	/**
+	 * Escape characters not allowed in file names;
+	 * 
+	 * @param pdfName
+	 * @return escaped file name;
+	 */
+	public static String escapeFileNameSpecialCharacters(String fileName) {
+		StringBuilder result = new StringBuilder();
+		StringCharacterIterator iterator = new StringCharacterIterator(fileName);
+		char character = iterator.current();
+		while (character != CharacterIterator.DONE) {
+			switch (character) {
+			case '/':
+			case '\\':
+			case ':':
+			case '|':
+			case '?':
+			case '%':
+			case '*':
+			case '>':
+			case '<': {
+				result.append("_").append((int) (character)).append("_");
+				break;
+			}
+			default:
+				// the char is not a special one
+				// add it to the result as is
+				result.append(character);
+			}
+			character = iterator.next();
+		}
+		return result.toString();
+	}
 }
