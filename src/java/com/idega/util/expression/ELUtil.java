@@ -11,7 +11,6 @@ import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 
 import org.springframework.beans.BeansException;
-import org.springframework.beans.factory.config.AutowireCapableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -23,9 +22,9 @@ import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  *
- * Last modified: $Date: 2009/02/19 13:19:04 $ by $Author: juozas $
+ * Last modified: $Date: 2009/03/05 15:38:52 $ by $Author: arunas $
  *
  */
 @Scope("singleton")
@@ -91,7 +90,7 @@ public class ELUtil implements ApplicationContextAware {
 		//ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
 	}
 	
-	private static String cleanupExp(String exp) {
+	public static String cleanupExp(String exp) {
 		
 		if(exp.startsWith(EXPRESSION_BEGIN)) {
 			exp = exp.substring(EXPRESSION_BEGIN.length());
