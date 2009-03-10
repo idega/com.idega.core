@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.203 2009/01/30 07:34:09 valdas Exp $
+ * $Id: IWMainApplication.java,v 1.204 2009/03/10 20:52:17 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -112,10 +112,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/01/30 07:34:09 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/03/10 20:52:17 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.203 $
+ * @version $Revision: 1.204 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -965,12 +965,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			String sBundleDirWithBundleExtension = directory+ File.separator+bundleIdentifier+DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 			File bundleDir = new File(sBundleDirWithBundleExtension);
 			if(bundleDir.exists()){
+				Logger.getLogger(IWMainApplication.class.getName()).log(Level.INFO, "****************** Found bundle: " + sBundleDirWithBundleExtension);
 				return sBundleDirWithBundleExtension;
 			}
 			//Then try the name without the bundleExtension
 			String sBundleDirWithoutBundleExtension = directory+ File.separator+bundleIdentifier;
 			bundleDir = new File(sBundleDirWithoutBundleExtension);
 			if(bundleDir.exists()){
+				Logger.getLogger(IWMainApplication.class.getName()).log(Level.INFO, "****************** Found bundle: " + sBundleDirWithoutBundleExtension);
 				return sBundleDirWithoutBundleExtension;
 			}
 		}
@@ -988,6 +990,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         //System.out.println("IWMainApplication : sBundle = "+sBundle);
         
 		//default method:
+        Logger.getLogger(IWMainApplication.class.getName()).log(Level.INFO, "****************** Trying bundle: " + getApplicationSpecialRealPath() + File.separator + sBundle);
         return getApplicationSpecialRealPath() + File.separator + sBundle;
     }
 
