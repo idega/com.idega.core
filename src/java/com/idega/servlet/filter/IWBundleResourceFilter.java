@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.52 2009/01/08 09:00:56 anton Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.53 2009/03/10 18:20:56 valdas Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -56,10 +56,10 @@ import com.idega.util.resources.ResourcesAdder;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2009/01/08 09:00:56 $ by $Author: anton $
+ * Last modified: $Date: 2009/03/10 18:20:56 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.52 $
+ * @version $Revision: 1.53 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -200,6 +200,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			return null;
 		}
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
+		requestUriWithoutContextPath = requestUriWithoutContextPath.replaceAll(CoreConstants.SLASH, File.separator);
 		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
 		File webappFile = new File(webappFilePath);
 		
