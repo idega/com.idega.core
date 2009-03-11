@@ -1,5 +1,5 @@
 /*
- * $Id: ViewManager.java,v 1.26 2008/02/13 11:25:39 valdas Exp $
+ * $Id: ViewManager.java,v 1.27 2009/03/11 08:17:19 valdas Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -30,10 +30,10 @@ import com.idega.util.RequestUtil;
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
  * 
- *  Last modified: $Date: 2008/02/13 11:25:39 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/03/11 08:17:19 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.26 $
+ * @version $Revision: 1.27 $
  */
 public class ViewManager implements Singleton {
 	
@@ -79,7 +79,7 @@ public class ViewManager implements Singleton {
 			DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
 			myPageNode.setName("My Page");
 			//TODO: Change this
-			myPageNode.setJspUri("/idegaweb/bundles/com.idega.block.article.bundle/jsp/cmspage.jsp");
+			myPageNode.setJspUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.block.article").getJSPURI("cmspage.jsp"));
 			myPageNode.setKeyboardShortcut(new KeyboardShortcut("5"));
 		}
 
@@ -108,9 +108,7 @@ public class ViewManager implements Singleton {
 			node.setViewId(CoreConstants.WORKSPACE_VIEW_MANAGER_ID);
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
-			//String jspUri = iwma.getBundle("com.idega.webface").getJSPURI("workspace.jsp");
-			String jspUri = "/idegaweb/bundles/com.idega.workspace.bundle/jsp/welcome.jsp";
-			node.setJspUri(jspUri);
+			node.setJspUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.workspace").getJSPURI("welcome.jsp"));
 			this.workspaceNode = node;
 		}
 		return this.workspaceNode;
