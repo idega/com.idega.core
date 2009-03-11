@@ -21,7 +21,7 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * @author <a href="anton@idega.com">Anton Makarov</a>
  * @version Revision: 1.0 
  *
- * Last modified: $Date: 2009/01/05 10:27:32 $ by $Author: anton $
+ * Last modified: $Date: 2009/03/11 10:06:04 $ by $Author: civilis $
  *
  */
 @Service
@@ -45,8 +45,8 @@ public class JarLoadedResourceBundle implements MessageResource {
 	}
 	
 	public void initialize(String bundleIdentifier, Locale locale) throws OperationNotSupportedException {
-		if(DefaultIWBundle.isProductionEnvironment() && !bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
-			JarLoadedIWBundle bundle = (JarLoadedIWBundle) IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
+		if(/*DefaultIWBundle.isProductionEnvironment() && */!bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
+			DefaultIWBundle bundle = (DefaultIWBundle) IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
 			try {
 				resource = bundle.initializeResourceBundle(locale);
 				initProperities();

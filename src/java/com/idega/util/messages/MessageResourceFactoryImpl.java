@@ -41,7 +41,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	
 	private static final String CASHED_RESOURCES = "cashed_resources";
 	
-	@SuppressWarnings("unchecked")
 	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
 		if(bundleIdentifier == null)
 			bundleIdentifier = MessageResource.NO_BUNDLE;
@@ -183,7 +182,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 //		}
 //	}
 	
-	@SuppressWarnings("unchecked")
 	private void sortResourcesByImportance(List<MessageResource> resources) {
 		ResourceComparatorByLevel resourceComparatorByLevel = new ResourceComparatorByLevel();
 		Collections.sort(resources, resourceComparatorByLevel);			
@@ -198,7 +196,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return null;
 	}
 	
-	@SuppressWarnings("unchecked")
 	public List<MessageResource> getResourceListByStorageIdentifier(String storageIdentifier) {
 		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		
