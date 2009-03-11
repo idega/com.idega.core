@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleResourceFilter.java,v 1.54 2009/03/11 08:11:01 valdas Exp $
+ * $Id: IWBundleResourceFilter.java,v 1.55 2009/03/11 08:25:28 civilis Exp $
  * Created on 27.1.2005
  * 
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -56,10 +56,10 @@ import com.idega.util.resources.ResourcesAdder;
  * preference pane).
  * </p>
  * 
- * Last modified: $Date: 2009/03/11 08:11:01 $ by $Author: valdas $
+ * Last modified: $Date: 2009/03/11 08:25:28 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.54 $
+ * @version $Revision: 1.55 $
  */
 public class IWBundleResourceFilter extends BaseFilter {
 
@@ -109,6 +109,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 			IWMainApplication iwma = getIWMainApplication(request);
 			String webappDir = iwma.getApplicationRealPath();
 			
+			boolean fileExists = false;
+			
 			if (this.feedFromSetBundleDir) {
 				try {
 					if (!speciallyHandleFile(request, this.sBundlesDirectory, webappDir, requestUriWithoutContextPath)) {
@@ -124,7 +126,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 					log.log(Level.WARNING, "Error serving file from workspace", e);
 				}
 			}
-			else if (feedFromJarFiles) {
+			if (feedFromJarFiles || !fileExists) {
 				if (requestUriWithoutContextPath.startsWith(BUNDLES_STANDARD_DIR)) {
 					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
 					//THIS IS VERY SIMPLE CACHING that invalidates on restart
