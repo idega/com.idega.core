@@ -5,6 +5,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -21,7 +22,7 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * @author <a href="anton@idega.com">Anton Makarov</a>
  * @version Revision: 1.0 
  *
- * Last modified: $Date: 2009/03/11 10:06:04 $ by $Author: civilis $
+ * Last modified: $Date: 2009/03/11 15:48:59 $ by $Author: valdas $
  *
  */
 @Service
@@ -46,9 +47,13 @@ public class JarLoadedResourceBundle implements MessageResource {
 	
 	public void initialize(String bundleIdentifier, Locale locale) throws OperationNotSupportedException {
 		if(/*DefaultIWBundle.isProductionEnvironment() && */!bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
-			DefaultIWBundle bundle = (DefaultIWBundle) IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
+			IWBundle bundle = IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
 			try {
-				resource = bundle.initializeResourceBundle(locale);
+				if (bundle instanceof DefaultIWBundle) {
+					resource = ((DefaultIWBundle) bundle).initializeResourceBundle(locale);
+				} else {
+					Logger.getLogger(JarLoadedResourceBundle.class.getName()).warning("Bundle " + bundle.getClass() + " doesn't support this method!");
+				}
 				initProperities();
 			} catch (IOException e) {
 				throw new OperationNotSupportedException("Initialization of this resource is not supported in test environment");
