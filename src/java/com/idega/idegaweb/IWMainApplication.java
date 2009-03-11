@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.205 2009/03/11 08:07:35 civilis Exp $
+ * $Id: IWMainApplication.java,v 1.206 2009/03/11 08:47:37 civilis Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -112,10 +112,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/03/11 08:07:35 $ by $Author: civilis $
+ *  Last modified: $Date: 2009/03/11 08:47:37 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.205 $
+ * @version $Revision: 1.206 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -370,9 +370,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         
         for (IWBundle bundle : getLoadedBundles().values()) {
 	        
-        	System.out.println("run bundle starter for bundle="+bundle);
-        	System.out.println("run bundle starter for bundle identifier="+bundle.getBundleIdentifier());
-        	
         	if(bundle.isPostponedBundleStartersRun()) {
         	
         		bundle.setPostponedBundleStartersRun(false);
@@ -2440,7 +2437,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			
 			if(postponeBundleStarters) {
 				
-				System.out.println("________SETTING postponed="+postponeBundleStarters);
 				bundle.setPostponedBundleStartersRun(true);
 				
 			} else {
