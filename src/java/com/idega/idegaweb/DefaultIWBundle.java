@@ -1,5 +1,5 @@
 /*
- * $Id: DefaultIWBundle.java,v 1.54 2009/02/10 14:15:41 laddi Exp $
+ * $Id: DefaultIWBundle.java,v 1.55 2009/03/11 08:07:35 civilis Exp $
  * 
  * Created in 2001 by Tryggvi Larusson
  * 
@@ -109,6 +109,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private File localizableStringsFile;
 	private IWPropertyList propertyList;
 	private List bundleStarters;
+	
+	private boolean postponedBundleStartersRun = false;
 	
 	/**
 	 * <p>
@@ -1763,5 +1765,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		return (directory == null) ? true : false;
 	}
+
+	public boolean isPostponedBundleStartersRun() {
+    	return postponedBundleStartersRun;
+    }
+
+	public void setPostponedBundleStartersRun(boolean postponedBundleStartersRun) {
+    	this.postponedBundleStartersRun = postponedBundleStartersRun;
+    }
 
 }

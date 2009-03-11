@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundle.java,v 1.99 2008/11/17 08:40:07 laddi Exp $
+ * $Id: IWBundle.java,v 1.100 2009/03/11 08:07:35 civilis Exp $
  * Created on 28.7.2004 by tryggvil - interface created, class refactored
  *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -33,10 +33,10 @@ import com.idega.presentation.Image;
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
  * 
- * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
+ * Last modified: $Date: 2009/03/11 08:07:35 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.99 $
+ * @version $Revision: 1.100 $
  */
 public interface IWBundle extends IWModule{
 	/**
@@ -401,4 +401,7 @@ public interface IWBundle extends IWModule{
 	 */
 	public long getResourceTime(String pathWithinBundle);
 	
+	public abstract boolean isPostponedBundleStartersRun();
+
+	public abstract void setPostponedBundleStartersRun(boolean postponedBundleStartersRun);
 }
