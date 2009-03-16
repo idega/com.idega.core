@@ -1,5 +1,5 @@
 /*
- * $Id: FacesConfigDeployer.java,v 1.15 2009/02/07 14:32:58 valdas Exp $
+ * $Id: FacesConfigDeployer.java,v 1.16 2009/03/16 08:42:40 valdas Exp $
  * Created on 5.2.2006 in project org.apache.axis
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -36,10 +36,10 @@ import com.idega.util.xml.XmlUtil;
  * Implementation of JarLoader to automatically scan all faces-config.xml files
  * in all installed Jar files, parse them, and read into the componentRegistry.
  * </p>
- * Last modified: $Date: 2009/02/07 14:32:58 $ by $Author: valdas $
+ * Last modified: $Date: 2009/03/16 08:42:40 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.15 $
+ * @version $Revision: 1.16 $
  */
 public class FacesConfigDeployer implements JarLoader {
 
@@ -290,8 +290,9 @@ public class FacesConfigDeployer implements JarLoader {
 					prop.setHandlerClass(propertyHandler);
 				}
 
-				info.getProperties().add(prop);
-
+				if (!info.getProperties().contains(prop)) {
+					info.getProperties().add(prop);
+				}
 			}
 		}
 	}
