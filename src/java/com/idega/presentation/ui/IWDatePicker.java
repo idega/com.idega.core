@@ -15,11 +15,11 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
- * @version $Revision: 1.13 $
+ * @version $Revision: 1.14 $
  *
  * Date (range) picker
  *
- * Last modified: $Date: 2009/02/05 11:47:22 $ by $Author: valdas $
+ * Last modified: $Date: 2009/03/17 13:14:59 $ by $Author: laddi $
  */
 public class IWDatePicker extends TextInput {
 	
@@ -34,6 +34,8 @@ public class IWDatePicker extends TextInput {
 	private String inputName = null;
 	
 	private String dateRangeSeparator = " - ";
+	private boolean showYearChange = false;
+	private boolean showMonthChange = false;
 
   /**
    * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -99,6 +101,9 @@ public class IWDatePicker extends TextInput {
 			//	Default date
 			initAction.append("defaultDate: ").append(iwDate == null ? "null" : new StringBuilder("new Date(").append(iwDate.getYear()).append(", ")
 					.append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay()).append(")").toString());
+			
+			// Show month/year select
+			initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear());
 			
 			//	Calendar image
 			if (isShowCalendarImage()) {
@@ -182,6 +187,22 @@ public class IWDatePicker extends TextInput {
 
 	public void setShowCalendarImage(boolean showCalendarImage) {
 		this.showCalendarImage = showCalendarImage;
+	}
+	
+	private boolean isChangeYear() {
+		return this.showYearChange;
+	}
+	
+	public void setShowYearChange(boolean showYearChange) {
+		this.showYearChange = showYearChange;
+	}
+
+	private boolean isChangeMonth() {
+		return this.showMonthChange;
+	}
+	
+	public void setShowMonthChange(boolean showMonthChange) {
+		this.showMonthChange = showMonthChange;
 	}
 
 	public String getOnSelectAction() {
