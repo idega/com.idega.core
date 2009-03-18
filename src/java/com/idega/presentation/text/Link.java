@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.179 2009/03/18 10:27:56 laddi Exp $
+ * $Id: Link.java,v 1.180 2009/03/18 10:29:40 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1898,8 +1898,9 @@ public class Link extends Text {
 			action = ("document.forms['" + formID + "']." + IWMainApplication.IWEventSessionAddressParameter + ".value='" + this.getID() + "';document.forms['" + formID + "'].submit();");
 		}
 		else {
-			action = ("document.forms['" + formID + "'].submit();");
+			action = ("document.forms['" + formID + "'].submit()");
 		}
+		action += "; return false;";
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
 	}
@@ -1929,7 +1930,7 @@ public class Link extends Text {
 	}
 	
 	public void setToFormReset(Form form) {
-		String action = ("document.forms['" + form.getID() + "'].reset();");
+		String action = ("document.forms['" + form.getID() + "'].reset(); return false;");
 		setFinalUrl(JAVASCRIPT + action);
 	}
 	
