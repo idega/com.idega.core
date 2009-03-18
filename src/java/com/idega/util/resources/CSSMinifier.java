@@ -13,11 +13,14 @@
  */
 package com.idega.util.resources;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import com.idega.util.StringHandler;
 
 /**
  * Minifies CSS files by removing expendable whitespace and comments. 
@@ -25,7 +28,7 @@ import java.util.regex.Pattern;
  * @author Valdas Žemaitis
  *
  */
-public class CSSMinifier {
+public class CSSMinifier implements AbstractMinifier {
 
 	// This regex captures comments
 	private static final String commentRegex ="(/\\*[^*]*\\*+([^/][^*]*\\*+)*/)"; 
@@ -149,6 +152,19 @@ public class CSSMinifier {
 			
 				
 		return new StringBuffer(compressed);
+	}
+
+	public String getMinifiedResource(String content) {
+		return minifyCSS(new StringBuffer(content)).toString();
+	}
+
+	public String getMinifiedResource(InputStream stream) {
+		try {
+			return getMinifiedResource(StringHandler.getContentFromInputStream(stream));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

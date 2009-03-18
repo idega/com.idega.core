@@ -1,11 +1,17 @@
 package com.idega.util.resources;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PushbackInputStream;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
-public class JavaScriptMinifier {
+import com.idega.util.IOUtil;
+import com.idega.util.StringHandler;
+
+public class JavaScriptMinifier implements AbstractMinifier {
 	private static final int EOF = -1;
 
 	private PushbackInputStream in;
@@ -14,7 +20,11 @@ public class JavaScriptMinifier {
 	private int theA;
 	private int theB;
 	
+	public JavaScriptMinifier() {}
+	
 	public JavaScriptMinifier(InputStream in, OutputStream out) {
+		this();
+		
 		this.in = new PushbackInputStream(in);
 		this.out = out;
 	}
@@ -241,5 +251,35 @@ public class JavaScriptMinifier {
 
 	private class UnterminatedRegExpLiteralException extends Exception {
 		private static final long serialVersionUID = 3794331487151636440L;
+	}
+
+	public String getMinifiedResource(String content) {
+		try {
+			return getMinifiedResource(StringHandler.getStreamFromString(content));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return content;
+	}
+
+	public String getMinifiedResource(InputStream stream) {
+		OutputStream output = null;
+		
+		try {
+			output = new ByteArrayOutputStream();
+			
+			this.in = new PushbackInputStream(stream);
+			this.out = output;
+			minify();
+		} catch(Exception e) {
+			output = null;
+			Logger.getLogger(JavaScriptMinifier.class.getName()).log(Level.WARNING, "Error while minifying resource", e);
+		} finally {
+			IOUtil.closeInputStream(this.in);
+			IOUtil.closeOutputStream(this.out);
+		}
+		
+		return output == null ? null : output.toString();
 	}
 }

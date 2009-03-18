@@ -1,10 +1,8 @@
 package com.idega.util.resources;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -26,7 +24,6 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
-import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
 @Scope("request")
@@ -326,20 +323,17 @@ public class ResourcesManagerImpl implements ResourcesManager {
 		if (input == null) {
 			return null;
 		}
-		
-		if (resourceURI.endsWith(ResourcesAdder.FILE_TYPE_JAVA_SCRIPT)) {
-			return getMinifiedResource(input);
-		}
-		
+
+		String minified = null;
 		try {
-			return getMinifiedResource(StringHandler.getContentFromInputStream(input));
+			minified = getMinifiedResource(resourceURI.endsWith(ResourcesAdder.FILE_TYPE_JAVA_SCRIPT), input);
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting resource from stream!", e);
+			LOGGER.log(Level.WARNING, "Error getting resource ('"+resourceURI+"') from stream!", e);
 		} finally {
 			IOUtil.closeInputStream(input);
 		}
 		
-		return null;
+		return StringUtil.isEmpty(minified) ? null : minified;
 	}
 	
 	private String getMinifiedResource(File resource, String resourceUri) {
@@ -375,39 +369,29 @@ public class ResourcesManagerImpl implements ResourcesManager {
 			return null;
 		}
 		
-		if (javaScript) {
-			try {
-				return getMinifiedResource(StringHandler.getStreamFromString(resourceContent));
-			} catch (Exception e) {
-				LOGGER.log(Level.WARNING, "Error while minifying resource: " + resource.getName(), e);
-			}
-		} else {
-			return getMinifiedResource(resourceContent);
-		}
-		
-		return resourceContent;
-	}
-	
-	private String getMinifiedResource(String content) {
-		CSSMinifier cssMinifier = new CSSMinifier();
-		return cssMinifier.minifyCSS(new StringBuffer(content)).toString();
-	}
-	
-	private String getMinifiedResource(InputStream input) {
-		OutputStream output = null;
+		String minified = null;
 		try {
-			output = new ByteArrayOutputStream();
-			JavaScriptMinifier minifier = new JavaScriptMinifier(input, output);
-			minifier.minify();
+			minified = getMinifiedResource(javaScript, resourceContent);
 		} catch(Exception e) {
-			output = null;
-			LOGGER.log(Level.WARNING, "Error while minifying resource", e);
-		} finally {
-			IOUtil.closeInputStream(input);
-			IOUtil.closeOutputStream(output);
+			LOGGER.log(Level.WARNING, "Error while minifying resource: " + resource.getName(), e);
+			return resourceContent;
+		}
+		if (StringUtil.isEmpty(minified)) {
+			LOGGER.log(Level.WARNING, "Error while minifying resource: " + resource.getName());
+			return resourceContent;
 		}
 		
-		return output == null ? null : output.toString();
+		return minified;
+	}
+	
+	private String getMinifiedResource(boolean javascript, String content) {
+		AbstractMinifier minifier = javascript ? new JavaScriptMinifier() : new CSSMinifier(); 
+		return minifier.getMinifiedResource(content);
+	}
+	
+	private String getMinifiedResource(boolean javascript, InputStream stream) {
+		AbstractMinifier minifier = javascript ? new JavaScriptMinifier() : new CSSMinifier(); 
+		return minifier.getMinifiedResource(stream);
 	}
 	
 }
