@@ -331,7 +331,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	
 	private Locale getDefaultLocale() {
 		if (oracleLocale == null) {
-			oracleLocale = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultLocaleFromIWPropertyList();
+			oracleLocale = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultSystemLocale();
 		}
 		return oracleLocale;
 	}

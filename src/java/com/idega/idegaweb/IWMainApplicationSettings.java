@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.60 2008/12/11 14:25:39 civilis Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.61 2009/03/18 14:36:51 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -47,10 +47,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2008/12/11 14:25:39 $ by $Author: civilis $
+ * Last modified: $Date: 2009/03/18 14:36:51 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.60 $
+ * @version $Revision: 1.61 $
  */
 
 
@@ -69,6 +69,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public static final String AUTO_CREATE_PROPERTIES_KEY="auto-create-properties";
 	public static final String DEFAULT_MARKUP_LANGUAGE_KEY="markup_language";
 	public static final String DEFAULT_MARKUP_LANGUAGE = Page.XHTML;
+	public static final String DEFAULT_SYSTEM_LOCALE = "idegaweb.default.locale";
 	
 	public static boolean DEBUG_FLAG = false;
 	public static boolean CREATE_STRINGS = true;
@@ -363,16 +364,16 @@ public class IWMainApplicationSettings implements MutableClass {
 		this.cachedDefaultLocale=null;
 	}
 	
-	public Locale getDefaultLocaleFromIWPropertyList() {
-		String localeIdentifier = getIdegawebPropertyList().getProperty(DEFAULT_LOCALE_KEY);
+	public Locale getDefaultSystemLocale() {
+		String systemLocale = System.getProperty(DEFAULT_SYSTEM_LOCALE);
 		Locale locale = null;
 		Locale englishLocal = Locale.ENGLISH;
 
-		if (localeIdentifier ==null) {
+		if (systemLocale ==null) {
 			locale = englishLocal;
 		}
 		else{
-			locale = LocaleUtil.getLocale(localeIdentifier);
+			locale = LocaleUtil.getLocale(systemLocale);
 		}
 		
 		return locale;
