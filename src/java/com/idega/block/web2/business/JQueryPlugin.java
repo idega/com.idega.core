@@ -61,6 +61,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".textarearesizer.js";
 		}
+	},
+	AUTO_RESIZER {
+		@Override
+		public String getFileName() {
+			return ".autoresize.js";
+		}
 	};
 
 	public abstract String getFileName();
