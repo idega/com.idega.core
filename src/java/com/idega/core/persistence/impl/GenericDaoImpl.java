@@ -18,9 +18,9 @@ import com.idega.core.persistence.Param;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  * 
- *          Last modified: $Date: 2009/03/23 15:55:31 $ by $Author: juozas $
+ *          Last modified: $Date: 2009/03/23 17:03:27 $ by $Author: juozas $
  */
 @Repository("genericDAO")
 public class GenericDaoImpl implements GenericDao {
@@ -110,8 +110,8 @@ public class GenericDaoImpl implements GenericDao {
 			for (Param param : params) {
 
 				q.setParameter(param.getParamName(), param.getParamValue());
+				System.out.println("paramName: " +param.getParamName() + " paramValue: "+ param.getParamValue());
 			}
-		System.out.println("query with params: " + q.toString());
 		final List<Expected> fresult;
 		
 		if (Long.class.equals(expectedReturnType)) {
