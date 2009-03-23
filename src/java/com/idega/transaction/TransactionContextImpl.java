@@ -6,21 +6,25 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $ Last modified: $Date: 2009/03/23 13:59:34 $ by $Author: civilis $
+ * @version $Revision: 1.3 $ Last modified: $Date: 2009/03/23 14:14:37 $ by $Author: civilis $
  */
 @Service
 @Scope("singleton")
 public class TransactionContextImpl implements TransactionContext {
 	
+	@SuppressWarnings("unchecked")
 	@Transactional
-	public Object executeInTransaction(TransactionalCallback callback) {
+	public <T> T executeInTransaction(TransactionalCallback callback) {
 		
-		return callback.execute();
+		Object result = callback.execute();
+		return (T) result;
 	}
 	
+	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
-	public Object executeInReadonlyTransaction(TransactionalCallback callback) {
+	public <T> T executeInReadonlyTransaction(TransactionalCallback callback) {
 		
-		return callback.execute();
+		Object result = callback.execute();
+		return (T) result;
 	}
 }
