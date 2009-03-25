@@ -5,11 +5,31 @@ import java.util.Comparator;
 import java.util.Locale;
 
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
+import com.idega.util.CoreUtil;
 
 public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> {
 	
 	private boolean sortById = false;
 	private Locale locale = null;
+	
+	public AdvancedPropertyComparator() {
+		Locale locale = null;
+		
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			locale = IWMainApplication.getDefaultIWMainApplication().getSettings().getDefaultLocale();
+		}
+		else {
+			locale = iwc.getCurrentLocale();
+		}
+		if (locale == null) {
+			locale = Locale.ENGLISH;
+		}
+		
+		this.locale = locale;
+	}
 	
 	public AdvancedPropertyComparator(Locale locale) {
 		this.locale = locale;
