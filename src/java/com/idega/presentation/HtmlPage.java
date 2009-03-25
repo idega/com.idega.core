@@ -17,7 +17,6 @@ import java.util.regex.Pattern;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.text.AttributeParser;
@@ -95,6 +94,7 @@ public class HtmlPage extends Page {
 	 * 
 	 * @see javax.faces.component.UIComponent#getRendersChildren()
 	 */
+	@Override
 	public boolean getRendersChildren() {
 		return true;
 	}
@@ -119,19 +119,17 @@ public class HtmlPage extends Page {
 	/**
 	 *
 	 */
-	public List getChildren(){
-		//return getChildren(getDefaultRegion());
+	@Override
+	public List<UIComponent> getChildren() {
 		return super.getChildren();
 	}
 	/**
 	 *
 	 */
-	protected void setChildren(List newChildren)
-	{
-		//setChildren(getDefaultRegion(),newChildren);
+	@Override
+	protected void setChildren(List<UIComponent> newChildren) {
 		super.setChildren(newChildren);
 	}
-	
 	
 	public UIComponent getRegion(String regionKey){
 		if(this.regionAsFacet){
@@ -176,10 +174,12 @@ public class HtmlPage extends Page {
 	}
 
 	
+	@Override
 	public void add(UIComponent comp){
 		add(comp,getDefaultRegion());
 	}
 
+	@Override
 	public void add(PresentationObject po){
 		add((UIComponent)po);
 	}
@@ -236,6 +236,7 @@ public class HtmlPage extends Page {
 	/**
 	 * Overrided from Page
 	 */
+	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		//Does nothing here
 	}
@@ -244,6 +245,7 @@ public class HtmlPage extends Page {
 	 * Overrided from Page
 	 * @throws IOException
 	 */
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException{
 		//Does just call the print(iwc) method below:
 		callPrint(context);
@@ -252,6 +254,7 @@ public class HtmlPage extends Page {
 	/**
 	 * Overrided from Page
 	 */
+	@Override
 	public void encodeEnd(FacesContext context)throws IOException{
 		//Does nothing here
 		encodeRenderTime(context);
@@ -261,6 +264,7 @@ public class HtmlPage extends Page {
 	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
 	 */
 	//public void encodeChildren(FacesContext ctx) throws IOException {
+	@Override
 	public void print(IWContext ctx) throws IOException {
 		addSessionPollingDWRFiles(ctx);
 		Writer out;
@@ -399,14 +403,18 @@ public class HtmlPage extends Page {
 		
 				out.write(t[1]);
 			}
+			
+			for (UIComponent child: getChildren()) {
+				if (!(child instanceof HtmlPageRegion)) {
+					renderChild(ctx, child);
+				}
+			}
 		} else {
-			//out.startElement("p",null);
 			out.write("Template file could not be found.");
-			//out.endElement("p");
-			List children = getChildren();
-			for (Iterator iter = children.iterator(); iter.hasNext();) {
-				UIComponent element = (UIComponent) iter.next();
-				renderChild(ctx,element);
+			
+			List<UIComponent> children = getChildren();
+			for (Iterator<UIComponent> iter = children.iterator(); iter.hasNext();) {
+				renderChild(ctx, iter.next());
 			}
 		}
 	}
@@ -414,6 +422,7 @@ public class HtmlPage extends Page {
 	/**
 	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[4];
 		values[0] = super.saveState(ctx);
@@ -427,6 +436,7 @@ public class HtmlPage extends Page {
 	/**
 	 * @see javax.faces.component.UIPanel#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(ctx, values[0]);
@@ -449,8 +459,12 @@ public class HtmlPage extends Page {
 	public void setHtml(String string) {
 		this.html = string;
 		findOutRegions();
+		findOutResources();
 	}
-
+	
+	private void findOutResources() {
+		
+	}
 
 //	/**
 //	 * @see javax.faces.component.UIComponent#decode(javax.faces.context.FacesContext)
@@ -467,6 +481,7 @@ public class HtmlPage extends Page {
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
 	
+	@Override
 	public Object clone(IWUserContext iwc, boolean askForPermission){
 		HtmlPage newPage = (HtmlPage) super.clone(iwc,askForPermission);
 		if(this.regionMap!=null){
@@ -475,6 +490,7 @@ public class HtmlPage extends Page {
 		return newPage;
 	}
 	
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		// TODO Auto-generated method stub
 		super.main(iwc);
@@ -482,6 +498,7 @@ public class HtmlPage extends Page {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#_main(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		// TODO Auto-generated method stub
 		super._main(iwc);
@@ -507,6 +524,7 @@ public class HtmlPage extends Page {
 		this.regionAsFacet = regionAsFacet;
 	}
 	
+	@Override
 	public Map getFacets(){
 		if(this.facetMap==null){
 			this.facetMap = new HtmlPageRegionFacetMap(this);
