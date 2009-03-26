@@ -1904,3 +1904,46 @@ IWCORE.getSelectedFromAdvancedProperties = function(handlerUsers) {
 	
 	return null;
 }
+
+IWCORE.isNumericValue = function(value) {
+	if (value == null || value.length == 0) {
+		return false;
+	}
+	
+	var validChars = '0123456789';
+	var isNumber = true;
+	var character = null;
+	
+	for (i = 0; i < value.length && isNumber; i++) { 
+		character = value.charAt(i); 
+		if (validChars.indexOf(character) == -1) {
+			isNumber = false;
+		}
+	}
+	
+	return isNumber;
+}
+
+IWCORE.activeSessionPolling = function(sleepTime, checkSleepTime) {
+	if (checkSleepTime) {
+		if (!IWCORE.isNumericValue(sleepTime)) {
+			return;
+		}
+	}
+	
+	var id = window.setTimeout(function() {
+		IWCORE.pingServer(sleepTime, id);
+	}, sleepTime);
+}
+
+IWCORE.pingServer = function(sleepTime, id) {
+	window.clearTimeout(id);
+	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/PageSessionPoller.js'], function() {
+		PageSessionPoller.pollSession(window.location.pathname, {
+			callback: function(result) {
+				IWCORE.activeSessionPolling(sleepTime, false);
+			},
+			errorHandler: function() {}
+		});
+	}, null);
+}

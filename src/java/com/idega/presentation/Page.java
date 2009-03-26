@@ -1,5 +1,5 @@
 /*
- * $Id: Page.java,v 1.184 2009/01/21 10:03:33 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
+ * $Id: Page.java,v 1.185 2009/03/26 14:29:23 valdas Exp $ Created in 2000 by Tryggvi Larusson Copyright (C) 2001-2005 Idega Software hf. All Rights
  * Reserved.
  * 
  * This software is the proprietary information of Idega hf. Use is subject to license terms.
@@ -69,10 +69,10 @@ import com.idega.util.reflect.Property;
  * 
  * tags in HTML and renders the children inside the body tags.
  * </p>
- * Last modified: $Date: 2009/01/21 10:03:33 $ by $Author: valdas $
+ * Last modified: $Date: 2009/03/26 14:29:23 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.184 $
+ * @version $Revision: 1.185 $
  */
 public class Page extends PresentationObjectContainer implements PropertyDescriptionHolder {
 
@@ -86,9 +86,6 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public final static String IW_FRAMESET_PAGE_PARAMETER = "idegaweb_frameset_path";
 	public final static String IW_FRAME_NAME_PARAMETER = "idegaweb_frame_name";
 	public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s";
-	public final static String SESSION_POLLING_SCRIPT = "var s_p_t = 0; var s_p_r = null; var s_p_i = 240000; function activeSessionPolling() { try { PageSessionPoller.pollSession('ping', { callback: function(r) { s_p_t++; s_p_r = setTimeout('activeSessionPolling()',s_p_i); } }); } catch(e) {} }";
-	public final static String SESSION_POLLING_FUNCTION = "activeSessionPolling();";
-	public final static String SESSION_POLLING_DWR_INTERFACE = "/dwr/interface/PageSessionPoller.js";
 	// private final static String START_TAG="<!DOCTYPE HTML PUBLIC
 	// \"-//W3C//DTD HTML 4.01 Transitional//EN\"
 	// \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
@@ -1455,22 +1452,13 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		setDefaultAttributes(iwc);
 	}
 	
-	/**
-	 * @param iwc
-	 *          Description of the Parameter
-	 * @exception Exception
-	 *              Description of the Exception
-	 */
 	protected void addSessionPollingDWRFiles(IWContext iwc) {
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(IWContext.getInstance());
 		IWMainApplicationSettings applicationSettings = iwma.getSettings();
 
 		if (applicationSettings.getIfUseSessionPolling()) {
-			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, CoreConstants.DWR_ENGINE_SCRIPT);
-			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, SESSION_POLLING_DWR_INTERFACE);
-			
-			PresentationUtil.addJavaScriptActionToBody(iwc, SESSION_POLLING_SCRIPT);
-			PresentationUtil.addJavaScriptActionToBody(iwc, SESSION_POLLING_FUNCTION);
+			PresentationUtil.addJavaScriptActionToBody(iwc, new StringBuilder("registerEvent(window, 'load', function() {IWCORE.activeSessionPolling(")
+				.append(applicationSettings.getProperty("iw.core.polling_interval", "1200000")).append(", true);});").toString());
 		}
 	}
 
