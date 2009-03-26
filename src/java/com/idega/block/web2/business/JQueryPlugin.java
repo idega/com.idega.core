@@ -67,6 +67,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".autogrow.js";
 		}
+	},
+	AUTO_RESIZE {
+		@Override
+		public String getFileName() {
+			return ".autoresize.js";
+		}
 	};
 
 	public abstract String getFileName();
