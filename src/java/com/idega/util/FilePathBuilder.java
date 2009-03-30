@@ -7,7 +7,7 @@ import java.io.File;
  * separator symbol is slash
  * 
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $ Last modified: $Date: 2009/03/23 15:15:44 $ by $Author: civilis $
+ * @version $Revision: 1.2 $ Last modified: $Date: 2009/03/30 17:28:13 $ by $Author: civilis $
  */
 public class FilePathBuilder {
 	
@@ -54,8 +54,9 @@ public class FilePathBuilder {
 		return this;
 	}
 	
-	public FilePathBuilder addFile(String folderName) {
+	public FilePathBuilder addFile(String fileName) {
 		
+		path.append(fileName);
 		return this;
 	}
 	
