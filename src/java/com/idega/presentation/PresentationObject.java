@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.180 2009/01/29 07:33:39 valdas Exp $
+ * $Id: PresentationObject.java,v 1.181 2009/03/30 13:19:11 civilis Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -21,6 +21,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.context.FacesContext;
@@ -79,10 +80,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2009/01/29 07:33:39 $ by $Author: valdas $
+ * Last modified: $Date: 2009/03/30 13:19:11 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.180 $
+ * @version $Revision: 1.181 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2867,4 +2868,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setToRenderForLoggedOut(boolean render) {
 		this.renderForLoggedOut = render;
 	}
+	
+	@SuppressWarnings("unchecked")
+    protected <T>T getExpressionValue(FacesContext ctx, String expression) {
+    	
+    	ValueExpression vexp = getValueExpression(expression);
+    	return vexp != null ? (T)vexp.getValue(ctx.getELContext()) : null;
+    }
 }
