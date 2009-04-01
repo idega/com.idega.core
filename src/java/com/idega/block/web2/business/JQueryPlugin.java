@@ -73,6 +73,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".autoresize.js";
 		}
+	},
+	HOT_KEY {
+		@Override
+		public String getFileName() {
+			return ".hotkey.js";
+		}
 	};
 
 	public abstract String getFileName();
