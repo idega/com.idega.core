@@ -5,6 +5,9 @@ package com.idega.presentation.paging;
 
 import java.util.Collection;
 
+import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
+
 /**
  * A wrapper class for paged data list and total count of records. 
  * 
@@ -35,5 +38,10 @@ public class PagedDataCollection<T> {
 
 	public int getTotalCount() {
 		return totalCount;
+	}
+	
+	@Override
+	public String toString() {
+		return ListUtil.isEmpty(data) ? CoreConstants.MINUS : data.toString();
 	}
 }
