@@ -150,7 +150,7 @@ public class ListUtil {
 			}
 		}
 		
-		return isEmpty(filtered) ? null : filtered;
+		return filtered;
 	}
 
   protected static class EmptyList extends ArrayList{
