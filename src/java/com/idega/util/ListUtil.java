@@ -141,6 +141,17 @@ public class ListUtil {
 		
 		return false;
 	}
+	
+	public static <E>List<E> getFilteredList(Collection<E> collection) {
+		List<E> filtered = new ArrayList<E>();
+		for (E object: collection) {
+			if (object != null && !StringUtil.isEmpty(object.toString())) {
+				filtered.add(object);
+			}
+		}
+		
+		return isEmpty(filtered) ? null : filtered;
+	}
 
   protected static class EmptyList extends ArrayList{
 
