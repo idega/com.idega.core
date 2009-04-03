@@ -79,6 +79,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".hotkey.js";
 		}
+	},
+	URL_PARSER {
+		@Override
+		public String getFileName() {
+			return ".urlParser.js";
+		}
 	};
 
 	public abstract String getFileName();
