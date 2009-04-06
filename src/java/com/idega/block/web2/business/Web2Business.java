@@ -97,13 +97,17 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleURIsToMooToolsLib();
 	
 	/**
+	 * @deprecated use getJQuery().getBundleURIToJQueryLib
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToJQueryLib
 	 */
+	@Deprecated
 	public String getBundleURIToJQueryLib();
 
 	/**
+	 * @deprecated use getJQuery().getBundleURIToJQueryLib
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToJQueryLib
 	 */
+	@Deprecated
 	public String getBundleURIToJQueryLib(String jqueryLibraryVersion) throws RemoteException;
 
 	/**
@@ -346,8 +350,20 @@ public interface Web2Business extends IBOService {
 	public String getSlimboxScriptFilePath();
 	public String getSlimboxStyleFilePath();
 	
+	/**
+	 * @deprecated use getJQuery().getBundleURIToJQueryUILib
+	 * @param type
+	 * @return
+	 */
+	@Deprecated
 	public String getBundleURIToJQueryUILib(JQueryUIType type);
 	
+	/**
+	 * @deprecated use getJQuery().getBundleURIToJQueryUILib
+	 * @param type
+	 * @return
+	 */
+	@Deprecated
 	public String getBundleURIToJQueryUILib(String jqueryUILibraryVersion, String fileName);
 	
 	public String getBundleURIToJQGrid();
@@ -366,8 +382,13 @@ public interface Web2Business extends IBOService {
 	//	GreyBox
 	public String getBundleUtiToGreyBoxScript();
 	public String getBundleUtiToGreyBoxStyleSheet();
-	
-	// jQuery plugins
+
+	/**
+	 * @deprecated use getJQuery().getBundleURIToJQueryPlugin
+	 * @param plugin
+	 * @return
+	 */
+	@Deprecated
 	public String getBundleURIToJQueryPlugin(JQueryPlugin plugin);
 	
 	//	jsTree (based on jQuery)
@@ -400,4 +421,5 @@ public interface Web2Business extends IBOService {
 	public String getActionToLinkLinksWithFiles(String containerId, boolean executeOnLoad, boolean addStyleForNonFileLinks);
 	public String getBundleUriToLinkLinksWithFilesStyleFile();
 	
+	public abstract JQuery getJQuery();
 }
