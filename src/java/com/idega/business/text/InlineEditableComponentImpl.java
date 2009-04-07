@@ -8,7 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import com.idega.block.web2.business.JQueryUIType;
+import com.idega.block.web2.business.JQueryPlugin;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogicWrapper;
 import com.idega.core.accesscontrol.business.StandardRoles;
@@ -47,7 +47,7 @@ public class InlineEditableComponentImpl implements InlineEditableComponent {
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(
 				web2.getBundleURIToJQueryLib(),
-				web2.getBundleURIToJQueryUILib(JQueryUIType.UI_EDITABLE),
+				web2.getBundleURIToJQueryPlugin(JQueryPlugin.EDITABLE),
 				iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("javascript/AdminCore.js")
 		));
 		
