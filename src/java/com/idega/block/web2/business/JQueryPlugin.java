@@ -85,6 +85,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".urlParser.js";
 		}
+	},
+	EDITABLE {
+		@Override
+		public String getFileName() {
+			return ".editable.js";
+		}
 	};
 
 	public abstract String getFileName();
