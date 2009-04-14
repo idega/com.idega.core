@@ -30,6 +30,8 @@
 		  </bean>
         
         <bean id="genericDAO" class="com.idega.core.persistence.impl.GenericDaoImpl" scope="singleton" />
+        <bean id="daoFunctions" class="com.idega.core.persistence.impl.DaoFunctionsImpl" scope="singleton" />
+        <bean id="NativeQueryInlineImpl" class="com.idega.core.persistence.impl.NativeQueryInlineImpl" scope="prototype" />
         
         <bean class="org.springframework.orm.jpa.support.PersistenceAnnotationBeanPostProcessor" />
 		<bean class="org.springframework.dao.annotation.PersistenceExceptionTranslationPostProcessor"/>
