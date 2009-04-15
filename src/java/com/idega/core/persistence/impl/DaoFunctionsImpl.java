@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
 import org.springframework.context.annotation.Scope;
@@ -19,7 +20,7 @@ import com.idega.util.ListUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $ Last modified: $Date: 2009/04/14 14:20:54 $ by $Author: civilis $
+ * @version $Revision: 1.2 $ Last modified: $Date: 2009/04/15 11:14:02 $ by $Author: civilis $
  */
 @Service
 @Scope("singleton")
@@ -103,7 +104,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		return ListUtil.isEmpty(realResults) ? null : realResults;
 	}
 	
-	@Transactional(readOnly = true)
+	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
 	public <Expected> Expected getSingleResultByQuery(Query q,
 	        Class<Expected> expectedReturnType, Param... params) {
 		
