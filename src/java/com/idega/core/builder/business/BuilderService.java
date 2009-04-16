@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.71 2009/01/30 07:33:14 valdas Exp $
+ * $Id: BuilderService.java,v 1.72 2009/04/16 08:42:56 valdas Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -374,6 +374,8 @@ public interface BuilderService extends IBOService
 	public RenderedComponent getRenderedComponentById(String uuid, String uri, List<AdvancedProperty> properties);
 	
 	public RenderedComponent getRenderedComponentByClassName(String className, List<AdvancedProperty> properties);
+	
+	public RenderedComponent getRenderedComponent(UIComponent component, List<AdvancedProperty> properties);
 	
 	public String getUriToPagePermissionsWindow(List<AdvancedProperty> parameters);
 	
