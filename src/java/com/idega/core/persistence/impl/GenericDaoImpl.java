@@ -17,7 +17,7 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.32 $ Last modified: $Date: 2009/04/16 08:36:32 $ by $Author: civilis $
+ * @version $Revision: 1.33 $ Last modified: $Date: 2009/04/16 13:23:09 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 public class GenericDaoImpl implements GenericDao {
@@ -122,40 +122,6 @@ public class GenericDaoImpl implements GenericDao {
 	public com.idega.core.persistence.Query getQueryNamed(String queryName) {
 		
 		return createNewQueryNamed(queryName);
-	}
-	
-	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultListByInlineNativeQuery(
-	        String query, Class<Expected> expectedReturnType, Param... params) {
-		
-		return getQueryNativeInline(query).getResultList(expectedReturnType,
-		    params);
-	}
-	
-	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultListByInlineNativeQuery(
-	        String query, Class<Expected> expectedReturnType,
-	        String mappingName, Param... params) {
-		
-		return getQueryNativeInline(query).getResultList(expectedReturnType,
-		    mappingName, params);
-	}
-	
-	@Transactional(readOnly = true)
-	public <Expected> Expected getSingleResultByInlineNativeQuery(String query,
-	        Class<Expected> expectedReturnType, String mappingName,
-	        Param... params) {
-		
-		return getQueryNativeInline(query).getSingleResult(expectedReturnType,
-		    mappingName, params);
-	}
-	
-	@Transactional(readOnly = true)
-	public <Expected> Expected getSingleResultByInlineNativeQuery(String query,
-	        Class<Expected> expectedReturnType, Param... params) {
-		
-		return getQueryNativeInline(query).getSingleResult(expectedReturnType,
-		    params);
 	}
 	
 	@Transactional(readOnly = true)

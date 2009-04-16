@@ -6,7 +6,7 @@ import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.13 $ Last modified: $Date: 2009/04/16 08:36:18 $ by $Author: civilis $
+ * @version $Revision: 1.14 $ Last modified: $Date: 2009/04/16 13:23:09 $ by $Author: civilis $
  */
 public interface GenericDao {
 	
@@ -44,60 +44,6 @@ public interface GenericDao {
 	        String query, Class<Expected> expectedReturnType, Param... params);
 	
 	public abstract <Expected> List<Expected> getResultListByInlineQuery(
-	        String query, Class<Expected> expectedReturnType, Param... params);
-	
-	/**
-	 * use getQueryNativeInline
-	 * 
-	 * @param <Expected>
-	 * @param query
-	 * @param expectedReturnType
-	 * @param params
-	 * @return
-	 */
-	@Deprecated
-	public abstract <Expected> List<Expected> getResultListByInlineNativeQuery(
-	        String query, Class<Expected> expectedReturnType, Param... params);
-	
-	/**
-	 * use getQueryNativeInline
-	 * 
-	 * @param <Expected>
-	 * @param query
-	 * @param expectedReturnType
-	 * @param params
-	 * @return
-	 */
-	@Deprecated
-	public abstract <Expected> List<Expected> getResultListByInlineNativeQuery(
-	        String query, Class<Expected> expectedReturnType,
-	        String mappingName, Param... params);
-	
-	/**
-	 * use getQueryNativeInline
-	 * 
-	 * @param <Expected>
-	 * @param query
-	 * @param expectedReturnType
-	 * @param params
-	 * @return
-	 */
-	@Deprecated
-	public abstract <Expected> Expected getSingleResultByInlineNativeQuery(
-	        String query, Class<Expected> expectedReturnType,
-	        String mappingName, Param... params);
-	
-	/**
-	 * use getQueryNativeInline
-	 * 
-	 * @param <Expected>
-	 * @param query
-	 * @param expectedReturnType
-	 * @param params
-	 * @return
-	 */
-	@Deprecated
-	public abstract <Expected> Expected getSingleResultByInlineNativeQuery(
 	        String query, Class<Expected> expectedReturnType, Param... params);
 	
 	/**
