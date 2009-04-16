@@ -27,9 +27,13 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.IWBundleResourceFilter;
@@ -842,6 +846,58 @@ public static String getFileSeparator(){
       output.write(buf,0,read);
       read = input.read(buf,0,buffersize);
     }
+  }
+  
+  public static final File getZippedFiles(Collection<File> filesToZip) throws IOException {
+	  return getZippedFiles(filesToZip, "Archive.zip", true);
+  }
+  
+  public static final File getZippedFiles(Collection<File> filesToZip, String fileName) throws IOException {
+	  return getZippedFiles(filesToZip, fileName, true);
+  }
+  
+  public static final File getZippedFiles(Collection<File> filesToZip, String fileName, boolean deleteZippedFiles) throws IOException {
+	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
+		  return null;
+	  }
+	  
+	  File zippedFile = new File(fileName);
+	  ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zippedFile));
+
+	  int bytesRead;
+	  CRC32 crc = new CRC32();
+	  byte[] buffer = new byte[1024];
+	  for (File file: filesToZip) {
+		  InputStream bis = new BufferedInputStream(new FileInputStream(file));
+		  
+		  //	Compressing
+		  crc.reset();
+		  while ((bytesRead = bis.read(buffer)) != -1) {
+              crc.update(buffer, 0, bytesRead);
+          }
+          bis.close();
+
+          //	Adding new entry
+          bis = new BufferedInputStream(new FileInputStream(file));
+          ZipEntry entry = new ZipEntry(file.getName());
+          entry.setMethod(ZipEntry.STORED);
+          entry.setCompressedSize(file.length());
+          entry.setSize(file.length());
+          entry.setCrc(crc.getValue());
+          zos.putNextEntry(entry);
+          while ((bytesRead = bis.read(buffer)) != -1) {
+              zos.write(buffer, 0, bytesRead);
+          }
+          bis.close();
+          
+          if (deleteZippedFiles) {
+        	  file.delete();
+          }
+	  }
+	  
+	  zos.close();
+	  
+	  return zippedFile;
   }
 
   public static void copyDirectoryRecursivelyKeepTimestamps(File inputDirectory,File outputDirectory) throws IOException {
