@@ -3,7 +3,6 @@ package com.idega.core.persistence.impl;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
@@ -18,7 +17,7 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.31 $ Last modified: $Date: 2009/04/14 14:20:25 $ by $Author: civilis $
+ * @version $Revision: 1.32 $ Last modified: $Date: 2009/04/16 08:36:32 $ by $Author: civilis $
  */
 @Repository("genericDAO")
 public class GenericDaoImpl implements GenericDao {
@@ -91,50 +90,45 @@ public class GenericDaoImpl implements GenericDao {
 	public <Expected> Expected getSingleResultByInlineQuery(String query,
 	        Class<Expected> expectedReturnType, Param... params) {
 		
-		try {
-			Query q = getEntityManager().createQuery(query);
-			return getDaoFunctions().getSingleResultByQuery(q,
-			    expectedReturnType, params);
-			
-		} catch (NoResultException e) {
-			return null;
-		}
+		return getQueryInline(query)
+		        .getSingleResult(expectedReturnType, params);
 	}
 	
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName,
 	        Class<Expected> expectedReturnType, Param... params) {
 		
-		try {
-			Query q = getEntityManager().createNamedQuery(namedQueryName);
-			return getDaoFunctions().getSingleResultByQuery(q,
-			    expectedReturnType, params);
-			
-		} catch (NoResultException e) {
-			return null;
-		}
+		return getQueryNamed(namedQueryName).getSingleResult(
+		    expectedReturnType, params);
 	}
 	
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineQuery(String query,
 	        Class<Expected> expectedReturnType, Param... params) {
 		
-		Query q = getEntityManager().createQuery(query);
-		return getDaoFunctions().getResultListByQuery(q, expectedReturnType,
-		    params);
+		return getQueryInline(query).getResultList(expectedReturnType, params);
 	}
 	
-	@Transactional(readOnly = true)
-	public com.idega.core.persistence.Query getNativeInlineQuery(String query) {
+	public com.idega.core.persistence.Query getQueryNativeInline(String query) {
 		
-		return createNewNativeInlineQuery(query);
+		return createNewQueryNativeInline(query);
+	}
+	
+	public com.idega.core.persistence.Query getQueryInline(String query) {
+		
+		return createNewQueryInline(query);
+	}
+	
+	public com.idega.core.persistence.Query getQueryNamed(String queryName) {
+		
+		return createNewQueryNamed(queryName);
 	}
 	
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineNativeQuery(
 	        String query, Class<Expected> expectedReturnType, Param... params) {
 		
-		return getNativeInlineQuery(query).getResultList(expectedReturnType,
+		return getQueryNativeInline(query).getResultList(expectedReturnType,
 		    params);
 	}
 	
@@ -143,7 +137,7 @@ public class GenericDaoImpl implements GenericDao {
 	        String query, Class<Expected> expectedReturnType,
 	        String mappingName, Param... params) {
 		
-		return getNativeInlineQuery(query).getResultList(expectedReturnType,
+		return getQueryNativeInline(query).getResultList(expectedReturnType,
 		    mappingName, params);
 	}
 	
@@ -152,7 +146,7 @@ public class GenericDaoImpl implements GenericDao {
 	        Class<Expected> expectedReturnType, String mappingName,
 	        Param... params) {
 		
-		return getNativeInlineQuery(query).getSingleResult(expectedReturnType,
+		return getQueryNativeInline(query).getSingleResult(expectedReturnType,
 		    mappingName, params);
 	}
 	
@@ -160,7 +154,7 @@ public class GenericDaoImpl implements GenericDao {
 	public <Expected> Expected getSingleResultByInlineNativeQuery(String query,
 	        Class<Expected> expectedReturnType, Param... params) {
 		
-		return getNativeInlineQuery(query).getSingleResult(expectedReturnType,
+		return getQueryNativeInline(query).getSingleResult(expectedReturnType,
 		    params);
 	}
 	
@@ -168,16 +162,33 @@ public class GenericDaoImpl implements GenericDao {
 	public <Expected> List<Expected> getResultList(String namedQueryName,
 	        Class<Expected> expectedReturnType, Param... params) {
 		
-		Query q = getEntityManager().createNamedQuery(namedQueryName);
-		return getDaoFunctions().getResultListByQuery(q, expectedReturnType,
+		return getQueryNamed(namedQueryName).getResultList(expectedReturnType,
 		    params);
 	}
 	
-	protected com.idega.core.persistence.Query createNewNativeInlineQuery(
+	protected com.idega.core.persistence.Query createNewQueryNativeInline(
 	        String queryExpression) {
 		
 		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(
-		    NativeQueryInlineImpl.beanIdentifier);
+		    QueryNativeInlineImpl.beanIdentifier);
+		q.setQueryExpression(queryExpression);
+		return q;
+	}
+	
+	protected com.idega.core.persistence.Query createNewQueryInline(
+	        String queryExpression) {
+		
+		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(
+		    QueryInlineImpl.beanIdentifier);
+		q.setQueryExpression(queryExpression);
+		return q;
+	}
+	
+	protected com.idega.core.persistence.Query createNewQueryNamed(
+	        String queryExpression) {
+		
+		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(
+		    QueryNamedImpl.beanIdentifier);
 		q.setQueryExpression(queryExpression);
 		return q;
 	}

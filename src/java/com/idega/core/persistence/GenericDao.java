@@ -6,7 +6,7 @@ import javax.persistence.Query;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.12 $ Last modified: $Date: 2009/04/14 14:19:43 $ by $Author: civilis $
+ * @version $Revision: 1.13 $ Last modified: $Date: 2009/04/16 08:36:18 $ by $Author: civilis $
  */
 public interface GenericDao {
 	
@@ -47,7 +47,7 @@ public interface GenericDao {
 	        String query, Class<Expected> expectedReturnType, Param... params);
 	
 	/**
-	 * use getNativeInlineQuery
+	 * use getQueryNativeInline
 	 * 
 	 * @param <Expected>
 	 * @param query
@@ -60,7 +60,7 @@ public interface GenericDao {
 	        String query, Class<Expected> expectedReturnType, Param... params);
 	
 	/**
-	 * use getNativeInlineQuery
+	 * use getQueryNativeInline
 	 * 
 	 * @param <Expected>
 	 * @param query
@@ -74,7 +74,7 @@ public interface GenericDao {
 	        String mappingName, Param... params);
 	
 	/**
-	 * use getNativeInlineQuery
+	 * use getQueryNativeInline
 	 * 
 	 * @param <Expected>
 	 * @param query
@@ -88,7 +88,7 @@ public interface GenericDao {
 	        String mappingName, Param... params);
 	
 	/**
-	 * use getNativeInlineQuery
+	 * use getQueryNativeInline
 	 * 
 	 * @param <Expected>
 	 * @param query
@@ -100,6 +100,24 @@ public interface GenericDao {
 	public abstract <Expected> Expected getSingleResultByInlineNativeQuery(
 	        String query, Class<Expected> expectedReturnType, Param... params);
 	
-	public abstract com.idega.core.persistence.Query getNativeInlineQuery(
+	/**
+	 * @param query
+	 * @return native inline query by query provided
+	 */
+	public abstract com.idega.core.persistence.Query getQueryNativeInline(
 	        String query);
+	
+	/**
+	 * @param query
+	 * @return hql inline query by query provided
+	 */
+	public abstract com.idega.core.persistence.Query getQueryInline(String query);
+	
+	/**
+	 * @param queryName
+	 * @return hql or native query by query name provided. Query can be defined e.g. using
+	 * @javax.persistence.NamedQuery
+	 */
+	public abstract com.idega.core.persistence.Query getQueryNamed(
+	        String queryName);
 }
