@@ -410,6 +410,8 @@ public interface Web2Business extends IBOService {
 	//	FancyBox
 	public List<String> getBundleURIsToFancyBoxScriptFiles();
 	public String getBundleURIToFancyBoxStyleFile();
+	public String getBundleURIToFancyBoxStyleFile(String version);
+	public List<String> getBundleURIsToFancyBoxScriptFiles(String version);
 
 	//	CodeMirror
 	public String getBundleURIToCodeMirrorScriptFile();
