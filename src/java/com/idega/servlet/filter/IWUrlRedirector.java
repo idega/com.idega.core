@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.24 2008/12/18 13:55:08 valdas Exp $
+ * $Id: IWUrlRedirector.java,v 1.25 2009/04/17 10:44:15 valdas Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -15,6 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import java.util.logging.Logger;
 
+import javax.faces.component.UIComponent;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -40,10 +41,10 @@ import com.idega.util.StringUtil;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2008/12/18 13:55:08 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/04/17 10:44:15 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.24 $
+ * @version $Revision: 1.25 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
@@ -123,6 +124,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 	 * @param request
 	 * @return
 	 */
+	@SuppressWarnings("unchecked")
 	String getNewRedirectURL(HttpServletRequest request) {
 		//TODO: Make this logic support regular expressions
 		String requestUri = getURIMinusContextPath(request);
@@ -193,30 +195,34 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			if (param != null && (isClassName || param.length() == 4)) {
 				String object = IWMainApplication.decryptClassName(param);
 				try {
-					Map pMap = request.getParameterMap();
-					StringBuffer newUri = new StringBuffer(getIWMainApplication(request).getPublicObjectInstanciatorURI(Class.forName(object)));
-					if (pMap != null) {
-						Iterator keys = pMap.keySet().iterator();
-						boolean first = true;
-						while (keys.hasNext()) {
-							String key = (String) keys.next();
-							if (!key.equals(IWMainApplication.classToInstanciateParameter)) {
-								String[] values = (String[]) pMap.get(key);
-								if (values != null) {
-									for (int i = 0; i < values.length; i++) {
-										if (first) {
-											newUri.append("?");
-											first = false;
-										} else {
-											newUri.append("&");
+					Class<?> classToInstanciate = Class.forName(object);
+					if (classToInstanciate.isInstance(UIComponent.class)) {
+						Map pMap = request.getParameterMap();
+						StringBuffer newUri = new StringBuffer(getIWMainApplication(request)
+													.getPublicObjectInstanciatorURI((Class<? extends UIComponent>) classToInstanciate));
+						if (pMap != null) {
+							Iterator keys = pMap.keySet().iterator();
+							boolean first = true;
+							while (keys.hasNext()) {
+								String key = (String) keys.next();
+								if (!key.equals(IWMainApplication.classToInstanciateParameter)) {
+									String[] values = (String[]) pMap.get(key);
+									if (values != null) {
+										for (int i = 0; i < values.length; i++) {
+											if (first) {
+												newUri.append("?");
+												first = false;
+											} else {
+												newUri.append("&");
+											}
+											newUri.append(key).append("=").append(values[i]);
 										}
-										newUri.append(key).append("=").append(values[i]);
 									}
 								}
 							}
 						}
+						return newUri.toString();
 					}
-					return newUri.toString();
 				}
 				catch (ClassNotFoundException e) {
 					String referer = request.getHeader("Referer");
