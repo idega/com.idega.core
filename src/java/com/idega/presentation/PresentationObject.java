@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.181 2009/03/30 13:19:11 civilis Exp $
+ * $Id: PresentationObject.java,v 1.182 2009/04/17 10:42:51 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -80,10 +80,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2009/03/30 13:19:11 $ by $Author: civilis $
+ * Last modified: $Date: 2009/04/17 10:42:51 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.181 $
+ * @version $Revision: 1.182 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -2480,7 +2480,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * This method has a bug in the Builder, the attributes do not clone correctly.
 	 */
 	@Override
-	public Map getAttributes(){
+	public Map<String, Object> getAttributes(){
 		//TODO: TL override this method because of the clone issue.
 		//		There is a problem with that because of the Myfaces implementation of restoreSate() and saveState() in UIComponentBase
 		return super.getAttributes();
