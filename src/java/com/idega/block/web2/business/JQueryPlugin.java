@@ -91,6 +91,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".editable.js";
 		}
+	},
+	EASING {
+		@Override
+		public String getFileName() {
+			return ".easing.js";
+		}
 	};
 
 	public abstract String getFileName();
