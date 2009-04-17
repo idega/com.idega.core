@@ -1,5 +1,5 @@
 /*
- * $Id: IFrame.java,v 1.21 2008/09/28 14:36:27 juozas Exp $
+ * $Id: IFrame.java,v 1.22 2009/04/17 10:43:33 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
@@ -12,6 +12,7 @@ package com.idega.presentation.ui;
 import java.io.IOException;
 import java.util.Map;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.LocaleSwitcher;
@@ -22,10 +23,10 @@ import com.idega.presentation.IWContext;
  * <p>
  * Component to render out an "iframe" or Inline Frame element.
  * </p>
- *  Last modified: $Date: 2008/09/28 14:36:27 $ by $Author: juozas $
+ *  Last modified: $Date: 2009/04/17 10:43:33 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.21 $
+ * @version $Revision: 1.22 $
  */
 public class IFrame extends InterfaceObject {
 
@@ -41,14 +42,17 @@ public class IFrame extends InterfaceObject {
 	public static final String SCROLLING_AUTO = "auto";
 	public static final int FRAMEBORDER_ON = 1;
 	public static final int FRAMEBORDER_OFF = 0;
+	public static final String CLASS_TO_INSTANCIATE_PARAMETER = "classToInstanciateParameter";
+	
 	//instance variables:
 	private boolean transparent = false;
 	private int ibPageId = 0;
 	private boolean addLocaleID = false;
-	private Class classToInstanciate;
+	private Class<? extends UIComponent> classToInstanciate;
 	private boolean addLanguageParameter = true;
 	private Map<String, String> parameters;
 
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(ctx);
@@ -59,13 +63,15 @@ public class IFrame extends InterfaceObject {
 		values[5] = Boolean.valueOf(this.addLanguageParameter);
 		return values;
 	}
+	@SuppressWarnings("unchecked")
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
 		this.transparent = ((Boolean)values[1]).booleanValue();
 		this.ibPageId = ((Integer)values[2]).intValue();
 		this.addLocaleID = ((Boolean)values[3]).booleanValue();
-		this.classToInstanciate = (Class)values[4];
+		this.classToInstanciate = (Class<? extends UIComponent>) values[4];
 		this.addLanguageParameter = ((Boolean) values[5]).booleanValue();
 	}
 	
@@ -77,8 +83,7 @@ public class IFrame extends InterfaceObject {
 		this(name, "");
 	}
 
-	public IFrame(String name, Class classToInstanciate) {
-		//	this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+	public IFrame(String name, Class<? extends UIComponent> classToInstanciate) {
 		this(name);
 		setSrc(classToInstanciate);
 	}
@@ -114,6 +119,7 @@ public class IFrame extends InterfaceObject {
 		setHeight(height);
 	}
 
+	@Override
 	public void setTitle(String title) {
 		setMarkupAttribute("title", title);
 	}
@@ -130,8 +136,7 @@ public class IFrame extends InterfaceObject {
 		this.ibPageId = id;
 	}
 
-	public void setSrc(Class classToAdd) {
-		//setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd));
+	public void setSrc(Class<? extends UIComponent> classToAdd) {
 		this.classToInstanciate = classToAdd;
 	}
 
@@ -141,7 +146,17 @@ public class IFrame extends InterfaceObject {
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
+	
+	@SuppressWarnings("unchecked")
 	private void setClassToInstanciateAsSource(IWContext iwc) {
+		if (iwc.isParameterSet(CLASS_TO_INSTANCIATE_PARAMETER)) {
+			try {
+				this.classToInstanciate = (Class<? extends UIComponent>) Class.forName(iwc.getParameter(CLASS_TO_INSTANCIATE_PARAMETER));
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
 		if (this.classToInstanciate != null) {
 			this.setSrc(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate));
 		}
@@ -151,10 +166,12 @@ public class IFrame extends InterfaceObject {
 	  setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd,templateClass));
 	}*/
 
+	@Override
 	public void setWidth(String width) {
 		setMarkupAttribute("width", width);
 	}
 
+	@Override
 	public String getWidth() {
 		return getMarkupAttribute("width");
 	}
@@ -163,6 +180,7 @@ public class IFrame extends InterfaceObject {
 		setMarkupAttribute("width", Integer.toString(width));
 	}
 
+	@Override
 	public void setHeight(String height) {
 		setMarkupAttribute("height", height);
 	}
@@ -171,6 +189,7 @@ public class IFrame extends InterfaceObject {
 		setMarkupAttribute("height", Integer.toString(height));
 	}
 
+	@Override
 	public void setStyleClass(String style) {
 		setMarkupAttribute("class", style);
 	}
@@ -211,6 +230,7 @@ public class IFrame extends InterfaceObject {
 		this.transparent = transparent;
 	}
 
+	@Override
 	public void print(IWContext iwc) throws IOException {
 		setClassToInstanciateAsSource(iwc);
 
@@ -275,12 +295,14 @@ public class IFrame extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
