@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.160 2009/04/02 14:25:45 laddi Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.161 2009/04/17 11:12:09 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -11,6 +11,7 @@ package com.idega.presentation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.Principal;
@@ -22,6 +23,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
@@ -67,9 +70,12 @@ import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
 import com.idega.user.business.UserProperties;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
 import com.idega.util.RequestUtil;
+import com.idega.util.SendMail;
+import com.idega.util.StringUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
 import com.idega.util.expression.ELUtil;
 
@@ -86,9 +92,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/04/02 14:25:45 $ by $Author: laddi $
+ * Last modified: $Date: 2009/04/17 11:12:09 $ by $Author: civilis $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.160 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.161 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -132,9 +138,15 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	private IWContext(FacesContext fc) {
-		this((HttpServletRequest) fc.getExternalContext().getRequest(),
-				(HttpServletResponse) fc.getExternalContext().getResponse(),
-				(ServletContext) fc.getExternalContext().getContext());
+		
+//		temporal constructor for catching character encoding npe, when fixed, use the uncommented one
+		this(fc, (HttpServletRequest) fc.getExternalContext().getRequest(),
+			(HttpServletResponse) fc.getExternalContext().getResponse(),
+			(ServletContext) fc.getExternalContext().getContext());
+		
+//		this((HttpServletRequest) fc.getExternalContext().getRequest(),
+//				(HttpServletResponse) fc.getExternalContext().getResponse(),
+//				(ServletContext) fc.getExternalContext().getContext());
 		setRealFacesContext(fc);
 	}
 
@@ -151,6 +163,66 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		initializeAfterRequestIsSet(request);
 		setServerURLToSystemProperties();
 	}
+	
+//	temporal constructor for catching character encoding npe
+	private IWContext(FacesContext fc, HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+		
+		if(request.getSession() == null) {
+			
+			try {
+//				the situation that we want to log
+				
+				String text = "=====Stacktrace of the call:\n";
+				
+				try {
+					throw new RuntimeException("Just the stacktrace");
+		            
+	            } catch (Exception e) {
+	            	StringWriter sw = new StringWriter();
+	            	e.printStackTrace(new PrintWriter(sw));
+	            	text += sw.toString();
+	            }
+	            
+//	            here we try to fix it by hoping session will be created
+	            fc.getExternalContext().getSession(true);
+	            
+	            if(request.getSession() != null) {
+	            	text += "\n\nThe session autocreated fixed the problem";
+	            } else {
+	            	text += "\n\nThe session autocreated didn't fix the problem";
+	            }
+
+	            String subject = "Exception of com.idega.presentation.IWContext.setCharactersetEncoding NPE handling at "+request.getServerName();
+	            sendErrorEmail(subject, text);
+	            
+            } catch (Exception e) {
+	            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Ex while producing debug info character encoding npe", e);
+            }
+		}
+		
+		setRequest(request);
+		setResponse(response);
+		setServletContext(context);
+		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
+		initializeAfterRequestIsSet(request);
+		setServerURLToSystemProperties();
+	}
+	
+//	tmp method till the npe bug is resolved
+	private void sendErrorEmail(String subject, String text) {
+    	
+    	String to = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("characterencodingnpe_error_mail_to", "civilis@idega.com");
+    	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+    	
+    	if(!StringUtil.isEmpty(host)) {
+    	
+    		try {
+        		SendMail.send("idegaweb@idega.com", to, null, null, host, subject, text);
+        	} catch(Exception e) {
+    			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error while sending email ("+text+") to: " + to, e);
+    		}
+    	}
+    }
 
 	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
 		setCharactersetEncoding(request);
