@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplication.java,v 1.206 2009/03/11 08:47:37 civilis Exp $
+ * $Id: IWMainApplication.java,v 1.207 2009/04/17 10:45:19 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
@@ -112,10 +112,10 @@ import com.idega.util.text.TextSoap;
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
  * 
- *  Last modified: $Date: 2009/03/11 08:47:37 $ by $Author: civilis $
+ *  Last modified: $Date: 2009/04/17 10:45:19 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.206 $
+ * @version $Revision: 1.207 $
  */
 public class IWMainApplication	extends Application  implements MutableClass {
 
@@ -516,7 +516,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return buffer.toString();
     }
     
-    public String getPublicObjectInstanciatorURI(Class className, String templateName) {
+    public String getPublicObjectInstanciatorURI(Class<? extends UIComponent> className, String templateName) {
         //return getObjectInstanciatorURI(className.getName(), templateName);
     	StringBuffer buffer = new StringBuffer();
 		if(useNewURLScheme){
@@ -1650,7 +1650,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962' 
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
-    public String getWindowOpenerURI(Class windowToOpen) {
+    public String getWindowOpenerURI(Class<? extends UIComponent> windowToOpen) {
     	return getBufferedWindowOpenerURI(windowToOpen,true).toString();
     }
     	
@@ -1661,11 +1661,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * This Method does not prefix the URI with the webapplication context path if any.
      * 
      */
-    public String getWindowOpenerURIWithoutContextPath(Class windowToOpen) {
+    public String getWindowOpenerURIWithoutContextPath(Class<? extends UIComponent> windowToOpen) {
     	return getBufferedWindowOpenerURI(windowToOpen,false).toString();
     }
     
-    private StringBuffer getBufferedWindowOpenerURI(Class windowToOpen,boolean includeContextPath) {
+    private StringBuffer getBufferedWindowOpenerURI(Class<? extends UIComponent> windowToOpen,boolean includeContextPath) {
     	StringBuffer buffer = new StringBuffer();
 	String windowUri = null;
 	if(includeContextPath){
@@ -1692,7 +1692,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
-    public String getPublicWindowOpenerURI(Class windowToOpen) {
+    public String getPublicWindowOpenerURI(Class<? extends UIComponent> windowToOpen) {
     	return getPublicWindowOpenerURI(windowToOpen, -1);
     }    
     
@@ -1701,7 +1701,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
-    public String getPublicObjectInstanciatorURI(Class windowToOpen) {
+    public String getPublicObjectInstanciatorURI(Class<? extends UIComponent> windowToOpen) {
     	return getPublicObjectInstanciatorURI(windowToOpen, -1);
     }    
     
@@ -1710,7 +1710,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
-    public String getPublicWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
+    public String getPublicWindowOpenerURI(Class<? extends UIComponent> windowToOpen, int ICObjectInstanceIDToOpen) {
 		if(useNewURLScheme){
 			StringBuffer url = new StringBuffer();
 			url.append(getPublicWindowOpenerURI()+getEncryptedClassName(windowToOpen));
@@ -1741,7 +1741,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
      * but for older versions this is '/servlet/ObjectInstanciator?idegaweb_frame_class=1234'
      */
-    public String getPublicObjectInstanciatorURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
+    public String getPublicObjectInstanciatorURI(Class<? extends UIComponent> windowToOpen, int ICObjectInstanceIDToOpen) {
 		if(useNewURLScheme){
 			StringBuffer url = new StringBuffer();
 			url.append(getPublicObjectInstanciatorURI()+getEncryptedClassName(windowToOpen));
@@ -1765,7 +1765,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			}
     	}    
     
-    public String getWindowOpenerURI(Class windowToOpen, int ICObjectInstanceIDToOpen) {
+    public String getWindowOpenerURI(Class<? extends UIComponent> windowToOpen, int ICObjectInstanceIDToOpen) {
     	StringBuffer windowOpenerUri = getBufferedWindowOpenerURI(windowToOpen,true);
     	if (windowOpenerUri.indexOf("?") < 0) {
     		// there is no parameter
