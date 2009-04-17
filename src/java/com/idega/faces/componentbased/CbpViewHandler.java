@@ -1,5 +1,5 @@
 /*
- * $Id: CbpViewHandler.java,v 1.9 2008/12/13 15:31:12 civilis Exp $
+ * $Id: CbpViewHandler.java,v 1.10 2009/04/17 14:11:13 civilis Exp $
  * Created on 21.6.2004 by  tryggvil
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -40,6 +40,7 @@ import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>
@@ -49,10 +50,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * </p>
  * Copyright (C) idega software 2004-2005<br>
  * 
- * Last modified: $Date: 2008/12/13 15:31:12 $ by $Author: civilis $
+ * Last modified: $Date: 2009/04/17 14:11:13 $ by $Author: civilis $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  */
 public class CbpViewHandler extends ViewHandler {
 
@@ -222,7 +223,9 @@ public class CbpViewHandler extends ViewHandler {
 	            //System.err.println("CbpViewHandler.writeOutResponseAndClientState(): "+e.getClass().getName()+" : "+e.getMessage());
 	            log.error(""+e.getClass().getName()+" : "+e.getMessage());
 	            
-	            //e.printStackTrace();
+	            System.out.println("______________xxxxxxxxxxxxxxx1");
+	            e.printStackTrace();
+	            System.out.println("______________xxxxxxxxxxxxxxx2");
 	            //throw new JspException(e);
                 
                 try {
@@ -256,10 +259,15 @@ public class CbpViewHandler extends ViewHandler {
 	 * @return
 	 */
 	private String getOutputAsString(ResponseWriter bufferWriter) {
-		HtmlStringBufferedResponseWriter responseWriter = (HtmlStringBufferedResponseWriter)bufferWriter;
-		StringWriter writer = responseWriter.getStringWriter();
-		//BlockCacheResponseWriter blockWriter = (BlockCacheResponseWriter)bufferWriter;
-		return writer.getBuffer().toString();
+		
+		if(bufferWriter instanceof HtmlStringBufferedResponseWriter) {
+		
+			HtmlStringBufferedResponseWriter responseWriter = (HtmlStringBufferedResponseWriter)bufferWriter;
+			StringWriter writer = responseWriter.getStringWriter();
+			//BlockCacheResponseWriter blockWriter = (BlockCacheResponseWriter)bufferWriter;
+			return writer.getBuffer().toString();
+		} else
+			return CoreConstants.EMPTY;
 	}
 
 	/**
