@@ -1,5 +1,5 @@
 /*
- * $Id: IWUrlRedirector.java,v 1.25 2009/04/17 10:44:15 valdas Exp $
+ * $Id: IWUrlRedirector.java,v 1.26 2009/04/20 09:47:56 valdas Exp $
  * Created on 30.12.2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
@@ -41,13 +42,14 @@ import com.idega.util.StringUtil;
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
  * 
- *  Last modified: $Date: 2009/04/17 10:44:15 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/04/20 09:47:56 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.25 $
+ * @version $Revision: 1.26 $
  */
 public class IWUrlRedirector extends BaseFilter implements Filter {
 
+	private static final Logger LOGGER = Logger.getLogger(IWUrlRedirector.class.getName());
 
 	public void init(FilterConfig arg0) throws ServletException {
 	}
@@ -81,7 +83,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 					return;
 				}
 				
-				Logger.getLogger(this.getClass().getName()).warning("Found default page for error 404, redirecting to: " + redirectUri);
+				LOGGER.warning("Found default page for error 404, redirecting to: " + redirectUri);
 				response.sendRedirect(redirectUri);
 				return;
 			}
@@ -167,7 +169,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 				return newUri.toString();
 			}
 			catch (RemoteException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.WARNING, "Error getting uri for page: " + pageId , e);
 			}
 		}
 		else if(requestUri.startsWith(OLD_IDEGAWEB_LOGIN)){
@@ -185,52 +187,47 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			return getPagesUri(request);
 		}
 		else if (requestUri.startsWith(OLD_OBJECT_INSTANCIATOR)) {
-			String param = request.getParameter(IWMainApplication.classToInstanciateParameter);
-			boolean isClassName = false;
+			String classParam = IWMainApplication.decryptClassName(request.getParameter(IWMainApplication.classToInstanciateParameter));
+			Class<?> classToInstanciate = null;
 			try {
-				Class.forName(param);
-				isClassName = true;
+				classToInstanciate = Class.forName(classParam);
 			} catch (Exception e) {
+				LOGGER.warning(classParam + " is not class name or such class can not be found!");
 			}
-			if (param != null && (isClassName || param.length() == 4)) {
-				String object = IWMainApplication.decryptClassName(param);
+			
+			if (classToInstanciate != null) {
 				try {
-					Class<?> classToInstanciate = Class.forName(object);
-					if (classToInstanciate.isInstance(UIComponent.class)) {
-						Map pMap = request.getParameterMap();
-						StringBuffer newUri = new StringBuffer(getIWMainApplication(request)
-													.getPublicObjectInstanciatorURI((Class<? extends UIComponent>) classToInstanciate));
-						if (pMap != null) {
-							Iterator keys = pMap.keySet().iterator();
-							boolean first = true;
-							while (keys.hasNext()) {
-								String key = (String) keys.next();
-								if (!key.equals(IWMainApplication.classToInstanciateParameter)) {
-									String[] values = (String[]) pMap.get(key);
-									if (values != null) {
-										for (int i = 0; i < values.length; i++) {
-											if (first) {
-												newUri.append("?");
-												first = false;
-											} else {
-												newUri.append("&");
-											}
-											newUri.append(key).append("=").append(values[i]);
+					Class<? extends UIComponent> uiComponentToInstanciate = classToInstanciate.asSubclass(UIComponent.class);
+					Map pMap = request.getParameterMap();
+					StringBuffer newUri = new StringBuffer(getIWMainApplication(request).getPublicObjectInstanciatorURI(uiComponentToInstanciate));
+					if (pMap != null) {
+						Iterator keys = pMap.keySet().iterator();
+						boolean first = true;
+						while (keys.hasNext()) {
+							String key = (String) keys.next();
+							if (!key.equals(IWMainApplication.classToInstanciateParameter)) {
+								String[] values = (String[]) pMap.get(key);
+								if (values != null) {
+									for (int i = 0; i < values.length; i++) {
+										if (first) {
+											newUri.append("?");
+											first = false;
+										} else {
+											newUri.append("&");
 										}
+										newUri.append(key).append("=").append(values[i]);
 									}
 								}
 							}
 						}
-						return newUri.toString();
 					}
+					return newUri.toString();
 				}
-				catch (ClassNotFoundException e) {
-					String referer = request.getHeader("Referer");
-					System.err.println("[IWUrlRedirector] Referer = "+referer);
-					e.printStackTrace();
+				catch(ClassCastException e) {
+					LOGGER.log(Level.WARNING, "Error resolving " + UIComponent.class.getSimpleName() + " from: " + classToInstanciate.getName(), e);
 				}
 				catch (Exception e) {
-					e.printStackTrace();
+					LOGGER.log(Level.WARNING, "Error resolving " + UIComponent.class.getSimpleName() + " from: " + classToInstanciate.getName(), e);
 				}
 			}
 		}
@@ -239,7 +236,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			try {
 				builder = BuilderServiceFactory.getBuilderService(getIWMainApplication(request).getIWApplicationContext());
 			} catch (RemoteException e) {
-				e.printStackTrace();
+				LOGGER.log(Level.WARNING, "Error getting " + BuilderService.class.getSimpleName(), e);
 			}
 			
 			if (builder.isFirstBuilderRun()) {
