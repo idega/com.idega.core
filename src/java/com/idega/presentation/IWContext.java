@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.161 2009/04/17 11:12:09 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.162 2009/04/20 11:42:55 civilis Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -92,9 +92,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/04/17 11:12:09 $ by $Author: civilis $
+ * Last modified: $Date: 2009/04/20 11:42:55 $ by $Author: civilis $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.161 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.162 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -184,7 +184,9 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	            }
 	            
 //	            here we try to fix it by hoping session will be created
-	            fc.getExternalContext().getSession(true);
+	            Object sessionFromContext = fc.getExternalContext().getSession(true);
+	            
+	            text += "\n\nSession created from external context="+sessionFromContext;
 	            
 	            if(request.getSession() != null) {
 	            	text += "\n\nThe session autocreated fixed the problem";
