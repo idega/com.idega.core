@@ -1,5 +1,5 @@
 /*
- * $Id: PresentationObject.java,v 1.182 2009/04/17 10:42:51 valdas Exp $
+ * $Id: PresentationObject.java,v 1.183 2009/04/22 12:50:27 valdas Exp $
  * Created in 2000 by Tryggvi Larusson
  *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -80,10 +80,10 @@ import com.idega.util.text.TextStyler;
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
  * 
- * Last modified: $Date: 2009/04/17 10:42:51 $ by $Author: valdas $
+ * Last modified: $Date: 2009/04/22 12:50:27 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.182 $
+ * @version $Revision: 1.183 $
  */
 public class PresentationObject 
 //implements Cloneable{
@@ -98,7 +98,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public final static String HEIGHT = "height";
 	public final static String HORIZONTAL_ALIGNMENT = "align";
 	protected static final String slash = CoreConstants.SLASH;
-	private static String emptyString = "";
 	public static String sessionEventStorageName = IWMainApplication.IWEventSessionAddressParameter;
 	public static final PresentationObject NULL_CLONE_OBJECT = new PresentationObject();
 	public static final String TARGET_OBJ_INS = "tois";
