@@ -8,12 +8,14 @@ import com.idega.util.SendMail;
  * <p>
  * Convenient and simple holder object to send an E-mail Message.
  * </p>
- *  Last modified: $Date: 2007/06/27 22:19:08 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2009/04/22 12:51:54 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class EmailMessage extends SimpleMessage {
+	
+	private String senderName;
 	
 	private String toAddress;
 	private String fromAddress;
@@ -120,6 +122,14 @@ public class EmailMessage extends SimpleMessage {
 		this.ccAddress = ccAddress;
 	}
 	
+	public String getSenderName() {
+		return senderName;
+	}
+
+	public void setSenderName(String senderName) {
+		this.senderName = senderName;
+	}
+
 	/**
 	 * <p>
 	 * Sends the email to the receiver.
@@ -127,6 +137,7 @@ public class EmailMessage extends SimpleMessage {
 	 * </p>
 	 * @throws MessagingException
 	 */
+	@Override
 	public void send() throws MessagingException{
 		MessagingSettings settings = getMessagingSettings();
 		if(settings.isEmailingEnabled()){
