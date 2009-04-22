@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.127 2009/01/24 02:48:55 eiki Exp $
+ * $Id: AccessControl.java,v 1.128 2009/04/22 12:50:56 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -76,12 +76,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2009/01/24 02:48:55 $ by $Author: eiki $
+ * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.127 $
+ * @version $Revision: 1.128 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -644,7 +644,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * 
 	 * @see com.idega.core.accesscontrol.business.AccessController#hasPermission(List, String, PresentationObject, IWUserContext)
 	 */
-	public boolean hasPermission(List groupIds, String permissionKey, Object obj, IWUserContext iwc) throws Exception {
+	public boolean hasPermission(List<Integer> groupIds, String permissionKey, Object obj, IWUserContext iwc) throws Exception {
 		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 		//TODO Eiki make one universal haspermission method

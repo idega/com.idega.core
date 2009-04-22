@@ -1,5 +1,5 @@
 /*
- * $Id: IDOContainer.java,v 1.27 2007/05/03 14:35:45 thomas Exp $
+ * $Id: IDOContainer.java,v 1.28 2009/04/22 12:50:56 valdas Exp $
  * Created in 2002 by Tryggvi Larusson
  * 
  * Copyright (C) 2002-2006 Idega software hf. All Rights Reserved.
@@ -28,15 +28,16 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
  * This class is a singleton for the application and is the "base center" for
  * getting access to other component of the persistence engine.
  * </p>
- * Last modified: $Date: 2007/05/03 14:35:45 $ by $Author: thomas $
+ * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.27 $
+ * @version $Revision: 1.28 $
  */
 public class IDOContainer implements Singleton {
 
 	// Static variables:
 	private static Instantiator instantiator = new Instantiator() {
+		@Override
 		public Object getInstance() {
 			return new IDOContainer();
 		}
@@ -52,7 +53,7 @@ public class IDOContainer implements Singleton {
 	// These variables were moved from GenericEntity:
 	private Map entityAttributes;
 	private Map entityStaticInstances;
-	private HashtableDoubleKeyed relationshipTables = new HashtableDoubleKeyed();
+	private HashtableDoubleKeyed<String, EntityRelationship> relationshipTables = new HashtableDoubleKeyed<String, EntityRelationship>();
 
 	protected IDOContainer() {
 		// unload
@@ -379,9 +380,9 @@ public class IDOContainer implements Singleton {
 	 * 
 	 * @return the relationship Map
 	 */
-	HashtableDoubleKeyed getRelationshipTableMap() {
+	HashtableDoubleKeyed<String, EntityRelationship> getRelationshipTableMap() {
 		if (this.relationshipTables == null) {
-			this.relationshipTables = new HashtableDoubleKeyed();
+			this.relationshipTables = new HashtableDoubleKeyed<String, EntityRelationship>();
 		}
 		return this.relationshipTables;
 	}

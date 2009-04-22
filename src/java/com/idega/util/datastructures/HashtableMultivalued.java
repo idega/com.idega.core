@@ -6,18 +6,13 @@
 
 */
 
-
-
 package com.idega.util.datastructures;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Hashtable;
 
-
-
-
-import java.util.*;
-
-
-
+import com.idega.util.ListUtil;
 
 
 /**
@@ -27,143 +22,77 @@ import java.util.*;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 
 *@version 0.9
-
+ * @param <K>
+ * @param <V>
 */
 
-public class HashtableMultivalued extends Hashtable{
+public class HashtableMultivalued<K, T extends Collection<V>, V> extends Hashtable<K, Collection<V>> {
 
+	private static final long serialVersionUID = -7189090701326564598L;
 
+	public V putValue(K key, V value) {
+      Collection<V> values = getList(key);
+      values.add(value);
 
+      super.put(key, values);
 
-
-   public Object put(Object key,Object value){
-
-      List vector = getList(key);
-
-      if(vector==null){
-
-         vector = new Vector();
-
-         super.put(key,vector);
-
-      }
-
-      vector.add(value);
-
-      return null;
-
+      return value;
    }
 
-
-
-   public Object put(Object key,Collection coll){
-
-      List vector = getList(key);
-
-      if(vector==null){
-
-         vector = new Vector();
-
-         super.put(key,vector);
-
-      }
-
-      vector.addAll(coll);
-
-      return null;
-
+   @Override
+   public Collection<V> put(K key, Collection<V> coll){
+      Collection<V> values = getList(key);
+      values.addAll(coll);
+      return super.put(key, values);
    }
 
+   @Override
+   public Collection<V> get(Object key){
+      return super.get(key);
+   }
 
-
+   public V getFirstValue(K key) {
+	   Collection<V> values = getList(key, false);
+	   
+	   if (ListUtil.isEmpty(values)) {
+		   return null;
+	   }
+	   
+	   return values.iterator().next();
+   }
+   
    /**
-
-   *Returns the first object with this key
-
-   */
-
-   public Object get(Object key){
-
-      List vector = getList(key);
-
-      if(vector==null){
-
-         return null;
-
+    * Returns the first object with this key and removes it from the Hashtable
+    * @param key
+    * @return
+    */
+   public V getAndRemove(K key) {
+      V obj = getFirstValue(key);
+     
+      if (obj == null) {
+    	  return null;
       }
+      
+      getList(key, false).remove(obj);
 
-      else{
-
-         return vector.get(0);
-
-      }
-
+      return obj;
+   }
+   
+   public Collection<V> getList(Object key) {
+	   return getList(key, true);
    }
 
-
-
-   /**
-
-   *Returns the first object with this key and removes it from the Hashtable
-
-   */
-
-   public Object getAndRemove(Object key){
-
-      List vector = getList(key);
-
-      if(vector==null){
-
-         return null;
-
-      }
-
-      else{
-
-        Object obj = vector.get(0);
-
-        vector.remove(0);
-
-        return obj;
-
-      }
-
+   private Collection<V> getList(Object key, boolean initialize) {
+	   Collection<V> values = super.get(key);
+	   if (values == null && initialize) {
+		   values = new ArrayList<V>();
+	   }
+	   return values;
    }
 
-
-
-   public Collection getCollection(Object key){
-
-      return (Collection)super.get(key);
-
-   }
-
-
-
-  public List getList(Object key){
-
-      return (List)super.get(key);
-
-  }
-
-
-
-  public int getNumberOfValues(Object key){
-
-      List vector = getList(key);
-
-      if(vector==null){
-
-         return 0;
-
-      }
-
-      else{
-
-        return vector.size();
-
-      }
-
+  public int getNumberOfValues(K key){
+      Collection<V> values = getList(key, false);
+      return ListUtil.isEmpty(values) ? 0 : values.size();
   }
 
 }

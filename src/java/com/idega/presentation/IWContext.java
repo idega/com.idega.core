@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.162 2009/04/20 11:42:55 civilis Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.163 2009/04/22 12:50:56 valdas Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -73,6 +73,7 @@ import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.SendMail;
 import com.idega.util.StringUtil;
@@ -92,9 +93,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/04/20 11:42:55 $ by $Author: civilis $
+ * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.162 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.163 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -118,7 +119,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	private PrintWriter cacheWriter;
 	private ResponseWriter cacheResponseWriter;
 	private PrintWriter writer = null;
-	private HashtableMultivalued _multipartParameters = null;
+	private HashtableMultivalued<String, Collection<String>, String> _multipartParameters = null;
 	private UploadFile _uploadedFile = null;
 	private FacesContext realFacesContext;
 	private static final String IWCONTEXT_REQUEST_KEY = "iwcontext";
@@ -319,18 +320,31 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	public void setMultipartParameter(String key, String value) {
 		if (this._multipartParameters == null) {
-			this._multipartParameters = new HashtableMultivalued();
+			this._multipartParameters = new HashtableMultivalued<String, Collection<String>, String>();
 		}
-		this._multipartParameters.put(key, value);
+		this._multipartParameters.putValue(key, value);
 	}
 
 	public String getMultipartParameter(String key) {
-		if (this._multipartParameters != null) {
-			return (String) this._multipartParameters.get(key);
-		}
-		else {
+		if (this._multipartParameters == null) {
 			return null;
 		}
+		
+		Collection<String> values = this._multipartParameters.get(key);
+		if (ListUtil.isEmpty(values)) {
+			return null;
+		}
+		
+		StringBuffer value = new StringBuffer();
+		for (Iterator<String> valuesIter = values.iterator(); valuesIter.hasNext();) {
+			value.append(valuesIter.next());
+			
+			if (valuesIter.hasNext()) {
+				value.append(CoreConstants.COMMA);
+			}
+		}
+		
+		return value.toString();
 	}
 
 	public UploadFile getUploadedFile() {
@@ -639,7 +653,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return null;
 	}
 
-	public Enumeration getParameterNames() {
+	@SuppressWarnings("unchecked")
+	public Enumeration<String> getParameterNames() {
 		if (this._multipartParameters != null) {
 			return this._multipartParameters.keys();
 		}
@@ -650,9 +665,9 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	public String[] getParameterValues(String parameterName) {
 		if (this._multipartParameters != null) {
-			Collection values = this._multipartParameters.getCollection(parameterName);
+			Collection<String> values = this._multipartParameters.get(parameterName);
 			if (values != null) {
-				return (String[]) values.toArray(new String[values.size()]);
+				return values.toArray(new String[values.size()]);
 			}
 			else {
 				return null;
@@ -724,11 +739,12 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * @deprecated UNIMPLEMENTED
 	 */
+	@SuppressWarnings("unchecked")
 	@Deprecated
 	public void maintainParameter(Parameter parameter) {
-		Hashtable theParameters = (Hashtable) this.getSessionAttribute("idega_special_maintained_parameters");
+		Hashtable<String, Parameter> theParameters = (Hashtable<String, Parameter>) this.getSessionAttribute("idega_special_maintained_parameters");
 		if (theParameters == null) {
-			theParameters = new Hashtable();
+			theParameters = new Hashtable<String, Parameter>();
 			theParameters.put(parameter.getName(), parameter);
 		}
 		else {
@@ -876,10 +892,11 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return getWeakHashMap().get(propertyName);
 	}
 
-	private Map getWeakHashMap() {
-		WeakHashMap map = (WeakHashMap) getSessionAttribute(WEAK_HASHMAP_KEY);
+	@SuppressWarnings("unchecked")
+	private Map<String, Object> getWeakHashMap() {
+		WeakHashMap<String, Object> map = (WeakHashMap<String, Object>) getSessionAttribute(WEAK_HASHMAP_KEY);
 		if (map == null) {
-			map = new WeakHashMap();
+			map = new WeakHashMap<String, Object>();
 			setSessionAttribute(WEAK_HASHMAP_KEY, map);
 		}
 		return map;
@@ -1004,7 +1021,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return this.hasPermission(AccessController.PERMISSION_KEY_EDIT, obj);
 	}
 
-	public boolean hasPermission(List groupIds, String permissionKey, Object obj) {
+	public boolean hasPermission(List<Integer> groupIds, String permissionKey, Object obj) {
 		try {
 			return this.getAccessController().hasPermission(groupIds, permissionKey, obj, this);
 		}
@@ -1034,11 +1051,11 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 	}
 
-	public boolean hasViewPermission(List groupIds, PresentationObject obj) {
+	public boolean hasViewPermission(List<Integer> groupIds, PresentationObject obj) {
 		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_VIEW, obj);
 	}
 
-	public boolean hasEditPermission(List groupIds, PresentationObject obj) {
+	public boolean hasEditPermission(List<Integer> groupIds, PresentationObject obj) {
 		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_EDIT, obj);
 	}
 
@@ -1123,6 +1140,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * @todo implement
 	 */
+	@SuppressWarnings("unchecked")
 	public String getCurrentState(int instanceId) {
 		String historyId = this.getParameter(PRM_HISTORY_ID);
 		// System.err.println("in iwc.getCurrentState()");
@@ -1131,14 +1149,14 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			HttpSession s = this.getSession();
 			// System.err.println(" - from Session.hashCode() ->
 			// "+s.hashCode());
-			List historyList = (List) s.getAttribute(SESSION_OBJECT_STATE);
+			List<Object> historyList = (List<Object>) s.getAttribute(SESSION_OBJECT_STATE);
 			// List historyList =
 			// (List)this.getSessionAttribute(BuilderLogic.SESSION_OBJECT_STATE);
 			if (historyList != null && historyList.contains(historyId)) {
 				int index = historyList.indexOf(historyId);
 				// System.err.println("current state historyIndex = "+index + "
 				// for instance " + instanceId);
-				Object ob = ((Hashtable) historyList.get(index + 1)).get(Integer.toString(instanceId));
+				Object ob = ((Hashtable<Object, Object>) historyList.get(index + 1)).get(Integer.toString(instanceId));
 				// System.err.println("current state = "+ob);
 				// System.err.println("iwc.getCurrentState() ends");
 				return (String) ob;
@@ -1394,7 +1412,6 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return bs.getCurrentPageId(this);
 		}
 		catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return -1;
@@ -1472,7 +1489,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * @see javax.faces.context.FacesContext#getClientIdsWithMessages()
 	 */
 	@Override
-	public Iterator getClientIdsWithMessages() {
+	public Iterator<String> getClientIdsWithMessages() {
 		return getRealFacesContext().getClientIdsWithMessages();
 	}
 
@@ -1502,7 +1519,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * @see javax.faces.context.FacesContext#getMessages()
 	 */
 	@Override
-	public Iterator getMessages() {
+	public Iterator<FacesMessage> getMessages() {
 		return getRealFacesContext().getMessages();
 	}
 
@@ -1512,7 +1529,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * @see javax.faces.context.FacesContext#getMessages(java.lang.String)
 	 */
 	@Override
-	public Iterator getMessages(String arg0) {
+	public Iterator<FacesMessage> getMessages(String arg0) {
 		return getRealFacesContext().getMessages(arg0);
 	}
 

@@ -1,5 +1,5 @@
 /*
- * $Id: AccessController.java,v 1.36 2008/09/03 07:22:08 valdas Exp $
+ * $Id: AccessController.java,v 1.37 2009/04/22 12:50:56 valdas Exp $
  * 
  * Created in 2001 by gummi
  * 
@@ -32,10 +32,10 @@ import com.idega.user.data.Group;
  * This is the main service interface for the old generation permission system
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
- * Last modified: $Date: 2008/09/03 07:22:08 $ by $Author: valdas $
+ * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.36 $
+ * @version $Revision: 1.37 $
  */
 public interface AccessController extends com.idega.idegaweb.IWService{
 
@@ -106,7 +106,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   //temp public boolean hasDataPermission(String permissionKey, Class entity, IWUserContext iwc)throws Exception;
   public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWUserContext iwc) throws Exception;
   //public boolean hasPermission(Class someClass, int id, IWUserContext iwc) throws Exception;
-  public boolean hasPermission(List groupIds,String permissionType, Object obj,IWUserContext iwc) throws Exception;
+  public boolean hasPermission(List<Integer> groupIds,String permissionType, Object obj,IWUserContext iwc) throws Exception;
 	public boolean hasCreatePermissionFor(Group group,IWUserContext iwuc);
 	public boolean hasDeletePermissionFor(Group group,IWUserContext iwuc);
 

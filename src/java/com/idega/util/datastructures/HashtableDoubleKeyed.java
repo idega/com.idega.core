@@ -6,21 +6,16 @@
 
 */
 
-
-
 package com.idega.util.datastructures;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Enumeration;
+import java.util.Hashtable;
+import java.util.List;
 
-
-
-
-import java.util.*;
-
-import com.idega.util.*;
-
-
-
-
+import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 
 /**
 
@@ -32,89 +27,47 @@ import com.idega.util.*;
 
 */
 
-public class HashtableDoubleKeyed{
+public class HashtableDoubleKeyed<K, V> {
 
+   private Hashtable<String, V> table;
+   private HashtableMultivalued<String, Collection<V>, V> tableForKeys;
 
-
-   private Hashtable table;
-
-
-
-   private HashtableMultivalued tableForKeys;
-
-
-
-
-
-   public HashtableDoubleKeyed(){
-
-      this.table = new Hashtable();
-
-      this.tableForKeys=new HashtableMultivalued();
-
+   public HashtableDoubleKeyed() {
+      this.table = new Hashtable<String, V>();
+      this.tableForKeys=new HashtableMultivalued<String, Collection<V>, V>();
    }
 
-
-
-   public Object put(String key1,String key2,Object value){
-
-      this.tableForKeys.put(key1,value);
-
-      this.tableForKeys.put(key2,value);
-
+   public V put(String key1, String key2, V value){
+      this.tableForKeys.putValue(key1, value);
+      this.tableForKeys.putValue(key2, value);
+      
       return this.table.put(StringHandler.concatAlphabetically(key1,key2),value);
-
    }
 
-
-
-   public Object get(String key1,String key2){
-
+   public V get(String key1,String key2){
       return this.table.get(StringHandler.concatAlphabetically(key1,key2));
-
   }
 
-
-
-   public Object remove(String key1,String key2){
-
+   public V remove(String key1, String key2){
       return this.table.remove(StringHandler.concatAlphabetically(key1,key2));
-
   }
 
-
-
-  public Enumeration keys(){
-
+  public Enumeration<String> keys(){
       return this.table.keys();
-
   }
 
-
-
-  public Enumeration elements(){
-
+  public Enumeration<V> elements(){
       return this.table.elements();
-
   }
-
-
 
   /**
-
    * Returns a list of objects put for this key
-
+   * @param key
+   * @return
    */
-
-  public List get(String key){
-
-      return this.tableForKeys.getList(key);
-
+  public List<V> get(String key){
+	  Collection<V> values = this.tableForKeys.get(key);
+	  return ListUtil.isEmpty(values) ? null : new ArrayList<V>(values);
   }
-
-
-
-
-
+  
 }
-
