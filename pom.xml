@@ -213,6 +213,16 @@
       <artifactId>jcr</artifactId>
       <version>1.0</version>
     </dependency>
+    <dependency>
+      <groupId>jaxen</groupId>
+      <artifactId>jaxen</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>saxpath</groupId>
+      <artifactId>saxpath</artifactId>
+      <version>1.0-FCS</version>
+      <type>jar</type>
+    </dependency>
     
     <dependency>
     <!-- this dependency is here, because of maven exclusion mechanism not working correctly (civilis) -->
