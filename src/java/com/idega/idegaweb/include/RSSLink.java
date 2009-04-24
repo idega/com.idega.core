@@ -1,5 +1,5 @@
 /*
- * $Id: RSSLink.java,v 1.1 2005/03/06 13:17:37 tryggvil Exp $
+ * $Id: RSSLink.java,v 1.2 2009/04/24 08:39:08 valdas Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,19 +14,23 @@ package com.idega.idegaweb.include;
  * <p>
  *  Class to represent an external link to an RSS feed.
  * </p>
- *  Last modified: $Date: 2005/03/06 13:17:37 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2009/04/24 08:39:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class RSSLink extends ExternalLink{
+
+	private static final long serialVersionUID = -5443508768481787898L;
+	
+	private String title;
 	
 	/**
 	 * By default the relation to alternate
 	 */
 	public RSSLink(){
-		setType(TYPE_RSS);
-		setRelationship(RELATIONSHIP_ALTERNATE);
+		setType(PageResourceConstants.TYPE_RSS);
+		setRelationship(PageResourceConstants.RELATIONSHIP_ALTERNATE);
 	}
 	/**
 	 * By default the relation to alternate
@@ -39,5 +43,18 @@ public class RSSLink extends ExternalLink{
 	public RSSLink(String url,String relationship){
 		this(url);
 		setRelationship(relationship);
+	}
+	
+	/**
+	 * @return Returns the title.
+	 */
+	public String getTitle() {
+		return this.title;
+	}
+	/**
+	 * @param title The title to set.
+	 */
+	public void setTitle(String title) {
+		this.title = title;
 	}
 }

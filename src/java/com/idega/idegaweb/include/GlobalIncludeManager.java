@@ -16,6 +16,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
+import com.idega.util.CoreConstants;
 
 /**
  * This class manages resources such as stylesheets that are supposed to be
@@ -26,20 +27,19 @@ import com.idega.repository.data.SingletonRepository;
  */
 public class GlobalIncludeManager implements Singleton {
 	
-	private static Instantiator instantiator = new Instantiator() { public Object getInstance() {return new GlobalIncludeManager();}};
+	private static Instantiator instantiator = new Instantiator() { @Override
+	public Object getInstance() {return new GlobalIncludeManager();}};
 
-	//private String standardIWStyleSheetURL = "/idegaweb/style/style.css";
-	private String coreIWStyleSheetURL = "/idegaweb/bundles/com.idega.core.bundle/resources/style/iw_core.css";
+	private String coreIWStyleSheetURL = "style/iw_core.css";
 	
 	private IWMainApplication iwma;
 
-	private List styleSheets;
+	private List<StyleSheetLink> styleSheets;
 
 
 	protected GlobalIncludeManager() {
 		this.iwma =  IWMainApplication.getDefaultIWMainApplication();
-		addStyleSheet(this.coreIWStyleSheetURL);
-		//addStyleSheet(this.standardIWStyleSheetURL);
+		addStyleSheet(iwma.getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString(this.coreIWStyleSheetURL));
 	}
 
 	/**
@@ -55,9 +55,9 @@ public class GlobalIncludeManager implements Singleton {
 	 * Returns a list of StylesheetLink objects
 	 * @return
 	 */
-	public List getStyleSheets(){
+	public List<StyleSheetLink> getStyleSheets(){
 		if(this.styleSheets==null){
-			this.styleSheets=new ArrayList();
+			this.styleSheets=new ArrayList<StyleSheetLink>();
 		}
 		return this.styleSheets;
 	}
@@ -82,9 +82,9 @@ public class GlobalIncludeManager implements Singleton {
 	
 	
 	public boolean containsStyleSheet(String url){
-		Iterator iterator = getStyleSheets().iterator();
+		Iterator<StyleSheetLink> iterator = getStyleSheets().iterator();
 		while (iterator.hasNext()) {
-			StyleSheetLink link = (StyleSheetLink) iterator.next();
+			StyleSheetLink link = iterator.next();
 			if(link.getUrl().equals(url)){
 				return true;
 			}

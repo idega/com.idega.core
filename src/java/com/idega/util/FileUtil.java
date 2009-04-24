@@ -523,6 +523,18 @@ public static String getFileSeparator(){
 	  }
 	  return buffer.toString();
   }
+  
+  /** Uses getLinesFromFile and returns them in a string with "\n" between them **/
+  public static String getStringFromFile(File file) throws IOException{
+	  StringBuffer buffer = new StringBuffer();
+	  List<String> lines = getLinesFromFile(file);
+	  if (lines != null) {
+		  for (String line: lines) {
+			  buffer.append(line).append('\n');
+		  }
+	  }
+	  return buffer.toString();
+  }
 
   /** Gets a file relative to the specified file according the specified path.
    * Note: Works with windows or unix separators.

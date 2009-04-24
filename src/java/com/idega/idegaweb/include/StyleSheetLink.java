@@ -1,5 +1,5 @@
 /*
- * $Id: StyleSheetLink.java,v 1.1 2005/03/06 13:17:37 tryggvil Exp $
+ * $Id: StyleSheetLink.java,v 1.2 2009/04/24 08:39:08 valdas Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -14,20 +14,24 @@ package com.idega.idegaweb.include;
  *  <p>
  *  	Class to serve as a representation of a link to an external stylesheet file.
  *  </p>
- *  Last modified: $Date: 2005/03/06 13:17:37 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2009/04/24 08:39:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  */
 public class StyleSheetLink extends ExternalLink {
 
+	private static final long serialVersionUID = 5126013562070769025L;
+	
+	private String media;
+	
 	/**
 	 * By default the media is set to screen
 	 */
 	public StyleSheetLink(){
-		setType(TYPE_CSS);
-		setMedia(MEDIA_SCREEN);
-		setRelationship(RELATIONSHIP_STYLESHEET);
+		setType(PageResourceConstants.TYPE_CSS);
+		setMedia(PageResourceConstants.MEDIA_SCREEN);
+		setRelationship(PageResourceConstants.RELATIONSHIP_STYLESHEET);
 	}
 	/**
 	 * By default the media is set to screen
@@ -56,71 +60,83 @@ public class StyleSheetLink extends ExternalLink {
 	}
 	
 	public void setAsScreen(){
-		setMedia(MEDIA_SCREEN);
+		setMedia(PageResourceConstants.MEDIA_SCREEN);
 	}
 	
 	public void addAsScreen(){
-		addMedia(MEDIA_SCREEN);
+		addMedia(PageResourceConstants.MEDIA_SCREEN);
 	}
 	
 	public void setAsTty(){
-		setMedia(MEDIA_TTY);
+		setMedia(PageResourceConstants.MEDIA_TTY);
 	}
 	
 	public void addAsTty(){
-		addMedia(MEDIA_TTY);
+		addMedia(PageResourceConstants.MEDIA_TTY);
 	}
 	
 	public void setAsTv(){
-		setMedia(MEDIA_TV);
+		setMedia(PageResourceConstants.MEDIA_TV);
 	}
 	
 	public void addAsTv(){
-		addMedia(MEDIA_TV);
+		addMedia(PageResourceConstants.MEDIA_TV);
 	}
 	
 	public void setAsProjection(){
-		setMedia(MEDIA_PROJECTION);
+		setMedia(PageResourceConstants.MEDIA_PROJECTION);
 	}
 	
 	public void addAsProjection(){
-		addMedia(MEDIA_PROJECTION);
+		addMedia(PageResourceConstants.MEDIA_PROJECTION);
 	}
 
 	public void setAsHandheld(){
-		setMedia(MEDIA_HANDHELD);
+		setMedia(PageResourceConstants.MEDIA_HANDHELD);
 	}
 	
 	public void addAsHandheld(){
-		addMedia(MEDIA_HANDHELD);
+		addMedia(PageResourceConstants.MEDIA_HANDHELD);
 	}
 	
 	public void setAsPrint(){
-		setMedia(MEDIA_PRINT);
+		setMedia(PageResourceConstants.MEDIA_PRINT);
 	}
 	
 	public void addAsPrint(){
-		addMedia(MEDIA_PRINT);
+		addMedia(PageResourceConstants.MEDIA_PRINT);
 	}
 	
 	public void setAsBraille(){
-		setMedia(MEDIA_BRAILLE);
+		setMedia(PageResourceConstants.MEDIA_BRAILLE);
 	}
 	
 	public void addAsBraille(){
-		addMedia(MEDIA_BRAILLE);
+		addMedia(PageResourceConstants.MEDIA_BRAILLE);
 	}
 	
 	public void setAsAural(){
-		setMedia(MEDIA_AURAL);
+		setMedia(PageResourceConstants.MEDIA_AURAL);
 	}
 	
 	public void addAsAural(){
-		addMedia(MEDIA_AURAL);
+		addMedia(PageResourceConstants.MEDIA_AURAL);
 	}
 	
 	public void setAsALL(){
-		setMedia(MEDIA_ALL);
+		setMedia(PageResourceConstants.MEDIA_ALL);
 	}
 	
+	/**
+	 * @return Returns the media.
+	 */
+	public String getMedia() {
+		return this.media;
+	}
+	/**
+	 * @param media The media to set.
+	 */
+	public void setMedia(String media) {
+		this.media = media;
+	}
 }

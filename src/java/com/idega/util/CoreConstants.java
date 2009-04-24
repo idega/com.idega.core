@@ -86,6 +86,9 @@ public class CoreConstants {
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
 	
+	public static final String XHTML_NAMESPACE_ID = "xhtml";
+	public static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+	
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;
 	}

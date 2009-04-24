@@ -1,5 +1,5 @@
 /*
- * $Id: ExternalLink.java,v 1.4 2007/12/21 11:45:41 valdas Exp $
+ * $Id: ExternalLink.java,v 1.5 2009/04/24 08:39:08 valdas Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -9,8 +9,8 @@
  */
 package com.idega.idegaweb.include;
 
-import com.idega.util.CoreConstants;
-
+import java.io.InputStream;
+import java.io.Serializable;
 
 /**
  * 	<p>
@@ -18,31 +18,15 @@ import com.idega.util.CoreConstants;
  *  a <code>&lt;link&gt;</code> tag used to define resources such ass CSS links.
  *  This class is used by the GlobalIncludeManager for managing resources included in all pages.
  *  </p>
- *  Last modified: $Date: 2007/12/21 11:45:41 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/04/24 08:39:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.4 $
+ * @version $Revision: 1.5 $
  */
-public class ExternalLink {
+public abstract class ExternalLink implements Serializable {
 	
-	//static contants
-	public final static String MEDIA_SCREEN="screen";
-	public final static String MEDIA_TTY="tty";
-	public final static String MEDIA_TV="tv";
-	public final static String MEDIA_PROJECTION="projection";
-	public final static String MEDIA_HANDHELD="handheld";
-	public final static String MEDIA_PRINT="print";
-	public final static String MEDIA_BRAILLE="braille";
-	public final static String MEDIA_AURAL="aural";
-	public final static String MEDIA_ALL="all";
+	private static final long serialVersionUID = -3223586255509071468L;
 	
-	protected final static String TYPE_CSS=CoreConstants.CONTENT_TYPE_TEXT_CSS;
-	protected final static String TYPE_RSS="application/rss+xml";
-	
-	protected final static String RELATIONSHIP_STYLESHEET="stylesheet";
-	protected final static String RELATIONSHIP_ALTERNATE="alternate";
-	
-	//instance variables
 	//href attribute
 	private String url;
 	//charset attribute
@@ -54,10 +38,9 @@ public class ExternalLink {
 	private String relationship;
 	//rev attribute
 	private String reverseRelationship;
-	private String media;
-	//title attributes (maybe only used for rss)
-	private String title;
 
+	private String content;
+	private InputStream contentStream;
 	
 	/**
 	 * @return Returns the characterset.
@@ -70,18 +53,6 @@ public class ExternalLink {
 	 */
 	public void setCharacterset(String characterset) {
 		this.characterset = characterset;
-	}
-	/**
-	 * @return Returns the media.
-	 */
-	public String getMedia() {
-		return this.media;
-	}
-	/**
-	 * @param media The media to set.
-	 */
-	public void setMedia(String media) {
-		this.media = media;
 	}
 	/**
 	 * @return Returns the relationship.
@@ -143,16 +114,24 @@ public class ExternalLink {
 	public void setUrllanguage(String urllanguage) {
 		this.urllanguage = urllanguage;
 	}
-	/**
-	 * @return Returns the title.
-	 */
-	public String getTitle() {
-		return this.title;
+	
+	@Override
+	public String toString() {
+		return url;
 	}
-	/**
-	 * @param title The title to set.
-	 */
-	public void setTitle(String title) {
-		this.title = title;
+	
+	public String getContent() {
+		return content;
 	}
+	public void setContent(String content) {
+		this.content = content;
+	}
+	
+	public InputStream getContentStream() {
+		return contentStream;
+	}
+	public void setContentStream(InputStream contentStream) {
+		this.contentStream = contentStream;
+	}
+	
 }

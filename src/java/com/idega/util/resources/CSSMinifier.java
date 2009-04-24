@@ -13,14 +13,21 @@
  */
 package com.idega.util.resources;
 
-import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.idegaweb.include.ExternalLink;
+import com.idega.idegaweb.include.StyleSheetLink;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * Minifies CSS files by removing expendable whitespace and comments. 
@@ -68,6 +75,9 @@ public class CSSMinifier implements AbstractMinifier {
 
 	private static final String COLON = ":";
 	private static final String SEMICOLON = ";";
+	
+	@Autowired
+	private ResourceScanner resourceScanner;
 	
 	/**
 	 * Template class to abstract the pattern of iterating over a Matcher and performing 
@@ -154,17 +164,63 @@ public class CSSMinifier implements AbstractMinifier {
 		return new StringBuffer(compressed);
 	}
 
-	public String getMinifiedResource(String content) {
-		return minifyCSS(new StringBuffer(content)).toString();
+	private String getParsedContent(String resourceUri, String content) {
+		if (!resourceUri.startsWith(CoreConstants.SLASH)) {
+			resourceUri = CoreConstants.SLASH + resourceUri;
+		}
+		return getResourceScanner().getParsedContent(StringUtil.getLinesFromString(content),
+				resourceUri.substring(0, resourceUri.lastIndexOf(CoreConstants.SLASH) + 1));
+	}
+	
+	private String getMinifiedResource(String resourceUri, String content, String media) {
+		if (StringUtil.isEmpty(content)) {
+			return null;
+		}
+		
+		StringBuilder minified = new StringBuilder("\n/***************** STARTS: ").append(resourceUri).append(" *****************/\n");
+		
+		boolean mediaIsEmpty = StringUtil.isEmpty(media);
+		if (!mediaIsEmpty) {
+			minified.append("@media ").append(media).append(" {\n");
+		}
+
+		minified.append(getParsedContent(resourceUri, content));
+		
+		if (!mediaIsEmpty) {
+			minified.append("\n}");
+		}
+		
+		minified.append("\n/***************** ENDS: ").append(resourceUri).append(" *****************/\n").toString();
+		return minified.toString();
 	}
 
-	public String getMinifiedResource(InputStream stream) {
+	public String getMinifiedResource(ExternalLink resource) {
+		if (!(resource instanceof StyleSheetLink)) {
+			Logger.getLogger(getClass().getName()).warning("Resource " + resource + " is not type of " + StyleSheetLink.class);
+			return null;
+		}
+		
+		StyleSheetLink cssResource = (StyleSheetLink) resource;
 		try {
-			return getMinifiedResource(StringHandler.getContentFromInputStream(stream));
+			return getMinifiedResource(cssResource.getUrl(), StringUtil.isEmpty(resource.getContent()) ?
+					StringHandler.getContentFromInputStream(cssResource.getContentStream()) : resource.getContent(),
+			cssResource.getMedia());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		return null;
+	}
+
+	public ResourceScanner getResourceScanner() {
+		if (resourceScanner == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return resourceScanner;
+	}
+
+	public void setResourceScanner(ResourceScanner resourceScanner) {
+		this.resourceScanner = resourceScanner;
 	}
 
 }

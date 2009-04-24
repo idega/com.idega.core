@@ -7,7 +7,9 @@ import java.util.List;
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
+import com.idega.idegaweb.include.PageResourceConstants;
 import com.idega.presentation.IWContext;
+import com.idega.util.resources.ResourcesAdder;
 
 public class PresentationUtil {
 	
@@ -234,6 +236,10 @@ public class PresentationUtil {
 	}
 	
 	public static boolean addStyleSheetToHeader(IWContext iwc, String styleSheetUri) {
+		return addStyleSheetToHeader(iwc, styleSheetUri, PageResourceConstants.MEDIA_SCREEN);
+	}
+		
+	public static boolean addStyleSheetToHeader(IWContext iwc, String styleSheetUri, String mediaType) {
 		if (iwc == null || StringUtil.isEmpty(styleSheetUri)) {
 			return false;
 		}
@@ -247,6 +253,10 @@ public class PresentationUtil {
 		AddResource adder = getResourceAdder(iwc);
 		if (adder == null) {
 			return false;
+		}
+
+		if (!StringUtil.isEmpty(mediaType) && adder instanceof ResourcesAdder) {
+			((ResourcesAdder) adder).addMediaType(styleSheetUri, mediaType);
 		}
 		
 		adder.addStyleSheet(iwc, AddResource.HEADER_BEGIN, styleSheetUri);

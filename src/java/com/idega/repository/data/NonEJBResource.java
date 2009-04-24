@@ -1,5 +1,5 @@
 /*
- * $Id: NonEJBResource.java,v 1.1 2005/10/03 18:24:19 thomas Exp $
+ * $Id: NonEJBResource.java,v 1.2 2009/04/24 08:39:08 valdas Exp $
  * Created on Sep 30, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,12 +18,12 @@ package com.idega.repository.data;
  * for creating and finding such a resource. 
  * 
  * <p/>
- *  Last modified: $Date: 2005/10/03 18:24:19 $ by $Author: thomas $
+ *  Last modified: $Date: 2009/04/24 08:39:08 $ by $Author: valdas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.2 $
  * 
- * @see com.idega.repository.Resource
+ * @see com.idega.presentation.bean.Resource
  */
 
 public interface NonEJBResource extends Resource {

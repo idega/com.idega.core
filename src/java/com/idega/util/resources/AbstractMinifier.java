@@ -1,11 +1,9 @@
 package com.idega.util.resources;
 
-import java.io.InputStream;
+import com.idega.idegaweb.include.ExternalLink;
 
 public interface AbstractMinifier {
 	
-	public abstract String getMinifiedResource(String content);
-	
-	public abstract String getMinifiedResource(InputStream stream);
+	public abstract String getMinifiedResource(ExternalLink resource);
 
 }

@@ -1,5 +1,8 @@
 package com.idega.util;
 
+import java.io.IOException;
+import java.io.LineNumberReader;
+import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -231,5 +234,26 @@ public class StringUtil {
 			character = iterator.next();
 		}
 		return result.toString();
+	}
+	
+	public static List<String> getLinesFromString(String content) {
+		List<String> strings = new ArrayList<String>();
+
+		LineNumberReader lineReader = new LineNumberReader(new StringReader(content));
+
+		try {
+			lineReader.mark(1);
+			while (lineReader.read() != -1) {
+				lineReader.reset();
+				strings.add(lineReader.readLine());
+				lineReader.mark(1);
+			}
+		} catch(IOException e) {
+			e.printStackTrace();
+		} finally {
+			IOUtil.closeReader(lineReader);
+		}
+
+		return strings;
 	}
 }

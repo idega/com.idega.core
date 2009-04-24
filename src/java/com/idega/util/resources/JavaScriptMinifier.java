@@ -8,6 +8,9 @@ import java.io.PushbackInputStream;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.idega.idegaweb.include.ExternalLink;
+import com.idega.idegaweb.include.JavaScriptLink;
+import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.StringHandler;
 
@@ -253,17 +256,24 @@ public class JavaScriptMinifier implements AbstractMinifier {
 		private static final long serialVersionUID = 3794331487151636440L;
 	}
 
-	public String getMinifiedResource(String content) {
-		try {
-			return getMinifiedResource(StringHandler.getStreamFromString(content));
-		} catch (Exception e) {
-			e.printStackTrace();
+	public String getMinifiedResource(ExternalLink resource) {
+		if (!(resource instanceof JavaScriptLink)) {
+			Logger.getLogger(getClass().getName()).warning("Resource " + resource + " is not type of " + JavaScriptLink.class);
+			return null;
 		}
 		
-		return content;
-	}
-
-	public String getMinifiedResource(InputStream stream) {
+		InputStream stream = resource.getContentStream();
+		if (stream == null) {
+			try {
+				stream = StringHandler.getStreamFromString(resource.getContent());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		if (stream == null) {
+			return null;
+		}
+		
 		OutputStream output = null;
 		
 		try {
@@ -280,6 +290,19 @@ public class JavaScriptMinifier implements AbstractMinifier {
 			IOUtil.closeOutputStream(this.out);
 		}
 		
-		return output == null ? null : output.toString();
+		if (output == null)
+			return null;
+		String script = output.toString();
+		if (script == null) {
+			return null;
+		}
+		
+		StringBuilder minified = new StringBuilder("\n/***************** STARTS: ").append(resource.getUrl()).append(" *****************/\n");
+		
+		if (script.startsWith("(function")) {
+			minified.append(CoreConstants.SEMICOLON);
+		}
+		
+		return minified.append(script).append("\n/***************** ENDS: ").append(resource.getUrl()).append(" *****************/\n").toString();
 	}
 }
