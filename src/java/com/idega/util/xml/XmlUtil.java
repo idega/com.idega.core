@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,7 +19,13 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.jaxen.JaxenException;
+import org.jaxen.jdom.JDOMXPath;
+import org.jdom.Element;
+import org.jdom.Namespace;
 import org.jdom.input.DOMBuilder;
+import org.jdom.output.Format;
+import org.jdom.output.XMLOutputter;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
@@ -29,9 +36,9 @@ import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.7 $
  *
- * Last modified: $Date: 2009/01/25 15:22:33 $ by $Author: civilis $
+ * Last modified: $Date: 2009/04/24 08:38:30 $ by $Author: valdas $
  */
 public class XmlUtil {
 
@@ -186,5 +193,25 @@ public class XmlUtil {
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.transform(new DOMSource(node), new StreamResult(stream));
+    }
+    
+    public static String getPrettyJDOMDocument(org.jdom.Document document) {
+    	XMLOutputter outputter = new XMLOutputter();
+    	outputter.setFormat(Format.getPrettyFormat());
+    	return outputter.outputString(document);
+    }
+
+	@SuppressWarnings("unchecked")
+	public static List<Element> getElementsByXPath(Element root, Namespace namespace, String expression) {
+    	try {
+    		JDOMXPath xp = new JDOMXPath(expression);
+			if (namespace != null) {
+				xp.addNamespace(namespace.getPrefix(), namespace.getURI());
+			}
+			return xp.selectNodes(root);
+		} catch (JaxenException e) {
+			e.printStackTrace();
+		}
+		return null;
     }
 }
