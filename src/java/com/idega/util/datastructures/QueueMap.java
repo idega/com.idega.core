@@ -21,12 +21,16 @@ import java.util.Set;
  * Company:		idega Software
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		0.5
+ * @param <T>
+ * @param <E>
  */
-public class QueueMap extends HashMap implements Map {
+public class QueueMap<E, T> extends HashMap<E, T> implements Map<E, T> {
+
+	private static final long serialVersionUID = 709341061424502067L;
 	
-	private QueueSet _keySet = new QueueSet();
-	private List keyList = new ArrayList();
-	private List _valueList = new ArrayList();
+	private QueueSet<E> _keySet = new QueueSet<E>();
+	private List<E> keyList = new ArrayList<E>();
+	private List<T> _valueList = new ArrayList<T>();
 	
 	/**
 	 * @param initialCapacity
@@ -53,41 +57,45 @@ public class QueueMap extends HashMap implements Map {
 	/**
 	 * @param m
 	 */
-	public QueueMap(Map m) {
+	public QueueMap(Map<E, T> m) {
 		super(m);
 	}
 	
-	public Object put(Object key, Object value){
+	@Override
+	public T put(E key, T value){
 		removeKey(key);
 		this.keyList.add(key);
 		this._keySet.add(key);
 		this._valueList.add(value);
-		return super.put(key,value);
+		return super.put(key, value);
 	}
 	
-	public Object putAtBeginning(Object key, Object value){
+	public Object putAtBeginning(E key, T value){
 		removeKey(key);
-		this.keyList.add(0,key);
+		this.keyList.add(0, key);
 		this._keySet.addAtBeginning(key);
-		this._valueList.add(0,value);
-		return super.put(key,value);
+		this._valueList.add(0, value);
+		return super.put(key, value);
 	}
 
-	public Object remove(Object key){
+	@Override
+	public T remove(Object key){
 		Object val = super.remove(key);
 		removeKey(key);
-		return val;		
+		return (T) val;		
 	}
 	
-	public Set keySet(){
+	@Override
+	public Set<E> keySet(){
 		return this._keySet;
 	}
 	
-	public Collection values(){
+	@Override
+	public Collection<T> values(){
 		return this._valueList;
 	}
 	
-	public Iterator iterator() {
+	public Iterator<T> iterator() {
 		return this._valueList.iterator();
 	}
 	

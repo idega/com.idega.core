@@ -21,9 +21,11 @@ import java.util.Set;
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		1.0
  */
-public class QueueSet extends HashSet implements Set {
+public class QueueSet<T> extends HashSet<T> implements Set<T> {
 	
-	private List _set = new ArrayList();
+	private static final long serialVersionUID = 7823526840082612027L;
+	
+	private List<T> _set = new ArrayList<T>();
 	
 	/**
 	 * 
@@ -35,7 +37,7 @@ public class QueueSet extends HashSet implements Set {
 	/**
 	 * @param c
 	 */
-	public QueueSet(Collection c) {
+	public QueueSet(Collection<T> c) {
 		super(c);
 	}
 
@@ -54,27 +56,31 @@ public class QueueSet extends HashSet implements Set {
 		super(initialCapacity);
 	}
 	
-	public boolean add(Object obj){
+	@Override
+	public boolean add(T obj){
 		this._set.add(obj);
 		return super.add(obj);
 	}
 	
-	public boolean addAtBeginning(Object obj){
+	public boolean addAtBeginning(T obj){
 		this._set.add(0,obj);
 		return super.add(obj);
 	}
 	
+	@Override
 	public boolean remove(Object obj){
 		this._set.remove(obj);
 		return super.remove(obj);
 	}
 	
-	public boolean removeAll(Collection c){
+	@Override
+	public boolean removeAll(Collection c) {
 		this._set.removeAll(c);
 		return super.removeAll(c);
 	}
 	
-	public Iterator iterator(){
+	@Override
+	public Iterator<T> iterator(){
 		return this._set.iterator();
 	}
 	

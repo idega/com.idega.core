@@ -13,8 +13,8 @@ import java.util.StringTokenizer;
  */
 public class AttributeParser {
 
-	public static Map parse(String stringToParse) {
-		Map map = new HashMap();
+	public static Map<String, String> parse(String stringToParse) {
+		Map<String, String> map = new HashMap<String, String>();
 		
 		StringTokenizer tokens = new StringTokenizer(stringToParse, " ");
 		while (tokens.hasMoreTokens()) {
