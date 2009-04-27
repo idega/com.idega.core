@@ -14,6 +14,46 @@ import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.StringHandler;
 
+/**
+ * 
+ * JSMin.java 2006-02-13
+ * 
+ * Updated 2007-08-20 with updates from jsmin.c (2007-05-22)
+ * 
+ * Copyright (c) 2006 John Reilly (www.inconspicuous.org)
+ * 
+ * This work is a translation from C to Java of jsmin.c published by
+ * Douglas Crockford.  Permission is hereby granted to use the Java 
+ * version under the same conditions as the jsmin.c on which it is
+ * based.  
+ * 
+ * 
+ * 
+ * 
+ * jsmin.c 2003-04-21
+ * 
+ * Copyright (c) 2002 Douglas Crockford (www.crockford.com)
+ * 
+ * Permission is hereby granted, free of charge, to any person obtaining a copy
+ * of this software and associated documentation files (the "Software"), to deal
+ * in the Software without restriction, including without limitation the rights
+ * to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+ * copies of the Software, and to permit persons to whom the Software is
+ * furnished to do so, subject to the following conditions:
+ * 
+ * The above copyright notice and this permission notice shall be included in
+ * all copies or substantial portions of the Software.
+ * 
+ * The Software shall be used for Good, not Evil.
+ * 
+ * THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+ * IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+ * FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+ * AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+ * LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+ * OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+ * SOFTWARE.
+ **/
 public class JavaScriptMinifier implements AbstractMinifier {
 	private static final int EOF = -1;
 
@@ -36,7 +76,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	 * isAlphanum -- return true if the character is a letter, digit,
 	 * underscore, dollar sign, or non-ASCII character.
 	 */
-	private static boolean isAlphanum(int c) {
+	static boolean isAlphanum(int c) {
 		return ( (c >= 'a' && c <= 'z') || (c >= '0' && c <= '9') || 
 				 (c >= 'A' && c <= 'Z') || c == '_' || c == '$' || c == '\\' || 
 				 c > 126);
@@ -47,7 +87,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	 * the character is a control character, translate it to a space or
 	 * linefeed.
 	 */
-	private int get() throws IOException {
+	int get() throws IOException {
 		int c = in.read();
 
 		if (c >= ' ' || c == '\n' || c == EOF) {
@@ -66,7 +106,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	/**
 	 * Get the next character without getting it.
 	 */
-	private int peek() throws IOException {
+	int peek() throws IOException {
 		int lookaheadChar = in.read();
 		in.unread(lookaheadChar);
 		return lookaheadChar;
@@ -76,7 +116,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	 * next -- get the next character, excluding comments. peek() is used to see
 	 * if a '/' is followed by a '/' or '*'.
 	 */
-	private int next() throws IOException, UnterminatedCommentException {
+	int next() throws IOException, UnterminatedCommentException {
 		int c = get();
 		if (c == '/') {
 			switch (peek()) {
@@ -119,7 +159,8 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	 * preceded by ( or , or =.
 	 */
 
-	private void action(int d) throws IOException, UnterminatedRegExpLiteralException, UnterminatedCommentException, UnterminatedStringLiteralException {
+	void action(int d) throws IOException, UnterminatedRegExpLiteralException,
+			UnterminatedCommentException, UnterminatedStringLiteralException {
 		switch (d) {
 		case 1:
 			out.write(theA);
@@ -175,7 +216,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	 * replaced with spaces. Carriage returns will be replaced with linefeeds.
 	 * Most spaces and linefeeds will be removed.
 	 */
-	public void minify() throws IOException, UnterminatedRegExpLiteralException, UnterminatedCommentException, UnterminatedStringLiteralException{
+	private void jsmin() throws IOException, UnterminatedRegExpLiteralException, UnterminatedCommentException, UnterminatedStringLiteralException{
 		theA = '\n';
 		action(3);
 		while (theA != EOF) {
@@ -244,16 +285,16 @@ public class JavaScriptMinifier implements AbstractMinifier {
 		out.flush();
 	}
 
-	private class UnterminatedCommentException extends Exception {
-		private static final long serialVersionUID = 6550798107375855025L;
+	class UnterminatedCommentException extends Exception {
+		private static final long serialVersionUID = -2371646387982298945L;
 	}
 
-	private class UnterminatedStringLiteralException extends Exception {
-		private static final long serialVersionUID = -4384905098638386647L;
+	class UnterminatedStringLiteralException extends Exception {
+		private static final long serialVersionUID = -3951474297141479527L;
 	}
 
-	private class UnterminatedRegExpLiteralException extends Exception {
-		private static final long serialVersionUID = 3794331487151636440L;
+	class UnterminatedRegExpLiteralException extends Exception {
+		private static final long serialVersionUID = 5421327280143948956L;
 	}
 
 	public String getMinifiedResource(ExternalLink resource) {
@@ -281,7 +322,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 			
 			this.in = new PushbackInputStream(stream);
 			this.out = output;
-			minify();
+			jsmin();
 		} catch(Exception e) {
 			output = null;
 			Logger.getLogger(JavaScriptMinifier.class.getName()).log(Level.WARNING, "Error while minifying resource", e);
@@ -292,17 +333,43 @@ public class JavaScriptMinifier implements AbstractMinifier {
 		
 		if (output == null)
 			return null;
+		
 		String script = output.toString();
-		if (script == null) {
-			return null;
+		if (!isValidScript((JavaScriptLink) resource, script)) {
+			script = getRestoredScript((JavaScriptLink) resource);
+			if (script == null) {
+				return null;
+			}
 		}
 		
 		StringBuilder minified = new StringBuilder("\n/***************** STARTS: ").append(resource.getUrl()).append(" *****************/\n");
-		
 		if (script.startsWith("(function")) {
 			minified.append(CoreConstants.SEMICOLON);
 		}
-		
 		return minified.append(script).append("\n/***************** ENDS: ").append(resource.getUrl()).append(" *****************/\n").toString();
+	}
+	
+	private boolean isValidScript(JavaScriptLink resource, String script) {
+		if (script == null) {
+			Logger.getLogger(JavaScriptMinifier.class.getName()).warning("Script is not valid: " + resource.getUrl());
+			return false;
+		}
+		
+		return true;
+	}
+	
+	private String getRestoredScript(JavaScriptLink resource) {
+		String script = resource.getContent();
+		if (script != null) {
+			return script;
+		}
+		
+		try {
+			return StringHandler.getContentFromInputStream(resource.getContentStream());
+		} catch(Exception e) {
+			Logger.getLogger(JavaScriptMinifier.class.getName()).log(Level.WARNING, "Error while trying to get original script for: " + resource.getUrl(), e);
+		}
+		
+		return null;
 	}
 }
