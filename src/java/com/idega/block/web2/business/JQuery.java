@@ -4,7 +4,7 @@ import java.util.List;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.1 $ Last modified: $Date: 2009/04/06 14:47:40 $ by $Author: civilis $
+ * @version $Revision: 1.2 $ Last modified: $Date: 2009/04/27 12:50:50 $ by $Author: valdas $
  */
 public interface JQuery {
 	
@@ -20,4 +20,5 @@ public interface JQuery {
 	public abstract String getBundleURIToJQueryPlugin(JQueryPlugin plugin);
 	
 	public abstract List<String> getBundleURISToValidation();
+	public abstract List<String> getBundleURISToValidation(boolean addAdditionalMethods);
 }
