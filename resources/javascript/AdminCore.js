@@ -158,6 +158,9 @@ jQuery(document).ready(function() {
 			
 			jQuery('body').addClass(AdminCoreHelper.modes.builder);
 			AdminToolbarSession.setMode(AdminCoreHelper.modes.builder);
+			if (typeof BuilderHelper != 'undefined') {
+				BuilderHelper.initializeBuilder(AdminCoreHelper.modes.builder);
+			}
 		}
 		
 		if (jQuery(this).hasClass('adminContentMode')) {
