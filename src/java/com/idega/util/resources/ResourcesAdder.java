@@ -214,20 +214,20 @@ public class ResourcesAdder extends DefaultAddResource {
 			//	Restoring original resources
 			for (ExternalLink link: resources) {
 				if (link instanceof JavaScriptLink) {
-					super.addJavaScriptAtPosition(facesContext, ResourcesAdder.BODY_END, link.getUrl());
+					super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, link.getUrl());
 				}
 				else {
-					super.addStyleSheet(facesContext, ResourcesAdder.HEADER_BEGIN, link.getUrl());
+					super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, link.getUrl());
 				}
 			}
 		}
 		if (!StringUtil.isEmpty(concatenatedResourcesUri)) {
 			//	Adding concatenated file to page
 			if (concatenatedResourcesUri.endsWith(FILE_TYPE_JAVA_SCRIPT)) {
-				super.addJavaScriptAtPosition(facesContext, ResourcesAdder.BODY_END, concatenatedResourcesUri);
+				super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, concatenatedResourcesUri);
 			}
 			else {
-				super.addStyleSheet(facesContext, ResourcesAdder.HEADER_BEGIN, concatenatedResourcesUri);
+				super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, concatenatedResourcesUri);
 			}
 		}
 	}

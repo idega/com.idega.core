@@ -63,7 +63,7 @@ public class CSSMinifier implements AbstractMinifier {
 	
 	private static final Pattern quotedContentPattern = Pattern.compile(quotedContentRegex, Pattern.DOTALL);
 	private static final Pattern rulesPattern = Pattern.compile(rulesRegex, Pattern.DOTALL);
-	private static final Pattern newlinesTabsPattern = Pattern.compile(newlinesTabsRegex, Pattern.DOTALL);
+	protected static final Pattern newlinesTabsPattern = Pattern.compile(newlinesTabsRegex, Pattern.DOTALL);
 	private static final Pattern stringPlaceholderPattern = Pattern.compile(STRING_PLACEHOLDER, Pattern.DOTALL);
 	
 	

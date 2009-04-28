@@ -41,7 +41,7 @@ public class DownloadLinkTag extends UIComponentELTagBase {
 		
 			DownloadLink link = (DownloadLink) component;
 			try {
-				link.setMediaWriterClass(Class.forName((String) Property.getValueFromExpression(downloadWriter, String.class)));
+				link.setMediaWriterClass(Class.forName(Property.getValueFromExpression(downloadWriter, String.class)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
