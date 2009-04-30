@@ -164,8 +164,6 @@ public class JavaScriptMinifier implements AbstractMinifier {
 		switch (d) {
 		case 1:
 			out.write(theA);
-			break;
-			
 		case 2:
 			theA = theB;
 
@@ -185,7 +183,6 @@ public class JavaScriptMinifier implements AbstractMinifier {
 					}
 				}
 			}
-			break;
 			
 		case 3:
 			theB = next();
