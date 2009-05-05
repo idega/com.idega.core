@@ -186,8 +186,8 @@ public class HtmlPage extends Page {
 	}
 
 	@Override
-	public void add(PresentationObject po){
-		add(po);
+	public void add(PresentationObject po) {
+		add((UIComponent) po);
 	}
 
 	/**
