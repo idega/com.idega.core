@@ -20,6 +20,7 @@ import com.idega.user.data.User;
 
 public class IBOSessionBean extends IBOServiceBean implements IBOSession,SessionBean{
 
+	private static final long serialVersionUID = -3480014893942017616L;
   private IWUserContext iwuc;
   private String sessionKey="IBO."+this.getClass().getName();
 
@@ -48,21 +49,25 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
     return this.iwuc;
   }
 
-  public IWApplicationContext getIWApplicationContext(){
+  @Override
+public IWApplicationContext getIWApplicationContext(){
     return this.getUserContext().getApplicationContext();
   }
 
-  public void remove(){
+  @Override
+public void remove(){
     this.ejbRemove();
   }
 
-  public void ejbRemove(){
+  @Override
+public void ejbRemove(){
     this.getUserContext().removeSessionAttribute(this.sessionKey);
     this.iwuc=null;
   }
 
-  protected IBOSession getSessionInstance(Class beanClass)throws IBOLookupException{
-    return IBOLookup.getSessionInstance(this.getUserContext(),beanClass);
+  @SuppressWarnings("unchecked")
+  protected <T extends IBOSession> T getSessionInstance(Class<? extends IBOSession> beanClass)throws IBOLookupException {
+	return (T) IBOLookup.getSessionInstance(this.getUserContext(), beanClass);
   }
 
 

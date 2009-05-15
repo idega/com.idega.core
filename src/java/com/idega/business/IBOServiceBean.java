@@ -4,7 +4,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -36,9 +35,11 @@ import com.idega.util.logging.LoggingHelper;
  */
 public class IBOServiceBean implements IBOService, SessionBean {
 
+	private static final long serialVersionUID = 2234823785602301801L;
+	
   private SessionContext ejbSessionContext;
   private IWApplicationContext iwac;
-  private List actionListeners = new ArrayList();
+  private List<ActionListener> actionListeners = new ArrayList<ActionListener>();
 
   public IBOServiceBean() {
   }
@@ -158,15 +159,17 @@ public class IBOServiceBean implements IBOService, SessionBean {
   /**
    * Get an instance of the service bean specified by serviceClass
    */
-  protected IBOService getServiceInstance(Class serviceClass)throws IBOLookupException{
-    return IBOLookup.getServiceInstance(this.getIWApplicationContext(),serviceClass);
+  @SuppressWarnings("unchecked")
+protected <T extends IBOService> T getServiceInstance(Class<? extends IBOService> serviceClass) throws IBOLookupException {
+    return (T) IBOLookup.getServiceInstance(this.getIWApplicationContext(), serviceClass);
   }
 
   /**
    * Get an instance of the session bean specified by serviceClass
    */
-  protected IBOService getSessionInstance(IWUserContext iwuc,Class sessionClass)throws IBOLookupException{
-    return IBOLookup.getSessionInstance(iwuc,sessionClass);
+  @SuppressWarnings("unchecked")
+protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionClass) throws IBOLookupException {
+    return (T) IBOLookup.getSessionInstance(iwuc, sessionClass);
   }
 
   /**
@@ -306,12 +309,8 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	
 	public void triggerActionEvent(String command, int id) {
 		ActionEvent e = new ActionEvent(this, id, command);
-		Iterator iter = this.actionListeners.iterator();
-		while (iter.hasNext()) {
-			((ActionListener) iter.next()).actionPerformed(e);
+		for (ActionListener listener: actionListeners) {
+			listener.actionPerformed(e);
 		}
 	}
-
-  	//END STANDARD LOGGING METHODS
-  	
 }
