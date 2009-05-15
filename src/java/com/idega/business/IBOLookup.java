@@ -15,6 +15,9 @@ import javax.naming.NamingException;
 import javax.rmi.PortableRemoteObject;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
+
+import com.idega.data.IDOEntity;
+import com.idega.data.IDOHome;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
@@ -57,7 +60,7 @@ public class IBOLookup implements Singleton
 	private Map homes;
 	private Map beanClasses;
 	private Map interfaceClasses;
-	private Map services;
+	private Map<Class<? extends IBOService>, IBOService> services;
 	private Properties jndiProperties;
 	private Map createMethodsMap;
 	
@@ -77,24 +80,21 @@ public class IBOLookup implements Singleton
 	 * @param iwuc A reference to the user (context) the bean instance is working under.
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
-	public static IBOSession getSessionInstance(IWUserContext iwuc, Class beanInterfaceClass) throws IBOLookupException
-	{
+	public static <T>T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> beanInterfaceClass) throws IBOLookupException {
 		checkAnnotatedAsSpringBean(beanInterfaceClass);
 		return getInstance().getSessionInstanceImpl(iwuc, beanInterfaceClass);
 	}
-	private IBOSession getSessionInstanceImpl(IWUserContext iwuc, Class beanInterfaceClass) throws IBOLookupException
-	{
+	
+	@SuppressWarnings("unchecked")
+	private <T>T getSessionInstanceImpl(IWUserContext iwuc, Class<? extends IBOSession> beanInterfaceClass) throws IBOLookupException {
 		IBOSession session = (IBOSession) iwuc.getSessionAttribute(this.getSessionKeyForObject(beanInterfaceClass));
-		if (session == null)
-		{
-			try
-			{
+		if (session == null) {
+			try {
 				session = instanciateSessionBean(beanInterfaceClass);
 			 	iwuc.setSessionAttribute(getSessionKeyForObject(beanInterfaceClass), session);
 				session.setUserContext(iwuc);
 			}
-			catch (CreateException cre)
-			{
+			catch (CreateException cre) {
 				throw new IBOLookupException("[IBOLookup] : CreateException : " + cre.getMessage());
 			}
 			catch (RemoteException cre)
@@ -102,48 +102,45 @@ public class IBOLookup implements Singleton
 				throw new IBOLookupException("[IBOLookup] : RemoteException : " + cre.getMessage());
 			}
 		}
-		return session;
+		return (T) session;
 	}
 	/**
 	 * Cleans up after an an instance of a IBOSession bean has been used.
 	 * @param iwuc A reference to the user (context) the bean instance is working under.
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
-	public static void removeSessionInstance(IWUserContext iwuc, Class beanInterfaceClass)
-		throws RemoteException, RemoveException
-	{
+	public static void removeSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> beanInterfaceClass) throws RemoteException, RemoveException {
 		getInstance().removeSessionInstanceImpl(iwuc, beanInterfaceClass);
 	}
-	private void removeSessionInstanceImpl(IWUserContext iwuc, Class beanInterfaceClass)
-		throws RemoteException, RemoveException
-	{
+	
+	private void removeSessionInstanceImpl(IWUserContext iwuc, Class<? extends IBOSession> beanInterfaceClass) throws RemoteException, RemoveException {
 		IBOSession session = getSessionInstance(iwuc, beanInterfaceClass);
 		session.remove();
 		iwuc.removeSessionAttribute(getSessionKeyForObject(beanInterfaceClass));
 	}
+	
 	/**
 	 * Cleans up after an an instance of a IBOSession bean has been used.
 	 * @param iwuc A reference to the user (context) the bean instance is working under.
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
-	public static void removeSessionInstance(HttpSession session, Class beanInterfaceClass)
+	public static void removeSessionInstance(HttpSession session, Class<? extends IBOSession> beanInterfaceClass)
 		throws RemoteException, RemoveException
 	{
 		getInstance().removeSessionInstanceImpl(session, beanInterfaceClass);
 	}
-	private void removeSessionInstanceImpl(HttpSession session, Class beanInterfaceClass)
-		throws RemoteException, RemoveException
-	{
+	
+	private void removeSessionInstanceImpl(HttpSession session, Class<? extends IBOSession> beanInterfaceClass) throws RemoteException, RemoveException {
 		IBOSession sessionBean = getSessionInstance(session, beanInterfaceClass);
 		sessionBean.remove();
 		session.removeAttribute(getSessionKeyForObject(beanInterfaceClass));
 	}
-	private IBOSession instanciateSessionBean(Class beanInterfaceClass) throws IBOLookupException, CreateException
-	{
+	
+	private IBOSession instanciateSessionBean(Class<? extends IBOSession> beanInterfaceClass) throws IBOLookupException, CreateException {
 		return (IBOSession) instanciateServiceBean(beanInterfaceClass);
 	}
-	private IBOService instanciateServiceBean(Class beanInterfaceClass) throws IBOLookupException, CreateException
-	{
+	
+	private IBOService instanciateServiceBean(Class<? extends IBOService> beanInterfaceClass) throws IBOLookupException, CreateException {
 		IBOService session = null;
 		IBOHome home = getIBOHomeForClass(beanInterfaceClass);
 		try{
@@ -191,41 +188,37 @@ public class IBOLookup implements Singleton
 		return this.createMethodsMap;
 	}
 
-
 	/**
 	 * Returns an instance of a IBOService bean.
 	 * The instance is stored in the application context and is shared between all users.
+	 * @param <T>
 	 * @param iwac A reference to the application (context) the bean should be looked up.
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
-	public static IBOService getServiceInstance(IWApplicationContext iwac, Class beanInterfaceClass)
-		throws IBOLookupException
-	{
+	public static <T> T getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> beanInterfaceClass) throws IBOLookupException {
 		return getInstance().getServiceInstanceImpl(iwac, beanInterfaceClass);
 	}
-	private IBOService getServiceInstanceImpl(IWApplicationContext iwac, Class beanInterfaceClass)
-		throws IBOLookupException
-	{
-		IBOService service = (IBOService) this.getServicesMap(iwac).get(beanInterfaceClass);
-		if (service == null)
-		{
-			try
-			{
+	
+	@SuppressWarnings("unchecked")
+	private <T> T getServiceInstanceImpl(IWApplicationContext iwac, Class<? extends IBOService> beanInterfaceClass) throws IBOLookupException {
+		IBOService service = this.getServicesMap(iwac).get(beanInterfaceClass);
+		if (service == null) {
+			try {
 				service = this.instanciateServiceBean(beanInterfaceClass);
-				if(iwac!=null){
+				if (iwac != null) {
 					((IBOServiceBean) service).setIWApplicationContext(iwac);
 				}
 				service.initializeBean();
 				getServicesMap(iwac).put(beanInterfaceClass, service);
 			}
-			catch (CreateException cre)
-			{
+			catch (CreateException cre) {
 				throw new IBOLookupException("[IBOLookup] : CreateException : " + cre.getMessage());
 			}
 		}
-		return service;
+		return (T) service;
 	}
-	protected Class getHomeInterfaceClassFor(Class entityInterfaceClass) throws Exception
+	
+	protected Class<? extends IDOHome> getHomeInterfaceClassFor(Class<? extends IDOEntity> entityInterfaceClass) throws Exception
 	{
 		try{
 			//First try to suffix the Home to the interface class name
@@ -403,18 +396,14 @@ public class IBOLookup implements Singleton
 			}
 		}
 	}
-	private Map getServicesMap(IWApplicationContext iwac)
-	{
-		/**
-		 * @todo: implement
-		 */
+	
+	private Map<Class<? extends IBOService>, IBOService> getServicesMap(IWApplicationContext iwac) {
 		return getServicesMap();
 	}
-	private Map getServicesMap()
-	{
-		if (this.services == null)
-		{
-			this.services = new HashMap();
+	
+	private Map<Class<? extends IBOService>, IBOService> getServicesMap() {
+		if (this.services == null) {
+			this.services = new HashMap<Class<? extends IBOService>, IBOService>();
 		}
 		return this.services;
 	}
@@ -520,8 +509,8 @@ public class IBOLookup implements Singleton
    * @param beanInterfaceClass
    * @return
    */
-  public static boolean isSessionBeanInitialized(HttpServletRequest request,Class beanInterfaceClass){
-	  return isSessionBeanInitialized(request.getSession(),beanInterfaceClass);
+  public static boolean isSessionBeanInitialized(HttpServletRequest request, Class<? extends IBOSession> beanInterfaceClass){
+	  return isSessionBeanInitialized(request.getSession(), beanInterfaceClass);
   }
   
   /**
@@ -532,7 +521,7 @@ public class IBOLookup implements Singleton
    * @param beanInterfaceClass
    * @return
    */
-  public static boolean isSessionBeanInitialized(HttpSession session,Class beanInterfaceClass){
+  public static boolean isSessionBeanInitialized(HttpSession session, Class<? extends IBOSession> beanInterfaceClass){
 	  String key = getInstance().getSessionKeyForObject(beanInterfaceClass);
 	  Object bean = session.getAttribute(key);
 	  if(bean!=null){
@@ -550,7 +539,7 @@ public class IBOLookup implements Singleton
    * @param beanInterfaceClass
    * @return
    */
-  public static boolean isSessionBeanInitialized(IWUserContext iwuc,Class beanInterfaceClass){
+  public static boolean isSessionBeanInitialized(IWUserContext iwuc, Class<? extends IBOSession> beanInterfaceClass){
 	  String key = getInstance().getSessionKeyForObject(beanInterfaceClass);
 	  Object bean = iwuc.getSessionAttribute(key);
 	  if(bean!=null){
@@ -565,7 +554,7 @@ public class IBOLookup implements Singleton
 	 * @param iwuc A reference to the user (context) the bean instance is working under.
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
-	public static IBOSession getSessionInstance(HttpServletRequest request, Class beanInterfaceClass) throws IBOLookupException
+	public static IBOSession getSessionInstance(HttpServletRequest request, Class<? extends IBOSession> beanInterfaceClass) throws IBOLookupException
 	{
 		checkAnnotatedAsSpringBean(beanInterfaceClass);
 		return getInstance().getSessionInstanceImpl(request.getSession(), beanInterfaceClass);
@@ -577,25 +566,22 @@ public class IBOLookup implements Singleton
 	 * @param iwuc A reference to the user (context) the bean instance is working under.
 	 * @param beanInterfaceClass The bean (implementation or interface) class to be used. (For example UserBusiness.class or UserBusinessBean.class)
 	 */
-	public static IBOSession getSessionInstance(HttpSession session, Class beanInterfaceClass) throws IBOLookupException
-	{
+	public static <T> T getSessionInstance(HttpSession session, Class<? extends IBOSession> beanInterfaceClass) throws IBOLookupException {
 		checkAnnotatedAsSpringBean(beanInterfaceClass);
 		return getInstance().getSessionInstanceImpl(session, beanInterfaceClass);
 	}
 	
-	private IBOSession getSessionInstanceImpl(HttpSession session, Class beanInterfaceClass) throws IBOLookupException
-	{
+	@SuppressWarnings("unchecked")
+	private <T> T getSessionInstanceImpl(HttpSession session, Class<? extends IBOSession> beanInterfaceClass) throws IBOLookupException {
 		IBOSession sessionBean = (IBOSession) session.getAttribute(this.getSessionKeyForObject(beanInterfaceClass));
-		if (sessionBean == null)
-		{
+		if (sessionBean == null) {
 			IWUserContext iwuc = new IWUserContextImpl(session,session.getServletContext());
 			sessionBean = getSessionInstanceImpl(iwuc,beanInterfaceClass);
 		}
-		return sessionBean;
-
+		return (T) sessionBean;
 	}
 	
-	private static void checkAnnotatedAsSpringBean(Class interface_class) {
+	private static void checkAnnotatedAsSpringBean(Class<? extends IBOSession> interface_class) {
 		
 		if(interface_class.isAnnotationPresent(SpringBeanName.class)) {
 			throw new UnsupportedOperationException(
