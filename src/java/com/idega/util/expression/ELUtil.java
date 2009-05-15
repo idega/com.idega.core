@@ -7,9 +7,8 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
-
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -22,9 +21,9 @@ import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  *
- * Last modified: $Date: 2009/03/05 15:38:52 $ by $Author: arunas $
+ * Last modified: $Date: 2009/05/15 07:22:30 $ by $Author: valdas $
  *
  */
 @Scope("singleton")
@@ -66,10 +65,10 @@ public class ELUtil implements ApplicationContextAware {
 					expression += EXPRESSION_END;
 				}
 				
-				ValueBinding vb = fctx.getApplication().createValueBinding(expression);
+				ValueExpression ve = fctx.getApplication().getExpressionFactory().createValueExpression(fctx.getELContext(), expression, Object.class);
 				
 				@SuppressWarnings("unchecked")
-				T bean = (T)vb.getValue(fctx);
+				T bean = (T) ve.getValue(fctx.getELContext());
 				return bean;
 				
 			} else 
