@@ -1,5 +1,5 @@
 /*
- * $Id: ExternalLink.java,v 1.5 2009/04/24 08:39:08 valdas Exp $
+ * $Id: ExternalLink.java,v 1.6 2009/05/15 15:08:06 valdas Exp $
  * Created on 12.1.2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -12,16 +12,19 @@ package com.idega.idegaweb.include;
 import java.io.InputStream;
 import java.io.Serializable;
 
+import com.idega.util.StringUtil;
+import com.idega.util.reflect.Property;
+
 /**
  * 	<p>
  *  Class to represent an External Link to a Resource that is represented in html as 
  *  a <code>&lt;link&gt;</code> tag used to define resources such ass CSS links.
  *  This class is used by the GlobalIncludeManager for managing resources included in all pages.
  *  </p>
- *  Last modified: $Date: 2009/04/24 08:39:08 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/05/15 15:08:06 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public abstract class ExternalLink implements Serializable {
 	
@@ -100,6 +103,10 @@ public abstract class ExternalLink implements Serializable {
 	 * @param url The url to set.
 	 */
 	public void setUrl(String url) {
+		String urlFromExpression = Property.getValueFromExpression(url, String.class);
+		if (!StringUtil.isEmpty(urlFromExpression)) {
+			url = urlFromExpression;
+		}
 		this.url = url;
 	}
 	/**
