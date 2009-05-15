@@ -14,6 +14,7 @@ import java.util.Date;
 
 import javax.ejb.CreateException;
 
+import com.idega.business.IBOService;
 import com.idega.user.data.Status;
 import com.idega.user.data.StatusHome;
 import com.idega.user.data.UserStatus;
@@ -24,7 +25,7 @@ import com.idega.user.data.UserStatusHome;
  *
  * UserStatusBusiness TODO Describe this type
  */
-public interface UserStatusBusiness {
+public interface UserStatusBusiness extends IBOService {
     /**
      * @see com.idega.user.business.UserStatusBusinessBean#removeUserFromGroup
      */
