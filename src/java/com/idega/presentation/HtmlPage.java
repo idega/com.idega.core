@@ -30,7 +30,6 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
-import com.idega.util.resources.ResourcesAdder;
 import com.idega.util.text.AttributeParser;
 import com.idega.util.xml.XmlUtil;
 
@@ -472,16 +471,6 @@ public class HtmlPage extends Page {
 			return;
 		}
 		
-		if (!ResourcesAdder.isOptimizationTurnedOn(ResourcesAdder.OPTIMIZE_RESOURCES)) {
-			return;
-		}
-		
-		boolean optimizeJavaScript = ResourcesAdder.isOptimizationTurnedOn(ResourcesAdder.OPTIMIZE_JAVA_SCRIPT);
-		boolean optimizeStyleSheet = ResourcesAdder.isOptimizationTurnedOn(ResourcesAdder.OPTIMIZE_STYLE_SHEET);
-		if (!optimizeJavaScript && !optimizeStyleSheet) {
-			return;
-		}
-		
 		Document templateDoc = XmlUtil.getJDOMXMLDocument(html);
 		if (templateDoc == null) {
 			Logger.getLogger(getClass().getName()).warning("Unable to optimize resources! Template file can not be resolved!");
@@ -491,49 +480,48 @@ public class HtmlPage extends Page {
 		Namespace namespace = Namespace.getNamespace(CoreConstants.XHTML_NAMESPACE_ID, CoreConstants.XHTML_NAMESPACE);
 		List<Element> uselessElements = new ArrayList<Element>();
 		
-		if (optimizeJavaScript) {
-			List<Element> javaScripts = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), namespace, "//" + CoreConstants.XHTML_NAMESPACE_ID + ":script");
-			if (!ListUtil.isEmpty(javaScripts)) {
-				for (Element script: javaScripts) {
-					Attribute source = script.getAttribute("src");
-					if (source == null || StringUtil.isEmpty(source.getValue())) {
-						
+		List<Element> javaScripts = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), namespace, "//" + CoreConstants.XHTML_NAMESPACE_ID + ":script");
+		if (!ListUtil.isEmpty(javaScripts)) {
+			for (Element script: javaScripts) {
+				Attribute source = script.getAttribute("src");
+				if (source == null || StringUtil.isEmpty(source.getValue())) {
+					String action = script.getValue();
+					if (!StringUtil.isEmpty(action)) {
+						addJavaScriptAction(action);
 					}
-					else {
-						String sourceUri = source.getValue();
-						if (StringUtil.isEmpty(sourceUri)) {
-							break;
-						}
-						
-						addJavascriptURL(sourceUri);
-					}
-					
-					uselessElements.add(script);
 				}
-			}
-		}
-		
-		if (optimizeStyleSheet) {
-			List<Element> styleSheets = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), namespace, "//" + CoreConstants.XHTML_NAMESPACE_ID + ":link");
-			if (!ListUtil.isEmpty(styleSheets)) {
-				for (Element style: styleSheets) {
-					Attribute source = style.getAttribute("href");
-					if (source == null) {
-						break;
-					}
+				else {
 					String sourceUri = source.getValue();
 					if (StringUtil.isEmpty(sourceUri)) {
 						break;
 					}
 					
-					Attribute media = style.getAttribute("media");
-					if (media == null) {
-						break;
-					}
-					
-					addStyleSheetURL(sourceUri, media.getValue());
-					uselessElements.add(style);
+					addJavascriptURL(sourceUri);
 				}
+				
+				uselessElements.add(script);
+			}
+		}
+	
+		List<Element> styleSheets = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), namespace, "//" + CoreConstants.XHTML_NAMESPACE_ID + ":link");
+		if (!ListUtil.isEmpty(styleSheets)) {
+			for (Element style: styleSheets) {
+				Attribute source = style.getAttribute("href");
+				if (source == null) {
+					break;
+				}
+				String sourceUri = source.getValue();
+				if (StringUtil.isEmpty(sourceUri)) {
+					break;
+				}
+				
+				Attribute media = style.getAttribute("media");
+				if (media == null) {
+					break;
+				}
+				
+				addStyleSheetURL(sourceUri, media.getValue());
+				uselessElements.add(style);
 			}
 		}
 		
