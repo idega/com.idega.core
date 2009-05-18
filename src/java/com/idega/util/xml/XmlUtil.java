@@ -36,9 +36,9 @@ import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.7 $
+ * @version $Revision: 1.8 $
  *
- * Last modified: $Date: 2009/04/24 08:38:30 $ by $Author: valdas $
+ * Last modified: $Date: 2009/05/18 10:03:48 $ by $Author: valdas $
  */
 public class XmlUtil {
 
@@ -197,7 +197,7 @@ public class XmlUtil {
     
     public static String getPrettyJDOMDocument(org.jdom.Document document) {
     	XMLOutputter outputter = new XMLOutputter();
-    	outputter.setFormat(Format.getPrettyFormat());
+    	outputter.setFormat(Format.getRawFormat());
     	return outputter.outputString(document);
     }
 
