@@ -15,16 +15,13 @@ import com.idega.idegaweb.IWApplicationContext;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public final class BuilderServiceFactory
-{
+public final class BuilderServiceFactory {
 
 	/**
 	 * This class should not be instantiated
 	 */
-	private BuilderServiceFactory()
-	{
+	private BuilderServiceFactory() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 	
 	/**
@@ -33,21 +30,11 @@ public final class BuilderServiceFactory
 	 * @return the BuilderService instance
 	 */
 	public static BuilderService getBuilderService(IWApplicationContext iwac) throws RemoteException{
-		/*Class serviceClass=null;
-		try
-		{
-			//TODO: Remove hardcoding of serviceclass:
-			serviceClass = Class.forName("com.idega.builder.business.IBMainService");
-		}
-		catch (ClassNotFoundException e)
-		{
-			throw new RemoteException("BuilderServiceFactory.getBuilderService:"+e.getClass()+":"+e.getMessage());
-		}*/
-		return (BuilderService)IBOLookup.getServiceInstance(iwac,BuilderService.class);
+		return IBOLookup.getServiceInstance(iwac, BuilderService.class);
 	}
 	
 	public static BuilderPageWriterService getBuilderPageWriterService(IWApplicationContext iwac) throws IBOLookupException {
-		return (BuilderPageWriterService)IBOLookup.getServiceInstance(iwac,BuilderPageWriterService.class);
+		return IBOLookup.getServiceInstance(iwac, BuilderPageWriterService.class);
 	}
 	
 }
