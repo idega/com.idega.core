@@ -1,5 +1,5 @@
 /*
- * $Id: StringHandler.java,v 1.50 2009/01/05 05:24:40 valdas Exp $ Created on
+ * $Id: StringHandler.java,v 1.51 2009/05/20 14:19:05 valdas Exp $ Created on
  * 14.9.2004
  * 
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
@@ -34,11 +34,11 @@ import com.idega.presentation.IWContext;
 
 /**
  * This class has utility methods to work with strings. <br>
- * Last modified: $Date: 2009/01/05 05:24:40 $ by $Author: valdas $
+ * Last modified: $Date: 2009/05/20 14:19:05 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
- * @version $Revision: 1.50 $
+ * @version $Revision: 1.51 $
  */
 public class StringHandler {
 
@@ -1304,7 +1304,7 @@ public class StringHandler {
 		}
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
-		StringBuilder sb = new StringBuilder();
+		StringBuffer sb = new StringBuffer();
 		String line = null;
 
 		try {
@@ -1315,8 +1315,8 @@ public class StringHandler {
 			e.printStackTrace();
 			return null;
 		} finally {
-			stream.close();
-			br.close();
+			IOUtil.closeInputStream(stream);
+			IOUtil.closeReader(br);
 		}
 		
 		return sb.toString();
