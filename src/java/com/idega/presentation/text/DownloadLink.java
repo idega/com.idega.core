@@ -11,11 +11,10 @@ package com.idega.presentation.text;
 import java.io.IOException;
 import java.util.Collection;
 
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
-
 import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.DownloadWriter;
@@ -35,7 +34,7 @@ public class DownloadLink extends Link {
 	public static final String DOWNLOAD_WRITER_PROPERTY = "downloadWriter";
 	public static final String LINK_TEXT = "value";
     
-    private Class<?> writerClass = null;
+    private Class<? extends MediaWritable> writerClass = null;
     
     /**
      * 
@@ -84,7 +83,6 @@ public class DownloadLink extends Link {
     public DownloadLink(Text text) {
         super(text);
         setMediaWriterClass(DownloadWriter.class);
-        // TODO Auto-generated constructor stub
     }
     
     /**
@@ -93,12 +91,11 @@ public class DownloadLink extends Link {
     public DownloadLink(Text text,String absolutepath) {
         super(text);
         addParameter(DownloadWriter.PRM_ABSOLUTE_FILE_PATH,absolutepath);
-        // TODO Auto-generated constructor stub
     }
     
     @Override
 	public void encodeBegin(FacesContext context) throws IOException { 
-    	Class<?> mediaWriterClass = getMediaWriter(context);
+    	Class<? extends MediaWritable> mediaWriterClass = getMediaWriter(context);
     	String text = getValue(context);
 
     	if(mediaWriterClass != null)
@@ -136,27 +133,31 @@ public class DownloadLink extends Link {
         addParameter(DownloadWriter.PRM_FILE_ID,fileId);
     }
     
-    
-    public void setMediaWriterClass(Class<?> writerClass){
+    public void setMediaWriterClass(Class<? extends MediaWritable> writerClass){
         this.writerClass = writerClass;
     }
     
-    public Class<?> getMediaWriter(FacesContext context) {
-    	ValueBinding vb = getValueBinding(DOWNLOAD_WRITER_PROPERTY);
+    @SuppressWarnings("unchecked")
+	public Class<? extends MediaWritable> getMediaWriter(FacesContext context) {
+    	ValueExpression ve = getValueExpression(DOWNLOAD_WRITER_PROPERTY);
     	
-    	if(vb != null) {
-    		
-    		Class<?> writer = (Class<?>)getValueBinding(DOWNLOAD_WRITER_PROPERTY).getValue(context);
-    		return writer;
-    	} else {
-    	
+    	if (ve == null) {
     		return null;
     	}
+    	
+    	Object o = ve.getValue(context.getELContext());
+    	if (o instanceof Class) {
+    		return (Class<? extends MediaWritable>) o;
+    	}
+    	return null;
 	}
     
     private String getValue(FacesContext context) {
-    	String text = getValueBinding(LINK_TEXT) != null ? (String) getValueBinding(LINK_TEXT).getValue(context) :
-    		(String) context.getExternalContext().getRequestParameterMap().get(LINK_TEXT);
+    	ValueExpression textExpression = getValueExpression(LINK_TEXT);
+    	
+    	String text = textExpression == null ? (String) context.getExternalContext().getRequestParameterMap().get(LINK_TEXT) :
+    		textExpression.getValue(context.getELContext()).toString();
+    	
 		return text;
 	}
     

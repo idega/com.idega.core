@@ -5,6 +5,7 @@ import javax.faces.context.FacesContext;
 
 import org.apache.myfaces.shared_tomahawk.taglib.UIComponentELTagBase;
 
+import com.idega.io.MediaWritable;
 import com.idega.util.reflect.Property;
 
 public class DownloadLinkTag extends UIComponentELTagBase {
@@ -34,6 +35,7 @@ public class DownloadLinkTag extends UIComponentELTagBase {
 		this.value = null;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	protected void setProperties(UIComponent component) {
 		if (component instanceof DownloadLink) {
@@ -41,7 +43,7 @@ public class DownloadLinkTag extends UIComponentELTagBase {
 		
 			DownloadLink link = (DownloadLink) component;
 			try {
-				link.setMediaWriterClass(Class.forName(Property.getValueFromExpression(downloadWriter, String.class)));
+				link.setMediaWriterClass((Class<? extends MediaWritable>) Class.forName(Property.getValueFromExpression(downloadWriter, String.class)));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
