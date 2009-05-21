@@ -21,7 +21,6 @@ public interface ICObjectType extends com.idega.data.IDOEntity, BundleComponent
  public void setRequiredInterfacesString(java.lang.String p0);
  public void setRequiredSuperClassName(java.lang.String p0);
  public void setType(java.lang.String p0);
- public java.lang.String type();
  public boolean validateInterfaces(java.lang.Class p0);
  public boolean validateSuperClasses(java.lang.Class p0);
 }

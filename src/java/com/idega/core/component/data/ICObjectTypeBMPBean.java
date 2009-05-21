@@ -212,10 +212,6 @@ public class ICObjectTypeBMPBean extends GenericEntity implements ICObjectType, 
 		return updated;
 	}
 	
-	public String type() {
-		return getType();
-	}
-	
 	/** Implementation of BundleComponent */ 
 	public Class[] getRequiredInterfaces() {
 		String interfaces = getStringColumnValue(COLUMN_REQUIRED_INTERFACES);

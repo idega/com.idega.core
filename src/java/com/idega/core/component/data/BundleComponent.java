@@ -18,7 +18,7 @@ public interface BundleComponent {
 	 * Gets the component type identifier
 	 * @return type identifier
 	 */
-	public String type();
+	public String getType();
 	/**
 	 * Gets the interfaces the component should implement
 	 * @return interfaces, null if do not require any 
