@@ -1,5 +1,5 @@
 /*
- * $Id: IWMainApplicationSettings.java,v 1.61 2009/03/18 14:36:51 laddi Exp $
+ * $Id: IWMainApplicationSettings.java,v 1.62 2009/05/21 12:48:08 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
  * 
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
@@ -47,10 +47,10 @@ import com.idega.util.StringHandler;
  * explicitly set in the idegaweb.pxml properties file.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
- * Last modified: $Date: 2009/03/18 14:36:51 $ by $Author: laddi $
+ * Last modified: $Date: 2009/05/21 12:48:08 $ by $Author: laddi $
  *  
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.61 $
+ * @version $Revision: 1.62 $
  */
 
 
@@ -228,10 +228,14 @@ public class IWMainApplicationSettings implements MutableClass {
 		String value = getProperty(key);
 		return Boolean.valueOf(value).booleanValue();
 	}
-
+	
 	public void setProperty(String key, String value) {
+		setProperty(key, value, null);
+	}
+
+	public void setProperty(String key, String value, String type) {
 		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
-		putInApplicationBinding(key, value);
+		putInApplicationBinding(key, value, type);
 	}
 	
 	public void removeProperty(String key) {
@@ -824,11 +828,15 @@ public class IWMainApplicationSettings implements MutableClass {
 			}
 		}
 	}
-	
+
 	private String putInApplicationBinding(String key, String value) {
+		return putInApplicationBinding(key, value, null);
+	}
+	
+	private String putInApplicationBinding(String key, String value, String type) {
 		try {
 			setApplicationBindingInMap(key, value);
-			return getApplicationBindingBusiness().put(key, value);
+			return getApplicationBindingBusiness().put(key, value, type);
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
