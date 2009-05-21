@@ -1,5 +1,5 @@
 /*
- * $Id: ICApplicationBindingBusiness.java,v 1.5 2005/12/30 12:23:24 thomas Exp $
+ * $Id: ICApplicationBindingBusiness.java,v 1.6 2009/05/21 12:47:47 laddi Exp $
  * Created on Dec 15, 2005
  *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
@@ -18,10 +18,10 @@ import com.idega.business.IBOService;
  * 
  * Do not use this class directly, use IWMainApplicationSettings.
  * 
- *  Last modified: $Date: 2005/12/30 12:23:24 $ by $Author: thomas $
+ *  Last modified: $Date: 2009/05/21 12:47:47 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.5 $
+ * @version $Revision: 1.6 $
  */
 public interface ICApplicationBindingBusiness extends IBOService {
 
@@ -40,6 +40,14 @@ public interface ICApplicationBindingBusiness extends IBOService {
 	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#put
 	 */
 	public String put(String key, String value) throws IOException, java.rmi.RemoteException;
+
+	/**
+	 * 
+	 * Do not use this method, use IWMainApplicationSettings.
+	 * 
+	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#put
+	 */
+	public String put(String key, String value, String type) throws IOException, java.rmi.RemoteException;
 
 	/**
 	 * 
