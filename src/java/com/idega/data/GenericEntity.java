@@ -37,9 +37,12 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
+import com.idega.core.persistence.EntityManagerService;
 import com.idega.data.query.Column;
 import com.idega.data.query.Criteria;
 import com.idega.data.query.MatchCriteria;
@@ -828,22 +831,32 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		// else if (value instanceof java.lang.Integer){
 		else if (relationClass != null) {
 			// if (getRelationShipClass(columnName).getName().indexOf("idega") != -1){
-			try {
-				// returnObj =
-				// this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
+			if (relationClass.isAnnotationPresent(Entity.class)) {
 				if (value != null) {
-					IDOHome home = IDOLookup.getHome(relationClass);
-					if (this.getDatasource() != null) {
-						home = IDOLookup.getHome(relationClass, getDatasource());
-					}
-					returnObj = home.findByPrimaryKeyIDO(value);
+					EntityManagerService service = new EntityManagerService();
+					EntityManager manager = service.getEntityManagerFactory().createEntityManager();
+					
+					returnObj = manager.find(relationClass, value);
 				}
 			}
-			catch (Exception ex) {
-				System.err.println("Exception in com.idega.data.GenericEntity.getColumnValue(String columnName): of type+ " + ex.getClass().getName() + " , Message = " + ex.getMessage());
-				ex.printStackTrace(System.err);
-			}
-			finally {
+			else {
+				try {
+					// returnObj =
+					// this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
+					if (value != null) {
+						IDOHome home = IDOLookup.getHome(relationClass);
+						if (this.getDatasource() != null) {
+							home = IDOLookup.getHome(relationClass, getDatasource());
+						}
+						returnObj = home.findByPrimaryKeyIDO(value);
+					}
+				}
+				catch (Exception ex) {
+					System.err.println("Exception in com.idega.data.GenericEntity.getColumnValue(String columnName): of type+ " + ex.getClass().getName() + " , Message = " + ex.getMessage());
+					ex.printStackTrace(System.err);
+				}
+				finally {
+				}
 			}
 			// }
 			// else{

@@ -20,7 +20,7 @@ import com.idega.util.ListUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.2 $ Last modified: $Date: 2009/04/15 11:14:02 $ by $Author: civilis $
+ * @version $Revision: 1.3 $ Last modified: $Date: 2009/05/22 04:55:13 $ by $Author: laddi $
  */
 @Service
 @Scope("singleton")
@@ -29,7 +29,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	private static final Logger logger = Logger
 	        .getLogger(DaoFunctionsImpl.class.getName());
 	
-	private static final List<Class<?>> IMPLENENTED_CONVERTERS = Collections
+	private static final List<Class<?>> IMPLEMENTED_CONVERTERS = Collections
 	        .unmodifiableList(Arrays.asList(new Class<?>[] { Long.class,
 	                Integer.class, Float.class, Byte.class, Double.class,
 	                Short.class }));
@@ -47,7 +47,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		
 		final List<Expected> fresult;
 		
-		if (IMPLENENTED_CONVERTERS.contains(expectedReturnType)) {
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
 			fresult = getRealResults(q.getResultList(), expectedReturnType);
 		} else {
 			fresult = q.getResultList();

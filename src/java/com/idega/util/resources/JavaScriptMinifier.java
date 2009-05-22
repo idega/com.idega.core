@@ -159,6 +159,7 @@ public class JavaScriptMinifier implements AbstractMinifier {
 	 * preceded by ( or , or =.
 	 */
 
+	@SuppressWarnings("fallthrough")
 	void action(int d) throws IOException, UnterminatedRegExpLiteralException,
 			UnterminatedCommentException, UnterminatedStringLiteralException {
 		switch (d) {
