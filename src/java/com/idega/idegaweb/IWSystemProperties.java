@@ -33,20 +33,15 @@ public class IWSystemProperties extends IWPropertyList {
 	
 	private void loadPropertiesFile(IWMainApplication application) {
 		try {
-			ICApplicationBindingHome iab = (ICApplicationBindingHome) IDOLookup.getHome(ICApplicationBinding.class);
-			String icFileID = null;
-			try {
-				ICApplicationBinding binding = iab.findByPrimaryKey(PROPERTY_NAME);
-				icFileID = binding.getValue();
-			} catch (FinderException e) {
-			}
+			String icFileID = application.getSettings().getProperty(PROPERTY_NAME);
 			
 			if (icFileID != null) {
 				ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
 				ICFile icFile = home.findByPrimaryKey(new Integer(icFileID));
 				this.systemProperties = icFile;
 				super.load(icFile.getFileValue());
-			} else {
+			}
+			else {
 				File file = createFile(application.getPropertiesRealPath(), "system_properties.pxml");
 				
 				ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
@@ -55,10 +50,7 @@ public class IWSystemProperties extends IWPropertyList {
 				icFile.setName(file.getName());
 				icFile.store();
 
-				ICApplicationBinding binding = iab.create();
-				binding.setKey(PROPERTY_NAME);
-				binding.setValue(icFile.getPrimaryKey().toString());
-				binding.store();
+				application.getSettings().setProperty(PROPERTY_NAME, icFile.getPrimaryKey().toString());
 				
 				this.systemProperties = icFile;
 				file.delete();
