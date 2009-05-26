@@ -1,5 +1,5 @@
 /*
- * $Id: ViewNode.java,v 1.10 2007/09/20 13:17:07 eiki Exp $
+ * $Id: ViewNode.java,v 1.11 2009/05/26 15:51:17 valdas Exp $
  * Created on 2.9.2004
  *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
@@ -28,10 +28,10 @@ import com.idega.idegaweb.IWUserContext;
  * 'workspace' and 'builder parts of the URL. <br>
  * ViewNodes are accessed and managed by the ViewManager instance.<br>
  * </p>
- *  Last modified: $Date: 2007/09/20 13:17:07 $ by $Author: eiki $
+ *  Last modified: $Date: 2009/05/26 15:51:17 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  */
 public interface ViewNode {
 	
@@ -51,7 +51,7 @@ public interface ViewNode {
 	 * This should be a Collection of ViewNode instances.
 	 * @return
 	 */
-	public Collection getChildren();
+	public Collection<ViewNode> getChildren();
 	
 	/**
 	 * Returns the primary URI up the tree hierarchy and does NOT include the webapplications context path if any.
@@ -109,7 +109,7 @@ public interface ViewNode {
 	 * Method that returns a collection of roles needed to access this ViewNode.<br>
 	 * This should be a collection of Strings.
 	 */
-	public Collection getAuthorizedRoles();
+	public Collection<String> getAuthorizedRoles();
 	
 	/**
 	 * @param iwuc
