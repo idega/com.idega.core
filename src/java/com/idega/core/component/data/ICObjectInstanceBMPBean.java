@@ -45,6 +45,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 	public static final String IBPAGEID = "IB_PAGE_ID";
 	public static final String COLUMNNAME_PARENTID = "DPT_PARENT_ID";
 
+	@Override
 	public void initializeAttributes() {
 		// par1: column name, par2: visible column name, par3-par4:
 		// editable/showable, par5 ...
@@ -60,14 +61,17 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		getEntityDefinition().setUseFinderCollectionPrefetch(true);
 	}
 
+	@Override
 	public String getEntityName() {
 		return "IC_OBJECT_INSTANCE";
 	}
 
+	@Override
 	public void setDefaultValues() {
 		// setColumn("image_id",1);
 	}
 
+	@Override
 	public String getName() {
 		return getObject().getName() + " nr. " + this.getID();
 	}
@@ -98,6 +102,9 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 
 	public ICObject getObject() {
 		int icObjectID = this.getIntColumnValue(COLUMN_OBJECT_ID);
+		if (icObjectID < 0) {
+			return null;
+		}
 		return ICObjectBusiness.getInstance().getICObject(icObjectID);
 	}
 
@@ -126,14 +133,17 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		}
 	}
 
+	@Override
 	public String getUniqueId() {
 		return super.getUniqueId();
 	}
 
+	@Override
 	public void setUniqueId(String uniqueId) {
 		super.setUniqueId(uniqueId);
 	}
 	
+	@Override
 	public int getID(){
 		return super.getID();
 	}

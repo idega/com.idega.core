@@ -31,7 +31,7 @@ import com.idega.repository.data.SingletonRepository;
  * Description:  Use this class to get and manipulate ICObject and ICObjectInstance data objects rather than constructing them with "new"
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
+ * @author 2000-2002 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</>,<a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 
@@ -149,10 +149,13 @@ public class ICObjectBusiness implements Singleton {
 	  if (icObjectInstanceID > -1) {
 		  try{
 			  ICObjectInstance ico = this.getICObjectInstance(Integer.toString(icObjectInstanceID));
-			  String className = ico.getObject().getClassName();
-			  inst =  RefactorClassRegistry.forName(className);
-			  if(inst instanceof PresentationObject){
-				  ((PresentationObject)inst).setICObjectInstance(ico);
+			  ICObject icObject = ico.getObject();
+			  if (icObject != null) {
+				  String className = icObject.getClassName();
+				  inst =  RefactorClassRegistry.forName(className);
+				  if(inst instanceof PresentationObject){
+					  ((PresentationObject)inst).setICObjectInstance(ico);
+				  }
 			  }
 		  }
 		  catch(Exception e){

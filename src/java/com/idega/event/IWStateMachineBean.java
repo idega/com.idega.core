@@ -34,7 +34,7 @@ import com.idega.repository.data.RefactorClassRegistry;
  * Company: idega Software
  * </p>
  * 
- * @author <a href="gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>
+ * @author <a href="gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson </a>
  * @version 1.0
  */
 public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine {
@@ -371,29 +371,31 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 		if (state == null) {
 			//        System.out.println("StateMachineBean: state is null");
 			ICObject icObject = idObj.getObject();
-			IWPresentationState globalState = (IWPresentationState) this.getGlobalStatesMap(
-					getUserContext().getApplicationContext()).get(icObject.getPrimaryKey());
-			if (globalState == null) {
-				//          System.out.println("StateMachineBean: globalState is null");
-				globalState = initializeState(icObject);
-				if (globalState != null) {
-					getGlobalStatesMap(getUserContext().getApplicationContext()).put(icObject.getPrimaryKey(),
-							globalState);
+			if (icObject != null) {
+				IWPresentationState globalState = (IWPresentationState) this.getGlobalStatesMap(
+						getUserContext().getApplicationContext()).get(icObject.getPrimaryKey());
+				if (globalState == null) {
+					//          System.out.println("StateMachineBean: globalState is null");
+					globalState = initializeState(icObject);
+					if (globalState != null) {
+						getGlobalStatesMap(getUserContext().getApplicationContext()).put(icObject.getPrimaryKey(),
+								globalState);
+					}
+					else {
+						throw new RuntimeException("IWPresentationState class not initialized for this object: " + icObject);
+					}
 				}
-				else {
-					throw new RuntimeException("IWPresentationState class not initialized for this object: " + icObject);
+				try {
+					state = globalState.getClass().newInstance();
 				}
+				catch (IllegalAccessException iae) {
+					throw new RuntimeException(iae.getMessage());
+				}
+				catch (InstantiationException ie) {
+					throw new RuntimeException(ie.getMessage());
+				}
+				this.getUserStatesMap().put(idObj.getPrimaryKey(), state);
 			}
-			try {
-				state = globalState.getClass().newInstance();
-			}
-			catch (IllegalAccessException iae) {
-				throw new RuntimeException(iae.getMessage());
-			}
-			catch (InstantiationException ie) {
-				throw new RuntimeException(ie.getMessage());
-			}
-			this.getUserStatesMap().put(idObj.getPrimaryKey(), state);
 		}
 		return state;
 		//}
