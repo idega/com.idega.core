@@ -16,10 +16,10 @@ import com.idega.idegaweb.IWMainApplication;
  * <p>
  * Implementation of a general cacher for UIComponents.	
  * </p>
- *  Last modified: $Date: 2007/06/05 16:57:54 $ by $Author: valdas $
+ *  Last modified: $Date: 2009/05/26 15:49:57 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.8 $
+ * @version $Revision: 1.9 $
  */
 public class UIComponentCacher {
 	
@@ -65,8 +65,8 @@ public class UIComponentCacher {
 		StringBuffer sbBuffer = buffer.getBuffer();
 		String sBuffer = sbBuffer.toString();
 		String cacheKey = getCacheKey(component,context);
-		Map cacheMap = getCacheMap();
-		cacheMap.put(cacheKey,sBuffer);
+		Map<String, String> cacheMap = getCacheMap();
+		cacheMap.put(cacheKey, sBuffer);
 		
 		//finally print out the content as it has only been printed to buffer previously
 		encodeCached(component,context);
@@ -99,9 +99,9 @@ public class UIComponentCacher {
 	protected String getCachedContent(UIComponent component, FacesContext context) {
 		
 		String cacheKey = getCacheKey(component,context);
-		Map cacheMap = getCacheMap();
+		Map<String, String> cacheMap = getCacheMap();
 		
-		return (String)cacheMap.get(cacheKey);
+		return cacheMap.get(cacheKey);
 	}
 
 	/**
@@ -110,7 +110,7 @@ public class UIComponentCacher {
 	 * </p>
 	 * @return
 	 */
-	public Map getCacheMap() {
+	public Map<String, String> getCacheMap() {
 		IWCacheManager2 iwcm = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 		return iwcm.getCache(DEFAULT_CACHE_NAME);
 	}
