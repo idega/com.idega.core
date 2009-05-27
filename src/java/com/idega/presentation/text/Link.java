@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.181 2009/03/18 13:46:04 laddi Exp $
+ * $Id: Link.java,v 1.182 2009/05/27 11:41:20 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -1326,7 +1326,7 @@ public class Link extends Text {
 	 * the url generation is done in the main method
 	 */
 	public void setFile(ICFile file) {
-		this.fileId = ((Integer)file.getPrimaryKey()).intValue();
+		this.fileId = new Integer(file.getPrimaryKey().toString()).intValue();
 		this.datasource = file.getDatasource();
 	}
 
