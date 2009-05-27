@@ -1,5 +1,5 @@
 /*
- * $Id: UserBusinessBean.java,v 1.245 2009/02/07 14:34:57 valdas Exp $
+ * $Id: UserBusinessBean.java,v 1.246 2009/05/27 11:25:19 laddi Exp $
  * Created in 2002 by gummi
  * 
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
@@ -120,10 +120,10 @@ import com.idega.util.text.Name;
  * <p>
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
- * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2009/02/07 14:34:57 $ by $Author: valdas $
+ * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2009/05/27 11:25:19 $ by $Author: laddi $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version $Revision: 1.245 $
+ * @version $Revision: 1.246 $
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
@@ -3891,9 +3891,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		Collection<User> moderators = new ArrayList<User>();
 		Collection<Group> userGroups = getUserGroups(user);
-		for (Group group : userGroups) {
-			if (group.getModerator() != null) {
-				moderators.add(group.getModerator());
+		if (userGroups != null) {
+			for (Group group : userGroups) {
+				if (group.getModerator() != null) {
+					moderators.add(group.getModerator());
+				}
 			}
 		}
 		if(moderators.size()==1){
