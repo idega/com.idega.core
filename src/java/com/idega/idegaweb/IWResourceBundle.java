@@ -1,5 +1,5 @@
 /*
- * $Id: IWResourceBundle.java,v 1.54 2009/03/11 10:06:04 civilis Exp $
+ * $Id: IWResourceBundle.java,v 1.55 2009/05/27 09:45:29 laddi Exp $
  * 
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
  * 
@@ -56,10 +56,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  * com.idega.core.bundle/en.locale/Localized.strings) and is an extension to the
  * standard Java ResourceBundle.
  * </p>
- * Last modified: $Date: 2009/03/11 10:06:04 $ by $Author: civilis $<br/>
+ * Last modified: $Date: 2009/05/27 09:45:29 $ by $Author: laddi $<br/>
  * 
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
- * @version $Revision: 1.54 $
+ * @version $Revision: 1.55 $
  */
 
 @Service
@@ -674,7 +674,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 
 	@SuppressWarnings("unchecked")
 	public Set<Object> getAllLocalisedKeys() {
-		if(/*DefaultIWBundle.isProductionEnvironment() && */!getBundleIdentifier().equals(MessageResource.NO_BUNDLE)) {
+		if(getBundleIdentifier() != null && !getBundleIdentifier().equals(MessageResource.NO_BUNDLE)) {
 			IWBundle bundle = getIWMainApplication().getBundle(getBundleIdentifier());
 			String[] str = bundle.getLocalizableStrings();
 			return new TreeSet(Arrays.asList(str));

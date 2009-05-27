@@ -41,7 +41,7 @@ public class SingletonRepository {
   public static synchronized void start() {
 		if (singletonRepository != null) {
 			// nothing to do, start already called!
-			Logger.getLogger(singletonRepository.getClass().getName()).info("["+ SingletonRepository.class.getName()+"] Note: Tried to start Repository again but it is already running (this is usually not an  error or problem)");
+			Logger.getLogger(singletonRepository.getClass().getName()).finest("["+ SingletonRepository.class.getName()+"] Note: Tried to start Repository again but it is already running (this is usually not an  error or problem)");
 			return;
 		}
 		singletonRepository = new SingletonRepository();
