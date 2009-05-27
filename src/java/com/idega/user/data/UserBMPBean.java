@@ -75,6 +75,8 @@ import com.idega.util.text.TextSoap;
 
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
 
+	private static final long serialVersionUID = 8515735782511731375L;
+	
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
@@ -196,7 +198,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	/*  ColumNames begin   */
 
 	public static String getColumnNameUserID() {
-		return "IC_USER_ID";
+		return User.FIELD_USER_ID;
 	}
 	public static String getColumnNameFirstName() {
 		return "FIRST_NAME";
