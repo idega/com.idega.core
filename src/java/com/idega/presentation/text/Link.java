@@ -1,5 +1,5 @@
 /*
- * $Id: Link.java,v 1.182 2009/05/27 11:41:20 laddi Exp $
+ * $Id: Link.java,v 1.183 2009/05/30 09:29:48 valdas Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -51,6 +51,7 @@ import com.idega.presentation.ui.Window;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.util.CoreConstants;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -513,6 +514,10 @@ public class Link extends Text {
 	 *
 	 */
 	public void setURL(String url, boolean maintainAllGlobalParameters, boolean maintainBuilderParameters) {
+		if (StringUtil.isEmpty(url)) {
+			return;
+		}
+		
 		StringTokenizer urlplusprm = new StringTokenizer(url, "?");
 		String newUrl = urlplusprm.nextToken();
 		if (urlplusprm.hasMoreTokens()) {
