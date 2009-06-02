@@ -12,16 +12,20 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.text.Collator;
+import java.util.Collection;
 import java.util.Locale;
 import javax.ejb.FinderException;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.data.BlobWrapper;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookupException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.TreeableEntityWrapper;
 import com.idega.io.serialization.ObjectReader;
 import com.idega.io.serialization.ObjectWriter;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.User;
 
 /**
  * Title:		ICFileWrapperBean
@@ -52,10 +56,12 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityWrapper#getMainClass()
 	 */
+	@Override
 	protected Class getMainClass() {
 		return ICFile.class;
 	}
 
+	@Override
 	protected Class getVersionClass() {
 		return ICFile.class;
 	}
@@ -63,6 +69,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityWrapper#useVersions()
 	 */
+	@Override
 	protected boolean useVersions() {
 		return true;
 	}
@@ -70,6 +77,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityWrapper#useTranslations()
 	 */
+	@Override
 	protected boolean useTranslations() {
 		return false;
 	}
@@ -200,6 +208,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#isLeaf()
 	 */
+	@Override
 	public boolean isLeaf() {
 		return ((ICFile)this.getMainEntity()).isLeaf();
 	}
@@ -458,5 +467,17 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	// implements Storable
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
 		return reader.read(this, iwc);
-	}		
+	}
+
+	public void addDownloadedBy(User downloader) throws IDOAddRelationshipException {
+		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
+	}
+
+	public Collection<User> getDownloadedBy() {
+		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
+	}
+
+	public void removeDownloadedBy(User downloader) throws IDORemoveRelationshipException {
+		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
+	}	
 }

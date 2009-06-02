@@ -8,7 +8,6 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
@@ -21,10 +20,13 @@ import com.idega.core.version.data.ICVersion;
 import com.idega.core.version.util.ICVersionQuery;
 import com.idega.data.BlobWrapper;
 import com.idega.data.EntityControl;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.MetaDataCapable;
@@ -72,7 +74,8 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	private static final String TABLENAME_ICFILE_ICITEM = "ic_file_ic_item";
 	private static final String TABLENAME_ICFILE_ICVERSION = "ic_file_ic_version";
-
+	private static final String FILE_DOWNLOADERS = ENTITY_NAME + "_DOWNLOADERS";
+	
 	public ICFileBMPBean() {
 		super();
 		this._sortLeafs = true;
@@ -83,6 +86,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		this._sortLeafs = true;
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		//Removed LanguageIDColumn in favor of Locale
@@ -105,13 +109,15 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 		addManyToManyRelationShip(ICItem.class, TABLENAME_ICFILE_ICITEM);
 		addManyToManyRelationShip(ICVersion.class, TABLENAME_ICFILE_ICVERSION);
-
+		addManyToManyRelationShip(com.idega.user.data.User.class, FILE_DOWNLOADERS);
+		
 		addMetaDataRelationship(); //can have extra info in the ic_metadata table
 
 		addIndex("IDX_IC_FILE_1", getColumnNameName());
 
 	}
 
+	@Override
 	public String getEntityName() {
 		return (ENTITY_NAME);
 	}
@@ -160,6 +166,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	/**
 	 * @deprecated Replaced with getColumnLocale()
 	 */
+	@Deprecated
 	public static String getColumnNameLanguageId() {
 		return "IC_LANGUAGE_ID";
 	}
@@ -176,6 +183,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return getStringColumnValue(getColumnNameMimeType());
 	}
 
+	@Override
 	public String getName() {
 		return getStringColumnValue(getColumnNameName());
 	}
@@ -220,6 +228,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		setColumn(getColumnNameMimeType(), mimeType);
 	}
 
+	@Override
 	public void setName(String Name) {
 		setColumn(getColumnNameName(), Name);
 	}
@@ -260,11 +269,13 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		setColumn(getColumnNameModificationDate(), modificationDate);
 	}
 
+	@Override
 	public void insert() throws SQLException {
 		this.setCreationDate(com.idega.util.IWTimestamp.getTimestampRightNow());
 		super.insert();
 	}
 
+	@Override
 	public void update() throws SQLException {
 		this.setModificationDate(com.idega.util.IWTimestamp.getTimestampRightNow());
 		super.update();
@@ -292,6 +303,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	// and here are the delete functions
 
+	@Override
 	public boolean isLeaf() {
 		if (com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER.equalsIgnoreCase(this.getMimeType())) {
 			return false;
@@ -341,6 +353,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	 * Overrides the delete function because we keep all files
 	 * throws every child into the trash also. Recursive function if the file has children
 	 */
+	@Override
 	public void delete() throws SQLException {
 		setDeleted(true);
 		setDeletedWhen(IWTimestamp.getTimestampRightNow());
@@ -436,6 +449,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	 * @return
 	 * @throws FinderException
 	 */
+	@Deprecated
 	public Collection ejbFindAllDescendingOrdered() throws FinderException {
 		String query = "select " + getIDColumnName() + " from " + this.getTableName() + " order by " + getIDColumnName() + " desc";
 		return idoFindPKsBySQL(query);
@@ -513,6 +527,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return reader.read(this, iwc);
 	}
 	
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		if (getLocalizationKey() != null) {
 			IWBundle bundle = iwac.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
@@ -568,6 +583,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	/**
 	 * Overriding store to avoid use of an input stream that can't be read again (it has already been read by the store() method)
 	 **/
+	@Override
 	public void store() throws IDOStoreException {
 		super.store();
 		BlobWrapper wrapper = getBlobColumnValue(getColumnNameFileValue());
@@ -580,6 +596,24 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	
 	public String getFileUri() {
 		return getStringColumnValue(FILE_URI_IN_SLIDE);
+	}
+
+	public void addDownloadedBy(com.idega.user.data.User downloader) throws IDOAddRelationshipException {
+		this.idoAddTo(downloader);
+	}
+
+	@SuppressWarnings("unchecked")
+	public Collection<com.idega.user.data.User> getDownloadedBy() {
+		try {
+			return super.idoGetRelatedEntities(com.idega.user.data.User.class);
+		} catch (IDORelationshipException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
+	public void removeDownloadedBy(com.idega.user.data.User downloader) throws IDORemoveRelationshipException {
+		this.idoRemoveFrom(downloader);
 	}
 	
 }

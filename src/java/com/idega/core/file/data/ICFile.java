@@ -1,7 +1,12 @@
 package com.idega.core.file.data;
 
+import java.util.Collection;
+
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.io.serialization.Storable;
 import com.idega.repository.data.Resource;
+import com.idega.user.data.User;
 
 
 
@@ -45,4 +50,8 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public void setLocalizationKey(String key);
  public void setFileUri(String uri);
  public String getFileUri();
+ 
+ 	public Collection<User> getDownloadedBy();
+	public void addDownloadedBy(User downloader) throws IDOAddRelationshipException;
+	public void removeDownloadedBy(User downloader) throws IDORemoveRelationshipException;
 }
