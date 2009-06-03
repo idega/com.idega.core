@@ -19,6 +19,8 @@
     <context:component-scan base-package="com.idega,is.idega"/>
 
 	<bean id="loginSession" class="com.idega.core.accesscontrol.business.LoginSessionBean" scope="session" />
+	
+	<bean id="iwCoreServletRequestProvider" class="com.idega.servlet.filter.impl.RequestProviderImpl" scope="request" />
     
 	<bean id="coreConstants" class="com.idega.util.CoreConstants" scope="singleton">
 		<property name="articleConstantsInstance" ref="articleConstants" />

@@ -12,6 +12,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.idega.presentation.IWContext;
+import com.idega.util.expression.ELUtil;
 
 /**
  * 
@@ -48,6 +49,12 @@ public class IWEncodingFilter implements Filter {
 		// iwc.getParameter("just forcing the getting of parameters, remove
 		// later");
 
+		RequestProvider requestProvider = null;
+		try {
+			requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+			requestProvider.setRequest(request);
+		} catch(Exception e) {}
+		
 		chain.doFilter(request, response);
 	}
 
