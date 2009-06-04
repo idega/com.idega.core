@@ -175,6 +175,10 @@ public class DownloadWriter implements MediaWritable {
 	}
 	
 	protected boolean markFileAsDownloaded(IWContext iwc, ICFile attachment) {
+		if (attachment == null) {
+			return false;
+		}
+		
 		User user = iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
 		if (user == null) {
 			return false;
@@ -204,9 +208,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
 			return fileHome.findByHash(hash);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
+		} catch(Exception e) {}
 		
 		return null;
 	}
