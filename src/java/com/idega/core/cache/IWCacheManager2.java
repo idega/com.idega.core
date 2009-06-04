@@ -1,5 +1,5 @@
 /*
- * $Id: IWCacheManager2.java,v 1.12 2006/11/07 18:25:09 tryggvil Exp $ Created on
+ * $Id: IWCacheManager2.java,v 1.13 2009/06/04 07:30:04 valdas Exp $ Created on
  * 6.1.2006 in project com.idega.core
  * 
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -13,11 +13,12 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
-import net.sf.ehcache.ObjectExistsException;
 import net.sf.ehcache.Status;
 import com.idega.idegaweb.IWMainApplication;
 
@@ -26,10 +27,10 @@ import com.idega.idegaweb.IWMainApplication;
  * IWCacheManager2 is a newer replacement for the older IWCacheManager class
  * and is implemented on top of the ehCache framework.
  * </p>
- * Last modified: $Date: 2006/11/07 18:25:09 $ by $Author: tryggvil $
+ * Last modified: $Date: 2009/06/04 07:30:04 $ by $Author: valdas $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.12 $
+ * @version $Revision: 1.13 $
  */
 public class IWCacheManager2 {
 
@@ -109,31 +110,21 @@ public class IWCacheManager2 {
 		return getCache(cacheName,cacheSize,overFlowToDisk,isEternal,cacheTTLSeconds,cacheTTLIdleSeconds);
 	}
 	
-	public Map getCache(String cacheName,int cacheSize,boolean overFlowToDisk,boolean isEternal,long cacheTTLIdleSeconds,long cacheTTLSeconds){
+	public synchronized Map getCache(String cacheName,int cacheSize,boolean overFlowToDisk,boolean isEternal,long cacheTTLIdleSeconds,long cacheTTLSeconds){
 		Map cm = (Map) getCacheMapsMap().get(cacheName);
-		if(cm==null){
-			Cache cache = getInternalCache(cacheName);
-			if(cache==null){
-					//cache = new IWCache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
+		if (cm == null) {
+			try {
+				Cache cache = getInternalCache(cacheName);
+				if (cache == null) {
 					cache = new Cache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
-					try {
-						getInternalCacheManager().addCache(cache);
-					}
-					catch (IllegalStateException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					catch (ObjectExistsException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
-					catch (CacheException e) {
-						// TODO Auto-generated catch block
-						e.printStackTrace();
-					}
+					getInternalCacheManager().addCache(cache);
+				}
+				cm = new CacheMap(cache);
+				getCacheMapsMap().put(cacheName, cm);
 			}
-			cm = new CacheMap(cache);
-			getCacheMapsMap().put(cacheName,cm);
+			catch (Exception e) {
+				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error creating cache: " + cacheName, e);
+			}
 		}
 		else{
 			CacheMap ccm = (CacheMap)cm;
