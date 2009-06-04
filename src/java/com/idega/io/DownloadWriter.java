@@ -16,6 +16,8 @@ import java.io.IOException;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.Collection;
+
 import javax.servlet.http.HttpServletRequest;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
@@ -23,6 +25,8 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.User;
+import com.idega.util.ListUtil;
 
 /**
  * @author aron
@@ -152,9 +156,58 @@ public class DownloadWriter implements MediaWritable {
 	}
 
 	public void setAsDownload(IWContext iwc, String filename, int fileLength) {
+		setAsDownload(iwc, filename, fileLength, null);
+	}
+	
+	public void setAsDownload(IWContext iwc, String filename, int fileLength, Integer hash) {
+		if (hash != null) {
+			markFileAsDownloaded(iwc, hash);
+		}
+		
 		iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
 		if (fileLength > 0) {
 			iwc.getResponse().setContentLength(fileLength);
 		}
+	}
+	
+	protected boolean markFileAsDownloaded(IWContext iwc, Integer hash) {
+		return markFileAsDownloaded(iwc, getFile(hash));
+	}
+	
+	protected boolean markFileAsDownloaded(IWContext iwc, ICFile attachment) {
+		User user = iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
+		if (user == null) {
+			return false;
+		}
+		
+		Collection<User> downloadedBy = attachment.getDownloadedBy();
+		if (!ListUtil.isEmpty(downloadedBy) && downloadedBy.contains(user)) {
+			return true;
+		}
+		
+		try {
+			attachment.addDownloadedBy(user);
+			attachment.store();
+			return true;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return false;
+	}
+	
+	private ICFile getFile(Integer hash) {
+		if (hash == null) {
+			return null;
+		}
+		
+		try {
+			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
+			return fileHome.findByHash(hash);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }
