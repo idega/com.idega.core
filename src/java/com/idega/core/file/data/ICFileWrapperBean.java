@@ -479,5 +479,13 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 
 	public void removeDownloadedBy(User downloader) throws IDORemoveRelationshipException {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
-	}	
+	}
+
+	public Integer getHash() {
+		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
+	}
+
+	public void setHash(Integer hash) {
+		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
+	}
 }

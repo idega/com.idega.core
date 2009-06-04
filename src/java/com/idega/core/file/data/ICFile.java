@@ -54,4 +54,7 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  	public Collection<User> getDownloadedBy();
 	public void addDownloadedBy(User downloader) throws IDOAddRelationshipException;
 	public void removeDownloadedBy(User downloader) throws IDORemoveRelationshipException;
+	
+	public Integer getHash();
+	public void setHash(Integer hash);
 }

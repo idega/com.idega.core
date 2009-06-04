@@ -1,9 +1,12 @@
 package com.idega.core.file.data;
 
+import javax.ejb.FinderException;
+
 
 public class ICFileHomeImpl extends com.idega.data.IDOFactory implements ICFileHome
 {
- protected Class getEntityInterfaceClass(){
+ @Override
+protected Class getEntityInterfaceClass(){
   return ICFile.class;
  }
 
@@ -60,4 +63,12 @@ public ICFile findRootFolder()throws javax.ejb.FinderException{
 	 return this.getEntityCollectionForPrimaryKeys(ids);
 	 
 }
+
+
+	public ICFile findByHash(Integer hash) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((ICFileBMPBean)entity).ejbFindByHash(hash);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
 }

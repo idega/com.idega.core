@@ -32,6 +32,10 @@ import com.idega.data.IDOStoreException;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
+import com.idega.data.query.Column;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
@@ -71,6 +75,8 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	public final static String DELETED = "Y";
 	public final static String NOT_DELETED = "N";
+	
+	private static final String COLUMN_HASH = "HASH_VALUE";
 
 	private static final String TABLENAME_ICFILE_ICITEM = "ic_file_ic_item";
 	private static final String TABLENAME_ICFILE_ICVERSION = "ic_file_ic_version";
@@ -99,7 +105,8 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		addAttribute(getColumnNameFileValue(), "The file value", true, true, com.idega.data.BlobWrapper.class);
 		addAttribute(getColumnNameCreationDate(), "Creation date", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnNameModificationDate(), "Modification date", true, true, java.sql.Timestamp.class);
-		addAttribute(getColumnNameFileSize(), "file size in bytes", true, true, java.lang.Integer.class);
+		addAttribute(getColumnNameFileSize(), "file size in bytes", true, true, Integer.class);
+		addAttribute(COLUMN_HASH, "Hash value", true, true, Integer.class);
 		
 		addAttribute(getColumnDeleted(), "Deleted", true, true, String.class, 1);
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
@@ -615,6 +622,23 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public void removeDownloadedBy(com.idega.user.data.User downloader) throws IDORemoveRelationshipException {
 		this.idoRemoveFrom(downloader);
 	}
+
+	public Integer getHash() {
+		return getIntegerColumnValue(COLUMN_HASH);
+	}
+
+	public void setHash(Integer hash) {
+		setValue(COLUMN_HASH, hash);
+	}
 	
+	public Object ejbFindByHash(Integer hash) throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(new Column(table, getIDColumnName()));
+		
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_HASH), MatchCriteria.EQUALS, hash));
+		
+		return this.idoFindOnePKByQuery(query);
+	}
 }
 		
