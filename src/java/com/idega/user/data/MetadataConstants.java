@@ -1,5 +1,5 @@
 /*
- * $Id: MetadataConstants.java,v 1.2 2008/09/10 11:59:07 juozas Exp $
+ * $Id: MetadataConstants.java,v 1.3 2009/06/08 14:29:41 valdas Exp $
  * Created on Oct 29, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -12,10 +12,10 @@ package com.idega.user.data;
 
 /**
  * 
- *  Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
+ *  Last modified: $Date: 2009/06/08 14:29:41 $ by $Author: valdas $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.2 $
+ * @version $Revision: 1.3 $
  */
 public class MetadataConstants {
 	
@@ -25,5 +25,5 @@ public class MetadataConstants {
 	public static final String HANDICAP_GOLF_META_DATA_KEY  = GOLF_META_PREFIX +"handicap";
 	
 	public static final String USER_PREFERED_COMPANY_METADATE_KEY = "USER_PREFERED_COMPANY";
-	
+	public static final String USER_REAL_COMPANY_META_DATA_KEY = "USER_REAL_COMPANY";
 }
