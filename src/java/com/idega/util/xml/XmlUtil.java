@@ -1,6 +1,5 @@
 package com.idega.util.xml;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -36,9 +35,9 @@ import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.9 $
+ * @version $Revision: 1.10 $
  *
- * Last modified: $Date: 2009/05/18 10:36:00 $ by $Author: valdas $
+ * Last modified: $Date: 2009/06/10 10:12:28 $ by $Author: valdas $
  */
 public class XmlUtil {
 
@@ -74,8 +73,14 @@ public class XmlUtil {
 					factory = DocumentBuilderFactory.newInstance();
 				    factory.setNamespaceAware(true);
 				    factory.setValidating(false);
-				    factory.setAttribute("http://apache.org/xml/properties/dom/document-class-name",
-					"org.apache.xerces.dom.DocumentImpl");
+				    factory.setAttribute("http://apache.org/xml/properties/dom/document-class-name", "org.apache.xerces.dom.DocumentImpl");
+				    
+				    try {
+						factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+						factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+					} catch (ParserConfigurationException e) {
+						logger.log(Level.WARNING, "Error setting features", e);
+					}
 				}
 			}
 		}
@@ -96,8 +101,14 @@ public class XmlUtil {
 					factoryNoNamespace = DocumentBuilderFactory.newInstance();
 					factoryNoNamespace.setNamespaceAware(false);
 					factoryNoNamespace.setValidating(false);
-					factoryNoNamespace.setAttribute("http://apache.org/xml/properties/dom/document-class-name",
-					"org.apache.xerces.dom.DocumentImpl");
+					factoryNoNamespace.setAttribute("http://apache.org/xml/properties/dom/document-class-name", "org.apache.xerces.dom.DocumentImpl");
+					
+					try {
+						factoryNoNamespace.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+						factoryNoNamespace.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
+					} catch (ParserConfigurationException e) {
+						logger.log(Level.WARNING, "Error setting features", e);
+					}
 				}
 			}
 		}
@@ -129,7 +140,7 @@ public class XmlUtil {
 			logger.log(Level.SEVERE, "Error generating XML document", e);
 		} finally {
 			IOUtil.closeInputStream(stream);
-			closeReader(reader);
+			IOUtil.closeReader(reader);
 		}
 		
 		return null;
@@ -150,18 +161,6 @@ public class XmlUtil {
 		
 		DOMBuilder domBuilder = new DOMBuilder();
 		return domBuilder.build(document);
-	}
-	
-	private static void closeReader(Reader reader) {
-		if (reader == null) {
-			return;
-		}
-		
-		try {
-			reader.close();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
 	}
 	
 	/**
