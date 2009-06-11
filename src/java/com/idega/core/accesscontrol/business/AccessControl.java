@@ -1,5 +1,5 @@
 /*
- * $Id: AccessControl.java,v 1.128 2009/04/22 12:50:56 valdas Exp $
+ * $Id: AccessControl.java,v 1.129 2009/06/11 07:17:00 valdas Exp $
  * Created in 2001
  *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
@@ -76,12 +76,12 @@ import com.idega.util.reflect.FieldAccessor;
  * access control information (with ICPermission) in idegaWeb.
  * </p>
  * 
- * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
+ * Last modified: $Date: 2009/06/11 07:17:00 $ by $Author: valdas $
  * 
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
- * @version $Revision: 1.128 $
+ * @version $Revision: 1.129 $
  */
 public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
@@ -3425,7 +3425,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  			return hasViewPermissionForPageKey(pageKey,iwuc);
 	  		}
 	  		else{
-	  			getLogger().fine("No pageKey for : "+pageUri);
+	  			getLogger().warning("No pageKey found for : "+pageUri);
 	  			return false;
 	  		}
 		}
