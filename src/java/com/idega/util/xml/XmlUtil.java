@@ -18,7 +18,6 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
-import org.jaxen.JaxenException;
 import org.jaxen.jdom.JDOMXPath;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -31,15 +30,22 @@ import org.xml.sax.InputSource;
 
 import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
- * @version $Revision: 1.10 $
+ * @version $Revision: 1.11 $
  *
- * Last modified: $Date: 2009/06/10 10:12:28 $ by $Author: valdas $
+ * Last modified: $Date: 2009/06/12 10:49:54 $ by $Author: valdas $
  */
 public class XmlUtil {
+
+	public static final String XMLNS_NAMESPACE_ID = "xmlns";
+	public static final String XHTML_NAMESPACE_ID = "xhtml";
+	
+	public static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
 	private XmlUtil() { }
 	
@@ -115,7 +121,7 @@ public class XmlUtil {
 		return factoryNoNamespace;
 	}
 	
-	public static Document getXMLDocument(String source) {
+	public static Document getXMLDocument(String source, boolean namespaceAware) {
 		InputStream stream = null;
 		try {
 			stream = StringHandler.getStreamFromString(source);
@@ -124,10 +130,14 @@ public class XmlUtil {
 			return null;
 		}
 		
-		return getXMLDocument(stream);
+		return getXMLDocument(stream, namespaceAware);
 	}
 	
 	public static Document getXMLDocument(InputStream stream) {
+		return getXMLDocument(stream, true);
+	}
+		
+	public static Document getXMLDocument(InputStream stream, boolean namespaceAware) {
 		if (stream == null) {
 			return null;
 		}
@@ -135,7 +145,7 @@ public class XmlUtil {
 		Reader reader = null;
 		try {
 			reader = new InputStreamReader(stream, CoreConstants.ENCODING_UTF8);
-			return getDocumentBuilder().parse(new InputSource(reader));
+			return getDocumentBuilder(namespaceAware).parse(new InputSource(reader));
 		} catch(Exception e) {
 			logger.log(Level.SEVERE, "Error generating XML document", e);
 		} finally {
@@ -147,11 +157,19 @@ public class XmlUtil {
 	}
 	
 	public static org.jdom.Document getJDOMXMLDocument(InputStream stream) {
-		return getJDOMXMLDocument(getXMLDocument(stream));
+		return getJDOMXMLDocument(getXMLDocument(stream, true));
+	}
+	
+	public static org.jdom.Document getJDOMXMLDocument(InputStream stream, boolean namespaceAware) {
+		return getJDOMXMLDocument(getXMLDocument(stream, namespaceAware));
 	}
 	
 	public static org.jdom.Document getJDOMXMLDocument(String source) {
-		return getJDOMXMLDocument(getXMLDocument(source));
+		return getJDOMXMLDocument(source, true);
+	}
+	
+	public static org.jdom.Document getJDOMXMLDocument(String source, boolean namespaceAware) {
+		return getJDOMXMLDocument(getXMLDocument(source, namespaceAware));
 	}
 	
 	public static org.jdom.Document getJDOMXMLDocument(Document document) {
@@ -174,7 +192,7 @@ public class XmlUtil {
         try {
             prettyPrintDOM(node, System.out);
         } catch (Exception e) {
-            e.printStackTrace();
+            logger.log(Level.WARNING, "Error printing node's content", e);
         }
     }
 
@@ -196,23 +214,58 @@ public class XmlUtil {
     
     public static String getPrettyJDOMDocument(org.jdom.Document document) {
     	XMLOutputter outputter = new XMLOutputter();
-    	Format format = Format.getRawFormat();
+    	Format format = Format.getPrettyFormat();
     	format.setExpandEmptyElements(true);
     	outputter.setFormat(format);
     	return outputter.outputString(document);
     }
-
-	@SuppressWarnings("unchecked")
-	public static List<Element> getElementsByXPath(Element root, Namespace namespace, String expression) {
-    	try {
-    		JDOMXPath xp = new JDOMXPath(expression);
-			if (namespace != null) {
-				xp.addNamespace(namespace.getPrefix(), namespace.getURI());
-			}
-			return xp.selectNodes(root);
-		} catch (JaxenException e) {
-			e.printStackTrace();
+	
+	public static List<Element> getElementsByXPath(Object container, String expression) {
+		return getElementsByXPath(container, expression, CoreConstants.EMPTY);
+	}
+	
+	public static List<Element> getElementsByXPath(Object container, String expression, String nameSpaceId) {
+		if (container == null || expression == null) {
+			return null;
 		}
+		
+		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ? null : Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
+		List<Element> elements = getElementsByXPath(container, expression, namespace);
+		
+		return ListUtil.isEmpty(elements) ?
+				nameSpaceId == null ?
+						getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID) :
+						null :
+				elements;
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static List<Element> getElementsByXPath(Object container, String expression, Namespace namespace) {
+		JDOMXPath xPath = null;
+		String xPathExpression = null;
+		try {
+			boolean validNameSpace = false;
+			xPathExpression = expression;
+			
+			String prefix = XMLNS_NAMESPACE_ID;
+			if (namespace != null && !StringUtil.isEmpty(namespace.getURI())) {
+				prefix = StringUtil.isEmpty(namespace.getPrefix()) ? prefix : namespace.getPrefix();
+				
+				xPathExpression = "//" + (prefix.equals(XHTML_NAMESPACE_ID) ? CoreConstants.EMPTY : (prefix + CoreConstants.COLON)) + expression;
+				validNameSpace = true;
+			}
+			
+			xPath = new JDOMXPath(xPathExpression);
+			
+			if (validNameSpace) {
+				xPath.addNamespace(prefix, namespace.getURI());
+			}
+			
+			return xPath.selectNodes(container);
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error selecting elements by XPath expression: " + xPathExpression, e);
+		}
+		
 		return null;
-    }
+	}
 }
