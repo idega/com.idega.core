@@ -27,7 +27,6 @@ import org.jdom.Namespace;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
-import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.text.AttributeParser;
@@ -471,16 +470,17 @@ public class HtmlPage extends Page {
 			return;
 		}
 		
-		Document templateDoc = XmlUtil.getJDOMXMLDocument(html);
+		Document templateDoc = XmlUtil.getJDOMXMLDocument(html, false);
 		if (templateDoc == null) {
 			Logger.getLogger(getClass().getName()).warning("Unable to optimize resources! Template file can not be resolved!");
 			return;
 		}
 		
-		Namespace namespace = Namespace.getNamespace(CoreConstants.XHTML_NAMESPACE_ID, CoreConstants.XHTML_NAMESPACE);
+		Element root = templateDoc.getRootElement();
+		Namespace namespace = root.getNamespace();
 		List<Element> uselessElements = new ArrayList<Element>();
 		
-		List<Element> javaScripts = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), namespace, "//" + CoreConstants.XHTML_NAMESPACE_ID + ":script");
+		List<Element> javaScripts = XmlUtil.getElementsByXPath(templateDoc, "script", namespace);
 		if (!ListUtil.isEmpty(javaScripts)) {
 			for (Element script: javaScripts) {
 				Attribute source = script.getAttribute("src");
@@ -503,7 +503,7 @@ public class HtmlPage extends Page {
 			}
 		}
 	
-		List<Element> styleSheets = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), namespace, "//" + CoreConstants.XHTML_NAMESPACE_ID + ":link");
+		List<Element> styleSheets = XmlUtil.getElementsByXPath(templateDoc, "link", namespace);
 		if (!ListUtil.isEmpty(styleSheets)) {
 			for (Element style: styleSheets) {
 				Attribute source = style.getAttribute("href");
