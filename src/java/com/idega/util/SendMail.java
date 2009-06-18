@@ -26,10 +26,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  * <p>
  * Utility class to send Emails with the Java Mail API.
  * </p>
- * Last modified: $Date: 2008/11/01 16:41:43 $ by $Author: eiki $
+ * Last modified: $Date: 2009/06/18 15:57:43 $ by $Author: eiki $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.19 $
+ * @version $Revision: 1.20 $
  */
 public class SendMail {
 
@@ -64,7 +64,7 @@ public class SendMail {
 		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "");
 		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "");
 		if(host==null || (host.length()==0)){
-			host = settings.getProperty(MessagingSettings.DEFAULT_SMTP_MAILSERVER);
+			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER);
 		}
 		
 		
