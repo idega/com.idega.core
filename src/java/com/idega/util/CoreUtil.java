@@ -1,9 +1,10 @@
 package com.idega.util;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
@@ -13,6 +14,8 @@ import sun.misc.BASE64Encoder;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.servlet.filter.RequestProvider;
+import com.idega.util.expression.ELUtil;
 
 public class CoreUtil {
 	
@@ -133,5 +136,40 @@ public class CoreUtil {
 		}
 		
 		return Boolean.valueOf(value.toLowerCase());
+	}
+	
+	public static boolean sendExceptionNotification(Throwable exception) {
+    	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+    	if (StringUtil.isEmpty(host)) {
+    		System.err.println("Unable to send email about exception:");
+    		exception.printStackTrace(System.err);
+    		return false;
+    	}
+    	
+    	String serverName = null;
+    	try {
+    		serverName = ELUtil.getInstance().getBean(RequestProvider.class).getRequest().getServerName();
+    	} catch(Exception e) {
+    		e.printStackTrace();
+    		serverName = "unkown";
+    	}
+    	
+    	StringWriter stringWriter = null;
+    	PrintWriter printWriter = null;
+    	try {
+    		stringWriter = new StringWriter();
+    		printWriter = new PrintWriter(stringWriter);
+    		exception.printStackTrace(printWriter);
+    		
+        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName,
+        			"Stack trace:\n" + printWriter.toString());
+        } catch(Exception e) {
+        	e.printStackTrace();
+        	return false;
+        } finally {
+        	IOUtil.closeWriter(stringWriter);
+        	IOUtil.closeWriter(printWriter);
+        }
+    	return true;
 	}
 }
