@@ -1,5 +1,5 @@
 /*
- * $Id: BuilderService.java,v 1.11.4.1 2007/08/07 14:00:33 valdas Exp $
+ * $Id: BuilderService.java,v 1.11.4.2 2009/06/22 12:06:11 laddi Exp $
  * Created on 8.7.2003
  *
  * Copyright (C) 2003-2004 Idega Software hf. All Rights Reserved.
@@ -10,6 +10,8 @@
 package com.idega.core.builder.business;
 
 import java.rmi.RemoteException;
+import java.util.List;
+
 import javax.faces.component.UIComponent;
 
 import com.idega.business.IBOService;
@@ -176,4 +178,5 @@ public interface BuilderService extends IBOService
 	 * public void movePageUnder(IBPage thePageToMove,IBPage oldParent,IBPage newParent,ICUser committer);
 	 */
 	
+	public String getUriToObject(Class objectClass, List parameters);
 }

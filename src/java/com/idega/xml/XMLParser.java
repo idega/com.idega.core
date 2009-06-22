@@ -1,5 +1,5 @@
 /*
- * $Id: XMLParser.java,v 1.7 2006/04/09 12:13:14 laddi Exp $
+ * $Id: XMLParser.java,v 1.7.2.1 2009/06/22 12:06:11 laddi Exp $
  *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
  *
@@ -34,14 +34,18 @@ private SAXBuilder _builder = null;
    *
    */
   public XMLParser() {
-    this._builder = new SAXBuilder();
+  	this(false);
   }
 
   /**
    *
    */
   public XMLParser(boolean verify) {
-    this._builder = new SAXBuilder(verify);
+    this._builder = new SAXBuilder(false);
+    this._builder.setValidation(false);
+    this._builder.setFeature("http://xml.org/sax/features/validation", false);
+    this._builder.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
+    this._builder.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
   }
 
   /**

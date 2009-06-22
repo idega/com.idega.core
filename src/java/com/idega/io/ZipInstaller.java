@@ -1,5 +1,5 @@
 /*
- * $Id: ZipInstaller.java,v 1.1 2004/12/06 18:04:28 thomas Exp $
+ * $Id: ZipInstaller.java,v 1.1.4.1 2009/06/22 12:06:11 laddi Exp $
  * Created on Dec 6, 2004
  *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
@@ -29,10 +29,10 @@ import com.idega.util.FileUtil;
  * Extracts zip files and keeps the original timestamps. 
  * E.g. used fo extracting idegaweb archive bundles.
  * 
- *  Last modified: $Date: 2004/12/06 18:04:28 $ by $Author: thomas $
+ *  Last modified: $Date: 2009/06/22 12:06:11 $ by $Author: laddi $
  * 
  * @author <a href="mailto:thomas@idega.com">thomas</a>
- * @version $Revision: 1.1 $
+ * @version $Revision: 1.1.4.1 $
  */
 public class ZipInstaller {
 	
@@ -87,7 +87,7 @@ public class ZipInstaller {
 		return new BufferedOutputStream(new FileOutputStream(file));
 	} 
 	
-	private void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
+	public void writeFromStreamToStream(InputStream source, OutputStream destination) throws IOException { 
 		// parts of this method  were copied from "Java in a nutshell" by David Flanagan
 		byte[] buffer = new byte[4096];  // A buffer to hold file contents
 		int bytesRead;                       

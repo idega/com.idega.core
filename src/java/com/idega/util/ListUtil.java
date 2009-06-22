@@ -139,6 +139,14 @@ public class ListUtil {
 		return list;
 	}
 
+	public static final boolean isEmpty(Collection collection) {
+		if (collection == null || collection.isEmpty()) {
+			return true;
+		}
+		
+		return false;
+	}
+	
   protected static class EmptyList extends ArrayList{
 
 
