@@ -1,5 +1,5 @@
 /*
- * $Id: IWContext.java,v 1.163 2009/04/22 12:50:56 valdas Exp $ Created 2000 by
+ * $Id: IWContext.java,v 1.164 2009/06/22 09:55:45 valdas Exp $ Created 2000 by
  * Tryggvi Larusson
  * 
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
@@ -11,8 +11,6 @@ package com.idega.presentation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Collection;
@@ -69,13 +67,13 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
+import com.idega.servlet.filter.RequestProvider;
 import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
-import com.idega.util.SendMail;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.HashtableMultivalued;
 import com.idega.util.expression.ELUtil;
@@ -93,9 +91,9 @@ import com.idega.util.expression.ELUtil;
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
  * 
- * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
+ * Last modified: $Date: 2009/06/22 09:55:45 $ by $Author: valdas $
  * 
- * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.163 $
+ * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.164 $
 $
  */
 public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
@@ -104,6 +102,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * Comment for <code>serialVersionUID</code>
 	 */
 	private static final long serialVersionUID = 3761970466885022262L;
+	private static final Logger LOGGER = Logger.getLogger(IWContext.class.getName());
+	
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
@@ -139,15 +139,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	private IWContext(FacesContext fc) {
-		
-//		temporal constructor for catching character encoding npe, when fixed, use the uncommented one
-		this(fc, (HttpServletRequest) fc.getExternalContext().getRequest(),
-			(HttpServletResponse) fc.getExternalContext().getResponse(),
-			(ServletContext) fc.getExternalContext().getContext());
-		
-//		this((HttpServletRequest) fc.getExternalContext().getRequest(),
-//				(HttpServletResponse) fc.getExternalContext().getResponse(),
-//				(ServletContext) fc.getExternalContext().getContext());
+		this((HttpServletRequest) fc.getExternalContext().getRequest(), (HttpServletResponse) fc.getExternalContext().getResponse(),
+				(ServletContext) fc.getExternalContext().getContext());
 		setRealFacesContext(fc);
 	}
 
@@ -157,75 +150,29 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * @param context
 	 */
 	public IWContext(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
-		setRequest(request);
-		setResponse(response);
-		setServletContext(context);
-		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
-		initializeAfterRequestIsSet(request);
-		setServerURLToSystemProperties();
-	}
-	
-//	temporal constructor for catching character encoding npe
-	private IWContext(FacesContext fc, HttpServletRequest request, HttpServletResponse response, ServletContext context) {
-		
-		if(request.getSession() == null) {
-			
-			try {
-//				the situation that we want to log
-				
-				String text = "=====Stacktrace of the call:\n";
-				
+		if (request.getSession() == null) {
+			LOGGER.warning("Session is null in request! Trying to re-initialize session");
+			if (reInitializeRequest()) {
+				request = this._request;
+			} else {
 				try {
-					throw new RuntimeException("Just the stacktrace");
-		            
-	            } catch (Exception e) {
-	            	StringWriter sw = new StringWriter();
-	            	e.printStackTrace(new PrintWriter(sw));
-	            	text += sw.toString();
-	            }
-	            
-//	            here we try to fix it by hoping session will be created
-	            Object sessionFromContext = fc.getExternalContext().getSession(true);
-	            
-	            text += "\n\nSession created from external context="+sessionFromContext;
-	            
-	            if(request.getSession() != null) {
-	            	text += "\n\nThe session autocreated fixed the problem";
-	            } else {
-	            	text += "\n\nThe session autocreated didn't fix the problem";
-	            }
-
-	            String subject = "Exception of com.idega.presentation.IWContext.setCharactersetEncoding NPE handling at "+request.getServerName();
-	            sendErrorEmail(subject, text);
-	            
-            } catch (Exception e) {
-	            Logger.getLogger(getClass().getName()).log(Level.WARNING, "Ex while producing debug info character encoding npe", e);
-            }
+					throw new RuntimeException("There is no session ("+HttpSession.class+") object attached to request: " + request);
+				} catch (Exception e) {
+					LOGGER.log(Level.SEVERE, "No session", e);
+					CoreUtil.sendExceptionNotification(e);
+				}
+			}
+			
 		}
 		
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
+		
 		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
 		initializeAfterRequestIsSet(request);
 		setServerURLToSystemProperties();
 	}
-	
-//	tmp method till the npe bug is resolved
-	private void sendErrorEmail(String subject, String text) {
-    	
-    	String to = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("characterencodingnpe_error_mail_to", "civilis@idega.com");
-    	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-    	
-    	if(!StringUtil.isEmpty(host)) {
-    	
-    		try {
-        		SendMail.send("idegaweb@idega.com", to, null, null, host, subject, text);
-        	} catch(Exception e) {
-    			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error while sending email ("+text+") to: " + to, e);
-    		}
-    	}
-    }
 
 	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
 		setCharactersetEncoding(request);
@@ -247,18 +194,32 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 */
 	public static void setCharactersetEncoding(HttpServletRequest request) {
 		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+		
+		HttpSession session = request == null ? null : request.getSession();
+		if (session == null) {
+			LOGGER.warning("Request: " + request + " and/or session: " + session + " is null");
+			RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+			try {
+				session = requestProvider.getRequest().getSession();
+			} catch(Exception e) {
+				LOGGER.log(Level.SEVERE, "Error getting session", e);
+			}
+			if (session != null) {
+				LOGGER.info("Session was resolved");
+			}
+		}
+		
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
 		if (getIfSetRequestCharacterEncoding(iwma)) {
 			try {
 				String characterSetEncoding = iwma.getSettings().getCharacterEncoding();
 				request.setCharacterEncoding(characterSetEncoding);
 				//encoding for myfaces and ajax4jsf to pick up
-				request.getSession().setAttribute(ViewHandler.CHARACTER_ENCODING_KEY,characterSetEncoding);
-				//request.setAttribute(ViewHandler.CHARACTER_ENCODING_KEY,characterSetEncoding);
-				// isRequestCharacterEncodingSet = true;
+				session.setAttribute(ViewHandler.CHARACTER_ENCODING_KEY,characterSetEncoding);
 			}
-			catch (UnsupportedEncodingException e) {
-				e.printStackTrace();
+			catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error setting encoding", e);
+				CoreUtil.sendExceptionNotification(e);
 			}
 		}
 		// CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE
@@ -299,7 +260,12 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		if (iwc == null || fc != iwc.getRealFacesContext()) {
 			// put it to the request map if it isn't there already
 			iwc = new IWContext(fc);
-			fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY, iwc);
+			try {
+				fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY, iwc);
+			} catch(Exception e) {
+				LOGGER.log(Level.SEVERE, "Error storing IWContext", e);
+				CoreUtil.sendExceptionNotification(e);
+			}
 		}
 		return iwc;
 	}
@@ -353,7 +319,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				IWEventProcessor.getInstance().handleMultipartFormData(this);
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.log(Level.WARNING, "Error handling multipart form data", e);
 			}
 		}
 		return this._uploadedFile;
@@ -493,8 +459,16 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		// --only implemented for the UPG1 test WAP browser
 		// @TODO (jonas) use better method to find content types supported by
 		// client. Use rdf docs referenced in request headers.x
-		String mlParam = request.getParameter(IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
-		if (mlParam != null && mlParam.length() > 0) {
+		String mlParam = null;
+		try {
+			mlParam = request.getParameter(IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting parameter: " + IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE, e);
+			if (!reInitializeRequest()) {
+				CoreUtil.sendExceptionNotification(e);
+			}
+		}
+		if (!StringUtil.isEmpty(mlParam)) {
 			return mlParam;
 		}
 		boolean isWMLAgent = false;
@@ -516,6 +490,29 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 	}
 
+	private boolean reInitializeRequest() {
+		try {
+			HttpServletRequest request = ELUtil.getInstance().getBean(RequestProvider.class).getRequest();
+			if (request == null) {
+				LOGGER.warning("Request is null, failed to re-initialize");
+				return false;
+			}
+			HttpSession session = request.getSession();
+			if (session == null) {
+				LOGGER.warning("Session is null, failed to re-initialize");
+				return false;
+			}
+			
+			LOGGER.fine("Session was re-initialized sucessfully");
+			this._request = request;
+		} catch(Exception e) {
+			LOGGER.log(Level.SEVERE, "Error while re-initializing request", e);
+			CoreUtil.sendExceptionNotification(e);
+			return false;
+		}
+		return true;
+	}
+	
 	public boolean isParameterSet(String parameterName) {
 		return RequestUtil.isParameterSet(getRequest(), parameterName);
 	}
@@ -630,10 +627,10 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public Integer getIntegerParameter(String parameterName) {
 		if (isParameterSet(parameterName)) {
 			try {
-				return new Integer(getParameter(parameterName));
+				return Integer.valueOf(getParameter(parameterName));
 			}
 			catch (NumberFormatException nfe) {
-				nfe.printStackTrace();
+				LOGGER.log(Level.WARNING, "Invalid integer: " + getParameter(parameterName), nfe);
 			}
 		}
 		
@@ -643,10 +640,10 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public Float getFloatParameter(String parameterName) {
 		if (isParameterSet(parameterName)) {
 			try {
-				return new Float(getParameter(parameterName));
+				return Float.valueOf(getParameter(parameterName));
 			}
 			catch (NumberFormatException nfe) {
-				nfe.printStackTrace();
+				LOGGER.log(Level.WARNING, "Invalid float number: " + getParameter(parameterName), nfe);
 			}
 		}
 		
@@ -819,7 +816,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			getResponse().sendRedirect(getResponse().encodeRedirectURL(URL));
 		}
 		catch (IOException e) {
-			e.printStackTrace(System.err);
+			LOGGER.log(Level.WARNING, "Error redirecting to: " + URL, e);
+			CoreUtil.sendExceptionNotification(e);
 		}
 	}
 
@@ -1008,7 +1006,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return this.getAccessController().hasPermission(permissionKey, obj, this);
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error resolving if object " + obj + " has permission: " + permissionKey, ex);
 			return false;
 		}
 	}
@@ -1026,7 +1024,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return this.getAccessController().hasPermission(groupIds, permissionKey, obj, this);
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error resoving if object " + obj + " has permission: " + permissionKey, ex);
 			return false;
 		}
 	}
@@ -1036,7 +1034,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return this.getAccessController().hasFilePermission(permissionKey, id, this);
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error resolving if file (id=" + id + ") has permission: " + permissionKey, ex);
 			return false;
 		}
 	}
@@ -1046,7 +1044,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return this.getAccessController().hasDataPermission(permissionKey, obj, entityRecordId, this);
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error resovling if object " + obj + " has permission: " + permissionKey , ex);
 			return false;
 		}
 	}
@@ -1065,7 +1063,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				return ELUtil.getInstance().getBean(LoginSession.class).isSuperAdmin();
 			}
 			catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.log(Level.WARNING, "Error resolving if current user is super admin", e);
 			}
 		}
 		return false;
@@ -1083,30 +1081,25 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 */
 	public static IWContext getInstance() throws UnavailableIWContext {
-		// IWContext theReturn =
-		// com.idega.servlet.IWPresentationServlet.getIWContext();
 		IWContext theReturn = null;
-		// if(theReturn==null){
 		try {
 			// If no IWContext is found then try to get the FacesContext:
 			FacesContext fc = FacesContext.getCurrentInstance();
 			if (fc != null) {
 				theReturn = getIWContext(fc);
 			}
-			else{
+			else {
 				throw new UnavailableIWContext();
 			}
 		}
 		catch (Exception e) {
-			//e.printStackTrace();
 			if(e instanceof UnavailableIWContext){
-				throw (UnavailableIWContext)e;
+				throw (UnavailableIWContext) e;
 			}
 			else{
 				throw new UnavailableIWContext(e);
 			}
 		}
-		// }
 		return theReturn;
 	}
 	
@@ -1283,7 +1276,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			forwardToURL(fromPage, url, secondInterval, includeQueryString);
 		}
 		catch (RemoteException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error forwarding to: " + pageID + " from: " + fromPage.getPageID(), e);
+			CoreUtil.sendExceptionNotification(e);
 		}
 	}
 
@@ -1412,7 +1406,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return bs.getCurrentPageId(this);
 		}
 		catch (RemoteException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting current Builder page", e);
 		}
 		return -1;
 	}
