@@ -6,6 +6,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.zip.ZipInputStream;
 
 import com.idega.io.ZipInstaller;
@@ -39,6 +40,16 @@ public class IOUtil {
 		
 		try {
 			reader.close();
+		} catch(IOException e) {}
+	}
+	
+	public static final void closeWriter(Writer writer) {
+		if (writer == null) {
+			return;
+		}
+		
+		try {
+			writer.close();
 		} catch(IOException e) {}
 	}
 	
