@@ -1,5 +1,5 @@
 /*
- * $Id: AccessController.java,v 1.37 2009/04/22 12:50:56 valdas Exp $
+ * $Id: AccessController.java,v 1.38 2009/06/24 08:58:18 valdas Exp $
  * 
  * Created in 2001 by gummi
  * 
@@ -32,10 +32,10 @@ import com.idega.user.data.Group;
  * This is the main service interface for the old generation permission system
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
- * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
+ * Last modified: $Date: 2009/06/24 08:58:18 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
- * @version $Revision: 1.37 $
+ * @version $Revision: 1.38 $
  */
 public interface AccessController extends com.idega.idegaweb.IWService{
 
@@ -150,7 +150,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection groups);
   public Collection<ICRole> getAllRoles();
   public Collection getAllGroupsThatAreRoleMasters(IWApplicationContext iwac                  );
-  public Collection getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac                  );
+  public Collection<Group> getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac                  );
   public void removeGroupFromRoleMastersList(Group group, IWApplicationContext iwac                  );
   public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
   public boolean removeRoleFromGroup(String roleKey,String permissionKey, Integer groupId, IWApplicationContext iwac                  );
