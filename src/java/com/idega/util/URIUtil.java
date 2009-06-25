@@ -70,6 +70,10 @@ public class URIUtil {
 	}
 	
 	public void setParameter(String key, String value) {
+		if (StringUtil.isEmpty(key) || StringUtil.isEmpty(value)) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Invalid parameter ('"+key+"') or/and it's value ('"+value+"')");
+			return;
+		}
 		
 		if(parameters == null)
 			parameters = getParameters();
