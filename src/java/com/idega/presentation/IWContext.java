@@ -24,25 +24,6 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.faces.application.Application;
-import javax.faces.application.FacesMessage;
-import javax.faces.application.ViewHandler;
-import javax.faces.application.FacesMessage.Severity;
-import javax.faces.component.UIViewRoot;
-import javax.faces.context.ExternalContext;
-import javax.faces.context.FacesContext;
-import javax.faces.context.ResponseStream;
-import javax.faces.context.ResponseWriter;
-import javax.faces.render.RenderKit;
-import javax.jcr.Repository;
-import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.servlet.ServletContext;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import javax.servlet.http.HttpSession;
-
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
@@ -153,7 +134,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		if (request.getSession() == null) {
 			LOGGER.warning("Session is null in request! Trying to re-initialize session");
 			if (reInitializeRequest()) {
-				request = this._request;
+				request = getRequest();
 			} else {
 				try {
 					throw new RuntimeException("There is no session ("+HttpSession.class+") object attached to request: " + request);
@@ -248,7 +229,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		IWContext iwc = null;
 		// try to look up from requestmap
-		iwc = (IWContext) fc.getExternalContext().getRequestMap().get(IWCONTEXT_REQUEST_KEY);
+		iwc = (IWContext) ((HttpServletRequest) fc.getExternalContext().getRequest()).getAttribute(IWCONTEXT_REQUEST_KEY);
+		
 		// reason for the second condition below:
 		// After forwarding the faces context has changed, check if the stored
 		// iwc holds the same faces context
@@ -261,12 +243,13 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			// put it to the request map if it isn't there already
 			iwc = new IWContext(fc);
 			try {
-				fc.getExternalContext().getRequestMap().put(IWCONTEXT_REQUEST_KEY, iwc);
+				iwc.getRequest().setAttribute(IWCONTEXT_REQUEST_KEY, iwc);
 			} catch(Exception e) {
 				LOGGER.log(Level.SEVERE, "Error storing IWContext", e);
 				CoreUtil.sendExceptionNotification(e);
 			}
 		}
+		
 		return iwc;
 	}
 
@@ -504,7 +487,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			}
 			
 			LOGGER.fine("Session was re-initialized sucessfully");
-			this._request = request;
+			setRequest(request);
+			getExternalContext().setRequest(getRequest());
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, "Error while re-initializing request", e);
 			CoreUtil.sendExceptionNotification(e);
