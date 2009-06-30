@@ -11,17 +11,22 @@ package com.idega.servlet.filter;
 
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContextFactory;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.RequestUtil;
 
 
@@ -176,5 +181,20 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	 */
 	protected void removeApplicationContext(HttpServletRequest request){
 		IWApplicationContextFactory.removeCurrentIWApplicationContext(request);
+	}
+	
+	protected IWContext getIWContext(HttpServletRequest request, HttpServletResponse response) {
+		IWContext iwc = CoreUtil.getIWContext();
+		
+		if (iwc == null) {
+			try {
+				iwc = new IWContext(request, response, request.getSession().getServletContext());
+			} catch(Exception e) {
+				Logger.getLogger(BaseFilter.class.getName()).log(Level.SEVERE, "Error creating instance of " + IWContext.class.getSimpleName(), e);
+				CoreUtil.sendExceptionNotification(e);
+			}
+		}
+		
+		return iwc;
 	}
 }
