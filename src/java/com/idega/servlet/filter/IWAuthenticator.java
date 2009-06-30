@@ -206,8 +206,7 @@ public class IWAuthenticator extends BaseFilter {
 			try {
 				AuthenticationBusiness authenticationBusiness = getAuthenticationBusiness(request);
 				User currentUser = loginBusiness.getCurrentUser(session);
-				//TODO: Remove IWContext
-				IWContext iwc = new IWContext(request, response, request.getSession().getServletContext());
+				IWContext iwc = getIWContext(request, response);
 				authenticationBusiness.callOnLogonMethodInAllAuthenticationListeners(iwc, currentUser);
 			}
 			catch (ServletFilterChainInterruptException e) {
