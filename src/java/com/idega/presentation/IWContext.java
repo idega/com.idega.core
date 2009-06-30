@@ -172,6 +172,9 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
 		initializeAfterRequestIsSet(request);
 		setServerURLToSystemProperties();
+		
+		// Put it to the request map
+		storeContext();
 	}
 
 	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
@@ -247,7 +250,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return (IWContext) fc;
 		}
 		IWContext iwc = null;
-		// try to look up from requestmap
+		// try to look up from request map
 		iwc = (IWContext) ((HttpServletRequest) fc.getExternalContext().getRequest()).getAttribute(IWCONTEXT_REQUEST_KEY);
 		
 		// reason for the second condition below:
@@ -259,17 +262,20 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		// be set
 		// (that is the response writer is null).
 		if (iwc == null || fc != iwc.getRealFacesContext()) {
-			// put it to the request map if it isn't there already
+			//	Create new instance
 			iwc = new IWContext(fc);
-			try {
-				iwc.getRequest().setAttribute(IWCONTEXT_REQUEST_KEY, iwc);
-			} catch(Exception e) {
-				LOGGER.log(Level.SEVERE, "Error storing IWContext", e);
-				CoreUtil.sendExceptionNotification(e);
-			}
 		}
 		
 		return iwc;
+	}
+	
+	private void storeContext() {
+		try {
+			getRequest().setAttribute(IWCONTEXT_REQUEST_KEY, this);
+		} catch(Exception e) {
+			LOGGER.log(Level.SEVERE, "Error storing IWContext", e);
+			CoreUtil.sendExceptionNotification(e);
+		}
 	}
 
 	public HttpSession getSession() {
