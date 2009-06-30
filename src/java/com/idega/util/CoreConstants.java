@@ -111,7 +111,7 @@ public class CoreConstants {
 				name = m.getName();
 				params = m.getParameterTypes();
 				result = m.invoke(name, params);
-				if (result instanceof Class) {
+				if (result instanceof Class<?>) {
 					ARTICLE_ITEM_VIEWER_NAME = (Class<?>) result;
 				}
 			}
