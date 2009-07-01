@@ -45,7 +45,7 @@ public class MoonPhase extends Widget {
     moonPhase = bd.doubleValue();
     int moon = (int) (moonPhase * 10);
 		
-		Image image = getBundle().getImage("/moonphase/" + moon + ".gif");
+		Image image = getBundle().getImage("/widgets/moonphase/" + moon + ".gif");
 		
 		if (image != null) {
 			if (this.iWidth > 0) {

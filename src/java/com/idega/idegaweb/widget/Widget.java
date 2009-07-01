@@ -16,6 +16,7 @@ import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.CoreUtil;
 
 /**
  * The base object that all widgets should extend.  Has the standard methods most of them need.
@@ -26,8 +27,6 @@ import com.idega.presentation.PresentationObject;
  * @version $Revision: 1.5 $
  */
 public abstract class Widget extends Block {
-	
-	private static final String IW_BUNDLE_IDENTIFIER = "com.idega.idegaweb.widget";
 	
 	private IWBundle iwb;
 	private IWResourceBundle iwrb;
@@ -68,10 +67,6 @@ public abstract class Widget extends Block {
 		return this.locale;
 	}
 
-	public String getBundleIdentifier() {
-		return IW_BUNDLE_IDENTIFIER;
-	}
-	
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}

@@ -42,15 +42,15 @@ public class SunOrMoon extends Widget {
 		Image image = null;
 
 		if (now.isBetween(sunrise, sunset)) {
-			image = getBundle().getImage("/moonphase/sun.png");
+			image = getBundle().getImage("/widgets/moonphase/sun.png");
 		}
 		else {
 			BigDecimal bd = new BigDecimal(moonPhase);
-	    bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
-	    moonPhase = bd.doubleValue();
-	    int moon = (int) (moonPhase * 10);
+			bd = bd.setScale(1, BigDecimal.ROUND_HALF_UP);
+			moonPhase = bd.doubleValue();
+			int moon = (int) (moonPhase * 10);
 			
-			image = getBundle().getImage("/moonphase/" + moon + ".png");
+			image = getBundle().getImage("/widgets/moonphase/" + moon + ".png");
 		}
 		
 		if (image != null) {
