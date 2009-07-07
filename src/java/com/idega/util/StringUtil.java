@@ -26,6 +26,11 @@ public class StringUtil {
 		return extractedValues;
 	}
 	
+	/**
+	 * Handy method for null and empty check
+	 * @param string to check if is null or empty string
+	 * @return return str == null || str.length() == 0;
+	 */
 	public static boolean isEmpty(String str) {
 		
 		return str == null || str.length() == 0;
