@@ -1,6 +1,7 @@
 package com.idega.presentation.ui.handlers;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -98,6 +99,14 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 					locale.toString(), e);
 		}
 		return null;
+	}
+	
+	public static final Timestamp getParsedTimestampByCurrentLocale(String source) {
+		Date date = getParsedDate(source);
+		if (date == null) {
+			return null;
+		}
+		return new Timestamp(date.getTime());
 	}
 	
 	public static final Date getParsedDate(String source) {
