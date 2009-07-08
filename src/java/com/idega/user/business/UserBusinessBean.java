@@ -3132,6 +3132,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		if ("is_IS".equals(locale.toString())) {
 			return validateIcelandicSSN(personalId);
+		} else if ("en".equals(locale.toString())) {
+			return true;	//	Default locale, no validator needed
 		}
 		
 		LOGGER.warning("There is no validator for locale: " + locale + ", personal id: " + personalId);
