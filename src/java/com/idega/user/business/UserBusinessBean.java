@@ -28,6 +28,7 @@ import java.util.Set;
 import java.util.TreeSet;
 import java.util.Vector;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -127,11 +128,10 @@ import com.idega.util.text.Name;
  */
 public class UserBusinessBean extends com.idega.business.IBOServiceBean implements UserBusiness {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = 5915206628531551728L;
 
+	private static final Logger LOGGER = Logger.getLogger(UserBusinessBean.class.getName());
+	
 	// remove use of "null" when metadata can be removed
 	private static final String NULL = "null";
 
@@ -1117,7 +1117,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, code, country, city, province, poBox, communeID, addressType);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
+			LOGGER.log(Level.WARNING, "Error updating address for user: " + userId, e);
 		}
 		return null;
 	}
@@ -2130,8 +2130,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 										}
 									}
 								} else {
-									System.out.println("Group in permissions collection = " + group);
-									System.out.println("Content of permissions collection = " + permissions);
+									LOGGER.warning("Group in permissions collection = " + group);
+									LOGGER.warning("Content of permissions collection = " + permissions);
 								}
 							}
 							time.stop();
@@ -2424,8 +2424,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		try {
 			return grHome.findByPrimaryKeyCollection(resultGroups);
 		} catch (FinderException e) {
-			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. groups not found");
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "UserBusiness: In getAllGroupsWithEditPermission. groups not found", e);
 			return ListUtil.getEmptyList();
 		}
 	}
@@ -2493,8 +2492,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		try {
 			return grHome.findByPrimaryKeyCollection(resultGroups);
 		} catch (FinderException e) {
-			System.out.println("UserBusiness: In getAllGroupsWithEditPermission. groups not found");
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "UserBusiness: In getAllGroupsWithEditPermission. groups not found", e);
 			return ListUtil.getEmptyList();
 		}
 	}
@@ -3109,13 +3107,45 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return role;
 	}
+	
+	public boolean validatePersonalId(User user, Locale locale) {
+		return user == null ? false : validatePersonalId(user.getPersonalID(), locale);
+	}
+	
+	public boolean validatePersonalId(User user) {
+		return validatePersonalId(user, CoreUtil.getCurrentLocale());
+	}
+	
+	public boolean validatePersonalId(String personalId) {
+		return validatePersonalId(personalId, CoreUtil.getCurrentLocale());
+	}
+	
+	public boolean validatePersonalId(String personalId, Locale locale) {
+		if (StringUtil.isEmpty(personalId)) {
+			LOGGER.warning("Personal ID is empty!");
+			return false;
+		}
+		if (locale == null) {
+			LOGGER.warning("Unkown locale!");
+			return false;
+		}
+		
+		if ("is_IS".equals(locale.toString())) {
+			return validateIcelandicSSN(personalId);
+		}
+		
+		LOGGER.warning("There is no validator for locale: " + locale + ", personal id: " + personalId);
+		return false;
+	}
 
 	/**
 	 * Validated the Icelandic SSN checksum
 	 */
-	public boolean validateIcelandicSSN(String ssn) {
-		// TODO change to validateSSN(string ssn, Locale locale)
-		// so we can implement other SSN checking
+	private boolean validateIcelandicSSN(String ssn) {
+		if (StringUtil.isEmpty(ssn)) {
+			return false;
+		}
+		
 		int sum = 0;
 		boolean validSSN = false;
 		if (ssn.length() == 10) {
@@ -3133,27 +3163,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if ((sum % 11) == 0) {
 					validSSN = true;
 				} else {
-					System.out.println(ssn + " is not a valid SSN. If fails validation test.");
+					LOGGER.warning(ssn + " is not a valid SSN. If fails validation test.");
 				}
 			} catch (NumberFormatException e) {
-				System.out.println(ssn + " is not a valid SSN. It contains characters other than digits.");
+				LOGGER.warning(ssn + " is not a valid SSN. It contains characters other than digits.");
 			}
 		} else {
-			System.out.println(ssn + " is not a valid SSN. It is not 10 characters.");
+			LOGGER.warning(ssn + " is not a valid SSN. It is not 10 characters.");
 		}
 		return validSSN;
 	}
 
-	/**
-	 * @return Returns true if the user has a valid Icelandic social security number
-	 */
-	public boolean hasValidIcelandicSSN(User user) {
-		// TODO change to hasValidSSN(string ssn, Locale locale)
-		// so we can implement other SSN checking
-		if (user.getPersonalID() == null) {
-			return false;
-		}
-		return validateIcelandicSSN(user.getPersonalID());
+	public boolean hasValidPersonalId(User user) {
+		return validatePersonalId(user);
+	}
+	
+	public boolean hasValidPersonalId(User user, Locale locale) {
+		return validatePersonalId(user, locale);
 	}
 
 	/**
@@ -3503,14 +3529,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public Date getUserDateOfBirthFromPersonalId(String personalId) {
-		// TODO: add logic to decide which country's personal id is being parsed
-		if (personalId == null) {
+		Locale locale = CoreUtil.getCurrentLocale();
+		if (locale == null) {
+			LOGGER.warning("Current locale is unknown!");
 			return null;
 		}
-		if (!validateIcelandicSSN(personalId)) {
+		
+		if (!validatePersonalId(personalId, locale)) {
 			return null;
 		}
+		
+		if ("is_IS".equals(locale.toString())) {
+			return getDateBirthFromIcelandicPersonalId(personalId);
+		}
+		
+		LOGGER.warning("There is no date parser from personal id: " + personalId + " and locale: " + locale);
+		return null;
+	}
 
+	private Date getDateBirthFromIcelandicPersonalId(String personalId) {
 		String dateInString = personalId.substring(0, 6);
 		java.util.Date date = null;
 		try {

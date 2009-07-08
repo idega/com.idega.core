@@ -841,17 +841,6 @@ public interface UserBusiness extends IBOService {
 	 */
 	public ICRole getUsersPreferredRole(User user);
 	
-	
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#validateIcelandicSSN
-	 */
-	public boolean validateIcelandicSSN(String ssn);
-	
-	/**
-	 * @see com.idega.user.business.UserBusinessBean#hasValidIcelandicSSN
-	 */
-	public boolean hasValidIcelandicSSN(User user);
-	
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getGroupsMembersData
 	 */
@@ -924,4 +913,12 @@ public interface UserBusiness extends IBOService {
 			Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType);
 	
 	public Image getUserImage(User user);
+	
+	public boolean validatePersonalId(User user);
+	public boolean validatePersonalId(User user, Locale locale);
+	public boolean validatePersonalId(String personalId);
+	public boolean validatePersonalId(String personalId, Locale locale);
+
+	public boolean hasValidPersonalId(User user);
+	public boolean hasValidPersonalId(User user, Locale locale);
 }
