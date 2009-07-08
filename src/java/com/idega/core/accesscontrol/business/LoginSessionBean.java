@@ -15,6 +15,8 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Logger;
+
 import com.idega.core.data.GenericGroup;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
@@ -22,6 +24,7 @@ import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserProperties;
+import com.idega.util.CoreUtil;
 
 /**
  * 
@@ -36,12 +39,12 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	private IWApplicationContext iwac;
 	private SessionHelper sessionHelper = new SessionHelper();
-	private Stack reservedSessionHelpers = new Stack();
+	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
 	private Locale currentLocale;
 
 	public void reset() {
 		sessionHelper = new SessionHelper();
-		reservedSessionHelpers = new Stack();
+		reservedSessionHelpers = new Stack<SessionHelper>();
 	}
 
 	/**
@@ -196,7 +199,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	public void retrieve() {
 		if (this.reservedSessionHelpers != null && !this.reservedSessionHelpers.isEmpty()) {
-			this.sessionHelper = (SessionHelper) this.reservedSessionHelpers.pop();
+			this.sessionHelper = this.reservedSessionHelpers.pop();
 		}
 	}
 
@@ -259,7 +262,13 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	}
 
 	public Locale getCurrentLocale() {
-		currentLocale = IWContext.getInstance().getCurrentLocale();
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			Logger.getLogger(getClass().getName()).warning(IWContext.class.getName() + " is unavailable!");
+			return null;
+		}
+		
+		currentLocale = iwc.getCurrentLocale();
 		return currentLocale;
 	}
 

@@ -30,7 +30,6 @@ public class LocalePresentationUtil
 	private LocalePresentationUtil()
 	{
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	public static DropdownMenu getAvailableLocalesDropdown(IWContext iwc) {
@@ -46,19 +45,6 @@ public class LocalePresentationUtil
 	
 		return down;
 	}
-
-	/*
-	  public static DropdownMenu getAvailableLocalesDropdown(IWMainApplication iwma,String name){
-	    List locales = ICLocaleBusiness.listOfLocalesJAVA();
-	    DropdownMenu down = new DropdownMenu(name);
-	    Iterator iter = locales.iterator();
-	    while (iter.hasNext()) {
-	      Locale item = (Locale)iter.next();
-	      down.addMenuElement(item.toString(),item.getDisplayLanguage());
-	    }
-	    return down;
-	  }
-	*/
 	
 	public static DropdownMenu getAvailableLocalesDropdown(IWMainApplication iwma, String name) {
 		return ICLocaleBusiness.getAvailableLocalesDropdownStringKeyed(iwma, name);

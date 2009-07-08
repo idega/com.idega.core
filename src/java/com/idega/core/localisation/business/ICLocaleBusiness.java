@@ -15,6 +15,7 @@ import com.idega.presentation.ui.DropdownMenu;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 
 /**
  * Title:
@@ -282,6 +283,10 @@ public class ICLocaleBusiness  implements MutableClass {
    * returns null if not found
    */
   public static Locale getLocaleFromLocaleString(String localeString){
+	  if (StringUtil.isEmpty(localeString)) {
+		  return null;
+	  }
+	  
     if(localeString.length() == 2){
       return new Locale(localeString, CoreConstants.EMPTY);
     }

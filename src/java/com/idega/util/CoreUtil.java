@@ -5,19 +5,28 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
+import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestProvider;
+import com.idega.user.data.User;
 import com.idega.util.expression.ELUtil;
 
 public class CoreUtil {
+	
+	private static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
 	
 	private static final BASE64Encoder ENCODER_BASE64 = new BASE64Encoder();
 	private static final BASE64Decoder DECODER_BASE64 = new BASE64Decoder();
@@ -39,7 +48,7 @@ public class CoreUtil {
 			}
 			return IWContext.getIWContext(context);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, IWContext.class.getName() + " is unavailable", e);
 			return null;
 		}
 	}
@@ -78,7 +87,7 @@ public class CoreUtil {
 		try {
 			return new String(DECODER_BASE64.decodeBuffer(encodedValue));
 		} catch (IOException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error decoding: " + encodedValue, e);
 		}
 		return null;
 	}
@@ -141,8 +150,7 @@ public class CoreUtil {
 	public static boolean sendExceptionNotification(Throwable exception) {
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
     	if (StringUtil.isEmpty(host)) {
-    		System.err.println("Unable to send email about exception:");
-    		exception.printStackTrace(System.err);
+    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
     		return false;
     	}
     	
@@ -150,26 +158,58 @@ public class CoreUtil {
     	try {
     		serverName = ELUtil.getInstance().getBean(RequestProvider.class).getRequest().getServerName();
     	} catch(Exception e) {
-    		e.printStackTrace();
+    		LOGGER.log(Level.WARNING, "Error getting " + RequestProvider.class, e);
     		serverName = "unkown";
     	}
     	
     	StringWriter stringWriter = null;
     	PrintWriter printWriter = null;
+    	String notification = null;
     	try {
     		stringWriter = new StringWriter();
     		printWriter = new PrintWriter(stringWriter);
     		exception.printStackTrace(printWriter);
     		
-        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName,
-        			"Stack trace:\n" + printWriter.toString());
+    		notification = "Stack trace:\n" + printWriter.toString();
+    		
+        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName, notification);
         } catch(Exception e) {
-        	e.printStackTrace();
+        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
         	return false;
         } finally {
         	IOUtil.closeWriter(stringWriter);
         	IOUtil.closeWriter(printWriter);
         }
     	return true;
+	}
+	
+	public static final Locale getCurrentLocale() {
+		try {
+			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+			if (loginSession == null) {
+				LOGGER.warning("LoginSession was not found");
+				return null;
+			}
+			
+			//	1. Trying to get from request
+			Locale locale = loginSession.getCurrentLocale();
+			if (locale == null) {
+				User currentUser = loginSession.getUser();
+				if (currentUser != null) {
+					//	2. Trying to get from user settings
+					String preferredLocaleId = currentUser.getPreferredLocale();
+					locale = ICLocaleBusiness.getLocaleFromLocaleString(preferredLocaleId);
+				}
+			}
+			if (locale == null) {
+				//	3. Trying to get from application settings
+				locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
+			}
+			
+			return locale;
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting current locale", e);
+		}
+		return null;
 	}
 }
