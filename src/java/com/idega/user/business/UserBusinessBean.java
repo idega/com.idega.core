@@ -82,10 +82,12 @@ import com.idega.data.IDOUtil;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.servlet.filter.IWAuthenticator;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMemberDataBeanComparator;
 import com.idega.user.data.Gender;
@@ -1650,22 +1652,104 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		UserProperties properties = new UserProperties(getIWApplicationContext().getIWMainApplication(), userID);
 		return properties;
 	}
-
+	
+	
 	/**
-	 * @return the id of the homepage for the user if it is set, else -1 Finds the homepage set for the user, if none is set it checks on the homepage set for the users primary group, else it returns -1
+	 * 	Home page precedence is as follows:
+	 *	Users direct home page id
+	 *	The only home page found from a parent group
+	 *	A home page of the preferred role (if only one found).
+	 *	If more than one page is still available and the forward page (PROPERTY_FORWARD_PAGE_URI) is set, goto the forward page
+	 *	else goto the first home page in the preferred group home pages list OR the primary group home page 
+	 *	OR lastly to the first of the none preferred home pages list (pretty random but we can't decide anyway).
+	 *
+	 * @param user
+	 * @return the URI of the page
 	 */
-	public int getHomePageIDForUser(User user) {
-		try {
-			int homeID = user.getHomePageID();
-			if (homeID == -1) {
-				homeID = user.getPrimaryGroup().getHomePageID();
-				return homeID;
-			} else {
-				return homeID;
-			}
-		} catch (Exception e) {
-			return -1;
+	public int getHomePageIDForUser(User user){
+		IWMainApplicationSettings settings = this.getIWApplicationContext().getIWMainApplication().getSettings();
+		
+		//Check if we need to use the role chooser / start page chooser page
+		String forwardPage = settings.getProperty(IWAuthenticator.PROPERTY_FORWARD_PAGE_URI);
+		
+		//Check if the user has specifically been set to go to a page, this is highly unlikely but should override everything else.
+		int homePageID = user.getHomePageID();
+		if (homePageID > 0) {
+			return homePageID;
 		}
+		
+		//Gather all the users groups and see if any of them have home pages.
+		ICRole preferredRole = user.getPreferredRole();
+		Collection<Integer> homepages = new ArrayList<Integer>();
+		Collection<Integer> homePagesOfPreferredRole = new ArrayList<Integer>();
+		Collection<Group> groups = user.getParentGroups();
+		
+		//collect home pages
+		for (Group group : groups) {
+			if (group.getHomePageID() > 0) {
+				Integer pageID = new Integer(group.getHomePageID());		
+				if(!homepages.contains(pageID)) {
+					if(preferredRole!=null){
+						Collection<ICRole> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesForGroup(group);
+						if( !ListUtil.isEmpty(allRolesForGroup) && allRolesForGroup.contains(preferredRole)){
+							homePagesOfPreferredRole.add(pageID);
+						}
+					}
+					homepages.add(pageID);
+				}
+			}
+		}
+		
+		if(!ListUtil.isEmpty(homepages) && homepages.size()==1){
+			return ((Integer)(homepages.iterator().next())).intValue();
+		}
+		
+		
+		//preferred role
+		if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
+			if(homePagesOfPreferredRole.size()==1){
+				return ((Integer)(homePagesOfPreferredRole.iterator().next())).intValue();
+			}
+		}
+		
+		//Check if there was a forward page specified for when there may be more than one page to choose from
+		if(forwardPage!=null && ( !ListUtil.isEmpty(homePagesOfPreferredRole) || !ListUtil.isEmpty(homepages) ) ){
+			try {
+				ICPageHome pageHome = (ICPageHome)IDOLookup.getHome(ICPage.class);
+				ICPage page = pageHome.findExistingByUri(forwardPage,this.getIWApplicationContext().getDomain().getID());
+				return ((Integer)page.getPrimaryKey()).intValue();
+			}
+			catch (IDOLookupException e) {
+				e.printStackTrace();
+			}
+			catch(FinderException fe) {
+				fe.printStackTrace();
+			}
+		}
+		else{
+			
+			//Last resort we use the first page of the preferred role home pages or home pages (if any)
+			if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
+				return ((Integer)(homePagesOfPreferredRole.iterator().next())).intValue();
+			}
+
+			//use the primary groups home page if any
+			Group primary = user.getPrimaryGroup();
+			if(primary!=null){
+				int homePageId = primary.getHomePageID();
+				if(homePageId>0){
+					return homePageId;
+				}
+				
+			}
+			
+			if(!ListUtil.isEmpty(homepages)){
+				return ((Integer)(homepages.iterator().next())).intValue();
+			}
+		}
+		
+		
+		return -1;
 	}
 
 	/**
@@ -3859,6 +3943,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public String getPageUriByUserPreferredRole(User user) {
+		//FIXME change to use the same logic as the page choosing in IWAuthenticator
 		ICRole userPrefferedRole = user.getPreferredRole();
 		if (userPrefferedRole == null) {
 			return null;
@@ -3989,4 +4074,5 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return "failure";
 		}	
 	}
+	
 } // Class UserBusiness

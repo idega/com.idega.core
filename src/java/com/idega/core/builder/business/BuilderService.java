@@ -384,4 +384,6 @@ public interface BuilderService extends IBOService
 	public abstract ICPage getNearestPageForUserHomePageOrCurrentPageByPageType(User currentUser, IWContext iwc, String pageType);
 	
 	public List<com.idega.core.component.business.ComponentProperty> getComponentProperties(IWContext iwc, String instanceId);
+	
+	public ICPage getUsersHomePage(User user);
 }

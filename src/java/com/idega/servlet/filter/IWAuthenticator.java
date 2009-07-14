@@ -14,8 +14,6 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -53,12 +51,10 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CypherText;
 import com.idega.util.RequestUtil;
-import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -74,7 +70,7 @@ import com.idega.util.StringUtil;
  */
 public class IWAuthenticator extends BaseFilter {
 
-	private static final String PROPERTY_FORWARD_PAGE_URI = "FORWARD_PAGE_URI";
+	public static final String PROPERTY_FORWARD_PAGE_URI = "FORWARD_PAGE_URI";
 
 	/**
 	 * This parameter can be set
@@ -166,12 +162,14 @@ public class IWAuthenticator extends BaseFilter {
 
 		processJAASLogin(request);
 
-		if (!isLoggedOn)
+		if (!isLoggedOn){
 			isLoggedOn = loginBusiness.isLoggedOn(request);
-
-		if (lastLoggedOnAsUser == null && isLoggedOn)
+		}
+		
+		if (lastLoggedOnAsUser == null && isLoggedOn){
 			lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
-
+		}
+		
 		boolean didInterrupt = processAuthenticationListeners(request, response, session, lastLoggedOnAsUser, loginBusiness, isLoggedOn);
 		if (didInterrupt) {
 			return;
@@ -228,41 +226,6 @@ public class IWAuthenticator extends BaseFilter {
 				System.out.println("[IWAuthenticator] - Filter chain interrupted. The reason was: " + e.getMessage());
 				return true;
 			}
-		}
-		return false;
-	}
-
-	protected boolean processRedirectsToUserHome(HttpServletRequest request, HttpServletResponse response, HttpSession session, LoginBusinessBean loginBusiness, boolean isLoggedOn) throws IOException, RemoteException {
-		if (isLoggedOn) {
-			int homePageID = -1;
-
-			User user = loginBusiness.getCurrentUser(session);
-			IWMainApplication app = getIWMainApplication(request);
-			IWApplicationContext iwac = app.getIWApplicationContext();
-			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-			String homePageUri = userBusiness.getPageUriByUserPreferredRole(user);
-			if (StringUtil.isEmpty(homePageUri)) {
-				log.log(Level.INFO, "Didn't find user's " + user.getName() + " home page id from preferred role");
-				homePageID = user.getHomePageID();
-				if (homePageID > 0) {
-					homePageUri = getBuilderService(iwac).getPageURI(homePageID);
-				}
-			}
-			if (!StringUtil.isEmpty(homePageUri)) {
-				response.sendRedirect(homePageUri);
-				return true;
-			}
-
-			Group prmg = user.getPrimaryGroup();
-			if (prmg != null) {
-				homePageID = prmg.getHomePageID();
-				if (homePageID > 0) {
-					response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
-					return true;
-				}
-			}
-
-			log.log(Level.INFO, "Didn't find user's " + user.getName() + " home page");
 		}
 		return false;
 	}
@@ -328,10 +291,8 @@ public class IWAuthenticator extends BaseFilter {
 	}
 	
 	/**
-	 * <p>
-	 * TODO tryggvil describe method redirectToUserHomepage
-	 * </p>
-	 * 
+	 * @see com.idega.user.business.UserBusinessBean#getHomePageIDForUser(User)
+	 *
 	 * @param request
 	 * @param response
 	 * @param isLoggedOn
@@ -341,44 +302,19 @@ public class IWAuthenticator extends BaseFilter {
 	protected boolean redirectToUserHomepage(HttpServletRequest request, HttpServletResponse response, LoginBusinessBean loginBusiness) throws IOException, RemoteException {
 		HttpSession session = request.getSession();
 		User user = loginBusiness.getCurrentUser(session);
-		IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
-
-		IWMainApplicationSettings settings = iwac.getIWMainApplication().getSettings();
-		String forwardPage = settings.getProperty(PROPERTY_FORWARD_PAGE_URI);
-		if (forwardPage != null) {
-			Collection homepages = new ArrayList();
-			Collection groups = user.getParentGroups();
-			Iterator iterator = groups.iterator();
-			while (iterator.hasNext()) {
-				Group element = (Group) iterator.next();
-				if (element.getHomePageID() > 0) {
-					Collection roles = iwac.getIWMainApplication().getAccessController().getAllRolesForGroup(element);
-					if (roles != null && !roles.isEmpty() && !homepages.contains(new Integer(element.getHomePageID()))) {
-						homepages.add(new Integer(element.getHomePageID()));
-					}
-				}
-			}
-
-			if (homepages.size() > 1) {
-				response.sendRedirect(forwardPage);
-				return true;
-			}
-		}
-
-		int homePageID = user.getHomePageID();
-		if (homePageID > 0) {
-			response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
+		IWMainApplication iwMainApplication = getIWMainApplication(request);
+		IWApplicationContext iwac = iwMainApplication.getIWApplicationContext();
+		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+		
+		int redirectPageId = userBusiness.getHomePageIDForUser(user);
+		
+		if (redirectPageId > 0) {
+			response.sendRedirect(getBuilderService(iwac).getPageURI(redirectPageId));
 			return true;
 		}
-
-		Group prmg = user.getPrimaryGroup();
-		if (prmg != null) {
-			homePageID = prmg.getHomePageID();
-			if (homePageID > 0) {
-				response.sendRedirect(getBuilderService(iwac).getPageURI(homePageID));
-				return true;
-			}
-		}
+		
+		log.log(Level.INFO, "Didn't find user's " + user.getName() + " home page");
+		
 		return false;
 	}
 
