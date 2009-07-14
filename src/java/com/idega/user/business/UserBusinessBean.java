@@ -1659,7 +1659,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 *	Users direct home page id
 	 *	The only home page found from a parent group
 	 *	A home page of the preferred role (if only one found).
-	 *	If more than one page is still available and the forward page (PROPERTY_FORWARD_PAGE_URI) is set, goto the forward page
+	 *	If more than one page is still available and the forward page (PROPERTY_FORWARD_PAGE_URI) is set, goto the forward page (if the group also has a role to choose from)
 	 *	else goto the first home page in the preferred group home pages list OR the primary group home page 
 	 *	OR lastly to the first of the none preferred home pages list (pretty random but we can't decide anyway).
 	 *
@@ -1682,6 +1682,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		ICRole preferredRole = user.getPreferredRole();
 		Collection<Integer> homepages = new ArrayList<Integer>();
 		Collection<Integer> homePagesOfPreferredRole = new ArrayList<Integer>();
+		Collection<Integer> homepagesWithRolesNotPreferred = new ArrayList<Integer>();
+		
 		Collection<Group> groups = user.getParentGroups();
 		
 		//collect home pages
@@ -1691,8 +1693,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if(!homepages.contains(pageID)) {
 					if(preferredRole!=null){
 						Collection<ICRole> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesForGroup(group);
-						if( !ListUtil.isEmpty(allRolesForGroup) && allRolesForGroup.contains(preferredRole)){
-							homePagesOfPreferredRole.add(pageID);
+						if( !ListUtil.isEmpty(allRolesForGroup)){
+							if(allRolesForGroup.contains(preferredRole)){
+								homePagesOfPreferredRole.add(pageID);
+							}
+							else{
+								homepagesWithRolesNotPreferred.add(pageID);
+							}
 						}
 					}
 					homepages.add(pageID);
@@ -1712,8 +1719,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		
-		//Check if there was a forward page specified for when there may be more than one page to choose from
-		if(forwardPage!=null && ( !ListUtil.isEmpty(homePagesOfPreferredRole) || !ListUtil.isEmpty(homepages) ) ){
+		//Check if there was a forward page specified for when there may be more than one page / role to choose from
+		if(forwardPage!=null && ( !ListUtil.isEmpty(homePagesOfPreferredRole) || !ListUtil.isEmpty(homepagesWithRolesNotPreferred) ) ){
 			try {
 				ICPageHome pageHome = (ICPageHome)IDOLookup.getHome(ICPage.class);
 				ICPage page = pageHome.findExistingByUri(forwardPage,this.getIWApplicationContext().getDomain().getID());
