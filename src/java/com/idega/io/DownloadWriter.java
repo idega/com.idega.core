@@ -16,8 +16,10 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.Collection;
 
+import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.idega.core.file.business.ICFileSystem;
@@ -55,6 +57,8 @@ public class DownloadWriter implements MediaWritable {
 	private ICFile icFile = null;
 
 	private URL url = null;
+	
+	private String fileName;
 
 	/*
 	 * (non-Javadoc)
@@ -82,7 +86,6 @@ public class DownloadWriter implements MediaWritable {
 				String fileURL = fsystem.getFileURI(Integer.valueOf(fileId).intValue());
 				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
 				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
-				//setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
 			catch (Exception e) {
@@ -163,6 +166,8 @@ public class DownloadWriter implements MediaWritable {
 	}	
 	
 	public void setAsDownload(IWContext iwc, String filename, int fileLength, String icFileId) {
+		this.fileName = filename;
+		
 		if (!StringUtil.isEmpty(icFileId)) {
 			markFileAsDownloaded(iwc, icFileId);
 		}
@@ -171,6 +176,8 @@ public class DownloadWriter implements MediaWritable {
 	}
 	
 	public void setAsDownload(IWContext iwc, String filename, int fileLength, Integer hash) {
+		this.fileName = filename;
+		
 		if (hash != null) {
 			markFileAsDownloaded(iwc, hash);
 		}
@@ -224,11 +231,45 @@ public class DownloadWriter implements MediaWritable {
 			return null;
 		}
 		
+		ICFileHome fileHome = null;
 		try {
-			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-			return fileHome.findByHash(hash);
-		} catch(Exception e) {}
+			fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		if (fileHome == null) {
+			return null;
+		}
 		
+		ICFile file = null;
+		try {
+			file = fileHome.findByHash(hash);
+		} catch(FinderException e) {
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		if (file == null) {
+			file = createFile(fileHome, hash);
+		}
+		
+		return file;
+	}
+	
+	private ICFile createFile(ICFileHome fileHome, Integer hash) {
+		try {
+			ICFile file = fileHome.create();
+			file.setHash(hash);
+			
+			if (!StringUtil.isEmpty(getFileName())) {
+				file.setName(URLEncoder.encode(getFileName(), CoreConstants.ENCODING_UTF8));
+			}
+			
+			file.store();
+			return file;
+		} catch(Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 	
@@ -243,5 +284,13 @@ public class DownloadWriter implements MediaWritable {
 		} catch(Exception e) {}
 		
 		return null;
+	}
+
+	public String getFileName() {
+		return fileName;
+	}
+
+	public void setFileName(String fileName) {
+		this.fileName = fileName;
 	}
 }
