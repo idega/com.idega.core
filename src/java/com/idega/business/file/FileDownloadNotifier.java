@@ -36,7 +36,8 @@ public abstract class FileDownloadNotifier implements Serializable {
 	public AdvancedProperty sendNotifications(FileDownloadNotificationProperties properties) {
 		AdvancedProperty result = new AdvancedProperty(Boolean.FALSE.toString(), "Unable to send notifications");
 		
-		if (properties == null) {
+		if (properties == null || StringUtil.isEmpty(properties.getUrl())) {
+			LOGGER.warning("Invalid properties!");
 			return result;
 		}
 		
@@ -74,7 +75,7 @@ public abstract class FileDownloadNotifier implements Serializable {
 		} catch(UnsupportedEncodingException e) {
 			LOGGER.log(Level.WARNING, "Error decoding: " + file.getName(), e);
 		}
-
+		
 		String pageMessage = new StringBuilder(iwrb.getLocalizedString("file_download_notifier.reminder_message_for_document_to_download",
 			"Please download document. You can find it: ")).append(properties.getUrl()).append(". ")
 			.append(iwrb.getLocalizedString("file_download_notifier.or_directly_download", "Or directly download from: ")).toString();
