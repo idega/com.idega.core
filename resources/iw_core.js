@@ -1856,6 +1856,9 @@ LazyLoader.existsResourceInDocument = function(url, isCSS) {
 
 LazyLoader.existsResourceInElement = function(elementTagName, url, isCSS) {
 	var element = document.getElementsByTagName(elementTagName)[0];
+	if (element == null) {
+		return false;
+	}
 	var currentResources = null;
 	try {
 		currentResources = element.getElementsByTagName(isCSS ? 'link' : 'script');
