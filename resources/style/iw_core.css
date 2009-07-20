@@ -221,3 +221,9 @@ span.blockedContentWithLoadingLayer {
 	line-height: 54px;
 	padding-left: 30px;
 }
+
+div.fileDownloadStatisticsNotificationContainer {
+	float: right;
+	margin-top: 15px;
+	padding-right: 5px;
+}

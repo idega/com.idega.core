@@ -270,7 +270,11 @@ public class HtmlPage extends Page {
 	//public void encodeChildren(FacesContext ctx) throws IOException {
 	@Override
 	public void print(IWContext ctx) throws IOException {
-		addSessionPollingDWRFiles(ctx);
+		IWContext iwc = IWContext.getIWContext(ctx);
+		
+		addSessionPollingDWRFiles(iwc);
+		addNotifications(iwc);
+		
 		Writer out;
 		
 		//ResponseWriter out = ctx.getResponseWriter();
