@@ -138,4 +138,6 @@ public class CoreConstants {
 	
 	public static final String PAGE_ERROR_403_HANDLER_PORPERTY = HttpServletResponse.SC_FORBIDDEN + "_PAGE_URI";
 	public static final String PAGE_ERROR_404_HANDLER_PORPERTY = HttpServletResponse.SC_NOT_FOUND + "_PAGE_URI";
+	
+	public static final String SYSTEM_RESTART_IN_PROPERTY = "system_restart_in";
 }

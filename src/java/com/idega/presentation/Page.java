@@ -22,6 +22,8 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
@@ -42,6 +44,8 @@ import com.idega.idegaweb.include.JavaScriptLink;
 import com.idega.idegaweb.include.PageResourceConstants;
 import com.idega.idegaweb.include.StyleSheetLink;
 import com.idega.io.serialization.FileObjectReader;
+import com.idega.notifier.business.Notifier;
+import com.idega.notifier.presentation.BasicNotification;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
@@ -1421,6 +1425,27 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				.append(applicationSettings.getProperty("iw.core.polling_interval", "1200000")).append(", true);});").toString());
 		}
 	}
+	
+	@SuppressWarnings("unchecked")
+	protected void addNotifications(IWContext iwc) {
+		Map<String, ? extends Notifier> notifiers = WebApplicationContextUtils.getWebApplicationContext(iwc.getServletContext()).getBeansOfType(Notifier.class);
+		if (notifiers == null || notifiers.isEmpty()) {
+			return;
+		}
+		
+		for (Notifier notifier: notifiers.values()) {
+			if (notifier.isActive()) {
+				BasicNotification notification = notifier.getNotification(iwc.getSession());
+				if (notification != null) {
+					try {
+						renderChild(iwc, notification);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+	}
 
 	/**
 	 * @param iwc
@@ -1453,6 +1478,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		callMain(context);
+		
 		this.printBegin(IWContext.getIWContext(context));
 	}
 
@@ -1505,12 +1531,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			println("<?xml version=\"1.0\"?>");
-			if (true) {
+//			if (true) {
 				println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
-			}
+			/*}
 			else {
 				println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
-			}
+			}*/
 			println("<wml>");
 			println("<head>");
 			println("<meta http-equiv=\"cache-control\" content=\"no-cache\"/>");
