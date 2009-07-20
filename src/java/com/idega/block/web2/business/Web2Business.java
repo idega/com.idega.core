@@ -424,4 +424,9 @@ public interface Web2Business extends IBOService {
 	public String getBundleUriToLinkLinksWithFilesStyleFile();
 	
 	public abstract JQuery getJQuery();
+	
+	//	Gritter
+	public String getBundleUriToGritterStyleSheet();
+	public String getBundleUriToGritterScriptFile();
+	
 }
