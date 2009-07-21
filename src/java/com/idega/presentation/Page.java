@@ -21,7 +21,7 @@ import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-
+import javax.servlet.http.HttpSession;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
@@ -58,6 +58,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
+import com.idega.util.ListUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.URLUtil;
@@ -1435,16 +1436,29 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		
 		for (Notifier notifier: notifiers.values()) {
 			if (notifier.isActive()) {
-				BasicNotification notification = notifier.getNotification(iwc.getSession());
-				if (notification != null) {
-					try {
-						renderChild(iwc, notification);
-					} catch (IOException e) {
-						e.printStackTrace();
+				HttpSession session = iwc.getSession();
+								
+				List<BasicNotification> notifications = notifier.getNotifications(session);
+				if (!ListUtil.isEmpty(notifications)) {
+					for (BasicNotification notification: notifications) {
+						try {
+							renderChild(iwc, notification);
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
 					}
 				}
 			}
 		}
+	}
+	
+	protected void enableReverseAjax(IWContext iwc) {
+		if (!iwc.getApplicationSettings().isReverseAjaxEnabled()) {
+			return;
+		}
+		
+		PresentationUtil.addJavaScriptSourceLineToHeader(iwc, CoreConstants.DWR_ENGINE_SCRIPT);
+		PresentationUtil.addJavaScriptActionToBody(iwc, "registerEvent(window, 'load', function() {dwr.engine.setActiveReverseAjax(true);});");
 	}
 
 	/**
