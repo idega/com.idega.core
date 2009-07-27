@@ -9,6 +9,12 @@
  */
 package com.idega.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Set;
+
 import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
@@ -214,10 +220,13 @@ public class RequestUtil {
 		
 		boolean addLoginRedirectParameter = false;
 		String redirectUri = null;
+		String loginRedirectString = null;
 		switch(code) {
 			case HttpServletResponse.SC_FORBIDDEN : {
 				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_403_HANDLER_PORPERTY);
 				addLoginRedirectParameter = true;
+				String parameters = getParametersStringFromRequest(request);
+				loginRedirectString = new StringBuilder("?logon_redirect_uri=").append(requestedPage).append("&").append(parameters).toString();
 				
 				break;
 			}
@@ -231,7 +240,48 @@ public class RequestUtil {
 			return null;
 		}
 		
-		return new StringBuilder(redirectUri).append(addLoginRedirectParameter ? new StringBuilder("?logon_redirect_uri=").append(requestedPage).toString() :
-													CoreConstants.EMPTY).toString();
+		
+		
+		return new StringBuilder(redirectUri).append(addLoginRedirectParameter ? loginRedirectString : CoreConstants.EMPTY).toString();
 	}
+
+	/**
+	 * 
+	 * @param request
+	 * @return An URLEncoded (UTF-8) string with request parameters, e.g. "parameter1=value1&parameter2=value1&parameter2=value2"
+	 */
+	public static String getParametersStringFromRequest(HttpServletRequest request) {
+		StringBuilder parametersString = new StringBuilder();
+		try {
+			Map parameters = request.getParameterMap();
+			
+			if (parameters != null && !parameters.isEmpty()) {
+				Set parametersSet = parameters.keySet();
+				for (Iterator iterator = parametersSet.iterator(); iterator.hasNext();) {
+					String key = (String) iterator.next();
+					String encodedKey = URLEncoder.encode(key, CoreConstants.ENCODING_UTF8);
+					String[] values = request.getParameterValues(key);
+					if (values != null && values.length > 0) {
+						for (int j = 0; j < values.length; j++) {
+							parametersString.append(encodedKey).append(URLEncoder.encode(values[j], CoreConstants.ENCODING_UTF8)).append("&");
+						}
+					}
+				}
+			}
+			return parametersString.toString();
+		}
+		catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
+		
+		return parametersString.toString();
+	}
+	
+	public static String getRequestParametersAsString(HttpServletRequest request){
+		
+		
+		
+		return "";
+	}
+	
 }
