@@ -1944,6 +1944,13 @@ IWCORE.pingServer = function(sleepTime, id) {
 	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/PageSessionPoller.js'], function() {
 		PageSessionPoller.pollSession(window.location.pathname, {
 			callback: function(result) {
+				if (result != null) {
+					IWCORE.insertRenderedComponent(result, {
+						container: document.body,
+						append: true
+					});
+				}
+				
 				IWCORE.activeSessionPolling(sleepTime, false);
 			},
 			errorHandler: function() {}

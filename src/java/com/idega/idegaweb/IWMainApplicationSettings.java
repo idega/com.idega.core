@@ -92,6 +92,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public static final String IDO_ENTITY_BEAN_CACHING_KEY = "ido_entity_bean_caching";
 	public static final String IDO_ENTITY_QUERY_CACHING_KEY = "ido_entity_query_caching";
 	public static final String SESSION_POLLING_KEY = "session_polling";
+	public static final String REVERSE_AJAX_KEY = "reverse_ajax";
 	
 	// the following three properties seem not to be set but  
 	// they are read BEFORE the database is initialized, that is
@@ -549,6 +550,9 @@ public class IWMainApplicationSettings implements MutableClass {
 		return ret;
 	}
 	
+	public boolean isReverseAjaxEnabled() {
+		return getBoolean(REVERSE_AJAX_KEY, Boolean.FALSE);
+	}
 	
 	public void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;

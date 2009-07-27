@@ -274,6 +274,7 @@ public class HtmlPage extends Page {
 		
 		addSessionPollingDWRFiles(iwc);
 		addNotifications(iwc);
+		enableReverseAjax(iwc);
 		
 		Writer out;
 		
