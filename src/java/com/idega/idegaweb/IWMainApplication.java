@@ -1384,6 +1384,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
             log.info("Storing Cryptonium");
 
             try {
+            	//fixme this is failing when the file doesn't already exist.
         		String file = getApplicationRealPath()+"/WEB-INF/idegaweb/properties/crypto.properties";
                 cryptoClassNamesPropertiesKeyedByCode.store(
                         new FileOutputStream(file), "Cryptonium");
