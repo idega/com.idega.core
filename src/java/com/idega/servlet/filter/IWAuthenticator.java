@@ -14,6 +14,7 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -334,9 +335,16 @@ public class IWAuthenticator extends BaseFilter {
 		if (uri != null) {
 			try {
 				uri = URLDecoder.decode(uri, CoreConstants.ENCODING_UTF8);
+				List<String> ignoreParams = new ArrayList<String>();
+				ignoreParams.add(PARAMETER_REDIRECT_URI_ONLOGON);
+				ignoreParams.add(LoginBusinessBean.PARAMETER_USERNAME);
+				ignoreParams.add(LoginBusinessBean.PARAMETER_PASSWORD);
+				ignoreParams.add(LoginBusinessBean.PARAMETER_PASSWORD2);//whatever that is...
+				ignoreParams.add(LoginBusinessBean.LoginStateParameter);
+				ignoreParams.add(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID);
+				uri+="?"+RequestUtil.getParametersStringFromRequest(request,ignoreParams);
 			}
 			catch (UnsupportedEncodingException e) {
-				// TODO: what tha heck container is that?
 				log.log(Level.WARNING, "Exception while decoding redirect uri parameter: " + PARAMETER_REDIRECT_URI_ONLOGON + " by using " + CoreConstants.ENCODING_UTF8 + " encoding", e);
 			}
 		}

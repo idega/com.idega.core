@@ -10,6 +10,7 @@
 package com.idega.util;
 
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -250,6 +251,15 @@ public class RequestUtil {
 	 * @return String with request parameters, e.g. "parameter1=value1&parameter2=value1&parameter2=value2"
 	 */
 	public static String getParametersStringFromRequest(HttpServletRequest request) {
+		return getParametersStringFromRequest(request,null);
+	}
+	
+	/**
+	 * 
+	 * @param request
+	 * @return String with request parameters, e.g. "parameter1=value1&parameter2=value1&parameter2=value2"
+	 */
+	public static String getParametersStringFromRequest(HttpServletRequest request, List<String> keysToIgnore) {
 		StringBuilder parametersString = new StringBuilder();
 		Map parameters = request.getParameterMap();
 
@@ -257,19 +267,24 @@ public class RequestUtil {
 			Set<String> parametersSet = parameters.keySet();
 			for (Iterator iterator = parametersSet.iterator(); iterator.hasNext();) {
 				String key = (String) iterator.next();
-				String[] values = request.getParameterValues(key);
-				if (values != null && values.length > 0) {
-					for (int j = 0; j < values.length; j++) {
-						parametersString.append(key).append('=').append(values[j]);
-						if(j!=(values.length-1)){
-							parametersString.append('&');
+				if(ListUtil.isEmpty(keysToIgnore) || !(keysToIgnore.contains(key)) ){
+					String[] values = request.getParameterValues(key);
+					if (values != null && values.length > 0) {
+						for (int j = 0; j < values.length; j++) {
+							parametersString.append('&').append(key).append('=').append(values[j]);
 						}
 					}
 				}
 			}
 		}
-
-		return parametersString.toString();
+		
+		if(parametersString.length()>0){
+			//just to remove the first &
+			return parametersString.substring(1);
+		}
+		else{
+			return "";
+		}
 	}
 	
 	public static String getRequestParametersAsString(HttpServletRequest request){
