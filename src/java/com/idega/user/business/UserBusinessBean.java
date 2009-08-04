@@ -1692,9 +1692,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				Integer pageID = new Integer(group.getHomePageID());		
 				if(!homepages.contains(pageID)) {
 					if(preferredRole!=null){
-						Collection<ICRole> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesForGroup(group);
-						if( !ListUtil.isEmpty(allRolesForGroup)){
-							if(allRolesForGroup.contains(preferredRole)){
+						Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
+						if(!ListUtil.isEmpty(allRolesForGroup)){
+							if(allRolesForGroup.contains(preferredRole.getRoleKey())){
 								homePagesOfPreferredRole.add(pageID);
 							}
 							else{
@@ -1708,14 +1708,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		
 		if(!ListUtil.isEmpty(homepages) && homepages.size()==1){
-			return ((Integer)(homepages.iterator().next())).intValue();
+			return ((homepages.iterator().next())).intValue();
 		}
 		
 		
 		//preferred role
 		if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
 			if(homePagesOfPreferredRole.size()==1){
-				return ((Integer)(homePagesOfPreferredRole.iterator().next())).intValue();
+				return ((homePagesOfPreferredRole.iterator().next())).intValue();
 			}
 		}
 		
@@ -1737,7 +1737,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			
 			//Last resort we use the first page of the preferred role home pages or home pages (if any)
 			if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
-				return ((Integer)(homePagesOfPreferredRole.iterator().next())).intValue();
+				return ((homePagesOfPreferredRole.iterator().next())).intValue();
 			}
 
 			//use the primary groups home page if any
@@ -1751,7 +1751,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			
 			if(!ListUtil.isEmpty(homepages)){
-				return ((Integer)(homepages.iterator().next())).intValue();
+				return ((homepages.iterator().next())).intValue();
 			}
 		}
 		
