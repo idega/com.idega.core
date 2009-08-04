@@ -2700,25 +2700,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
 	 * Gets all the role permissions the group has. It does not return role-permissionkey permissions
 	 */
-	public Collection getAllRolesForGroup(Group group) {
-		Collection returnCol = new Vector(); //empty
+	public Collection<ICPermission> getAllRolesForGroup(Group group) {
+		Collection<ICPermission> groupPermissions = new Vector<ICPermission>(); //empty
 		try {
-			Collection permissions=
-				getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
-					RoleHelperObject.getStaticInstance().toString(),
-					group);
+			Collection<ICPermission> permissions = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
+					RoleHelperObject.getStaticInstance().toString(), group);
 			
-			if(permissions!=null && !permissions.isEmpty()){
-						Iterator permissionsIter = permissions.iterator();
-						while (permissionsIter.hasNext()) {
-							ICPermission perm = (ICPermission) permissionsIter.next();
-//							perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
-			                //if not it is a role for a permission key
-			                if(perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())){
-			                    returnCol.add(perm);
-			                }
-						}
-					}		
+			if (ListUtil.isEmpty(permissions)) {
+				return groupPermissions;
+			}
+			
+			for (ICPermission perm: permissions) {
+//				perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
+				//	If not it is a role for a permission key
+				if (perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())) {
+					groupPermissions.add(perm);
+				}
+			}	
 		}
 		catch (FinderException ex) {
 			ex.printStackTrace();
@@ -2727,20 +2725,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			x.printStackTrace();
 		}
 
-		return returnCol;	
+		return groupPermissions;
+	}
+	
+	public Collection<String> getAllRolesKeysForGroup(Group group) {
+		Collection<ICPermission> permissions = getAllRolesForGroup(group);
+		if (ListUtil.isEmpty(permissions)) {
+			return new ArrayList<String>(0);
+		}
+		
+		Collection<String> keys = new ArrayList<String>(permissions.size());
+		for (ICPermission permission: permissions) {
+			keys.add(permission.getPermissionString());
+		}
+		
+		return keys;
 	}
 
 	/**
 	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
 	 */
-	public Collection getAllRolesForGroupCollection(Collection groups) {
-	    Collection returnCol = new Vector(); //empty
-	    if(groups == null || groups.isEmpty()){
-	    		return ListUtil.getEmptyList();
+	public Collection<ICPermission> getAllRolesForGroupCollection(Collection groups) {
+	    Collection<ICPermission> returnCol = new Vector<ICPermission>(); //empty
+	    if (ListUtil.isEmpty(groups)) {
+	    	return ListUtil.getEmptyList();
 	    }
 	    try {
-	        Collection permissions=
-	            getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
+	        Collection permissions = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
 	                    RoleHelperObject.getStaticInstance().toString(),
 	                    groups);
 	        
@@ -2772,18 +2783,29 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 	
 	public Set<String> getAllRolesForUser(User user) {
+		Set<String> s = new HashSet<String>();
+		
+		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(user);
+		if (!ListUtil.isEmpty(userRolesFromGroup)) {
+			for (String key: userRolesFromGroup) {
+				s.add(key);
+			}
+		}
+		
 		try {
-			Collection c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
-			if(c!=null){
-				Set s = new HashSet();
-				for (Iterator iter = c.iterator(); iter.hasNext();) {
-					ICPermission p = (ICPermission) iter.next();
-					if(p.isActive()){		//if(p.getPermissionValue()){  // always true for this roles 
-						s.add(p.getPermissionString());
-					}
-				}
+			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
+			if (c == null) {
 				return s;
 			}
+			for (ICPermission p: c) {
+				if (p.isActive()) {		//if(p.getPermissionValue()){  // always true for this roles
+					String key = p.getPermissionString();
+					if (!s.contains(key)) {
+						s.add(key);
+					}
+				}
+			}
+			return s;
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
