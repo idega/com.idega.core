@@ -140,4 +140,7 @@ public class CoreConstants {
 	public static final String PAGE_ERROR_404_HANDLER_PORPERTY = HttpServletResponse.SC_NOT_FOUND + "_PAGE_URI";
 	
 	public static final String SYSTEM_RESTART_IN_PROPERTY = "system_restart_in";
+	
+	public static final String MAIL_TEXT_PLAIN_TYPE = "text/plain";
+	public static final String MAIL_TEXT_HTML_TYPE = "text/html";
 }

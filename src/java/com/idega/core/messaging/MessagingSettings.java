@@ -100,16 +100,11 @@ public class MessagingSettings {
 	 * </p>
 	 * @return
 	 */
-	public boolean isEmailingEnabled(){
-		String theRet = getProperty(PROPERTY_EMAIL_ENABLED);
-		if(theRet!=null){
-			try{
-				Boolean b = Boolean.valueOf(theRet);
-				return b.booleanValue();
-			}
-			catch(Exception e){}
-		}
-		return true;
+	public boolean isEmailingEnabled() {
+		return iwma.getSettings().getBoolean(PROPERTY_EMAIL_ENABLED, Boolean.TRUE);
 	}
 	
+	public void setEmailingEnabled(boolean enabled) {
+		setProperty(PROPERTY_EMAIL_ENABLED, Boolean.valueOf(enabled).toString());
+	}
 }
