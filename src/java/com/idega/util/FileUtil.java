@@ -31,6 +31,8 @@ import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
@@ -40,6 +42,8 @@ import com.idega.servlet.filter.IWBundleResourceFilter;
 
 public class FileUtil {
 
+	private static final Logger LOGGER = Logger.getLogger(FileUtil.class.getName());
+	
   public static final char UNIX_FILE_SEPARATOR = '/';
   public static final char WINDOWS_FILE_SEPARATOR = '\\';
   public static final String BACKUP_SUFFIX = "backup~";
@@ -119,7 +123,7 @@ public class FileUtil {
 		}
 	}
 	if (file.isDirectory()) {
-		System.out.println("Weser");
+		LOGGER.info("Weser");
 	}
 	// everything is okay
 	return true;
@@ -176,7 +180,7 @@ public static String getFileSeparator(){
         dirs.mkdirs();
       }
       catch(Exception e){
-        e.printStackTrace();
+        LOGGER.log(Level.WARNING, "Error making directory: " + path, e);
       }
       File file = null;
 
@@ -233,8 +237,7 @@ public static String getFileSeparator(){
           }
         }
         catch(IOException e){
-            //e.printStackTrace(System.err);
-            System.err.println("FileUtil : Error or skipping (for folders) writing to file");
+        	LOGGER.log(Level.WARNING, "Error or skipping (for folders) writing to file", e);
          }
 
         return file;
@@ -262,10 +265,6 @@ public static String getFileSeparator(){
       }
 
     }
-    //catch(IOException e){
-    //  //e.printStackTrace(System.err);
-    //  System.err.println("FileUtil : Error or skipping (for folders) writing to file");
-    //}
     finally{
       try{
         if(input!=null) {
@@ -273,8 +272,7 @@ public static String getFileSeparator(){
         }
       }
       catch(IOException e){
-        //e.printStackTrace(System.err);
-        System.err.println("FileUtil : Error closing the inputstream");
+    	  LOGGER.warning("FileUtil : Error closing the inputstream");
       }
     }
   }
@@ -708,11 +706,11 @@ public static String getFileSeparator(){
   	}
   	catch(MalformedURLException mue) { // URL c'tor
   		//return "MalformedURLException: Site not available or wrong url";
-  		mue.printStackTrace();
+  		LOGGER.log(Level.WARNING, "Site not available or wrong url", mue);
   	}
   	catch(IOException ioe) { // Stream constructors
   		//return "IOException: Site not available or wrong url";
-  		ioe.printStackTrace();
+  		LOGGER.log(Level.WARNING, "Site not available or wrong url", ioe);
   	}
   	
   }
