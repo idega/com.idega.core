@@ -11,9 +11,13 @@ package com.idega.core.contact.data;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
+
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOFactory;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 
 /**
@@ -25,7 +29,10 @@ import com.idega.user.data.Group;
  */
 public class EmailHomeImpl extends IDOFactory implements EmailHome {
 
-	protected Class getEntityInterfaceClass() {
+	private static final long serialVersionUID = -3828302165942058939L;
+
+	@Override
+	protected Class<Email> getEntityInterfaceClass() {
 		return Email.class;
 	}
 
@@ -108,5 +115,12 @@ public class EmailHomeImpl extends IDOFactory implements EmailHome {
 				throw new RuntimeException("CreateException:"+ce.getMessage());
 			}
 	 }
+
+	public Collection<Email> findMainEmailsForUsers(Collection<User> users) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<Integer> ids = ((EmailBMPBean) entity).ejbFindMainEmailsForUsers(users);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKeyCollection(ids);
+	}
 
 }

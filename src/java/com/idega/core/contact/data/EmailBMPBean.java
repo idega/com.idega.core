@@ -12,6 +12,10 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.query.Column;
+import com.idega.data.query.InCriteria;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupBMPBean;
@@ -38,6 +42,7 @@ public class EmailBMPBean
 	{
 		super(id);
 	}
+	@Override
 	public void initializeAttributes()
 	{
 		this.addAttribute(this.getIDColumnName());
@@ -45,6 +50,7 @@ public class EmailBMPBean
 		addManyToOneRelationship(getColumnNameEmailTypeId(), "Type", EmailType.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_email");
 	}
+	@Override
 	public String getEntityName()
 	{
 		return SQL_TABLE_NAME;
@@ -295,5 +301,27 @@ public class EmailBMPBean
 		query.append(" email.").append(getIDColumnName()).appendEqualSign().append("iue.").append(getIDColumnName());
 		query.appendAnd();
 		query.append("iue.").append(userOrGroupPrimaryKey).appendEqualSign().append(userOrGroupId);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<Integer> ejbFindMainEmailsForUsers(Collection<com.idega.user.data.User> users) throws FinderException {
+		Table emails = new Table(this);
+		SelectQuery query = new SelectQuery(emails);
+		
+		Table emailTypes = new Table(EmailType.class);
+		
+		query.addColumn(new Column(emails, getIDColumnName()));
+		
+		query.addJoin(emails, SQL_COLUMN_TYPE, emailTypes, SQL_COLUMN_TYPE);
+		query.addCriteria(new MatchCriteria(emailTypes, GenericTypeBMPBean.getColumnNameUniqueName(), MatchCriteria.EQUALS, EmailTypeBMPBean.MAIN_EMAIL));
+		
+		Table usersEmails = new Table(UserBMPBean.SQL_RELATION_EMAIL);
+		query.addJoin(emails, getIDColumnName(), usersEmails, getIDColumnName());
+		
+		Table usersTable = new Table(com.idega.user.data.User.class);
+		query.addJoin(usersEmails, com.idega.user.data.User.FIELD_USER_ID, usersTable, com.idega.user.data.User.FIELD_USER_ID);
+		query.addCriteria(new InCriteria(usersTable, com.idega.user.data.User.FIELD_USER_ID, users));
+		
+    	return idoFindPKsByQuery(query);
 	}
 }
