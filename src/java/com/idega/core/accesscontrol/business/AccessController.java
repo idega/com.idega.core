@@ -16,6 +16,8 @@ import java.util.List;
 import java.util.Set;
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
+
+import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICPage;
@@ -145,7 +147,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );
   public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
   public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac                  );
-  public Collection getAllRolesForGroup(Group group);
+  public Collection<ICPermission> getAllRolesForGroup(Group group);
   public Collection getAllRolesWithRolePermissionsForGroup(Group group);
   public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection groups);
   public Collection<ICRole> getAllRoles();
@@ -161,7 +163,8 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
   public Set<String> getAllRolesForUser(User user);
   public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user);
-
+  public Collection<String> getAllRolesKeysForGroup(Group group);
+  
 /*
   public static List getPermissionGroups(User user) throws Exception;
   public static List getPermissionGroups(GenericGroup group) throws Exception;

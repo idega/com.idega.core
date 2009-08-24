@@ -22,19 +22,26 @@ import com.idega.idegaweb.IWMainApplication;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
  */
-public class SimpleMessage {
+public class SimpleMessage implements Cloneable {
 
-	String subject;
-	String body;
+	private String subject;
+	private String body;
 	
-	public SimpleMessage(){
+	public SimpleMessage() {
+		super();
 	}
 	
-	public SimpleMessage(String subject,String body){
-		this.setSubject(subject);
-		this.setBody(body);
+	public SimpleMessage(String subject, String body) {
+		this();
+		
+		setSubject(subject);
+		setBody(body);
 	}
 
+	protected SimpleMessage(SimpleMessage message) {
+		this(message.getSubject(), message.getBody());
+	}
+	
 	public String getBody() {
 		return this.body;
 	}
@@ -65,6 +72,10 @@ public class SimpleMessage {
 	 * </p>
 	 * @throws MessagingException
 	 */
-	public void send() throws MessagingException{
+	public void send() throws MessagingException {}
+
+	@Override
+	protected Object clone() throws CloneNotSupportedException {
+		return new SimpleMessage(this);
 	}
 }

@@ -43,6 +43,7 @@ public abstract class FileDownloadNotifier implements Serializable {
 		
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
+			LOGGER.warning(IWContext.class + " is unavailable");
 			return result;
 		}
 		
@@ -50,21 +51,25 @@ public abstract class FileDownloadNotifier implements Serializable {
 		
 		String fileId = properties.getFile();
 		if (StringUtil.isEmpty(fileId)) {
+			LOGGER.warning("File ID is undefined (for ICFile)");
 			return result;
 		}
 
 		ICFile file = getFile(fileId);
 		if (file == null) {
+			LOGGER.warning("File was not found by ID: " + fileId);
 			return result;
 		}
 		
 		List<String> usersIds = properties.getUsers();
 		if (ListUtil.isEmpty(usersIds)) {
+			LOGGER.warning("There are no recipients of this notification!");
 			return result;
 		}
 		
 		List<AdvancedProperty> emailsAndLinks = getEmails(file, properties);
 		if (ListUtil.isEmpty(emailsAndLinks)) {
+			LOGGER.warning("Unable to resolve e-mail addresses for recipients: " + usersIds);
 			return result;
 		}
 		
@@ -82,10 +87,6 @@ public abstract class FileDownloadNotifier implements Serializable {
 		
 		IWMainApplicationSettings settings = iwc.getApplicationSettings();
 		String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-		if (StringUtil.isEmpty(host)) {
-			LOGGER.warning("Host server is not defined, unable to send message: " + subject + " to: " + emailsAndLinks);
-			return result;
-		}
 		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS);
 		if (StringUtil.isEmpty(from)) {
 			LOGGER.warning("Address 'from' is not defined, unable to send message: " + subject + " to: " + emailsAndLinks);
@@ -105,6 +106,7 @@ public abstract class FileDownloadNotifier implements Serializable {
 	
 	private boolean sendNotification(String recipient, String subject, String message, String host, String from) {
 		if (StringUtil.isEmpty(recipient) || StringUtil.isEmpty(subject) || StringUtil.isEmpty(message)) {
+			LOGGER.warning("Some of fields are not provided: recipient: '"+recipient+"', subject: '"+subject+"', message: '"+message+"'");
 			return false;
 		}
 		
@@ -112,8 +114,10 @@ public abstract class FileDownloadNotifier implements Serializable {
 			SendMail.send(from, recipient, null, null, host, subject, message);
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error sending message: " + subject + " to: " + recipient, e);
+			return false;
 		}
-		return false;
+		
+		return true;
 	}
 	
 	private ICFile getFile(String id) {

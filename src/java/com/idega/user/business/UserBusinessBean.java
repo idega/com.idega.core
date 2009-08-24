@@ -1691,13 +1691,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if (group.getHomePageID() > 0) {
 				Integer pageID = new Integer(group.getHomePageID());		
 				if(!homepages.contains(pageID)) {
-					Collection<ICRole> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesForGroup(group);
-					if( !ListUtil.isEmpty(allRolesForGroup)){
-						if(preferredRole!=null && allRolesForGroup.contains(preferredRole)){
-							homePagesOfPreferredRole.add(pageID);
-						}
-						else{
-							homepagesWithRolesNotPreferred.add(pageID);
+					if(preferredRole!=null){
+						Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
+						if(!ListUtil.isEmpty(allRolesForGroup)){
+							if(allRolesForGroup.contains(preferredRole.getRoleKey())){
+								homePagesOfPreferredRole.add(pageID);
+							}
+							else{
+								homepagesWithRolesNotPreferred.add(pageID);
+							}
 						}
 					}
 					homepages.add(pageID);
@@ -1706,22 +1708,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		
 		if(!ListUtil.isEmpty(homepages) && homepages.size()==1){
-			return ((Integer)(homepages.iterator().next())).intValue();
+			return ((homepages.iterator().next())).intValue();
 		}
 		
 		
 		//preferred role
 		if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
 			if(homePagesOfPreferredRole.size()==1){
-				return ((Integer)(homePagesOfPreferredRole.iterator().next())).intValue();
+				return ((homePagesOfPreferredRole.iterator().next())).intValue();
 			}
 		}
 		
-		//if homePagesOfPreferredRole is none empty it also is bigger then 1 because of the check above.
-		boolean moreThanOneRoleWithPage = (!ListUtil.isEmpty(homePagesOfPreferredRole) || (!ListUtil.isEmpty(homepagesWithRolesNotPreferred) && homepagesWithRolesNotPreferred.size()>1));
-		
 		//Check if there was a forward page specified for when there may be more than one page / role to choose from
-		if(forwardPage!=null && moreThanOneRoleWithPage ){
+		if(forwardPage!=null && ( !ListUtil.isEmpty(homePagesOfPreferredRole) || !ListUtil.isEmpty(homepagesWithRolesNotPreferred) ) ){
 			try {
 				ICPageHome pageHome = (ICPageHome)IDOLookup.getHome(ICPage.class);
 				ICPage page = pageHome.findExistingByUri(forwardPage,this.getIWApplicationContext().getDomain().getID());
@@ -1738,7 +1737,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			
 			//Last resort we use the first page of the preferred role home pages or home pages (if any)
 			if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
-				return ((Integer)(homePagesOfPreferredRole.iterator().next())).intValue();
+				return ((homePagesOfPreferredRole.iterator().next())).intValue();
 			}
 
 			//use the primary groups home page if any
@@ -1752,7 +1751,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			
 			if(!ListUtil.isEmpty(homepages)){
-				return ((Integer)(homepages.iterator().next())).intValue();
+				return ((homepages.iterator().next())).intValue();
 			}
 		}
 		

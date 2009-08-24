@@ -2,6 +2,7 @@ package com.idega.util;
 
 import java.io.File;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -12,10 +13,12 @@ import javax.mail.Message;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
+import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 
 import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.messaging.SMTPAuthenticator;
@@ -33,6 +36,8 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  */
 public class SendMail {
 
+	private static final Logger LOGGER = Logger.getLogger(SendMail.class.getName());
+	
 	public SendMail() {
 	}
 
@@ -51,29 +56,28 @@ public class SendMail {
 	 * @param host
 	 * @param subject
 	 * @param text
-	 * @param attachedFile
+	 * @param mailType: plain text, HTML etc.
+	 * @param attachedFiles
 	 * @throws MessagingException
-	 */
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File attachedFile) throws MessagingException {
+	 */	
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+			File... attachedFiles) throws MessagingException {
 
-		// charset usually either "UTF-8" or "ISO-8859-1"
-		// if not set the system default set is taken
+		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
-		boolean useSmtpAuthentication = Boolean.valueOf(settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, "false")).booleanValue();
-		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "");
-		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "");
-		if(host==null || (host.length()==0)){
+		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.FALSE);
+		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, CoreConstants.EMPTY);
+		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, CoreConstants.EMPTY);
+		if (StringUtil.isEmpty(host)) {
 			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER);
 		}
 		
-		
-		if("".equals(username)){
+		if (StringUtil.isEmpty(username)) {
 			useSmtpAuthentication = false;
 		}
 		
-		
-		//Set the host smtp address
+		// Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
 
@@ -81,7 +85,7 @@ public class SendMail {
 		Session session;
 
 		if (useSmtpAuthentication) {
-			props.put("mail.smtp.auth", "true");
+			props.put("mail.smtp.auth", Boolean.TRUE.toString());
 			Authenticator auth = new SMTPAuthenticator(username, password);
 			session = Session.getInstance(props, auth);
 		}
@@ -89,61 +93,72 @@ public class SendMail {
 			session = Session.getInstance(props, null);
 		}
 
-		//set debug if needed
+		// Set debug if needed
 		session.setDebug(settings.isDebugActive());
 
 		// Construct a message
-		to = to.replace(';', ',');
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
-		message.addRecipients(Message.RecipientType.TO, InternetAddress.parse(to));
-		// process cc and bcc
-		// this Address[] ccAddressess = InternetAddress.parse(cc); or similar
-		if ((cc != null) && !("".equals(cc))) {
-			cc = cc.replace(';', ',');
-			message.addRecipients(Message.RecipientType.CC, InternetAddress.parse(cc));
-		}
-		if ((bcc != null) && !("".equals(bcc))) {
-			bcc = bcc.replace(';', ',');
-			message.addRecipients(Message.RecipientType.BCC, InternetAddress.parse(bcc));
-		}
-		/** @todo tryggvi laga */
-		/*
-		 * message.setSubject(parseCharacters(subject));
-		 * 
-		 * message.setText(parseCharacters(text));
-		 * 
-		 */
-		if (replyTo != null && !"".equals(replyTo)) {
+		
+		// Process to, cc and bcc
+		addRecipients(message, Message.RecipientType.TO, to);
+		addRecipients(message, Message.RecipientType.CC, cc);
+		addRecipients(message, Message.RecipientType.BCC, bcc);
+		
+		if (!StringUtil.isEmpty(replyTo)) {
 			message.setReplyTo(InternetAddress.parse(replyTo));
 		}
 
-		//EIKI IS THIS CORRECT? in examples on the net the second parameter is usually "text/plain" a.k.a. a contenttype!?
 		message.setSubject(subject, charset);
 
-		if (attachedFile == null) {
-			message.setText(text, charset);
+		if (ArrayUtil.isEmpty(attachedFiles)) {
+			setMessageContent(message, text, mailType, charset);
 		}
 		else {
 			MimeBodyPart body = new MimeBodyPart();
-			body.setText(text, charset);
-			BodyPart attachment = new MimeBodyPart();
-			DataSource attachmentSource = new FileDataSource(attachedFile);
-			DataHandler attachmentHandler = new DataHandler(attachmentSource);
-			attachment.setDataHandler(attachmentHandler);
-			attachment.setFileName(attachedFile.getName());
-			attachment.setDescription("Attached file");
+			setMessageContent(body, text, mailType, charset);
+			
 			MimeMultipart multipart = new MimeMultipart();
 			multipart.addBodyPart(body);
-			System.out.println("Adding attachment " + attachment);
-			multipart.addBodyPart(attachment);
+			
+			for (File attachedFile: attachedFiles) {
+				if (attachedFile == null) {
+					continue;
+				}
+				
+				BodyPart attachment = new MimeBodyPart();
+				DataSource attachmentSource = new FileDataSource(attachedFile);
+				DataHandler attachmentHandler = new DataHandler(attachmentSource);
+				attachment.setDataHandler(attachmentHandler);
+				attachment.setFileName(attachedFile.getName());
+				attachment.setDescription("Attached file: " + attachment.getFileName());
+				LOGGER.info("Adding attachment " + attachment);
+				multipart.addBodyPart(attachment);
+			}
+			
 			message.setContent(multipart);
 		}
 
 		// Send the message and close the connection
 		Transport.send(message);
-		//Transport.sendMessage(message, message.getAllRecipients());
-		//transport.close();
+	}
+		
+	private static void setMessageContent(MimePart message, String content, String mailType, String charset) throws MessagingException {
+		boolean htmlMail = CoreConstants.MAIL_TEXT_HTML_TYPE.equals(mailType);
+		if (htmlMail) {
+			message.setText(content, charset, "html");
+		} else {
+			message.setText(content, charset);
+		}
+	}
+	
+	private static void addRecipients(MimeMessage message, RecipientType recipientType, String addresses) throws MessagingException {
+		if (StringUtil.isEmpty(addresses)) {
+			return;
+		}
+		
+		addresses = addresses.replace(CoreConstants.SEMICOLON, CoreConstants.COMMA);
+		message.addRecipients(recipientType, InternetAddress.parse(addresses));
 	}
 
 	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile) throws MessagingException {
@@ -151,15 +166,20 @@ public class SendMail {
 	}
 	
 	public static void send(SendMailMessageValue mv) throws MessagingException {
-		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(), mv.getAttachedFile());
+		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(),
+				mv.getAttachedFile() == null ? null : mv.getAttachedFile());
 	}
 
 	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
-		send(from, to, cc, bcc, null, host, subject, text, null);
+		send(from, to, cc, bcc, null, host, subject, text);
 	}
 
 	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, null);
+		send(from, to, cc, bcc, replyTo, host, subject, text, new File[] {});
 	}
 
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File... attachedFiles)
+		throws MessagingException {
+		send(from, to, cc, bcc, replyTo, host, subject, text, CoreConstants.MAIL_TEXT_PLAIN_TYPE, attachedFiles);
+	}
 }

@@ -10,9 +10,13 @@
 package com.idega.core.contact.data;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOHome;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 
 /**
@@ -57,6 +61,7 @@ public interface EmailHome extends IDOHome {
 	 * @see com.idega.core.contact.data.EmailBMPBean#ejbFindMainEmailForUser
 	 */
 	public Email findEmailForGroup(Group group, EmailType emailType) throws FinderException, RemoteException;
-
+	
+	public Collection<Email> findMainEmailsForUsers(Collection<User> users) throws FinderException;
 
 }

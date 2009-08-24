@@ -41,7 +41,7 @@ public class ApplicationProductInfo {
 	private String vendorUrl="http://www.idega.com/";
 	private String vendorLogoUrl="http://developer.idega.com/idega_onwhite_120.gif";
 	private String name="ePlatform";
-	private String family="idegaWeb";
+	private String family="";
 	
 	public ApplicationProductInfo(IWMainApplication iwma){
 		//String filePath = iwma.getPropertiesRealPath()+FileUtil.getFileSeparator()+"product.properties";
@@ -212,7 +212,13 @@ public class ApplicationProductInfo {
 	 * @return
 	 */
 	public String getFullProductName(){
-		return getFamily()+" "+getName();
+		String family=getFamily();
+		if(family==null||family.equals("")){
+			return getName();
+		}
+		else{
+			return family+" "+getName();	
+		}
 	}
 	/**
 	 * @return Returns the vendor.

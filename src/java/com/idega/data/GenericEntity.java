@@ -2994,7 +2994,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		removeFrom((IDOEntity) entityToRemoveFrom);
 	}
 
-	private void removeFrom(IDOEntity entityToRemoveFrom) throws SQLException {
+	private void removeFrom(IDOEntity entityToRemoveFrom, String middleTableName) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
 		String qry = "";
@@ -3008,11 +3008,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 																																														// in
 																																														// middle
 																																														// table
-				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString();
+				qry = "delete from " + middleTableName + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString();
 			}
 			else {
 				// just removing this particular one
-				qry = "delete from " + getNameOfMiddleTable(entityToRemoveFrom, this) + " where " + this.getIDColumnName() + "=" + getPrimaryKeyValueSQLString() + " AND " + entityToRemoveFrom.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKey());
+				qry = "delete from " + middleTableName + " where " + this.getIDColumnName() + "=" + getPrimaryKeyValueSQLString() + " AND " + entityToRemoveFrom.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName() + "= " + getKeyValueSQLString(entityToRemoveFrom.getPrimaryKey());
 			}
 			// }
 			/*
@@ -3037,6 +3037,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				freeConnection(getDatasource(), conn);
 			}
 		}
+	}
+	
+	private void removeFrom(IDOEntity entityToRemoveFrom) throws SQLException {
+		removeFrom(entityToRemoveFrom, getNameOfMiddleTable(entityToRemoveFrom, this));
 	}
 
 	/**
@@ -4910,6 +4914,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			throw new IDORemoveRelationshipException(ex, this);
 		}
 	}
+	
+	protected void idoRemoveFrom(IDOEntity entity, String middleTableName) throws IDORemoveRelationshipException {
+		try {
+			removeFrom(entity, middleTableName);
+		}
+		catch (SQLException ex) {
+			throw new IDORemoveRelationshipException(ex, this);
+		}
+	}
 
 	/**
 	 * *Default insert behavior with a many-to-many relationship
@@ -4939,6 +4952,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		try {
 			idoAddTo(getNameOfMiddleTable(entity, this), entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(), entity.getPrimaryKey());
+		}
+		catch (Exception e) {
+			throw new IDOAddRelationshipException(e, this);
+		}
+	}
+	
+	protected void idoAddTo(IDOEntity entity, String middleTableName) throws IDOAddRelationshipException {
+		try {
+			idoAddTo(middleTableName, entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(), entity.getPrimaryKey());
 		}
 		catch (Exception e) {
 			throw new IDOAddRelationshipException(e, this);
