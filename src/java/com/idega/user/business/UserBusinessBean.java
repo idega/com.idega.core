@@ -1680,6 +1680,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		
 		//Gather all the users groups and see if any of them have home pages.
 		ICRole preferredRole = user.getPreferredRole();
+		String preferredRoleKey = (preferredRole!=null)? preferredRole.getRoleKey() : null;
 		Collection<Integer> homepages = new ArrayList<Integer>();
 		Collection<Integer> homePagesOfPreferredRole = new ArrayList<Integer>();
 		Collection<Integer> homepagesWithRolesNotPreferred = new ArrayList<Integer>();
@@ -1691,15 +1692,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if (group.getHomePageID() > 0) {
 				Integer pageID = new Integer(group.getHomePageID());		
 				if(!homepages.contains(pageID)) {
-					if(preferredRole!=null){
-						Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
-						if(!ListUtil.isEmpty(allRolesForGroup)){
-							if(allRolesForGroup.contains(preferredRole.getRoleKey())){
-								homePagesOfPreferredRole.add(pageID);
-							}
-							else{
-								homepagesWithRolesNotPreferred.add(pageID);
-							}
+					Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
+					if( !ListUtil.isEmpty(allRolesForGroup)){
+						if(preferredRoleKey!=null && allRolesForGroup.contains(preferredRoleKey)){
+							homePagesOfPreferredRole.add(pageID);
+						}
+						else{
+							homepagesWithRolesNotPreferred.add(pageID);
 						}
 					}
 					homepages.add(pageID);
@@ -1719,8 +1718,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		
+		//if homePagesOfPreferredRole is none empty it also is bigger then 1 because of the check above.
+		boolean moreThanOneRoleWithPage = (!ListUtil.isEmpty(homePagesOfPreferredRole) || (!ListUtil.isEmpty(homepagesWithRolesNotPreferred) && homepagesWithRolesNotPreferred.size()>1));
+		
 		//Check if there was a forward page specified for when there may be more than one page / role to choose from
-		if(forwardPage!=null && ( !ListUtil.isEmpty(homePagesOfPreferredRole) || !ListUtil.isEmpty(homepagesWithRolesNotPreferred) ) ){
+		if(forwardPage!=null && moreThanOneRoleWithPage ){
 			try {
 				ICPageHome pageHome = (ICPageHome)IDOLookup.getHome(ICPage.class);
 				ICPage page = pageHome.findExistingByUri(forwardPage,this.getIWApplicationContext().getDomain().getID());
