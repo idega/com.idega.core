@@ -429,4 +429,8 @@ public interface Web2Business extends IBOService {
 	public String getBundleUriToGritterStyleSheet();
 	public String getBundleUriToGritterScriptFile();
 	
+	//	TinyMCE
+	public List<String> getScriptsForTinyMCE();
+	public List<String> getScriptsForTinyMCE(String version);
+	
 }
