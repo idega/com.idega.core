@@ -11,6 +11,8 @@ public class FileDownloadNotificationProperties implements Serializable {
 	private String url;
 	private String server;
 	
+	private String commentsManagerIdentifier;
+	
 	private List<String> users;
 
 	public String getFile() {
@@ -44,4 +46,13 @@ public class FileDownloadNotificationProperties implements Serializable {
 	public void setUsers(List<String> users) {
 		this.users = users;
 	}
+
+	public String getCommentsManagerIdentifier() {
+		return commentsManagerIdentifier;
+	}
+
+	public void setCommentsManagerIdentifier(String commentsManagerIdentifier) {
+		this.commentsManagerIdentifier = commentsManagerIdentifier;
+	}
+
 }

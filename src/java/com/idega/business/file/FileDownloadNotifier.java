@@ -50,12 +50,6 @@ public abstract class FileDownloadNotifier implements Serializable {
 		}
 		
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
-		
-		String fileId = properties.getFile();
-		if (StringUtil.isEmpty(fileId)) {
-			LOGGER.warning("File ID is undefined (for ICFile)");
-			return result;
-		}
 
 		ICFile file = getFile(properties);
 		
