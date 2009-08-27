@@ -136,6 +136,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		
 		addAttribute(WEBDAV_URI, "Webdav/Slide path", String.class);
 		
+		addIndex("idx_page_uri",PAGE_URI);
+		
 	}
 
 	/**

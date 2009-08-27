@@ -1691,16 +1691,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		for (Group group : groups) {
 			if (group.getHomePageID() > 0) {
 				Integer pageID = new Integer(group.getHomePageID());		
-				if(!homepages.contains(pageID)) {
-					Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
-					if( !ListUtil.isEmpty(allRolesForGroup)){
-						if(preferredRoleKey!=null && allRolesForGroup.contains(preferredRoleKey)){
-							homePagesOfPreferredRole.add(pageID);
-						}
-						else{
-							homepagesWithRolesNotPreferred.add(pageID);
-						}
+
+				Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
+				if( !ListUtil.isEmpty(allRolesForGroup)){
+					if(preferredRoleKey!=null && allRolesForGroup.contains(preferredRoleKey)){
+						homePagesOfPreferredRole.add(pageID);
 					}
+					else{
+						homepagesWithRolesNotPreferred.add(pageID);
+					}
+				}
+				if(!homepages.contains(pageID)) {
 					homepages.add(pageID);
 				}
 			}
