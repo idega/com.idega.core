@@ -4,7 +4,9 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -55,35 +57,44 @@ public abstract class FileDownloadNotifier implements Serializable {
 			return result;
 		}
 
-		ICFile file = getFile(fileId);
-		if (file == null) {
-			LOGGER.warning("File was not found by ID: " + fileId);
-			return result;
-		}
+		ICFile file = getFile(properties);
 		
 		List<String> usersIds = properties.getUsers();
 		if (ListUtil.isEmpty(usersIds)) {
 			LOGGER.warning("There are no recipients of this notification!");
 			return result;
 		}
+		List<User> users = getUsers(usersIds);
+		if (ListUtil.isEmpty(users)) {
+			LOGGER.warning("There are no recipients of this notification!");
+			return result;
+		}
 		
-		List<AdvancedProperty> emailsAndLinks = getEmails(file, properties);
-		if (ListUtil.isEmpty(emailsAndLinks)) {
+		Map<String, AdvancedProperty> emailsAndLinks = getEmails(file, properties, users);
+		if (emailsAndLinks == null || emailsAndLinks.isEmpty()) {
 			LOGGER.warning("Unable to resolve e-mail addresses for recipients: " + usersIds);
 			return result;
 		}
 		
-		String subject = CoreConstants.EMPTY;
-		try {
-			subject = new StringBuilder(iwrb.getLocalizedString("file_download_notifier.reminder_to_download_document", "Reminder to download document"))
-				.append(": ").append(URLDecoder.decode(file.getName(), CoreConstants.ENCODING_UTF8)).toString();
-		} catch(UnsupportedEncodingException e) {
-			LOGGER.log(Level.WARNING, "Error decoding: " + file.getName(), e);
+		Map<String, String> uris = getUriToDocument(properties, users);
+		if (uris == null || uris.isEmpty()) {
+			LOGGER.warning("Unable to resolve links to documents for recipients: " + usersIds);
+			return result;
 		}
 		
-		String pageMessage = new StringBuilder(iwrb.getLocalizedString("file_download_notifier.reminder_message_for_document_to_download",
-			"Please download document. You can find it: ")).append(properties.getUrl()).append(". ")
-			.append(iwrb.getLocalizedString("file_download_notifier.or_directly_download", "Or directly download from: ")).toString();
+		String subject = new StringBuilder(iwrb.getLocalizedString("file_download_notifier.reminder_to_download_document", "Reminder to download document"))
+			.toString();
+		if (file != null) {
+			try {
+				subject = new StringBuilder(subject).append(": ").append(URLDecoder.decode(file.getName(), CoreConstants.ENCODING_UTF8)).toString();
+			} catch(UnsupportedEncodingException e) {
+				LOGGER.log(Level.WARNING, "Error decoding: " + file.getName(), e);
+			}
+		}
+		
+		String pageMessagePart1 = new StringBuilder(iwrb.getLocalizedString("file_download_notifier.reminder_message_for_document_to_download",
+			"Please download document. You can find it: ")).toString();
+		String pageMessagePart2 = iwrb.getLocalizedString("file_download_notifier.or_directly_download", "Or directly download from: ");
 		
 		IWMainApplicationSettings settings = iwc.getApplicationSettings();
 		String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
@@ -93,8 +104,22 @@ public abstract class FileDownloadNotifier implements Serializable {
 			return result;
 		}
 		
-		for (AdvancedProperty emailAndLink: emailsAndLinks) {
-			if (!sendNotification(emailAndLink.getId(), subject, new StringBuilder(pageMessage).append(emailAndLink.getValue()).toString(), host, from)) {
+		for (String userId: emailsAndLinks.keySet()) {
+			AdvancedProperty emailAndLink = emailsAndLinks.get(userId);
+			if (emailAndLink == null) {
+				LOGGER.warning("No email and/or link to attachment found for user: " + userId);
+				continue;
+			}
+			
+			String uriToDocument = uris.get(userId);
+			if (StringUtil.isEmpty(uriToDocument)) {
+				LOGGER.warning("No uri found to the document for user: " + userId);
+				continue;
+			}
+			
+			String message = new StringBuilder(pageMessagePart1).append(uriToDocument).append(CoreConstants.SPACE).append(pageMessagePart2)
+								.append(emailAndLink.getValue()).toString();
+			if (!sendNotification(emailAndLink.getId(), subject, message, host, from)) {
 				return result;
 			}
 		}
@@ -130,7 +155,17 @@ public abstract class FileDownloadNotifier implements Serializable {
 		return null;
 	}
 	
-	private List<AdvancedProperty> getEmails(ICFile attachment, FileDownloadNotificationProperties properties) {
+	protected ICFile getFile(Integer hash) {
+		try {
+			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
+			return fileHome.findByHash(hash);
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "File was not found by hash: " + hash);
+		}
+		return null;
+	}
+	
+	private Map<String, AdvancedProperty> getEmails(ICFile attachment, FileDownloadNotificationProperties properties, List<User> users) {
 		if (StringUtil.isEmpty(properties.getServer())) {
 			return null;
 		}
@@ -145,24 +180,24 @@ public abstract class FileDownloadNotifier implements Serializable {
 			return null;
 		}
 		
-		List<AdvancedProperty> emailsAndLinks = new ArrayList<AdvancedProperty>(properties.getUsers().size());
-		for (String userId: properties.getUsers()) {
-			User user = null;
+		Map<String, AdvancedProperty> emailsAndLinks = new HashMap<String, AdvancedProperty>(users.size());
+		for (User user: users) {	
 			Email email = null;
 			try {
-				user = userBusiness.getUser(Integer.valueOf(userId));
 				email = userBusiness.getEmailHome().findMainEmailForUser(user);
 			} catch(Exception e) {
-				LOGGER.log(Level.WARNING, "Error getting email for user: " + userId, e);
+				LOGGER.log(Level.WARNING, "Error getting email for user: " + user, e);
 			}
 			
-			if (user != null && email != null) {
+			if (email != null) {
 				String uri = getUriToAttachment(properties, user);
 				
 				if (StringUtil.isEmpty(uri)) {
-					LOGGER.warning("Unable to resolve file uri for user: " + user + " and email: " + email + " and file: " + attachment.getId());
+					LOGGER.warning("Unable to resolve file uri for user: " + user + " and email: " + email + attachment == null ?
+							"" : " and file: " + attachment.getId());
 				} else {
-					emailsAndLinks.add(new AdvancedProperty(email.getEmailAddress(), new StringBuilder(properties.getServer()).append(uri).toString()));
+					emailsAndLinks.put(user.getId(), new AdvancedProperty(email.getEmailAddress(),
+							new StringBuilder(properties.getServer()).append(uri).toString()));
 				}
 			}
 		}
@@ -170,6 +205,38 @@ public abstract class FileDownloadNotifier implements Serializable {
 		return emailsAndLinks;
 	}
 	
+	private List<User> getUsers(List<String> usersIds) {
+		UserBusiness userBusiness = null;
+		try {
+			userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+		} catch (IBOLookupException e) {
+			LOGGER.log(Level.WARNING, "Error getting UserBusiness", e);
+		}
+		if (userBusiness == null) {
+			return null;
+		}
+		
+		List<User> users = new ArrayList<User>(usersIds.size());
+		for (String userId: usersIds) {
+			User user = null;
+			try {
+				user = userBusiness.getUser(Integer.valueOf(userId));
+			} catch(Exception e) {
+				LOGGER.log(Level.WARNING, "Error getting user by id: " + userId);
+			}
+			if (user != null) {
+				users.add(user);
+			}
+		}
+		
+		return users;
+	}
+	
 	public abstract String getUriToAttachment(FileDownloadNotificationProperties properties, User user);
 
+	public abstract Map<String, String> getUriToDocument(FileDownloadNotificationProperties properties, List<User> users);
+	
+	protected ICFile getFile(FileDownloadNotificationProperties properties) {
+		return getFile(properties.getFile());
+	}
 }
