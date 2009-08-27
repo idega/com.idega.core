@@ -61,46 +61,41 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		}
 		
 		ICFile file = getFile(iwc);
-		if (file == null) {
-			container.add(new Heading1(iwrb.getLocalizedString("download_stats.file_was_not_found", "File was not found")));
-			return;
+		
+		Collection<User> downloaders = file == null ? null : file.getDownloadedBy();
+		
+		if (file != null) {
+			container.add(new Heading3(new StringBuilder(iwrb.getLocalizedString("download_stats.downloads_statistics_for", "Download statistics for")).append(": ")
+					.append(URLDecoder.decode(file.getName(), CoreConstants.ENCODING_UTF8)).toString()));
+			
+			container.add(new Break());
 		}
 		
-		Collection<User> downloaders = file.getDownloadedBy();
-		if (ListUtil.isEmpty(downloaders)) {
-			container.add(new Heading1(iwrb.getLocalizedString("download_stats.no_downloads_yet", "File was not downloaded yet")));
-			addNotifier(iwc, container, file, null);
-			return;
-		}
-		
-		container.add(new Heading3(new StringBuilder(iwrb.getLocalizedString("download_stats.downloads_statistics_for", "Download statistics for")).append(": ")
-				.append(URLDecoder.decode(file.getName(), CoreConstants.ENCODING_UTF8)).toString()));
-		
-		container.add(new Break());
-		
-		Table2 table = new Table2();
-		container.add(table);
-		TableHeaderRowGroup headerRows = table.createHeaderRowGroup();
-		TableRow row = headerRows.createRow();
-		row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.nr", "Nr")));
-		row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.name", "Name")));
-		row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.personal_id", "Personal ID")));
-		row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.email", "E-mail")));
-		
-		int index = 0;
-		TableBodyRowGroup bodyRows = table.createBodyRowGroup();
-		for (User downloader: downloaders) {
-			row = bodyRows.createRow();
+		if (!ListUtil.isEmpty(downloaders)) {
+			Table2 table = new Table2();
+			container.add(table);
+			TableHeaderRowGroup headerRows = table.createHeaderRowGroup();
+			TableRow row = headerRows.createRow();
+			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.nr", "Nr")));
+			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.name", "Name")));
+			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.personal_id", "Personal ID")));
+			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.email", "E-mail")));
 			
-			row.createCell().add(new Text(new StringBuilder().append(index + 1).append(CoreConstants.DOT).toString()));
-			row.createCell().add(new Text(downloader.getName()));
-			row.createCell().add(new Text(downloader.getPersonalID()));
-			String emailAddress = getEmailAddress(iwc, downloader);
-			row.createCell().add(StringUtil.isEmpty(emailAddress) ?
-				new Text(CoreConstants.MINUS) :
-				new Link(emailAddress, new StringBuilder("mailto:").append(emailAddress).toString()));
-			
-			index++;
+			int index = 0;
+			TableBodyRowGroup bodyRows = table.createBodyRowGroup();
+			for (User downloader: downloaders) {
+				row = bodyRows.createRow();
+				
+				row.createCell().add(new Text(new StringBuilder().append(index + 1).append(CoreConstants.DOT).toString()));
+				row.createCell().add(new Text(downloader.getName()));
+				row.createCell().add(new Text(downloader.getPersonalID()));
+				String emailAddress = getEmailAddress(iwc, downloader);
+				row.createCell().add(StringUtil.isEmpty(emailAddress) ?
+					new Text(CoreConstants.MINUS) :
+					new Link(emailAddress, new StringBuilder("mailto:").append(emailAddress).toString()));
+				
+				index++;
+			}
 		}
 		
 		addNotifier(iwc, container, file, downloaders);
