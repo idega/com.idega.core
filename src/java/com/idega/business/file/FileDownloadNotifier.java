@@ -51,7 +51,7 @@ public abstract class FileDownloadNotifier implements Serializable {
 		
 		IWResourceBundle iwrb = iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getResourceBundle(iwc);
 
-		ICFile file = getFile(properties);
+		AdvancedProperty file = getFile(properties);
 		
 		List<String> usersIds = properties.getUsers();
 		if (ListUtil.isEmpty(usersIds)) {
@@ -80,9 +80,9 @@ public abstract class FileDownloadNotifier implements Serializable {
 			.toString();
 		if (file != null) {
 			try {
-				subject = new StringBuilder(subject).append(": ").append(URLDecoder.decode(file.getName(), CoreConstants.ENCODING_UTF8)).toString();
+				subject = new StringBuilder(subject).append(": ").append(URLDecoder.decode(file.getValue(), CoreConstants.ENCODING_UTF8)).toString();
 			} catch(UnsupportedEncodingException e) {
-				LOGGER.log(Level.WARNING, "Error decoding: " + file.getName(), e);
+				LOGGER.log(Level.WARNING, "Error decoding: " + file.getValue(), e);
 			}
 		}
 		
@@ -139,27 +139,39 @@ public abstract class FileDownloadNotifier implements Serializable {
 		return true;
 	}
 	
-	private ICFile getFile(String id) {
+	private AdvancedProperty getFile(String id) {
 		try {
 			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-			return fileHome.findByPrimaryKey(id);
+			ICFile icFile = fileHome.findByPrimaryKey(id);
+			if (icFile == null) {
+				return null;
+			}
+			
+			AdvancedProperty file = new AdvancedProperty(icFile.getId(), icFile.getName());
+			return file;
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "File was not found by id: " + id);
 		}
 		return null;
 	}
 	
-	protected ICFile getFile(Integer hash) {
+	protected AdvancedProperty getFile(Integer hash) {
 		try {
 			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-			return fileHome.findByHash(hash);
+			ICFile icFile = fileHome.findByHash(hash);
+			if (icFile == null) {
+				return null;
+			}
+			
+			AdvancedProperty file = new AdvancedProperty(icFile.getId(), icFile.getName());
+			return file;
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "File was not found by hash: " + hash);
 		}
 		return null;
 	}
 	
-	private Map<String, AdvancedProperty> getEmails(ICFile attachment, FileDownloadNotificationProperties properties, List<User> users) {
+	private Map<String, AdvancedProperty> getEmails(AdvancedProperty attachment, FileDownloadNotificationProperties properties, List<User> users) {
 		if (StringUtil.isEmpty(properties.getServer())) {
 			return null;
 		}
@@ -230,7 +242,7 @@ public abstract class FileDownloadNotifier implements Serializable {
 
 	public abstract Map<String, String> getUriToDocument(FileDownloadNotificationProperties properties, List<User> users);
 	
-	protected ICFile getFile(FileDownloadNotificationProperties properties) {
+	protected AdvancedProperty getFile(FileDownloadNotificationProperties properties) {
 		return getFile(properties.getFile());
 	}
 }

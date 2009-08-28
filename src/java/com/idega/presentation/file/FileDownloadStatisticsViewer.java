@@ -11,6 +11,7 @@ import javax.faces.component.UIComponent;
 
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.file.FileStatisticsProvider;
 import com.idega.core.contact.data.Email;
 import com.idega.core.file.data.ICFile;
@@ -41,7 +42,8 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	public static final String PARAMETER_FILE_ID = "fileId";
 	public static final String PARAMETER_FILE_HASH = "fileHash";
 	
-	private ICFile file;
+	private AdvancedProperty file;
+	private ICFile realFile;
 	
 	private String fileHolderIdentifier;
 	
@@ -60,13 +62,14 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 			return;
 		}
 		
-		ICFile file = getFile(iwc);
+		AdvancedProperty file = getFile(iwc);
+		ICFile realFile = getRealFile(iwc);
 		
-		Collection<User> downloaders = file == null ? null : file.getDownloadedBy();
+		Collection<User> downloaders = realFile == null ? null : realFile.getDownloadedBy();
 		
 		if (file != null) {
-			container.add(new Heading3(new StringBuilder(iwrb.getLocalizedString("download_stats.downloads_statistics_for", "Download statistics for")).append(": ")
-					.append(URLDecoder.decode(file.getName(), CoreConstants.ENCODING_UTF8)).toString()));
+			container.add(new Heading3(new StringBuilder(iwrb.getLocalizedString("download_stats.downloads_statistics_for", "Download statistics for"))
+				.append(": ").append(URLDecoder.decode(file.getValue(), CoreConstants.ENCODING_UTF8)).toString()));
 			
 			container.add(new Break());
 		}
@@ -124,16 +127,23 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		return allDownloaders;
 	}
 	
-	public void addNotifier(IWContext iwc, Layer container, ICFile file, Collection<User> downloaders) {
+	public void addNotifier(IWContext iwc, Layer container, AdvancedProperty file, Collection<User> downloaders) {
 		Collection<User> usersToInform = getUsersToInform(iwc, downloaders);
-		if (ListUtil.isEmpty(usersToInform)) {
+		if (ListUtil.isEmpty(usersToInform) && ListUtil.isEmpty(downloaders)) {
+			Layer noReaders = new Layer();
+			container.add(noReaders);
+			noReaders.add(new Heading3(getMessageNobodyIsInterested(iwc)));
 			return;
 		}
 		
-		container.add(getNotifierButton(iwc, file, usersToInform));
+		if (!ListUtil.isEmpty(usersToInform)) {
+			container.add(getNotifierButton(iwc, file, usersToInform));
+		}
 	}
 	
-	protected UIComponent getNotifierButton(IWContext iwc, ICFile file, Collection<User> usersToInform) {
+	public abstract String getMessageNobodyIsInterested(IWContext iwc);
+	
+	protected UIComponent getNotifierButton(IWContext iwc, AdvancedProperty file, Collection<User> usersToInform) {
 		Layer notificationContainer = new Layer();
 		notificationContainer.setStyleClass("fileDownloadStatisticsNotificationContainer");
 		
@@ -151,7 +161,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		return notificationContainer;
 	}
 	
-	public abstract String getNotifierAction(IWContext iwc, ICFile file, Collection<User> usersToInform);
+	public abstract String getNotifierAction(IWContext iwc, AdvancedProperty file, Collection<User> usersToInform);
 	
 	public Collection<User> getUsersToInform(IWContext iwc, Collection<User> downloaders) {
 		Collection<User> potentialDownloaders = getPotentialDownloaders(iwc);
@@ -183,8 +193,8 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		return mails.iterator().next().getEmailAddress();
 	}
 	
-	protected ICFile getFile(IWContext iwc) {
-		ICFile file = getFile();
+	protected ICFile getRealFile(IWContext iwc) {
+		ICFile file = getRealFile();
 		if (file != null) {
 			return file;
 		}
@@ -216,16 +226,28 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		}
 		
 		if (file != null) {
-			setFile(file);
+			setRealFile(file);
 		}
+		
 		return file;
 	}
 	
-	public ICFile getFile() {
+	protected AdvancedProperty getFile(IWContext iwc) {
+		ICFile icFile = getRealFile(iwc);
+		if (icFile == null) {
+			return null;
+		}
+		
+		AdvancedProperty file = new AdvancedProperty(icFile.getId(), icFile.getName());
+		setFile(file);
+		return file;
+	}
+	
+	public AdvancedProperty getFile() {
 		return file;
 	}
 
-	public void setFile(ICFile file) {
+	public void setFile(AdvancedProperty file) {
 		this.file = file;
 	}
 
@@ -242,6 +264,14 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 
 	public void setFileHolderIdentifier(String fileHolderIdentifier) {
 		this.fileHolderIdentifier = fileHolderIdentifier;
+	}
+
+	public ICFile getRealFile() {
+		return realFile;
+	}
+
+	public void setRealFile(ICFile realFile) {
+		this.realFile = realFile;
 	}
 	
 }
