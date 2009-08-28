@@ -97,6 +97,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".easing.js";
 		}
+	},
+	MASKED_INPUT {
+		@Override
+		public String getFileName() {
+			return ".maskedinput.js";
+		}
 	};
 
 	public abstract String getFileName();
