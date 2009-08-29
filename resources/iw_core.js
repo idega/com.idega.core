@@ -1213,6 +1213,19 @@ IWCORE.insertRenderedComponent = function(component, options) {
 		}
 
 		try {
+			var xmlEncoding = '<?xml version="1.0" encoding="UTF-8"?>';
+			while (component.html.indexOf(xmlEncoding) != -1) {
+				component.html = component.html.replace(xmlEncoding, '');
+			}
+			var commentOpener = '&lt;';
+			while (component.html.indexOf(commentOpener) != -1) {
+				component.html = component.html.replace(commentOpener, '<');
+			}
+			var commentCloser = '&gt;';
+			while (component.html.indexOf(commentCloser) != -1) {
+				component.html = component.html.replace(commentCloser, '>');
+			}
+			
 			if (options.append) {
 				parentContainer.append(jQuery(component.html));
 			}
