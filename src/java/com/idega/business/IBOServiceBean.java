@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.EJBHome;
@@ -15,6 +16,7 @@ import javax.ejb.EJBObject;
 import javax.ejb.Handle;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
+
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
@@ -175,8 +177,8 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
   /**
    * Get an instance of the home interface for the IDO bean specified identified by beanClass
    */
-    protected IDOHome getIDOHome(Class beanClass)throws RemoteException{
-    return IDOLookup.getHome(beanClass);
+    protected IDOHome getIDOHome(Class<?> beanClass)throws RemoteException{
+    	return IDOLookup.getHome(beanClass);
   }
   
   	protected AccessController getAccessController() {
@@ -210,6 +212,10 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 	protected void log(Level level,String msg) {
 		//System.out.println(msg);
 		getLogger().log(level,msg);
+	}
+	
+	protected void log(Level level, String msg, Throwable exception) {
+		getLogger().log(level, msg, exception);
 	}
 	
 	/**
@@ -272,7 +278,7 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 	 * @return the default Logger
 	 */
 	protected Logger getLogger(){
-		return Logger.getLogger(this.getClass().getName());
+		return Logger.getLogger(getClass().getName());
 	}
 	
 	/**
