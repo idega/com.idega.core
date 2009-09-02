@@ -15,9 +15,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
 import com.idega.repository.data.Instantiator;
@@ -253,7 +250,7 @@ public class IDOContainer implements Singleton {
 			return entity;
 		}
 		catch (Exception e) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error getting by primary key: " + pk + " ("+pk.getClass()+")" , e);
+//			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error getting by primary key: " + pk + " ("+pk.getClass()+")", e);
 			throw new FinderException(e.getMessage());
 		}
 	}
