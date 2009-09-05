@@ -1,5 +1,6 @@
 package com.idega.core.file.data;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -44,6 +45,8 @@ import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Resource;
+import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 
@@ -224,7 +227,24 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	}
 
 	public Integer getFileSize() {
-		return (Integer)getColumnValue(getColumnNameFileSize());
+		Integer size = (Integer) getColumnValue(getColumnNameFileSize());
+		if (size == null) {
+			BlobWrapper blobWrapper = getBlobWrapperFileValue();
+			if (blobWrapper == null) {
+				return 0;
+			}
+			ByteArrayOutputStream output = new ByteArrayOutputStream();
+			try {
+				FileUtil.streamToOutputStream(blobWrapper.getBlobInputStream(), output);
+				size = output.toByteArray().length;
+				setFileSize(size);
+				this.store();
+			} catch (Exception e) {
+			} finally {
+				IOUtil.closeOutputStream(output);
+			}
+		}
+		return size;
 	}
 
 	public void setLanguage(int language) {
