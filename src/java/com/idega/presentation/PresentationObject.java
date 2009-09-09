@@ -1187,22 +1187,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		return this.ic_object_id;
 	}	
-	public ICObject getICObject() throws Exception
-	{
+	public ICObject getICObject() throws Exception {
 		return this.getICObject(this.getClass());
 	}
-	protected ICObject getICObject(Class<?> c) throws Exception
-	{
-		try
-		{
+	protected ICObject getICObject(Class<?> c) throws Exception {
+		try {
 			ICObjectHome icohome = (ICObjectHome) com.idega.data.IDOLookup.getHome(ICObject.class);
 			ICObject ico = icohome.findByClassName(c.getName());
 			return ico;
 		}
-		catch (Exception e)
-		{
-			//throw new ICObjectNotInstalledException(c.getName());
-			e.printStackTrace();
+		catch (Exception e) {
+			log(e);
 			return null;
 		}
 	}
