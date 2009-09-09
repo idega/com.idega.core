@@ -1197,7 +1197,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			return ico;
 		}
 		catch (Exception e) {
-			log(e);
+			log("[PresentationObject] " + c.getName() + " not found in ic_object");
+			e.printStackTrace();
 			return null;
 		}
 	}
