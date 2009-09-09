@@ -4,6 +4,8 @@ package com.idega.block.web2.business;
 import java.rmi.RemoteException;
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.idega.business.IBOService;
 import com.idega.business.SpringBeanName;
 import com.idega.presentation.IWContext;
@@ -433,4 +435,7 @@ public interface Web2Business extends IBOService {
 	public List<String> getScriptsForTinyMCE();
 	public List<String> getScriptsForTinyMCE(String version);
 	
+	//	JCaptcha
+	public boolean validateJCaptcha(HttpServletRequest request, String userCaptchaResponse);
+	public String getJCaptchaImageURL();
 }
