@@ -439,7 +439,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 				entity.setColumn(columnName, string);
 			}
 		}
-		else {
+		/*else {
 			try {
 				System.out.println("Informix: 1 Filling column for clob field:" + columnName);
 				//com.informix.jdbc.IfmxResultSet ifrs;
@@ -461,7 +461,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 					  reader.read(charArray);
 					  sbuffer.append(charArray);
 					}*/
-					byte[] charArray = new byte[buffersize];
+					/*byte[] charArray = new byte[buffersize];
 					stream.read(charArray);
 					sbuffer.append(convertToCharArray(charArray));
 					while (stream.read(charArray) != -1) {
@@ -481,7 +481,7 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 			catch (Exception e) {
 				e.printStackTrace();
 			}
-		}
+		}*/
 	}
 	/*protected String getColumnStringForSelectList(IDOLegacyEntity entity,String columnName){
 	  int columnType = entity.getAttribute(columnName).getStorageClassType();
@@ -499,13 +499,13 @@ public class InformixDatastoreInterface extends DatastoreInterface {
 	    return columnName;
 	  }
 	}*/
-	private char[] convertToCharArray(byte[] byteArray) {
+	/*private char[] convertToCharArray(byte[] byteArray) {
 		char[] charArray = new char[byteArray.length];
 		for (int i = 0; i < byteArray.length; i++) {
 			charArray[i] = (char) byteArray[i];
 		}
 		return charArray;
-	}
+	}*/
 	void convertCharArrayToByteArray(char[] charArray, byte[] byteArray) {
 		for (int i = 0; i < charArray.length; i++) {
 			byteArray[i] = (byte) charArray[i];

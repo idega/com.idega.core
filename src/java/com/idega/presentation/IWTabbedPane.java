@@ -386,10 +386,8 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	private class Page {
 
 		String title;
-		IWTabbedPane parent;
 		PresentationObject content;
 		Link tabLink;
-		boolean needsUIUpdate;
 
 		public Page(IWTabbedPane parent, String title, PresentationObject content, IWContext iwc) {
 			this.title = title;
@@ -404,16 +402,12 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 		}
 
 		public void needsUIUpdate(boolean update) {
-			this.needsUIUpdate = update;
 		}
 
 		public Link getTabLink() {
 			return this.tabLink;
 		}
 
-		public PresentationObject getContent() {
-			return this.content;
-		}
 	} // InnerClass Page
 
 	private void addTabs(PresentationObject obj) {
@@ -444,13 +438,13 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 }
 
 /**
- * @todo Kalla á TabPagePresentation hlut frá ui-inu og setja viðeigani síðu í
+ * @todo Kalla ï¿½ TabPagePresentation hlut frï¿½ ui-inu og setja viï¿½eigani sï¿½ï¿½u ï¿½
  *       hann.
  * 
- * @todo Selecta viðeigandi hlut og láta TabPresentatnion vita. Nota alltaf
- * sama TabPresentation hlutinn en kalla á fireStateChange() fallið.
- * adda í Tabpresentationhlutinn um leið og hlut er addað í TabbedPane. Veldur
- * vandræðum ef að skipta á um UI því þá þarf að adda öllu í TabPresentation aftur.
+ * @todo Selecta viï¿½eigandi hlut og lï¿½ta TabPresentatnion vita. Nota alltaf
+ * sama TabPresentation hlutinn en kalla ï¿½ fireStateChange() falliï¿½.
+ * adda ï¿½ Tabpresentationhlutinn um leiï¿½ og hlut er addaï¿½ ï¿½ TabbedPane. Veldur
+ * vandrï¿½ï¿½um ef aï¿½ skipta ï¿½ um UI ï¿½vï¿½ ï¿½ï¿½ ï¿½arf aï¿½ adda ï¿½llu ï¿½ TabPresentation aftur.
  * 
- * @todo stroka út setBorder í Table
+ * @todo stroka ï¿½t setBorder ï¿½ Table
  */

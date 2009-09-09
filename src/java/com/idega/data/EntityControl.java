@@ -834,8 +834,7 @@ public class EntityControl implements MutableClass {
 		return getManyToManyRelationShip(relatingEntityName1, relatingEntityName2);
 	}
 	protected static EntityRelationship getManyToManyRelationShip(String relatingEntityName1, String relatingEntityName2) {
-
-		EntityRelationship rel = (EntityRelationship)getIDOContainer().getRelationshipTableMap().get(relatingEntityName1, relatingEntityName2);
+		EntityRelationship rel = getIDOContainer().getRelationshipTableMap().get(relatingEntityName1, relatingEntityName2);
 		if (rel == null) {
 			return null;
 		} else {

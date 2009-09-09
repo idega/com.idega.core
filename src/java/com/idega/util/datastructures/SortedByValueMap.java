@@ -67,10 +67,6 @@ public class SortedByValueMap extends LinkedHashMap {
     	private Map map;
     	private Collator collator = null;
 
-    	public SortByValueComparator(Map map) {
-    	    this.map = map;   	    
-    	}
-
     	public SortByValueComparator(Map map, Locale locale) {
     	    this.map = map;
     	    if (locale == null) {

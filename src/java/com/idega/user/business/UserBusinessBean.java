@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -116,7 +115,6 @@ import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.Timer;
-import com.idega.util.datastructures.NestedSetsContainer;
 import com.idega.util.text.Name;
 
 /**
@@ -1910,7 +1908,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return found;
 	}
 
-	private Collection searchForTopNodes(Collection permissions, Collection initialTopNodes, User user) throws EJBException, RemoteException, FinderException {
+	/*private Collection searchForTopNodes(Collection permissions, Collection initialTopNodes, User user) throws EJBException, RemoteException, FinderException {
 		if (permissions == null || permissions.isEmpty()) {
 			return ListUtil.getEmptyList();
 		}
@@ -2000,15 +1998,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		return topNodes;
-	}
+	}*/
 
-	private Collection searchForTopNodesFromTheTop(Collection possibleGroups) throws IDORelationshipException, RemoteException, FinderException {
+	/*private Collection searchForTopNodesFromTheTop(Collection possibleGroups) throws IDORelationshipException, RemoteException, FinderException {
 		Collection domainTopNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
 		Collection topNodes = new ArrayList();
 		HashSet prosessedGroups = new HashSet();
 		collectTopNodesForSubtree(domainTopNodes, possibleGroups, topNodes, prosessedGroups);
 		return topNodes;
-	}
+	}*/
 
 	/**
 	 * 
@@ -2018,7 +2016,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param topNodes
 	 * @param prosessedGroups
 	 */
-	private void collectTopNodesForSubtree(Collection childGroups, Collection possibleGroups, Collection topNodes, Set prosessedGroups) {
+	/*private void collectTopNodesForSubtree(Collection childGroups, Collection possibleGroups, Collection topNodes, Set prosessedGroups) {
 		for (Iterator iter = childGroups.iterator(); iter.hasNext();) {
 			Group gr = (Group) iter.next();
 			if (!prosessedGroups.contains(gr)) {
@@ -2031,7 +2029,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 			}
 		}
-	}
+	}*/
 
 	public boolean hasTopNodes(User user, IWUserContext iwuc) {
 		try {
@@ -2092,7 +2090,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				Collection allViewAndOwnerPermissionGroups = new ArrayList();
 				try {
 					GroupBusiness groupBiz = getGroupBusiness();
-					if (false) {// (groupBiz.userGroupTreeImageProcedureTopNodeSearch())
+					/*if (false) {// (groupBiz.userGroupTreeImageProcedureTopNodeSearch())
 						// {
 						log("[UserBusinessBean]: using stored procedure topnode search");
 						Timer time = new Timer();
@@ -2134,7 +2132,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						} catch (FinderException e1) {
 							throw new EJBException(e1);
 						}
-					} else {
+					}*/
+					if(true) {
 						log("[UserBusinessBean]: not using stored procedure topnode search");
 						Timer time = new Timer();
 						time.start();
@@ -2175,7 +2174,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						log("[UserBusinessBean]: getting permission groups complete " + time.getTimeString());
 						time.start();
 						// searchForTopNodesFromTop=3000; //some suitable value
-						if (false) {// (allViewAndOwnerPermissionGroups.size() >
+						/*if (false) {// (allViewAndOwnerPermissionGroups.size() >
 							// this.searchForTopNodesFromTop) {
 							log("[UserBusinessBean]: using search from the top");
 							try {
@@ -2196,7 +2195,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							} catch (FinderException e1) {
 								throw new EJBException(e1);
 							}
-						} else {
+						}*/
+						if(true) {
 							log("[UserBusinessBean]: using old topnode search");
 							// get all (recursively) parents for permission
 							Iterator permissions = allViewAndOwnerPermissionGroups.iterator();

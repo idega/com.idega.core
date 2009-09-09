@@ -51,6 +51,7 @@ public class ComponentRegistry {
 	private boolean loadedFacesConfig=false;
 	private boolean initializedModuleLoader=false;
 	private IWMainApplication iwma;
+	@SuppressWarnings("unused")
 	private ServletContext context;
 	public static final String COMPONENT_TYPE_ELEMENT = ICObjectBMPBean.COMPONENT_TYPE_ELEMENT;
 	public static final String COMPONENT_TYPE_BLOCK = ICObjectBMPBean.COMPONENT_TYPE_BLOCK;

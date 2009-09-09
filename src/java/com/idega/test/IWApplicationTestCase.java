@@ -11,8 +11,6 @@ import java.util.Properties;
 import javax.faces.FactoryFinder;
 import javax.servlet.ServletContext;
 
-import junit.framework.TestCase;
-
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.support.DefaultListableBeanFactory;
 import org.springframework.context.ApplicationContext;

@@ -10,13 +10,13 @@
 package com.idega.idegaweb.widget;
 
 import java.util.Locale;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.PresentationObject;
-import com.idega.util.CoreUtil;
 
 /**
  * The base object that all widgets should extend.  Has the standard methods most of them need.

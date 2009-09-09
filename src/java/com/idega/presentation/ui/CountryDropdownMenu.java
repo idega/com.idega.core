@@ -201,13 +201,6 @@ public class CountryDropdownMenu extends DropdownMenu {
 		/**
 		 * @return
 		 */
-		public String getCode() {
-			return this.code;
-		}
-
-		/**
-		 * @return
-		 */
 		public Integer getID() {
 			return this.ID;
 		}

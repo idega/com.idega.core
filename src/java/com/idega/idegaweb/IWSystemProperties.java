@@ -3,9 +3,7 @@ package com.idega.idegaweb;
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.Locale;
-import javax.ejb.FinderException;
-import com.idega.core.data.ICApplicationBinding;
-import com.idega.core.data.ICApplicationBindingHome;
+
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;

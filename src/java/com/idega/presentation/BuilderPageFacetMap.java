@@ -90,7 +90,7 @@ public class BuilderPageFacetMap extends PresentationObjectComponentFacetMap {
 			UIComponent region = findRegionComponent(regionKey);
 			if(region!=null){
 				if(region.getChildren().size()>0){
-					return (UIComponent) region.getChildren().get(0);
+					return region.getChildren().get(0);
 				}
 			}
 			/*if(doesComponentContainChild(region,component)){
