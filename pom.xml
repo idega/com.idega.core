@@ -14,7 +14,7 @@
   <scm>
     <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
     <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
-    <tag>com_idega_block_platform-4_1_2</tag>
+    <tag>com_idega_block_platform-4_1_3</tag>
   </scm>
   <!--
   <scm>
