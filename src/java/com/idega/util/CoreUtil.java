@@ -57,11 +57,16 @@ public class CoreUtil {
 		IWBundle iwb = getCoreBundle();
 		
 		List<String> resources = new ArrayList<String>();
-		resources.add(iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
-		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
+		
+		//	DWR
 		resources.add("/dwr/interface/ChooserService.js");
 		resources.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
+		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		
+		//	Chooser
+		resources.add(iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
+		
+		//	Groups and users choosers
 		IWBundle userBundle = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		if (userBundle != null) {
 			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/GroupInfoViewerHelper.js"));
