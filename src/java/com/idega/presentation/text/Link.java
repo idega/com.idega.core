@@ -1684,6 +1684,11 @@ public class Link extends Text {
 		setMarkupAttribute(HREF_ATTRIBUTE, url);
 	}
 
+	public String getFinalUrl(IWContext iwc) {
+		String uri = iwc.getRequestURI();
+		return uri + getParameterString(iwc, uri);
+	}
+	
 	private void maintainParameters(IWContext iwc) {
 		Iterator iter = this.maintainedParameters.iterator();
 		while (iter.hasNext()) {
