@@ -1,24 +1,33 @@
 package com.idega.data;
 
+import java.util.Collection;
 
-public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaDataHome
-{
- protected Class getEntityInterfaceClass(){
+import javax.ejb.FinderException;
+
+
+public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaDataHome {
+	
+ /**
+	 * 
+	 */
+	private static final long serialVersionUID = -2779913911896861198L;
+
+@Override
+ protected Class<MetaData> getEntityInterfaceClass(){
   return MetaData.class;
  }
 
  public MetaData create() throws javax.ejb.CreateException{
-  return (MetaData) super.idoCreate();
+  return (MetaData) super.idoCreate(MetaData.class);
  }
 
  public MetaData createLegacy(){
-	try{
+	try {
 		return create();
 	}
 	catch(javax.ejb.CreateException ce){
 		throw new RuntimeException("CreateException:"+ce.getMessage());
 	}
-
  }
 
  public MetaData findByPrimaryKey(int id) throws javax.ejb.FinderException{
@@ -26,7 +35,7 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
  }
 
  public MetaData findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (MetaData) super.idoFindByPrimaryKey(pk);
+  return (MetaData) super.idoFindByPrimaryKey(MetaData.class, pk);
  }
 
  public MetaData findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
@@ -39,5 +48,12 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
 
  }
 
+	@SuppressWarnings("unchecked")
+	public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<?> ids = ((MetaDataBMPBean) entity).ejbFindAllByMetaDataNameAndType(name, type);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 
 }

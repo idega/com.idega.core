@@ -1,12 +1,17 @@
 package com.idega.data;
 
+import java.util.Collection;
 
-public interface MetaDataHome extends com.idega.data.IDOHome
-{
+import javax.ejb.FinderException;
+
+public interface MetaDataHome extends com.idega.data.IDOHome {
+	
  public MetaData create() throws javax.ejb.CreateException;
  public MetaData createLegacy();
- public MetaData findByPrimaryKey(int id) throws javax.ejb.FinderException;
- public MetaData findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
+ public MetaData findByPrimaryKey(int id) throws FinderException;
+ public MetaData findByPrimaryKey(Object pk) throws FinderException;
  public MetaData findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
 
+ public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException;
+ 
 }

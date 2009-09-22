@@ -10,6 +10,14 @@
 package com.idega.data;
 
 import java.sql.SQLException;
+import java.util.Collection;
+
+import javax.ejb.FinderException;
+
+import com.idega.data.query.Column;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 
 /**
  * <p>
@@ -43,6 +51,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		super(id);
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(COLUMN_META_KEY, "The key name", true, true, String.class, 255);
@@ -53,10 +62,12 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		addIndex("IDX_IC_METADATA_3", new String[] { COLUMN_META_VALUE });
 	}
 
+	@Override
 	public String getEntityName() {
 		return (TABLE_NAME);
 	}
 
+	@Override
 	public String getName() {
 		return (String) getColumnValue(COLUMN_META_KEY);
 	}
@@ -98,6 +109,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		setValue(value);
 	}
 
+	@Override
 	public void setName(String name) {
 		setColumn(COLUMN_META_KEY, name);
 	}
@@ -108,5 +120,17 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 
 	public void setType(String type) {
 		setColumn(COLUMN_META_TYPE, type);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Collection<Integer> ejbFindAllByMetaDataNameAndType(String name, String type) throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(new Column(table, getIDColumnName()));
+		
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_KEY), MatchCriteria.EQUALS, name));
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_TYPE), MatchCriteria.EQUALS, type));
+		
+		return this.idoFindPKsByQuery(query);
 	}
 }
