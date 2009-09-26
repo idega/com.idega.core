@@ -542,26 +542,26 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				returnString.append("\" ");
 				String tagValue = getMetaTag(tagName);
 				if (tagValue != null) {
-					returnString.append(" content=\"");
+					returnString.append("content=\"");
 					returnString.append(tagValue);
 					returnString.append("\"");
 				}
-				returnString.append(" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
+				returnString.append(">\n");
 			}
 			returnString.append("\n");
 		}
 		if (this._HTTPEquivs != null) {
-			for (String tagName: this._HTTPEquivs.keySet()) {
+			for (Map.Entry<String, String> entry: this._HTTPEquivs.entrySet()) {
 				returnString.append("<meta http-equiv=\"");
-				returnString.append(tagName);
+				returnString.append(entry.getKey());
 				returnString.append("\" ");
-				String tagValue = getHTTPEquivTag(tagName);
+				String tagValue = entry.getValue();
 				if (tagValue != null) {
-					returnString.append(" content=\"");
+					returnString.append("content=\"");
 					returnString.append(tagValue);
 					returnString.append("\"");
 				}
-				returnString.append(" " + (!markup.equals(HTML) ? "/" : "") + ">\n");
+				returnString.append(">\n");
 			}
 			returnString.append("\n");
 		}
@@ -1307,6 +1307,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		if (getUseIE7Extension()) {
 			buf.append(getIE7());
 		}
+		
 		buf.append(getMetaInformation(markup, characterEncoding));
 		buf.append(getMetaTags(markup));
 		buf.append(getJavaScriptBeforeJavascriptURLs(iwc));
@@ -1461,6 +1462,15 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		PresentationUtil.addJavaScriptActionToBody(iwc, "registerEvent(window, 'load', function() {dwr.engine.setActiveReverseAjax(true);});");
 	}
 
+	protected void enableChromeFrame(IWContext iwc) {
+		if (iwc.isIE() && iwc.getBrowserVersion() <= 7.0 && iwc.getIWMainApplication().getSettings().getBoolean("use_chrome_frame", Boolean.FALSE)) {
+			setHTTPEquivTag("X-UA-Compatible", "chrome=1");
+			
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, "http://ajax.googleapis.com/ajax/libs/chrome-frame/1/CFInstall.min.js");
+			PresentationUtil.addJavaScriptActionToBody(iwc, "registerEvent(window, 'load', function() {CFInstall.check({cssText: 'position: absolute; z-index: 2147483647;', destination: window.location.href});});");
+		}
+	}
+	
 	/**
 	 * @param iwc
 	 *          Description of the Parameter
@@ -1516,26 +1526,15 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				}
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
-				/*
-				 * //shortcut icon println(getPrintableSchortCutIconURL(iwc)); print(getMetaInformation(markup, characterEncoding));
-				 * print(getMetaTags(markup)); print(getJavascriptURLs(iwc)); if (getAssociatedScript() != null) { getAssociatedScript()._print(iwc); }
-				 * print(getStyleSheetURL(markup)); print(getStyleDefinition());
-				 */
 				print(getHeadContents(markup, characterEncoding, iwc));
 				if (getAssociatedScript() != null) {
-					// getAssociatedScript()._print(iwc);
 					UIComponent script = getAssociatedScript();
 					this.renderChild(iwc, script);
 				}
-				// Laddi: Made obsolete with default style sheet
-				/*
-				 * if (_addStyleSheet) { println("<link rel=\"stylesheet\" href=\"" + _styleSheetURL + "\" type=\"text/css\">\n"); }
-				 */
 				println("\n</head>");
 				if (this._addBody) {
 					println("<body " + getMarkupAttributesString() + ">");
 					if (!getAssociatedBodyScript().isEmpty()) {
-						// getAssociatedBodyScript()._print(iwc);
 						UIComponent script = getAssociatedBodyScript();
 						this.renderChild(iwc, script);
 					}
@@ -1724,19 +1723,29 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public String getMetaInformation(String markup, String characterEncoding) {
 		boolean addIdegaAuthorAndCopyRight = false;
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=" + characterEncoding + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb " + IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
+		
+		setHTTPEquivTag("content-type", "text/html; charset=" + characterEncoding);
+//		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=" + characterEncoding + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb " + IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
+		
 		// If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 		if (notUseProxyCaching) {
-			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
+			setHTTPEquivTag("pragma", "no-cache");
+//			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
+		
 		if (getRedirectInfo() != null) {
-			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
+			setHTTPEquivTag("refresh", getRedirectInfo());
+//			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
+		
 		if (addIdegaAuthorAndCopyRight) {
-			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
+			setMetaTag("author", "idega.is");
+			setMetaTag("copyright", "idega.is");
+//			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
-		return theReturn;
+		
+		return CoreConstants.EMPTY;
 	}
 
 	/**
