@@ -1725,24 +1725,20 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		boolean addIdegaAuthorAndCopyRight = false;
 		
 		setHTTPEquivTag("content-type", "text/html; charset=" + characterEncoding);
-//		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=" + characterEncoding + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb " + IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		
 		// If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 		if (notUseProxyCaching) {
 			setHTTPEquivTag("pragma", "no-cache");
-//			theReturn += "<meta http-equiv=\"pragma\" content=\"no-cache\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
 		
 		if (getRedirectInfo() != null) {
 			setHTTPEquivTag("refresh", getRedirectInfo());
-//			theReturn += "<meta http-equiv=\"refresh\" content=\"" + getRedirectInfo() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
 		
 		if (addIdegaAuthorAndCopyRight) {
 			setMetaTag("author", "idega.is");
 			setMetaTag("copyright", "idega.is");
-//			theReturn += "<meta name=\"author\" content=\"idega.is\"/>\n<meta name=\"copyright\" content=\"idega.is\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		}
 		
 		return CoreConstants.EMPTY;
