@@ -441,6 +441,56 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return false;
 	}
+	
+	public String getFullBrowserVersion() {
+		String userAgent = getUserAgent();
+		
+		try {
+			if (isIE()) {
+				String agentInfo[] = userAgent.split("MSIE ");
+				return agentInfo[1].split(";")[0];
+			} else if (isSafari()) {
+				String agentInfo[] = userAgent.split("Version/");
+				return agentInfo[1].split(CoreConstants.SPACE)[0];
+			} else if (isOpera()) {
+				String agentInfo[] = userAgent.split("Version/");
+				return agentInfo[1].split(CoreConstants.SPACE)[0];
+			} else if (isMozilla()) {
+				if (userAgent.indexOf("Camino") != -1) {
+					String agentInfo[] = userAgent.split("Camino/");
+					return agentInfo[1].split(CoreConstants.SPACE)[0];
+				} else if (userAgent.indexOf("Firefox") != -1) {
+					String agentInfo[] = userAgent.split("Firefox/");
+					return agentInfo[1];
+				}
+			}
+			
+			LOGGER.warning("Couldn't detect version from user agent info:\n" + userAgent);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Some error occured while trying to resolve browser's version from:\n" + userAgent, e);
+		}
+		
+		return CoreConstants.EMPTY;
+	}
+	
+	public Double getBrowserVersion() {
+		String version = getFullBrowserVersion();
+		if (StringUtil.isEmpty(version)) {
+			return 0.0;
+		}
+		
+		if (version.indexOf(CoreConstants.DOT) != -1) {
+			version = version.substring(0, version.lastIndexOf(CoreConstants.DOT));
+		}
+		
+		try {
+			return Double.valueOf(version);
+		} catch (NumberFormatException e) {
+			LOGGER.warning("Error converting to Double: " + version);
+		}
+		
+		return 0.0;
+	}
 
 	public boolean isSearchEngine() {
 		String userAgent = getUserAgent();
