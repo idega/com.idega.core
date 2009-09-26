@@ -3,6 +3,7 @@ package com.idega.util;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -167,22 +168,22 @@ public class CoreUtil {
     		serverName = "unkown";
     	}
     	
-    	StringWriter stringWriter = null;
+    	Writer writer = null;
     	PrintWriter printWriter = null;
     	String notification = null;
     	try {
-    		stringWriter = new StringWriter();
-    		printWriter = new PrintWriter(stringWriter);
+    		writer = new StringWriter();
+    		printWriter = new PrintWriter(writer);
     		exception.printStackTrace(printWriter);
     		
-    		notification = "Stack trace:\n" + printWriter.toString();
+    		notification = "Stack trace:\n" + writer.toString();
     		
         	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName, notification);
         } catch(Exception e) {
         	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
         	return false;
         } finally {
-        	IOUtil.closeWriter(stringWriter);
+        	IOUtil.closeWriter(writer);
         	IOUtil.closeWriter(printWriter);
         }
     	return true;
