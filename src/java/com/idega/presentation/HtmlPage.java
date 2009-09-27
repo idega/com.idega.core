@@ -6,7 +6,6 @@ package com.idega.presentation;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.InputStreamReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -14,6 +13,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
@@ -27,7 +27,10 @@ import org.jdom.Namespace;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.util.CoreConstants;
+import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.text.AttributeParser;
 import com.idega.util.xml.XmlUtil;
@@ -54,6 +57,8 @@ import com.idega.util.xml.XmlUtil;
  */
 public class HtmlPage extends Page {
 
+	private static final Logger LOGGER = Logger.getLogger(HtmlPage.class.getName());
+	
 	private String html;
 	private Map<String, Integer> regionMap;
 	
@@ -64,38 +69,18 @@ public class HtmlPage extends Page {
 		super();
 	}
 	
-	/**
-	 * @return
-	 */
 	public void setResource(InputStream htmlStream) {
-		//String ret = "";
-		
-		//ret = getHtml();
-		//if(ret == null && getResourceName() != null) {
-			
-			//InputStream htmlStream = this.getClass().getClassLoader().getResourceAsStream(getResourceName());
-			if(htmlStream != null) {
-				try {
-					InputStreamReader htmlReader = new InputStreamReader(htmlStream);
-					StringBuffer html = new StringBuffer();
-					int nr = 0;
-					char[] buffer = new char[1024];
-					while(nr != -1) {
-						nr = htmlReader.read(buffer);
-						if(nr != -1) {
-							html.append(buffer,0,nr);
-						}
-					}
-					setHtml(html.toString());
-					//ret = getHtml();
-					htmlReader.close();
-				} catch(IOException e) {
-					throw new RuntimeException("Attribute <resourceName> for component <" + getId() + ">. Could not load the html from named resource <>");
-				}
+		if (htmlStream != null) {
+			try {
+				setHtml(StringHandler.getContentFromInputStream(htmlStream));
+			} catch(Exception e) {
+				throw new RuntimeException("Attribute <resourceName> for component <" + getId() + ">. Could not load the html from named resource <>");
+			} finally {
+				IOUtil.closeInputStream(htmlStream);
 			}
-		//}
+		}
+		
 		findOutRegions();
-		//return ret;
 	}
 
 	/**
@@ -132,6 +117,7 @@ public class HtmlPage extends Page {
 	public List<UIComponent> getChildren() {
 		return super.getChildren();
 	}
+	
 	/**
 	 *
 	 */
@@ -211,29 +197,33 @@ public class HtmlPage extends Page {
 
 	private void findOutRegions(){
 		String template = getHtml();
-		if(template != null) {
-			String[] parts = template.split("<!-- TemplateBeginEditable");
-			//out.write(parts[0]);
-			int regionIndex=0;
-			for (int i = 1; i < parts.length; i++) {
-				String part = parts[i];
-				String[] t = part.split("TemplateEndEditable -->");
-			
-				String toParse = t[0];
-				String[] a1=toParse.split("name=\"");
-				String[] a2 = a1[1].split("\"");
-				
-				String regionId=a2[0];
-				
-				getRegionIdsMap().put(regionId,new Integer(regionIndex));
-				//instanciate the region in the children list:
-				HtmlPageRegion region = new HtmlPageRegion();
-				region.setRegionId(regionId);
-				setRegion(regionId,region);
-				//getChildren().add(region);
-				//getChildren().set(regionIndex,region);
-				regionIndex++;
+		if (template == null) {
+			LOGGER.info("There is no template for this page");
+			return;
+		}
+		
+		String[] parts = template.split("<!-- TemplateBeginEditable");
+		int regionIndex=0;
+		for (int i = 1; i < parts.length; i++) {
+			String part = parts[i];
+			String[] t = part.split("TemplateEndEditable -->");
+		
+			String toParse = t[0];
+			String[] a1 = toParse.split("name=\"");
+			if (a1.length < 2) {
+				LOGGER.warning("Invalid region pattern! Got part:\n" + toParse);
+				continue;
 			}
+			String[] a2 = a1[1].split("\"");
+			
+			String regionId = a2[0];
+			
+			getRegionIdsMap().put(regionId,new Integer(regionIndex));
+			//	Instantiate the region in the children list:
+			HtmlPageRegion region = new HtmlPageRegion();
+			region.setRegionId(regionId);
+			setRegion(regionId,region);
+			regionIndex++;
 		}
 	}
 	
@@ -264,10 +254,6 @@ public class HtmlPage extends Page {
 		encodeRenderTime(context);
 	}
 	
-	/**
-	 * @see javax.faces.component.UIComponent#encodeChildren(javax.faces.context.FacesContext)
-	 */
-	//public void encodeChildren(FacesContext ctx) throws IOException {
 	@Override
 	public void print(IWContext ctx) throws IOException {
 		IWContext iwc = IWContext.getIWContext(ctx);
@@ -277,153 +263,139 @@ public class HtmlPage extends Page {
 		enableReverseAjax(iwc);
 		enableChromeFrame(iwc);
 		
-		Writer out;
-		
-		//ResponseWriter out = ctx.getResponseWriter();
-		//RenderUtils.ensureAllTagsFinished();
-		if(IWMainApplication.useJSF){
-			out = ctx.getResponseWriter();
-		}
-		else{
-			out = ctx.getWriter();
-		}
+		Writer out = IWMainApplication.useJSF ? ctx.getResponseWriter() : ctx.getWriter();
 		
 		String template = getHtml();
-		if(template != null) {
-			//Process the HEAD first:
-			Pattern headOpensPattern = Pattern.compile("<head>", Pattern.CASE_INSENSITIVE);
-			String[] headOpensSplit = headOpensPattern.split(template);
-			//String[] headOpensSplit = template.split("<head>");
-			String preHead = headOpensSplit[0];
-			String postHeadOpens = headOpensSplit[1];
-			out.write(preHead);
-			out.write("<head>");
-			
-			Pattern headClosesPattern = Pattern.compile("</head>", Pattern.CASE_INSENSITIVE);
-			String[] headClosesSplit = headClosesPattern.split(postHeadOpens);
-//			String[] headClosesSplit = postHeadOpens.split("</head>");
-			String headContent = headClosesSplit[0];
-			String body = headClosesSplit[1];
-			
-			//Get the contents from the superclass first
-			out.write(getHeadContents(ctx));
-			Script associatedScript = getAssociatedScript();
-			renderChild(ctx,associatedScript);
-			
-			//then printout the head contents from the html page
-			//find out where the title is in the head:
-			String htmlTitle="";
-			try{
-				//Try to find where the TITLE tag is in the HEAD:
-				Pattern titlePattern = Pattern.compile("<title>", Pattern.CASE_INSENSITIVE);
-				String[] titleSplit = titlePattern.split(headContent);
-				//String[] titleSplit = headContent.split("<title>");
-				String preTitleHead= titleSplit[0];
-				String postTitleOpens = titleSplit[1];
-				
-				Pattern postTitlePattern = Pattern.compile("</title>", Pattern.CASE_INSENSITIVE);
-				String[] postTitleSplit = postTitlePattern.split(postTitleOpens);
-				//String[] postTitleSplit = postTitleOpens.split("</title>");
-				htmlTitle = postTitleSplit[0];
-				String postTitleHead = postTitleSplit[1];
-				
-				//Print out all befor the TITLE tag in the HEAD
-				out.write(preTitleHead);
-				//Print out the title from the idegaWeb page
-				String locTitle = this.getLocalizedTitle(ctx);
-				out.write("<title>");
-				if(locTitle!=null   && !locTitle.equals("")){
-					out.write(locTitle);
-				}
-				else{
-					out.write(htmlTitle);
-				}
-				out.write("</title>");
-				//Print out all after the TITLE tag in the HEAD
-				out.write(postTitleHead);
-			}
-			catch(ArrayIndexOutOfBoundsException ae){
-				//If there is an error (title not found)
-				//then just write out the whole head contents + idegaWeb Title
-				out.write(headContent);
-				String locTitle = this.getLocalizedTitle(ctx);
-				out.write("<title>");
-				if(locTitle!=null   && !locTitle.equals("")){
-					out.write(locTitle);
-				}
-				else{
-					out.write(htmlTitle);
-				}
-				out.write("</title>");
-			}
-			out.write("</head>");	
-			
-			String[] htmlBody = body.split("<body");
-			int index = 0;
-			if (htmlBody.length > 1) {
-				out.write(htmlBody[index++]);
-			}
-			body = htmlBody[index];
-
-			String attributes = body.substring(0, body.indexOf(">"));
-			Map<String, String> attributeMap = AttributeParser.parse(attributes);
-			for (Iterator<String> iter = attributeMap.keySet().iterator(); iter.hasNext();) {
-				String attribute = iter.next();
-				String value = attributeMap.get(attribute);
-				if (attribute.equals("onload")) {
-					this.setMarkupAttributeMultivalued("onload", value);
-				}
-				if (attribute.equals("onunload")) {
-					this.setMarkupAttributeMultivalued("onunload", value);
-				}
-				else {
-					if (!isMarkupAttributeSet(attribute)) {
-						setMarkupAttribute(attribute, value);
-					}
-				}
-			}
-			out.write("<body " + getMarkupAttributesString() + " >\n");
-			
-			body = body.substring(body.indexOf(">") + 1);
-			
-			//Process the template regions:			
-			String[] parts = body.split("<!-- TemplateBeginEditable");
-			out.write(parts[0]);
-			for (int i = 1; i < parts.length; i++) {
-				String part = parts[i];
-				String[] t = part.split("TemplateEndEditable -->");
-			
-				String toParse = t[0];
-				String[] a1=toParse.split("name=\"");
-				String[] a2 = a1[1].split("\"");
-				
-				String regionId=a2[0];
-				
-				
-				//int childNumber = Integer.parseInt(t[0]) - 1;
-
-				try{
-					UIComponent region = getRegion(regionId);
-					renderChild(ctx,region);
-				}
-				catch(ClassCastException cce){
-					cce.printStackTrace();
-				}
+		if (template == null) {
+			out.write("Template file could not be found.");
+			return;
+		}
 		
+		//	Process the HEAD first:
+		Pattern headOpensPattern = Pattern.compile("<head>", Pattern.CASE_INSENSITIVE);
+		String[] headOpensSplit = headOpensPattern.split(template);
+		String preHead = headOpensSplit[0];
+		String postHeadOpens = headOpensSplit[1];
+		out.write(preHead);
+		out.write("<head>");
+		
+		Pattern headClosesPattern = Pattern.compile("</head>", Pattern.CASE_INSENSITIVE);
+		String[] headClosesSplit = headClosesPattern.split(postHeadOpens);
+		String headContent = headClosesSplit[0];
+		String body = headClosesSplit[1];
+		
+		//	Get the contents from the superclass first
+		out.write(getHeadContents(ctx));
+		Script associatedScript = getAssociatedScript();
+		renderChild(ctx,associatedScript);
+		
+		//	Then printout the head contents from the HTML page find out where the title is in the head:
+		String htmlTitle = CoreConstants.EMPTY;
+		try {
+			//	Try to find where the TITLE tag is in the HEAD:
+			Pattern titlePattern = Pattern.compile("<title>", Pattern.CASE_INSENSITIVE);
+			String[] titleSplit = titlePattern.split(headContent);
+			String preTitleHead= titleSplit[0];
+			String postTitleOpens = titleSplit[1];
+			
+			Pattern postTitlePattern = Pattern.compile("</title>", Pattern.CASE_INSENSITIVE);
+			String[] postTitleSplit = postTitlePattern.split(postTitleOpens);
+			htmlTitle = postTitleSplit[0];
+			String postTitleHead = postTitleSplit[1];
+			
+			//	Print out all before the TITLE tag in the HEAD
+			out.write(preTitleHead);
+			//	Print out the title from the idegaWeb page
+			String locTitle = this.getLocalizedTitle(ctx);
+			out.write("<title>");
+			if (StringUtil.isEmpty(locTitle)) {
+				out.write(htmlTitle);
+			}
+			else {
+				out.write(locTitle);
+			}
+			out.write("</title>");
+			//	Print out all after the TITLE tag in the HEAD
+			out.write(postTitleHead);
+		}
+		catch (ArrayIndexOutOfBoundsException ae) {
+			//	If there is an error (title not found) then just write out the whole head contents + idegaWeb Title
+			out.write(headContent);
+			String locTitle = this.getLocalizedTitle(ctx);
+			out.write("<title>");
+			if (StringUtil.isEmpty(locTitle)) {
+				out.write(htmlTitle);
+			}
+			else {
+				out.write(locTitle);
+			}
+			out.write("</title>");
+		}
+		out.write("</head>");	
+		
+		String[] htmlBody = body.split("<body");
+		int index = 0;
+		if (htmlBody.length > 1) {
+			out.write(htmlBody[index++]);
+		}
+		body = htmlBody[index];
+
+		String attributes = body.substring(0, body.indexOf(">"));
+		Map<String, String> attributeMap = AttributeParser.parse(attributes);
+		for (Iterator<String> iter = attributeMap.keySet().iterator(); iter.hasNext();) {
+			String attribute = iter.next();
+			String value = attributeMap.get(attribute);
+			if (attribute.equals("onload")) {
+				this.setMarkupAttributeMultivalued("onload", value);
+			}
+			if (attribute.equals("onunload")) {
+				this.setMarkupAttributeMultivalued("onunload", value);
+			}
+			else {
+				if (!isMarkupAttributeSet(attribute)) {
+					setMarkupAttribute(attribute, value);
+				}
+			}
+		}
+		String attributesString = getMarkupAttributesString();
+		out.write("<body" + (StringUtil.isEmpty(attributesString) ? CoreConstants.EMPTY : (CoreConstants.SPACE + attributesString + CoreConstants.SPACE)) + ">\n");
+		
+		body = body.substring(body.indexOf(">") + 1);
+		
+		//	Process the template regions:			
+		String[] parts = body.split("<!-- TemplateBeginEditable");
+		out.write(parts[0]);
+		for (int i = 1; i < parts.length; i++) {
+			String part = parts[i];
+			String[] t = part.split("TemplateEndEditable -->");
+			
+			String toParse = t[0];
+			String[] a1 = toParse.split("name=\"");
+			if (a1.length < 2) {
+				LOGGER.warning("Invalid region pattern! Unable to extract region's ID! Got region's part:\n" + toParse);
+				continue;
+			}
+			String[] a2 = a1[1].split("\"");
+			
+			String regionId = a2[0];
+			
+			try {
+				UIComponent region = getRegion(regionId);
+				renderChild(ctx,region);
+			}
+			catch (ClassCastException cce) {
+				LOGGER.log(Level.WARNING, "Error occured while rendering UI component", cce);
+			}
+			if (t.length < 2) {
+				LOGGER.warning("Invalid region pattern! Got template's part:\n" + part);
+			} else {
 				out.write(t[1]);
 			}
+		}
 			
-			for (UIComponent child: getChildren()) {
-				if (!(child instanceof HtmlPageRegion)) {
-					renderChild(ctx, child);
-				}
-			}
-		} else {
-			out.write("Template file could not be found.");
-			
-			List<UIComponent> children = getChildren();
-			for (Iterator<UIComponent> iter = children.iterator(); iter.hasNext();) {
-				renderChild(ctx, iter.next());
+		for (UIComponent child: getChildren()) {
+			if (!(child instanceof HtmlPageRegion)) {
+				renderChild(ctx, child);
 			}
 		}
 	}
@@ -438,7 +410,6 @@ public class HtmlPage extends Page {
 		values[1] = getHtml();
 		values[2] = this.regionMap;
 		values[3] = Boolean.valueOf(this.regionAsFacet);
-		//values[2] = getResourceName();
 		return values;
 	}
 	
@@ -539,10 +510,6 @@ public class HtmlPage extends Page {
 			this.html = XmlUtil.getPrettyJDOMDocument(templateDoc);
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
-	 */
 	
 	@SuppressWarnings("unchecked")
 	@Override
