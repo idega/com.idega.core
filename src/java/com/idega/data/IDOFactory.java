@@ -94,12 +94,14 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
       throw new IDOFinderException("[idoFactory] : Primarykey other than type Integer not supported");
     }*/
   }
-  
-  
-
 
   public IDOEntity createIDO() throws CreateException{
     return idoCreate(getEntityInterfaceClass());
+  }
+  
+  @SuppressWarnings("unchecked")
+  public <T extends IDOEntity> T createEntity() throws CreateException{
+    return (T) idoCreate(getEntityInterfaceClass());
   }
 
   /**

@@ -821,6 +821,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return wrapper.getBlobInputStream();
 	}
 
+	protected <T>T getRealValue(String columnName) {
+		return getRealValue(columnName, (T) null);	//	Type parameter added because of Maven 2 compiler - it fails without casting to T
+	}
+	
+	@SuppressWarnings("unchecked")
+	protected <T>T getRealValue(String columnName, T defaultValue) {
+		Object value = getColumnValue(columnName);
+		return value == null ? defaultValue : (T) value;
+	}
+	
 	public Object getColumnValue(String columnName) {
 		Object returnObj = null;
 		Object value = getValue(columnName);
