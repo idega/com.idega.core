@@ -8,6 +8,9 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.data.IDOEntity;
+import com.idega.data.IDOHome;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
@@ -72,4 +75,13 @@ public abstract class DefaultSpringBean {
 		return null;
 	}
 	
+	@SuppressWarnings("unchecked")
+	protected <T extends IDOHome> T getHomeForEntity(Class<? extends IDOEntity> entityClass) {
+		try {
+			return (T) IDOLookup.getHome(entityClass);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Som error occurred getting home interface for entity: " + entityClass, e);
+		}
+		return null;
+	}
 }
