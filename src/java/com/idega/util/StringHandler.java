@@ -1298,6 +1298,15 @@ public class StringHandler {
 		return link;
 	}
 	
+	public static String getContentFromStream(InputStream stream) {
+		try {
+			return getContentFromInputStream(stream);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
 	public static String getContentFromInputStream(InputStream stream) throws Exception {
 		if (stream == null) {
 			return null;
