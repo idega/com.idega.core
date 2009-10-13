@@ -19,15 +19,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.builder.data.CachedDomain;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.idegaweb.IWApplicationContextFactory;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.MutableClass;
+import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.RequestUtil;
+import com.idega.util.expression.ELUtil;
 
 
 
@@ -192,9 +195,32 @@ public abstract class BaseFilter implements Filter, MutableClass {
 			} catch(Exception e) {
 				Logger.getLogger(BaseFilter.class.getName()).log(Level.SEVERE, "Error creating instance of " + IWContext.class.getSimpleName(), e);
 				CoreUtil.sendExceptionNotification(e);
+				return null;
 			}
 		}
 		
 		return iwc;
+	}
+	
+	protected User getCurrentUser(HttpServletRequest request, HttpServletResponse response) {
+		IWContext iwc = null;
+		try {
+			iwc = getIWContext(request, response);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		try {
+			if (iwc == null) {
+				LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+				return loginSession.getUser();
+			} else {
+				return iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return null;
 	}
 }
