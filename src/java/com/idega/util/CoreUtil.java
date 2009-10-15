@@ -161,24 +161,41 @@ public class CoreUtil {
     	}
     	
     	String serverName = null;
+    	String requestUri = null;
     	try {
-    		serverName = ELUtil.getInstance().getBean(RequestProvider.class).getRequest().getServerName();
+    		HttpServletRequest request = ELUtil.getInstance().getBean(RequestProvider.class).getRequest();
+    		serverName = request.getServerName();
+    		requestUri = request.getRequestURI();
     	} catch(Exception e) {
     		LOGGER.log(Level.WARNING, "Error getting " + RequestProvider.class, e);
-    		serverName = "unkown";
     	}
+    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
+    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
+
+    	String userFullName = null;
+    	try {
+    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+    		User loggedInUser = loginSession.getUser();
+    		userFullName = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
+    	} catch (Exception e) {
+    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class, e);
+    	}
+    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
     	
     	Writer writer = null;
     	PrintWriter printWriter = null;
-    	String notification = null;
+    	StringBuffer notification = null;
     	try {
     		writer = new StringWriter();
     		printWriter = new PrintWriter(writer);
     		exception.printStackTrace(printWriter);
     		
-    		notification = "Stack trace:\n" + writer.toString();
+    		notification = new StringBuffer("Requested uri: ").append(requestUri).append("\n");
+    		notification.append("User: ").append(userFullName).append("\n");
+    		notification.append("Stack trace:\n").append(writer.toString());
     		
-        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName, notification);
+        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName,
+        			notification.toString());
         } catch(Exception e) {
         	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
         	return false;
