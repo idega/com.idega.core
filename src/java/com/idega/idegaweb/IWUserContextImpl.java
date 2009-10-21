@@ -26,14 +26,17 @@ import com.idega.presentation.IWContext;
  * @version 1.0
  */
 public class IWUserContextImpl extends IWContext implements IWUserContext{
-	private HttpSession session;
-	
 
-	public IWUserContextImpl(HttpSession session,ServletContext sc){
+	private static final long serialVersionUID = 5582688835463938292L;
+	
+	private HttpSession session;
+
+	public IWUserContextImpl(HttpSession session, ServletContext sc){
 		this.session=session;	
 		this.setServletContext(sc);
 	}
 	
+	@Override
 	public HttpSession getSession(){
 		return this.session;	
 	}
@@ -41,6 +44,7 @@ public class IWUserContextImpl extends IWContext implements IWUserContext{
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWUserContext#getUserPrincipal()
 	 */
+	@Override
 	public Principal getUserPrincipal() {
 		String userName = getRemoteUser();
 		if(userName != null){
@@ -54,6 +58,7 @@ public class IWUserContextImpl extends IWContext implements IWUserContext{
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWUserContext#isUserInRole(java.lang.String)
 	 */
+	@Override
 	public boolean isUserInRole(String role) {
 		LoggedOnInfo lInfo = LoginBusinessBean.getLoggedOnInfo(this);
 		if(lInfo != null){
@@ -68,6 +73,7 @@ public class IWUserContextImpl extends IWContext implements IWUserContext{
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWUserContext#getRemoteUser()
 	 */
+	@Override
 	public String getRemoteUser() {
 		LoggedOnInfo lInfo = LoginBusinessBean.getLoggedOnInfo(this);
 		if(lInfo != null){

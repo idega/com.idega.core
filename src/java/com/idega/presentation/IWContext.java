@@ -135,34 +135,33 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Default constructor
 	 */
-	public IWContext() {
-	}
+	protected IWContext() {}
 
 	private IWContext(FacesContext fc) {
 		this((HttpServletRequest) fc.getExternalContext().getRequest(), (HttpServletResponse) fc.getExternalContext().getResponse(),
-				(ServletContext) fc.getExternalContext().getContext());
+				(ServletContext) fc.getExternalContext().getContext(), false);
 		setRealFacesContext(fc);
 	}
 
-	/**
-	 * @param request
-	 * @param response
-	 * @param context
-	 */
-	public IWContext(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+	private IWContext(HttpServletRequest request, HttpServletResponse response, ServletContext context, boolean createFacesContext) {
+		if (createFacesContext && getRealFacesContext() == null) {
+			FacesContextInitializer facesContextInitializer = getFacesContextInitializer();
+			FacesContext fc = facesContextInitializer.getInitializedFacesContext(context, request, response);
+			setRealFacesContext(fc);
+		}
+		
 		if (request.getSession() == null) {
-			LOGGER.warning("Session is null in request! Trying to re-initialize session");
+			LOGGER.warning("Session is null in request ("+request.getClass()+")! Trying to re-initialize session");
 			if (reInitializeRequest()) {
 				request = getRequest();
 			} else {
 				try {
-					throw new RuntimeException("There is no session ("+HttpSession.class+") object attached to request: " + request);
+					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request);
 				} catch (Exception e) {
-					LOGGER.log(Level.SEVERE, "No session", e);
+					LOGGER.log(Level.SEVERE, "Error initializing IWContext", e);
 					CoreUtil.sendExceptionNotification(e);
 				}
 			}
-			
 		}
 		
 		setRequest(request);
@@ -175,6 +174,15 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		
 		// Put it to the request map
 		storeContext();
+	}
+	
+	/**
+	 * @param request
+	 * @param response
+	 * @param context
+	 */
+	public IWContext(HttpServletRequest request, HttpServletResponse response, ServletContext context) {
+		this(request, response, context, true);
 	}
 
 	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
@@ -557,8 +565,21 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			}
 			HttpSession session = request.getSession();
 			if (session == null) {
-				LOGGER.warning("Session is null, failed to re-initialize");
-				return false;
+				ExternalContext extContext = getExternalContext();
+				if (extContext == null) {
+					LOGGER.severe(ExternalContext.class.getSimpleName() + " is not provided! Can not initialize HTTP session!");
+					return false;
+				} else {
+					Object o = extContext.getSession(true);
+					if (o instanceof HttpSession) {
+						session = (HttpSession) o;
+					}
+				}
+				
+				if (session == null) {
+					LOGGER.warning("Session is null, failed to re-initialize");
+					return false;
+				}
 			}
 			
 			LOGGER.fine("Session was re-initialized sucessfully");
@@ -1553,7 +1574,15 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 */
 	@Override
 	public ExternalContext getExternalContext() {
-		return getRealFacesContext() != null ? getRealFacesContext().getExternalContext() : null;
+		ExternalContext extContext = getRealFacesContext() != null ? getRealFacesContext().getExternalContext() : null;
+		if (extContext == null) {
+			extContext = getFacesContextInitializer().getInitializedExternalContext(getServletContext(), getRequest(), getResponse());
+		}
+		return extContext;
+	}
+	
+	private FacesContextInitializer getFacesContextInitializer() {
+		return ELUtil.getInstance().getBean(FacesContextInitializer.class);
 	}
 
 	/*
