@@ -281,7 +281,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// found user with given personal id, use that user since no two
 			// users can have same personal id
 			user.setFullName(fullName);
-			if (user.getDisplayName() == null || "".equals(user.getDisplayName().trim())) {
+			if (!user.getDisplayNameSetManually()) {
 				user.setDisplayName(fullName);
 			}
 			if (gender != null) {

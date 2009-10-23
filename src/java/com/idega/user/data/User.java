@@ -148,4 +148,6 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public Email getUsersEmail() throws EJBException, RemoteException ;
  public boolean isJuridicalPerson();
  public void setJuridicalPerson(boolean juridicalPerson);
+ public boolean getDisplayNameSetManually();
+ public void setDisplayNameSetManually(boolean diplayNameSetManually);
 }
