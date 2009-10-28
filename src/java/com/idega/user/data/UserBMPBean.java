@@ -92,7 +92,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   
 	static final String META_DATA_HOME_PAGE = "homepage";
   
-
+	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
+	
 	@Override
 	public String getEntityName() {
 		return TABLE_NAME;
@@ -522,10 +523,20 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	}
 	
 }
+  
+	public boolean getDisplayNameSetManually() {
+  		return getBooleanColumnValue(COLUMN_DISPLAY_NAME_SET_MANUALLY, false);
+  	}
+
 	/*  Getters end   */
 
 	/*  Setters begin   */
 
+	public void setDisplayNameSetManually(boolean diplayNameSetManually) {
+		setColumn(COLUMN_DISPLAY_NAME_SET_MANUALLY, diplayNameSetManually);
+	}
+
+	
 	public void setPersonalID(String personalId) {
 		setColumn(getColumnNamePersonalID(), personalId);
 	}

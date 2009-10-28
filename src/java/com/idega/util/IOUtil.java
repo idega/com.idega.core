@@ -2,6 +2,7 @@ package com.idega.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -13,44 +14,30 @@ import com.idega.io.ZipInstaller;
 
 public class IOUtil {
 	
-	public static final void closeInputStream(InputStream stream) {
-		if (stream == null) {
+	public static final void close(Closeable closeable) {
+		if (closeable == null) {
 			return;
 		}
 		
 		try {
-			stream.close();
-		} catch(IOException e) {}
+			closeable.close();
+		} catch (IOException e) {}
+	}
+	
+	public static final void closeInputStream(InputStream stream) {
+		close(stream);
 	}
 	
 	public static final void closeOutputStream(OutputStream stream) {
-		if (stream == null) {
-			return;
-		}
-		
-		try {
-			stream.close();
-		} catch(IOException e) {}
+		close(stream);
 	}
 	
 	public static final void closeReader(Reader reader) {
-		if (reader == null) {
-			return;
-		}
-		
-		try {
-			reader.close();
-		} catch(IOException e) {}
+		close(reader);
 	}
 	
 	public static final void closeWriter(Writer writer) {
-		if (writer == null) {
-			return;
-		}
-		
-		try {
-			writer.close();
-		} catch(IOException e) {}
+		close(writer);
 	}
 	
 	public static final InputStream getStreamFromCurrentZipEntry(ZipInputStream zipStream) throws IOException {

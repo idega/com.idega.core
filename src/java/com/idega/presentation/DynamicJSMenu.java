@@ -56,7 +56,6 @@ public class DynamicJSMenu extends PresentationObject {
 	private int fromLeft = 20;
 	private int fromTop = 0;
 	private String height = "";
-	IWContext iwc = new IWContext();
 	private String layerBackgroundColor = "";
 	private String layerMenuName = "layer" + this._menuObjectName;
 	private String left = "";
@@ -326,6 +325,7 @@ public class DynamicJSMenu extends PresentationObject {
 		setWait(this.wait);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		// get the current page to print the coolMenu4.js and the coolStyle.css src
 		// to it
@@ -338,10 +338,11 @@ public class DynamicJSMenu extends PresentationObject {
 
 	}
 
+	@Override
 	public void print(IWContext main) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 
-			print(getTableWithLayer(this.iwc));
+			print(getTableWithLayer(main));
 
 			print("<script type=\"text/javascript\">\n");
 			print(getFindPositionJavaScript());

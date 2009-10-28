@@ -4,6 +4,8 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -18,6 +20,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
 
+import org.apache.xerces.dom.DocumentImpl;
 import org.jaxen.jdom.JDOMXPath;
 import org.jdom.Element;
 import org.jdom.Namespace;
@@ -28,6 +31,10 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.InputSource;
 
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
@@ -54,6 +61,14 @@ public class XmlUtil {
 	private volatile static DocumentBuilderFactory factory;
 	private volatile static DocumentBuilderFactory factoryNoNamespace;
 	
+	private static final List<AdvancedProperty> ATTRIBUTES = Collections.unmodifiableList(Arrays.asList(
+			new AdvancedProperty("http://apache.org/xml/properties/dom/document-class-name", DocumentImpl.class.getName())
+	));
+	private static final List<AdvancedProperty> FEATURES = Collections.unmodifiableList(Arrays.asList(
+			new AdvancedProperty("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", Boolean.FALSE.toString()),
+			new AdvancedProperty("http://apache.org/xml/features/nonvalidating/load-external-dtd", Boolean.FALSE.toString())
+	));
+		
 	public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
 		
 		return getDocumentBuilder(true);
@@ -69,24 +84,10 @@ public class XmlUtil {
 	}
 	
 	private static DocumentBuilderFactory getDocumentBuilderFactoryNSAware() {
-	
-		if(factory == null) {
-			
+		if (factory == null) {
 			synchronized (XmlUtil.class) {
-				
-				if(factory == null) {
-			
-					factory = DocumentBuilderFactory.newInstance();
-				    factory.setNamespaceAware(true);
-				    factory.setValidating(false);
-				    factory.setAttribute("http://apache.org/xml/properties/dom/document-class-name", "org.apache.xerces.dom.DocumentImpl");
-				    
-				    try {
-						factory.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-						factory.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-					} catch (ParserConfigurationException e) {
-						logger.log(Level.WARNING, "Error setting features", e);
-					}
+				if (factory == null) {
+					factory = getFactory(Boolean.TRUE);
 				}
 			}
 		}
@@ -94,43 +95,88 @@ public class XmlUtil {
 	}
 	
 	private static DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware) {
-		
-		if(namespaceAware)
+		if (namespaceAware)
 			return getDocumentBuilderFactoryNSAware();
 		
-		if(factoryNoNamespace == null) {
-			
+		if (factoryNoNamespace == null) {
 			synchronized (XmlUtil.class) {
-				
 				if(factoryNoNamespace == null) {
-			
-					factoryNoNamespace = DocumentBuilderFactory.newInstance();
-					factoryNoNamespace.setNamespaceAware(false);
-					factoryNoNamespace.setValidating(false);
-					factoryNoNamespace.setAttribute("http://apache.org/xml/properties/dom/document-class-name", "org.apache.xerces.dom.DocumentImpl");
-					
-					try {
-						factoryNoNamespace.setFeature("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", false);
-						factoryNoNamespace.setFeature("http://apache.org/xml/features/nonvalidating/load-external-dtd", false);
-					} catch (ParserConfigurationException e) {
-						logger.log(Level.WARNING, "Error setting features", e);
-					}
+					factoryNoNamespace = getFactory(Boolean.FALSE);
 				}
 			}
 		}
 		return factoryNoNamespace;
 	}
 	
+	private static DocumentBuilderFactory getFactory(boolean namespaceAware) {
+		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+		
+		factory.setNamespaceAware(namespaceAware);
+		factory.setValidating(Boolean.FALSE);
+		
+		for (AdvancedProperty attribute: ATTRIBUTES) {
+	    	factory.setAttribute(attribute.getId(), attribute.getValue());
+	    }
+		
+		for (AdvancedProperty feature: FEATURES) {
+			try {
+				factory.setFeature(feature.getId(), Boolean.valueOf(feature.getValue()));
+			} catch (ParserConfigurationException e) {
+				logger.log(Level.WARNING, "Error setting features", e);
+			}
+		}
+		
+		return factory;
+	}
+	
 	public static Document getXMLDocument(String source, boolean namespaceAware) {
+		return getXMLDocument(source, namespaceAware, Boolean.TRUE);
+	}
+	
+	private static Document getXMLDocument(String source, boolean namespaceAware, boolean reTry) {
+		if (source == null) {
+			logger.warning("Source does not provided - unable to generate XML document");
+			return null;
+		}
+		
 		InputStream stream = null;
 		try {
 			stream = StringHandler.getStreamFromString(source);
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Error getting InputStream from source: " + source, e);
+			logger.log(Level.SEVERE, "Error getting InputStream from source:\n" + source, e);
 			return null;
 		}
 		
-		return getXMLDocument(stream, namespaceAware);
+		Document doc = null;
+		try {
+			doc = getXMLDocumentWithException(stream, namespaceAware);
+		} catch (Exception e) {
+			if (reTry) {
+				logger.warning("Error generating XML document from source:\n" + source + "\nWill try to clean given source and to re-generate XML");
+			} else {
+				logger.log(Level.SEVERE, "Error generating XML document from source:\n" + source, e);
+			}
+		}
+		if (doc == null && reTry) {
+			doc = getXMLDocument(getCleanedSource(source), namespaceAware, Boolean.FALSE);
+		}
+		return doc;
+	}
+	
+	private static String getCleanedSource(String source) {
+		BuilderService builderService = null;
+		try {
+			builderService = BuilderServiceFactory.getBuilderService(IWMainApplication.getDefaultIWApplicationContext());
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Error getting " + BuilderService.class, e);
+		}
+		
+		if (builderService == null) {
+			return null;
+		}
+		
+		String cleanedSource = builderService.getCleanedHtmlContent(source, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
+		return cleanedSource;
 	}
 	
 	public static Document getXMLDocument(InputStream stream) {
@@ -138,6 +184,15 @@ public class XmlUtil {
 	}
 		
 	public static Document getXMLDocument(InputStream stream, boolean namespaceAware) {
+		try {
+			return getXMLDocumentWithException(stream, namespaceAware);
+		} catch (Exception e) {
+			logger.log(Level.SEVERE, "Error generating XML document", e);
+		}
+		return null;
+	}
+	
+	private static Document getXMLDocumentWithException(InputStream stream, boolean namespaceAware) throws Exception {
 		if (stream == null) {
 			return null;
 		}
@@ -146,14 +201,10 @@ public class XmlUtil {
 		try {
 			reader = new InputStreamReader(stream, CoreConstants.ENCODING_UTF8);
 			return getDocumentBuilder(namespaceAware).parse(new InputSource(reader));
-		} catch(Exception e) {
-			logger.log(Level.SEVERE, "Error generating XML document", e);
 		} finally {
 			IOUtil.closeInputStream(stream);
 			IOUtil.closeReader(reader);
 		}
-		
-		return null;
 	}
 	
 	public static org.jdom.Document getJDOMXMLDocument(InputStream stream) {
