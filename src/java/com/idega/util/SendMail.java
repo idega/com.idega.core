@@ -20,6 +20,7 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.messaging.SMTPAuthenticator;
 import com.idega.idegaweb.IWMainApplication;
@@ -144,7 +145,7 @@ public class SendMail {
 	}
 		
 	private static void setMessageContent(MimePart message, String content, String mailType, String charset) throws MessagingException {
-		boolean htmlMail = CoreConstants.MAIL_TEXT_HTML_TYPE.equals(mailType);
+		boolean htmlMail = MimeTypeUtil.MIME_TYPE_HTML.equals(mailType);
 		if (htmlMail) {
 			message.setText(content, charset, "html");
 		} else {
@@ -180,6 +181,6 @@ public class SendMail {
 
 	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File... attachedFiles)
 		throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, CoreConstants.MAIL_TEXT_PLAIN_TYPE, attachedFiles);
+		send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, attachedFiles);
 	}
 }

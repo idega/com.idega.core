@@ -16,7 +16,6 @@ import java.util.Properties;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 
@@ -321,7 +320,7 @@ public class FileIconSupplier {
 		if(theReturn==null){
 			//A few additions that aren't covered by the fileNameMap
 			if(fileName.endsWith(".css")){
-				return CoreConstants.CONTENT_TYPE_TEXT_CSS;
+				return MimeTypeUtil.MIME_TYPE_CSS;
 			}
 		}
 		return theReturn;

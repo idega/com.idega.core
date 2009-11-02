@@ -13,7 +13,6 @@ import javax.activation.MimetypesFileTypeMap;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
-import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 
@@ -52,6 +51,9 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_PDF_1 = "application/pdf";
 	public static final String MIME_TYPE_ZIP = "application/zip";
 	public static final String MIME_TYPE_XML = "text/xml";
+	public static final String MIME_TYPE_CSS = "text/css";
+	public static final String MIME_TYPE_HTML = "text/html";
+	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
 
 	private String pathToConfigFile;
 	private Properties properties;
@@ -117,7 +119,7 @@ public class MimeTypeUtil implements Singleton {
 
 	private String[] document = { "text/html", "text/plain", MIME_TYPE_XML,
 			"text/richtext", "text/enriched",
-			CoreConstants.CONTENT_TYPE_TEXT_CSS, "application/postscript",
+			MimeTypeUtil.MIME_TYPE_CSS, "application/postscript",
 			"application/rtf", MIME_TYPE_PDF_1, MIME_TYPE_PDF_2,
 			MIME_TYPE_WORD, "application/mspowerpoint", MIME_TYPE_POWERPOINT,
 			"application/vnd.ms-project", MIME_TYPE_EXCEL,
