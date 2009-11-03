@@ -1,5 +1,7 @@
 package com.idega.event;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
 import javax.servlet.http.HttpSession;
@@ -32,4 +34,28 @@ public class IWHttpSessionsManager {
 		return sessions.size();
 	}
 	
+	@SuppressWarnings("deprecation")
+	int removeUselessSessions() {
+		if (sessions.isEmpty()) {
+			return 0;
+		}
+		
+		Collection<HttpSession> sessionsCollection = new ArrayList<HttpSession>(sessions.values());
+		
+		int count = 0;
+		long currentTime = System.currentTimeMillis();
+		for (HttpSession session: sessionsCollection) {
+			long idleTime = currentTime - session.getLastAccessedTime();
+			if (idleTime >= 60000) {
+				//	Session "was" idle for minute or more
+				Object principal = session.getValue("org.apache.slide.webdav.method.principal");
+				//	Checking if session was created by Slide's root user
+				if (principal instanceof String && "root".equals(principal)) {
+					session.invalidate();
+					count++;
+				}
+			}
+		}
+		return count;
+	}	
 }
