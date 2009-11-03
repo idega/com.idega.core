@@ -32,7 +32,7 @@ public interface MessageResource {
 	
 	public void setMessages(Map<Object, Object> values);
 	
-	public Set<String> getAllLocalisedKeys();
+	public <T> Set<T> getAllLocalisedKeys();
 	
 	/**
 	 * @param key - message key

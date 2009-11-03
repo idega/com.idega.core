@@ -68,13 +68,9 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
 	
-//	private static final String AUTO_INSERT_PROPERTY = RESOURCE_IDENTIFIER + "_autoinsert";
-//	private static final String PRIORITY_PROPERTY = RESOURCE_IDENTIFIER + "_property";
-	
 	// ==================privates====================
-	Map<String, String> lookup;
+	private Map<String, String> lookup;
 	private Properties properties;
-	// private Properties properties = new Properties();
 	private Locale locale;
 	private File file;
 	private IWBundle iwBundleParent;
@@ -85,9 +81,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	private boolean autoInsert;
 	private String bundleIdentifier;
 
-	// private IWResourceBundle parentResourceBundle;
-	
-	
 	/**
 	 * Empty constructor for use in extending classes
 	 * 
@@ -218,16 +211,15 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	/**
 	 * Implementation of ResourceBundle.getKeys.
 	 */
-	@SuppressWarnings("unchecked")
 	@Override
-	public Enumeration getKeys() {
-		Enumeration result = null;
+	public Enumeration<String> getKeys() {
+		Enumeration<String> result = null;
 		if (this.parent != null) {
-			Iterator iter = this.lookup.keySet().iterator();
-			final Enumeration myKeys = new EnumerationIteratorWrapper(iter);
-			final Enumeration parentKeys = this.parent.getKeys();
+			Iterator<String> iter = this.lookup.keySet().iterator();
+			final Enumeration<String> myKeys = new EnumerationIteratorWrapper(iter);
+			final Enumeration<String> parentKeys = this.parent.getKeys();
 
-			result = new Enumeration() {
+			result = new Enumeration<String>() {
 
 				public boolean hasMoreElements() {
 					if (this.temp == null) {
@@ -236,8 +228,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 					return this.temp != null;
 				}
 
-				public Object nextElement() {
-					Object returnVal = this.temp;
+				public String nextElement() {
+					String returnVal = this.temp;
 					if (myKeys.hasMoreElements()) {
 						this.temp = myKeys.nextElement();
 					}
@@ -253,11 +245,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 					return returnVal;
 				}
 
-				Object temp = null;
+				String temp = null;
 			};
 		}
 		else {
-			Iterator iter = this.lookup.keySet().iterator();
+			Iterator<String> iter = this.lookup.keySet().iterator();
 			result = new EnumerationIteratorWrapper(iter);
 		}
 
@@ -278,9 +270,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			try {
 				this.properties.clear();
 				if (this.lookup != null) {
-					Iterator iter = this.lookup.keySet().iterator();
-					while (iter.hasNext()) {
-						Object key = iter.next();
+					for (String key: this.lookup.keySet()) {
 						if (key != null) {
 							Object value = this.lookup.get(key);
 							if (value != null) {
@@ -380,39 +370,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			return returnString;
 		}
 	}
-	
-//	private String getBundleLocalizedString(String key, String returnValueIfNotFound) {
-//		String returnString = getBundleLocalizedString(key);
-//		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString)) && returnValueIfNotFound != null) {// null IS necessary
-//			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
-//
-//				boolean hadToCreate = this.checkBundleLocalizedString(key, returnValueIfNotFound);
-//				
-//				//Localizable.strings always wins unless
-//				if(!hadToCreate){
-//					IWBundle bundle = getIWBundleParent();
-//					String value = bundle.getLocalizableStringDefaultValue(key);
-//					if( value==null || ("".equals(value) && (returnValueIfNotFound!=null)) ){
-//						return returnValueIfNotFound;
-//					}
-//					else{
-//						return value;
-//					}
-//				}
-//				
-//			}
-//			return returnValueIfNotFound;
-//		}
-//		else {
-//			return returnString;
-//		}
-//	}
-	
-	
-//	public String getLocalizedString(String key, String returnValueIfNotFound) {
-//		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-//		return getIWBundleParent().getApplication().getLocalisedStringMessage(key, returnValueIfNotFound, bundleIdentifier);
-//	}
 
 	/**
 	 * * Gets a localized stringvalue and sets the value as returnValueIfNotFound
@@ -594,7 +551,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	public String toString() {
 		IWBundle bundleParent = this.getIWBundleParent();
 		if (bundleParent != null) {
-			return bundleParent + "/" + this.locale;
+			return bundleParent + CoreConstants.SLASH + this.locale;
 		}
 		else {
 			return this.locale.toString();
@@ -616,13 +573,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		super.setParent(parentResourceBundle);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected Map getLookup() {
+	protected Map<String, String> getLookup() {
 		return lookup;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected void setLookup(TreeMap lookup) {
+	protected void setLookup(Map<String, String> lookup) {
 		this.lookup = lookup;
 	}
 	
@@ -637,9 +592,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		return getBundleLocalizedString(String.valueOf(key), null);
 	}
 	
-
-
-
 	/**
 	 * @return object that was set or null if there was a failure setting object
 	 */
@@ -673,22 +625,17 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	}
 
 	@SuppressWarnings("unchecked")
-	public Set<Object> getAllLocalisedKeys() {
+	public Set<String> getAllLocalisedKeys() {
 		if(getBundleIdentifier() != null && !getBundleIdentifier().equals(MessageResource.NO_BUNDLE)) {
 			IWBundle bundle = getIWMainApplication().getBundle(getBundleIdentifier());
 			String[] str = bundle.getLocalizableStrings();
-			return new TreeSet(Arrays.asList(str));
+			return new TreeSet<String>(Arrays.asList(str));
 		} else {
 			return getLookup().keySet();
 		}
 	}
 	
 	public void removeMessage(Object key) {
-//		try {
-//			initialize(bundleIdentifier, locale);
-//		} catch (IOException e) {
-//			e.printStackTrace();
-//		}
 		getLookup().remove(key);
 		this.storeState();
 	}

@@ -107,7 +107,8 @@ public class JarLoadedResourceBundle implements MessageResource {
 
 	public void setMessages(Map<Object, Object> values) {}
 
-	public Set<Object> getAllLocalisedKeys() {
+	@SuppressWarnings("unchecked")
+	public Set<String> getAllLocalisedKeys() {
 		return resource.getAllLocalisedKeys();
 	}
 
