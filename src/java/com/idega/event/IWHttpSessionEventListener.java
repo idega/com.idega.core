@@ -5,6 +5,7 @@ import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.util.expression.ELUtil;
 
 public class IWHttpSessionEventListener implements HttpSessionListener {
@@ -19,7 +20,7 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
-		getSessionsManager().removeSession(destroyedSession);
+		getSessionsManager().removeSession(destroyedSession.getId());
 	}
 
 	public IWHttpSessionsManager getSessionsManager() {
