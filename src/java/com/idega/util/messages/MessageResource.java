@@ -32,23 +32,13 @@ public interface MessageResource {
 	
 	public void setMessages(Map<Object, Object> values);
 	
-	public Set<Object> getAllLocalisedKeys();
+	public <T> Set<T> getAllLocalisedKeys();
 	
-
 	/**
 	 * @param key - message key
 	 * @return object that was found in resource, null - if there are no values with specified key
 	 */	
 	public Object getMessage(Object key);
-	
-//	/**
-//	 * @param key - message key
-//	 * @param bundleIdentifier - bundle in which messages should be located
-//	 * @param locale - message locale
-//	 * @param defaultValue - value that can be automatically set to to the resource according t its implementation
-//	 * @return object that was found in resource, valueIfNotFound - if there are no values with specified key
-//	 */
-//	public Object getMessage(Object key, String defaultValue, String bundleIdentifier, Locale locale);
 	
 	public void removeMessage(Object key);
 	

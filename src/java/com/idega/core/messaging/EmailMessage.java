@@ -9,8 +9,8 @@ import java.util.Map;
 
 import javax.mail.MessagingException;
 
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.util.ArrayUtil;
-import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.SendMail;
@@ -40,7 +40,7 @@ public class EmailMessage extends SimpleMessage {
 	
 	private boolean autoDeletedAttachments = true;
 	
-	private String mailType = CoreConstants.MAIL_TEXT_PLAIN_TYPE;
+	private String mailType = MimeTypeUtil.MIME_TYPE_TEXT_PLAIN;
 	
 	public EmailMessage() {
 		super();

@@ -11,7 +11,9 @@
 			com.idega.idegaweb.IWApplicationStarter
 		</listener-class>
 	</listener>
-
+	<listener>
+		<listener-class>com.idega.event.IWHttpSessionEventListener</listener-class>
+	</listener>
 
 	<servlet>
 		<display-name>Excel</display-name>

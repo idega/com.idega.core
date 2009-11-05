@@ -1,6 +1,6 @@
 package com.idega.idegaweb.include;
 
-import com.idega.util.CoreConstants;
+import com.idega.core.file.util.MimeTypeUtil;
 
 /**
  * Constants for page resources
@@ -23,7 +23,7 @@ public class PageResourceConstants {
 	public final static String MEDIA_AURAL="aural";
 	public final static String MEDIA_ALL="all";
 	
-	public final static String TYPE_CSS=CoreConstants.CONTENT_TYPE_TEXT_CSS;
+	public final static String TYPE_CSS=MimeTypeUtil.MIME_TYPE_CSS;
 	public final static String TYPE_RSS="application/rss+xml";
 	public final static String TYPE_JAVA_SCRIPT = "text/javascript";
 	
