@@ -211,7 +211,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			LOGGER.warning("Request: " + request + " and/or session: " + session + " is null");
 			RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
 			try {
-				session = requestProvider.getRequest().getSession();
+				session = requestProvider.getRequest().getSession(Boolean.TRUE);
 			} catch(Exception e) {
 				LOGGER.log(Level.SEVERE, "Error getting session", e);
 			}
@@ -563,14 +563,14 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				LOGGER.warning("Request is null, failed to re-initialize");
 				return false;
 			}
-			HttpSession session = request.getSession();
+			HttpSession session = request.getSession(Boolean.FALSE);
 			if (session == null) {
 				ExternalContext extContext = getExternalContext();
 				if (extContext == null) {
 					LOGGER.severe(ExternalContext.class.getSimpleName() + " is not provided! Can not initialize HTTP session!");
 					return false;
 				} else {
-					Object o = extContext.getSession(true);
+					Object o = extContext.getSession(Boolean.TRUE);
 					if (o instanceof HttpSession) {
 						session = (HttpSession) o;
 					}
