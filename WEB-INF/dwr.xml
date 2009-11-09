@@ -19,6 +19,10 @@
 			<include method="changeUserPassword"/>
 		</create>
 		
+		<create creator="new" javascript="javaDate">
+			<param name="class" value="java.util.Date"/>
+		</create>
+  		
 		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 		<convert match="com.idega.core.component.bean.RenderedComponent" converter="bean" />
 	</allow>
