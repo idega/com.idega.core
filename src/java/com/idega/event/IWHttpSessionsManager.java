@@ -12,6 +12,7 @@ import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.RequestProvider;
 import com.idega.util.expression.ELUtil;
 
@@ -31,12 +32,14 @@ public class IWHttpSessionsManager {
 		String id = session.getId();
 		sessions.put(id, session);
 		
-		String uri = "unknown";
-		try {
-			RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
-			uri = requestProvider.getRequest().getRequestURI();
-		} catch (Exception e) {}
-		LOGGER.info("HttpSession '" + id + "' created for request: " + uri);
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("log_session_creation", Boolean.FALSE)) {
+			String uri = "unknown";
+			try {
+				RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+				uri = requestProvider.getRequest().getRequestURI();
+			} catch (Exception e) {}
+			LOGGER.info("HttpSession '" + id + "' created for request: " + uri);
+		}
 	}
 	
 	void removeSession(String id) {
