@@ -31,7 +31,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	public static final String OPTIMIZE_STYLE_SHEET = "idega_core.optimize_css";
 	
 	public static final String OPTIMIZIED_RESOURCES = "optimizedResources_";
-	protected static final String FILE_TYPE_JAVA_SCRIPT = ".js";
+	public static final String FILE_TYPE_JAVA_SCRIPT = ".js";
 	private static final String FILE_TYPE_CSS = ".css";
 	
 	@Override
