@@ -58,7 +58,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		InputStream inStream = null;
 		try {
 			inStream = getResourceInputStream(filePathWithinBundle);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			LOGGER.warning(e.getMessage());
 		}
 		if (inStream == null) {
