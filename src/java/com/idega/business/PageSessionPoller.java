@@ -6,11 +6,17 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.Scope;
+import org.springframework.stereotype.Service;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.component.bean.RenderedComponent;
+import com.idega.event.SessionPollerEvent;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.notifier.business.Notifier;
@@ -20,7 +26,12 @@ import com.idega.presentation.Layer;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 
+@Service("pageSessionPoller")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class PageSessionPoller {
+
+	@Autowired
+	private ApplicationContext context;
 	
 	public boolean isPollingSettingEnabled() {
 		IWMainApplicationSettings applicationSettings = IWMainApplication.getDefaultIWMainApplication().getSettings();
@@ -29,6 +40,8 @@ public class PageSessionPoller {
 	}
 	
 	public RenderedComponent pollSession(String ping) {
+		getContext().publishEvent(new SessionPollerEvent(this));
+		
 		return getNotifications();
 	}
 	
@@ -81,5 +94,13 @@ public class PageSessionPoller {
 		}
 		
 		return builderService.getRenderedComponent(container, null);
+	}
+
+	public ApplicationContext getContext() {
+		return context;
+	}
+
+	public void setContext(ApplicationContext context) {
+		this.context = context;
 	}
 }
