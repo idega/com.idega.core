@@ -175,13 +175,11 @@
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache</artifactId>
+      <artifactId>ehcache-core</artifactId>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-constructs</artifactId>
-      <version>0.6</version>
-      <type>jar</type>
+      <artifactId>ehcache-web</artifactId>
     </dependency>
     <dependency>
       <groupId>commons-jxpath</groupId>
