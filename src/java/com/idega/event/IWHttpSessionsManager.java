@@ -30,7 +30,9 @@ public class IWHttpSessionsManager {
 	
 	void addSession(HttpSession session) {
 		String id = session.getId();
-		sessions.put(id, session);
+		synchronized (session) {
+			sessions.put(id, session);
+		}
 		
 		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("log_session_creation", Boolean.FALSE)) {
 			String uri = "unknown";
@@ -38,12 +40,20 @@ public class IWHttpSessionsManager {
 				RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
 				uri = requestProvider.getRequest().getRequestURI();
 			} catch (Exception e) {}
-			LOGGER.info("HttpSession '" + id + "' created for request: " + uri);
+			LOGGER.info("********************************* HttpSession '" + id + "' created for request: " + uri);
 		}
 	}
 	
 	void removeSession(String id) {
-		sessions.remove(id);
+		synchronized (sessions) {
+			sessions.remove(id);
+		}
+	}
+	
+	public boolean isSessionValid(String id) {
+		synchronized (sessions) {
+			return sessions.containsKey(id);
+		}
 	}
 	
 	@SuppressWarnings("deprecation")
