@@ -9,6 +9,7 @@
  */
 package com.idega.data;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Map;
 import com.idega.core.cache.IWCacheManager2;
@@ -29,17 +30,17 @@ public class IDOBeanCache {
 	private String findQueryCacheName = null;
 	private String homeQueryCacheName = null;
 	
-	private Class entityInterfaceClass = null;
+	private Class<? extends IDOEntity> entityInterfaceClass = null;
 	private String datasource = null;
 	private boolean isEternal = false;
 	private int maxCachedBeans = -1;
 		
 
-	IDOBeanCache(Class entityInterfaceClass,String datasource) {
+	IDOBeanCache(Class<? extends IDOEntity> entityInterfaceClass,String datasource) {
 		initialize(entityInterfaceClass, datasource);
 	}
 	
-	private void initialize(Class entityInterfaceClass, String datasource) {
+	private void initialize(Class<? extends IDOEntity> entityInterfaceClass, String datasource) {
 		this.entityInterfaceClass = entityInterfaceClass;
 		this.datasource = datasource;
 		IDOEntityDefinition definition = getEntityDefinition();
@@ -47,11 +48,11 @@ public class IDOBeanCache {
 		maxCachedBeans = definition.getMaxCachedBeans();
 	}
 
-	private Map getFindQueryCacheMap() {
+	private Map<String, Collection<Integer>> getFindQueryCacheMap() {
 		return getCacheMap(getFindQueryCacheName());
 	}
 	
-	private Map getHomeQueryCacheMap() {
+	private Map<String, Object> getHomeQueryCacheMap() {
 		return getCacheMap(getHomeQueryCacheName());
 	}
 	
@@ -63,11 +64,11 @@ public class IDOBeanCache {
 	 * 
 	 * @return
 	 */
-	protected Map getCacheMap() {
+	protected Map<Serializable, IDOEntity> getCacheMap() {
 		return getCacheMap(getCacheName());
 	}
 
-	private Map getCacheMap(String nameOfCache) {
+	private <K extends Serializable, V> Map<K, V> getCacheMap(String nameOfCache) {
 		/*
 		 * if(this.cacheMap==null){ //cacheMap=new HashMap(); int maxCachedBeans =
 		 * 200; IDOEntityDefinition entityDef; try { entityDef =
@@ -109,11 +110,11 @@ public class IDOBeanCache {
 	}
 
 	IDOEntity getCachedEntity(Object pk) {
-		return (IDOEntity) getCacheMap().get(pk);
+		return getCacheMap().get(pk);
 	}
 
 	void putCachedEntity(Object pk, IDOEntity entity) {
-		getCacheMap().put(pk, entity);
+		getCacheMap().put((Serializable) pk, entity);
 	}
 
 	void removeCachedEntity(Object pk) {
@@ -122,22 +123,22 @@ public class IDOBeanCache {
 
 	/**
 	 * <p>
-	 * Returns a Collectino of all cached entity objects in the bean cache for
+	 * Returns a Collection of all cached entity objects in the bean cache for
 	 * this BeanCache.
 	 * </p>
 	 * 
 	 * @return
 	 */
-	protected Collection getCachedEntities() {
+	protected Collection<IDOEntity> getCachedEntities() {
 		return getCacheMap().values();
 	}
 
-	void putCachedFindQuery(String querySQL, Collection pkColl) {
+	void putCachedFindQuery(String querySQL, Collection<Integer> pkColl) {
 		getFindQueryCacheMap().put(querySQL, pkColl);
 	}
 
-	Collection getCachedFindQuery(String querySQL) {
-		return (Collection) getFindQueryCacheMap().get(querySQL);
+	Collection<Integer> getCachedFindQuery(String querySQL) {
+		return getFindQueryCacheMap().get(querySQL);
 	}
 
 	boolean isFindQueryCached(String queryString) {
@@ -176,7 +177,7 @@ public class IDOBeanCache {
 	/**
 	 * @return the entityInterfaceClass
 	 */
-	protected Class getEntityInterfaceClass() {
+	protected Class<? extends IDOEntity> getEntityInterfaceClass() {
 		return this.entityInterfaceClass;
 	}
 
@@ -184,7 +185,7 @@ public class IDOBeanCache {
 	 * @param entityInterfaceClass
 	 *            the entityInterfaceClass to set
 	 */
-	protected void setEntityInterfaceClass(Class entityInterfaceClass) {
+	protected void setEntityInterfaceClass(Class<? extends IDOEntity> entityInterfaceClass) {
 		this.entityInterfaceClass = entityInterfaceClass;
 	}
 

@@ -255,13 +255,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return allUninitializedResources;
 	}
 	
-	
-	
-//	public void setUninitializedMessageResources(
-//			List<MessageResource> uninitializedMessageResources) {
-//		this.uninitializedMessageResources = uninitializedMessageResources;
-//	}
-	
 	protected class ResourceComparatorByLevel implements Comparator<MessageResource> {
 		private static final int LESS = -1;
 		private static final int EQUAL = 0;
@@ -277,13 +270,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
 		//TODO leave cache object noneternal but make changes to the code where cache is used
-		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);							//.getCache(CASHED_RESOURCES);
+		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);
 	}
-	
-//	public List<String> getInitializedMessageResourceTypes() {
-//		return initializedStorageTypes;
-//	}
 }
