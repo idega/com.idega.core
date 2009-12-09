@@ -3,6 +3,8 @@
  */
 package com.idega.core.cache;
 
+import java.io.Serializable;
+
 
 /**
  * <p>
@@ -14,13 +16,13 @@ package com.idega.core.cache;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
  */
-public interface CacheMapListener {
+public interface CacheMapListener<K extends Serializable, V> {
 	
-	public void removedObject(Object key);
+	public void removedObject(K key);
 	
-	public void putObject(Object key,Object object);
+	public void putObject(K key, V object);
 	
-	public void gotObject(Object key,Object object);
+	public void gotObject(K key, V object);
 	
 	/**
 	 * <p>

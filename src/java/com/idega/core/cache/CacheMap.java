@@ -9,7 +9,6 @@
  */
 package com.idega.core.cache;
 
-import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -18,6 +17,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Element;
@@ -32,48 +34,33 @@ import net.sf.ehcache.Element;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.13 $
  */
-public class CacheMap implements Map {
+public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
+	private static final Logger LOGGER = Logger.getLogger(CacheMap.class.getName());
+	
 	private Cache cache;
-	private List cacheListeners;
+	private List<CacheMapListener<K, V>> cacheListeners;
 
-	/**
-	 * 
-	 */
 	CacheMap(Cache cache) {
-		this.cache=cache;
+		this.cache = cache;
 	}
 	
-	Cache getCache(){
+	Cache getCache() {
 		return this.cache;
 	}
 	
-
-	/* (non-Javadoc)
-	 * @see java.util.Map#size()
-	 */
 	public int size() {
-		//int memorySize = (int) getCache().getMemoryStoreSize();
-		//int diskSize = (int) getCache().getMemoryStoreSize();
-		//return memorySize+diskSize;
 		int size = getCache().getKeysWithExpiryCheck().size();
 		return size;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#isEmpty()
-	 */
 	public boolean isEmpty() {
 		int size = size();
-		return size==0;
+		return size == 0;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#containsKey(java.lang.Object)
-	 */
 	public boolean containsKey(Object key) {
 		try {
-			//return getCache().getKeys().contains(key);
 			Element element = getCache().get((Serializable) key);
 			if(element!=null){
 				if(element.getValue()!=null){
@@ -82,129 +69,132 @@ public class CacheMap implements Map {
 			}
 		}
 		catch (IllegalStateException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		catch (CacheException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		return false;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#containsValue(java.lang.Object)
-	 */
 	public boolean containsValue(Object value) {
 		throw new UnsupportedOperationException("Method containsValue not implemented");
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#get(java.lang.Object)
-	 */
-	public Object get(Object key) {
-		Object theRet = null;
+	@SuppressWarnings("unchecked")
+	public V get(Object key) {
 		try {
 			Element element = getCache().get(key);
-			if(element != null) {
-				theRet = element.getObjectValue();
-				if(getCacheListeners() != null){
-					for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
-						CacheMapListener listener = (CacheMapListener) iterator.next();
-						listener.gotObject(key,theRet);
-					}
+			if (element == null) {
+				return null;
+			}
+			
+			Object o = element.getObjectValue();
+			if (o == null) {
+				return null;
+			}
+			
+			K realKey = (K) key;
+			V result = (V) o;
+			
+			if (getCacheListeners() != null) {
+				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener<K, V> listener = iterator.next();
+					listener.gotObject(realKey, result);
 				}
 			}
-			return theRet;
-		}
-		catch (IllegalStateException e) {
+			
+			return result;
+		} catch (ClassCastException e) {
+			LOGGER.log(Level.WARNING, "Error while casting", e);
 			throw new RuntimeException(e);
-		}
-		catch (CacheException e) {
+		} catch (IllegalStateException e) {
+			throw new RuntimeException(e);
+		} catch (CacheException e) {
 			throw new RuntimeException(e);
 		}
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.Map#put(java.lang.Object, java.lang.Object)
-	 */
-	public Object put(Object key, Object value) {
+	public V put(K key, V value) {
+		if (key == null || value == null) {
+			LOGGER.warning("Some element (key="+key+" or value="+value+") is null! Not adding element to cache.");
+			return value;
+		}
+		
 		try {
 			Element element = new Element(key, value);
 			getCache().put(element);
-			if(getCacheListeners()!=null){
-				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
-					CacheMapListener listener = (CacheMapListener) iterator.next();
-					listener.putObject(key,value);
+			if (getCacheListeners() != null) {
+				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener<K, V> listener = iterator.next();
+					listener.putObject(key, value);
 				}
 			}
-			return null;
+			
+			return value;
 		}
 		catch (IllegalStateException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#remove(java.lang.Object)
-	 */
-	public Object remove(Object key) {
+	@SuppressWarnings("unchecked")
+	public V remove(Object key) {
 		try {
-			getCache().remove((Serializable)key);
-			if(getCacheListeners()!=null){
-				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
-					CacheMapListener listener = (CacheMapListener) iterator.next();
-					listener.removedObject(key);
+			V realElementToRemove = null;
+			Element objectToRemove = getCache().get(key);
+			if (objectToRemove != null) {
+				realElementToRemove = (V) objectToRemove.getObjectValue();
+			}
+			
+			getCache().remove((Serializable) key);
+			
+			if (getCacheListeners() != null) {
+				K realKey = (K) key;
+				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener<K, V> listener = iterator.next();
+					listener.removedObject(realKey);
 				}
 			}
-			return null;
-		}
-		catch (IllegalStateException e) {
+			
+			return realElementToRemove;
+		} catch (ClassCastException e) {
+			LOGGER.log(Level.WARNING, "Error while casting", e);
+			throw new RuntimeException(e);
+		} catch (IllegalStateException e) {
 			throw new RuntimeException(e);
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#putAll(java.util.Map)
-	 */
-	public void putAll(Map map) {
-		for (Iterator iter = map.keySet().iterator(); iter.hasNext();) {
-			Object key = iter.next();
-			Object value = map.get(key);
-			if(key!=null&&value!=null){
-				put(key,value);
+	public void putAll(Map<? extends K, ? extends V> map) {
+		for (Iterator<? extends K> iter = map.keySet().iterator(); iter.hasNext();) {
+			K key = iter.next();
+			V value = map.get(key);
+			if (key != null && value != null) {
+				put(key, value);
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#clear()
-	 */
 	public void clear() {
 		try {
 			getCache().removeAll();
-			if(getCacheListeners()!=null){
-				for (Iterator iterator = getCacheListeners().iterator(); iterator.hasNext();) {
-					CacheMapListener listener = (CacheMapListener) iterator.next();
+			if (getCacheListeners() != null) {
+				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
+					CacheMapListener<K, V> listener = iterator.next();
 					listener.cleared();
 				}
 			}
-			System.out.println("Clearing cache: "+this.cache.getName());
+			LOGGER.info("Clearing cache: " + this.cache.getName());
 		}
 		catch (IllegalStateException e) {
 			throw new RuntimeException(e);
 		}
-		catch (IOException e) {
-			throw new RuntimeException(e);
-		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#keySet()
-	 */
-	public Set keySet() {
-		Set set = new HashSet();
-		List keys;
+	public Set<K> keySet() {
+		Set<K> set = new HashSet<K>();
+		List<K> keys;
 		try {
 			keys = getCache().getKeys();
 			set.addAll(keys);
@@ -218,52 +208,43 @@ public class CacheMap implements Map {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#values()
-	 */
-	public Collection values() {
-		Collection values = new ArrayList();
-		for (Iterator iter = keySet().iterator(); iter.hasNext();) {
-			Object key = iter.next();
-			Object value = get(key);
-			if(value!=null){
+	public Collection<V> values() {
+		Collection<V> values = new ArrayList<V>();
+		for (Iterator<K> iter = keySet().iterator(); iter.hasNext();) {
+			K key = iter.next();
+			V value = get(key);
+			if (value != null) {
 				values.add(value);
 			}
 		}
 		return values;
 	}
 
-	/* (non-Javadoc)
-	 * @see java.util.Map#entrySet()
-	 */
-	public Set entrySet() {
+	public Set<Map.Entry<K, V>> entrySet() {
 		throw new UnsupportedOperationException("Method entrySet() not implemented");
 	}
 	
-	
-
 	/**
 	 * @return Returns the cacheListeners.
 	 */
-	public List getCacheListeners() {
+	public List<CacheMapListener<K, V>> getCacheListeners() {
 		return this.cacheListeners;
 	}
 
-	
 	/**
 	 * @param cacheListeners The cacheListeners to set.
 	 */
-	public void setCacheListeners(List cacheListeners) {
+	public void setCacheListeners(List<CacheMapListener<K, V>> cacheListeners) {
 		this.cacheListeners = cacheListeners;
 	}
 	
 	/**
 	 * @return Returns the cacheListeners.
 	 */
-	public void addCacheListener(CacheMapListener listener) {
-		List cacheListeners = getCacheListeners();
-		if(cacheListeners==null){
-			cacheListeners=new ArrayList();
+	public void addCacheListener(CacheMapListener<K, V> listener) {
+		List<CacheMapListener<K, V>> cacheListeners = getCacheListeners();
+		if (cacheListeners == null) {
+			cacheListeners = new ArrayList<CacheMapListener<K, V>>();
 			setCacheListeners(cacheListeners);
 		}
 		cacheListeners.add(listener);
