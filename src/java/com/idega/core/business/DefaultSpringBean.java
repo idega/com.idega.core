@@ -1,6 +1,8 @@
 package com.idega.core.business;
 
+import java.io.Serializable;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -8,6 +10,7 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
@@ -81,6 +84,23 @@ public abstract class DefaultSpringBean {
 			return (T) IDOLookup.getHome(entityClass);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Som error occurred getting home interface for entity: " + entityClass, e);
+		}
+		return null;
+	}
+	
+	protected IWMainApplication getApplication() {
+		return IWMainApplication.getDefaultIWMainApplication();
+	}
+	
+	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
+		return getCache(cacheName, -1);
+	}
+	
+	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive) {
+		try {
+			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, timeToLive);
+		} catch(Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting cache!", e);
 		}
 		return null;
 	}
