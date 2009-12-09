@@ -24,6 +24,7 @@ public class UserPropertiesBean extends PropertiesBean {
 	private boolean showUserInfoOne = false;
 	private boolean showUserInfoTwo = false;
 	private boolean showUserInfoThree = false;
+	private boolean showYearOfBirth = false;
 	
 	private String imageWidth = "70";
 	private String imageHeight = "90";
@@ -132,6 +133,12 @@ public class UserPropertiesBean extends PropertiesBean {
 	}
 	public void setShowDateOfBirth(boolean showDateOfBirth) {
 		this.showDateOfBirth = showDateOfBirth;
+	}
+	public boolean isShowYearOfBirth() {
+		return showYearOfBirth;
+	}
+	public void setShowYearOfBirth(boolean showYearOfBirth) {
+		this.showYearOfBirth = showYearOfBirth;
 	}
 	public boolean isShowJob() {
 		return showJob;

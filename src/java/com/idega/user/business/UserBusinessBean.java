@@ -3418,6 +3418,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				// Date of birth
 				memberInfo.setDateOfBirth(user.getDateOfBirth());
 
+				// Year of birth
+				if (user.getDateOfBirth() != null) {
+					memberInfo.setYearOfBirth(String.valueOf(new IWTimestamp(user.getDateOfBirth()).getYear()));
+				}
+				
 				// Job
 				memberInfo.setJob(getUserJob(user));
 

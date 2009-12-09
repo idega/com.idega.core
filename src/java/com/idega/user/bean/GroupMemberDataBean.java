@@ -35,6 +35,7 @@ public class GroupMemberDataBean extends DataBean {
 	private Integer statusOrder = null;
 	
 	private Date dateOfBirth = null;
+	private String yearOfBirth = null;
 
 	private AddressData companyAddress = null;
 	
@@ -46,6 +47,14 @@ public class GroupMemberDataBean extends DataBean {
 
 	public void setAge(String age) {
 		this.age = age;
+	}
+
+	public String getYearOfBirth() {
+		return yearOfBirth;
+	}
+
+	public void setYearOfBirth(String yearOfBirth) {
+		this.yearOfBirth = yearOfBirth;
 	}
 
 	public String getArea() {
