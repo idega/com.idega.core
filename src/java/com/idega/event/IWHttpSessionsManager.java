@@ -8,7 +8,9 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -21,6 +23,9 @@ import com.idega.util.expression.ELUtil;
 public class IWHttpSessionsManager {
 	
 	private static final Logger LOGGER = Logger.getLogger(IWHttpSessionsManager.class.getName());
+	
+	@Autowired
+	private ApplicationContext context;
 	
 	private Map<String, HttpSession> sessions;
 	
@@ -48,6 +53,8 @@ public class IWHttpSessionsManager {
 		synchronized (sessions) {
 			sessions.remove(id);
 		}
+		
+		getContext().publishEvent(new HttpSessionDestroyed(this, id));
 	}
 	
 	public boolean isSessionValid(String id) {
@@ -83,5 +90,13 @@ public class IWHttpSessionsManager {
 		}
 		
 		return count;
+	}
+
+	public ApplicationContext getContext() {
+		return context;
+	}
+
+	public void setContext(ApplicationContext context) {
+		this.context = context;
 	}
 }
