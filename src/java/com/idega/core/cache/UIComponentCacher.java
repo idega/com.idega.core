@@ -36,11 +36,8 @@ public class UIComponentCacher {
 			return false;
 		}
 		String cacheKey = getCacheKey(component,context);
-		Map cacheMap = getCacheMap();
-		if(cacheMap.containsKey(cacheKey)){
-			return true;
-		}
-		return false;
+		Map<String, String> cacheMap = getCacheMap();
+		return cacheMap.containsKey(cacheKey);
 	}
 
 	public boolean isCacheEnbled(UIComponent component,FacesContext context){
@@ -97,7 +94,6 @@ public class UIComponentCacher {
 	 * @return
 	 */
 	protected String getCachedContent(UIComponent component, FacesContext context) {
-		
 		String cacheKey = getCacheKey(component,context);
 		Map<String, String> cacheMap = getCacheMap();
 		
@@ -144,6 +140,4 @@ public class UIComponentCacher {
 		}
 		return buf;
 	}
-	
-	
 }

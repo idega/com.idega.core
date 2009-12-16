@@ -1,59 +1,20 @@
-/* ====================================================================
- * The Apache Software License, Version 1.1
- *
- * Copyright (c) 2003 - 2004 Greg Luck.  All rights reserved.
- *
- * Redistribution and use in source and binary forms, with or without
- * modification, are permitted provided that the following conditions
- * are met:
- *
- * 1. Redistributions of source code must retain the above copyright
- *    notice, this list of conditions and the following disclaimer.
- *
- * 2. Redistributions in binary form must reproduce the above copyright
- *    notice, this list of conditions and the following disclaimer in
- *    the documentation and/or other materials provided with the
- *    distribution.
- *
- * 3. The end-user documentation included with the redistribution, if
- *    any, must include the following acknowlegement:
- *       "This product includes software developed by Greg Luck
- *       (http://sourceforge.net/users/gregluck) and contributors.
- *       See http://sourceforge.net/project/memberlist.php?group_id=93232
- *       for a list of contributors"
- *    Alternately, this acknowledgement may appear in the software itself,
- *    if and wherever such third-party acknowlegements normally appear.
- *
- * 4. The names "EHCache" must not be used to endorse or promote products
- *    derived from this software without prior written permission. For written
- *    permission, please contact Greg Luck (gregluck at users.sourceforge.net).
- *
- * 5. Products derived from this software may not be called "EHCache"
- *    nor may "EHCache" appear in their names without prior written
- *    permission of Greg Luck.
- *
- * THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED
- * WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES
- * OF MERCHANTABILITY AND FITNESS FOR A PARTICULAR PURPOSE ARE
- * DISCLAIMED.  IN NO EVENT SHALL GREG LUCK OR OTHER
- * CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL,
- * SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT
- * LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF
- * USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND
- * ON ANY THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY,
- * OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT
- * OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
- * SUCH DAMAGE.
- * ====================================================================
- *
- * This software consists of voluntary contributions made by contributors
- * individuals on behalf of the EHCache project.  For more
- * information on EHCache, please see <http://ehcache.sourceforge.net/>.
- *
- */
 package com.idega.core.cache.filter;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.Iterator;
+import java.util.zip.DataFormatException;
+
+import javax.servlet.FilterChain;
+import javax.servlet.http.Cookie;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+
 import net.sf.ehcache.CacheException;
+import net.sf.ehcache.CacheManager;
+import net.sf.ehcache.Ehcache;
+import net.sf.ehcache.Element;
 import net.sf.ehcache.constructs.blocking.BlockingCache;
 import net.sf.ehcache.constructs.web.AlreadyCommittedException;
 import net.sf.ehcache.constructs.web.AlreadyGzippedException;
@@ -62,18 +23,12 @@ import net.sf.ehcache.constructs.web.PageInfo;
 import net.sf.ehcache.constructs.web.ResponseHeadersNotModifiableException;
 import net.sf.ehcache.constructs.web.SerializableCookie;
 import net.sf.ehcache.constructs.web.filter.FilterNonReentrantException;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 
-import javax.servlet.FilterChain;
-import javax.servlet.http.Cookie;
-import javax.servlet.http.HttpServletRequest;
-import javax.servlet.http.HttpServletResponse;
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.util.Collection;
-import java.util.Iterator;
-import java.util.zip.DataFormatException;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 
 /**
  * An abstract CachingFilter.
@@ -107,16 +62,19 @@ public abstract class CachingFilter extends Filter {
      * @throws CacheException The most likely cause is that a cache has not been
      *                        configured in ehcache's configuration file ehcache.xml for the filter name
      */
-    public void doInit() throws CacheException {
-        final String cacheName = getCacheName();
-        setBlockingCache(new BlockingCache(cacheName));
+    @Override
+	public void doInit() throws CacheException {
+    	final String cacheName = getCacheName();
+    	Ehcache cache = CacheManager.getInstance().getEhcache(cacheName);
+        setBlockingCache(new BlockingCache(cache));
     }
 
 
     /**
      * Destroys the filter.
      */
-    protected void doDestroy() {
+    @Override
+	protected void doDestroy() {
         //noop
     }
 
@@ -131,7 +89,8 @@ public abstract class CachingFilter extends Filter {
      * @throws Exception for all other exceptions. They will be caught and logged in
      * {@link Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)}
      */
-    protected void doFilter(final HttpServletRequest request, final HttpServletResponse response,
+    @Override
+	protected void doFilter(final HttpServletRequest request, final HttpServletResponse response,
                             final FilterChain chain)
             throws AlreadyGzippedException,
                     AlreadyCommittedException,
@@ -141,7 +100,11 @@ public abstract class CachingFilter extends Filter {
             throw new AlreadyCommittedException("Response already committed before doing buildPage.");
         }
         logRequestHeaders(request);
-        PageInfo pageInfo = buildPageInfo(request, response, chain);
+
+        IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+        long timeToLive = Long.valueOf(settings.getProperty("gzip_ttl", String.valueOf(Long.valueOf(1800))));
+        
+        PageInfo pageInfo = buildPageInfo(request, response, chain, timeToLive);
         if (response.isCommitted()) {
             throw new AlreadyCommittedException("Response already committed after doing buildPage"
                     + "but before writing response from PageInfo.");
@@ -157,33 +120,39 @@ public abstract class CachingFilter extends Filter {
      * other pages which are not gzipped.
      */
     protected PageInfo buildPageInfo(final HttpServletRequest request, final HttpServletResponse response,
-                                     final FilterChain chain) throws Exception {
+                                     final FilterChain chain, long timeToLive) throws Exception {
         // Look up the cached page
         final String key = calculateKey(request);
         PageInfo pageInfo = null;
         try {
-        		BlockingCache blockingCache = getBlockingCache();
+        	BlockingCache blockingCache = getBlockingCache();
             checkNoReentry(request);
-            pageInfo = (PageInfo) blockingCache.get(key);
+            Element e = blockingCache.get(key);
+            Object value = e == null ? null : e.getObjectValue();
+            if (value instanceof PageInfo) {
+            	pageInfo = (PageInfo) value;
+            }
+            
             if (pageInfo == null) {
                 try {
                     // Page is not cached - build the response, cache it, and send to client
-                    pageInfo = buildPage(request, response, chain);
+                    pageInfo = buildPage(request, response, chain, timeToLive);
                     if (pageInfo.isOk()) {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("PageInfo ok. Adding to cache " + blockingCache.getName() + " with key " + key);
                         }
-                        blockingCache.put(key, pageInfo);
+                        Element element = new Element(key, pageInfo);
+                        blockingCache.put(element);
                     } else {
                         if (LOG.isWarnEnabled()) {
                             LOG.warn("PageInfo was not ok(200). Putting null into cache " + blockingCache.getName()
                                     + " with key " + key);
                         }
-                        blockingCache.put(key, null);
+                        blockingCache.put(new Element(key, null));
                     }
                 } catch (final Throwable throwable) {
                     // Must unlock the cache if the above fails. Will be logged at Filter
-                    blockingCache.put(key, null);
+                	blockingCache.put(new Element(key, null));
                     throw new Exception(throwable);
                 }
             }
@@ -205,7 +174,7 @@ public abstract class CachingFilter extends Filter {
      * @throws Exception
      */
     protected PageInfo buildPage(final HttpServletRequest request, final HttpServletResponse response,
-                                 final FilterChain chain) throws AlreadyGzippedException, Exception {
+                                 final FilterChain chain, long timeToLive) throws AlreadyGzippedException, Exception {
 
         // Invoke the next entity in the chain
         final ByteArrayOutputStream outstr = new ByteArrayOutputStream();
@@ -218,8 +187,7 @@ public abstract class CachingFilter extends Filter {
         	e.printStackTrace();
         }
         // Return the page info
-        return new PageInfo(wrapper.getStatus(), wrapper.getContentType(), wrapper.getHeaders(), wrapper.getCookies(),
-                outstr.toByteArray(), true);
+        return new PageInfo(wrapper.getStatus(), wrapper.getContentType(), wrapper.getHeaders(), wrapper.getCookies(), outstr.toByteArray(), true, timeToLive);
     }
 
     /**
@@ -289,7 +257,7 @@ public abstract class CachingFilter extends Filter {
                               boolean requestAcceptsGzipEncoding,
                               final HttpServletResponse response) {
 
-        final Collection headers = pageInfo.getHeaders();
+        final Collection headers = pageInfo.getResponseHeaders();
         final int header = 0;
         final int value = 1;
 

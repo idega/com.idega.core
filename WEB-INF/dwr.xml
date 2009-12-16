@@ -9,10 +9,10 @@
 		<create creator="ibo" javascript="ChooserService" scope="application">
 			<param name="class" value="com.idega.business.chooser.ChooserService" />
 		</create>
-		<create creator="jsf" javascript="PageSessionPoller" scope="application">
-	    	<param name="managedBeanName" value="pageSessionPoller"/>
-	    	<param name="class" value="com.idega.business.PageSessionPoller"/>
-    	</create>
+		<create creator="spring" javascript="PageSessionPoller">
+			<param name="beanName" value="pageSessionPoller" />
+      		<include method="pollSession" />
+		</create>
 		<create creator="ibo" javascript="UserBusiness" scope="application">
 			<param name="class" value="com.idega.user.business.UserBusiness" />
 			<include method="setPreferredRoleAndGetHomePageUri"/>

@@ -9,6 +9,8 @@
  */
 package com.idega.core.cache;
 
+import java.io.InputStream;
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
@@ -20,7 +22,10 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Status;
+
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.CoreConstants;
+import com.idega.util.IOUtil;
 
 /**
  * <p>
@@ -34,12 +39,20 @@ import com.idega.idegaweb.IWMainApplication;
  */
 public class IWCacheManager2 {
 
+	private static final Logger LOGGER = Logger.getLogger(IWCacheManager2.class.getName());
+	
 	private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager2";
+	
+	public static final int DEFAULT_CACHE_SIZE = 1000;
+	public static final Boolean DEFAULT_OVERFLOW_TO_DISK = Boolean.TRUE;
+	public static final Boolean DEFAULT_ETERNAL = Boolean.FALSE;
+	public static final int DEFAULT_CACHE_TTL_IDLE_SECONDS = 1000;
+	public static final int DEFAULT_CACHE_TTL_SECONDS = 10000;
+	
 	private CacheManager internalCacheManager;
-	private Map cacheMapsMap;
+	private Map<String, CacheMap> cacheMapsMap;
 
-	private IWCacheManager2() {
-	}
+	private IWCacheManager2() {}
 
 	public static synchronized IWCacheManager2 getInstance(IWMainApplication iwma) {
 		IWCacheManager2 iwcm = (IWCacheManager2) iwma.getAttribute(IW_CACHEMANAGER_KEY);
@@ -55,11 +68,17 @@ public class IWCacheManager2 {
 	 */
 	public CacheManager getInternalCacheManager() {
 		if (this.internalCacheManager == null) {
+			System.setProperty(Cache.NET_SF_EHCACHE_USE_CLASSIC_LRU, Boolean.TRUE.toString());
+			
+			InputStream streamToConfiguration = null;
 			try {
-				this.internalCacheManager = CacheManager.create();
+				streamToConfiguration = IOUtil.getStreamFromJar(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER, "WEB-INF/ehcache.xml");
+				this.internalCacheManager = CacheManager.create(streamToConfiguration);
 			}
 			catch (CacheException e) {
 				e.printStackTrace();
+			} finally {
+				IOUtil.close(streamToConfiguration);
 			}
 		}
 		return this.internalCacheManager;
@@ -70,48 +89,48 @@ public class IWCacheManager2 {
 	}
 
 	private Cache getDefaultInternalCache() {
-		Cache cache = getInternalCache("default");
+		Cache cache = getInternalCache(Cache.DEFAULT_CACHE_NAME);
 		return cache;
 	}
 
-	public Map getDefaultCacheMap() {
-		CacheMap cacheMap = new CacheMap(getDefaultInternalCache());
+	public <K extends Serializable, V> Map<K, V> getDefaultCacheMap() {
+		CacheMap<K, V> cacheMap = new CacheMap<K, V>(getDefaultInternalCache());
 		return cacheMap;
 	}
 
 	/**
 	 * @return Returns the cacheMapsMap.
 	 */
-	private Map getCacheMapsMap() {
-		if(this.cacheMapsMap==null){
-			this.cacheMapsMap=new HashMap();
+	private Map<String, CacheMap> getCacheMapsMap() {
+		if (this.cacheMapsMap == null) {
+			this.cacheMapsMap = new HashMap<String, CacheMap>();
 		}
 		return this.cacheMapsMap;
 	}
 
-	
-	/**
-	 * @param cacheMapsMap The cacheMapsMap to set.
-	 */
-	/*private void setCacheMapsMap(Map cacheMapsMap) {
-		this.cacheMapsMap = cacheMapsMap;
-	}*/
-
-	public Map getCache(String cacheName){
-		int cacheSize=1000;
-		boolean overFlowToDisk=true;
-		boolean isEternal=false;
-		return getCache(cacheName,cacheSize,overFlowToDisk,isEternal);
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
+		return getCache(cacheName, -1);
 	}
 	
-	public Map getCache(String cacheName,int cacheSize,boolean overFlowToDisk,boolean isEternal){
-		long cacheTTLIdleSeconds = 1000;
-		long cacheTTLSeconds=10000;
-		return getCache(cacheName,cacheSize,overFlowToDisk,isEternal,cacheTTLSeconds,cacheTTLIdleSeconds);
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, long cacheTTLSeconds) {
+		return getCache(cacheName, DEFAULT_CACHE_SIZE, DEFAULT_OVERFLOW_TO_DISK, DEFAULT_ETERNAL, cacheTTLSeconds);
 	}
 	
-	public synchronized Map getCache(String cacheName,int cacheSize,boolean overFlowToDisk,boolean isEternal,long cacheTTLIdleSeconds,long cacheTTLSeconds){
-		Map cm = (Map) getCacheMapsMap().get(cacheName);
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal) {
+		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, -1);
+	}
+	
+	private <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal, long cacheTTLSeconds) {
+		if (cacheTTLSeconds < 0) {
+			cacheTTLSeconds = DEFAULT_CACHE_TTL_SECONDS;
+		}
+		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, DEFAULT_CACHE_TTL_IDLE_SECONDS, cacheTTLSeconds);
+	}
+	
+	public synchronized <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
+			long cacheTTLIdleSeconds, long cacheTTLSeconds) {
+		
+		CacheMap<K, V> cm = getCacheMapsMap().get(cacheName);
 		if (cm == null) {
 			try {
 				Cache cache = getInternalCache(cacheName);
@@ -119,18 +138,17 @@ public class IWCacheManager2 {
 					cache = new Cache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
 					getInternalCacheManager().addCache(cache);
 				}
-				cm = new CacheMap(cache);
+				cm = new CacheMap<K, V>(cache);
 				getCacheMapsMap().put(cacheName, cm);
 			}
 			catch (Exception e) {
-				Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error creating cache: " + cacheName, e);
+				LOGGER.log(Level.SEVERE, "Error creating cache: " + cacheName, e);
 			}
 		}
 		else{
-			CacheMap ccm = (CacheMap)cm;
+			CacheMap<K, V> ccm = cm;
 			//the status must be alive
-			if(ccm.getCache().getStatus()==Status.STATUS_ALIVE){
-			//if(ccm.getCache().getStatus()==Cache.STATUS_ALIVE){
+			if (ccm.getCache().getStatus()==Status.STATUS_ALIVE) {
 				return cm;
 			}
 			else{
@@ -147,15 +165,13 @@ public class IWCacheManager2 {
 	
 	public void reset(){
 		synchronized(this){
-			Map internalCaches = getCacheMapsMap();
-			Set cacheKeys = internalCaches.keySet();
-			for (Iterator iter = cacheKeys.iterator(); iter.hasNext();) {
-				String key = (String) iter.next();
-				Map cm = (Map) internalCaches.get(key);
+			Map<String, CacheMap> internalCaches = getCacheMapsMap();
+			Set<String> cacheKeys = internalCaches.keySet();
+			for (Iterator<String> iter = cacheKeys.iterator(); iter.hasNext();) {
+				String key = iter.next();
+				CacheMap<?, ?> cm = internalCaches.get(key);
 				cm.clear();
 			}
-			//this.internalCacheManager=null;
-			//this.cacheMapsMap=null;
 		}
 	}
 	

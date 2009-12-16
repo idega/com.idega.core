@@ -13,5 +13,6 @@ public interface MetaDataHome extends com.idega.data.IDOHome {
  public MetaData findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
 
  public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException;
+ public MetaData findByMetaDataNameAndValueAndType(String name, String value, String type) throws FinderException;
  
 }
