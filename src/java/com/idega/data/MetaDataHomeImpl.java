@@ -56,4 +56,11 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	public MetaData findByMetaDataNameAndValueAndType(String name, String value, String type) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((MetaDataBMPBean) entity).ejbFindByMetaDataNameAndValueAndType(name, value, type);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
+	}
+
 }

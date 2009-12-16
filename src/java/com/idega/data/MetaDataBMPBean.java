@@ -60,6 +60,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		addIndex("IDX_IC_METADATA_1", new String[] { COLUMN_META_KEY, COLUMN_META_VALUE });
 		addIndex("IDX_IC_METADATA_2", new String[] { COLUMN_META_KEY });
 		addIndex("IDX_IC_METADATA_3", new String[] { COLUMN_META_VALUE });
+		addIndex("IDX_IC_METADATA_4", new String[] { COLUMN_META_KEY, COLUMN_META_VALUE, COLUMN_META_TYPE });
 	}
 
 	@Override
@@ -132,5 +133,18 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_TYPE), MatchCriteria.EQUALS, type));
 		
 		return this.idoFindPKsByQuery(query);
+	}
+	
+	@SuppressWarnings("unchecked")
+	public Object ejbFindByMetaDataNameAndValueAndType(String name, String value, String type) throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(new Column(table, getIDColumnName()));
+		
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_KEY), MatchCriteria.EQUALS, name));
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_VALUE), MatchCriteria.EQUALS, value));
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_TYPE), MatchCriteria.EQUALS, type));
+		
+		return this.idoFindOnePKByQuery(query);
 	}
 }
