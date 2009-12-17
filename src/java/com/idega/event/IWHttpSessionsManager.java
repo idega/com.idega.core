@@ -15,7 +15,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.servlet.filter.RequestProvider;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.util.expression.ELUtil;
 
 @Service
@@ -42,7 +42,7 @@ public class IWHttpSessionsManager {
 		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("log_session_creation", Boolean.FALSE)) {
 			String uri = "unknown";
 			try {
-				RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+				RequestResponseProvider requestProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 				uri = requestProvider.getRequest().getRequestURI();
 			} catch (Exception e) {}
 			LOGGER.info("********************************* HttpSession '" + id + "' created for request: " + uri);
