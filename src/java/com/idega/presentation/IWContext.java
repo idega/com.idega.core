@@ -67,7 +67,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
-import com.idega.servlet.filter.RequestProvider;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -209,7 +209,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		HttpSession session = request == null ? null : request.getSession();
 		if (session == null) {
 			LOGGER.warning("Request: " + request + " and/or session: " + session + " is null");
-			RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+			RequestResponseProvider requestProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 			try {
 				session = requestProvider.getRequest().getSession(Boolean.TRUE);
 			} catch(Exception e) {
@@ -558,7 +558,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	private boolean reInitializeRequest() {
 		try {
-			HttpServletRequest request = ELUtil.getInstance().getBean(RequestProvider.class).getRequest();
+			HttpServletRequest request = ELUtil.getInstance().getBean(RequestResponseProvider.class).getRequest();
 			if (request == null) {
 				LOGGER.warning("Request is null, failed to re-initialize");
 				return false;

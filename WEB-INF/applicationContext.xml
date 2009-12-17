@@ -22,7 +22,7 @@
 	
 	<bean id="customIdegaFacesContextInitializer" class="com.idega.webface.initializer.FacesContextInitializerImpl" scope="singleton" />
 	
-	<bean id="iwCoreServletRequestProvider" class="com.idega.servlet.filter.impl.RequestProviderImpl" scope="request" />
+	<bean id="iwCoreServletRequestProvider" class="com.idega.servlet.filter.impl.RequestResponseProviderImpl" scope="request" />
     
 	<bean id="coreConstants" class="com.idega.util.CoreConstants" scope="singleton">
 		<property name="articleConstantsInstance" ref="articleConstants" />

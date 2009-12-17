@@ -21,7 +21,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
-import com.idega.servlet.filter.RequestProvider;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
 import com.idega.util.expression.ELUtil;
 
@@ -163,11 +163,11 @@ public class CoreUtil {
     	String serverName = null;
     	String requestUri = null;
     	try {
-    		HttpServletRequest request = ELUtil.getInstance().getBean(RequestProvider.class).getRequest();
+    		HttpServletRequest request = ELUtil.getInstance().getBean(RequestResponseProvider.class).getRequest();
     		serverName = request.getServerName();
     		requestUri = request.getRequestURI();
     	} catch(Exception e) {
-    		LOGGER.log(Level.WARNING, "Error getting " + RequestProvider.class, e);
+    		LOGGER.log(Level.WARNING, "Error getting " + RequestResponseProvider.class, e);
     	}
     	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
     	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
