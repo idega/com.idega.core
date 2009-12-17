@@ -135,7 +135,7 @@ public class IWCacheManager2 {
 			try {
 				Cache cache = getInternalCache(cacheName);
 				if (cache == null) {
-					cache = new Cache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
+					cache = new Cache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds, overFlowToDisk, cacheTTLIdleSeconds);
 					getInternalCacheManager().addCache(cache);
 				}
 				cm = new CacheMap<K, V>(cache);

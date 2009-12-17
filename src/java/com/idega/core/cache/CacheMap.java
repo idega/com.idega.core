@@ -79,6 +79,10 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	@SuppressWarnings("unchecked")
 	public V get(Object key) {
+		if (key == null) {
+			return null;
+		}
+		
 		try {
 			Element element = getCache().get(key);
 			if (element == null) {
@@ -118,6 +122,14 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 		}
 		
 		try {
+			if (!containsKey(key)) {
+				long maxElementsInMemory = cache.getCacheConfiguration().getMaxElementsInMemory();
+				if (maxElementsInMemory == cache.getMemoryStoreSize()) {
+					LOGGER.info("Storing elements on the disk from the cache: " + cache.getName());
+					cache.flush();
+				}
+			}
+			
 			Element element = new Element(key, value);
 			getCache().put(element);
 			if (getCacheListeners() != null) {
