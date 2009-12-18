@@ -62,7 +62,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	public boolean containsKey(Object key) {
 		try {
 			Element element = getCache().get((Serializable) key);
-			return element != null && element.getValue() != null;
+			return element != null && (element.getObjectValue() != null || element.getValue() != null);
 		}
 		catch (IllegalStateException e) {
 			e.printStackTrace();
