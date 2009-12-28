@@ -29,6 +29,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.ICRole;
@@ -44,6 +45,7 @@ import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.data.GenericGroup;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.idgenerator.business.UUIDBusiness;
 import com.idega.core.user.business.UserGroupBusiness;
 import com.idega.data.EntityFinder;
 import com.idega.data.IDOLookup;
@@ -2098,6 +2100,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 			adminUser = users.iterator().next();
 		}
+		
+		if (adminUser.getUniqueId() == null) {
+			UUIDBusiness uuidBean = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UUIDBusiness.class);
+			uuidBean.addUniqueKeyIfNeeded(adminUser, null);
+		}
+		
 		getApplication().setAttribute(_APPADDRESS_ADMINISTRATOR_USER, adminUser);
 	}
 
