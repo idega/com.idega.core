@@ -51,7 +51,8 @@ public abstract class DefaultSpringBean {
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOService> T getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> serviceBeanClass) {
 		try {
-			return (T) IBOLookup.getServiceInstance(iwac, serviceBeanClass);	//	Casting is needed to avoid stupid compilation error in Maven 2
+			//	Casting is needed to avoid stupid compilation error in Maven 2
+			return (T) IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext(): iwac, serviceBeanClass);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting service instance: " + serviceBeanClass);
 		}
