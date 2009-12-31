@@ -237,7 +237,7 @@ public static String getFileSeparator(){
           }
         }
         catch(IOException e){
-        	LOGGER.log(Level.WARNING, "Error or skipping (for folders) writing to file", e);
+        	LOGGER.log(Level.WARNING, "Error or skipping (for folders) writing to file: " + filePath + fileName, e);
          }
 
         return file;
