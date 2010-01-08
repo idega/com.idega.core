@@ -124,8 +124,10 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 		try {
 			if (!containsKey(key)) {
 				long maxElementsInMemory = cache.getCacheConfiguration().getMaxElementsInMemory();
-				if (maxElementsInMemory == cache.getMemoryStoreSize()) {
-					LOGGER.info("Storing elements on the disk from the cache: " + cache.getName());
+				long currentCacheSize = cache.getMemoryStoreSize();
+				if (maxElementsInMemory == currentCacheSize) {
+					LOGGER.info("Storing elements on the disk from the cache: " + cache.getName() + " because the cache size (" + currentCacheSize +
+							") has reached maximum: " + maxElementsInMemory);
 					cache.flush();
 				}
 			}
