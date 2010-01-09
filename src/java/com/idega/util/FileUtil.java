@@ -220,61 +220,65 @@ public static String getFileSeparator(){
     	FileOutputStream out = new FileOutputStream(toFile);
     	streamToOutputStream(input, out);
     }
-  
     
-
     /*
     * streams an inputstream to a file
     */
-      public static File streamToFile( InputStream input, String filePath, String fileName){
-      	File file = null;
-        try{
-          if(input!=null){
-            input.available();//this casts an ioexception if the stream is null
-            file = getFileAndCreateIfNotExists(filePath,fileName);
-            FileOutputStream fileOut = new FileOutputStream(file);
-            streamToOutputStream(input,fileOut);
-          }
+    public static File streamToFile(InputStream input, String filePath, String fileName) {
+    	return streamToFile(input, filePath, fileName, Boolean.TRUE);
+    }
+
+    public static File streamToFile(InputStream input, String filePath, String fileName, boolean closeStream) {
+    	File file = null;
+        try {
+        	if (input == null) {
+        		LOGGER.warning("Provided InputStream is undefined!");
+        		return null;
+        	}
+          
+        	input.available();	//	This method throws an IO exception if the stream is invalid
+        	file = getFileAndCreateIfNotExists(filePath,fileName);
+        	FileOutputStream fileOut = new FileOutputStream(file);
+        	streamToOutputStream(input, fileOut, closeStream);
+        } catch(IOException e) {
+        	LOGGER.log(Level.WARNING, "Error writing to file: " + filePath + fileName, e);
         }
-        catch(IOException e){
-        	LOGGER.log(Level.WARNING, "Error or skipping (for folders) writing to file: " + filePath + fileName, e);
-         }
 
         return file;
-      }
+    }
     
 /*
 * streams an inputstream to a file
 */
   public static void streamToOutputStream( InputStream input, OutputStream out)throws IOException{
-    try{
-      if(input!=null){
-        input.available();
-        byte buffer[]= new byte[1024];
-        int	noRead	= 0;
+	  streamToOutputStream(input, out, Boolean.TRUE);
+  }
 
-        noRead = input.read( buffer, 0, 1024 );
-        //Write out the stream to the file
-        while ( noRead != -1 ){
-          out.write( buffer, 0, noRead );
-          noRead = input.read( buffer, 0, 1024 );
-        }
-
-        out.flush();
-        out.close();
+  private static void streamToOutputStream(InputStream input, OutputStream out, boolean closeInputStream) throws IOException {
+	  try{
+	      if (input == null) {
+	    	  LOGGER.warning("Provided InputStream is undefined!");
+	    	  return;
+	      }
+	      
+	      input.available();
+	      byte buffer[] = new byte[1024];
+	      int noRead = 0;
+	      noRead = input.read(buffer, 0, 1024);
+	
+	      //	Write out the stream to the file
+	      while (noRead != -1) {
+	    	  out.write( buffer, 0, noRead );
+	          noRead = input.read( buffer, 0, 1024 );
+	      }
+	
+	      out.flush();
+	      out.close();
+      } finally {
+    	  if (closeInputStream) {
+    		  IOUtil.close(input);
+    	  }
       }
-
-    }
-    finally{
-      try{
-        if(input!=null) {
-        	input.close();
-        }
-      }
-      catch(IOException e){
-    	  LOGGER.warning("FileUtil : Error closing the inputstream");
-      }
-    }
   }
 
   /** 

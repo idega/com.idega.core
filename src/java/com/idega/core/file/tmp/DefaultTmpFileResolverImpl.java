@@ -103,14 +103,13 @@ public class DefaultTmpFileResolverImpl implements TmpFileResolver {
 		throw new UnsupportedOperationException("Not supported");
 	}
 
-	public void uploadToTmpLocation(String pathDirRelativeToBase,
-			String fileName, InputStream inputStream) {
-
+	public void uploadToTmpLocation(String pathDirRelativeToBase, String fileName, InputStream inputStream) {
+		uploadToTmpLocation(pathDirRelativeToBase, fileName, inputStream, Boolean.TRUE);
+	}
+	
+	public void uploadToTmpLocation(String pathDirRelativeToBase, String fileName, InputStream inputStream, boolean closeStream) {
 		if (StringUtil.isEmpty(fileName)) {
-			Logger
-					.getLogger(getClass().getName())
-					.log(Level.WARNING,
-							"Tried to upload file to tmp dir, but no fileName provided");
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Tried to upload file to tmp dir, but no fileName provided");
 			return;
 		}
 
@@ -127,7 +126,7 @@ public class DefaultTmpFileResolverImpl implements TmpFileResolver {
 			basePath += pathDirRelativeToBase;
 		}
 
-		FileUtil.streamToFile(inputStream, basePath, fileName);
+		FileUtil.streamToFile(inputStream, basePath, fileName, closeStream);
 	}
 
 	public File getFile(String fullUploadFolderPath, String fileName) {
