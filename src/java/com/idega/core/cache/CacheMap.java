@@ -122,7 +122,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 		}
 		
 		try {
-			if (!containsKey(key)) {
+			if (cache.getCacheConfiguration().isOverflowToDisk() && !containsKey(key)) {
 				long maxElementsInMemory = cache.getCacheConfiguration().getMaxElementsInMemory();
 				long currentCacheSize = cache.getMemoryStoreSize();
 				if (maxElementsInMemory == currentCacheSize) {
