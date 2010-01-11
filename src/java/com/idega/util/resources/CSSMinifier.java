@@ -165,11 +165,15 @@ public class CSSMinifier implements AbstractMinifier {
 	}
 
 	private String getParsedContent(String resourceUri, String content) {
-		if (!resourceUri.startsWith(CoreConstants.SLASH)) {
-			resourceUri = CoreConstants.SLASH + resourceUri;
+		if (!StringUtil.isEmpty(resourceUri)) {
+			if (!resourceUri.startsWith(CoreConstants.SLASH)) {
+				resourceUri = CoreConstants.SLASH.concat(resourceUri);
+			}
+			
+			resourceUri = resourceUri.substring(0, resourceUri.lastIndexOf(CoreConstants.SLASH) + 1);
 		}
-		return getResourceScanner().getParsedContent(StringUtil.getLinesFromString(content),
-				resourceUri.substring(0, resourceUri.lastIndexOf(CoreConstants.SLASH) + 1));
+		
+		return getResourceScanner().getParsedContent(StringUtil.getLinesFromString(content), resourceUri);
 	}
 	
 	private String getMinifiedResource(String resourceUri, String content, String media) {
@@ -204,7 +208,7 @@ public class CSSMinifier implements AbstractMinifier {
 		try {
 			return getMinifiedResource(cssResource.getUrl(), StringUtil.isEmpty(resource.getContent()) ?
 					StringHandler.getContentFromInputStream(cssResource.getContentStream()) : resource.getContent(),
-			cssResource.getMedia());
+					cssResource.getMedia());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
