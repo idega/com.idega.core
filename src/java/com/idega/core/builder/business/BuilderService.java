@@ -212,9 +212,7 @@ public interface BuilderService extends IBOService
 	
 	public Collection getTopLevelPages(IWContext iwc);
 	
-	public Collection getTopLevelTemplates(IWContext iwc);
-	
-	public Map getTree(IWContext iwc);
+	public Collection getTopLevelTemplates(IWApplicationContext iwac);
 	
 	public String getTemplateKey();
 	
