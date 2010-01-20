@@ -154,6 +154,10 @@ public class CoreUtil {
 	}
 	
 	public static boolean sendExceptionNotification(Throwable exception) {
+		return sendExceptionNotification(null, exception);
+	}
+	
+	public static boolean sendExceptionNotification(String message, Throwable exception) {
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
     	if (StringUtil.isEmpty(host)) {
     		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
@@ -192,6 +196,9 @@ public class CoreUtil {
     		
     		notification = new StringBuffer("Requested uri: ").append(requestUri).append("\n");
     		notification.append("User: ").append(userFullName).append("\n");
+    		if (!StringUtil.isEmpty(message)) {
+    			notification.append("Message: ").append(message).append("\n");
+    		}
     		notification.append("Stack trace:\n").append(writer.toString());
     		
         	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName,
