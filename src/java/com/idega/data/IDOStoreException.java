@@ -13,10 +13,16 @@ import javax.ejb.EJBException;
 
 public class IDOStoreException extends EJBException {
 
-  public IDOStoreException() {
-  }
+	private static final long serialVersionUID = 4549882969357164659L;
 
-  public IDOStoreException(String message) {
-    super(message);
-  }
+	public IDOStoreException() {
+	}
+
+	public IDOStoreException(String message) {
+		super(message);
+	}
+	
+	public IDOStoreException(String message, Exception e) {
+		super(message, e);
+	}
 }
