@@ -110,4 +110,11 @@ public class IOUtil {
 		
 		return null;
 	}
+	
+	public static final boolean isStreamValid(InputStream stream) {
+		try {
+			return stream != null && stream.available() >= 0;
+		} catch (Exception e) {}
+		return false;
+	}
 }
