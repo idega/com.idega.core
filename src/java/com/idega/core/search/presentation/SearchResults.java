@@ -65,6 +65,7 @@ public class SearchResults extends Block {
 	public static final String DEFAULT_EXTRA_ATTRIBUTE_EVEN_STYLE_CLASS = "iw_search_result_extra_attribute_even";
 	private static final String DEFAULT_SEARCH_NAME_STYLE_CLASS = "iw_search_name";
 
+	private String id;
 	private String linkStyleClass = DEFAULT_LINK_STYLE_CLASS;
 	private String abstractTextStyleClass = DEFAULT_ABSTRACT_TEXT_STYLE_CLASS;
 	private String extraInformationTextStyleClass = DEFAULT_EXTRA_INFO_TEXT_STYLE_CLASS;
@@ -155,6 +156,10 @@ public class SearchResults extends Block {
 	public String getStyleClass() {
 		return this.styleClass;
 	}
+	
+	public String getContainerID() {
+		return this.id;
+	}
 
 	/**
 	 * @param styleClass
@@ -163,6 +168,10 @@ public class SearchResults extends Block {
 	@Override
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+	
+	public void setContainerID(String id) {
+		this.id = id;
 	}
 	
 	/**
@@ -190,6 +199,9 @@ public class SearchResults extends Block {
 			CSSSpacer spacer = new CSSSpacer();
 			Layer container = new Layer();
 			container.setStyleClass(getStyleClass());
+			if (getContainerID() != null) {
+				container.setID(getContainerID());
+			}
 			
 			if(hideResultsLayer){
 				container.setStyleAttribute("display","none");
