@@ -790,6 +790,15 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	return (Integer)idoFindOnePKByQuery(query);
 	}
 	
+	public Integer ejbFindByWebDavUri(String webDavUri) throws FinderException {
+		Table table = new Table(this);
+    	SelectQuery query = new SelectQuery(table);
+    	query.addColumn(new Column(table, getIDColumnName()));
+    	query.addCriteria(new MatchCriteria(table, WEBDAV_URI, MatchCriteria.EQUALS, webDavUri));
+    	query.addCriteria(new MatchCriteria(table, DELETED_COLUMN, MatchCriteria.IS, NULL));
+    	return (Integer) idoFindOnePKByQuery(query);
+	}
+	
 	/**
 	 * Gets the id/key of the template of this page as a String.
 	 * Returns null if no template is set (templateId<=0)
