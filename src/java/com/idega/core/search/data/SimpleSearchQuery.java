@@ -74,4 +74,9 @@ public class SimpleSearchQuery implements SearchQuery {
 		}
 		return null;
 	}
+	
+	@Override
+	public String toString() {
+		return "Simple search query: " + searchParameters;
+	}
 }

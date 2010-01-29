@@ -38,6 +38,7 @@ public class AdvancedSearchQuery extends SimpleSearchQuery implements SearchQuer
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchQuery#isSimpleQuery()
 	 */
+	@Override
 	public boolean isSimpleQuery() {
 		return false;
 	}
@@ -45,6 +46,7 @@ public class AdvancedSearchQuery extends SimpleSearchQuery implements SearchQuer
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchQuery#isAdvancedQuery()
 	 */
+	@Override
 	public boolean isAdvancedQuery() {
 		return true;
 	}
@@ -52,7 +54,13 @@ public class AdvancedSearchQuery extends SimpleSearchQuery implements SearchQuer
 	/**
 	 * @return the first value in the search parameter map
 	 */
+	@Override
 	public String getSimpleSearchQuery(){
 		return (String) getSearchParameters().get(Searcher.DEFAULT_SEARCH_PARAMETER_NAME);
+	}
+	
+	@Override
+	public String toString() {
+		return "Advanced search query: " + getSearchParameters();
 	}
 }

@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
@@ -396,6 +397,8 @@ public class SearchResults extends Block {
 								addResultRow(container, rowContainer, extraInfo);
 								row++;
 							}
+						} else {
+							Logger.getLogger(SearchResults.class.getName()).info("There were foud no results by query: " + query);
 						}
 					}
 				}
