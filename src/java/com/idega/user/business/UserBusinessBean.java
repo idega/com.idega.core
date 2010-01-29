@@ -3419,31 +3419,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 				memberInfo = new GroupMemberDataBean();
 
-				//	Title, Education, School, Area, Began work
-				//extractExtraInfo(memberInfo, user);	//	TODO	may be useful later
+				// Title, Education, School, Area, Began work
+				// extractExtraInfo(memberInfo, user);	// TODO may be useful later
 
-				//	Age
+				// Age
 				memberInfo.setAge(getUserAge(user));
 
-				//	Phones
+				// Phones
 				Phone workPhone = null;
 				Phone homePhone = null;
 				Phone mobilePhone = null;
 				try {
 					workPhone = getUsersWorkPhone(user);
-				}
-				catch (NoPhoneFoundException e) {
-				}
+				} catch (NoPhoneFoundException e) {}
 				try {
 					homePhone = getUsersHomePhone(user);
-				}
-				catch (NoPhoneFoundException e) {
-				}
+				} catch (NoPhoneFoundException e) {}
 				try {
 					mobilePhone = getUsersMobilePhone(user);
-				}
-				catch (NoPhoneFoundException e) {
-				}
+				} catch (NoPhoneFoundException e) {}
 				if (workPhone != null) {
 					memberInfo.setWorkPhone(workPhone.getNumber());
 				}
@@ -3455,35 +3449,28 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 
 				if (groupBusiness != null) {
-					//	Addresses (main and company's)
+					// Addresses (main and company's)
 					try {
 						memberInfo.setAddress(groupBusiness.getAddressParts(getUsersMainAddress(user)));
-					}
-					catch (RemoteException e) {
-					}
+					} catch (RemoteException e) {}
 					try {
 						memberInfo.setCompanyAddress(groupBusiness.getAddressParts(getUsersCoAddress(user)));
-					}
-					catch (RemoteException e) {
-					}
+					} catch (RemoteException e) {}
 				}
 
-				//	Is male?
+				// Is male?
 				try {
 					memberInfo.setMale(isMale(user.getGenderID()));
-				}
-				catch (RemoteException e) {
-				}
-				catch (FinderException e) {
-				}
+				} catch (RemoteException e) {
+				} catch (FinderException e) {}
 
-				//	Emails
+				// Emails
 				setUserMails(memberInfo, user);
 
-				//	Name
+				// Name
 				memberInfo.setName(user.getName());
 
-				//	Image
+				// Image
 				if (iwc != null) {
 					Image image = getUserImage(user);
 					if (image != null) {
@@ -3491,51 +3478,50 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					}
 				}
 
-				//	Extra info
+				// Extra info
 				memberInfo.setExtraInfo(user.getExtraInfo());
 
-				//	Description
+				// Description
 				memberInfo.setDescription(user.getDescription());
 
-				//	Date of birth
+				// Date of birth
 				memberInfo.setDateOfBirth(user.getDateOfBirth());
 
-				//	Job
+				// Year of birth
+				if (user.getDateOfBirth() != null) {
+					memberInfo.setYearOfBirth(String.valueOf(new IWTimestamp(user.getDateOfBirth()).getYear()));
+				}
+				
+				// Job
 				memberInfo.setJob(getUserJob(user));
 
-				//	Work place
+				// Work place
 				memberInfo.setWorkPlace(getUserWorkPlace(user));
 
-				//	Status
+				// Status
 				Status userStatus = getUserStatus(iwc, user, group);
 				if (userStatus != null) {
 					memberInfo.setStatus(userStatus.getStatusKey());
 					memberInfo.setStatusOrder(userStatus.getStatusOrder());
 				}
 
-				//	Descriptions
+				// Descriptions
 				if (userInfoBusiness != null) {
-					//	User info 1
+					// User info 1
 					try {
 						memberInfo.setInfoOne(userInfoBusiness.getUserInfo1(userId, groupId));
-					}
-					catch (RemoteException e) {
-					}
-					//	User info 2
+					} catch (RemoteException e) {}
+					// User info 2
 					try {
 						memberInfo.setInfoTwo(userInfoBusiness.getUserInfo2(userId, groupId));
-					}
-					catch (RemoteException e) {
-					}
-					//	User info 3
+					} catch (RemoteException e) {}
+					// User info 3
 					try {
 						memberInfo.setInfoThree(userInfoBusiness.getUserInfo3(userId, groupId));
-					}
-					catch (RemoteException e) {
-					}
+					} catch (RemoteException e) {}
 				}
 
-				//	Group name
+				// Group name
 				memberInfo.setGroupName(group.getName());
 
 				members.add(memberInfo);
