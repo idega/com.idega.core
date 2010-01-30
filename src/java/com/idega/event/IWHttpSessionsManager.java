@@ -72,7 +72,12 @@ public class IWHttpSessionsManager {
 		int count = 0;
 		List<String> sessionsToRemove = new ArrayList<String>();
 		long currentTime = System.currentTimeMillis();
-		for (HttpSession session: sessions.values()) {
+		for (String key: sessions.keySet()) {
+			HttpSession session = sessions.get(key);
+			if (session == null) {
+				continue;
+			}
+			
 			long idleTime = currentTime - session.getLastAccessedTime();
 			if (idleTime >= 300000) {
 				//	Session "was" idle for 5 minutes or more
