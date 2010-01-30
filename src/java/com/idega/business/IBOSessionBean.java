@@ -5,6 +5,7 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
@@ -50,17 +51,17 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
   }
 
   @Override
-public IWApplicationContext getIWApplicationContext(){
-    return this.getUserContext().getApplicationContext();
+  public IWApplicationContext getIWApplicationContext() {
+	  return this.getUserContext() == null ? IWMainApplication.getDefaultIWApplicationContext() : this.getUserContext().getApplicationContext();
   }
 
   @Override
-public void remove(){
+  public void remove(){
     this.ejbRemove();
   }
 
   @Override
-public void ejbRemove(){
+  public void ejbRemove(){
     this.getUserContext().removeSessionAttribute(this.sessionKey);
     this.iwuc=null;
   }
@@ -71,7 +72,8 @@ public void ejbRemove(){
   }
 
 
-  protected User getCurrentUser(){
+  @Override
+protected User getCurrentUser(){
     return this.getUserContext().getCurrentUser();
   }
 }
