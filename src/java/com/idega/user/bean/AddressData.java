@@ -3,6 +3,7 @@ package com.idega.user.bean;
 public class AddressData {
 
 	private String streetAddress = null;
+	private String postalName = null;
 	private String postalCode = null;
 	private String city = null;
 	
@@ -28,6 +29,14 @@ public class AddressData {
 	
 	public void setStreetAddress(String streetAddress) {
 		this.streetAddress = streetAddress;
+	}
+
+	public String getPostalName() {
+		return postalName;
+	}
+
+	public void setPostalName(String postalName) {
+		this.postalName = postalName;
 	}
 
 }

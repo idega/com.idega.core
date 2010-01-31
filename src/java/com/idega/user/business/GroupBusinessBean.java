@@ -2576,8 +2576,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		
 		AddressData addressData = new AddressData();
 		addressData.setStreetAddress(address.getStreetAddress());
-		if (address.getPostalCode() != null) {
-			addressData.setPostalCode(address.getPostalCode().getPostalCode());
+		PostalCode postalCode = address.getPostalCode();
+		if (postalCode != null) {
+			addressData.setPostalCode(postalCode.getPostalCode());
+			addressData.setPostalName(postalCode.getName());
 		}
 		addressData.setCity(address.getCity());
 		return addressData;
