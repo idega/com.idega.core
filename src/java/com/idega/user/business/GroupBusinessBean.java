@@ -1880,6 +1880,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @deprecated use getGroupMainEmail
 	 * 
 	 */
+	@Deprecated
 	public Email getGroupEmail(Group group) {
 		try {
 			return getGroupMainEmail(group);
@@ -2584,8 +2585,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		
 		AddressData addressData = new AddressData();
 		addressData.setStreetAddress(address.getStreetAddress());
-		if (address.getPostalCode() != null) {
-			addressData.setPostalCode(address.getPostalCode().getPostalCode());
+		PostalCode postalCode = address.getPostalCode();
+		if (postalCode != null) {
+			addressData.setPostalCode(postalCode.getPostalCode());
+			addressData.setPostalName(postalCode.getName());
 		}
 		addressData.setCity(address.getCity());
 		return addressData;
@@ -2696,6 +2699,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			this.randID = rand;
 		}
 
+		@Override
 		public void run() {
 			try {
 				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:" + this.randID + "'");
