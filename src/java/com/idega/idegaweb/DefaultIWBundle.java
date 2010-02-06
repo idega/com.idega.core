@@ -1619,8 +1619,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		return vb;
 	}
 	
-	public ValueExpression getValueExpression(String expression) {
-		return getApplication().getExpressionFactory().createValueExpression(FacesContext.getCurrentInstance().getELContext(), expression, String.class);
+	public ValueExpression getValueExpression(String localizationKey) {
+		return getApplication().getExpressionFactory().createValueExpression(FacesContext.getCurrentInstance().getELContext(),
+				getLocalizedStringExpr(localizationKey), String.class);
 	}
 	
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue) {
