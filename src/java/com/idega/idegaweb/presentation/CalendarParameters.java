@@ -46,4 +46,6 @@ public class CalendarParameters {
 	public static final String PARAMETER_SHOW_CALENDAR = "show_calendar";
 	public static final String PARAMETER_VIEW = PARAMETER_CALENDAR + "_view";
 
+	public static final String PARAMETER_ALL_DAY_EVENT = "all_day_event";
+	public static final String PARAMETER_REPEAT_EVERY_YEAR = "repeat_every_year";
 }

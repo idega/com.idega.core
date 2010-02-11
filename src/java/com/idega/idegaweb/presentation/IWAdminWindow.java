@@ -233,6 +233,27 @@ public class IWAdminWindow extends Window {
 		}
 		this.leftTable.add(obj, 1, rows);
 	}
+	
+	public void addInverseLeft(String text, PresentationObject obj, boolean hasBreak) {
+		addInverseLeft(text, obj, hasBreak, false);
+	}
+
+	public void addInverseLeft(String text, PresentationObject obj, boolean hasBreak, boolean useStyle) {
+		int rows = this.leftTable.getRows();
+		if (!this.leftTable.isEmpty(1, rows)) {
+			rows++;
+		}
+
+		if (useStyle) {
+			setStyle(obj);
+		}
+
+		this.leftTable.add(obj, 1, rows);
+		if (hasBreak) {
+			this.leftTable.add(Text.getBreak(), 1, rows);
+		}
+		this.leftTable.add(text, 1, rows);
+	}
 
 	public void addLeft(String headline, String text) {
 		int rows = this.leftTable.getRows();

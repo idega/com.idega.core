@@ -42,6 +42,7 @@ import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.event.GenericState;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWEvent;
@@ -196,14 +197,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	protected String generateID()
 	{
-		int hashCode = hashCode();
-		String code;
-		if (hashCode < 0)
-		{
-			hashCode = -hashCode;
-		}
-		code = "id" + hashCode;
-		return code;
+		return "id" + UUIDGenerator.getInstance().generateId();
 	}
 	protected String setID()
 	{
