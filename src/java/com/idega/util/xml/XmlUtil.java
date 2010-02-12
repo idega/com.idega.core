@@ -299,7 +299,7 @@ public class XmlUtil {
 			xPathExpression = expression;
 			
 			String prefix = XMLNS_NAMESPACE_ID;
-			if (namespace != null && !StringUtil.isEmpty(namespace.getURI())) {
+			if (namespace != null && namespace.getURI() != null) {
 				prefix = StringUtil.isEmpty(namespace.getPrefix()) ? prefix : namespace.getPrefix();
 				
 				xPathExpression = "//" + (prefix.equals(XHTML_NAMESPACE_ID) ? CoreConstants.EMPTY : (prefix + CoreConstants.COLON)) + expression;
