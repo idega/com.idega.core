@@ -418,13 +418,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * method that loads the bundle localizations that can be used as value bindings for JSF
      */
     private void loadBundlesLocalizationsForJSF() {
-    	Map bundleForLocalizations = new HashMap();
-    	for (Iterator iter = getLoadedBundles().values().iterator(); iter.hasNext();) {
-    		IWBundle bundle = (IWBundle) iter.next();
+    	Map<String, BundleLocalizationMap> bundleForLocalizations = new HashMap<String, BundleLocalizationMap>();
+    	for (Iterator<IWBundle> iter = getLoadedBundles().values().iterator(); iter.hasNext();) {
+    		IWBundle bundle = iter.next();
 			BundleLocalizationMap bLocalizationMap = new BundleLocalizationMap(bundle);
 			bundleForLocalizations.put(bundle.getBundleIdentifier(),bLocalizationMap);
     	}
-    	this.setAttribute("localizedStrings",bundleForLocalizations);
+    	this.setAttribute("localizedStrings", bundleForLocalizations);
     }
     
     private void loadBundlesResourcesResolvers() {
