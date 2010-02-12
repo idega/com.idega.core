@@ -15,9 +15,12 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -104,5 +107,14 @@ public abstract class DefaultSpringBean {
 			LOGGER.log(Level.WARNING, "Error getting cache!", e);
 		}
 		return null;
+	}
+	
+	protected IWBundle getBundle(String bundleIdentifier) {
+		return getApplication().getBundle(bundleIdentifier);
+	}
+
+	protected IWResourceBundle getResourceBundle(IWBundle bundle) {
+		Locale locale = getCurrentLocale();
+		return locale == null ? bundle.getResourceBundle(CoreUtil.getIWContext()) : bundle.getResourceBundle(locale);
 	}
 }
