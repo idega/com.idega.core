@@ -103,6 +103,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".maskedinput.js";
 		}
+	},
+	MOUSE_WHEEL {
+		@Override
+		public String getFileName() {
+			return ".mousewheel.js";
+		}
 	};
 
 	public abstract String getFileName();
