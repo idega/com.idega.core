@@ -51,5 +51,5 @@ public interface SearchResult {
 	 * Can return any arbitrary non-standard attributes with a Collection of attributeKey=attributeValue.
 	 * @return
 	 */
-	public Map getSearchResultAttributes();
+	public Map<String, Object> getSearchResultAttributes();
 }

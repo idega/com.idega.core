@@ -28,7 +28,7 @@ public class BasicSearchResult implements SearchResult {
 	private String searchResultAbstract;
 	private String searchResultExtraInformation;
 	private String searchResultURI;
-	private Map searchResultAttributes;
+	private Map<String, Object> searchResultAttributes;
 	
 	public BasicSearchResult() {
 		super();
@@ -72,7 +72,7 @@ public class BasicSearchResult implements SearchResult {
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchResult#getSearchResultAttributes()
 	 */
-	public Map getSearchResultAttributes() {
+	public Map<String, Object> getSearchResultAttributes() {
 		return this.searchResultAttributes;
 	}
 	
@@ -86,7 +86,7 @@ public class BasicSearchResult implements SearchResult {
 	/**
 	 * @param searchResultAttributes The searchResultAttributes to set.
 	 */
-	public void setSearchResultAttributes(Map searchResultAttributes) {
+	public void setSearchResultAttributes(Map<String, Object> searchResultAttributes) {
 		this.searchResultAttributes = searchResultAttributes;
 	}
 	

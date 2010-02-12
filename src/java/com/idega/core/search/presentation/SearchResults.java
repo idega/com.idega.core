@@ -293,7 +293,7 @@ public class SearchResults extends Block {
 								String uri = result.getSearchResultURI();
 								String abstractText = result.getSearchResultAbstract();
 								String extraInfo = result.getSearchResultExtraInformation();
-								Map extraParameters = result.getSearchResultAttributes();
+								Map<String, Object> extraParameters = result.getSearchResultAttributes();
 								// todo group by type
 								String type = result.getSearchResultType();
 								if (row % 2 == 0) {
@@ -355,11 +355,10 @@ public class SearchResults extends Block {
 								}
 								
 								if (extraParameters != null && !extraParameters.isEmpty() && isSetToShowAllResultProperties()) {
-									Iterator keys = extraParameters.keySet().iterator();
 									int counter = 0;
-									while (keys.hasNext()) {
+									for (Iterator<String> keys = extraParameters.keySet().iterator(); keys.hasNext();) {
 										counter++;
-										String key = (String) keys.next();
+										String key = keys.next();
 										String value = extraParameters.get(key).toString();
 										Text extraParams;
 										
