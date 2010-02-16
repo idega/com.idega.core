@@ -38,11 +38,17 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	private static final Logger LOGGER = Logger.getLogger(CacheMap.class.getName());
 	
+	private boolean resetable = Boolean.TRUE;
 	private Cache cache;
 	private List<CacheMapListener<K, V>> cacheListeners;
 
 	CacheMap(Cache cache) {
+		this(cache, Boolean.TRUE);
+	}
+	
+	CacheMap(Cache cache, boolean resetable) {
 		this.cache = cache;
+		this.resetable = resetable;
 	}
 	
 	Cache getCache() {
@@ -188,6 +194,11 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	public void clear() {
 		try {
+			if (!resetable) {
+				LOGGER.info("Cache " + cache.getName() + " is not resetable!");
+				return;
+			}
+			
 			getCache().removeAll();
 			if (getCacheListeners() != null) {
 				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {

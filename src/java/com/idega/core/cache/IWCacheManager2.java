@@ -127,17 +127,23 @@ public class IWCacheManager2 {
 		if (cacheTTLSeconds < 0) {
 			cacheTTLSeconds = DEFAULT_CACHE_TTL_SECONDS;
 		}
-		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, DEFAULT_CACHE_TTL_IDLE_SECONDS, cacheTTLSeconds);
+		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, DEFAULT_CACHE_TTL_IDLE_SECONDS, cacheTTLSeconds, Boolean.TRUE);
 	}
 	
 	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
 			long cacheTTLIdleSeconds, long cacheTTLSeconds) {
-		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null);
+		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, Boolean.TRUE);
+	}
+	
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
+			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable) {
+		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
+				resetable);
 	}
 	
 	private synchronized <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, MemoryStoreEvictionPolicy memoryPolicy,
 			boolean overFlowToDisk, boolean isEternal, long cacheTTLIdleSeconds, long cacheTTLSeconds, RegisteredEventListeners registeredEventListeners,
-            BootstrapCacheLoader bootstrapCacheLoader) {
+            BootstrapCacheLoader bootstrapCacheLoader, boolean resetable) {
 		
 		CacheMap<K, V> cm = getCacheMapsMap().get(cacheName);
 		if (cm == null) {
@@ -148,7 +154,7 @@ public class IWCacheManager2 {
 							cacheTTLIdleSeconds, registeredEventListeners, bootstrapCacheLoader);
 					getInternalCacheManager().addCache(cache);
 				}
-				cm = new CacheMap<K, V>(cache);
+				cm = new CacheMap<K, V>(cache, resetable);
 				getCacheMapsMap().put(cacheName, cm);
 			}
 			catch (Exception e) {
