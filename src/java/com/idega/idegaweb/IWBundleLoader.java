@@ -1,5 +1,5 @@
 /*
- * $Id: IWBundleLoader.java,v 1.6 2006/06/21 18:08:49 tryggvil Exp $
+ * $Id: IWBundleLoader.java,v 1.5 2006/04/09 12:13:14 laddi Exp $
  * Created on 5.2.2006 in project com.idega.core
  *
  * Copyright (C) 2006 Idega Software hf. All Rights Reserved.
@@ -25,20 +25,18 @@ import org.apache.commons.logging.LogFactory;
  * <p>
  * Implementation for loading a IWBundle from a Jar file in WEB-INF/lib.
  * </p>
- *  Last modified: $Date: 2006/06/21 18:08:49 $ by $Author: tryggvil $
+ *  Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  * 
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
- * @version $Revision: 1.6 $
+ * @version $Revision: 1.5 $
  */
 public class IWBundleLoader implements JarLoader{
 
 	private static final Log log = LogFactory.getLog(IWBundleLoader.class);
-	private IWMainApplication iwma;
 	/**
 	 * 
 	 */
 	public IWBundleLoader(IWMainApplication iwma) {
-		this.iwma=iwma;
 	}
 	
 	/**
@@ -53,7 +51,6 @@ public class IWBundleLoader implements JarLoader{
 	public void loadJar(File bundleJarFile, JarFile jarFile, String jarPath) {
 		JarEntry bundleConfigFile = jarFile.getJarEntry("properties/bundle.pxml");
 		//JarEntry facesConfigFile = jarFile.getJarEntry("META-INF/faces-config.xml");
-		JarModule module = (JarModule)jarFile;
 		if (bundleConfigFile != null) {
 			if (log.isDebugEnabled()) {
 				log.debug("bundle.pxml found in jar " + jarPath);
@@ -110,18 +107,12 @@ public class IWBundleLoader implements JarLoader{
 			}
 			System.out.println("Found idegaweb bundle in jar: " + bundleJarFile);
 			if (bundleIdentifier != null) {
-				
-				boolean alreadyLoaded = this.iwma.isBundleLoaded(bundleIdentifier);
-				
-				if(!alreadyLoaded){
-					IWBundle bundle = new JarLoadedIWBundle(module,this.iwma);
-					if (version != null) {
-						// bundle.setVersion(version);
-					}
-					if (implementationVendor != null) {
-						// bundle.setImplementationVendor(implementatioVendor);
-					}
-					iwma.loadBundle(bundle);
+				//IWBundle bundle = iwma.getBundle(bundleIdentifier);
+				if (version != null) {
+					// bundle.setVersion(version);
+				}
+				if (implementationVendor != null) {
+					// bundle.setImplementationVendor(implementatioVendor);
 				}
 			}
 		}

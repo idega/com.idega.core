@@ -3804,31 +3804,30 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 
-		List userGroups = new ArrayList();
+		//List userGroups = new ArrayList();
 		GroupBusiness groupBusiness = getGroupBusiness();
 		Collection parentUserGroups = groupBusiness.getParentGroups(user);
 		if (parentUserGroups == null) {
 			return null;
 		}
 
-		Object o = null;
+		/*Object o = null;
 		for (Iterator it = parentUserGroups.iterator(); it.hasNext();) {
 			o = it.next();
 
 			if (o instanceof Group) {
 				userGroups.add(o);
 			}
-		}
+		}*/
 
 		List groupsIds = new ArrayList();
-		Collection permissionsByUserGroups = AccessControl.getAllGroupPermitPermissions(userGroups);
+		Collection permissionsByUserGroups = AccessControl.getAllGroupPermitPermissions(parentUserGroups);
 		addIdsFromPermissions(permissionsByUserGroups, groupsIds);
 
 		Collection permissionsByUser = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
 		addIdsFromPermissions(permissionsByUser, groupsIds);
 
-		return groupsIds;
-	}
+		return groupsIds;	}
 
 	public List getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException {
 		List groupsIds = getAllUserGroupsIds(user, iwuc);
