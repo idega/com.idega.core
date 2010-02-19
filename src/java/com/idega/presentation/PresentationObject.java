@@ -197,7 +197,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	protected String generateID()
 	{
-		return "id" + UUIDGenerator.getInstance().generateId();
+		String UUID = UUIDGenerator.getInstance().generateId();
+		return "id" + UUID.substring(UUID.lastIndexOf("-") + 1);
 	}
 	protected String setID()
 	{
