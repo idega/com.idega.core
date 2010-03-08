@@ -20,6 +20,7 @@ import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringHandler;
 
 
@@ -34,13 +35,13 @@ import com.idega.util.StringHandler;
 public class DefaultViewNode implements ViewNode {
 
 	private String viewId;
-	private Map children;
+	private Map<String, ViewNode> children;
 	private ViewHandler viewHandler;
 	private String resourceUri;
 	private ViewNode parent;
-	private Collection roles;
+	private Collection<String> roles;
 	private IWMainApplication iwma;
-	protected static String SLASH="/";
+	protected static String SLASH=CoreConstants.SLASH;
 	static String NODE_SEPARATOR=SLASH;
 	private boolean isRendered = true;
 	private String name;
@@ -80,9 +81,9 @@ public class DefaultViewNode implements ViewNode {
 		this.viewId=viewId;
 	}
 
-	protected Map getChildrenMap(){
+	protected Map<String, ViewNode> getChildrenMap(){
 		if(this.children==null){
-			this.children=new LinkedHashMap();
+			this.children=new LinkedHashMap<String, ViewNode>();
 		}
 		return this.children;
 	}
@@ -131,7 +132,7 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getChildren()
 	 */
-	public Collection getChildren() {
+	public Collection<ViewNode> getChildren() {
 		return getChildrenMap().values();
 	}
 
@@ -142,7 +143,7 @@ public class DefaultViewNode implements ViewNode {
 	 * @return
 	 */
 	protected ViewNode getDirectChild(String realChildId){
-		ViewNode theReturn = (ViewNode)getChildrenMap().get(realChildId);
+		ViewNode theReturn = getChildrenMap().get(realChildId);
 		if(theReturn==null){
 			theReturn = loadChild(realChildId);
 			if(theReturn!=null){
@@ -185,89 +186,6 @@ public class DefaultViewNode implements ViewNode {
 			
 		}
 		return this;
-		
-		/*
-		if(newChildViewId.equals(StringHandler.SLASH)){
-			return this;
-		}
-		 elseif(childViewId!=null){
-			int slashIndex = childViewId.indexOf(StringHandler.SLASH);
-			if(childViewId.equals(StringHandler.SLASH)){
-				return this;
-			}
-			else if (slashIndex!=-1){
-					//String[] split = StringHandler.breakDownURL(childViewId);
-					String[] split;
-					if(slashIndex==0){
-						//This case is when the '/' is in the beginning of the string.
-						//This results that the array returned out of s.split(s,i) returns an empty string as the first result:
-						String[] firstSplit = split= childViewId.split(StringHandler.SLASH,3);
-						//So we shift the results that we want
-						if(firstSplit.length==3){
-							
-							if(firstSplit[2].equals("")){
-//								In this case there are empty strings in indexes 0 and 2
-								split = new String[1];
-								split[0]=firstSplit[1];
-							}
-							else{
-								split = new String[2];
-								split[0]=firstSplit[1];
-								split[1]=firstSplit[2];
-							}
-						}
-						else if(firstSplit.length==2){
-							split = new String[1];
-							split[0]=firstSplit[1];
-						}
-						else{
-							split = new String[2];
-							split[0]=firstSplit[1];
-							split[1]=firstSplit[2];
-						}
-					}
-					else{
-						split= childViewId.split(StringHandler.SLASH,2);
-					}
-					
-					int length = split.length;
-					
-					if(length==2){
-						//In this case the '/' character must have been somewhere in the middle of the string
-						String prefix = split[0];
-						String rest = split[1];
-						ViewNode child = (ViewNode)getChildrenMap().get(prefix);
-						if(child==null){
-							//Instead of returning null we return this if no chid is found
-							return this;
-						}
-						else{
-							return child.getChild(rest);
-						}
-					}
-					else if(length==1){
-						String prefix = split[0];
-						//In this case the '/' must have been in the beginning of the string
-						ViewNode theReturn = (ViewNode)getChildrenMap().get(prefix);
-						if(theReturn==null){
-							//Instead of returning null we return this if no chid is found
-							theReturn = this;
-							
-						}
-						return theReturn;
-					}
-					
-			}
-			else{
-				ViewNode child = (ViewNode)getChildrenMap().get(childViewId);
-				if(child==null){
-					//Instead of returning null we return this.
-					child=this;
-				}
-				return child;
-			}
-		}
-		*/
 	}
 	
 	
@@ -420,7 +338,7 @@ public class DefaultViewNode implements ViewNode {
 	 * If no special roles are set then this method returns 
 	 * the roles from the parent ViewNode
 	 */
-	public Collection getAuthorizedRoles() {
+	public Collection<String> getAuthorizedRoles() {
 		if(this.roles==null){
 			ViewNode parent = getParent();
 			if(parent!=null){
@@ -430,7 +348,7 @@ public class DefaultViewNode implements ViewNode {
 		return this.roles;
 	}
 	
-	public void setAuthorizedRoles(Collection coll){
+	public void setAuthorizedRoles(Collection<String> coll){
 		this.roles=coll;
 	}
 
