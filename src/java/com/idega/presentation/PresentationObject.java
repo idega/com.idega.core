@@ -35,7 +35,6 @@ import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectInstance;
@@ -2807,30 +2806,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 					obj.getFacets().put(key,newObject);
 				}
 			}
-		}
-	}
-	
-	private ICPage getPage(IWApplicationContext iwac, String pageId) {
-		try {
-			return getBuilderService(iwac).getICPage(pageId);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	 
-	private boolean isPageHiddenInMenu(IWContext iwc, String pageId) {
-		ICPage page = getPage(iwc, pageId);
-		if (page == null) {
-			return false;
-		}
-		
-		return page.isHidePageInMenu();
-	}
-	
-	protected void setPageInvisibleInNavigation(IWContext iwc, String pageId, PresentationObject po) {
-		if (isPageHiddenInMenu(iwc, pageId)) {
-			po.setStyleClass(CoreConstants.HIDDEN_PAGE_IN_MENU_STYLE_CLASS);
 		}
 	}
 	
