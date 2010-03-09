@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
@@ -19,6 +21,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
 import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
@@ -116,5 +119,14 @@ public abstract class DefaultSpringBean {
 	protected IWResourceBundle getResourceBundle(IWBundle bundle) {
 		Locale locale = getCurrentLocale();
 		return locale == null ? bundle.getResourceBundle(CoreUtil.getIWContext()) : bundle.getResourceBundle(locale);
+	}
+	
+	protected HttpSession getSession() {
+		RequestResponseProvider provider = null;
+		try {
+			provider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+		} catch (Exception e) {}
+		
+		return provider == null ? null : provider.getRequest().getSession(Boolean.TRUE);
 	}
 }
