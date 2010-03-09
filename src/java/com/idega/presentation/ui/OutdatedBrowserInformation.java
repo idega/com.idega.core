@@ -3,6 +3,7 @@ package com.idega.presentation.ui;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
+import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Layer;
@@ -69,6 +70,8 @@ public class OutdatedBrowserInformation extends Block {
 		content.add(getPart("outdatedBrowserInformationChrome", bundle.getVirtualPathWithFileNameString("icons/browsers/chrome.png"),
 				"outdatedBrowserInformationChromeImage", iwrb.getLocalizedString("outdated_browser_get_chrome", "Get Chrome"), null,
 				"http://www.google.com/chrome", "_blank"));
+		
+		container.add(new CSSSpacer());
 	}
 	
 	public boolean isCloseable() {
