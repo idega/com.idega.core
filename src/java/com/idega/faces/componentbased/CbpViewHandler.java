@@ -32,10 +32,7 @@ import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.apache.myfaces.application.MyfacesStateManager;
 import org.apache.myfaces.application.jsp.JspViewHandlerImpl;
-import org.apache.myfaces.shared_impl.renderkit.html.HtmlLinkRendererBase;
 
-//import com.icesoft.faces.application.D2DViewHandler;
-//import com.icesoft.faces.context.BridgeFacesContext;
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 import com.idega.presentation.IWContext;
