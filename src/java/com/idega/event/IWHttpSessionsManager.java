@@ -69,10 +69,12 @@ public class IWHttpSessionsManager {
 			return 0;
 		}
 		
+		List<String> keys = new ArrayList<String>(sessions.keySet());
+		
 		int count = 0;
 		List<String> sessionsToRemove = new ArrayList<String>();
 		long currentTime = System.currentTimeMillis();
-		for (String key: sessions.keySet()) {
+		for (String key: keys) {
 			HttpSession session = sessions.get(key);
 			if (session == null) {
 				continue;
