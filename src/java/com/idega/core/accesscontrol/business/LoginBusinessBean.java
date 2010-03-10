@@ -394,7 +394,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return LOGIN_EVENT_LOGOFF.equals(controlAction);
 	}
 
-	protected boolean isTryAgainAction(HttpServletRequest request) {
+	public boolean isTryAgainAction(HttpServletRequest request) {
 		String controlAction = getControlActionValue(request);
 		return LOGIN_EVENT_TRYAGAIN.equals(controlAction);
 	}
