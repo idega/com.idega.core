@@ -114,74 +114,60 @@ public class IWAuthenticator extends BaseFilter {
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
-
 		HttpServletRequest request = (HttpServletRequest) srequest;
 		HttpServletResponse response = (HttpServletResponse) sresponse;
 		HttpSession session = request.getSession();
 
-		//		Enumeration headerNames = request.getHeaderNames();
-		//		System.out.println("------------HEADER BEGINS-------------");
-		//		while (headerNames.hasMoreElements()) {
-		//		String headerName = (String) headerNames.nextElement();
-		//		System.out.println("\t["+headerName+"]: "+request.getHeader(headerName));
-		//		}
-		//		System.out.println("------------HEADER ENDS-------------");
-
-		//		Enumeration parameterNames = request.getParameterNames();
-		//		System.out.println("------------PARAMETERS BEGINS-------------");
-		//		while (parameterNames.hasMoreElements()) {
-		//		String parameterName = (String) parameterNames.nextElement();
-		//		System.out.println("\t["+parameterNames+"]: "+request.getParameter(parameterName));
-		//		}
-		//		System.out.println("------------PARAMETERS ENDS-------------");
 		User lastLoggedOnAsUser = null;
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
-
-		if (isLoggedOn) {
-			//lastLoggedOnAsUser = iwc.getCurrentUser();
-			lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
-		}
-
-		if (useBasicAuthenticationMethod(request)) {
-			if (!isLoggedOn) {
-				if (!loginBusiness.authenticateBasicAuthenticationRequest(request)) {
-					loginBusiness.callForBasicAuthentication(request, response, null);
-					return;
+		
+		if ((isLoggedOn && loginBusiness.isLogOffAction(request)) || loginBusiness.isLogOnAction(request) || loginBusiness.isTryAgainAction(request)) {
+			if (isLoggedOn) {
+				lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
+			}
+	
+			if (useBasicAuthenticationMethod(request)) {
+				if (!isLoggedOn) {
+					if (!loginBusiness.authenticateBasicAuthenticationRequest(request)) {
+						loginBusiness.callForBasicAuthentication(request, response, null);
+						return;
+					}
 				}
 			}
+			else {
+				if (!isLoggedOn) {
+					loginBusiness.authenticateBasicAuthenticationRequest(request);
+				}
+				tryRegularLogin(request);
+				tryCookieLogin(request, response, loginBusiness);
+			}
+	
+			processJAASLogin(request);
+	
+			if (!isLoggedOn){
+				isLoggedOn = loginBusiness.isLoggedOn(request);
+			}
+			
+			if (lastLoggedOnAsUser == null && isLoggedOn){
+				lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
+			}
+			
+			boolean didInterrupt = processAuthenticationListeners(request, response, session, lastLoggedOnAsUser, loginBusiness, isLoggedOn);
+			if (didInterrupt) {
+				return;
+			}
+	
+			boolean didRedirect = processRedirects(request, response, session, loginBusiness);
+			if (didRedirect) {
+				return;
+			}
+	
+			chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
 		}
 		else {
-			if (!isLoggedOn) {
-				loginBusiness.authenticateBasicAuthenticationRequest(request);
-			}
-			//initializeDefaultDomain(request);
-			tryRegularLogin(request);
-			tryCookieLogin(request, response, loginBusiness);
-			//addCookie(request,response,loginBusiness);
+			chain.doFilter(request, response);
 		}
-
-		processJAASLogin(request);
-
-		if (!isLoggedOn){
-			isLoggedOn = loginBusiness.isLoggedOn(request);
-		}
-		
-		if (lastLoggedOnAsUser == null && isLoggedOn){
-			lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
-		}
-		
-		boolean didInterrupt = processAuthenticationListeners(request, response, session, lastLoggedOnAsUser, loginBusiness, isLoggedOn);
-		if (didInterrupt) {
-			return;
-		}
-
-		boolean didRedirect = processRedirects(request, response, session, loginBusiness);
-		if (didRedirect) {
-			return;
-		}
-
-		chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
 	}
 
 	/**
@@ -523,6 +509,7 @@ public class IWAuthenticator extends BaseFilter {
 		return BuilderServiceFactory.getBuilderService(iwac);
 	}
 
+	@SuppressWarnings("unchecked")
 	protected void processJAASLogin(HttpServletRequest request) {
 		List loginModules = ImplementorRepository.getInstance().newInstances(LoginModule.class, this.getClass());
 		// just a shortcut 
@@ -558,19 +545,14 @@ public class IWAuthenticator extends BaseFilter {
 	}
 
 	public static void main(String[] args) {
-
-		//		http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/
 		try {
-
 			String encoded = URLEncoder.encode("http://formbuilder.idega.is/login/?logon_redirect_uri=/workspace/", CoreConstants.ENCODING_UTF8);
 			System.out.println("encooded: " + encoded);
 			String decoded = URLDecoder.decode(encoded, CoreConstants.ENCODING_UTF8);
 			System.out.println("decoded: " + decoded);
-
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}
-
 	}
 }
