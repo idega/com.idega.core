@@ -122,7 +122,7 @@ public class IWAuthenticator extends BaseFilter {
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
 		
-		if ((isLoggedOn && loginBusiness.isLogOffAction(request)) || loginBusiness.isLogOnAction(request) || loginBusiness.isTryAgainAction(request)) {
+		//if ((isLoggedOn && loginBusiness.isLogOffAction(request)) || loginBusiness.isLogOnAction(request) || loginBusiness.isTryAgainAction(request)) {
 			if (isLoggedOn) {
 				lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
 			}
@@ -164,10 +164,10 @@ public class IWAuthenticator extends BaseFilter {
 			}
 	
 			chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
-		}
+		/*}
 		else {
 			chain.doFilter(request, response);
-		}
+		}*/
 	}
 
 	/**

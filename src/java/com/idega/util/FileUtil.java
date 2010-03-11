@@ -652,8 +652,13 @@ public static String getFileSeparator(){
   	return result;
   }
 
-/** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
+  /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String.  Uses UTF-8 as default encoding **/
   public static String getStringFromURL(String uri){
+	  return getStringFromURL(uri, "UTF-8");
+  }
+  
+  /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
+  public static String getStringFromURL(String uri, String encoding){
     StringBuffer buffer = new StringBuffer("");
     String line;
     BufferedInputStream bin;
@@ -663,7 +668,7 @@ public static String getFileSeparator(){
     try {
       url = new URL(uri);
       bin = new BufferedInputStream(url.openStream());
-      in = new BufferedReader(new InputStreamReader(bin));
+      in = new BufferedReader(new InputStreamReader(bin, encoding));
       //Put the contents in a string
       while ((line = in.readLine()) != null) {
         buffer.append(line);
