@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.RequestResponseProvider;
+import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
 
 @Service
@@ -64,14 +66,13 @@ public class IWHttpSessionsManager {
 	}
 	
 	@SuppressWarnings("deprecation")
-	int removeUselessSessions() {
+	String removeUselessSessions() {
 		if (sessions.isEmpty()) {
-			return 0;
+			return CoreConstants.EMPTY;
 		}
 		
 		List<String> keys = new ArrayList<String>(sessions.keySet());
 		
-		int count = 0;
 		List<String> sessionsToRemove = new ArrayList<String>();
 		long currentTime = System.currentTimeMillis();
 		for (String key: keys) {
@@ -81,13 +82,18 @@ public class IWHttpSessionsManager {
 			}
 			
 			long idleTime = currentTime - session.getLastAccessedTime();
-			if (idleTime >= 300000) {
-				//	Session "was" idle for 5 minutes or more
+			if (idleTime >= 600000) {
+				//	Session "was" idle for 10 minutes or more
+				
+				Object chibaManager = session.getAttribute("chiba.session.manager");
+				if (chibaManager != null) {
+					continue;
+				}
+				
 				Object principal = session.getValue("org.apache.slide.webdav.method.principal");
 				//	Checking if session was created by Slide's root user
 				if (principal instanceof String && "root".equals(principal)) {
 					sessionsToRemove.add(session.getId());
-					count++;
 				}
 			}
 		}
@@ -96,7 +102,7 @@ public class IWHttpSessionsManager {
 			removeSession(sessionId);
 		}
 		
-		return count;
+		return ListUtil.isEmpty(sessionsToRemove) ? CoreConstants.EMPTY : sessionsToRemove.toString();
 	}
 
 	public ApplicationContext getContext() {
