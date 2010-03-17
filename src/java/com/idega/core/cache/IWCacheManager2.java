@@ -138,12 +138,18 @@ public class IWCacheManager2 {
 	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
 			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable) {
 		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
-				resetable);
+				resetable, null, null);
+	}
+	
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
+			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
+		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
+				resetable, cacheListener, cacheGuardian);
 	}
 	
 	private synchronized <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, MemoryStoreEvictionPolicy memoryPolicy,
 			boolean overFlowToDisk, boolean isEternal, long cacheTTLIdleSeconds, long cacheTTLSeconds, RegisteredEventListeners registeredEventListeners,
-            BootstrapCacheLoader bootstrapCacheLoader, boolean resetable) {
+            BootstrapCacheLoader bootstrapCacheLoader, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
 		
 		CacheMap<K, V> cm = getCacheMapsMap().get(cacheName);
 		if (cm == null) {
@@ -154,7 +160,7 @@ public class IWCacheManager2 {
 							cacheTTLIdleSeconds, registeredEventListeners, bootstrapCacheLoader);
 					getInternalCacheManager().addCache(cache);
 				}
-				cm = new CacheMap<K, V>(cache, resetable);
+				cm = new CacheMap<K, V>(cache, resetable, cacheListener, cacheGuardian);
 				getCacheMapsMap().put(cacheName, cm);
 			}
 			catch (Exception e) {
