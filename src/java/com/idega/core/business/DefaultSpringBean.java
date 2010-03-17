@@ -38,6 +38,14 @@ import com.idega.util.expression.ELUtil;
 public abstract class DefaultSpringBean {
 
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
+	private static Logger LOGGER_;
+	
+	protected Logger getLogger() {
+		if (LOGGER_ == null) {
+			LOGGER_ = Logger.getLogger(getClass().getName());
+		}
+		return LOGGER_;
+	}
 	
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionBeanClass) {
