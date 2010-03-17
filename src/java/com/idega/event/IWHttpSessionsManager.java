@@ -52,11 +52,14 @@ public class IWHttpSessionsManager {
 	}
 	
 	void removeSession(String id) {
+		HttpSession session = null;
 		synchronized (sessions) {
-			sessions.remove(id);
+			session = sessions.remove(id);
 		}
 		
-		getContext().publishEvent(new HttpSessionDestroyed(this, id));
+		long lastAccessedTime = session == null ? 0 : session.getLastAccessedTime();
+		int maxInactiveInterval = session == null ? 0 : session.getMaxInactiveInterval();
+		getContext().publishEvent(new HttpSessionDestroyed(this, id, lastAccessedTime, maxInactiveInterval));
 	}
 	
 	public boolean isSessionValid(String id) {
