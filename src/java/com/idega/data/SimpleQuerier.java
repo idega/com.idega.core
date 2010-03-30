@@ -5,11 +5,17 @@
 
 */
 package com.idega.data;
-import java.sql.SQLException;
+import java.io.Serializable;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Vector;
+import java.util.logging.Logger;
+
+import com.idega.util.CoreUtil;
 import com.idega.util.database.ConnectionBroker;
 /**
 *A class to query/update directly to an SQL datastore. This class should only be used by data implementation classes
@@ -101,6 +107,43 @@ public class SimpleQuerier {
         return theReturn;
     }
     
+    public static List<Serializable[]> executeQuery(String sqlQuery, int columns) throws Exception {
+        Statement stmt = null;
+        Connection conn = null;
+        
+        long start = System.currentTimeMillis();
+        List<Serializable[]> objects = null;
+        try {
+        	conn = getConnection();
+        	stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery(sqlQuery);
+            
+            objects = new ArrayList<Serializable[]>();
+            while (results.next()) {
+                Serializable[] data = new Serializable[columns];
+            	for (int i = 0; i < columns; i++) {
+                	data[i] = (Serializable) results.getObject(i + 1);
+                }
+            	objects.add(data);
+            }
+            results.close();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+            	conn.close();
+            }
+            
+            long end = System.currentTimeMillis();
+            if (CoreUtil.isSQLMeasurementOn()) {
+            	Logger.getLogger(SimpleQuerier.class.getName()).info("Query '" + sqlQuery + "' was executed in " + (end - start) + " ms.");
+            }
+        }
+        
+        return objects;
+    }
+    
     /**
      * Gets and returns the first int in the resultset from column 'columnInResultSet'
      * @param sqlQuery
@@ -184,13 +227,15 @@ public class SimpleQuerier {
     /**
      * @deprecated Replaced with idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity or executeUpdate()
      */
-    public static boolean execute(String sqlString) throws Exception {
+    @Deprecated
+	public static boolean execute(String sqlString) throws Exception {
         return execute(sqlString, true);
     }
     /**
      * @deprecated Replaced with executeUpdate() or idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity
      */
-    private static boolean execute(String sqlString, boolean flushCache) throws Exception {
+    @Deprecated
+	private static boolean execute(String sqlString, boolean flushCache) throws Exception {
         Connection conn= null;
         Statement Stmt= null;
         boolean theReturn= false;
