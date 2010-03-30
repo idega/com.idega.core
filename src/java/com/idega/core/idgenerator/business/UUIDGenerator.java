@@ -27,7 +27,7 @@ public class UUIDGenerator implements IdGenerator, Singleton {
 
 	public static void main(String[] args) {
 		String UUID = UUIDGenerator.getInstance().generateUUID();
-		System.out.println(UUID.substring(UUID.lastIndexOf("-") + 1));
+		System.out.println(UUID);
 	}
 	
 	/**

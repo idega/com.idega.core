@@ -113,9 +113,18 @@ public class SelectOption extends InterfaceObject {
 		}
 		return null;
 	}
-	
+
 	public String getName(){
-		return xhtmlEncode(super.getName());
+		return getName(true);
+	}
+	
+	public String getName(boolean xhtmlEncode){
+		if (xhtmlEncode) {
+			return xhtmlEncode(super.getName());
+		}
+		else {
+			return super.getName();
+		}
 	}
 
 	public void print(IWContext iwc) throws Exception {
@@ -170,5 +179,16 @@ public class SelectOption extends InterfaceObject {
 		//This method is overridden is because the SelectOption instances do not have a direct ICObjectInstanceId (in the Builder)
 		// - this is because the Dropdownmenu is inserted in the Builder, not a SelectOption
 		return this.clone(iwc,false);
-	}	
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof SelectOption) {
+			SelectOption option = (SelectOption) obj;
+			if (option.getValueAsString().equals(this.getValueAsString())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
 }

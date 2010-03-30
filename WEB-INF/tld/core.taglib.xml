@@ -13,4 +13,25 @@
             <component-type>DownloadLink</component-type>
         </component>
     </tag>
+
+    <tag>
+        <tag-name>selectOne</tag-name>
+        <component>
+            <component-type>SelectDropdown</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>textArea</tag-name>
+        <component>
+            <component-type>TextArea</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>textInput</tag-name>
+        <component>
+            <component-type>TextInput</component-type>
+        </component>
+    </tag>
 </facelet-taglib>

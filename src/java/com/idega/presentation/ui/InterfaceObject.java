@@ -10,7 +10,10 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
@@ -28,7 +31,7 @@ import com.idega.presentation.Script;
  */
 public abstract class InterfaceObject extends PresentationObjectContainer {
 
-	protected boolean keepStatus = false;
+	public boolean keepStatus = false;
 	protected int index = -1;
 
 	private boolean _checkObject = false;
@@ -49,6 +52,13 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public static final String ACTION_ON_SELECT = "onselect";
 	public static final String ACTION_ON_SUBMIT = "onsubmit";
 
+	public static final String ID_PROPERTY = "id";
+	public static final String INDEX_PROPERTY = "index";
+	public static final String STYLE_CLASS_PROPERTY = "styleClass";
+	public static final String NAME_PROPERTY = "name";
+	public static final String CONTENT_PROPERTY = "content";
+	public static final String KEEP_STATUS_PROPERTY = "keepStatus";
+	public static final String DISABLED_PROPERTY = "disabled";
 	
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[9];
@@ -76,6 +86,53 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		this.index = ((Integer) values[8]).intValue();
 	}
 
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+    	ValueExpression ve = getValueExpression(KEEP_STATUS_PROPERTY);
+    	if (ve != null) {
+	    	boolean keepStatusOnAction = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	keepStatusOnAction(keepStatusOnAction);
+    	}
+
+		ve = getValueExpression(NAME_PROPERTY);
+    	if (ve != null) {
+	    	String name = (String) ve.getValue(context.getELContext());
+	    	setName(name);
+    	}    
+    	
+		ve = getValueExpression(CONTENT_PROPERTY);
+    	if (ve != null) {
+	    	String content = (String) ve.getValue(context.getELContext());
+    		setContent(content);
+    	}    
+    	
+		ve = getValueExpression(STYLE_CLASS_PROPERTY);
+    	if (ve != null) {
+	    	String styleClass = (String) ve.getValue(context.getELContext());
+    		setStyleClass(styleClass);
+    	}    
+    	
+		ve = getValueExpression(ID_PROPERTY);
+    	if (ve != null) {
+	    	String id = (String) ve.getValue(context.getELContext());
+    		setID(id);
+    	}    
+    	
+		ve = getValueExpression(INDEX_PROPERTY);
+    	if (ve != null) {
+	    	int index = Integer.parseInt(ve.getValue(context.getELContext()).toString());
+    		setIndex(index);
+    	}    
+    	
+		ve = getValueExpression(DISABLED_PROPERTY);
+    	if (ve != null) {
+	    	boolean disabled = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setDisabled(disabled);
+    	}
+    	
+    	super.encodeBegin(context);
+    }
+    
 	public InterfaceObject() {
 		super();
 		setID();
@@ -665,12 +722,20 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		return this.index;
 	}
 
+	public void setIndex(int index) {
+		this.index = index;
+	}
+	
 	/**
 	 * Sets to keep the status on the interface object when an action is performed.
 	 * @param boolean	True if interface object is to keep status, false otherwise.
 	 */
 	public void keepStatusOnAction(boolean keepStatus) {
 		this.keepStatus = keepStatus;
+	}
+	
+	public void setKeepStatus(boolean keepStatus) {
+		keepStatusOnAction(keepStatus);
 	}
 
 	/**
@@ -680,7 +745,11 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 */
 	public void keepStatusOnAction(boolean keepStatus, int index) {
 		this.keepStatus = keepStatus;
-		this.index = index;
+		setIndex(index);
+	}
+
+	public void setKeepStatus(boolean keepStatus, int index) {
+		keepStatusOnAction(keepStatus, index);
 	}
 
 	/**
@@ -690,7 +759,6 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		keepStatusOnAction(true);
 	}
 
-	
 	protected void callPrint(FacesContext fc)throws IOException{
 		//Overridden here to call the same methods as _print():
 		IWContext iwc = castToIWContext(fc);
