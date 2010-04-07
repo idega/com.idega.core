@@ -403,8 +403,6 @@ public class GenericSelect extends InterfaceObject {
 				if(setSelected){
 					val = option.getValueAsString();
 				}
-			} else {
-				System.out.println("Object other than SelectOption in a GenericSelect, skipping setting selected value");
 			}
 		}
 

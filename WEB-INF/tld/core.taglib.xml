@@ -15,9 +15,23 @@
     </tag>
 
     <tag>
+        <tag-name>datePicker</tag-name>
+        <component>
+            <component-type>IWDatePicker</component-type>
+        </component>
+    </tag>
+
+    <tag>
         <tag-name>selectOne</tag-name>
         <component>
             <component-type>SelectDropdown</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>selectOption</tag-name>
+        <component>
+            <component-type>SelectOption</component-type>
         </component>
     </tag>
 
