@@ -138,7 +138,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 	}
 	
 	public String getName(boolean xhtmlEncode){
-		if (xhtmlEncode) {
+		if (xhtmlEncode && super.getName() != null) {
 			return xhtmlEncode(super.getName());
 		}
 		else {
