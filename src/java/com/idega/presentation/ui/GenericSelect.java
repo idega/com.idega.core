@@ -6,6 +6,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import com.idega.data.IDOEntity;
@@ -97,6 +98,38 @@ public class GenericSelect extends InterfaceObject {
     	super.encodeBegin(context);
     }
     
+	private String setSelectedOption() {
+		String val = null;
+		Iterator iter = getChildren().iterator();
+		while (iter.hasNext()) {
+			Object optionObj = iter.next();
+			if(optionObj instanceof SelectOption) {
+				SelectOption option = (SelectOption) optionObj;
+				boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()) || this.selectedElements.contains(option.getName(false)));
+				option.setSelected(setSelected);
+				if(setSelected){
+					val = option.getValueAsString();
+				}
+			}
+			else if (optionObj instanceof UIComponent) {
+				UIComponent comp = (UIComponent) optionObj;
+				List<UIComponent> list = comp.getChildren();
+				for (UIComponent uiComponent : list) {
+					if (uiComponent instanceof SelectOption) {
+						SelectOption option = (SelectOption) uiComponent;
+						boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()) || this.selectedElements.contains(option.getName(false)));
+						option.setSelected(setSelected);
+						if(setSelected){
+							val = option.getValueAsString();
+						}
+					}
+				}
+			}
+		}
+
+		return val;
+	}
+	
 	/**
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
 	 */
@@ -392,19 +425,7 @@ public class GenericSelect extends InterfaceObject {
 			setOnChange("navHandler(this)");
 		}
 		
-		String val = null;
-		Iterator iter = getChildren().iterator();
-		while (iter.hasNext()) {
-			Object optionObj = iter.next();
-			if(optionObj instanceof SelectOption) {
-				SelectOption option = (SelectOption) optionObj;
-				boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()) || this.selectedElements.contains(option.getName(false)));
-				option.setSelected(setSelected);
-				if(setSelected){
-					val = option.getValueAsString();
-				}
-			}
-		}
+		String val = setSelectedOption();
 
 		if (getMarkupLanguage().equals("HTML")) {
 			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
