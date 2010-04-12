@@ -348,7 +348,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		
 		// set application variables first before setting any properties (ICApplicationBinding table might be created first)
 		setApplicationVariables();
-		this.iwma.regData();
+		/**
+		 * @TODO I've commented this out. We can re-insert it if we ever start the license server again.
+		 */
+		//this.iwma.regData();
 		// now set some properties
 		this.iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
