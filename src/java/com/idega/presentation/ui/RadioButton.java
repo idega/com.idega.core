@@ -9,7 +9,11 @@
  */
 package com.idega.presentation.ui;
 
+import java.io.IOException;
+
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 
 /**
@@ -26,6 +30,8 @@ public class RadioButton extends GenericInput {
 	private boolean _mustBeSelected = false;
 	private String _errorMessage;
 	
+	public static final String SELECTED_PROPERTY = "selected";
+
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
@@ -33,6 +39,7 @@ public class RadioButton extends GenericInput {
 		values[2] = this._errorMessage;
 		return values;
 	}
+	
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -40,6 +47,17 @@ public class RadioButton extends GenericInput {
 		this._errorMessage = (String) values[2];
 	}
 
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+		ValueExpression ve = getValueExpression(SELECTED_PROPERTY);
+    	if (ve != null) {
+	    	boolean selected = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+    		setSelected(selected);
+    	}    
+    	
+    	super.encodeBegin(context);
+    }
+    
 	/**
 	 * Constructs a new <code>RadioButton</code> with the name "untitled" and the value
 	 * "unspecified".

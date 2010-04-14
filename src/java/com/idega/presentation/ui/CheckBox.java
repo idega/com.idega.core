@@ -4,6 +4,9 @@
 */
 package com.idega.presentation.ui;
 
+import java.io.IOException;
+
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 
@@ -21,6 +24,7 @@ public class CheckBox extends GenericInput {
 	private boolean _checkWhenCheckedUncheckWhenUnchecked = false;
 	private String _errorMessage;
 
+	public static final String CHECKED_PROPERTY = "checked";
 	
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
@@ -29,6 +33,7 @@ public class CheckBox extends GenericInput {
 		values[2] = this._errorMessage;
 		return values;
 	}
+
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -36,7 +41,17 @@ public class CheckBox extends GenericInput {
 		this._errorMessage = (String)values[2];
 	}		
 	
-	
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+		ValueExpression ve = getValueExpression(CHECKED_PROPERTY);
+    	if (ve != null) {
+	    	boolean checked = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+    		setChecked(checked);
+    	}    
+    	
+    	super.encodeBegin(context);
+    }
+    
 	/**
 	 * Constructs a new <code>CheckBox</code> with name set as "untitled" and value as
 	 * "unspecified".
