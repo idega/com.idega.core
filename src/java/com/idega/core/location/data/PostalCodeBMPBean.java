@@ -387,6 +387,14 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		}
 		return null;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof PostalCode) {
+			PostalCode other = (PostalCode) obj;
+			return other.getPostalCode().equals(this.getPostalCode());
+		}
+		return false;
+	}
 
 	/*
 	 * (non-Javadoc)
