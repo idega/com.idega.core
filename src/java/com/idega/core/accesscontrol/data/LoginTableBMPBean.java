@@ -28,6 +28,8 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	private static final String COLUMN_CHANGED_BY_USER = "CHANGED_BY_USER_ID";
 	private static final String COLUMN_CHANGED_BY_GROUP = "CHANGED_BY_GROUP_ID";
 	
+	private static final String COLUMN_COUNT_SENT_TO_BANK = "bank_count";
+	
 	private static final String COLUMN_LOGIN_TYPE = "LOGIN_TYPE";
 	private transient String unEncryptedUserPassword;
 
@@ -43,6 +45,8 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		addAttribute(getLoginTypeColumnName(), "Login type", true, true, String.class, 32);
 		addAttribute(COLUMN_CHANGED_BY_USER, "Last changed by user id", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(COLUMN_CHANGED_BY_GROUP, "Last changed by group id", true, true, Integer.class, "many-to-one", Group.class);
+		
+		addAttribute(COLUMN_COUNT_SENT_TO_BANK, "bank count", Integer.class);
 		
 		setNullable(getUserLoginColumnName(), false);
 		setUnique(getUserLoginColumnName(), true);
@@ -262,6 +266,14 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		return ((Timestamp) getColumnValue(getLastChangedColumnName()));
 	}
 
+	public void setBankCount(int bankCount) {
+		setColumn(COLUMN_COUNT_SENT_TO_BANK, bankCount);
+	}
+	
+	public int getBankCount() {
+		return getIntColumnValue(COLUMN_COUNT_SENT_TO_BANK, 2);
+	}
+	
 	/**
 	 * Sets both the intented encrypted password and the original unencrypted
 	 * password for temporary retrieval
