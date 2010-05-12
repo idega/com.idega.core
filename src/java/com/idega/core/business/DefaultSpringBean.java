@@ -88,6 +88,10 @@ public abstract class DefaultSpringBean {
 			locale = iwc == null ? null : iwc.getCurrentLocale();
 		}
 		
+		if (locale == null) {
+			locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
+		}
+		
 		return locale == null ? Locale.ENGLISH : locale;
 	}
 	
