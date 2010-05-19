@@ -175,7 +175,11 @@ public class WindowViewNode extends ComponentClassViewNode {
 			//String encryptedClassName=urlArray[1];
 		//}
 		String realClassName = IWMainApplication.decryptClassName(encryptedClassName);
-		return RefactorClassRegistry.forName(realClassName);
+		
+		if (realClassName != null) {
+			return RefactorClassRegistry.forName(realClassName);
+		}
+		return null;
 	}
 
 	/**
