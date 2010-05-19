@@ -28,6 +28,7 @@
 		</create>
   		
 		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
+		<convert converter="bean" match="com.idega.util.IWTimestamp" />
 		<convert match="com.idega.core.component.bean.RenderedComponent" converter="bean" />
 	</allow>
 	<signatures>
