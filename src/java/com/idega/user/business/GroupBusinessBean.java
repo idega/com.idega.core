@@ -88,15 +88,16 @@ import com.idega.util.datastructures.NestedSetsContainer;
  * This is the the class that holds the main business logic for creating,
  * removing, lookups and manipulating Groups.
  * </p>
- * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2006/02/20
- * 11:04:35 $ by $Author: valdas $
+ * Copyright (C) idega software 2002-2005 <br/>
+ * Last modified: $Date: 2006/02/20 11:04:35 $ by $Author: valdas $
  * 
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a
  *         href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.108.2.7 $
  */
-public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
+public class GroupBusinessBean extends com.idega.business.IBOServiceBean
+		implements GroupBusiness {
 
 	/**
 	 * Comment for <code>serialVersionUID</code>
@@ -124,8 +125,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (this.userHome == null) {
 			try {
 				this.userHome = (UserHome) IDOLookup.getHome(User.class);
-			}
-			catch (RemoteException rme) {
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -135,9 +135,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public UserGroupRepresentativeHome getUserGroupRepresentativeHome() {
 		if (this.userRepHome == null) {
 			try {
-				this.userRepHome = (UserGroupRepresentativeHome) IDOLookup.getHome(UserGroupRepresentative.class);
-			}
-			catch (RemoteException rme) {
+				this.userRepHome = (UserGroupRepresentativeHome) IDOLookup
+						.getHome(UserGroupRepresentative.class);
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -148,8 +148,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (this.groupHome == null) {
 			try {
 				this.groupHome = (GroupHome) IDOLookup.getHome(Group.class);
-			}
-			catch (RemoteException rme) {
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -159,9 +158,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public GroupHome getPermissionGroupHome() {
 		if (this.permGroupHome == null) {
 			try {
-				this.permGroupHome = (GroupHome) IDOLookup.getHome(PermissionGroup.class);
-			}
-			catch (RemoteException rme) {
+				this.permGroupHome = (GroupHome) IDOLookup
+						.getHome(PermissionGroup.class);
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -177,8 +176,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public Collection getAllGroups() {
 		try {
 			return getGroups(getUserRepresentativeGroupTypeStringArray(), false);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -199,8 +197,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			// ((PermissionGroup)com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getInstance(PermissionGroup.class)).getGroupTypeValue();
 			// filter end
 			return getGroups(groupsNotToReturn, true);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -210,20 +207,22 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Returns all groups filtered by the grouptypes array.
 	 * 
 	 * @param groupTypes
-	 *          the Groups a String array of group types to be filtered with
+	 *            the Groups a String array of group types to be filtered with
 	 * @param returnSpecifiedGroupTypes
-	 *          if true it returns the Collection with all the groups that are of
-	 *          the types specified in groupTypes[], else it returns the opposite
-	 *          (all the groups that are not of any of the types specified by
-	 *          groupTypes[])
+	 *            if true it returns the Collection with all the groups that are
+	 *            of the types specified in groupTypes[], else it returns the
+	 *            opposite (all the groups that are not of any of the types
+	 *            specified by groupTypes[])
 	 * @return Collection of Groups
 	 * @throws Exception
-	 *           If an error occured
+	 *             If an error occured
 	 */
-	public Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception {
-		Collection result = getGroupHome().findAllGroups(groupTypes, returnSpecifiedGroupTypes);
+	public Collection getGroups(String[] groupTypes,
+			boolean returnSpecifiedGroupTypes) throws Exception {
+		Collection result = getGroupHome().findAllGroups(groupTypes,
+				returnSpecifiedGroupTypes);
 		if (result != null) { // TODO move from business level to data level by
-													// using 'NOT IN (_list_of_standard_group_ids_)'
+			// using 'NOT IN (_list_of_standard_group_ids_)'
 			result.removeAll(getAccessController().getStandardGroups());
 		}
 		return result;
@@ -235,13 +234,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * 
 	 * @return Collection of direct parent groups
 	 */
-	public Collection getParentGroups(int uGroupId) throws EJBException, FinderException {
+	public Collection getParentGroups(int uGroupId) throws EJBException,
+			FinderException {
 		// public Collection getGroupsContainingDirectlyRelated(int uGroupId){
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			return getParentGroups(group);
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -256,8 +255,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		// public Collection getGroupsContainingDirectlyRelated(Group group){
 		try {
 			return group.getParentGroups();
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -268,12 +266,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Database access is minimized by passing a Map of cached groupParents and
 	 * Map of cached groups to the method
 	 */
-	public Collection getParentGroups(Group group, Map cachedParents, Map cachedGroups) {
+	public Collection getParentGroups(Group group, Map cachedParents,
+			Map cachedGroups) {
 		// public Collection getGroupsContainingDirectlyRelated(Group group){
 		try {
 			return group.getParentGroups(cachedParents, cachedGroups);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -281,8 +279,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * Returns all the groups that are not a direct parent of the Group with id
-	 * uGroupId. That is both groups that are indirect parents of the group or not
-	 * at all parents of the group.
+	 * uGroupId. That is both groups that are indirect parents of the group or
+	 * not at all parents of the group.
 	 * 
 	 * @see com.idega.user.business.GroupBusiness#getNonParentGroups(int)
 	 * @return Collection of non direct parent groups
@@ -292,9 +290,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			Collection isDirectlyRelated = getParentGroups(group);
-			Collection AllGroups = getAllGroups();// Filters out userrepresentative
-																						// groups //
-																						// EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
+			Collection AllGroups = getAllGroups();// Filters out
+													// userrepresentative
+			// groups //
+			// EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
 
 			if (AllGroups != null) {
 				if (isDirectlyRelated != null) {
@@ -302,12 +301,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				}
 				AllGroups.remove(group);
 				return AllGroups;
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -319,18 +316,20 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * type user-representative and permission
 	 * 
 	 * @param uGroupId
-	 *          the ID of the group
+	 *            the ID of the group
 	 * @return Collection
 	 */
 	public Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId) {
-		// public Collection getRegisteredGroupsNotDirectlyRelated(int uGroupId){
+		// public Collection getRegisteredGroupsNotDirectlyRelated(int
+		// uGroupId){
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			Collection isDirectlyRelated = getParentGroups(group);
-			Collection AllGroups = getAllNonPermissionOrGeneralGroups();// Filters out
-																																	// userrepresentative/permission
-																																	// groups //
-																																	// EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
+			Collection AllGroups = getAllNonPermissionOrGeneralGroups();// Filters
+																		// out
+			// userrepresentative/permission
+			// groups //
+			// EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getInstance());
 
 			if (AllGroups != null) {
 				if (isDirectlyRelated != null) {
@@ -338,12 +337,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				}
 				AllGroups.remove(group);
 				return AllGroups;
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -357,7 +354,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of indirect parent (grandparents etc.) Groups
 	 */
 	public Collection getParentGroupsInDirect(int uGroupId) {
-		// public Collection getGroupsContainingNotDirectlyRelated(int uGroupId){
+		// public Collection getGroupsContainingNotDirectlyRelated(int
+		// uGroupId){
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			Collection isDirectlyRelated = getParentGroups(group);
@@ -374,12 +372,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				}
 				AllGroups.remove(group);
 				return AllGroups;
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -389,18 +385,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Returns recursively up the group tree parents of group aGroup
 	 * 
 	 * @param uGroupId
-	 *          an id of the Group to be found parents recursively for.
+	 *            an id of the Group to be found parents recursively for.
 	 * @return Collection of Groups found recursively up the tree
 	 * @throws EJBException
-	 *           If an error occured
+	 *             If an error occured
 	 */
-	public Collection getParentGroupsRecursive(int uGroupId) throws EJBException {
-		// public Collection getGroupsContaining(int uGroupId)throws EJBException{
+	public Collection getParentGroupsRecursive(int uGroupId)
+			throws EJBException {
+		// public Collection getGroupsContaining(int uGroupId)throws
+		// EJBException{
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			return getParentGroupsRecursive(group);
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new IBORuntimeException(ex);
 		}
 	}
@@ -409,12 +406,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Returns recursively up the group tree parents of group aGroup
 	 * 
 	 * @param aGroup
-	 *          The Group to be found parents recursively for.
+	 *            The Group to be found parents recursively for.
 	 * @return Collection of Groups found recursively up the tree
 	 * @throws EJBException
-	 *           If an error occured
+	 *             If an error occured
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup) throws EJBException {
+	public Collection getParentGroupsRecursive(Group aGroup)
+			throws EJBException {
 		return getParentGroupsRecursive(aGroup, null, null);
 	}
 
@@ -423,45 +421,56 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * 22.06.2004 Database access is minimized by passing a Map of cached
 	 * groupParents and Map of cached groups to the method
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup, Map cachedParents, Map cachedGroups) throws EJBException {
-		return getParentGroupsRecursive(aGroup, getUserRepresentativeGroupTypeStringArray(), false, cachedParents, cachedGroups);
+	public Collection getParentGroupsRecursive(Group aGroup, Map cachedParents,
+			Map cachedGroups) throws EJBException {
+		return getParentGroupsRecursive(aGroup,
+				getUserRepresentativeGroupTypeStringArray(), false,
+				cachedParents, cachedGroups);
 	}
 
 	public String[] getUserRepresentativeGroupTypeStringArray() {
 		if (this.userRepresentativeType == null) {
 			this.userRepresentativeType = new String[1];
-			this.userRepresentativeType[0] = this.getUserGroupRepresentativeHome().getGroupType();
+			this.userRepresentativeType[0] = this
+					.getUserGroupRepresentativeHome().getGroupType();
 		}
 		return this.userRepresentativeType;
 	}
 
 	/**
-	 * Returns recursively up the group tree parents of group aGroup with filtered
-	 * out with specified groupTypes
+	 * Returns recursively up the group tree parents of group aGroup with
+	 * filtered out with specified groupTypes
 	 * 
 	 * @param aGroup
-	 *          a Group to find parents for
+	 *            a Group to find parents for
 	 * @param groupTypes
-	 *          the Groups a String array of group types to be filtered with
+	 *            the Groups a String array of group types to be filtered with
 	 * @param returnSpecifiedGroupTypes
-	 *          if true it returns the Collection with all the groups that are of
-	 *          the types specified in groupTypes[], else it returns the opposite
-	 *          (all the groups that are not of any of the types specified by
-	 *          groupTypes[])
+	 *            if true it returns the Collection with all the groups that are
+	 *            of the types specified in groupTypes[], else it returns the
+	 *            opposite (all the groups that are not of any of the types
+	 *            specified by groupTypes[])
 	 * @return Collection of Groups found recursively up the tree
 	 * @throws EJBException
-	 *           If an error occured
+	 *             If an error occured
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
-		return getParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes, null, null);
+	public Collection getParentGroupsRecursive(Group aGroup,
+			String[] groupTypes, boolean returnSpecifiedGroupTypes)
+			throws EJBException {
+		return getParentGroupsRecursive(aGroup, groupTypes,
+				returnSpecifiedGroupTypes, null, null);
 	}
 
-	private Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map cachedParents, Map cachedGroups) throws EJBException {
+	private Collection getParentGroupsRecursive(Group aGroup,
+			String[] groupTypes, boolean returnSpecifiedGroupTypes,
+			Map cachedParents, Map cachedGroups) throws EJBException {
 		if (useStoredProsedureGettingParentGroupsRecursive()) {
-			return getParentGroupsRecursiveUsingStoredProcedure(aGroup, groupTypes, returnSpecifiedGroupTypes);
-		}
-		else {
-			return getParentGroupsRecursiveNotUsingStoredProcedure(aGroup, groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups);
+			return getParentGroupsRecursiveUsingStoredProcedure(aGroup,
+					groupTypes, returnSpecifiedGroupTypes);
+		} else {
+			return getParentGroupsRecursiveNotUsingStoredProcedure(aGroup,
+					groupTypes, returnSpecifiedGroupTypes, cachedParents,
+					cachedGroups);
 		}
 	}
 
@@ -470,7 +479,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Sigtryggur 22.06.2004 Database access is minimized by passing a Map of
 	 * cached groupParents and Map of cached groups to the method
 	 */
-	private Collection getParentGroupsRecursiveNotUsingStoredProcedure(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map cachedParents, Map cachedGroups) throws EJBException {
+	private Collection getParentGroupsRecursiveNotUsingStoredProcedure(
+			Group aGroup, String[] groupTypes,
+			boolean returnSpecifiedGroupTypes, Map cachedParents,
+			Map cachedGroups) throws EJBException {
 		// public Collection getGroupsContaining(Group groupContained, String[]
 		// groupTypes, boolean returnSepcifiedGroupTypes) throws
 		// EJBException,RemoteException{
@@ -488,7 +500,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 					key = item.getPrimaryKey().toString();
 					if (!GroupsContained.containsKey(key)) {
 						GroupsContained.put(key, item);
-						putGroupsContaining(item, GroupsContained, groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups);
+						putGroupsContaining(item, GroupsContained, groupTypes,
+								returnSpecifiedGroupTypes, cachedParents,
+								cachedGroups);
 					}
 				}
 			}
@@ -510,15 +524,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 					}
 					if (!specified) {
 						notSpecifiedGroups.add(k++, tempObj);
-					}
-					else {
+					} else {
 						specified = false;
 					}
 				}
 				notSpecifiedGroups.remove(aGroup);
 				specifiedGroups.remove(aGroup);
-			}
-			else {
+			} else {
 				while (iter2.hasNext()) {
 					Group tempObj = (Group) iter2.next();
 					notSpecifiedGroups.add(j++, tempObj);
@@ -527,28 +539,29 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				returnSpecifiedGroupTypes = false;
 			}
 
-			return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
+			return (returnSpecifiedGroupTypes) ? specifiedGroups
+					: notSpecifiedGroups;
 
 			// ///REMOVE AFTER IMPLEMENTING PUTGROUPSCONTAINED BETTER
 
-		}
-		else {
+		} else {
 			return null;
 		}
 	}
 
 	/**
-	 * Optimized version of putGroupsContaining(Group, Map, String[], boolean) by
-	 * Sigtryggur 22.06.2004 Database access is minimized by passing a Map of
+	 * Optimized version of putGroupsContaining(Group, Map, String[], boolean)
+	 * by Sigtryggur 22.06.2004 Database access is minimized by passing a Map of
 	 * cached groupParents and Map of cached groups to the method
 	 */
-	private void putGroupsContaining(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes, Map cachedParents, Map cachedGroups) {
+	private void putGroupsContaining(Group group, Map GroupsContained,
+			String[] groupTypes, boolean returnGroupTypes, Map cachedParents,
+			Map cachedGroups) {
 		Collection pGroups = null;
 		if (cachedParents == null) {
 			pGroups = group.getParentGroups();// TODO EIKI FINISH THIS
-																				// groupTypes,returnGroupTypes);
-		}
-		else {
+			// groupTypes,returnGroupTypes);
+		} else {
 			pGroups = group.getParentGroups(cachedParents, cachedGroups);
 		}
 		if (pGroups != null) {
@@ -561,39 +574,40 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 					if (!GroupsContained.containsKey(key)) {
 						GroupsContained.put(key, item);
-						putGroupsContaining(item, GroupsContained, groupTypes, returnGroupTypes, cachedParents, cachedGroups);
+						putGroupsContaining(item, GroupsContained, groupTypes,
+								returnGroupTypes, cachedParents, cachedGroups);
 					}
 				}
 			}
 		}
 	}
 
-	public Collection getUsers(int groupId) throws EJBException, FinderException {
+	public Collection getUsers(int groupId) throws EJBException,
+			FinderException {
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getUsers(group);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
 
-	public Collection getUsersDirectlyRelated(int groupId) throws EJBException, FinderException {
+	public Collection getUsersDirectlyRelated(int groupId) throws EJBException,
+			FinderException {
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getUsersDirectlyRelated(group);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
 
-	public Collection getUsersNotDirectlyRelated(int groupId) throws EJBException, FinderException {
+	public Collection getUsersNotDirectlyRelated(int groupId)
+			throws EJBException, FinderException {
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getUsersNotDirectlyRelated(group);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
@@ -602,19 +616,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Returns recursively down the group tree children of group with id groupId
 	 * 
 	 * @param groupId
-	 *          an id of a Group to find parents for
+	 *            an id of a Group to find parents for
 	 * @return Collection of Groups found recursively down the tree
 	 * @throws EJBException
-	 *           If an error occured
+	 *             If an error occured
 	 */
-	public Collection getChildGroupsRecursive(int groupId) throws EJBException, FinderException {
+	public Collection getChildGroupsRecursive(int groupId) throws EJBException,
+			FinderException {
 		// public Collection getGroupsContained(int groupId) throws
 		// EJBException,FinderException,RemoteException{
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getChildGroupsRecursive(group);
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
@@ -624,13 +638,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * filtered out with specified groupTypes
 	 * 
 	 * @param aGroup
-	 *          a Group to find children for
+	 *            a Group to find children for
 	 * @return Collection of Groups found recursively down the tree
 	 * @throws EJBException
-	 *           If an error occured
+	 *             If an error occured
 	 */
 	public Collection getChildGroupsRecursive(Group aGroup) throws EJBException {
-		return getChildGroupsRecursive(aGroup, getUserRepresentativeGroupTypeStringArray(), false);
+		return getChildGroupsRecursive(aGroup,
+				getUserRepresentativeGroupTypeStringArray(), false);
 	}
 
 	/**
@@ -642,26 +657,30 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * groupTypesAsString, boolean complementSetWanted).
 	 * 
 	 * @param aGroup
-	 *          a Group to find children for
+	 *            a Group to find children for
 	 * @param groupTypes
-	 *          the Groups a String array of group types to be filtered with
+	 *            the Groups a String array of group types to be filtered with
 	 * @param returnSpecifiedGroupTypes
-	 *          if true it returns the Collection with all the groups that are of
-	 *          the types specified in groupTypes[], else it returns the opposite
-	 *          (all the groups that are not of any of the types specified by
-	 *          groupTypes[])
+	 *            if true it returns the Collection with all the groups that are
+	 *            of the types specified in groupTypes[], else it returns the
+	 *            opposite (all the groups that are not of any of the types
+	 *            specified by groupTypes[])
 	 * @return Collection of Groups found recursively down the tree
 	 * @throws EJBException
-	 *           If an error occured
+	 *             If an error occured
 	 */
-	public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
+	public Collection getChildGroupsRecursive(Group aGroup,
+			String[] groupTypes, boolean returnSpecifiedGroupTypes)
+			throws EJBException {
 		// public Collection getGroupsContained(Group groupContaining, String[]
-		// groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
+		// groupTypes, boolean returnSepcifiedGroupTypes) throws
+		// RemoteException{
 		try {
 
 			Map GroupsContained = new HashMap();// to avoid duplicates
 
-			Collection groups = aGroup.getChildGroups(groupTypes, returnSpecifiedGroupTypes);
+			Collection groups = aGroup.getChildGroups(groupTypes,
+					returnSpecifiedGroupTypes);
 
 			// int j = 0;
 
@@ -675,18 +694,17 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 						key = item.getPrimaryKey().toString();
 						if (!GroupsContained.containsKey(key)) {
 							GroupsContained.put(key, item);
-							putGroupsContained(item, GroupsContained, groupTypes, returnSpecifiedGroupTypes);
+							putGroupsContained(item, GroupsContained,
+									groupTypes, returnSpecifiedGroupTypes);
 						}
 					}
 				}
 
 				return new ArrayList(GroupsContained.values());
-			}
-			else {
+			} else {
 				return null;
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			throw new IBORuntimeException(e, this);
 		}
 
@@ -712,15 +730,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	public Collection getUsersRecursive(Group group) throws FinderException {
 		try {
-			Collection list = getChildGroupsRecursive(group, getUserRepresentativeGroupTypeStringArray(), true);
+			Collection list = getChildGroupsRecursive(group,
+					getUserRepresentativeGroupTypeStringArray(), true);
 			if (list != null && !list.isEmpty()) {
 				return getUsersForUserRepresentativeGroups(list);
-			}
-			else {
+			} else {
 				return ListUtil.getEmptyList();
 			}
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
@@ -735,8 +752,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getUsersRecursive(group);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
@@ -746,36 +762,40 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * groupId.
 	 * 
 	 * @param groupId
-	 *          an id of a Group to find children groups for
+	 *            an id of a Group to find children groups for
 	 * @return Collection of Groups that are Direct children of group aGroup
 	 */
-	public Collection getChildGroups(int groupId) throws EJBException, FinderException {
-		// public Collection getGroupsContainedDirectlyRelated(int groupId) throws
+	public Collection getChildGroups(int groupId) throws EJBException,
+			FinderException {
+		// public Collection getGroupsContainedDirectlyRelated(int groupId)
+		// throws
 		// EJBException,FinderException{
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getChildGroups(group);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
 
-	public Collection getChildGroupsResultFiltered(Group parentGroup, String groupName, Collection groupTypes, boolean onlyReturnTypesInCollection) throws RemoteException {
+	public Collection getChildGroupsResultFiltered(Group parentGroup,
+			String groupName, Collection groupTypes,
+			boolean onlyReturnTypesInCollection) throws RemoteException {
 		Group group = null;
 		Collection ancestorsOfGroup = null;
-		Collection allMatchingGroups = getGroupsByGroupNameAndGroupTypes(groupName, groupTypes, onlyReturnTypesInCollection);
+		Collection allMatchingGroups = getGroupsByGroupNameAndGroupTypes(
+				groupName, groupTypes, onlyReturnTypesInCollection);
 		Collection filteredChildGroups = new ArrayList();
 		Iterator it = allMatchingGroups.iterator();
 		while (it.hasNext()) {
 			try {
 				group = (Group) it.next();
 				ancestorsOfGroup = getParentGroupsRecursive(group);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			if (ancestorsOfGroup != null && ancestorsOfGroup.contains(parentGroup)) {
+			if (ancestorsOfGroup != null
+					&& ancestorsOfGroup.contains(parentGroup)) {
 				filteredChildGroups.add(group);
 			}
 		}
@@ -786,70 +806,86 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see getChildGroupsRecursiveResultFiltered(Group group, Collection
 	 *      groupTypesAsString, boolean onlyReturnTypesInCollection)
 	 * @param groupId
-	 * @param groupTypesAsString -
-	 *          a collection of strings representing group types, empty or null
-	 *          for any type
-	 * @param onlyReturnTypesInCollection -
-	 *          should be set to true if you want to fetch all the groups that
-	 *          have group types that are contained in the collection
-	 *          groupTypesAsString else false to exclude those group types
+	 * @param groupTypesAsString
+	 *            - a collection of strings representing group types, empty or
+	 *            null for any type
+	 * @param onlyReturnTypesInCollection
+	 *            - should be set to true if you want to fetch all the groups
+	 *            that have group types that are contained in the collection
+	 *            groupTypesAsString else false to exclude those group types
 	 * @return a collection of groups
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
-		return getChildGroupsRecursiveResultFiltered(groupId, groupTypesAsString, onlyReturnTypesInCollection, false);
+	public Collection getChildGroupsRecursiveResultFiltered(int groupId,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+		return getChildGroupsRecursiveResultFiltered(groupId,
+				groupTypesAsString, onlyReturnTypesInCollection, false);
 	}
 
-	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
+	public Collection getChildGroupsRecursiveResultFiltered(int groupId,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection,
+			boolean includeAliases) {
 		Group group = null;
 		try {
 			group = this.getGroupByGroupID(groupId);
-		}
-		catch (FinderException findEx) {
-			System.err.println("[GroupBusiness]: Can't retrieve group. Message is: " + findEx.getMessage());
+		} catch (FinderException findEx) {
+			System.err
+					.println("[GroupBusiness]: Can't retrieve group. Message is: "
+							+ findEx.getMessage());
 			findEx.printStackTrace(System.err);
 			return new ArrayList();
-		}
-		catch (RemoteException ex) {
-			System.err.println("[GroupBusiness]: Can't retrieve group. Message is: " + ex.getMessage());
+		} catch (RemoteException ex) {
+			System.err
+					.println("[GroupBusiness]: Can't retrieve group. Message is: "
+							+ ex.getMessage());
 			ex.printStackTrace(System.err);
 			throw new RuntimeException("[GroupBusiness]: Can't retrieve group.");
 		}
-		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, includeAliases);
+		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString,
+				onlyReturnTypesInCollection, includeAliases);
 	}
 
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
-		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false);
+	public Collection getChildGroupsRecursiveResultFiltered(Group group,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString,
+				onlyReturnTypesInCollection, false);
 	}
 
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
-		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false, false);
+	public Collection getChildGroupsRecursiveResultFiltered(Group group,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection,
+			boolean includeAliases) {
+		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString,
+				onlyReturnTypesInCollection, false, false);
 	}
 
 	/**
 	 * Returns all the groups that are direct and indirect children of the
-	 * specified group. If the grouptype collection is not null and none empty the
-	 * returned groups are filtered to only include or exclude those grouptypes in
-	 * the returning collection depending on whether the boolean is set to true or
-	 * false. The method does not stop recursing a group even if that group is not
-	 * specified in the desired grouptype collection. Its children are always
-	 * checked also that is the most important difference to the method
-	 * getChildGroupsRecursive.
+	 * specified group. If the grouptype collection is not null and none empty
+	 * the returned groups are filtered to only include or exclude those
+	 * grouptypes in the returning collection depending on whether the boolean
+	 * is set to true or false. The method does not stop recursing a group even
+	 * if that group is not specified in the desired grouptype collection. Its
+	 * children are always checked also that is the most important difference to
+	 * the method getChildGroupsRecursive.
 	 * 
 	 * @param group
-	 * @param groupTypesAsString -
-	 *          a collection of strings representing group types, empty or null
-	 *          for any type
-	 * @param onlyReturnTypesInCollection -
-	 *          should be set to true if you want to fetch all the groups that
-	 *          have group types that are contained in the collection
-	 *          groupTypesAsString else false to exclude those group types
+	 * @param groupTypesAsString
+	 *            - a collection of strings representing group types, empty or
+	 *            null for any type
+	 * @param onlyReturnTypesInCollection
+	 *            - should be set to true if you want to fetch all the groups
+	 *            that have group types that are contained in the collection
+	 *            groupTypesAsString else false to exclude those group types
 	 * @return a collection of groups
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) {
+	public Collection getChildGroupsRecursiveResultFiltered(Group group,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection,
+			boolean includeAliases, boolean excludeGroupsWithoutMembers) {
 		// author: Thomas
 		Collection alreadyCheckedGroups = new ArrayList();
 		Collection result = new ArrayList();
-		getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers);
+		getChildGroupsRecursive(group, alreadyCheckedGroups, result,
+				groupTypesAsString, onlyReturnTypesInCollection,
+				includeAliases, excludeGroupsWithoutMembers);
 		return result;
 	}
 
@@ -857,23 +893,27 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return getUsersFromGroupRecursive(group, null, false);
 	}
 
-	public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+	public Collection getUsersFromGroupRecursive(Group group,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
 		// author: Thomas
 		Collection users = new ArrayList();
-		Collection groups = getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection);
+		Collection groups = getChildGroupsRecursiveResultFiltered(group,
+				groupTypesAsString, onlyReturnTypesInCollection);
 		Iterator iterator = groups.iterator();
 		while (iterator.hasNext()) {
 			Group tempGroup = (Group) iterator.next();
 			try {
 				users.addAll(getUsers(tempGroup));
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 			}
 		}
 		return users;
 	}
 
-	private void getChildGroupsRecursive(Group currentGroup, Collection alreadyCheckedGroups, Collection result, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) {
+	private void getChildGroupsRecursive(Group currentGroup,
+			Collection alreadyCheckedGroups, Collection result,
+			Collection groupTypesAsString, boolean onlyReturnTypesInCollection,
+			boolean includeAliases, boolean excludeGroupsWithoutMembers) {
 
 		Integer currentPrimaryKey = (Integer) currentGroup.getPrimaryKey();
 		if (alreadyCheckedGroups.contains(currentPrimaryKey)) {
@@ -892,19 +932,16 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				if (!users.isEmpty()) {
 					result.add(currentGroup);
 				}
-			}
-			else {
+			} else {
 				result.add(currentGroup);
 			}
-		}
-		else if (!(groupTypesAsString.contains(currentGroupType) ^ (onlyReturnTypesInCollection))) {
+		} else if (!(groupTypesAsString.contains(currentGroupType) ^ (onlyReturnTypesInCollection))) {
 			if (excludeGroupsWithoutMembers) {
 				Collection users = currentGroup.getChildGroups(userType, true);
 				if (!users.isEmpty()) {
 					result.add(currentGroup);
 				}
-			}
-			else {
+			} else {
 				result.add(currentGroup);
 			}
 		}
@@ -921,7 +958,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 					}
 				}
 			}
-			getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers);
+			getChildGroupsRecursive(child, alreadyCheckedGroups, result,
+					groupTypesAsString, onlyReturnTypesInCollection,
+					includeAliases, excludeGroupsWithoutMembers);
 		}
 	}
 
@@ -929,68 +968,75 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Returns all the groups that are direct children groups of group aGroup.
 	 * 
 	 * @param aGroup
-	 *          a group to find children groups for
+	 *            a group to find children groups for
 	 * @return Collection of Groups that are Direct children of group aGroup
 	 */
 	public Collection getChildGroups(Group aGroup) {
-		return getChildGroups(aGroup, getUserRepresentativeGroupTypeStringArray(), false);
+		return getChildGroups(aGroup,
+				getUserRepresentativeGroupTypeStringArray(), false);
 	}
 
-	public Collection getChildGroups(Group aGroup, Collection groupTypes, boolean returnSpecifiedGroupTypes) {
-		return getChildGroups(aGroup, ((String[]) groupTypes.toArray(new String[groupTypes.size()])), returnSpecifiedGroupTypes);
+	public Collection getChildGroups(Group aGroup, Collection groupTypes,
+			boolean returnSpecifiedGroupTypes) {
+		return getChildGroups(aGroup, ((String[]) groupTypes
+				.toArray(new String[groupTypes.size()])),
+				returnSpecifiedGroupTypes);
 	}
 
-	public Collection getChildGroups(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) {
+	public Collection getChildGroups(Group aGroup, String[] groupTypes,
+			boolean returnSpecifiedGroupTypes) {
 		try {
-			Collection list = aGroup.getChildGroups(groupTypes, returnSpecifiedGroupTypes);
+			Collection list = aGroup.getChildGroups(groupTypes,
+					returnSpecifiedGroupTypes);
 			if (list != null) {
 				list.remove(aGroup);
 			}
 			return list;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
-	public Collection getUsersDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException {
+	public Collection getUsersDirectlyRelated(Group group) throws EJBException,
+			RemoteException, FinderException {
 		// TODO GET USERS DIRECTLY
-		Collection result = group.getChildGroups(this.getUserRepresentativeGroupTypeStringArray(), true);
+		Collection result = group.getChildGroups(this
+				.getUserRepresentativeGroupTypeStringArray(), true);
 		return getUsersForUserRepresentativeGroups(result);
 	}
 
 	/**
 	 * @param groupId
-	 *          a group to find Groups under
+	 *            a group to find Groups under
 	 * @return Collection A Collection of Groups that are indirect children
 	 *         (grandchildren etc.) of the specified group recursively down the
 	 *         group tree
 	 * @throws FinderException
-	 *           if there was an error finding the group by id groupId
+	 *             if there was an error finding the group by id groupId
 	 * @throws EJBException
-	 *           if other errors occur.
+	 *             if other errors occur.
 	 */
-	public Collection getChildGroupsInDirect(int groupId) throws EJBException, FinderException {
+	public Collection getChildGroupsInDirect(int groupId) throws EJBException,
+			FinderException {
 		// public Collection getGroupsContainedNotDirectlyRelated(int groupId)
 		// throws EJBException,FinderException{
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getChildGroupsInDirect(group);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException(e, this);
 		}
 	}
 
 	/**
 	 * @param group
-	 *          a group to find Groups under
+	 *            a group to find Groups under
 	 * @return Collection A Collection of Groups that are indirect children
 	 *         (grandchildren etc.) of the specified group recursively down the
 	 *         group tree
 	 * @throws EJBException
-	 *           if an error occurs.
+	 *             if an error occurs.
 	 */
 	public Collection getChildGroupsInDirect(Group group) throws EJBException {
 		// public Collection getGroupsContainedNotDirectlyRelated(Group group)
@@ -1005,19 +1051,18 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				}
 				AllGroups.remove(group);
 				return AllGroups;
-			}
-			else {
+			} else {
 				return null;
 			}
 
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 			return null;
 		}
 	}
 
-	public Collection getUsersNotDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException {
+	public Collection getUsersNotDirectlyRelated(Group group)
+			throws EJBException, RemoteException, FinderException {
 
 		Collection DirectUsers = getUsersDirectlyRelated(group);
 		Collection notDirectUsers = getUsers(group);
@@ -1031,8 +1076,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				}
 			}
 			return notDirectUsers;
-		}
-		else {
+		} else {
 			return null;
 		}
 		/*
@@ -1041,8 +1085,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		 */
 	}
 
-	private void putGroupsContained(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes) throws RemoteException {
-		Collection childGroups = group.getChildGroups(groupTypes, returnGroupTypes);
+	private void putGroupsContained(Group group, Map GroupsContained,
+			String[] groupTypes, boolean returnGroupTypes)
+			throws RemoteException {
+		Collection childGroups = group.getChildGroups(groupTypes,
+				returnGroupTypes);
 		if (childGroups != null && !childGroups.isEmpty()) {
 			String key = "";
 			Iterator iter = childGroups.iterator();
@@ -1051,7 +1098,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				key = item.getPrimaryKey().toString();
 				if (!GroupsContained.containsKey(key)) {
 					GroupsContained.put(key, item);
-					putGroupsContained(item, GroupsContained, groupTypes, returnGroupTypes);
+					putGroupsContained(item, GroupsContained, groupTypes,
+							returnGroupTypes);
 				}
 			}
 		}
@@ -1060,25 +1108,28 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	/**
 	 * @param groupIDs
-	 *          a string array of IDs to be found.
+	 *            a string array of IDs to be found.
 	 * @return A Collection of groups with the specified ids.
 	 * @see com.idega.user.business.GroupBusiness#getGroups(String[])
 	 */
-	public Collection getGroups(String[] groupIDs) throws FinderException, RemoteException {
+	public Collection getGroups(String[] groupIDs) throws FinderException,
+			RemoteException {
 		return this.getGroupHome().findGroups(groupIDs);
 	}
 
-	public Collection getUsersForUserRepresentativeGroups(Collection groups) throws FinderException, RemoteException {
+	public Collection getUsersForUserRepresentativeGroups(Collection groups)
+			throws FinderException, RemoteException {
 		try {
-			return this.getUserHome().findUsersForUserRepresentativeGroups(groups);
-		}
-		catch (FinderException ex) {
+			return this.getUserHome().findUsersForUserRepresentativeGroups(
+					groups);
+		} catch (FinderException ex) {
 			System.err.println(ex.getMessage());
 			return new Vector(0);
 		}
 	}
 
-	public void updateUsersInGroup(int groupId, String[] usrGroupIdsInGroup, User currentUser) throws RemoteException, FinderException {
+	public void updateUsersInGroup(int groupId, String[] usrGroupIdsInGroup,
+			User currentUser) throws RemoteException, FinderException {
 
 		if (groupId != -1) {
 			Group group = this.getGroupByGroupID(groupId);
@@ -1103,8 +1154,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 					if (direct.contains(usrGroupIdsInGroup[i])) {
 						toRemove.remove(usrGroupIdsInGroup[i]);
-					}
-					else {
+					} else {
 						toAdd.add(usrGroupIdsInGroup[i]);
 					}
 
@@ -1128,32 +1178,34 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				group.addGroup(Integer.parseInt(item));
 			}
 
-		}
-		else {
-			// System.out.println("groupId = "+ groupId + ", usrGroupIdsInGroup = "+
+		} else {
+			// System.out.println("groupId = "+ groupId +
+			// ", usrGroupIdsInGroup = "+
 			// usrGroupIdsInGroup);
 		}
 
 	}
 
-	public Group getGroupByGroupID(int id) throws FinderException, RemoteException {
+	public Group getGroupByGroupID(int id) throws FinderException,
+			RemoteException {
 		return this.getGroupHome().findByPrimaryKey(new Integer(id));
 	}
 
 	public Collection getGroupsByGroupName(String name) throws RemoteException {
 		try {
 			return this.getGroupHome().findGroupsByName(name);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			return ListUtil.getEmptyList();
 		}
 	}
 
-	public Collection getGroupsByGroupNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws RemoteException {
+	public Collection getGroupsByGroupNameAndGroupTypes(String name,
+			Collection groupTypes, boolean onlyReturnTypesInCollection)
+			throws RemoteException {
 		try {
-			return this.getGroupHome().findGroupsByNameAndGroupTypes(name, groupTypes, onlyReturnTypesInCollection);
-		}
-		catch (FinderException e) {
+			return this.getGroupHome().findGroupsByNameAndGroupTypes(name,
+					groupTypes, onlyReturnTypesInCollection);
+		} catch (FinderException e) {
 			return ListUtil.getEmptyList();
 		}
 	}
@@ -1163,28 +1215,29 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * start with the supplied name string ('name%')
 	 * 
 	 * @param type
-	 *          the group
+	 *            the group
 	 * @param name
 	 * @return
 	 * @throws RemoteException
 	 */
-	public Collection getGroupsByGroupTypeAndFirstPartOfName(String groupType, String groupNameStartsWith) throws RemoteException {
+	public Collection getGroupsByGroupTypeAndFirstPartOfName(String groupType,
+			String groupNameStartsWith) throws RemoteException {
 		try {
 			if (!groupNameStartsWith.endsWith("%")) {
 				groupNameStartsWith = groupNameStartsWith + "%";
 			}
-			return this.getGroupHome().findGroupsByGroupTypeAndLikeName(groupType, groupNameStartsWith);
-		}
-		catch (FinderException e) {
+			return this.getGroupHome().findGroupsByGroupTypeAndLikeName(
+					groupType, groupNameStartsWith);
+		} catch (FinderException e) {
 			return ListUtil.getEmptyList();
 		}
 	}
 
-	public Collection getGroupsByAbbreviation(String abbreviation) throws RemoteException {
+	public Collection getGroupsByAbbreviation(String abbreviation)
+			throws RemoteException {
 		try {
 			return this.getGroupHome().findGroupsByAbbreviation(abbreviation);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			return ListUtil.getEmptyList();
 		}
 	}
@@ -1193,11 +1246,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return this.getUserHome().findByPrimaryKey(new Integer(id));
 	}
 
-	public void addUser(int groupId, User user) throws EJBException, RemoteException {
+	public void addUser(int groupId, User user) throws EJBException,
+			RemoteException {
 		try {
 			this.getGroupByGroupID(groupId).addGroup(user);
-		}
-		catch (FinderException fe) {
+		} catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());
 		}
 	}
@@ -1212,8 +1265,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				 * @todo: implement
 				 */
 				this.groupHome = (GroupHome) IDOLookup.getHome(Group.class);
-			}
-			catch (RemoteException rme) {
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -1223,9 +1275,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public GroupRelationHome getGroupRelationHome() {
 		if (this.groupRelationHome == null) {
 			try {
-				this.groupRelationHome = (GroupRelationHome) IDOLookup.getHome(GroupRelation.class);
-			}
-			catch (RemoteException rme) {
+				this.groupRelationHome = (GroupRelationHome) IDOLookup
+						.getHome(GroupRelation.class);
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -1245,7 +1297,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String)
 	 */
-	public Group createGroup(String name) throws CreateException, RemoteException {
+	public Group createGroup(String name) throws CreateException,
+			RemoteException {
 		String description = "";
 		return createGroup(name, description);
 	}
@@ -1257,7 +1310,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String)
 	 */
-	public Group createGroup(String name, String description) throws CreateException, RemoteException {
+	public Group createGroup(String name, String description)
+			throws CreateException, RemoteException {
 		String generaltype = getGroupHome().getGroupType();
 		return createGroup(name, description, generaltype);
 	}
@@ -1269,20 +1323,24 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String)
 	 */
-	public Group createGroup(String name, String description, String type) throws CreateException, RemoteException {
+	public Group createGroup(String name, String description, String type)
+			throws CreateException, RemoteException {
 		return createGroup(name, description, type, -1);
 	}
 
 	/**
 	 * Creates a group and adds it under the default Domain (ICDomain)<br>
-	 * If createUnderDomainRoot is true it is added under the root (directly under
-	 * in the group tree) of the domain.
+	 * If createUnderDomainRoot is true it is added under the root (directly
+	 * under in the group tree) of the domain.
 	 * 
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String)
 	 */
-	public Group createGroup(String name, String description, String type, boolean createUnderDomainRoot) throws CreateException, RemoteException {
-		return createGroup(name, description, type, -1, -1, createUnderDomainRoot, null);
+	public Group createGroup(String name, String description, String type,
+			boolean createUnderDomainRoot) throws CreateException,
+			RemoteException {
+		return createGroup(name, description, type, -1, -1,
+				createUnderDomainRoot, null);
 	}
 
 	/**
@@ -1292,20 +1350,23 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String)
 	 */
-	public Group createGroupUnder(String name, String description, String type, Group parentGroup) throws CreateException, RemoteException {
+	public Group createGroupUnder(String name, String description, String type,
+			Group parentGroup) throws CreateException, RemoteException {
 		return createGroup(name, description, type, -1, -1, false, parentGroup);
 	}
 
 	/**
-	 * Creates a general group and adds it under the default Domain (IBDomain) and
-	 * under the group parentGroup.
+	 * Creates a general group and adds it under the default Domain (IBDomain)
+	 * and under the group parentGroup.
 	 * 
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String)
 	 */
-	public Group createGroupUnder(String name, String description, Group parentGroup) throws CreateException, RemoteException {
+	public Group createGroupUnder(String name, String description,
+			Group parentGroup) throws CreateException, RemoteException {
 		String generaltype = getGroupHome().getGroupType();
-		return createGroup(name, description, generaltype, -1, -1, false, parentGroup);
+		return createGroup(name, description, generaltype, -1, -1, false,
+				parentGroup);
 	}
 
 	/**
@@ -1315,7 +1376,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String, int)
 	 */
-	public Group createGroup(String name, String description, String type, int homePageID) throws CreateException, RemoteException {
+	public Group createGroup(String name, String description, String type,
+			int homePageID) throws CreateException, RemoteException {
 		return createGroup(name, description, type, -1, -1);
 	}
 
@@ -1326,8 +1388,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String, int)
 	 */
-	public Group createGroup(String name, String description, String type, int homePageID, int aliasID) throws CreateException, RemoteException {
-		return createGroup(name, description, type, homePageID, aliasID, true, null);
+	public Group createGroup(String name, String description, String type,
+			int homePageID, int aliasID) throws CreateException,
+			RemoteException {
+		return createGroup(name, description, type, homePageID, aliasID, true,
+				null);
 	}
 
 	/**
@@ -1337,15 +1402,24 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @see com.idega.user.business.GroupBusiness#createGroup(String, String,
 	 *      String, int)
 	 */
-	public Group createGroupUnder(String name, String description, String type, int homePageID, int aliasID, Group parentGroup) throws CreateException, RemoteException {
-		return createGroup(name, description, type, homePageID, aliasID, false, parentGroup);
+	public Group createGroupUnder(String name, String description, String type,
+			int homePageID, int aliasID, Group parentGroup)
+			throws CreateException, RemoteException {
+		return createGroup(name, description, type, homePageID, aliasID, false,
+				parentGroup);
 	}
 
-	public Group createGroup(String name, String description, String type, int homePageID, int aliasID, boolean createUnderDomainRoot, Group parentGroup) throws CreateException, RemoteException {
-		return createGroup(name, description, type, homePageID, -1, aliasID, createUnderDomainRoot, parentGroup);
+	public Group createGroup(String name, String description, String type,
+			int homePageID, int aliasID, boolean createUnderDomainRoot,
+			Group parentGroup) throws CreateException, RemoteException {
+		return createGroup(name, description, type, homePageID, -1, aliasID,
+				createUnderDomainRoot, parentGroup);
 	}
 
-	public Group createGroup(String name, String description, String type, int homePageID, int homeFolderID, int aliasID, boolean createUnderDomainRoot, Group parentGroup) throws CreateException, RemoteException {
+	public Group createGroup(String name, String description, String type,
+			int homePageID, int homeFolderID, int aliasID,
+			boolean createUnderDomainRoot, Group parentGroup)
+			throws CreateException, RemoteException {
 		Group newGroup;
 		newGroup = getGroupHome().create();
 		newGroup.setName(name);
@@ -1370,10 +1444,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 
 		if (createUnderDomainRoot) {
-			addGroupUnderDomainRoot(this.getIWApplicationContext().getDomain(), newGroup);
-		}
-		else {
-			addGroupUnderDomain(this.getIWApplicationContext().getDomain(), newGroup, null);
+			addGroupUnderDomainRoot(this.getIWApplicationContext().getDomain(),
+					newGroup);
+		} else {
+			addGroupUnderDomain(this.getIWApplicationContext().getDomain(),
+					newGroup, null);
 		}
 		if (parentGroup != null) {
 			parentGroup.addGroup(newGroup);
@@ -1386,8 +1461,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (this.fileHome == null) {
 			try {
 				this.fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-			}
-			catch (RemoteException rme) {
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -1397,8 +1471,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public ICFile createGroupHomeFolder(Group group) throws CreateException {
 		ICFile file = getICFileHome().create();
 		file.setName(group.getName());
-		file.setLocalizationKey(GROUP_HOME_FOLDER_LOCALIZATION_PREFIX + group.getGroupType());
-		file.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+		file.setLocalizationKey(GROUP_HOME_FOLDER_LOCALIZATION_PREFIX
+				+ group.getGroupType());
+		file
+				.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
 		file.setDescription("This is a home folder for a group");
 		file.store();
 
@@ -1408,23 +1484,24 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return file;
 	}
 
-	public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc) {
+	public Collection getAllAllowedGroupTypesForChildren(int groupId,
+			IWUserContext iwuc) {
 		// try to get the group
 		Group group;
 		try {
 			group = (groupId > -1) ? getGroupByGroupID(groupId) : null;
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage());
 		}
 		return getAllAllowedGroupTypesForChildren(group, iwuc);
 	}
 
 	/**
-	 * It is allowed and makes sense if the parameter group is null: In this case
-	 * alias and general group type is returned.
+	 * It is allowed and makes sense if the parameter group is null: In this
+	 * case alias and general group type is returned.
 	 */
-	public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc) {
+	public Collection getAllAllowedGroupTypesForChildren(Group group,
+			IWUserContext iwuc) {
 		GroupTypeHome groupTypeHome;
 		GroupType groupType;
 		String groupTypeString;
@@ -1434,10 +1511,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			if (iwuc.isSuperAdmin()) {
 				try {
 					if (groupTypeHome.getNumberOfVisibleGroupTypes() <= 0) {
-						((com.idega.data.GenericEntity) com.idega.data.IDOLookup.instanciateEntity(GroupType.class)).insertStartData();
+						((com.idega.data.GenericEntity) com.idega.data.IDOLookup
+								.instanciateEntity(GroupType.class))
+								.insertStartData();
 					}
-				}
-				catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				return groupTypeHome.findVisibleGroupTypes();
@@ -1446,29 +1524,28 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			if (group != null) {
 				groupTypeString = group.getGroupType();
 				groupType = groupTypeHome.findByPrimaryKey(groupTypeString);
-			}
-			else {
+			} else {
 				// okay, group is null, but we need an instance
 				// to get the alias and general group type
 				groupTypeString = "";
 				groupType = GroupTypeBMPBean.getStaticInstance();
 			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			throw new RuntimeException(ex.getMessage());
 		}
 
 		// get general and alias group type
-		GroupType generalType = findOrCreateGeneralGroupType(groupType, groupTypeHome);
-		GroupType aliasType = findOrCreateAliasGroupType(groupType, groupTypeHome);
+		GroupType generalType = findOrCreateGeneralGroupType(groupType,
+				groupTypeHome);
+		GroupType aliasType = findOrCreateAliasGroupType(groupType,
+				groupTypeHome);
 
 		ArrayList groupTypes = new ArrayList();
 		if (group == null) {
 			// first case: group is null
 			groupTypes.add(generalType);
 			groupTypes.add(aliasType);
-		}
-		else {
+		} else {
 
 			if (!groupType.getOnlySupportsSameTypeChildGroups()) {
 				// add same type
@@ -1480,20 +1557,22 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				// add children of type of selected group
 				addGroupTypeChildren(groupTypes, groupType);
 
-				// we only add general and alias types if there are no child types
+				// we only add general and alias types if there are no child
+				// types
 				// defined
 				if (groupTypes.size() <= typeSize) {
-					if (!generalType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
+					if (!generalType.getType().equals(groupTypeString)
+							&& !groupTypes.contains(groupType)) {
 						groupTypes.add(generalType);
 					}
 
-					if (!aliasType.getType().equals(groupTypeString) && !groupTypes.contains(groupType)) {
+					if (!aliasType.getType().equals(groupTypeString)
+							&& !groupTypes.contains(groupType)) {
 						groupTypes.add(aliasType);
 					}
 				}
 
-			}
-			else {
+			} else {
 				// so we can define a type that cannot have children
 				if (groupType.getSupportsSameTypeChildGroups()) {
 					groupTypes.add(groupType);
@@ -1518,7 +1597,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return ((GroupHome) IDOLookup.getHome(groupClass)).getGroupType();
 	}
 
-	public GroupType getGroupTypeFromString(String type) throws RemoteException, FinderException {
+	public GroupType getGroupTypeFromString(String type)
+			throws RemoteException, FinderException {
 		return getGroupTypeHome().findGroupTypeByGroupTypeString(type);
 	}
 
@@ -1528,7 +1608,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @param plugins
 	 * @return a collection of UserGroupPluginBusiness implementing classes
 	 */
-	protected Collection getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(Collection plugins) {
+	protected Collection getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(
+			Collection plugins) {
 
 		if (plugins == null || plugins.isEmpty()) {
 			return ListUtil.getEmptyList();
@@ -1540,19 +1621,17 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			UserGroupPlugInBusiness pluginBiz;
 			try {
 				ICObject icObject = element.getBusinessICObject();
-				if(icObject!=null){
-					pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(RefactorClassRegistry.forName(icObject.getClassName()));
+				if (icObject != null) {
+					pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(RefactorClassRegistry
+							.forName(icObject.getClassName()));
 					list.add(pluginBiz);
 				}
-				//else should we delete the record?
-			}
-			catch (IBOLookupException e) {
+				// else should we delete the record?
+			} catch (IBOLookupException e) {
 				e.printStackTrace();
-			}
-			catch (RemoteException e) {
+			} catch (RemoteException e) {
 				e.printStackTrace();
-			}
-			catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1560,23 +1639,25 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	/**
-	 * Gets a collection of UserGroupPluginBusiness beans that can operate on the
-	 * supplied group type
+	 * Gets a collection of UserGroupPluginBusiness beans that can operate on
+	 * the supplied group type
 	 * 
 	 * @param groupType
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPluginsForGroupType(String groupType) throws RemoteException {
+	public Collection getUserGroupPluginsForGroupType(String groupType)
+			throws RemoteException {
 
 		try {
-			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType));
-		}
-		catch (FinderException e) {
-			// no big deal, there are no plugins registered. Return an empty list
-		}
-		catch (IDORelationshipException e) {
-			// no big deal, there are no plugins registered. Return an empty list
+			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome()
+					.findRegisteredPlugInsForGroupType(groupType));
+		} catch (FinderException e) {
+			// no big deal, there are no plugins registered. Return an empty
+			// list
+		} catch (IDORelationshipException e) {
+			// no big deal, there are no plugins registered. Return an empty
+			// list
 		}
 
 		return ListUtil.getEmptyList();
@@ -1584,41 +1665,47 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	/**
-	 * Gets a collection of UserGroupPluginBusiness beans that can operate on the
-	 * supplied group
+	 * Gets a collection of UserGroupPluginBusiness beans that can operate on
+	 * the supplied group
 	 * 
 	 * @param group
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPluginsForGroup(Group group) throws RemoteException {
+	public Collection getUserGroupPluginsForGroup(Group group)
+			throws RemoteException {
 		try {
-			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForGroup(group));
-		}
-		catch (FinderException e) {
-			// no big deal, there are no plugins registered. Return an empty list
+			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome()
+					.findRegisteredPlugInsForGroup(group));
+		} catch (FinderException e) {
+			// no big deal, there are no plugins registered. Return an empty
+			// list
 		}
 
 		return ListUtil.getEmptyList();
 	}
 
 	/**
-	 * Gets a collection of UserGroupPluginBusiness beans that can operate on the
-	 * supplied user
+	 * Gets a collection of UserGroupPluginBusiness beans that can operate on
+	 * the supplied user
 	 * 
 	 * @param user
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPluginsForUser(User user) throws RemoteException {
+	public Collection getUserGroupPluginsForUser(User user)
+			throws RemoteException {
 		try {
-			// TODO finna allar gruppur tengdar thessum user og gera find fall sem
+			// TODO finna allar gruppur tengdar thessum user og gera find fall
+			// sem
 			// tekur inn i sig collection a groups
-			// THIS METHOD IS NOT FINISHED AND THE FIND METHOD ONLY GETS ALL PLUGINS
-			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForUser(user));
-		}
-		catch (FinderException e) {
-			// no big deal, there are no plugins registered. Return an empty list
+			// THIS METHOD IS NOT FINISHED AND THE FIND METHOD ONLY GETS ALL
+			// PLUGINS
+			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome()
+					.findRegisteredPlugInsForUser(user));
+		} catch (FinderException e) {
+			// no big deal, there are no plugins registered. Return an empty
+			// list
 		}
 
 		return ListUtil.getEmptyList();
@@ -1632,18 +1719,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	public Collection getUserGroupPlugins() throws RemoteException {
 		try {
-			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findAllPlugIns());
-		}
-		catch (FinderException e) {
-			// no big deal, there are no plugins registered. Return an empty list
+			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome()
+					.findAllPlugIns());
+		} catch (FinderException e) {
+			// no big deal, there are no plugins registered. Return an empty
+			// list
 		}
 
 		return ListUtil.getEmptyList();
 	}
 
 	/**
-	 * This method will try to find the parent of the group (if only one) and then
-	 * calls
+	 * This method will try to find the parent of the group (if only one) and
+	 * then calls
 	 * callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup)
 	 */
 	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group) {
@@ -1655,32 +1743,34 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group, parentGroup);
 	}
 
-	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group, Group parentGroup) {
+	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(
+			Group group, Group parentGroup) {
 		// get plugins and call the method
 		Collection pluginsForGroup;
 		try {
 			pluginsForGroup = getUserGroupPluginsForGroup(group);
 			Iterator plugs = pluginsForGroup.iterator();
 			while (plugs.hasNext()) {
-				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+				UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs
+						.next();
 				plugBiz.afterGroupCreateOrUpdate(group, parentGroup);
 			}
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			e.printStackTrace();
-		}
-		catch (CreateException e) {
+		} catch (CreateException e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group, Group parentGroup) throws RemoteException, RemoveException {
+	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group,
+			Group parentGroup) throws RemoteException, RemoveException {
 		// get plugins and call the method
 		Collection pluginsForGroup;
 		pluginsForGroup = getUserGroupPluginsForGroup(group);
 		Iterator plugs = pluginsForGroup.iterator();
 		while (plugs.hasNext()) {
-			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs.next();
+			UserGroupPlugInBusiness plugBiz = (UserGroupPlugInBusiness) plugs
+					.next();
 			plugBiz.beforeGroupRemove(group, parentGroup);
 		}
 	}
@@ -1689,34 +1779,39 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return (GroupTypeHome) this.getIDOHome(GroupType.class);
 	}
 
-	protected UserGroupPlugInHome getUserGroupPlugInHome() throws RemoteException {
+	protected UserGroupPlugInHome getUserGroupPlugInHome()
+			throws RemoteException {
 		return (UserGroupPlugInHome) this.getIDOHome(UserGroupPlugIn.class);
 	}
 
 	/**
-	 * Adds a group direcly under the domain (right in top under the domain in the
-	 * group tree). This adds the group with GroupRelationType Top to the domain.
+	 * Adds a group direcly under the domain (right in top under the domain in
+	 * the group tree). This adds the group with GroupRelationType Top to the
+	 * domain.
 	 * 
 	 * @param domain
 	 * @param group
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
-	public void addGroupUnderDomainRoot(ICDomain domain, Group group) throws CreateException, RemoteException {
+	public void addGroupUnderDomainRoot(ICDomain domain, Group group)
+			throws CreateException, RemoteException {
 		GroupDomainRelationTypeHome gdrHome = (GroupDomainRelationTypeHome) getIDOHome(GroupDomainRelationType.class);
 		GroupDomainRelationType domRelType;
 		try {
 			domRelType = gdrHome.getTopNodeRelationType();
 			addGroupUnderDomain(domain, group, domRelType);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			logWarning("Error finding GroupRelationType=TOP when adding group under domain");
 			log(e);
 		}
 	}
 
-	public void addGroupUnderDomain(ICDomain domain, Group group, GroupDomainRelationType type) throws CreateException, RemoteException {
-		GroupDomainRelation relation = (GroupDomainRelation) IDOLookup.create(GroupDomainRelation.class);
+	public void addGroupUnderDomain(ICDomain domain, Group group,
+			GroupDomainRelationType type) throws CreateException,
+			RemoteException {
+		GroupDomainRelation relation = (GroupDomainRelation) IDOLookup
+				.create(GroupDomainRelation.class);
 		relation.setDomain(domain);
 		relation.setRelatedGroup(group);
 
@@ -1744,13 +1839,18 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
-	public Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException {
+	public Address updateGroupMainAddressOrCreateIfDoesNotExist(
+			Integer groupId, String streetNameAndNumber, Integer postalCodeId,
+			String countryName, String city, String province, String poBox)
+			throws CreateException, RemoteException {
 		Address address = null;
 		if (streetNameAndNumber != null && groupId != null) {
 			try {
 				AddressBusiness addressBiz = getAddressBusiness();
-				String streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
-				String streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
+				String streetName = addressBiz
+						.getStreetNameFromAddressString(streetNameAndNumber);
+				String streetNumber = addressBiz
+						.getStreetNumberFromAddressString(streetNameAndNumber);
 
 				Group group = getGroupByGroupID(groupId.intValue());
 				address = getGroupMainAddress(group);
@@ -1758,12 +1858,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				Country country = null;
 
 				if (countryName != null) {
-					country = ((CountryHome) getIDOHome(Country.class)).findByCountryName(countryName);
+					country = ((CountryHome) getIDOHome(Country.class))
+							.findByCountryName(countryName);
 				}
 
 				PostalCode code = null;
 				if (postalCodeId != null) {
-					code = ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
+					code = ((PostalCodeHome) getIDOHome(PostalCode.class))
+							.findByPrimaryKey(postalCodeId);
 				}
 
 				boolean addAddress = false;
@@ -1803,14 +1905,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				if (addAddress) {
 					group.addAddress(address);
 				}
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				e.printStackTrace();
-				System.err.println("Failed to update or create address for groupid : " + groupId.toString());
+				System.err
+						.println("Failed to update or create address for groupid : "
+								+ groupId.toString());
 			}
 
-		}
-		else {
+		} else {
 			throw new CreateException("No streetname or userId is null!");
 		}
 
@@ -1826,7 +1928,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * 
 	 * @returns the address if found or null if not.
 	 */
-	public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
+	public Address getGroupMainAddress(Group group) throws RemoteException,
+			IDOLookupException, IDOCompositePrimaryKeyException,
+			IDORelationshipException {
 		AddressType type = getAddressHome().getAddressType1();
 		Collection coll = group.getAddresses(type);
 		if (coll == null || coll.isEmpty()) {
@@ -1839,9 +1943,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public AddressHome getAddressHome() {
 		if (this.addressHome == null) {
 			try {
-				this.addressHome = (AddressHome) IDOLookup.getHome(Address.class);
-			}
-			catch (RemoteException rme) {
+				this.addressHome = (AddressHome) IDOLookup
+						.getHome(Address.class);
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -1856,8 +1960,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			// }
 			// return (Phone[])
 			// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).findRelated(com.idega.core.data.PhoneBMPBean.getStaticInstance(Phone.class));
-		}
-		catch (EJBException ex) {
+		} catch (EJBException ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -1866,7 +1969,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	/**
 	 * deprecated
 	 * 
-	 *  (non-Javadoc)
+	 * (non-Javadoc)
+	 * 
 	 * @see com.idega.user.business.GroupBusiness#getGroupEmail(com.idega.user.data.Group)
 	 * 
 	 * @deprecated use getGroupMainEmail
@@ -1875,9 +1979,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public Email getGroupEmail(Group group) {
 		try {
 			return getGroupMainEmail(group);
-		}
-		catch (Exception ex) {
-			//ex.printStackTrace();
+		} catch (Exception ex) {
+			// ex.printStackTrace();
 			return null;
 		}
 	}
@@ -1886,26 +1989,27 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		EmailHome home = getEmailHome();
 		try {
 			return home.findMainEmailForGroup(group);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			String message = null;
 			if (group != null) {
 				message = group.getName();
 			}
 			throw new NoEmailFoundException(message);
-		}
-		catch (RemoteException e) {
+		} catch (RemoteException e) {
 			throw new IBORuntimeException();
 		}
-	}	
-	
+	}
+
 	/**
-	 * updates or creates the main email address (that is the email with type "main"l)
+	 * updates or creates the main email address (that is the email with type
+	 * "main"l)
 	 */
-	public Email updateGroupMail(Group group, String email) throws CreateException, RemoteException {
+	public Email updateGroupMail(Group group, String email)
+			throws CreateException, RemoteException {
 		/**
-		 * Updates or creates the main email address (that is the email with type "main"l)
-		 * if the specifield email is empty (that is null or empty) nothing happens.
+		 * Updates or creates the main email address (that is the email with
+		 * type "main"l) if the specifield email is empty (that is null or
+		 * empty) nothing happens.
 		 */
 		if (StringHandler.isEmpty(email)) {
 			return null;
@@ -1915,15 +2019,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			// note: call of the following method does some repairing
 			// + if main mail is not set yet a main email is figured out
 			mainEmail = getGroupMainEmail(group);
-		}
-		catch (NoEmailFoundException ex) {
+		} catch (NoEmailFoundException ex) {
 			mainEmail = null;
 		}
 		// email was found
 		if (mainEmail != null) {
 			String oldAddress = mainEmail.getEmailAddress();
 			// is it an update at all?
-			if (! email.equals(oldAddress)) {
+			if (!email.equals(oldAddress)) {
 				mainEmail.setEmailAddress(email);
 				mainEmail.store();
 			}
@@ -1938,11 +2041,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			mainEmail.store();
 			group.addEmail(mainEmail);
 			return mainEmail;
-		}
-		catch (FinderException ex) {
+		} catch (FinderException ex) {
 			throw new CreateException("Main email type could not be found");
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RemoteException(e.getMessage());
 		}
 	}
@@ -1951,27 +2052,27 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (this.emailHome == null) {
 			try {
 				this.emailHome = (EmailHome) IDOLookup.getHome(Email.class);
-			}
-			catch (RemoteException rme) {
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
 		return this.emailHome;
 	}
-	
+
 	public EmailTypeHome getEmailTypeHome() {
 		if (this.emailTypeHome == null) {
 			try {
-				this.emailTypeHome = (EmailTypeHome) IDOLookup.getHome(EmailType.class);
-			}
-			catch (RemoteException rme) {
+				this.emailTypeHome = (EmailTypeHome) IDOLookup
+						.getHome(EmailType.class);
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
 		return this.emailTypeHome;
 	}
 
-	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
+	public void updateGroupPhone(Group group, int phoneTypeId,
+			String phoneNumber) throws EJBException {
 		try {
 			Phone phone = getGroupPhone(group, phoneTypeId);
 			boolean insert = false;
@@ -1991,15 +2092,15 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				group.addPhone(phone);
 			}
 
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new EJBException(e.getMessage());
 		}
 
 	}
 
-	public Phone getGroupPhone(Group group, int phoneTypeId) throws RemoteException {
+	public Phone getGroupPhone(Group group, int phoneTypeId)
+			throws RemoteException {
 		try {
 			Phone[] result = this.getGroupPhones(group);
 			// IDOLegacyEntity[] result =
@@ -2012,8 +2113,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				}
 			}
 			return null;
-		}
-		catch (EJBException ex) {
+		} catch (EJBException ex) {
 			ex.printStackTrace();
 			return null;
 		}
@@ -2023,8 +2123,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (this.phoneHome == null) {
 			try {
 				this.phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
-			}
-			catch (RemoteException rme) {
+			} catch (RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
 			}
 		}
@@ -2037,22 +2136,26 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * 
 	 * @param group
 	 * @param parentGroup
-	 *          can be null
+	 *            can be null
 	 * @return boolean
 	 * @throws RemoteException
 	 * @throws RemoveException
 	 */
-	public boolean isGroupRemovable(Group group, Group parentGroup) throws RemoteException, RemoveException {
+	public boolean isGroupRemovable(Group group, Group parentGroup)
+			throws RemoteException, RemoveException {
 		boolean canRemove = false;
 		// childCount checks only groups as children
-		canRemove = ((group.getGroupType().equals("alias")) || (group.getChildCount() <= 0 && (getUserBusiness().getUsersInGroup(group).isEmpty())));
+		canRemove = ((group.getGroupType().equals("alias")) || (group
+				.getChildCount() <= 0 && (getUserBusiness().getUsersInGroup(
+				group).isEmpty())));
 		if (canRemove) {
 			callAllUserGroupPluginBeforeGroupRemoveMethod(group, parentGroup);
 		}
 		return canRemove;
 	}
 
-	public String getNameOfGroupWithParentName(Group group, Collection parentGroups) {
+	public String getNameOfGroupWithParentName(Group group,
+			Collection parentGroups) {
 		StringBuffer buffer = new StringBuffer();
 		Collection parents = parentGroups;
 		buffer.append(group.getName()).append(" ");
@@ -2074,96 +2177,98 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * 25.08.2004 Database access is minimized by passing a Map of cached
 	 * groupParents and Map of cached groups to the method
 	 */
-	public String getNameOfGroupWithParentName(Group group, Map cachedParents, Map cachedGroups) {
-		return getNameOfGroupWithParentName(group, getParentGroups(group, cachedParents, cachedGroups));
+	public String getNameOfGroupWithParentName(Group group, Map cachedParents,
+			Map cachedGroups) {
+		return getNameOfGroupWithParentName(group, getParentGroups(group,
+				cachedParents, cachedGroups));
 	}
 
 	private UserBusiness getUserBusiness() {
 		IWApplicationContext context = getIWApplicationContext();
 		try {
-			return (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(context, UserBusiness.class);
-		}
-		catch (java.rmi.RemoteException rme) {
+			return (UserBusiness) com.idega.business.IBOLookup
+					.getServiceInstance(context, UserBusiness.class);
+		} catch (java.rmi.RemoteException rme) {
 			throw new RuntimeException(rme.getMessage());
 		}
 	}
 
 	/**
-	 * Creates a visible group type from the supplied group type string if it does
-	 * not already exist, if it exists it will update the group types visibilty to
-	 * true.
+	 * Creates a visible group type from the supplied group type string if it
+	 * does not already exist, if it exists it will update the group types
+	 * visibilty to true.
 	 * 
 	 * @param groupType
 	 * @return a GroupType bean
 	 * @throws RemoteException
 	 */
-	public GroupType createVisibleGroupType(String groupType) throws RemoteException {
+	public GroupType createVisibleGroupType(String groupType)
+			throws RemoteException {
 		return createGroupTypeOrUpdate(groupType, true);
 	}
 
 	/**
-	 * Creates a group type that has the visibility supplied if the type does not
-	 * already exist. If it exist this method will update its visibility.
+	 * Creates a group type that has the visibility supplied if the type does
+	 * not already exist. If it exist this method will update its visibility.
 	 * 
 	 * @param groupType
 	 * @param visible
 	 * @return a GroupType bean
 	 * @throws RemoteException
 	 */
-	public GroupType createGroupTypeOrUpdate(String groupType, boolean visible) throws RemoteException {
+	public GroupType createGroupTypeOrUpdate(String groupType, boolean visible)
+			throws RemoteException {
 		GroupTypeHome home = getGroupTypeHome();
 		try {
 			GroupType type = home.findByPrimaryKey(groupType);
 			type.setVisibility(visible);
 			return type;
-		}
-		catch (FinderException findEx) {
+		} catch (FinderException findEx) {
 			try {
 				GroupType type = home.create();
 				type.setType(groupType);
 				type.setVisibility(visible);
 				type.store();
 				return type;
-			}
-			catch (CreateException createEx) {
+			} catch (CreateException createEx) {
 				throw new RuntimeException(createEx.getMessage());
 			}
 		}
 	}
 
-	private GroupType findOrCreateAliasGroupType(GroupType aGroupType, GroupTypeHome home) {
+	private GroupType findOrCreateAliasGroupType(GroupType aGroupType,
+			GroupTypeHome home) {
 		try {
-			GroupType type = home.findByPrimaryKey(home.getAliasGroupTypeString());
+			GroupType type = home.findByPrimaryKey(home
+					.getAliasGroupTypeString());
 			return type;
-		}
-		catch (FinderException findEx) {
+		} catch (FinderException findEx) {
 			try {
 				GroupType type = home.create();
 				type.setGroupTypeAsAliasGroup();
 				type.setVisibility(true);
 				type.store();
 				return type;
-			}
-			catch (CreateException createEx) {
+			} catch (CreateException createEx) {
 				throw new RuntimeException(createEx.getMessage());
 			}
 		}
 	}
 
-	private GroupType findOrCreateGeneralGroupType(GroupType aGroupType, GroupTypeHome home) {
+	private GroupType findOrCreateGeneralGroupType(GroupType aGroupType,
+			GroupTypeHome home) {
 		try {
-			GroupType type = home.findByPrimaryKey(home.getGeneralGroupTypeString());
+			GroupType type = home.findByPrimaryKey(home
+					.getGeneralGroupTypeString());
 			return type;
-		}
-		catch (FinderException findEx) {
+		} catch (FinderException findEx) {
 			try {
 				GroupType type = home.create();
 				type.setGroupTypeAsGeneralGroup();
 				type.setVisibility(true);
 				type.store();
 				return type;
-			}
-			catch (CreateException createEx) {
+			} catch (CreateException createEx) {
 				throw new RuntimeException(createEx.getMessage());
 			}
 		}
@@ -2173,7 +2278,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Gives all parent groups owners' primary groups, permit permission to this
 	 * group. The permission to give others permissions to this group.
 	 */
-	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(Group group) throws RemoteException {
+	public void applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(
+			Group group) throws RemoteException {
 		UserBusiness userBiz = getUserBusiness();
 		String groupId = group.getPrimaryKey().toString();
 		AccessController access = getAccessController();
@@ -2183,7 +2289,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			Iterator iter = col.iterator();
 			while (iter.hasNext()) {
 				Group parent = (Group) iter.next();
-				Collection owners = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(parent);
+				Collection owners = AccessControl
+						.getAllOwnerGroupPermissionsReverseForGroup(parent);
 
 				if (owners != null && !owners.isEmpty()) {
 					Iterator iter2 = owners.iterator();
@@ -2193,12 +2300,17 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 						User user = userBiz.getUser(perm.getGroupID());
 						Group primary = user.getPrimaryGroup();
 						if (primary != null) {
-							String primaryGroupId = primary.getPrimaryKey().toString();
+							String primaryGroupId = primary.getPrimaryKey()
+									.toString();
 							try {
 								// the owners primary group
-								access.setPermission(AccessController.CATEGORY_GROUP_ID, this.getIWApplicationContext(), primaryGroupId, groupId, AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
-							}
-							catch (Exception e) {
+								access.setPermission(
+										AccessController.CATEGORY_GROUP_ID,
+										this.getIWApplicationContext(),
+										primaryGroupId, groupId,
+										AccessController.PERMISSION_KEY_PERMIT,
+										Boolean.TRUE);
+							} catch (Exception e) {
 								e.printStackTrace();
 							}
 						}
@@ -2218,9 +2330,9 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		AccessController access = getAccessController();
 
 		try {
-			access.setAsOwner(group, ((Integer) user.getPrimaryKey()).intValue(), this.getIWApplicationContext());
-		}
-		catch (Exception ex) {
+			access.setAsOwner(group, ((Integer) user.getPrimaryKey())
+					.intValue(), this.getIWApplicationContext());
+		} catch (Exception ex) {
 			ex.printStackTrace();
 
 		}
@@ -2235,7 +2347,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Give the current users primary group all permission except for owner
 	 * 
 	 */
-	public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(IWUserContext iwuc, Group group) {
+	public void applyAllGroupPermissionsForGroupToCurrentUsersPrimaryGroup(
+			IWUserContext iwuc, Group group) {
 
 		User user = iwuc.getCurrentUser();
 
@@ -2247,44 +2360,56 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Give the users primary group all permission except for owner
 	 * 
 	 */
-	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(Group group, User user) {
+	public void applyAllGroupPermissionsForGroupToUsersPrimaryGroup(
+			Group group, User user) {
 
 		Group groupToGetPermissions = user.getPrimaryGroup();
 		applyAllGroupPermissionsForGroupToGroup(group, groupToGetPermissions);
 	}
 
 	/**
-	 * This methods gives the second group specified all permissions to the other
-	 * groups except for owner permission (set to users not groups). The
+	 * This methods gives the second group specified all permissions to the
+	 * other groups except for owner permission (set to users not groups). The
 	 * permissions include: view,edit,create,remove users, and the permission to
 	 * give others permissions to it.
 	 * 
 	 * @param iwac
 	 * @param groupToSetPermissionTo
-	 *          The group the permission apply to.
+	 *            The group the permission apply to.
 	 * @param groupToGetPermissions
-	 *          The group that will own the permissions e.g. get the rights to do
-	 *          the stuff.
+	 *            The group that will own the permissions e.g. get the rights to
+	 *            do the stuff.
 	 */
-	public void applyAllGroupPermissionsForGroupToGroup(Group groupToSetPermissionTo, Group groupToGetPermissions) {
+	public void applyAllGroupPermissionsForGroupToGroup(
+			Group groupToSetPermissionTo, Group groupToGetPermissions) {
 		AccessController access = getAccessController();
 		try {
 			IWApplicationContext iwac = this.getIWApplicationContext();
 			String groupId = groupToGetPermissions.getPrimaryKey().toString();
-			String theGroupIDToSetPermissionTo = groupToSetPermissionTo.getPrimaryKey().toString();
+			String theGroupIDToSetPermissionTo = groupToSetPermissionTo
+					.getPrimaryKey().toString();
 
 			// create permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac, groupId, theGroupIDToSetPermissionTo, AccessController.PERMISSION_KEY_CREATE, Boolean.TRUE);
+			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
+					groupId, theGroupIDToSetPermissionTo,
+					AccessController.PERMISSION_KEY_CREATE, Boolean.TRUE);
 			// edit permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac, groupId, theGroupIDToSetPermissionTo, AccessController.PERMISSION_KEY_EDIT, Boolean.TRUE);
+			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
+					groupId, theGroupIDToSetPermissionTo,
+					AccessController.PERMISSION_KEY_EDIT, Boolean.TRUE);
 			// delete permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac, groupId, theGroupIDToSetPermissionTo, AccessController.PERMISSION_KEY_DELETE, Boolean.TRUE);
+			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
+					groupId, theGroupIDToSetPermissionTo,
+					AccessController.PERMISSION_KEY_DELETE, Boolean.TRUE);
 			// view permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac, groupId, theGroupIDToSetPermissionTo, AccessController.PERMISSION_KEY_VIEW, Boolean.TRUE);
+			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
+					groupId, theGroupIDToSetPermissionTo,
+					AccessController.PERMISSION_KEY_VIEW, Boolean.TRUE);
 			// permission to give other permission
-			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac, groupId, theGroupIDToSetPermissionTo, AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
-		}
-		catch (Exception ex) {
+			access.setPermission(AccessController.CATEGORY_GROUP_ID, iwac,
+					groupId, theGroupIDToSetPermissionTo,
+					AccessController.PERMISSION_KEY_PERMIT, Boolean.TRUE);
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 	}
@@ -2296,17 +2421,21 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @param groupToGetInheritanceFrom
 	 * @param groupToInheritPermissions
 	 */
-	public void applyPermissionControllingFromGroupToGroup(Group groupToGetInheritanceFrom, Group groupToInheritPermissions) {
+	public void applyPermissionControllingFromGroupToGroup(
+			Group groupToGetInheritanceFrom, Group groupToInheritPermissions) {
 
 		if (groupToGetInheritanceFrom != null) {
 			// is controller
 			if (groupToGetInheritanceFrom.isPermissionControllingGroup()) {
-				groupToInheritPermissions.setPermissionControllingGroup(groupToGetInheritanceFrom);
+				groupToInheritPermissions
+						.setPermissionControllingGroup(groupToGetInheritanceFrom);
 				groupToInheritPermissions.store();
 			}
 			// is being controlled
 			if (groupToGetInheritanceFrom.getPermissionControllingGroupID() > 0) {
-				groupToInheritPermissions.setPermissionControllingGroup(groupToGetInheritanceFrom.getPermissionControllingGroup());
+				groupToInheritPermissions
+						.setPermissionControllingGroup(groupToGetInheritanceFrom
+								.getPermissionControllingGroup());
 				groupToInheritPermissions.store();
 			}
 
@@ -2315,25 +2444,27 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	/**
-	 * This method should only be called once for a newly created group if it was
-	 * done in code. This method is automatically called if the group is created
-	 * in the user application. Sets the user as the owner of the group and gives
-	 * his primary group all group permissions to the group. Also gives all
-	 * owners' primary groups of the groups parent groups permission to give
-	 * others permission to this group. Finally checks the groups parent if any
-	 * for inherited permissions and sets them.
+	 * This method should only be called once for a newly created group if it
+	 * was done in code. This method is automatically called if the group is
+	 * created in the user application. Sets the user as the owner of the group
+	 * and gives his primary group all group permissions to the group. Also
+	 * gives all owners' primary groups of the groups parent groups permission
+	 * to give others permission to this group. Finally checks the groups parent
+	 * if any for inherited permissions and sets them.
 	 * 
 	 * @param newlyCreatedGroup
 	 * @param user
 	 * @throws RemoteException
 	 */
-	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(Group newlyCreatedGroup, User user) throws RemoteException {
+	public void applyOwnerAndAllGroupPermissionsToNewlyCreatedGroupForUserAndHisPrimaryGroup(
+			Group newlyCreatedGroup, User user) throws RemoteException {
 
 		// set user as owner of group
 		applyUserAsGroupsOwner(newlyCreatedGroup, user);
 
 		// give the users primary group all permission except for owner
-		applyAllGroupPermissionsForGroupToUsersPrimaryGroup(newlyCreatedGroup, user);
+		applyAllGroupPermissionsForGroupToUsersPrimaryGroup(newlyCreatedGroup,
+				user);
 
 		// owners should get the permission to give permission for this group
 		applyPermitPermissionToGroupsParentGroupOwnersPrimaryGroups(newlyCreatedGroup);
@@ -2343,13 +2474,51 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		Collection parentGroups = newlyCreatedGroup.getParentGroups();
 
 		if (parentGroups != null && !parentGroups.isEmpty()) {
-			applyPermissionControllingFromGroupToGroup((Group) parentGroups.iterator().next(), newlyCreatedGroup);
+			applyPermissionControllingFromGroupToGroup((Group) parentGroups
+					.iterator().next(), newlyCreatedGroup);
+
+			addOwnersFromParentGroups(newlyCreatedGroup);
 		}
 
 		// apply permissions that have been marked to be inherited to this group
 		// from its parents
 		applyInheritedPermissionsToGroup(newlyCreatedGroup);
 
+	}
+
+	public void addOwnersFromParentGroups(Group newlyCreatedGroup)
+			throws RemoteException {
+		Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
+		if (recursiveParents != null && !recursiveParents.isEmpty()) {
+			List parentOwners = new ArrayList();
+
+			Iterator it = recursiveParents.iterator();
+			while (it.hasNext()) {
+				Group parent = (Group) it.next();
+				Collection permissions = AccessControl
+						.getAllOwnerGroupPermissionsReverseForGroup(parent);
+				// we only want active ones
+				Iterator permissionsIter = permissions.iterator();
+				while (permissionsIter.hasNext()) {
+					ICPermission perm = (ICPermission) permissionsIter.next();
+					if (perm.getPermissionValue()) {
+						try {
+							parentOwners.add(getUserByID(perm.getGroupID()));
+						} catch (FinderException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			}
+			
+			if (!parentOwners.isEmpty()) {
+				Iterator iter = parentOwners.iterator();
+				while (iter.hasNext()) {
+					User owner = (User) iter.next();
+					applyUserAsGroupsOwner(newlyCreatedGroup, owner);					
+				}
+			}
+		}
 	}
 
 	/**
@@ -2359,24 +2528,30 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @param newlyCreatedGroup
 	 * @throws RemoteException
 	 */
-	public void applyInheritedPermissionsToGroup(Group newlyCreatedGroup) throws RemoteException {
+	public void applyInheritedPermissionsToGroup(Group newlyCreatedGroup)
+			throws RemoteException {
 		AccessController access = getAccessController();
 		Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
 		if (recursiveParents != null && !recursiveParents.isEmpty()) {
 			try {
-				Collection permissions = AccessControl.getPermissionHome().findAllGroupPermissionsToInheritByGroupCollection(recursiveParents);
+				Collection permissions = AccessControl.getPermissionHome()
+						.findAllGroupPermissionsToInheritByGroupCollection(
+								recursiveParents);
 				Iterator iter = permissions.iterator();
 				while (iter.hasNext()) {
 					ICPermission perm = (ICPermission) iter.next();
 					try {
-						access.setPermission(AccessController.CATEGORY_GROUP_ID, this.getIWApplicationContext(), Integer.toString(perm.getGroupID()), newlyCreatedGroup.getPrimaryKey().toString(), perm.getPermissionString(), Boolean.TRUE);
-					}
-					catch (Exception e1) {
+						access.setPermission(
+								AccessController.CATEGORY_GROUP_ID, this
+										.getIWApplicationContext(), Integer
+										.toString(perm.getGroupID()),
+								newlyCreatedGroup.getPrimaryKey().toString(),
+								perm.getPermissionString(), Boolean.TRUE);
+					} catch (Exception e1) {
 						e1.printStackTrace();
 					}
 				}
-			}
-			catch (FinderException e) {
+			} catch (FinderException e) {
 				e.printStackTrace();// no parents, might happen not really an
 				// error
 			}
@@ -2388,12 +2563,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * this group
 	 * 
 	 * @param group
-	 *          to get owners for
+	 *            to get owners for
 	 * @return
 	 * @throws RemoteException
 	 */
 	public Collection getOwnerUsersForGroup(Group group) throws RemoteException {
-		Collection permissions = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(group);
+		Collection permissions = AccessControl
+				.getAllOwnerGroupPermissionsReverseForGroup(group);
 		ArrayList listOfOwnerUsers = new ArrayList();
 		UserBusiness userBiz = getUserBusiness();
 
@@ -2420,16 +2596,19 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		Collection groups;
 		try {
 			groups = getGroupHome().findGroupsByMetaData(key, value);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			return ListUtil.getEmptyList();
 		}
 
 		return groups;
 	}
 
-	private Collection getParentGroupsRecursiveUsingStoredProcedure(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
-		return ParentGroupsRecursiveProcedure.getInstance().findParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes);
+	private Collection getParentGroupsRecursiveUsingStoredProcedure(
+			Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+			throws EJBException {
+		return ParentGroupsRecursiveProcedure.getInstance()
+				.findParentGroupsRecursive(aGroup, groupTypes,
+						returnSpecifiedGroupTypes);
 	}
 
 	private boolean useStoredProsedureGettingParentGroupsRecursive() {
@@ -2447,23 +2626,23 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		try {
 			GroupTreeRefreshThread thread = new GroupTreeRefreshThread();
 			thread.start();
-		}
-		catch (RuntimeException e) {
+		} catch (RuntimeException e) {
 			e.printStackTrace();
 		}
 	}
 
 	public void refreshGroupTreeSnapShot() throws EJBException {
 		try {
-			Collection domainTopNodes = this.getIWApplicationContext().getDomain().getTopLevelGroupsUnderDomain();
+			Collection domainTopNodes = this.getIWApplicationContext()
+					.getDomain().getTopLevelGroupsUnderDomain();
 			NestedSetsContainer nsc = new NestedSetsContainer();
 			Iterator iter = domainTopNodes.iterator();
 			while (iter.hasNext()) {
-				nsc.add(GroupTreeImageProcedure.getInstance().getGroupTree((Group) iter.next()));
+				nsc.add(GroupTreeImageProcedure.getInstance().getGroupTree(
+						(Group) iter.next()));
 			}
 			this.groupTreeSnapShot = nsc;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new EJBException(e);
 		}
 	}
@@ -2471,7 +2650,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public boolean userGroupTreeImageProcedureTopNodeSearch() {
 		return GroupTreeImageProcedure.getInstance().isAvailable();
 	}
-	
+
 	/**
 	 * Returns info about groups
 	 */
@@ -2479,7 +2658,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		if (uniqueIds == null) {
 			return null;
 		}
-		
+
 		List groupsData = new ArrayList();
 		GroupDataBean dataBean = null;
 		Group group = null;
@@ -2492,47 +2671,48 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			}
 			if (group != null) {
 				dataBean = new GroupDataBean();
-				
-				//	Simple data
+
+				// Simple data
 				dataBean.setName(group.getName());
 				dataBean.setDescription(group.getDescription());
 				dataBean.setExtraInfo(group.getExtraInfo());
 				dataBean.setHomePageUrl(group.getHomePageURL());
 				dataBean.setShortName(group.getShortName());
-				
-				//	Complex data (address, phone, fax, emails)
+
+				// Complex data (address, phone, fax, emails)
 				try {
-					dataBean.setAddress(getAddressParts(getGroupMainAddress(group)));
+					dataBean
+							.setAddress(getAddressParts(getGroupMainAddress(group)));
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
 				setPhoneAndFax(dataBean, group);
 				dataBean.setEmailsAddresses(getEmails(group));
-				
-				//	Adding to list
+
+				// Adding to list
 				groupsData.add(dataBean);
 			}
 		}
-		
+
 		return groupsData;
 	}
-	
+
 	private List getEmails(Group group) {
 		if (group == null) {
 			return null;
 		}
-		
+
 		Collection emails = group.getEmails();
 		if (emails == null) {
 			return null;
 		}
-		
+
 		List emailsAddresses = new ArrayList();
-		
+
 		Iterator emailIter = emails.iterator();
 		Email email = null;
 		Object o = null;
-		for (Iterator it = emailIter; it.hasNext(); ) {
+		for (Iterator it = emailIter; it.hasNext();) {
 			o = it.next();
 			if (o instanceof Email) {
 				email = (Email) o;
@@ -2541,12 +2721,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 		return emailsAddresses;
 	}
-	
+
 	private void setPhoneAndFax(GroupDataBean dataBean, Group group) {
 		if (dataBean == null || group == null) {
 			return;
 		}
-		
+
 		Collection phones = group.getPhones();
 		if (phones == null) {
 			return;
@@ -2554,13 +2734,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		Iterator phoneIter = phones.iterator();
 		Object o = null;
 		Phone phoneObj = null;
-		for (Iterator it = phoneIter; it.hasNext(); ) {
+		for (Iterator it = phoneIter; it.hasNext();) {
 			o = it.next();
 			if (o instanceof Phone) {
 				phoneObj = (Phone) o;
 				if (phoneObj.getPhoneTypeId() == PhoneType.WORK_PHONE_ID) {
 					dataBean.setPhoneNumber(phoneObj.getNumber());
-				} else { 
+				} else {
 					if (phoneObj.getPhoneTypeId() == PhoneType.FAX_NUMBER_ID) {
 						dataBean.setFaxNumber(phoneObj.getNumber());
 					}
@@ -2568,12 +2748,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			}
 		}
 	}
-	
+
 	public AddressData getAddressParts(Address address) {
 		if (address == null) {
 			return null;
 		}
-		
+
 		AddressData addressData = new AddressData();
 		addressData.setStreetAddress(address.getStreetAddress());
 		PostalCode postalCode = address.getPostalCode();
@@ -2610,11 +2790,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 		public void run() {
 			try {
-				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:" + this.randID + "'");
+				log("[GroupBusiness]: fetch grouptree, new thread started 'randID:"
+						+ this.randID + "'");
 				refreshGroupTreeSnapShot();
-				log("[GroupBusiness]: fetch grouptree, thread done 'randID:" + this.randID + "'");
-			}
-			catch (EJBException e) {
+				log("[GroupBusiness]: fetch grouptree, thread done 'randID:"
+						+ this.randID + "'");
+			} catch (EJBException e) {
 				e.printStackTrace();
 			}
 		}

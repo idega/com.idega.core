@@ -1386,12 +1386,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public void setPermission(
+			int permissionCategory,
+			IWApplicationContext iwac,
+			String permissionGroupId,
+			String identifier,
+			String permissionKey,
+			Boolean permissionValue)
+			throws Exception {
+		this.setPermission(permissionCategory, iwac, permissionGroupId, identifier, permissionKey, permissionValue, false);
+	}
+	
+	public void setPermission(
 		int permissionCategory,
 		IWApplicationContext iwac,
 		String permissionGroupId,
 		String identifier,
 		String permissionKey,
-		Boolean permissionValue)
+		Boolean permissionValue, boolean inheritToChildren)
 		throws Exception {
 		
 		ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
@@ -1669,6 +1680,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permission.setPermissionString(permissionKey);
 			//        permission.setPermissionStringValue();
 			permission.setPermissionValue(permissionValue);
+			
+			if (inheritToChildren) {
+				permission.setToInheritToChildren();
+			} else {
+				permission.setToNOTInheritToChildren();
+			}
 			permission.insert();
 		}
 		else { //updating
@@ -1679,6 +1696,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				} else {
 					permission.setPassive();
 				}
+			}
+			if (inheritToChildren) {
+				permission.setToInheritToChildren();
+			} else {
+				permission.setToNOTInheritToChildren();
 			}
 			permission.update();
 		}

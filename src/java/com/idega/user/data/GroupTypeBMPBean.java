@@ -44,6 +44,9 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 	private static final String COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE = "INSTANCES_AUTO_CREATED";
 	private static final String COLUMN_SUPPORTS_SAME_CHILD_TYPE = "SAME_CHILD_TYPE";
 	private static final String COLUMN_SAME_CHILD_TYPE_ONLY = "SAME_CHILD_TYPE_ONLY";
+	
+	private static final String COLUMN_ALLOWS_PERMISSIONS = "allows_permissions";
+	
 	private static final String TYPE_GENERAL_GROUP = "general";
 	
 	public static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
@@ -63,6 +66,8 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		this.addAttribute(COLUMN_MAX_INSTANCES_PER_PARENT, "Maximum number of instances per parent", Integer.class);
 		this.addAttribute(COLUMN_SUPPORTS_SAME_CHILD_TYPE, "Does it support its own type as a child group",Boolean.class);
 		this.addAttribute(COLUMN_SAME_CHILD_TYPE_ONLY, "Only allows the same group type (for groups) for its children",Boolean.class);
+		
+		this.addAttribute(COLUMN_ALLOWS_PERMISSIONS, "Allows permissions", Boolean.class);
 		
 		this.addIndex("IDX_IC_GROUP_TYPE1", COLUMN_IS_VISIBLE);
 		this.addIndex("IDX_IC_GROUP_TYPE2", TYPE_COLUMN);
@@ -262,6 +267,14 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 		setColumn(COLUMN_AUTO_CREATE, autoCreate);
 	}
 
+	public boolean getAllowsPermissions() {
+		return getBooleanColumnValue(COLUMN_ALLOWS_PERMISSIONS, true);
+	}
+	
+	public void setAllowsPermissions(boolean allowsPermissions) {
+		setColumn(COLUMN_ALLOWS_PERMISSIONS, allowsPermissions);
+	}
+	
 	public Collection ejbFindAllGroupTypes() throws FinderException {
 		return super.idoFindIDsBySQL("select * from " + getEntityName());
 	}

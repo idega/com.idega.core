@@ -30,7 +30,7 @@ import java.util.Vector;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0  
  */
-public class SortedProperties extends Properties implements SortedMap
+public class SortedProperties extends Properties //implements SortedMap
 {
 	private SortedMap internalSortedMap;
 	/**

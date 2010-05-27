@@ -1010,6 +1010,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		// throw new java.lang.UnsupportedOperationException("Method getGroupType() not yet implemented.");
 		return "user_group_representative";
 	}
+	
+	public GroupType getGroupTypeEntity() {
+		throw new java.lang.UnsupportedOperationException("Method getGroupTypeEntity() not yet implemented.");		
+	}
 
 	/**
 	 * Gets a list of all the groups that this "group" is directly member of.

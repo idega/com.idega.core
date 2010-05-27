@@ -320,6 +320,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 
 		// deserialize the string
+		
+		System.out.println("fullAddressString = " + fullAddressString);
+		
 		StringTokenizer nizer = new StringTokenizer(fullAddressString, ";");
 		String streetNameAndNumber = NOT_AVAILABLE;
 		String postalCodeAndPostalAddress = NOT_AVAILABLE;
@@ -353,7 +356,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			// get commune by code or name
 			commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
 		}
-		if (!NOT_AVAILABLE.equals(postalCodeAndPostalAddress) && country != null) {
+		
+		System.out.println("postalCodeAndPostalAddress = " + postalCodeAndPostalAddress);
+		
+		if (!postalCodeAndPostalAddress.trim().equals("") && -1 != postalCodeAndPostalAddress.indexOf(" ") && !NOT_AVAILABLE.equals(postalCodeAndPostalAddress) && country != null) {
 			postalCode = postalCodeAndPostalAddress.substring(0, postalCodeAndPostalAddress.indexOf(" "));
 			postalName = postalCodeAndPostalAddress.substring(postalCodeAndPostalAddress.indexOf(" ") + 1);
 			postal = getPostalCodeAndCreateIfDoesNotExist(postalCode, postalName, country);

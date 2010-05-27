@@ -247,6 +247,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		// }
 	}
 
+	public GroupType getGroupTypeEntity() {
+		return (GroupType) getColumnValue(getGroupTypeColumnName());
+	}
+	
 	public void setGroupType(String groupType) {
 		setColumn(getGroupTypeColumnName(), groupType);
 	}
@@ -786,16 +790,27 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public int ejbHomeGetNumberOfVisibleGroupsContained(Group containingGroup) throws FinderException, IDOException {
-		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
-		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
+		//String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
+		//String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
 
-		IDOQuery query = idoQuery();
+		/*IDOQuery query = idoQuery();
 		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
+		
 		query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 		query.appendIn(visibleGroupTypes);
 		query.appendAnd();
 		query.append(GroupBMPBean.COLUMN_GROUP_ID);
-		query.appendIn(relatedSQL);
+		query.appendIn(relatedSQL);*/
+		StringBuffer query = new StringBuffer("select count(g.");
+		query.append(this.getIDColumnName());
+		query.append(") from ");
+		query.append(this.getEntityName());
+		query.append(" g, ic_group_type t, ic_group_relation r where g.group_type = t.group_type and t.is_visible != 'N' and g.ic_group_id = r.related_ic_group_id and r.ic_group_id =");
+		query.append(((Integer) containingGroup.getPrimaryKey()).intValue());
+		query.append(" and r.relationship_type = 'GROUP_PARENT' and (r.group_relation_status = 'ST_ACTIVE' or r.group_relation_status = 'PASS_PENDING')");
+		
+		System.out.println("sql = " + query.toString());
+		
 		return this.idoGetNumberOfRecords(query.toString());
 
 	}
