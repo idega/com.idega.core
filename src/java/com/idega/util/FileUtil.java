@@ -241,7 +241,7 @@ public static String getFileSeparator(){
         	FileOutputStream fileOut = new FileOutputStream(file);
         	streamToOutputStream(input, fileOut, closeStream);
         } catch(IOException e) {
-        	LOGGER.log(Level.WARNING, "Error writing to file: " + filePath + fileName, e);
+        	LOGGER.log(Level.WARNING, "Error writing to file: " + filePath + fileName + ": " + e.getMessage());
         }
 
         return file;
