@@ -25,6 +25,7 @@
 			<param name="beanName" value="webUtil" />
       		<include method="getLocalizedString" />
       		<include method="getMultipleLocalizedStrings" />
+      		<include method="sendEmail" />
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />

@@ -1941,34 +1941,87 @@ IWCORE.isNumericValue = function(value) {
 }
 
 IWCORE.activeSessionPolling = function(sleepTime, checkSleepTime) {
-	if (checkSleepTime) {
-		if (!IWCORE.isNumericValue(sleepTime)) {
-			return;
+	try {
+		if (checkSleepTime) {
+			if (!IWCORE.isNumericValue(sleepTime)) {
+				return;
+			}
 		}
+		
+		var id = window.setTimeout(function() {
+			IWCORE.pingServer(sleepTime, id);
+		}, sleepTime);
+	} catch (ex) {
+		ex.reloadPage = true;
+		IWCORE.sendExceptionNotification('Error activating session polling!', ex, null);
 	}
-	
-	var id = window.setTimeout(function() {
-		IWCORE.pingServer(sleepTime, id);
-	}, sleepTime);
 }
 
 IWCORE.pingServer = function(sleepTime, id) {
-	window.clearTimeout(id);
-	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/PageSessionPoller.js'], function() {
-		PageSessionPoller.pollSession(window.location.pathname, {
-			callback: function(result) {
-				if (result != null) {
-					IWCORE.insertRenderedComponent(result, {
-						container: document.body,
-						append: true
-					});
+	try {
+		window.clearTimeout(id);
+		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/PageSessionPoller.js'], function() {
+			PageSessionPoller.pollSession(window.location.pathname, {
+				callback: function(result) {
+					if (result != null) {
+						IWCORE.insertRenderedComponent(result, {
+							container: document.body,
+							append: true
+						});
+					}
+					
+					IWCORE.activeSessionPolling(sleepTime, false);
+				},
+				errorHandler: function(msg, exc) {}
+			});
+		}, null);
+	} catch (ex) {
+		ex.reloadPage = false;
+		IWCORE.sendExceptionNotification('Error pinging server!', ex, null);
+	}
+}
+
+IWCORE.sendingErrorMail = false;
+IWCORE.userDeniedToReloadPageOnError = false;
+IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
+	if (!IWCORE.sendingErrorMail) {
+		IWCORE.sendingErrorMail = true;
+		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
+			var mailMessage = 'Error: ' + msg + '\nException: ' + ex + '\nBrowser: ' + navigator.userAgent;
+			if (ex.fileName) {
+				mailMessage += '\nFile: ' + ex.fileName;
+			}
+			if (ex.lineNumber) {
+				mailMessage += '\nLine number: ' + ex.lineNumber;
+			}
+			if (ex.number) {
+				mailMessage += '\nError number: ' + ex.number;
+			}
+			WebUtil.sendEmail(null, null, '[JavaScript error] ERROR on: ' + window.location.href, mailMessage, {
+				callback: function(data) {
+					IWCORE.sendingErrorMail = false;
+				}, errorHandler: function(tmpMsg, tmpEx) {
+					IWCORE.sendingErrorMail = false;
 				}
-				
-				IWCORE.activeSessionPolling(sleepTime, false);
-			},
-			errorHandler: function() {}
-		});
-	}, null);
+			});
+		}, null);
+	}
+	
+	if (ex != null && ex.messageToClient != null && ex.reloadPage) {
+		if (!IWCORE.userDeniedToReloadPageOnError) {
+			if (reloadPageMessage == null) {
+				reloadPageMessage = 'Sorry, some error occurred... We strongly recommend to reload the page. Do you agree?';
+			}
+			if (window.confirm(reloadPageMessage)) {
+				reloadPage();
+				return false;
+			} else {
+				IWCORE.userDeniedToReloadPageOnError = true;
+			}
+		}
+	}
+	
+	return false;
 }
 
 String.prototype.trim = function () {

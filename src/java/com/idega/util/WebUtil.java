@@ -3,8 +3,7 @@ package com.idega.util;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.logging.Logger;
-
+import java.util.logging.Level;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -12,14 +11,14 @@ import org.springframework.stereotype.Service;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.IWContext;
 
 @Service("webUtil")
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class WebUtil extends DefaultSpringBean {
 
-	private static final Logger LOGGER = Logger.getLogger(WebUtil.class.getName());
-	
 	public String getLocalizedString(String bundleIdentifier, String key, String returnValueIfNotFound) {
 		return getMultipleLocalizedStrings(bundleIdentifier, Arrays.asList(
 				new AdvancedProperty(key, returnValueIfNotFound)
@@ -34,13 +33,13 @@ public class WebUtil extends DefaultSpringBean {
 		
 		IWBundle bundle = getBundle(bundleIdentifier);
 		if (bundle == null) {
-			LOGGER.warning("Bundle was not found by identifier: ".concat(bundleIdentifier));
+			getLogger().warning("Bundle was not found by identifier: ".concat(bundleIdentifier));
 			return defaultValues;
 		}
 		
 		IWResourceBundle iwrb = getResourceBundle(bundle);
 		if (iwrb == null) {
-			LOGGER.warning("Unable to resolve resource bundle from bundle: " + bundle);
+			getLogger().warning("Unable to resolve resource bundle from bundle: " + bundle);
 			return defaultValues;
 		}
 		
@@ -62,4 +61,39 @@ public class WebUtil extends DefaultSpringBean {
 		}
 		return defaultValues;
 	}
+	
+    public boolean sendEmail(String from, String to, String subject, String message) {
+    	if (StringUtil.isEmpty(subject) || StringUtil.isEmpty(message)) {
+    		getLogger().warning("Subject or/and message not provided");
+    		return false;
+    	}
+    	
+    	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
+    	
+    	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "programmers@idega.com") : to;
+    	if (StringUtil.isEmpty(to)) {
+    		return false;
+    	}
+    	
+    	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+    	if (StringUtil.isEmpty(host)) {
+    		return false;
+    	}
+    	
+    	String userName = "Not logged in";
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc != null && iwc.isLoggedOn()) {
+    		userName = iwc.getCurrentUser().getName();
+    	}
+    	message.concat("\nUser: ").concat(userName);
+    	
+    	try {
+    		SendMail.send(from, to, null, null, host, subject, message);
+    	} catch(Exception e) {
+			getLogger().log(Level.WARNING, "Error while sending email (".concat(message).concat(") to: ").concat(to), e);
+			return false;
+		}
+    	
+    	return true;
+    }
 }
