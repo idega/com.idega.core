@@ -87,12 +87,21 @@ public class WebUtil extends DefaultSpringBean {
     	}
     	message.concat("\nUser: ").concat(userName);
     	
-    	try {
-    		SendMail.send(from, to, null, null, host, subject, message);
-    	} catch(Exception e) {
-			getLogger().log(Level.WARNING, "Error while sending email (".concat(message).concat(") to: ").concat(to), e);
-			return false;
-		}
+    	final String fromAddress = from;
+    	final String toAddress = to;
+    	final String hostName = host;
+    	final String sbjct = subject;
+    	final String msg = message;
+    	Thread sender = new Thread(new Runnable() {
+			public void run() {
+				try {
+		    		SendMail.send(fromAddress, toAddress, null, null, hostName, sbjct, msg);
+		    	} catch(Exception e) {
+					getLogger().log(Level.WARNING, "Error while sending email (".concat(msg).concat(") to: ").concat(toAddress), e);
+				}
+			}
+		});
+    	sender.start();
     	
     	return true;
     }
