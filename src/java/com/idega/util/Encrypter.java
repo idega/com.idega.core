@@ -31,6 +31,8 @@ public class Encrypter {
 
   public static String encryptOneWay(String textToEncrypt){
 
+	  //System.out.println("textToEncrypt = " + textToEncrypt);
+	  
         MessageDigest digest = null;
         try {
           /*
@@ -71,6 +73,9 @@ public class Encrypter {
 
 
         String encryptedString = String.valueOf(digestedChars);
+        
+        //System.out.println("encryptedString " + encryptedString);
+        
         return encryptedString;
 
   }
