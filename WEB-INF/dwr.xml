@@ -30,6 +30,9 @@
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
 		<convert match="com.idega.core.component.bean.RenderedComponent" converter="bean" />
+		<convert match="java.lang.Exception" converter="exception">
+			<param name='include' value='javaClassName, message, cause, lineNumber' />
+		</convert>
 	</allow>
 	<signatures>
 		<![CDATA[

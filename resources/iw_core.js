@@ -1997,6 +1997,20 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 			if (ex.number) {
 				mailMessage += '\nError number: ' + ex.number;
 			}
+			
+			if (ex.javaClassName) {
+				mailMessage += '\nJava class name: ' + ex.javaClassName;
+			}
+			if (ex.message) {
+				mailMessage += '\nMessage: ' + ex.message;
+			}
+			if (ex.cause) {
+				mailMessage += '\nCause: ' + ex.cause;
+			}
+			if (ex.lineNumber) {
+				mailMessage += '\nLine number: ' + ex.lineNumber;
+			}
+			
 			WebUtil.sendEmail(null, null, '[JavaScript error] ERROR on: ' + window.location.href, mailMessage, {
 				callback: function(data) {
 					IWCORE.sendingErrorMail = false;
