@@ -42,7 +42,7 @@ public class EmailValidator implements Singleton {
 	 * @return	A boolean (true/false) depending on if the email is valid or not
 	 */
 	public boolean validateEmail(String email) {
-		Pattern pat = Pattern.compile("^[a-zA-Z][\\w\\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]$");
+		Pattern pat = Pattern.compile("^[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\\w\\.-]*[a-zA-Z0-9]\\.[a-zA-Z][a-zA-Z\\.]*[a-zA-Z]$");
 		Matcher matcher = pat.matcher(email);
 		return matcher.find();
 	}
