@@ -53,9 +53,16 @@
         <dependency>
 	        <groupId>bundles</groupId>
 	        <artifactId>com.idega.block.web2.0</artifactId>
-	        <version>3.1.7</version>
+	        <version>3.1.8</version>
 	        <type>jar</type>
 	        <url>http://www.idega.com</url>
-    		</dependency>
+   		</dependency>
+	    <dependency>
+			<groupId>captcha</groupId>
+			<artifactId>jcaptcha</artifactId>
+			<version>1.0</version>
+			<type>jar</type>
+			<url>http://jcaptcha.octo.com</url>
+	  	</dependency>
     </dependencies>
 </project>

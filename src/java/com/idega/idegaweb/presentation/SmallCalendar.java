@@ -335,7 +335,7 @@ public class SmallCalendar extends Block {
 					theLink.addParameter((String) this.parameterName.get(i), (String) this.parameterValue.get(i));
 				}
 				if(this.onClickMessageFormat!=null){
-					String[] s = new String[2];
+					Object[] s = new Object[2];
 					IWTimestamp timeStamp = new IWTimestamp(n,this.stamp.getMonth(),this.stamp.getYear());
 					
 					s[0]="'"+dateValueFormat.format(timeStamp.getDate())+"'";

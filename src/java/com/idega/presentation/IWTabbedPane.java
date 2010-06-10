@@ -386,10 +386,8 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 	private class Page {
 
 		String title;
-		IWTabbedPane parent;
 		PresentationObject content;
 		Link tabLink;
-		boolean needsUIUpdate;
 
 		public Page(IWTabbedPane parent, String title, PresentationObject content, IWContext iwc) {
 			this.title = title;
@@ -404,15 +402,10 @@ public class IWTabbedPane extends Table implements SwingConstants, Disposable {
 		}
 
 		public void needsUIUpdate(boolean update) {
-			this.needsUIUpdate = update;
 		}
 
 		public Link getTabLink() {
 			return this.tabLink;
-		}
-
-		public PresentationObject getContent() {
-			return this.content;
 		}
 	} // InnerClass Page
 

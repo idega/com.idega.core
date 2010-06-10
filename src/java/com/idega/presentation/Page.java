@@ -1543,12 +1543,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			println("<?xml version=\"1.0\"?>");
-			if (true) {
-				println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
-			}
-			else {
-				println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.3//EN\" \"http://www.wapforum.org/DTD/wml13.dtd\">");
-			}
+			println("<!DOCTYPE wml PUBLIC \"-//WAPFORUM//DTD WML 1.1//EN\" \"http://www.wapforum.org/DTD/wml_1.1.xml\">");
 			println("<wml>");
 			println("<head>");
 			println("<meta http-equiv=\"cache-control\" content=\"no-cache\"/>");

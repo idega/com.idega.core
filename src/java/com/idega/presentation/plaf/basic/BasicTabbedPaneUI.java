@@ -153,10 +153,6 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 				this.add(Text.emptyString(), 1, 1);
 			}
 
-			public void initilizeTab() {
-				this.resize(1, 1);
-			}
-
 			public void addLink(PresentationObject link) {
 				this.add(link, 1, 1); //changed from this.add(link,3,3);
 			}

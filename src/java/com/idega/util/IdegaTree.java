@@ -371,15 +371,6 @@ public class IdegaTree {
     }
 
 
-
-    public boolean hasChildren(){
-
-      return (this.childeIDs.size() > 0);
-
-    }
-
-
-
     public boolean removeChildren( Object children_id ){
 
       boolean temp = this.childeIDs.remove(children_id);
