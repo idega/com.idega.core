@@ -1987,6 +1987,10 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 	if (!IWCORE.sendingErrorMail) {
 		IWCORE.sendingErrorMail = true;
 		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
+			if (ex == null) {
+				ex = 'Unknown error';
+			}
+			
 			var mailMessage = 'Error: ' + msg + '\nException: ' + ex + '\nBrowser: ' + navigator.userAgent;
 			if (ex.fileName) {
 				mailMessage += '\nFile: ' + ex.fileName;
