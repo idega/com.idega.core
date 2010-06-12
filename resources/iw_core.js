@@ -1972,7 +1972,15 @@ IWCORE.pingServer = function(sleepTime, id) {
 					
 					IWCORE.activeSessionPolling(sleepTime, false);
 				},
-				errorHandler: function(msg, exc) {}
+				errorHandler: function(msg, exc) {
+					if (exc == null) {
+						exc = {};
+					}
+					exc.messageToClient = 'Most probably time out occurred while pinging server';
+					ex.reloadPage = true;
+					IWCORE.sendExceptionNotification(msg, exc, null);
+				},
+				timeout: 10000
 			});
 		}, null);
 	} catch (ex) {
