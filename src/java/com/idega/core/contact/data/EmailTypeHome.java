@@ -9,8 +9,6 @@
  */
 package com.idega.core.contact.data;
 
-import java.rmi.RemoteException;
-
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
@@ -32,9 +30,9 @@ public interface EmailTypeHome extends IDOHome {
 
 	public EmailType findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
 	
-	public EmailType findMainEmailType() throws FinderException, RemoteException;
+	public EmailType findMainEmailType() throws FinderException;
 	
-	public EmailType findEmailTypeByUniqueName(String uniqueName) throws FinderException, RemoteException;
+	public EmailType findEmailTypeByUniqueName(String uniqueName) throws FinderException;
 
 	/**
 	 * @see com.idega.core.contact.data.EmailTypeBMPBean#ejbHomeUpdateStartData

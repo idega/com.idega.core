@@ -17,11 +17,12 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import com.idega.core.accesscontrol.data.LoginRecord;
-import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.bean.LoginRecord;
+import com.idega.core.accesscontrol.data.bean.UserLogin;
+
 import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.core.accesscontrol.jaas.PersonalIdCredential;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -38,24 +39,28 @@ import com.idega.util.IWTimestamp;
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.21 $
  */
-public class LoggedOnInfo implements HttpSessionBindingListener {
+public class LoggedOnInfo implements HttpSessionBindingListener  {
 
-	private static final String TICKET_CREDENTIAL = "ticket";
+  private static final String TICKET_CREDENTIAL = "ticket";
+ 
+  private User _user = null;
+//  private HttpSession _session = null; 
+  private IWTimestamp _timeOfLogon = null;
+  private UserLogin _userLogin;
+  private String _login = null;
+  private LoginRecord _loginRecord;
+  private String _encryptionType = null;
+  private String _loginType = null;
+  private Set _userRoles = null;
+  private Map _loggedOnInfoAttribute = new HashMap();
+  private Map credentials = new HashMap(0);
 
-	private User _user = null;
-	private IWTimestamp _timeOfLogon = null;
-	private LoginTable _loginTable;
-	private String _login = null;
-	private LoginRecord _loginRecord;
-	private String _encryptionType = null;
-	private String _loginType = null;
-	private Set<String> _userRoles = null;
-	private Map<Object, Object> _loggedOnInfoAttribute = new HashMap<Object, Object>();
-	private Map<String, IWCredential> credentials = new HashMap<String, IWCredential>();
+  
 
-	public LoggedOnInfo() {
-	}
-
+public LoggedOnInfo() {
+	// empty
+  }
+  //setters
 	public void setUser(User user) {
 		this._user = user;
 		if (user != null) {
@@ -132,7 +137,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener {
 	}
 
 	public void valueUnbound(HttpSessionBindingEvent event) {
-		String name = this._user == null ? "Unknown" : this._user.getName();
+		String name = this._user == null ? "Unknown" : this._user.getDisplayName();
 		HttpSession session = event.getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean
 				.getLoginBusinessBean(session);
@@ -150,12 +155,18 @@ public class LoggedOnInfo implements HttpSessionBindingListener {
 		this._loginType = loginType;
 	}
 
-	public LoginTable getLoginTable() {
-		return this._loginTable;
+	/**
+	 * @return
+	 */
+	public UserLogin getUserLogin() {
+		return this._userLogin;
 	}
 
-	public void setLoginTable(LoginTable login) {
-		this._loginTable = login;
+	/**
+	 * @param id
+	 */
+	public void setUserLogin(UserLogin login) {
+		this._userLogin = login;
 	}
 
 	public Set<String> getUserRoles() {
@@ -175,7 +186,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener {
 	}
 
 	public IWCredential putCredential(String originator, IWCredential credential) {
-		return this.credentials.put(originator, credential);
+		return (IWCredential) this.credentials.put(originator, credential);
 	}
 
 	public Map<String, IWCredential> getCredentials() {

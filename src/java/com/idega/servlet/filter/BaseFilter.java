@@ -26,7 +26,7 @@ import com.idega.idegaweb.IWApplicationContextFactory;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.MutableClass;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.RequestUtil;
@@ -215,7 +215,7 @@ public abstract class BaseFilter implements Filter, MutableClass {
 				LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 				return loginSession.getUser();
 			} else {
-				return iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
+				return iwc.isLoggedOn() ? iwc.getLoggedInUser() : null;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

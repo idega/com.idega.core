@@ -13,9 +13,9 @@ import java.util.List;
 import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
-import com.idega.core.data.GenericGroup;
-import com.idega.user.data.User;
-import com.idega.core.user.data.UserGroupRepresentative;
+import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.User;
+import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.user.business.UserProperties;
 
 /**
@@ -29,22 +29,22 @@ public interface LoginSession {
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPermissionGroups
      */
-    public List getPermissionGroups();
+    public List<Group> getPermissionGroups();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setPermissionGroups
      */
-    public void setPermissionGroups(List permissionGroups);
+    public void setPermissionGroups(List<Group> permissionGroups);
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPrimaryGroup
      */
-    public GenericGroup getPrimaryGroup();
+    public Group getPrimaryGroup();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setPrimaryGroup
      */
-    public void setPrimaryGroup(GenericGroup primaryGroup);
+    public void setPrimaryGroup(Group primaryGroup);
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getRepresentativeGroup

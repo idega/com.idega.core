@@ -23,7 +23,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -40,7 +40,7 @@ public abstract class DefaultSpringBean {
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
 	private static Logger LOGGER_;
 	
-	protected Logger getLogger() {
+	public Logger getLogger() {
 		if (LOGGER_ == null) {
 			LOGGER_ = Logger.getLogger(getClass().getName());
 		}
@@ -106,7 +106,7 @@ public abstract class DefaultSpringBean {
 		
 		if (user == null) {
 			IWContext iwc = CoreUtil.getIWContext();
-			user = iwc == null ? null : iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
+			user = iwc == null ? null : iwc.isLoggedOn() ? iwc.getLoggedInUser() : null;
 		}
 		
 		return user;

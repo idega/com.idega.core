@@ -10,7 +10,7 @@
 package com.idega.core.accesscontrol.business;
 
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 
 /**
  * Implement this interface and register your class as a listener for login/logout events etc. via AuthenticationBusiness.

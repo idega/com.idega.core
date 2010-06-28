@@ -11,7 +11,7 @@ package com.idega.core.accesscontrol.business;
 
 import com.idega.business.IBOService;
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 
 
 /**

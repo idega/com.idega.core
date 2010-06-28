@@ -153,7 +153,7 @@ public class IWDatePicker extends TextInput {
 			inputName = this.getId();
 		}
 		setName(inputName);
-
+		
 		Locale locale = iwc.getCurrentLocale();
 		if (locale == null) {
 			locale = Locale.ENGLISH;

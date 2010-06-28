@@ -20,6 +20,7 @@ import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Struct;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -858,7 +859,7 @@ public class DatastoreConnection implements Connection {
 	 *      </a>
 	 *  
 	 */
-	public void setTypeMap(java.util.Map map) throws SQLException {
+	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
 		this.conn.setTypeMap(map);
 	}
 

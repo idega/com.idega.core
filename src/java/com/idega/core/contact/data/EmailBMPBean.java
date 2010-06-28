@@ -234,10 +234,6 @@ public class EmailBMPBean
 			e.printStackTrace();
 			throw new IBORuntimeException();
 		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-			throw new IBORuntimeException();
-		}
 		catch (FinderException e) {
 			// ! main email type is always set !
 			e.printStackTrace();
