@@ -26,7 +26,7 @@ import com.idega.util.expression.ELUtil;
  *          Last modified: $Date: 2009/03/17 13:14:59 $ by $Author: laddi $
  */
 public class IWDatePicker extends TextInput {
-
+	
 	private Date date = null;
 	private Date dateTo = null;
 
@@ -131,7 +131,7 @@ public class IWDatePicker extends TextInput {
 			inputName = this.getId();
 		}
 		setName(inputName);
-
+		
 		Locale locale = iwc.getCurrentLocale();
 		if (locale == null) {
 			locale = Locale.ENGLISH;
@@ -226,29 +226,19 @@ public class IWDatePicker extends TextInput {
 
 	private void addRequiredLibraries(IWContext iwc, String language) {
 		List<String> scripts = new ArrayList<String>();
-
-		Web2Business web2 = ELUtil.getInstance().getBean(
-				Web2Business.SPRING_BEAN_IDENTIFIER);
+		
+		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		scripts.add(web2.getBundleURIToJQueryLib());
-		scripts.add(web2
-				.getBundleURIToJQueryUILib("1.6rc5", "ui.datepicker.js"));
+		scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5", "ui.datepicker.js"));
 
 		if (language != null) {
-			scripts.add(web2.getBundleURIToJQueryUILib(
-					"1.6rc5/datepicker/i18n", "ui.datepicker-" + language
-							+ ".js"));
+			scripts.add(web2.getBundleURIToJQueryUILib("1.6rc5/datepicker/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
-
-		PresentationUtil
-				.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib(
-						"1.6rc5/themes/base", "ui.core.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc,
-				web2.getBundleURIToJQueryUILib("1.6rc5/themes/base",
-						"ui.theme.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, web2
-				.getBundleURIToJQueryUILib("1.6rc5/themes/base",
-						"ui.datepicker.css"));
+		
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.core.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.theme.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.datepicker.css"));
 	}
 
 	@Override
@@ -335,5 +325,4 @@ public class IWDatePicker extends TextInput {
 	public void setDateRangeSeparator(String dateRangeSeparator) {
 		this.dateRangeSeparator = dateRangeSeparator;
 	}
-
 }

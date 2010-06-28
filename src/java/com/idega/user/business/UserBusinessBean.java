@@ -92,7 +92,6 @@ import com.idega.user.bean.GroupMemberDataBeanComparator;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
-import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
@@ -560,12 +559,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String fullName) throws CreateException {
 		UserTransaction transaction = this.getSessionContext().getUserTransaction();
+		AccessController controller = getIWMainApplication().getAccessController();
 		try {
 			transaction.begin();
 			User newUser;
 			// added by Aron 07.01.2002 ( aron@idega.is )
 			if (primary_group == null) {
-				primary_group = new Integer(GroupBMPBean.GROUP_ID_USERS);
+				primary_group = new Integer(controller.getUsersGroupID());
 			}
 			// newUser = insertUser(firstname,middlename,
 			// lastname,null,null,null,null,primary_group);
@@ -3762,7 +3762,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 
 		List<String> groupsIds = new ArrayList<String>();
-		Collection permissionsByUserGroups = AccessControl.getAllGroupPermitPermissions(userGroups);
+		Collection permissionsByUserGroups = AccessControl.getAllGroupPermitPermissionsOld(userGroups);
 		addIdsFromPermissions(permissionsByUserGroups, groupsIds);
 
 		Collection permissionsByUser = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
@@ -3997,7 +3997,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					for (ICPermission permission : roles) {
 						ICRole role;
 						try {
-							role = getAccessController().getRoleByRoleKey(permission.getPermissionString());
+							role = getAccessController().getRoleByRoleKeyOld(permission.getPermissionString());
 							if (!rolesForUser.contains(role)) {
 								rolesForUser.add(role);
 							}

@@ -20,6 +20,7 @@ import java.sql.SQLWarning;
 import java.sql.SQLXML;
 import java.sql.Statement;
 import java.sql.Struct;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -858,7 +859,7 @@ public class DatastoreConnection implements Connection {
 	 *      </a>
 	 *  
 	 */
-	public void setTypeMap(java.util.Map map) throws SQLException {
+	public void setTypeMap(Map<String, Class<?>> map) throws SQLException {
 		this.conn.setTypeMap(map);
 	}
 
@@ -912,10 +913,6 @@ public class DatastoreConnection implements Connection {
 		return null;
 	}
 
-	/**
-	 * @todo implement this, required for jdk6 (snow leopard)
-	 * 
-	 */
 	public Array createArrayOf(String typeName, Object[] elements)
 			throws SQLException {
 		// TODO Auto-generated method stub
@@ -966,13 +963,11 @@ public class DatastoreConnection implements Connection {
 	public void setClientInfo(Properties properties)
 			throws SQLClientInfoException {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public void setClientInfo(String name, String value)
 			throws SQLClientInfoException {
 		// TODO Auto-generated method stub
-		
 	}
 
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
@@ -984,7 +979,4 @@ public class DatastoreConnection implements Connection {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	
-	
-	
 }

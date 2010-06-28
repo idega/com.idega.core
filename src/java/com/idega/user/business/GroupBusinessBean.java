@@ -35,6 +35,7 @@ import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.accesscontrol.data.ICPermission;
+import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.component.data.ICObject;
@@ -2373,7 +2374,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
 		if (recursiveParents != null && !recursiveParents.isEmpty()) {
 			try {
-				Collection permissions = AccessControl.getPermissionHome().findAllGroupPermissionsToInheritByGroupCollection(recursiveParents);
+				ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(ICPermission.class);
+				Collection permissions = home.findAllGroupPermissionsToInheritByGroupCollection(recursiveParents);
 				Iterator iter = permissions.iterator();
 				while (iter.hasNext()) {
 					ICPermission perm = (ICPermission) iter.next();

@@ -10,7 +10,6 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
-import com.idega.presentation.IWContext;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -468,20 +467,6 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   /**Finders end**/
   
-  /**
-   * @deprecated Replaced with remove(User)
-   */
-  public void remove()  throws RemoveException  {    
-    User currentUser;
-    try {
-      currentUser = IWContext.getInstance().getCurrentUser();
-    }
-    catch (Exception ex)  {
-    currentUser = null;
-    }
-    removeBy(currentUser);
-  }
-
   /**
    * 
    */

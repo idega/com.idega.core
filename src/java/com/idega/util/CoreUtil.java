@@ -22,12 +22,12 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.expression.ELUtil;
 
 public class CoreUtil {
 	
-	private static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
+	static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
 	
 	private static final BASE64Encoder ENCODER_BASE64 = new BASE64Encoder();
 	private static final BASE64Decoder DECODER_BASE64 = new BASE64Decoder();
@@ -189,7 +189,7 @@ public class CoreUtil {
 		    	try {
 		    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 		    		User loggedInUser = loginSession.getUser();
-		    		userFullName = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
+		    		userFullName = loggedInUser == null ? null : (loggedInUser.getDisplayName() + ", user ID: " + loggedInUser.getId());
 		    	} catch (Exception e) {
 		    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class, e);
 		    	}

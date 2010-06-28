@@ -14,13 +14,13 @@ import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import com.idega.core.accesscontrol.data.ICPermission;
-import com.idega.core.component.data.ICObject;
+
+import com.idega.core.component.data.bean.ICObject;
 import com.idega.data.EntityFinder;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
-import com.idega.user.data.Group;
+import com.idega.user.data.bean.Group;
 
 /**
  * <p>
@@ -30,7 +30,7 @@ import com.idega.user.data.Group;
  * 
  * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
  * @version $Revision: 1.35 $
@@ -320,7 +320,7 @@ class PermissionCacher {
 					+ " is not supported");
 		}
 		else if (permissionMapKey.equals(this.PERMISSION_MAP_GROUP)) {
-			identifier = ((Group) obj).getPrimaryKey().toString();
+			identifier = ((Group) obj).getID().toString();
 		}
 		else if (permissionMapKey.equals(this.PERMISSION_MAP_ROLE)) {
 			identifier = obj.toString();
@@ -378,7 +378,7 @@ class PermissionCacher {
 			throws SQLException {
 		String permissionMapKey = this.PERMISSION_MAP_OBJECT;
 		String identifier="-1";
-		Object primaryKey = obj.getPrimaryKey();
+		Object primaryKey = obj.getId();
 		if(primaryKey!=null){
 			identifier=primaryKey.toString();
 		}
@@ -554,7 +554,7 @@ class PermissionCacher {
 			Iterator iter = permissions.iterator();
 			Map mapToPutTo = new Hashtable();
 			while (iter.hasNext()) {
-				ICPermission item = (ICPermission) iter.next();
+				com.idega.core.accesscontrol.data.ICPermission item = (com.idega.core.accesscontrol.data.ICPermission) iter.next();
 				mapToPutTo.put(Integer.toString(item.getGroupID()), (item.getPermissionValue()) ? Boolean.TRUE
 						: Boolean.FALSE);
 			}

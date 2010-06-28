@@ -69,7 +69,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
 	
 	// ==================privates====================
-	private Map<String, String> lookup;
+	Map<String, String> lookup;
 	private Properties properties;
 	private Locale locale;
 	private File file;

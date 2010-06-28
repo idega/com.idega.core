@@ -26,7 +26,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.logging.LoggingHelper;
@@ -44,7 +44,7 @@ public class IBOServiceBean implements IBOService, SessionBean {
 	
   private SessionContext ejbSessionContext;
   private IWApplicationContext iwac;
-  private List<ActionListener> actionListeners = new ArrayList<ActionListener>();
+  private final List<ActionListener> actionListeners = new ArrayList<ActionListener>();
 
   public IBOServiceBean() {
   }
