@@ -520,6 +520,7 @@ version="1.2">
 		<component-type>UserImage</component-type>
 		<component-class>com.idega.idegaweb.widget.user.UserImage</component-class>
 	</component>
+<<<<<<< HEAD
 	
 	<component>
 	    <component-type>SelectionDoubleBox</component-type>
@@ -560,6 +561,8 @@ version="1.2">
 	      <property-class>java.util.List</property-class>
 	    </property>
 	</component>
+=======
+>>>>>>> Adding JPA changes
 	
 	<converter>
 		<converter-id>iw.CreditCard</converter-id>
@@ -602,4 +605,8 @@ version="1.2">
 		<converter-class>javax.faces.convert.DateTimeConverter</converter-class>
 	</converter>
 
+<<<<<<< HEAD
 </faces-config>
+=======
+</faces-config>
+>>>>>>> Adding JPA changes

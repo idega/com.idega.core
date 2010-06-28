@@ -943,6 +943,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 				}
 				getUserLoginDAO().merge(loginInfo);
 			}
+			else {
+				try {
+					throw new LoginCreateException("No record chosen");
+				}
+				catch (LoginCreateException e1) {
+					e1.printStackTrace();
+				}
+			}
 			return returnCode;
 		}
 
