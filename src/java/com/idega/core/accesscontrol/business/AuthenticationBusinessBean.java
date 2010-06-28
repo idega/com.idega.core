@@ -15,7 +15,7 @@ import java.util.Iterator;
 import java.util.Map;
 import com.idega.business.IBOServiceBean;
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 
 /**
  * A service bean that is/will be used for all standard idegaweb authentication methods.<br>

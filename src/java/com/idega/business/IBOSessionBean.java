@@ -10,7 +10,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -25,7 +25,7 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
 
 	private static final long serialVersionUID = -3480014893942017616L;
 	private IWUserContext iwuc;
-	private String sessionKey="IBO."+this.getClass().getName();
+	private final String sessionKey="IBO."+this.getClass().getName();
 
   public IBOSessionBean() {}
 
@@ -85,6 +85,6 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
     	}
     }
     
-    return getUserContext().getCurrentUser();
+    return getUserContext().getLoggedInUser();
   }
 }

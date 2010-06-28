@@ -69,4 +69,11 @@
             <component-type>RadioButton</component-type>
         </component>
     </tag>
+    
+    <tag>
+        <tag-name>userImage</tag-name>
+        <component>
+            <component-type>UserImage</component-type>
+        </component>
+    </tag>
 </facelet-taglib>

@@ -11,6 +11,7 @@
         
         <mapping-file>classpath*:com/idega/**/orm*.xml</mapping-file>
         <mapping-file>classpath*:is/idega/**/orm*.xml</mapping-file>
+        <mapping-file>classpath*:is/illuminati/**/orm*.xml</mapping-file>
         <mapping-file>classpath*:org/jbpm/**/*.hbm.xml</mapping-file>
         <mapping-file>classpath*:com/idega/**/*.hbm.xml</mapping-file>
         

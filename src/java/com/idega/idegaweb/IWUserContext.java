@@ -16,7 +16,7 @@ import javax.servlet.http.HttpSession;
 
 //import com.idega.core.accesscontrol.business.AccessController;
 //import com.idega.core.component.data.ICObject;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 //import com.idega.presentation.PresentationObject;
 import com.idega.user.business.UserProperties;
 
@@ -43,7 +43,7 @@ public interface IWUserContext extends java.io.Serializable{
   /**
    * @deprecated Replaced with getCurrentUser()
    **/
-  public com.idega.core.user.data.User getUser();
+  public User getUser();
   //public AccessController getAccessController();
   public IWApplicationContext getApplicationContext();
   public UserProperties getUserProperties();
@@ -52,7 +52,9 @@ public interface IWUserContext extends java.io.Serializable{
    * <br>This method is meant to replace getUser()
    * @return The current user if there is one associated with the current context. If there is none the method returns null.
    **/
-  public User getCurrentUser();
+  public com.idega.user.data.User getCurrentUser();
+  
+  public User getLoggedInUser();
   
   /**
    * @see javax.servlet.http.HttpServletRequest#getUserPrincipal()

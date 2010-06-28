@@ -44,8 +44,8 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean implements GroupType
 	private static final String COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE = "INSTANCES_AUTO_CREATED";
 	private static final String COLUMN_SUPPORTS_SAME_CHILD_TYPE = "SAME_CHILD_TYPE";
 	private static final String COLUMN_SAME_CHILD_TYPE_ONLY = "SAME_CHILD_TYPE_ONLY";
-	private static final String TYPE_GENERAL_GROUP = "general";
-	
+
+	public static final String TYPE_GENERAL_GROUP = "general";
 	public static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
 	public static final String TYPE_PERMISSION_GROUP = "permission";
 	public static final String TYPE_ALIAS = "alias";

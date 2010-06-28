@@ -15,11 +15,11 @@ import java.util.Set;
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
-import com.idega.core.accesscontrol.data.LoginRecord;
-import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.bean.LoginRecord;
+import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.core.accesscontrol.jaas.PersonalIdCredential;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -42,7 +42,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
   private User _user = null;
 //  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
-  private LoginTable _loginTable;
+  private UserLogin _userLogin;
   private String _login = null;
   private LoginRecord _loginRecord;
   private String _encryptionType = null;
@@ -169,7 +169,7 @@ private void initializePersonalIdCredential(User user) {
 		//log out!
 		String name = "Unknown";
 		if(this._user != null){
-			name = this._user.getName();
+			name = this._user.getDisplayName();
 		}
 		HttpSession session = event.getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
@@ -197,15 +197,15 @@ private void initializePersonalIdCredential(User user) {
 	/**
 	 * @return
 	 */
-	public LoginTable getLoginTable() {
-		return this._loginTable;
+	public UserLogin getUserLogin() {
+		return this._userLogin;
 	}
 
 	/**
 	 * @param id
 	 */
-	public void setLoginTable(LoginTable login) {
-		this._loginTable = login;
+	public void setUserLogin(UserLogin login) {
+		this._userLogin = login;
 	}
 
 	/**
