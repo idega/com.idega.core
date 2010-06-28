@@ -21,7 +21,7 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
-import com.idega.servlet.filter.RequestProvider;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
 import com.idega.util.expression.ELUtil;
 
@@ -154,55 +154,74 @@ public class CoreUtil {
 	}
 	
 	public static boolean sendExceptionNotification(Throwable exception) {
-    	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-    	if (StringUtil.isEmpty(host)) {
-    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
-    		return false;
+		return sendExceptionNotification(null, exception);
+	}
+	
+	public static boolean sendExceptionNotification(final String message, final Throwable exception) {
+		RequestResponseProvider reqResProvider = null;
+		try {
+			reqResProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+		} catch(Exception e) {
+    		LOGGER.log(Level.WARNING, "Error getting " + RequestResponseProvider.class, e);
     	}
-    	
+    	HttpServletRequest request = reqResProvider == null ? null : reqResProvider.getRequest();
     	String serverName = null;
     	String requestUri = null;
-    	try {
-    		HttpServletRequest request = ELUtil.getInstance().getBean(RequestProvider.class).getRequest();
-    		serverName = request.getServerName();
-    		requestUri = request.getRequestURI();
-    	} catch(Exception e) {
-    		LOGGER.log(Level.WARNING, "Error getting " + RequestProvider.class, e);
-    	}
-    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
-    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
-
-    	String userFullName = null;
-    	try {
-    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-    		User loggedInUser = loginSession.getUser();
-    		userFullName = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
-    	} catch (Exception e) {
-    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class, e);
-    	}
-    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
+		if (request != null) {
+	    	if (request != null) {
+	    		serverName = request.getServerName();
+	    		requestUri = request.getRequestURI();
+	    	}
+	    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
+	    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
+		}
     	
-    	Writer writer = null;
-    	PrintWriter printWriter = null;
-    	StringBuffer notification = null;
-    	try {
-    		writer = new StringWriter();
-    		printWriter = new PrintWriter(writer);
-    		exception.printStackTrace(printWriter);
-    		
-    		notification = new StringBuffer("Requested uri: ").append(requestUri).append("\n");
-    		notification.append("User: ").append(userFullName).append("\n");
-    		notification.append("Stack trace:\n").append(writer.toString());
-    		
-        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + serverName,
-        			notification.toString());
-        } catch(Exception e) {
-        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
-        	return false;
-        } finally {
-        	IOUtil.closeWriter(writer);
-        	IOUtil.closeWriter(printWriter);
-        }
+		final String server = serverName;
+		final String requestedUri = requestUri;
+		Thread sender = new Thread(new Runnable() {
+			public void run() {
+				String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+		    	if (StringUtil.isEmpty(host)) {
+		    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
+		    	}
+		    	
+		    	String userFullName = null;
+		    	try {
+		    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+		    		User loggedInUser = loginSession.getUser();
+		    		userFullName = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
+		    	} catch (Exception e) {
+		    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class, e);
+		    	}
+		    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
+		    	
+		    	Writer writer = null;
+		    	PrintWriter printWriter = null;
+		    	StringBuffer notification = null;
+		    	try {
+		    		writer = new StringWriter();
+		    		printWriter = new PrintWriter(writer);
+		    		exception.printStackTrace(printWriter);
+		    		
+		    		notification = new StringBuffer("Requested uri: ").append(requestedUri).append("\n");
+		    		notification.append("User: ").append(userFullName).append("\n");
+		    		if (!StringUtil.isEmpty(message)) {
+		    			notification.append("Message: ").append(message).append("\n");
+		    		}
+		    		notification.append("Stack trace:\n").append(writer.toString());
+		    		
+		        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + server,
+		        			notification.toString());
+		        } catch(Exception e) {
+		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
+		        } finally {
+		        	IOUtil.closeWriter(writer);
+		        	IOUtil.closeWriter(printWriter);
+		        }
+			}
+		});
+		sender.start();
+    	
     	return true;
 	}
 	
@@ -234,5 +253,9 @@ public class CoreUtil {
 			LOGGER.log(Level.WARNING, "Error getting current locale", e);
 		}
 		return null;
+	}
+
+	public static final boolean isSQLMeasurementOn() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_sql_queries", Boolean.FALSE);
 	}
 }

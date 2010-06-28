@@ -68,8 +68,17 @@ public class PageIncluder extends PresentationObject implements Index{
 
   private Map allowedDomainsAndIPNumberMap;
 
+  private String pageEncoding = "UTF-8";
 
-  public PageIncluder(){
+  public String getPageEncoding() {
+	return pageEncoding;
+}
+
+public void setPageEncoding(String pageEncoding) {
+	this.pageEncoding = pageEncoding;
+}
+
+public PageIncluder(){
     super();
   }
 
@@ -204,7 +213,7 @@ public void print(IWContext iwc)throws IOException{
   //System.out.println("Location url is: "+loc+" and index is: "+index);
 
   if(loc!=null && !loc.equals("") ){
-    this.out = FileUtil.getStringFromURL(loc);
+    this.out = FileUtil.getStringFromURL(loc, getPageEncoding());
 
     URL url = new URL(loc);
     this.BASEURL = url.getProtocol()+"://"+url.getHost()+"/";

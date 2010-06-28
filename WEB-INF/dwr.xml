@@ -18,13 +18,21 @@
 			<include method="setPreferredRoleAndGetHomePageUri"/>
 			<include method="changeUserPassword"/>
 		</create>
-		
 		<create creator="new" javascript="javaDate">
 			<param name="class" value="java.util.Date"/>
 		</create>
+		<create creator="spring" javascript="WebUtil">
+			<param name="beanName" value="webUtil" />
+      		<include method="getLocalizedString" />
+      		<include method="getMultipleLocalizedStrings" />
+      		<include method="sendEmail" />
+		</create>
   		
-		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
+		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
 		<convert match="com.idega.core.component.bean.RenderedComponent" converter="bean" />
+		<convert match="java.lang.Exception" converter="exception">
+			<param name='include' value='javaClassName, message, cause, lineNumber' />
+		</convert>
 	</allow>
 	<signatures>
 		<![CDATA[

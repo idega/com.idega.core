@@ -17,12 +17,12 @@ import com.idega.idegaweb.IWApplicationContext;
 public interface ICTreeNode {
 
 	/**
-	 * Returns the children of the reciever as an Collection.
+	 * Returns the children of the receiver as an Collection.
 	 */
 	public Collection getChildren();
     
 	/**
-	 * Returns the children of the reciever as an Enumeration.
+	 * Returns the children of the receiver as an Enumeration.
 	 */
 	public Iterator getChildrenIterator();
 	/**
@@ -74,6 +74,7 @@ public interface ICTreeNode {
 	/**
 	 * @deprecated Replaced with getId()
 	 */
+	@Deprecated
 	public int getNodeID();
 
 	/**
@@ -86,11 +87,5 @@ public interface ICTreeNode {
 	 * @return the id as a string
 	 */
 	public String getId();
-
-//	/**
-//	 * @return returns an int identifier for the node type
-//	 * @deprecated
-//	 */
-//	public int getNodeType();
 
 }

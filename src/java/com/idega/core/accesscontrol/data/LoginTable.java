@@ -152,4 +152,8 @@ public interface LoginTable extends IDOEntity, EncryptionType {
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#getLoginType
 	 */
 	public String getLoginType();
+	
+	public void setBankCount(int bankCount);	
+	public int getBankCount();
+
 }

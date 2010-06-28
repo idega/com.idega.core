@@ -1,20 +1,28 @@
 package com.idega.presentation.ui;
 
+import java.io.IOException;
+import java.text.Collator;
 import java.util.Map;
+
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 
 /**
  * @author laddi
  */
-public class SelectOption extends InterfaceObject {
+public class SelectOption extends InterfaceObject implements Comparable<SelectOption> {
 	
 	private Class windowClass;
 	private Map parameterMap;
 	private String target;
 	private int fileID = -1;
+	
+	private static final String SELECTED_PROPERTY = "selected";
 
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[8];
@@ -91,6 +99,17 @@ public class SelectOption extends InterfaceObject {
 		return false;	
 	}
 	
+	@Override
+	public void encodeBegin(FacesContext context) throws IOException {
+    	ValueExpression ve = getValueExpression(SELECTED_PROPERTY);
+    	if (ve != null) {
+	    	boolean selected = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setSelected(selected);
+    	}
+    	
+    	super.encodeBegin(context);
+	}
+	
 	public void main(IWContext iwc) throws Exception {
 		if (this.windowClass != null) {
 			String URL = Window.getWindowURLWithParameters(this.windowClass, iwc, this.parameterMap);
@@ -113,9 +132,18 @@ public class SelectOption extends InterfaceObject {
 		}
 		return null;
 	}
-	
+
 	public String getName(){
-		return xhtmlEncode(super.getName());
+		return getName(true);
+	}
+	
+	public String getName(boolean xhtmlEncode){
+		if (xhtmlEncode && super.getName() != null) {
+			return xhtmlEncode(super.getName());
+		}
+		else {
+			return super.getName();
+		}
 	}
 
 	public void print(IWContext iwc) throws Exception {
@@ -170,5 +198,32 @@ public class SelectOption extends InterfaceObject {
 		//This method is overridden is because the SelectOption instances do not have a direct ICObjectInstanceId (in the Builder)
 		// - this is because the Dropdownmenu is inserted in the Builder, not a SelectOption
 		return this.clone(iwc,false);
-	}	
+	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof SelectOption) {
+			SelectOption option = (SelectOption) obj;
+			if (option.getValueAsString().equals(this.getValueAsString())) {
+				return true;
+			}
+		}
+		
+		return false;
+	}
+
+	public int compareTo(SelectOption o) {
+		String value = this.getValueAsString();
+		String otherValue = this.getValueAsString();
+		if (value.length() == 0) {
+			return -1;
+		}
+		else if (otherValue.length() == 0) {
+			return 1;
+		}
+		
+		String name = this.getName();
+		String otherName = o.getName();
+		
+		return Collator.getInstance(IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultLocale()).compare(name, otherName);
+	}
 }

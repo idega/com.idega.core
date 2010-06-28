@@ -19,9 +19,10 @@ import javax.ejb.FinderException;
  * @version $Revision: 1.7 $
  */
 
-public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome
-{
- protected Class getEntityInterfaceClass(){
+public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome {
+	
+ @Override
+protected Class<ICPage> getEntityInterfaceClass(){
   return ICPage.class;
  }
 
@@ -137,6 +138,13 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
         java.util.Collection ids = ((ICPageBMPBean)entity).ejbFindAllPagesAndTemplates();
     	this.idoCheckInPooledEntity(entity);
     	return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	public ICPage findByWebDavUri(String webDavUri) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+        Integer pk  = ((ICPageBMPBean)entity).ejbFindByWebDavUri(webDavUri);
+    	this.idoCheckInPooledEntity(entity);
+    	return this.findByPrimaryKey(pk);
 	}
 	
 }

@@ -28,6 +28,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
@@ -1616,6 +1617,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		String valueBinding = getLocalizedStringExpr(localizationKey);
 		ValueBinding vb = getApplication().createValueBinding(valueBinding);
 		return vb;
+	}
+	
+	public ValueExpression getValueExpression(String localizationKey) {
+		return getApplication().getExpressionFactory().createValueExpression(FacesContext.getCurrentInstance().getELContext(),
+				getLocalizedStringExpr(localizationKey), String.class);
 	}
 	
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue) {

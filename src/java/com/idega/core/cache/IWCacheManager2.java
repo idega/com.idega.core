@@ -22,6 +22,9 @@ import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Status;
+import net.sf.ehcache.bootstrap.BootstrapCacheLoader;
+import net.sf.ehcache.event.RegisteredEventListeners;
+import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
@@ -124,21 +127,40 @@ public class IWCacheManager2 {
 		if (cacheTTLSeconds < 0) {
 			cacheTTLSeconds = DEFAULT_CACHE_TTL_SECONDS;
 		}
-		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, DEFAULT_CACHE_TTL_IDLE_SECONDS, cacheTTLSeconds);
+		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, DEFAULT_CACHE_TTL_IDLE_SECONDS, cacheTTLSeconds, Boolean.TRUE);
 	}
 	
-	public synchronized <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
 			long cacheTTLIdleSeconds, long cacheTTLSeconds) {
+		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, Boolean.TRUE);
+	}
+	
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
+			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable) {
+		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
+				resetable, null, null);
+	}
+	
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
+			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
+		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
+				resetable, cacheListener, cacheGuardian);
+	}
+	
+	private synchronized <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, MemoryStoreEvictionPolicy memoryPolicy,
+			boolean overFlowToDisk, boolean isEternal, long cacheTTLIdleSeconds, long cacheTTLSeconds, RegisteredEventListeners registeredEventListeners,
+            BootstrapCacheLoader bootstrapCacheLoader, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
 		
 		CacheMap<K, V> cm = getCacheMapsMap().get(cacheName);
 		if (cm == null) {
 			try {
 				Cache cache = getInternalCache(cacheName);
 				if (cache == null) {
-					cache = new Cache(cacheName, cacheSize, overFlowToDisk, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds);
+					cache = new Cache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, null, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds, overFlowToDisk,
+							cacheTTLIdleSeconds, registeredEventListeners, bootstrapCacheLoader);
 					getInternalCacheManager().addCache(cache);
 				}
-				cm = new CacheMap<K, V>(cache);
+				cm = new CacheMap<K, V>(cache, resetable, cacheListener, cacheGuardian);
 				getCacheMapsMap().put(cacheName, cm);
 			}
 			catch (Exception e) {

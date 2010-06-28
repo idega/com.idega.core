@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
@@ -15,9 +17,14 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -31,6 +38,14 @@ import com.idega.util.expression.ELUtil;
 public abstract class DefaultSpringBean {
 
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
+	private static Logger LOGGER_;
+	
+	protected Logger getLogger() {
+		if (LOGGER_ == null) {
+			LOGGER_ = Logger.getLogger(getClass().getName());
+		}
+		return LOGGER_;
+	}
 	
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionBeanClass) {
@@ -51,7 +66,8 @@ public abstract class DefaultSpringBean {
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOService> T getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> serviceBeanClass) {
 		try {
-			return (T) IBOLookup.getServiceInstance(iwac, serviceBeanClass);	//	Casting is needed to avoid stupid compilation error in Maven 2
+			//	Casting is needed to avoid stupid compilation error in Maven 2
+			return (T) IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext(): iwac, serviceBeanClass);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting service instance: " + serviceBeanClass);
 		}
@@ -59,13 +75,24 @@ public abstract class DefaultSpringBean {
 	}
 	
 	protected Locale getCurrentLocale() {
+		Locale locale = null;
 		try {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			return loginSession.getCurrentLocale();
+			locale = loginSession.getCurrentLocale();
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current locale", e);
 		}
-		return null;
+		
+		if (locale == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			locale = iwc == null ? null : iwc.getCurrentLocale();
+		}
+		
+		if (locale == null) {
+			locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
+		}
+		
+		return locale == null ? Locale.ENGLISH : locale;
 	}
 	
 	protected User getCurrentUser() {
@@ -103,5 +130,33 @@ public abstract class DefaultSpringBean {
 			LOGGER.log(Level.WARNING, "Error getting cache!", e);
 		}
 		return null;
+	}
+	
+	protected IWBundle getBundle(String bundleIdentifier) {
+		return getApplication().getBundle(bundleIdentifier);
+	}
+
+	protected IWResourceBundle getResourceBundle(IWBundle bundle) {
+		Locale locale = getCurrentLocale();
+		IWContext iwc = null;
+		if (locale == null) {
+			iwc = CoreUtil.getIWContext();
+		}
+	
+		if (locale == null && iwc == null) {
+			locale = Locale.ENGLISH;
+			LOGGER.warning("Will use default locale (" + locale + ") for resource bundle, because was unable to resolve both - IWContext and current locale");
+		}
+		
+		return locale == null ? bundle.getResourceBundle(iwc) : bundle.getResourceBundle(locale);
+	}
+	
+	protected HttpSession getSession() {
+		RequestResponseProvider provider = null;
+		try {
+			provider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+		} catch (Exception e) {}
+		
+		return provider == null ? null : provider.getRequest().getSession(Boolean.TRUE);
 	}
 }

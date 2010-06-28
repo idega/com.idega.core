@@ -33,10 +33,12 @@ public class EntityFinder implements Singleton {
 
 	private static Instantiator instantiator = new Instantiator() { 
 		
+		@Override
 		public Object getInstance() { 
 			return new EntityFinder();
 		}
 		
+		@Override
 		public void unload() {
 			debug = DEBUG_DEFAULT_VALUE;
 		}
@@ -209,8 +211,9 @@ public class EntityFinder implements Singleton {
 
 			}
 			RS.close();
-		}
-		finally {
+		} catch (Exception e) {
+			throw new SQLException("Error executing query: ".concat(SQLString), e);
+		} finally {
 			if (Stmt != null) {
 				Stmt.close();
 			}

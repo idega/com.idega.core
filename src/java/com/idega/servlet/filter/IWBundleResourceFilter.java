@@ -138,7 +138,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 						if(realFile!=null){
 							feedOutFile(request,response,realFile);
 							flushedResources.add(requestUriWithoutContextPath);
-							log.log(Level.INFO, "Flushed file to webapp : "+requestUriWithoutContextPath);
+							log.log(Level.FINE, "Flushed file to webapp : "+requestUriWithoutContextPath);
 							return;
 						}
 						

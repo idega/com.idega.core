@@ -38,11 +38,39 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	private static final Logger LOGGER = Logger.getLogger(CacheMap.class.getName());
 	
+	private boolean resetable = Boolean.TRUE;
+	
 	private Cache cache;
+	
 	private List<CacheMapListener<K, V>> cacheListeners;
-
+	private List<CacheMapGuardian<K, V>> guardians;
+	
 	CacheMap(Cache cache) {
+		this(cache, Boolean.TRUE);
+	}
+	
+	CacheMap(Cache cache, boolean resetable) {
+		this(cache, resetable, null, null);
+	}
+	
+	CacheMap(Cache cache, boolean resetable, CacheMapListener<K, V> cacheListener) {
+		this(cache, resetable, cacheListener, null);
+	}
+	
+	CacheMap(Cache cache, boolean resetable, CacheMapGuardian<K, V> guardian) {
+		this(cache, resetable, null, guardian);
+	}
+	
+	CacheMap(Cache cache, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> guardian) {
 		this.cache = cache;
+		this.resetable = resetable;
+		
+		if (cacheListener != null) {
+			addCacheListener(cacheListener);
+		}
+		if (guardian != null) {
+			addCacheGuardian(guardian);
+		}
 	}
 	
 	Cache getCache() {
@@ -62,7 +90,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	public boolean containsKey(Object key) {
 		try {
 			Element element = getCache().get((Serializable) key);
-			return element != null && element.getValue() != null;
+			return element != null && (element.getObjectValue() != null || element.getValue() != null);
 		}
 		catch (IllegalStateException e) {
 			e.printStackTrace();
@@ -79,7 +107,24 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	@SuppressWarnings("unchecked")
 	public V get(Object key) {
+		if (key == null) {
+			return null;
+		}
+		
 		try {
+			K realKey = (K) key;
+			
+			boolean canGet = true;
+			if (getCacheGuardians() != null) {
+				for (Iterator<CacheMapGuardian<K, V>> guardiansIter = getCacheGuardians().iterator(); (guardiansIter.hasNext() && canGet);) {
+					canGet = guardiansIter.next().beforeGet(realKey);
+				}
+			}
+			if (!canGet) {
+				LOGGER.warning("Object can not be fetched by the key " + key + " because of the guardian(s)!");
+				return null;
+			}
+			
 			Element element = getCache().get(key);
 			if (element == null) {
 				return null;
@@ -90,7 +135,6 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 				return null;
 			}
 			
-			K realKey = (K) key;
 			V result = (V) o;
 			
 			if (getCacheListeners() != null) {
@@ -118,6 +162,27 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 		}
 		
 		try {
+			boolean canPut = true;
+			if (getCacheGuardians() != null) {
+				for (Iterator<CacheMapGuardian<K, V>> guardiansIter = getCacheGuardians().iterator(); (guardiansIter.hasNext() && canPut);) {
+					canPut = guardiansIter.next().beforePut(key, value);
+				}
+			}
+			if (!canPut) {
+				LOGGER.warning("Object " + value + " can not be put with the key " + key + " because of the guardian(s)!");
+				return null;
+			}
+			
+			if (cache.getCacheConfiguration().isOverflowToDisk() && !containsKey(key)) {
+				long maxElementsInMemory = cache.getCacheConfiguration().getMaxElementsInMemory();
+				long currentCacheSize = cache.getMemoryStoreSize();
+				if (maxElementsInMemory == currentCacheSize) {
+					LOGGER.info("Flushing the cache: " + cache.getName() + " because the cache size (" + currentCacheSize + ") has reached maximum: " +
+							maxElementsInMemory);
+					cache.flush();
+				}
+			}
+			
 			Element element = new Element(key, value);
 			getCache().put(element);
 			if (getCacheListeners() != null) {
@@ -137,16 +202,27 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	@SuppressWarnings("unchecked")
 	public V remove(Object key) {
 		try {
+			K realKey = (K) key;
 			V realElementToRemove = null;
-			Element objectToRemove = getCache().get(key);
+			Element objectToRemove = getCache().get(realKey);
 			if (objectToRemove != null) {
 				realElementToRemove = (V) objectToRemove.getObjectValue();
 			}
 			
-			getCache().remove((Serializable) key);
+			boolean canRemove = true;
+			if (getCacheGuardians() != null) {
+				for (Iterator<CacheMapGuardian<K, V>> guardiansIter = getCacheGuardians().iterator(); (guardiansIter.hasNext() && canRemove);) {
+					canRemove = guardiansIter.next().beforeRemove(realKey, realElementToRemove);
+				}
+			}
+			if (!canRemove) {
+				LOGGER.warning("Object " + realElementToRemove + " can not be removed by the key " + key + " because of the guardian(s)!");
+				return null;
+			}			
+			
+			getCache().remove(realKey);
 			
 			if (getCacheListeners() != null) {
-				K realKey = (K) key;
 				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 					CacheMapListener<K, V> listener = iterator.next();
 					listener.removedObject(realKey);
@@ -174,6 +250,22 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	public void clear() {
 		try {
+			if (!resetable) {
+				LOGGER.info("Cache " + cache.getName() + " is not resetable!");
+				return;
+			}
+			
+			boolean canClear = true;
+			if (getCacheGuardians() != null) {
+				for (Iterator<CacheMapGuardian<K, V>> guardiansIter = getCacheGuardians().iterator(); (guardiansIter.hasNext() && canClear);) {
+					canClear = guardiansIter.next().beforeClear();
+				}
+			}
+			if (!canClear) {
+				LOGGER.warning("Cache " + cache.getName() + " can not be cleared because of the guardian(s)!");
+				return;
+			}
+			
 			getCache().removeAll();
 			if (getCacheListeners() != null) {
 				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
@@ -244,5 +336,21 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 			setCacheListeners(cacheListeners);
 		}
 		cacheListeners.add(listener);
+	}
+	
+	public List<CacheMapGuardian<K, V>> getCacheGuardians() {
+		return this.guardians;
+	}
+
+	public void setCacheGuardians(List<CacheMapGuardian<K, V>> guardians) {
+		this.guardians = guardians;
+	}
+	
+	public void addCacheGuardian(CacheMapGuardian<K, V> guardian) {
+		if (getCacheGuardians() == null) {
+			guardians = new ArrayList<CacheMapGuardian<K, V>>();
+			setCacheGuardians(guardians);
+		}
+		guardians.add(guardian);
 	}
 }

@@ -9,8 +9,11 @@
  */
 package com.idega.presentation.ui;
 
+import java.io.IOException;
 import java.text.NumberFormat;
 import java.util.Locale;
+
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.util.LocaleUtil;
@@ -56,7 +59,9 @@ public class TextInput extends GenericInput {
     private int minimumLength;
     private int decimals = -1;
 	
-	
+	private static final String LENGTH_PROPERTY = "length";
+	private static final String MAX_LENGTH_PROPERTY = "maxLength";
+    
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[28];
 		values[0] = super.saveState(ctx);
@@ -121,8 +126,23 @@ public class TextInput extends GenericInput {
 		this.nextInputID = (String) values[27];
 	}	
 	
-	
-	
+	@Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+    	ValueExpression ve = getValueExpression(LENGTH_PROPERTY);
+    	if (ve != null) {
+	    	int length = Integer.parseInt(ve.getValue(context.getELContext()).toString());
+    		setLength(length);
+    	}    
+    	
+		ve = getValueExpression(MAX_LENGTH_PROPERTY);
+    	if (ve != null) {
+	    	int maxLength = Integer.parseInt(ve.getValue(context.getELContext()).toString());
+    		setMaxlength(maxLength);
+    	}    
+    	    	
+    	super.encodeBegin(context);
+    }
+ 		
     /**
      * Constructs a new <code>TextInput</code> with the name "untitled".
      */

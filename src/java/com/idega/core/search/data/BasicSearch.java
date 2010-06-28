@@ -12,6 +12,8 @@ package com.idega.core.search.data;
 import java.util.Collection;
 import com.idega.core.search.business.Search;
 import com.idega.core.search.business.SearchQuery;
+import com.idega.core.search.business.SearchResult;
+import com.idega.util.ListUtil;
 
 
 /**
@@ -28,7 +30,7 @@ public class BasicSearch implements Search {
 	private String searchName;
 	private SearchQuery searchQuery;
 	private long numberOfResults = 0;
-	private Collection searchResults;
+	private Collection<SearchResult> searchResults;
 	
 	/**
 	 * 
@@ -61,7 +63,7 @@ public class BasicSearch implements Search {
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.Search#getSearchResults()
 	 */
-	public Collection getSearchResults() {
+	public Collection<SearchResult> getSearchResults() {
 		return this.searchResults;
 	}
 
@@ -69,8 +71,8 @@ public class BasicSearch implements Search {
 	 * @see com.idega.core.search.business.Search#getNumberOfResults()
 	 */
 	public long getNumberOfResults() {
-		Collection results = getSearchResults();
-		if(results!=null && !results.isEmpty()){
+		Collection<SearchResult> results = getSearchResults();
+		if (!ListUtil.isEmpty(results)) {
 			return results.size();
 		}
 		return this.numberOfResults;
@@ -91,7 +93,7 @@ public class BasicSearch implements Search {
 	/**
 	 * @param searchResults The searchResults to set.
 	 */
-	public void setSearchResults(Collection searchResults) {
+	public void setSearchResults(Collection<SearchResult> searchResults) {
 		this.searchResults = searchResults;
 	}
 	/**

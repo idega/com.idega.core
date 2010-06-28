@@ -18,6 +18,7 @@ import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
@@ -25,7 +26,9 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.logging.LoggingHelper;
 
 /**
@@ -318,5 +321,15 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 		for (ActionListener listener: actionListeners) {
 			listener.actionPerformed(e);
 		}
+	}
+	
+	protected User getCurrentUser() {
+		try {
+			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+			return loginSession.getUser();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 }

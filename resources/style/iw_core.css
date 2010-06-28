@@ -227,3 +227,94 @@ div.fileDownloadStatisticsNotificationContainer {
 	margin-top: 15px;
 	padding-right: 5px;
 }
+
+div.outdatedBrowserInformation {
+	border: 1px solid #F7941D;
+	background: #FEEFDA;
+	text-align: center;
+	clear: both;
+	height: 75px;
+	position: relative;
+}
+
+div.outdatedBrowserInformationCloser {
+	position: absolute;
+	right: 3px;
+	top: 3px;
+	font-family: courier new;
+	font-weight: bold;
+}
+
+img.outdatedBrowserInformationCloserImage {
+	border: none;
+}
+
+div.outdatedBrowserInformationContent {
+	width: 640px;
+	margin: 0 auto;
+	text-align: left;
+	padding: 0;
+	overflow: hidden;
+	color: black;
+}
+
+div.outdatedBrowserInformationContentWarningContainer {
+	width: 75px;
+	float: left;
+}
+
+img.outdatedBrowserInformationContentWarningImage {
+}
+
+div.outdatedBrowserInformationContentText {
+	width: 250px;
+	float: left;
+	font-family: Arial, sans-serif;
+}
+
+.outdatedBrowserInformationContentTextHeading {
+	font-size: 14px;
+	font-weight: bold;
+	margin-top: 12px;
+}
+
+.outdatedBrowserInformationContentTextBody {
+	font-size: 12px;
+	margin-top: 6px;
+	line-height: 12px;
+}
+
+.outdatedBrowserInformationFirefox {
+	width: 75px;
+	float: left;
+}
+.outdatedBrowserInformationFirefoxImage {
+	border: none;
+	width: 75px;
+}
+	
+.outdatedBrowserInformationIE {
+	width: 75px;
+	float: left;
+}
+.outdatedBrowserInformationIEImage {
+	border: none;
+	width: 75px;
+}
+
+.outdatedBrowserInformationSafari {
+	width: 75px;
+	float: left;
+}
+.outdatedBrowserInformationSafariImage {
+	border: none;
+	width: 75px;
+}
+
+.outdatedBrowserInformationChrome {
+	float: left;
+}
+.outdatedBrowserInformationChromeImage {
+	border: none;
+	width: 75px;
+}

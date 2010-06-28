@@ -19,8 +19,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
@@ -255,80 +253,47 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		return getChildren().isEmpty();
 	}
+	
 	@Override
-	public void _main(IWContext iwc) throws Exception
-	{
-		if (!this.initializedInMain)
-		{
+	public void _main(IWContext iwc) throws Exception {
+		if (!this.initializedInMain) {
 			this.initInMain(iwc);
 		}
-		//if (!goneThroughMain)
-		if(mayGoThroughMain())
-		{
-			//initVariables(iwc);
-			try
-			{
-				//super.main(iwc);
+		
+		if (mayGoThroughMain()) {
+			try	{
 				main(iwc);
-			}
-			catch (NotLoggedOnException noex)
-			{
-				//add(new ExceptionWrapper(ex, this));
+			} catch (NotLoggedOnException noex)	{
 				//throw the exception further:
 				throw noex;
-			}
-			catch (Exception ex)
-			{
+			} catch (Exception ex) {
 				add(new ExceptionWrapper(ex, this));
-				Logger.getLogger(PresentationObjectContainer.class.getName()).log(Level.WARNING, "Some error occured rendering " + this, ex);
+				getLogger().log(Level.WARNING, "Some error occured rendering " + this, ex);
 			}
-			//if (!isEmpty())
-			//{
 			
-			if(IWMainApplication.useJSF){
+			if (IWMainApplication.useJSF) {
 				//Do not go through the children in JSF as that is done through the encode/begin/children methods:
-				/*Iterator iter = getFacetsAndChildren();
-				while(iter.hasNext()){
-					UIComponent child = (UIComponent)iter.next();
-					if(child instanceof PresentationObject){
-						PresentationObject po = (PresentationObject)child;
-						po._main(iwc);
-					}
-				}*/
-			}
-			else{
+			} else {
 				int numberOfObjects = numberOfObjects();
-				for (int index = 0; index < numberOfObjects; index++)
-				{
-					try{
-						PresentationObject tempobj = (PresentationObject)objectAt(index);
-						try
-						{
-							if (tempobj != null)
-							{
-								if (tempobj != this)
-								{
+				for (int index = 0; index < numberOfObjects; index++) {
+					try {
+						PresentationObject tempobj = (PresentationObject) objectAt(index);
+						try {
+							if (tempobj != null) {
+								if (tempobj != this) {
 									tempobj._main(iwc);
 								}
 							}
-						}
-						catch (Exception ex)
-						{
+						} catch (Exception ex) {
 							add(new ExceptionWrapper(ex, this));
+							getLogger().log(Level.WARNING, "Some error occured rendering " + tempobj, ex);
 						}
-					}
-					catch(Exception e){
-						Logger log = getLogger();
-						log.fine("Exception in PressentationObjectContainer._main() catched: "+e.getClass()+" : "+e.getMessage());
-						if(log.isLoggable(Level.FINER)){
-							e.printStackTrace();
-						}
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Exception in PressentationObjectContainer._main() catched: "+e.getClass()+" : "+e.getMessage(), e);
 					}
 				}
-			//}
 			}
 		}
-		//goneThroughMain = true;
 		setGoneThroughMain();
 	}
 

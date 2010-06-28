@@ -3896,7 +3896,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		catch (Exception e) {
 			e.printStackTrace();
-			throw new IDOStoreException(e.getMessage());
+			throw new IDOStoreException(e.getMessage(), e);
 		}
 	}
 

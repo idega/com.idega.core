@@ -1,10 +1,15 @@
 package com.idega.presentation.ui;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
+import javax.el.ValueExpression;
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
+import com.idega.data.IDOEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
 import com.idega.util.text.TextSoap;
@@ -30,6 +35,11 @@ public class GenericSelect extends InterfaceObject {
 	private boolean _isMultiple = false;
 	
 	private boolean addSelectScript = false;
+	
+	public static final String SET_TO_SUBMIT_PROPERTY = "setToSubmit";
+	public static final String OPTIONS_PROPERTY = "options";
+	public static final String ENTITIES_PROPERTY = "entities";
+	public static final String SELECTED_PROPERTY = "selected";
 	
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[10];
@@ -59,6 +69,66 @@ public class GenericSelect extends InterfaceObject {
 		this.addSelectScript = ((Boolean) values[9]).booleanValue();
 	}
 	
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+    	ValueExpression ve = getValueExpression(SET_TO_SUBMIT_PROPERTY);
+    	if (ve != null) {
+	    	boolean setToSubmit = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setToSubmit(setToSubmit);
+    	}
+    	
+		ve = getValueExpression(SELECTED_PROPERTY);
+    	if (ve != null) {
+	    	String selected = (String) ve.getValue(context.getELContext());
+    		setSelectedOption(selected);
+    	}    
+    	
+		ve = getValueExpression(OPTIONS_PROPERTY);
+    	if (ve != null) {
+    		List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
+    		setSelectOptions(options);
+    	}    
+    	
+		ve = getValueExpression(ENTITIES_PROPERTY);
+    	if (ve != null) {
+    		List<IDOEntity> entities = (List<IDOEntity>) ve.getValue(context.getELContext());
+    		setEntities(entities);
+    	}    
+    	
+    	super.encodeBegin(context);
+    }
+    
+	private String setSelectedOption() {
+		String val = null;
+		Iterator iter = getChildren().iterator();
+		while (iter.hasNext()) {
+			Object optionObj = iter.next();
+			if(optionObj instanceof SelectOption) {
+				SelectOption option = (SelectOption) optionObj;
+				boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()) || this.selectedElements.contains(option.getName(false)));
+				option.setSelected(setSelected);
+				if(setSelected){
+					val = option.getValueAsString();
+				}
+			}
+			else if (optionObj instanceof UIComponent) {
+				UIComponent comp = (UIComponent) optionObj;
+				List<UIComponent> list = comp.getChildren();
+				for (UIComponent uiComponent : list) {
+					if (uiComponent instanceof SelectOption) {
+						SelectOption option = (SelectOption) uiComponent;
+						boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()) || this.selectedElements.contains(option.getName(false)));
+						option.setSelected(setSelected);
+						if(setSelected){
+							val = option.getValueAsString();
+						}
+					}
+				}
+			}
+		}
+
+		return val;
+	}
 	
 	/**
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
@@ -129,7 +199,9 @@ public class GenericSelect extends InterfaceObject {
 	 * @param option	The <code>SelectOption</code> to add.
 	 */
 	public void addOption(SelectOption option) {
-		add(option);
+		if (!getChildren().contains(option)) {
+			add(option);
+		}
 		if (option.getSelected()) {
 			setSelectedOption(option.getValueAsString());
 		}
@@ -142,13 +214,27 @@ public class GenericSelect extends InterfaceObject {
 	public void setSelectOption(SelectOption option) {
 		addOption(option);
 	}
+	
+	public void setSelectOptions(List<SelectOption> options) {
+		for (SelectOption selectOption : options) {
+			addOption(selectOption);
+		}
+	}
+	
+	public void setEntities(List<IDOEntity> entities) {
+		for (IDOEntity entity : entities) {
+			addOption(new SelectOption(entity.toString(), entity.getPrimaryKey().toString()));
+		}
+	}
 
 	/**
 	 * Adds a <code>SelectOption</code> to the select object as the first option.
 	 * @param option	The <code>SelectOption</code> to add.
 	 */
 	public void addFirstOption(SelectOption option) {
-		add(0, option);
+		if (!getChildren().contains(option)) {
+			add(0, option);
+		}
 		if (option.getSelected()) {
 			setSelectedOption(option.getValueAsString());
 		}
@@ -177,7 +263,9 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void addDisabledOption(SelectOption option) {
 		option.setDisabled(true);
-		add(option);
+		if (!getChildren().contains(option)) {
+			add(option);
+		}
 		if (option.getSelected()) {
 			setSelectedOption(option.getValueAsString());
 		}
@@ -286,8 +374,7 @@ public class GenericSelect extends InterfaceObject {
 		if (this._isSetAsNotEmpty) {
 			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this._notEmptyErrorMessage, this._emptyValue);
 		}
-//		if (_isSetToDisable) {
-		if (getScript() != null) {
+		if (_isSetToDisable && getScript() != null) {
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function disableObjectByDropdown (dropdown,inputs,value,selectedValue) {\n	if (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue)) {\n \tif (inputs.length > 1) {\n	\t\tfor(var i=0;i<inputs.length;i++)\n	\t\t\tinputs[i].disabled=eval(value);\n	\t\t}\n	\t\tinputs.disabled=eval(value);\n}\n");
 			if (!this._isMultiple) {
@@ -296,7 +383,6 @@ public class GenericSelect extends InterfaceObject {
 			buffer.append("}");
 			getScript().addFunction("disableObjectByDropdown", buffer.toString());
 		}
-//		}
 		if (this._isSetToSubmit) {
 			getScript().addFunction("submitWhenSelected", "function submitWhenSelected (dropdown,selectedValue) {\n\tif (dropdown.options[dropdown.selectedIndex].value == eval(selectedValue))\n\t\tdropdown.form.submit();\n}");
 		}
@@ -339,21 +425,7 @@ public class GenericSelect extends InterfaceObject {
 			setOnChange("navHandler(this)");
 		}
 		
-		String val = null;
-		Iterator iter = getChildren().iterator();
-		while (iter.hasNext()) {
-			Object optionObj = iter.next();
-			if(optionObj instanceof SelectOption) {
-				SelectOption option = (SelectOption) optionObj;
-				boolean setSelected = ((this._allSelected) || this.selectedElements.contains(option.getValueAsString()));
-				option.setSelected(setSelected);
-				if(setSelected){
-					val = option.getValueAsString();
-				}
-			} else {
-				System.out.println("Object other than SelectOption in a GenericSelect, skipping setting selected value");
-			}
-		}
+		String val = setSelectedOption();
 
 		if (getMarkupLanguage().equals("HTML")) {
 			println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
@@ -402,19 +474,17 @@ public class GenericSelect extends InterfaceObject {
 				}
 			}
 		}
-		else {
-    	if (getIndex() > -1) {
+		else if (getIndex() > -1) {
     		String[] parameters = iwc.getParameterValues(getName());
     		if (parameters != null && parameters.length >= getIndex() + 1) {
     			setSelectedOption(parameters[getIndex()]);
     		}
-    	}
-    	else {
-        if (iwc.getParameter(getName()) != null) {
-        	setSelectedOption(iwc.getParameter(getName()));
-        }
-    	}
 		}
+    	else {
+	        if (iwc.getParameter(getName()) != null) {
+	        	setSelectedOption(iwc.getParameter(getName()));
+	        }
+    	}
 	}
 
 	/**

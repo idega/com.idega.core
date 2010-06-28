@@ -29,6 +29,8 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 
 	public ICPage findExistingByUri(String pageUri, int domainId)
 			throws FinderException;
+	
+	public ICPage findByWebDavUri(String webDavUri) throws FinderException;
 
 	/**
 	 * @return

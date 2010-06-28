@@ -14,6 +14,7 @@ import java.util.Comparator;
 import java.util.Locale;
 
 import com.idega.core.data.ICTreeNode;
+import com.idega.util.CoreConstants;
 
 
 /**
@@ -24,32 +25,37 @@ import com.idega.core.data.ICTreeNode;
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.2 $
  */
-public class ICTreeNodeComparator implements Comparator {
+public class ICTreeNodeComparator implements Comparator<ICTreeNode> {
 
-  private Collator collator;
-	private Locale iLocale;
+	private Collator collator;
+	private Locale locale;
 	
 	public ICTreeNodeComparator() {
+		this.collator = Collator.getInstance();
 	}
 	
 	public ICTreeNodeComparator(Locale locale) {
-		this.iLocale = locale;
+		this.locale = locale;
+		this.collator = Collator.getInstance(locale);
 	}
 	
-	/* (non-Javadoc)
-	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
-	 */
-	public int compare(Object o1, Object o2) {
-    ICTreeNode p1 = (ICTreeNode) o1;
-    ICTreeNode p2 = (ICTreeNode) o2;
+	public int compare(ICTreeNode o1, ICTreeNode o2) {
+		String name1 = getName(o1);
+		String name2 = getName(o2);
+		return collator.compare(name1, name2);
+	}
+	
+	private String getName(ICTreeNode node) {
+		if (node == null) {
+			return CoreConstants.EMPTY;
+		}
 		
-		if (this.iLocale != null) {
-			this.collator = Collator.getInstance(this.iLocale);
-	    return this.collator.compare(p1.getNodeName(this.iLocale), p2.getNodeName(this.iLocale));
+		String name = locale == null ? node.getNodeName() : node.getNodeName(locale);
+		if (locale != null && name == null) {
+			//	Failed to retrieve localized name
+			name = node.getNodeName();
 		}
-		else {
-			this.collator = Collator.getInstance();
-			return this.collator.compare(p1.getNodeName(), p2.getNodeName());
-		}
+		
+		return name == null ? CoreConstants.EMPTY : name;
 	}
 }

@@ -30,8 +30,9 @@ public interface TmpFileResolver {
 	public abstract Collection<File> getFilesToCleanUp(String identifier,
 			Object resource);
 
-	public abstract void uploadToTmpLocation(String pathDirRelativeToBase,
-			String fileName, InputStream inputStream);
+	public abstract void uploadToTmpLocation(String pathDirRelativeToBase, String fileName, InputStream inputStream);
+	
+	public abstract void uploadToTmpLocation(String pathDirRelativeToBase, String fileName, InputStream inputStream, boolean closeStream);
 
 	public abstract String getTmpUploadDir(String pathDirRelativeToBase);
 	

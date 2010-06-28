@@ -145,6 +145,10 @@ public class PresentationUtil {
 	}
 	
 	public static final String getJavaScriptLinesLoadedLazily(List<String> scriptUris, String callbackFunction) {
+		return getJavaScriptLinesLoadedLazily(scriptUris, callbackFunction, false);
+	}
+	
+	public static final String getJavaScriptLinesLoadedLazily(List<String> scriptUris, String callbackFunction, boolean onWindowLoaded) {
 		if (scriptUris == null) {
 			return null;
 		}
@@ -161,6 +165,11 @@ public class PresentationUtil {
 			callbackFunction = new StringBuffer("\nfunction() {\n").append(callbackFunction).append("\n}").toString();
 		}
 		action.append("], ").append(callbackFunction == null ? "null" : callbackFunction).append(");");
+		
+		if (onWindowLoaded) {
+			action = new StringBuffer("registerEvent(window, 'load', function() {").append(action.toString()).append("});");
+		}
+		
 		return action.toString();
 	}
 	

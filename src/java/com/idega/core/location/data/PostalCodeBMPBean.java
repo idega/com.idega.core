@@ -387,6 +387,14 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		}
 		return null;
 	}
+	
+	public boolean equals(Object obj) {
+		if (obj instanceof PostalCode) {
+			PostalCode other = (PostalCode) obj;
+			return other.getPostalCode().equals(this.getPostalCode());
+		}
+		return false;
+	}
 
 	/*
 	 * (non-Javadoc)
@@ -401,6 +409,22 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		return false;
 	}
 
+	@Override
+	public String toString() {
+		StringBuilder builder = new StringBuilder();
+		if (getPostalCode() != null) {
+			builder.append(getPostalCode());
+		}
+		if (builder.length() > 0) {
+			builder.append(" ");
+		}
+		if (getName() != null) {
+			builder.append(getName());
+		}
+		
+		return builder.toString();
+	}
+	
 	public void store() throws IDOStoreException {
 		setPostalAddress(getPostalCode() + " " + getName());
 		super.store();

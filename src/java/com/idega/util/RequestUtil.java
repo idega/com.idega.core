@@ -36,6 +36,7 @@ public class RequestUtil {
 	private static final String HEADER_USER_AGENT = "User-agent";
 	private static final String HEADER_REFERER = "Referer";
 	private static final String HEADER_AUTHORIZATION = "Authorization";
+	private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
 
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it
@@ -178,6 +179,10 @@ public class RequestUtil {
 	 */
 	public static String getUserAgent(HttpServletRequest request) {
 		return request.getHeader(HEADER_USER_AGENT);
+	}
+	
+	public static String getBrowserLanguage(HttpServletRequest request) {
+		return request.getHeader(HEADER_ACCEPT_LANGUAGE);
 	}
 
 	/**

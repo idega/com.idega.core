@@ -49,10 +49,11 @@ public class IWEncodingFilter implements Filter {
 		// iwc.getParameter("just forcing the getting of parameters, remove
 		// later");
 
-		RequestProvider requestProvider = null;
+		RequestResponseProvider requestProvider = null;
 		try {
-			requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+			requestProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 			requestProvider.setRequest(request);
+			requestProvider.setResponse(response);
 		} catch(Exception e) {}
 		
 		chain.doFilter(request, response);

@@ -1,6 +1,7 @@
 package com.idega.core.persistence.impl;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -13,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.GenericDao;
 import com.idega.core.persistence.Param;
+import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -103,10 +105,18 @@ public class GenericDaoImpl implements GenericDao {
 	}
 	
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultListByInlineQuery(String query,
-	        Class<Expected> expectedReturnType, Param... params) {
+	public <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		
-		return getQueryInline(query).getResultList(expectedReturnType, params);
+		try {
+			return getQueryInline(query).getResultList(expectedReturnType, params);
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				Logger.getLogger(this.getClass().getName()).info("Query '" + query + "' executed in " + (end - start) + " ms");
+			}
+		}
 	}
 	
 	public com.idega.core.persistence.Query getQueryNativeInline(String query) {
@@ -125,11 +135,18 @@ public class GenericDaoImpl implements GenericDao {
 	}
 	
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultList(String namedQueryName,
-	        Class<Expected> expectedReturnType, Param... params) {
+	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		
-		return getQueryNamed(namedQueryName).getResultList(expectedReturnType,
-		    params);
+		try {
+			return getQueryNamed(namedQueryName).getResultList(expectedReturnType, params);
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				Logger.getLogger(this.getClass().getName()).info("Query '" + namedQueryName + "' executed in " + (end - start) + " ms");
+			}
+		}
 	}
 	
 	protected com.idega.core.persistence.Query createNewQueryNativeInline(

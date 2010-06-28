@@ -35,13 +35,13 @@ import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
-import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectHome;
 import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.event.GenericState;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWEvent;
@@ -196,14 +196,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	protected String generateID()
 	{
-		int hashCode = hashCode();
-		String code;
-		if (hashCode < 0)
-		{
-			hashCode = -hashCode;
-		}
-		code = "id" + hashCode;
-		return code;
+		String UUID = UUIDGenerator.getInstance().generateId();
+		return "id" + UUID.substring(UUID.lastIndexOf("-") + 1);
 	}
 	protected String setID()
 	{
@@ -1197,8 +1191,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			return ico;
 		}
 		catch (Exception e) {
-			log("[PresentationObject] " + c.getName() + " not found in ic_object");
-			e.printStackTrace();
+			log(Level.SEVERE, "[PresentationObject] " + c.getName() + " not found in ic_object");
 			return null;
 		}
 	}
@@ -2812,30 +2805,6 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 					obj.getFacets().put(key,newObject);
 				}
 			}
-		}
-	}
-	
-	private ICPage getPage(IWApplicationContext iwac, String pageId) {
-		try {
-			return getBuilderService(iwac).getICPage(pageId);
-		} catch(Exception e) {
-			e.printStackTrace();
-		}
-		return null;
-	}
-	 
-	private boolean isPageHiddenInMenu(IWContext iwc, String pageId) {
-		ICPage page = getPage(iwc, pageId);
-		if (page == null) {
-			return false;
-		}
-		
-		return page.isHidePageInMenu();
-	}
-	
-	protected void setPageInvisibleInNavigation(IWContext iwc, String pageId, PresentationObject po) {
-		if (isPageHiddenInMenu(iwc, pageId)) {
-			po.setStyleClass(CoreConstants.HIDDEN_PAGE_IN_MENU_STYLE_CLASS);
 		}
 	}
 	

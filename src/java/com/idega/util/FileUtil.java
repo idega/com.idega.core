@@ -220,61 +220,65 @@ public static String getFileSeparator(){
     	FileOutputStream out = new FileOutputStream(toFile);
     	streamToOutputStream(input, out);
     }
-  
     
-
     /*
     * streams an inputstream to a file
     */
-      public static File streamToFile( InputStream input, String filePath, String fileName){
-      	File file = null;
-        try{
-          if(input!=null){
-            input.available();//this casts an ioexception if the stream is null
-            file = getFileAndCreateIfNotExists(filePath,fileName);
-            FileOutputStream fileOut = new FileOutputStream(file);
-            streamToOutputStream(input,fileOut);
-          }
+    public static File streamToFile(InputStream input, String filePath, String fileName) {
+    	return streamToFile(input, filePath, fileName, Boolean.TRUE);
+    }
+
+    public static File streamToFile(InputStream input, String filePath, String fileName, boolean closeStream) {
+    	File file = null;
+        try {
+        	if (input == null) {
+        		LOGGER.warning("Provided InputStream is undefined!");
+        		return null;
+        	}
+          
+        	input.available();	//	This method throws an IO exception if the stream is invalid
+        	file = getFileAndCreateIfNotExists(filePath,fileName);
+        	FileOutputStream fileOut = new FileOutputStream(file);
+        	streamToOutputStream(input, fileOut, closeStream);
+        } catch(IOException e) {
+        	LOGGER.log(Level.WARNING, "Error writing to file: " + filePath + fileName + ": " + e.getMessage());
         }
-        catch(IOException e){
-        	LOGGER.log(Level.WARNING, "Error or skipping (for folders) writing to file", e);
-         }
 
         return file;
-      }
+    }
     
 /*
 * streams an inputstream to a file
 */
   public static void streamToOutputStream( InputStream input, OutputStream out)throws IOException{
-    try{
-      if(input!=null){
-        input.available();
-        byte buffer[]= new byte[1024];
-        int	noRead	= 0;
+	  streamToOutputStream(input, out, Boolean.TRUE);
+  }
 
-        noRead = input.read( buffer, 0, 1024 );
-        //Write out the stream to the file
-        while ( noRead != -1 ){
-          out.write( buffer, 0, noRead );
-          noRead = input.read( buffer, 0, 1024 );
-        }
-
-        out.flush();
-        out.close();
+  private static void streamToOutputStream(InputStream input, OutputStream out, boolean closeInputStream) throws IOException {
+	  try{
+	      if (input == null) {
+	    	  LOGGER.warning("Provided InputStream is undefined!");
+	    	  return;
+	      }
+	      
+	      input.available();
+	      byte buffer[] = new byte[1024];
+	      int noRead = 0;
+	      noRead = input.read(buffer, 0, 1024);
+	
+	      //	Write out the stream to the file
+	      while (noRead != -1) {
+	    	  out.write( buffer, 0, noRead );
+	          noRead = input.read( buffer, 0, 1024 );
+	      }
+	
+	      out.flush();
+	      out.close();
+      } finally {
+    	  if (closeInputStream) {
+    		  IOUtil.close(input);
+    	  }
       }
-
-    }
-    finally{
-      try{
-        if(input!=null) {
-        	input.close();
-        }
-      }
-      catch(IOException e){
-    	  LOGGER.warning("FileUtil : Error closing the inputstream");
-      }
-    }
   }
 
   /** 
@@ -648,8 +652,13 @@ public static String getFileSeparator(){
   	return result;
   }
 
-/** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
+  /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String.  Uses UTF-8 as default encoding **/
   public static String getStringFromURL(String uri){
+	  return getStringFromURL(uri, "UTF-8");
+  }
+  
+  /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
+  public static String getStringFromURL(String uri, String encoding){
     StringBuffer buffer = new StringBuffer("");
     String line;
     BufferedInputStream bin;
@@ -659,7 +668,7 @@ public static String getFileSeparator(){
     try {
       url = new URL(uri);
       bin = new BufferedInputStream(url.openStream());
-      in = new BufferedReader(new InputStreamReader(bin));
+      in = new BufferedReader(new InputStreamReader(bin, encoding));
       //Put the contents in a string
       while ((line = in.readLine()) != null) {
         buffer.append(line);

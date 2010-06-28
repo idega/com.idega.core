@@ -13,4 +13,53 @@
             <component-type>DownloadLink</component-type>
         </component>
     </tag>
+
+    <tag>
+        <tag-name>datePicker</tag-name>
+        <component>
+            <component-type>IWDatePicker</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>selectOne</tag-name>
+        <component>
+            <component-type>SelectDropdown</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>selectOption</tag-name>
+        <component>
+            <component-type>SelectOption</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>textArea</tag-name>
+        <component>
+            <component-type>TextArea</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>textInput</tag-name>
+        <component>
+            <component-type>TextInput</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>checkBox</tag-name>
+        <component>
+            <component-type>CheckBox</component-type>
+        </component>
+    </tag>
+
+    <tag>
+        <tag-name>radioButton</tag-name>
+        <component>
+            <component-type>RadioButton</component-type>
+        </component>
+    </tag>
 </facelet-taglib>

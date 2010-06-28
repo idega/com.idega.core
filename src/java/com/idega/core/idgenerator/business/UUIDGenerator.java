@@ -25,6 +25,10 @@ public class UUIDGenerator implements IdGenerator, Singleton {
 	
 	private org.doomdark.uuid.UUIDGenerator uidGenerator = org.doomdark.uuid.UUIDGenerator.getInstance();
 
+	public static void main(String[] args) {
+		String UUID = UUIDGenerator.getInstance().generateUUID();
+		System.out.println(UUID);
+	}
 	
 	/**
 	 * This constructor should not be used by others
@@ -41,7 +45,7 @@ public class UUIDGenerator implements IdGenerator, Singleton {
 	public String generateUUID(){
 		return this.uidGenerator.generateRandomBasedUUID().toString();
 	}
-
+	
 	/* (non-Javadoc)
 	 * @see com.idega.core.idgenerator.business.IdGenerator#generateId()
 	 */

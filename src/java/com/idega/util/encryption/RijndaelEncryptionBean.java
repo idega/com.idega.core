@@ -3,6 +3,9 @@
  */
 package com.idega.util.encryption;
 
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
@@ -52,8 +55,8 @@ public class RijndaelEncryptionBean {
 			return encrypt(inputPlainText, getSecretKey());
 		}
 		catch (Exception e) {
-			//e.printStackTrace();
-			throw new RuntimeException(e);
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
+			return null;
 		}
 	}
 	/**

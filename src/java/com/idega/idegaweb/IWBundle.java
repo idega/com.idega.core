@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import javax.ejb.FinderException;
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
@@ -301,7 +302,9 @@ public interface IWBundle extends IWModule{
 	 * @param localizationKey LocalizationKey
 	 * @return
 	 */
-	public ValueBinding getValueBinding(String localizationKey);
+	public ValueBinding getValueBinding(String expression);
+	
+	public ValueExpression getValueExpression(String localizationKey);
 	
 	/**
 	 * Returns a valueBinding for a localizationKey
@@ -310,10 +313,6 @@ public interface IWBundle extends IWModule{
 	 * @return
 	 */
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue);
-	
-	 
-	 
-	 
 	
 	/**
 	 * Returns a localized HtmlOutputText object.

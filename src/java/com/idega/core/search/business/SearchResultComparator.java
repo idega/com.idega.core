@@ -14,7 +14,7 @@ import java.util.Map;
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
  * @version $Revision: 1.2 $
  */
-public class SearchResultComparator implements Comparator {
+public class SearchResultComparator implements Comparator<SearchResult> {
 
 	public static final int SORT_BY_RESULT_TYPE = 1;
 
@@ -83,11 +83,7 @@ public class SearchResultComparator implements Comparator {
 		}
 	}
 
-	public int compare(Object searchResult1, Object searchResult2) {
-
-		SearchResult o1 = (SearchResult) searchResult1;
-		SearchResult o2 = (SearchResult) searchResult2;
-
+	public int compare(SearchResult o1, SearchResult o2) {
 		switch (this.sortBy) {
 		case SearchResultComparator.SORT_BY_RESULT_NAME:
 			return this.multiplier
@@ -126,8 +122,8 @@ public class SearchResultComparator implements Comparator {
 	 * @return
 	 */
 	public int mapKeyCompare(SearchResult o1, SearchResult o2, String key) {
-		Map attribMap1 = o1.getSearchResultAttributes();
-		Map attribMap2 = o2.getSearchResultAttributes();
+		Map<String, Object> attribMap1 = o1.getSearchResultAttributes();
+		Map<String, Object> attribMap2 = o2.getSearchResultAttributes();
 
 		if (attribMap1 != null && attribMap2 != null) {
 			Object value1 = attribMap1.get(key);

@@ -1,6 +1,7 @@
 package com.idega.business;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -15,6 +16,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.component.bean.RenderedComponent;
 import com.idega.event.SessionPollerEvent;
 import com.idega.idegaweb.IWMainApplication;
@@ -28,7 +30,7 @@ import com.idega.util.ListUtil;
 
 @Service("pageSessionPoller")
 @Scope(BeanDefinition.SCOPE_SINGLETON)
-public class PageSessionPoller {
+public class PageSessionPoller extends DefaultSpringBean {
 
 	@Autowired
 	private ApplicationContext context;
@@ -39,7 +41,15 @@ public class PageSessionPoller {
 		return applicationSettings.getIfUseSessionPolling();
 	}
 	
-	public RenderedComponent pollSession(String ping) {
+	public RenderedComponent pollSession(String ping, HttpSession httpSession) {
+		if (httpSession == null) {
+			getLogger().warning("No HTTP session session was provided!");
+		} else if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("poller_prints_session_info", Boolean.FALSE)) {
+			long lastTimeAccessed = httpSession.getLastAccessedTime();
+			getLogger().info("Pinging HTTP session: " + httpSession.getId() + ", it was last time accessed @ " + new Date(lastTimeAccessed) +
+					", session can be idle for " + httpSession.getMaxInactiveInterval() + " seconds");
+		}
+		
 		getContext().publishEvent(new SessionPollerEvent(this));
 		
 		return getNotifications();

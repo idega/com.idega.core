@@ -344,8 +344,9 @@ public class JavaScriptMinifier implements AbstractMinifier {
 		}
 		
 		StringBuilder minified = new StringBuilder("\n/***************** STARTS: ").append(resource.getUrl()).append(" *****************/\n");
+		script = script.trim();
 		if (script.startsWith("(function")) {
-			minified.append(CoreConstants.SEMICOLON);
+			script = CoreConstants.SEMICOLON.concat(script);
 		}
 		return minified.append(script).append("\n/***************** ENDS: ").append(resource.getUrl()).append(" *****************/\n").toString();
 	}

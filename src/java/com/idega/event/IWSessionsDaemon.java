@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.util.EventTimer;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 public class IWSessionsDaemon implements IWBundleStartable, ActionListener {
@@ -39,9 +40,9 @@ public class IWSessionsDaemon implements IWBundleStartable, ActionListener {
 	public void actionPerformed(ActionEvent event) {
 		try {	
 			if (event.getActionCommand().equals(IW_SESSIONS_DAEMON)) {
-				int removedSessions = getSessionsManager().removeUselessSessions();
-				if (removedSessions > 0) {
-					LOGGER.info("Removed useless Slide sessions: " + removedSessions);
+				String message = getSessionsManager().removeUselessSessions();
+				if (!StringUtil.isEmpty(message)) {
+					LOGGER.info("Removed idle (and probably useless) HTTP session(s): " + message);
 				}
 			}
 		} catch(Exception e) {

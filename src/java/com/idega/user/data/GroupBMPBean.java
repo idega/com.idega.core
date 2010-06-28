@@ -102,7 +102,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		
 		//addAttribute(COLUMN_GROUP_MODERATOR_ID,"Moderator Id", true,true, Integer.class);
 
-		addManyToOneRelationship(COLUMN_GROUP_MODERATOR_ID, Group.class);
+		addManyToOneRelationship(COLUMN_GROUP_MODERATOR_ID, User.class);
 		// adds a unique id string column to this entity that is set when the entity
 		// is first stored.
 		addUniqueIDColumn();

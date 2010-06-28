@@ -26,7 +26,7 @@ import com.idega.idegaweb.IWMainApplication;
  */
 public class ComponentClassViewNode extends DefaultViewNode {
 
-	private Class componentClass;
+	private Class<? extends UIComponent> componentClass;
 	
 	/**
 	 * @param viewId
@@ -53,30 +53,29 @@ public class ComponentClassViewNode extends DefaultViewNode {
 		setComponentBased(true);
 	}
 
-	
 	/**
 	 * @return Returns the componentClass.
 	 */
-	public Class getComponentClass() {
+	public Class<? extends UIComponent> getComponentClass() {
 		return this.componentClass;
 	}
-
 	
 	/**
 	 * @param componentClass The componentClass to set.
 	 */
-	public void setComponentClass(Class componentClass) {
+	public void setComponentClass(Class<? extends UIComponent> componentClass) {
 		this.componentClass = componentClass;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.view.DefaultViewNode#createComponent(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public UIComponent createComponent(FacesContext context) {
-		Class clazz = getComponentClass();
+		Class<? extends UIComponent> clazz = getComponentClass();
 		if(clazz!=null){
 			try {
-				return (UIComponent)clazz.newInstance();
+				return clazz.newInstance();
 			}
 			catch (InstantiationException e) {
 				throw new RuntimeException(e);

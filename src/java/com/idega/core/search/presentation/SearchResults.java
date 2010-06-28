@@ -14,6 +14,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
@@ -65,6 +66,7 @@ public class SearchResults extends Block {
 	public static final String DEFAULT_EXTRA_ATTRIBUTE_EVEN_STYLE_CLASS = "iw_search_result_extra_attribute_even";
 	private static final String DEFAULT_SEARCH_NAME_STYLE_CLASS = "iw_search_name";
 
+	private String id;
 	private String linkStyleClass = DEFAULT_LINK_STYLE_CLASS;
 	private String abstractTextStyleClass = DEFAULT_ABSTRACT_TEXT_STYLE_CLASS;
 	private String extraInformationTextStyleClass = DEFAULT_EXTRA_INFO_TEXT_STYLE_CLASS;
@@ -155,6 +157,10 @@ public class SearchResults extends Block {
 	public String getStyleClass() {
 		return this.styleClass;
 	}
+	
+	public String getContainerID() {
+		return this.id;
+	}
 
 	/**
 	 * @param styleClass
@@ -163,6 +169,10 @@ public class SearchResults extends Block {
 	@Override
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
+	}
+	
+	public void setContainerID(String id) {
+		this.id = id;
 	}
 	
 	/**
@@ -190,6 +200,9 @@ public class SearchResults extends Block {
 			CSSSpacer spacer = new CSSSpacer();
 			Layer container = new Layer();
 			container.setStyleClass(getStyleClass());
+			if (getContainerID() != null) {
+				container.setID(getContainerID());
+			}
 			
 			if(hideResultsLayer){
 				container.setStyleAttribute("display","none");
@@ -280,7 +293,7 @@ public class SearchResults extends Block {
 								String uri = result.getSearchResultURI();
 								String abstractText = result.getSearchResultAbstract();
 								String extraInfo = result.getSearchResultExtraInformation();
-								Map extraParameters = result.getSearchResultAttributes();
+								Map<String, Object> extraParameters = result.getSearchResultAttributes();
 								// todo group by type
 								String type = result.getSearchResultType();
 								if (row % 2 == 0) {
@@ -342,11 +355,10 @@ public class SearchResults extends Block {
 								}
 								
 								if (extraParameters != null && !extraParameters.isEmpty() && isSetToShowAllResultProperties()) {
-									Iterator keys = extraParameters.keySet().iterator();
 									int counter = 0;
-									while (keys.hasNext()) {
+									for (Iterator<String> keys = extraParameters.keySet().iterator(); keys.hasNext();) {
 										counter++;
-										String key = (String) keys.next();
+										String key = keys.next();
 										String value = extraParameters.get(key).toString();
 										Text extraParams;
 										
@@ -384,6 +396,8 @@ public class SearchResults extends Block {
 								addResultRow(container, rowContainer, extraInfo);
 								row++;
 							}
+						} else {
+							Logger.getLogger(SearchResults.class.getName()).info("There were foud no results by query: " + query);
 						}
 					}
 				}

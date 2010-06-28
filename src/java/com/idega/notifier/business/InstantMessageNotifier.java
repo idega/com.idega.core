@@ -21,7 +21,7 @@ import com.idega.notifier.type.NotificationType;
 import com.idega.presentation.Layer;
 import com.idega.presentation.ui.Label;
 import com.idega.presentation.ui.TextInput;
-import com.idega.servlet.filter.RequestProvider;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -190,7 +190,7 @@ public class InstantMessageNotifier extends BasicNotifier implements Notifier {
 	}
 
 	private String getRequestId() {
-		RequestProvider requestProvider = ELUtil.getInstance().getBean(RequestProvider.class);
+		RequestResponseProvider requestProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 		if (requestProvider == null) {
 			return null;
 		}

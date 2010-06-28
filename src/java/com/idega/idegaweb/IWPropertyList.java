@@ -398,10 +398,10 @@ public class IWPropertyList {
 
 		}
 		catch (XMLException e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, e.getMessage());
 		}
 		catch (Throwable e) {
-			e.printStackTrace();
+			logger.log(Level.SEVERE, e.getMessage());
 		}
 	}
 
