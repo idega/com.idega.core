@@ -809,7 +809,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.append(((Integer) containingGroup.getPrimaryKey()).intValue());
 		query.append(" and r.relationship_type = 'GROUP_PARENT' and (r.group_relation_status = 'ST_ACTIVE' or r.group_relation_status = 'PASS_PENDING')");
 		
-		System.out.println("sql = " + query.toString());
+		//System.out.println("sql = " + query.toString());
 		
 		return this.idoGetNumberOfRecords(query.toString());
 
@@ -1266,75 +1266,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return theReturn;
 	}
 
-	// private void addGroupLegacy(int groupId)throws EJBException{
-	// Connection conn= null;
-	// Statement Stmt= null;
-	// try{
-	// conn = getConnection(getDatasource());
-	// Stmt = conn.createStatement();
-	// String sql = "insert into IC_GROUP_TREE ("+getIDColumnName()+",
-	// CHILD_IC_GROUP_ID) values("+getID()+","+groupId+")";
-	// //System.err.println(sql);
-	// int i = Stmt.executeUpdate(sql);
-	// //System.err.println(sql);
-	// }catch (Exception ex) {
-	// ex.printStackTrace(System.out);
-	// }finally{
-	// if(Stmt != null){
-	// try{
-	// Stmt.close();
-	// }
-	// catch(SQLException sqle){}
-	// }
-	// if (conn != null){
-	// freeConnection(getDatasource(),conn);
-	// }
-	// }
-	// }
-
-	// private void removeGroupLegacy(int groupId, boolean AllEntries)throws
-	// EJBException{
-	// Connection conn= null;
-	// Statement Stmt= null;
-	// try{
-	// conn = getConnection(getDatasource());
-	// Stmt = conn.createStatement();
-	// String qry;
-	// if(AllEntries)//removing all in middle table
-	// qry = "delete from IC_GROUP_TREE where
-	// "+this.getIDColumnName()+"='"+this.getID()+"' OR CHILD_IC_GROUP_ID
-	// ='"+this.getID()+"'";
-	// else// just removing this particular one
-	// qry = "delete from IC_GROUP_TREE where
-	// "+this.getIDColumnName()+"='"+this.getID()+"' AND CHILD_IC_GROUP_ID
-	// ='"+groupId+"'";
-	// int i = Stmt.executeUpdate(qry);
-	// }catch (Exception ex) {
-	// ex.printStackTrace(System.out);
-	// }finally{
-	// if(Stmt != null){
-	// try{
-	// Stmt.close();
-	// }
-	// catch(SQLException sqle){}
-	// }
-	// if (conn != null){
-	// freeConnection(getDatasource(),conn);
-	// }
-	// }
-	// }
-	//
-	// /**
-	// * @deprecated moved to UserGroupBusiness
-	// */
-	// public static void addUserOld(int groupId, User user){
-	// //((com.idega.user.data.GroupHome)com.idega.data.IDOLookup.getHomeLegacy(Group.class)).findByPrimaryKeyLegacy(groupId).addGroup(user.getGroupID());
-	// throw new java.lang.UnsupportedOperationException("Method adduser moved to
-	// UserBusiness");
-	// }
-	// public void addUser(User user)throws RemoteException{
-	// this.addGroup(user.getGroupID());
-	// }
 	public void removeUser(User user, User currentUser) throws RemoveException {
 		// former: user.getGroupId() but this method is deprecated therefore:
 		// user.getId()
@@ -1359,22 +1290,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	}
 
-	// public Group findGroup(String groupName) throws SQLException{
-	//
-	// List group =
-	// EntityFinder.findAllByColumn(com.idega.data.GenericEntity.getStaticInstance(this.getClass().getName()),getNameColumnName(),groupName,getGroupTypeColumnName(),this.getGroupTypeValue());
-	//
-	// if(group != null){
-	//
-	// return (Group)group.get(0);
-	//
-	// }else{
-	//
-	// return null;
-	//
-	// }
-	//
-	// }
 	/**
 	 * This finder returns a collection of all groups of the grouptype(s) that are defined in the groupTypes parameter It also returns the groups that
 	 * are defined as topnodes in the ic_domain_group_relation table It excludes groups that have been deleted and don't have any active relations to
