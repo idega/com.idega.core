@@ -1977,8 +1977,10 @@ IWCORE.pingServer = function(sleepTime, id) {
 						exc = {};
 					}
 					exc.messageToClient = 'Most probably time out occurred while pinging server';
-					ex.reloadPage = true;
+					exc.reloadPage = true;
 					IWCORE.sendExceptionNotification(msg, exc, null);
+					
+					IWCORE.activeSessionPolling(sleepTime, false);
 				},
 				timeout: 10000
 			});
