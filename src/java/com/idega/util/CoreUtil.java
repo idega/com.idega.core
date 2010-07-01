@@ -191,7 +191,7 @@ public class CoreUtil {
 		    		User loggedInUser = loginSession.getUser();
 		    		userFullName = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
 		    	} catch (Exception e) {
-		    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class, e);
+		    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class);
 		    	}
 		    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
 		    	
