@@ -1310,38 +1310,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
-			return null;
-		}
-		//
-		//  NOTE: the code below was causing corrupted databases and is left here only for documentation what happened.
-		//             (the code below is sharing emails among users)
-		//				Do not use this code.
-		// 
-		//		try {
-		//			if (replaceExistentRecord) {
-		//				removeUserEmails(user);
-		//			}
-		//			if (!"".equals(emailAddress)) {
-		//				Email emailRecord = lookupEmail(emailAddress);
-		//				if (emailRecord == null) {
-		//					emailRecord = this.getEmailHome().create();
-		//					emailRecord.setEmailAddress(emailAddress);
-		//					emailRecord.store();
-		//				}
-		//				user.addEmail(emailRecord);
-		//				return emailRecord;
-		//			}
-		//		}
-		//		catch (IDOStoreException e) {
-		//			e.printStackTrace();
-		//		}
-		//		catch (IDOAddRelationshipException e) {
-		//			e.printStackTrace();
-		//		}
-		//		catch (CreateException e) {
-		//			e.printStackTrace();
-		//		}
-		//		return null;
+			return null;		}
 	}
 
 	/**
