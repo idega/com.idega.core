@@ -2,10 +2,14 @@ package com.idega.presentation;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
+
+import com.idega.core.file.data.ICFile;
 
 public class Flash extends GenericPlugin {
 	
 	private List sources;
+	private List files;
 
 	public Flash() {
 		super();
@@ -49,10 +53,18 @@ public class Flash extends GenericPlugin {
 		setHeight(height);
 	}
 	
-	public void main(IWContext iwc) {
+	public void main(IWContext iwc) throws Exception {
+		Random random = new Random();
+		
 		String url = "";
 		if (sources != null && !sources.isEmpty()) {
-			url = (String) sources.get((int) Math.random() * sources.size());
+			int randomPosition = random.nextInt(sources.size());
+			url = (String) sources.get(randomPosition);
+		}
+		if (files != null && !files.isEmpty()) {
+			int randomPosition = random.nextInt(files.size());
+			ICFile file = (ICFile) files.get(randomPosition);
+			url = getICFileSystem(iwc).getFileURI(file);
 		}
 
 		setParam("movie", url);
@@ -64,6 +76,13 @@ public class Flash extends GenericPlugin {
 			sources = new ArrayList();
 		}
 		sources.add(url);
+	}
+	
+	public void setFile(ICFile file) {
+		if (files == null) {
+			files = new ArrayList();
+		}
+		files.add(file);
 	}
 
 	public void setLoop(boolean loop) {

@@ -32,6 +32,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
 
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.servlet.filter.IWBundleResourceFilter;
+
 public class FileUtil {
 
   public static final char UNIX_FILE_SEPARATOR = '/';
@@ -992,4 +995,19 @@ public class FileUtil {
       reader.close();
       return lines;
   }
+
+	public static final File getFileFromWorkspace(String pathToFile) throws IOException {
+  		File file = new File(pathToFile);
+	    if (!file.exists()) {
+	    	int virtualPathStart = pathToFile.indexOf("/idegaweb/bundles/");
+	    	if (virtualPathStart != -1) {
+	    		file = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), pathToFile.substring(virtualPathStart));
+	    	}
+	    }
+	    if (file != null && file.exists()) {
+	    	return file;
+	    }
+	    
+	    throw new IOException("File '" + pathToFile + "' doesn't exist!");
+  	}
 }
