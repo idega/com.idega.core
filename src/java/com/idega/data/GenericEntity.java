@@ -1274,14 +1274,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 					vector.addElement(temp.getColumnName());
 				}
 			}
-			if (vector != null) {
-				vector.trimToSize();
-				theReturn = (String[]) vector.toArray(new String[0]);
-				// return vector.toArray(new IDOLegacyEntity[0]);
-			}
-			else {
-				theReturn = new String[0];
-			}
+
+			vector.trimToSize();
+			theReturn = (String[]) vector.toArray(new String[0]);
 			setCachedColumnNames(theReturn);
 		}
 		return theReturn;
@@ -2140,14 +2135,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				freeConnection(getDatasource(), conn);
 			}
 		}
-		if (vector != null) {
-			vector.trimToSize();
-			return (IDOLegacyEntity[]) vector.toArray((Object[]) java.lang.reflect.Array.newInstance(entity.getClass(), 0));
-			// return vector.toArray(new IDOLegacyEntity[0]);
-		}
-		else {
-			return null;
-		}
+
+		vector.trimToSize();
+		return (IDOLegacyEntity[]) vector.toArray((Object[]) java.lang.reflect.Array.newInstance(entity.getClass(), 0));
 	}
 
 	/**

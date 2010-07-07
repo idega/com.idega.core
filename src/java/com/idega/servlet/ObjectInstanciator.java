@@ -2,9 +2,6 @@ package com.idega.servlet;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.DefaultErrorHandlingUriWindow;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Page;
-import com.idega.presentation.PresentationObject;
-import com.idega.repository.data.RefactorClassRegistry;
 /**
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.0
@@ -27,7 +24,7 @@ public class ObjectInstanciator extends DynamicTemplateServlet {
 			return;
 		}
 			
-		try {
+		/*try {
 			PresentationObject obj = (PresentationObject) RefactorClassRegistry.forName(className).newInstance();
 			if (obj instanceof Page) {
 				this.setPage((Page) obj);
@@ -38,7 +35,7 @@ public class ObjectInstanciator extends DynamicTemplateServlet {
 		} catch (ClassNotFoundException e) {
 			System.err.println("[ObjectInstanciator] ClassNotFound : "+className+", referer = "+iwc.getReferer());
 			add(new DefaultErrorHandlingUriWindow());
-		}
+		}*/
 	}
 }
 //-------------

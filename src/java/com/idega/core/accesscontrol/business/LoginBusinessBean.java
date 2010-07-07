@@ -902,25 +902,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 				// Nothing done
 			}
 			if (verifyPassword(loginTable, password)) {
-				if (loginTable != null) {
-					if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
-						// return STATE_LOGIN_EXPIRED;
-						return LoginState.Expired;
-					}
-					if (logIn(request, loginTable)) {
-						loginInfo.setFailedAttemptCount(0);
-						loginInfo.store();
-						// return STATE_LOGGED_ON;
-						return LoginState.LoggedOn;
-					}
+				if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
+					// return STATE_LOGIN_EXPIRED;
+					return LoginState.Expired;
 				}
-				else {
-					try {
-						throw new LoginCreateException("No record chosen");
-					}
-					catch (LoginCreateException e1) {
-						e1.printStackTrace();
-					}
+				if (logIn(request, loginTable)) {
+					loginInfo.setFailedAttemptCount(0);
+					loginInfo.store();
+					// return STATE_LOGGED_ON;
+					return LoginState.LoggedOn;
 				}
 			}
 			else {

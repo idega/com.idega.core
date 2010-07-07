@@ -15,8 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.EJBException;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.file.business.FileSystemConstants;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
@@ -24,7 +26,6 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.text.Link;
-import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.NonEJBResource;
 import com.idega.repository.data.PropertyDescription;
@@ -637,131 +638,29 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			setImageURL(iwc);
 			setOverImageURLAndJavascript(iwc);
 			
-				String texti = null;
-				String link = null;
-				String width = null;
-				String height = null;
-			
-				if (!this.limitImageWidth)
+				if (this.limitImageWidth)
 				{
-					if ((width != null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")))
-					{
-						setWidth(width);
-					}
-					if ((height != null) && (!height.equalsIgnoreCase("")) && (!height.equalsIgnoreCase("-1")))
-					{
-						setHeight(height);
-					}
+					setWidth(this.maxImageWidth);
 				}
-				else
+
+
+				if (this.zoomView)
 				{
-					if ((width != null) && (!width.equalsIgnoreCase("")) && (!width.equalsIgnoreCase("-1")))
+					Link zoomViewLink = getImageZoomLink();
+					if (zoomViewLink != null)
 					{
-						if (Integer.parseInt(width) > this.maxImageWidth)
-						{
-							setWidth(this.maxImageWidth);
-						}
+						zoomViewLink.setText(getHTMLString(iwc));
+						zoomViewLink._print(iwc);
 					}
 					else
 					{
-						setWidth(this.maxImageWidth);
+						Link imageLink = new Link(getHTMLString(iwc));
+						imageLink.addParameter("image_id", this.imageId);
+						imageLink._print(iwc);
 					}
 				}
-				if ((texti != null) && (!"".equalsIgnoreCase(texti)))
-				{
-					Table imageTable = new Table(1, 2);
-					imageTable.setAlignment(1, 1, "center");
-					imageTable.setAlignment(1, 2, "left");
-					//imageTable.setCellpadding(0);
-					//imageTable.setCellspacing(0);
-					imageTable.setColor(1, 2, this.textBgColor);
-					String sWidth = getWidth();
-					if ((sWidth != null) && (!sWidth.equalsIgnoreCase("")) && (!this.limitImageWidth))
-					{
-						imageTable.setWidth(sWidth);
-					}
-					else if (this.limitImageWidth)
-					{
-						imageTable.setWidth(this.maxImageWidth);
-					}
-					Text imageText = new Text(texti);
-					imageText.setFontSize(1);
-					if ((link != null) && (!"".equalsIgnoreCase(link)))
-					{ //has a link
-						Link textLink = new Link(imageText, link);
-						textLink.setTarget("_new");
-						textLink.setFontSize(1);
-						imageTable.add(textLink, 1, 2); //add the text with the link on it
-						//should we add the image with a link? or just the image
-						if (this.zoomView)
-						{
-							Link zoomViewLink = getImageZoomLink();
-							if (zoomViewLink != null)
-							{
-								zoomViewLink.setText(getHTMLString(iwc));
-								imageTable.add(zoomViewLink, 1, 1);
-							}
-							else
-							{
-								Link imageLink = new Link(getHTMLString(iwc));
-								imageLink.addParameter("image_id", this.imageId);
-								imageTable.add(imageLink, 1, 1);
-							}
-						}
-						else if ((!this.zoomView) && (this.linkOnImage))
-						{
-							Link imageLink = new Link(getHTMLString(iwc), link);
-							imageLink.setTarget("_new");
-							imageTable.add(imageLink, 1, 1);
-						}
-						else {
-							imageTable.add(getHTMLString(iwc), 1, 1);
-						}
-					}
-					else
-					{ //or no link
-						if (this.zoomView)
-						{
-							Link zoomViewLink = getImageZoomLink();
-							if (zoomViewLink != null)
-							{
-								zoomViewLink.setText(getHTMLString(iwc));
-								imageTable.add(zoomViewLink, 1, 1);
-							}
-							else
-							{
-								Link imageLink = new Link(getHTMLString(iwc));
-								imageLink.addParameter("image_id", this.imageId);
-								imageTable.add(imageLink, 1, 1);
-							}
-						}
-						else {
-							imageTable.add(getHTMLString(iwc), 1, 1);
-						}
-						imageTable.add(imageText, 1, 2);
-					}
-					renderChild(iwc,imageTable);
-				}
-				else
-				{
-					if (this.zoomView)
-					{
-						Link zoomViewLink = getImageZoomLink();
-						if (zoomViewLink != null)
-						{
-							zoomViewLink.setText(getHTMLString(iwc));
-							zoomViewLink._print(iwc);
-						}
-						else
-						{
-							Link imageLink = new Link(getHTMLString(iwc));
-							imageLink.addParameter("image_id", this.imageId);
-							imageLink._print(iwc);
-						}
-					}
-					else {
-						print(getHTMLString(iwc));
-					}
+				else {
+					print(getHTMLString(iwc));
 				}
 			//} //end debug
 		}

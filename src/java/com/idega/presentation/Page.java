@@ -1136,19 +1136,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 						NULL_CLONE_PAGE.add(noPermissionImage);
 						if (iwc != null) {
 							BuilderService bservice = getBuilderService(iwc);
-							int pageId = 1;
-							String page = null;
-							if (page != null) {
-								try {
-									pageId = Integer.parseInt(page);
-								}
-								catch (NumberFormatException ex) {
-									pageId = bservice.getRootPageId();
-								}
-							}
-							else {
-								pageId = bservice.getRootPageId();
-							}
+							int pageId = bservice.getRootPageId();
 							NULL_CLONE_PAGE.setOnLoad("document.location='" + bservice.getPageURI(pageId) + "'");
 						}
 						NULL_CLONE_PAGE_INITIALIZED = true;

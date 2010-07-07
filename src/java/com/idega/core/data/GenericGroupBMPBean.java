@@ -25,7 +25,7 @@ import com.idega.util.database.ConnectionBroker;
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
  * @deprecated Class replaced with com.idega.user.data.GroupBMPBean
- * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
 public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements com.idega.core.data.GenericGroup
@@ -42,10 +42,10 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	public void initializeAttributes()
 	{
 		addAttribute(getIDColumnName());
-		addAttribute(getNameColumnName(), "Hópnafn", true, true, "java.lang.String");
-		addAttribute(getGroupTypeColumnName(), "Hópgerð", true, true, "java.lang.String");
-		addAttribute(getGroupDescriptionColumnName(), "Lýsing", true, true, "java.lang.String");
-		addAttribute(getExtraInfoColumnName(), "Auka upplýsingar", true, true, "java.lang.String");
+		addAttribute(getNameColumnName(), "Hï¿½pnafn", true, true, "java.lang.String");
+		addAttribute(getGroupTypeColumnName(), "Hï¿½pgerï¿½", true, true, "java.lang.String");
+		addAttribute(getGroupDescriptionColumnName(), "Lï¿½sing", true, true, "java.lang.String");
+		addAttribute(getExtraInfoColumnName(), "Auka upplï¿½singar", true, true, "java.lang.String");
 		this.addTreeRelationShip();
 		this.addManyToManyRelationShip(ICNetwork.class, "ic_group_network");
 		this.addManyToManyRelationShip(ICProtocol.class, "ic_group_protocol");
@@ -239,16 +239,8 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		    }
 	    }
 
-		if (vector != null)
-		{
-			vector.trimToSize();
-			return vector;
-			//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-		}
-		else
-		{
-			return null;
-		}
+		vector.trimToSize();
+		return vector;
 	}
 	//??
 	public GenericGroup[] getAllGroupsContained() throws SQLException
@@ -357,17 +349,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		     	statementCloseEx.printStackTrace(System.err);
 		    }
 	    }
-		if (vector != null)
-		{
-			vector.trimToSize();
-			return vector;
-			//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-		}
-		else
-		{
-			return null;
-		}
-		//return (Group[])this.findReverseRelated(this);
+
+		vector.trimToSize();
+		return vector;
 	}
 	/**
 	

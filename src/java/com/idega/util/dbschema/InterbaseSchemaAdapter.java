@@ -197,7 +197,6 @@ public class InterbaseSchemaAdapter extends SQLSchemaAdapter {
 
 	public boolean isConnectionOK(Connection conn) {
 		Statement testStmt = null;
-		ResultSet RS = null;
 		try {
 			if (!conn.isClosed()) {
 				// Try to createStatement to see if it's really alive
@@ -210,13 +209,6 @@ public class InterbaseSchemaAdapter extends SQLSchemaAdapter {
 		}
 		catch (SQLException e) {
 			if (testStmt != null) {
-				if (RS != null) {
-					try {
-						RS.close();
-					}
-					catch (SQLException se) {
-					}
-				}
 				try {
 					testStmt.close();
 				}

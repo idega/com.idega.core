@@ -711,20 +711,22 @@ public abstract class DatastoreInterface implements MutableClass {
 					//				System.out.println("update size: " + length);
 					for (int i = 0; i < length; i++) {
 						//System.out.println("updating: "+i);
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.elementAt(i)));
-						//do not construct with id to avoid database access
 						if (ids == null) {
 							System.out.println("ids is null");
 						}
-						//System.out.println("ID: "+data.getID());
-						data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get(update.elementAt(i)));
-						if (types != null && types.containsKey(update.elementAt(i))) {
-							data.setMetaDataType((String) types.get(update.elementAt(i)));
-						}
 						else {
-							data.setMetaDataType("java.lang.String");
+							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.elementAt(i)));
+							//do not construct with id to avoid database access
+							//System.out.println("ID: "+data.getID());
+							data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get(update.elementAt(i)));
+							if (types != null && types.containsKey(update.elementAt(i))) {
+								data.setMetaDataType((String) types.get(update.elementAt(i)));
+							}
+							else {
+								data.setMetaDataType("java.lang.String");
+							}
+							data.store();
 						}
-						data.store();
 					}
 				}
 				//else System.out.println("update is null");
