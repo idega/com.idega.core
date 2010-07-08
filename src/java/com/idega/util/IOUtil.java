@@ -117,4 +117,32 @@ public class IOUtil {
 		} catch (Exception e) {}
 		return false;
 	}
+	
+	public static byte[] getBytesFromInputStream(InputStream stream) {
+		if (!isStreamValid(stream)) {
+			return null;
+		}
+
+		int kiloByte = 1024;
+		ByteArrayOutputStream output = new ByteArrayOutputStream(kiloByte);
+		
+		try {
+			int length = 0;
+			int position = 0;
+			byte[] buffer = new byte[kiloByte];
+			while((length = stream.read(buffer)) >= 0) {
+				output.write(buffer, position, length);
+				position += length;
+			}
+			
+			return output.toByteArray();
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			close(stream);
+			close(output);
+		}
+		
+		return null;
+	}
 }
