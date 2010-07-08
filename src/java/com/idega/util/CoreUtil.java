@@ -227,24 +227,34 @@ public class CoreUtil {
 	
 	public static final Locale getCurrentLocale() {
 		try {
+			Locale locale = null;
+			
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 			if (loginSession == null) {
 				LOGGER.warning("LoginSession was not found");
-				return null;
-			}
-			
-			//	1. Trying to get from request
-			Locale locale = loginSession.getCurrentLocale();
-			if (locale == null) {
-				User currentUser = loginSession.getUser();
-				if (currentUser != null) {
-					//	2. Trying to get from user settings
-					String preferredLocaleId = currentUser.getPreferredLocale();
-					locale = ICLocaleBusiness.getLocaleFromLocaleString(preferredLocaleId);
+			} else {
+				//	1. Trying to get from request
+				locale = loginSession.getCurrentLocale();
+				if (locale == null) {
+					User currentUser = loginSession.getUser();
+					if (currentUser != null) {
+						//	2. Trying to get from user settings
+						String preferredLocaleId = currentUser.getPreferredLocale();
+						locale = ICLocaleBusiness.getLocaleFromLocaleString(preferredLocaleId);
+					}
 				}
 			}
+			
 			if (locale == null) {
-				//	3. Trying to get from application settings
+				//	3. Trying to get from IWContext
+				IWContext iwc = getIWContext();
+				if (iwc != null) {
+					locale = iwc.getCurrentLocale();
+				}
+			}
+			
+			if (locale == null) {
+				//	4. Trying to get from application settings
 				locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
 			}
 			
