@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -1312,7 +1313,7 @@ public class StringHandler {
 			return null;
 		}
 		
-		BufferedReader br = new BufferedReader(new InputStreamReader(stream));
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.forName(CoreConstants.ENCODING_UTF8)));
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 
