@@ -122,6 +122,51 @@
 	</component>
 	
 	<component>
+	    <component-type>PasswordInput</component-type>
+	    <component-class>com.idega.presentation.ui.PasswordInput</component-class>
+	    <property>
+	      <display-name>Keep status</display-name>
+	      <property-name>keepStatus</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Name</display-name>
+	      <property-name>name</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Value</display-name>
+	      <property-name>value</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Style class</display-name>
+	      <property-name>styleClass</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>ID</display-name>
+	      <property-name>id</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Index</display-name>
+	      <property-name>index</property-name>
+	      <property-class>java.lang.Integer</property-class>
+	    </property>
+	    <property>
+	      <display-name>Disabled</display-name>
+	      <property-name>disabled</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Length</display-name>
+	      <property-name>length</property-name>
+	      <property-class>java.lang.Integer</property-class>
+	    </property>
+	</component>
+	
+	<component>
 	    <component-type>RadioButton</component-type>
 	    <component-class>com.idega.presentation.ui.RadioButton</component-class>
 	    <property>

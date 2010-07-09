@@ -50,6 +50,13 @@
     </tag>
 
     <tag>
+        <tag-name>passwordInput</tag-name>
+        <component>
+            <component-type>PasswordInput</component-type>
+        </component>
+    </tag>
+
+    <tag>
         <tag-name>checkBox</tag-name>
         <component>
             <component-type>CheckBox</component-type>
