@@ -258,11 +258,11 @@ public class CoreUtil {
 				locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
 			}
 			
-			return locale;
+			return locale == null ? Locale.ENGLISH : locale;
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current locale", e);
 		}
-		return null;
+		return Locale.ENGLISH;
 	}
 
 	public static final boolean isSQLMeasurementOn() {
