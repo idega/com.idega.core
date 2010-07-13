@@ -328,7 +328,11 @@ public class IWAuthenticator extends BaseFilter {
 				ignoreParams.add(LoginBusinessBean.PARAMETER_PASSWORD2);//whatever that is...
 				ignoreParams.add(LoginBusinessBean.LoginStateParameter);
 				ignoreParams.add(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID);
-				uri+="?"+RequestUtil.getParametersStringFromRequest(request,ignoreParams);
+				
+				String parameterString = RequestUtil.getParametersStringFromRequest(request,ignoreParams);
+				if (parameterString.length() > 0) {
+					uri += (uri.indexOf("?") == -1 ? "?" : "&") + parameterString;
+				}
 			}
 			catch (UnsupportedEncodingException e) {
 				log.log(Level.WARNING, "Exception while decoding redirect uri parameter: " + PARAMETER_REDIRECT_URI_ONLOGON + " by using " + CoreConstants.ENCODING_UTF8 + " encoding", e);
