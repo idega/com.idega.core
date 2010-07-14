@@ -265,6 +265,11 @@ public class SimpleQuerier {
     protected static boolean executeUpdate(String sqlString, String dataSource) throws SQLException {
         return executeUpdate(sqlString, dataSource, true);
     }
+    
+    public static boolean executeUpdate(String sqlString, boolean flushCache) throws SQLException {
+    	return executeUpdate(sqlString, getDatasource(), flushCache);
+    }
+    
     /**
      * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if flushCache==true
      *  @returns true if there was an update, false if there was no update
