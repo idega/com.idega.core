@@ -424,22 +424,27 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	protected int executeUpdate(GenericEntity entity, String SQLCommand) throws Exception {
-		Connection conn = null;
+		return executeUpdate(entity, SQLCommand, null);
+	}
+	
+	private int executeUpdate(GenericEntity entity, String SQLCommand, Connection conn) throws Exception {
 		Statement Stmt = null;
 		int theReturn = 0;
 		try {
-			conn = entity.getConnection();
-			//conn.commit();
+			conn = conn == null ? ConnectionBroker.getConnection() : entity == null ? ConnectionBroker.getConnection() : entity.getConnection();
 			Stmt = conn.createStatement();
 			log(SQLCommand);
 			theReturn = Stmt.executeUpdate(SQLCommand);
-		}
-		finally {
+		} finally {
 			if (Stmt != null) {
 				Stmt.close();
 			}
 			if (conn != null) {
-				entity.freeConnection(conn);
+				if (entity == null) {
+					ConnectionBroker.freeConnection(conn);
+				} else {
+					entity.freeConnection(conn);
+				}
 			}
 		}
 		return theReturn;
@@ -625,9 +630,17 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
+		createIndex(entity, entity.getTableName(), name, fields);
+	}
+	
+	public void createIndex(String tableName, String name, String[] fields) throws Exception {
+		createIndex(null, tableName, name, fields);
+	}
+	
+	private void createIndex(GenericEntity entity, String tableName, String name, String[] fields) throws Exception {
 		if (useIndexes()) {
-			StringBuffer sql = new StringBuffer("CREATE INDEX ")
-			.append(name).append(" ON ").append(entity.getTableName()).append(" (");
+			StringBuffer sql = new StringBuffer("CREATE INDEX ").append(name).append(" ON ").append(entity == null ? tableName : entity.getTableName())
+				.append(" (");
 			for (int i = 0; i < fields.length; i++) {
 				if (i > 0) {
 					sql.append(", ");
