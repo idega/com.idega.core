@@ -234,20 +234,28 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	/**
-	 * To get the userame of the current log-in attempt
+	 * To get the user name of the current log-in attempt
 	 * 
-	 * @return The username the current user is trying to log in with. Returns
-	 *         null if no log-in attemt is going on.
+	 * @return The user name the current user is trying to log in with. Returns
+	 *         null if no log-in attempt is going on.
 	 */
 	protected String getLoginUserName(HttpServletRequest request) {
-		return request.getParameter(PARAMETER_USERNAME);
+		String username = request.getParameter(PARAMETER_USERNAME);
+		if (username == null) {
+			username = (String) request.getSession().getAttribute(PARAMETER_USERNAME);
+			if (username != null) {
+				request.getSession().removeAttribute(PARAMETER_USERNAME);
+			}
+		}
+		
+		return username;
 	}
 
 	/**
 	 * To get the password of the current log-in attempt
 	 * 
 	 * @return The password the current user is trying to log in with. Returns
-	 *         null if no log-in attemt is going on.
+	 *         null if no log-in attempt is going on.
 	 */
 	protected String getLoginPassword(HttpServletRequest request) {
 		return request.getParameter(PARAMETER_PASSWORD);
