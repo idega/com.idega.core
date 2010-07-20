@@ -123,6 +123,15 @@ public abstract class DefaultSpringBean {
 		return getCache(cacheName, -1);
 	}
 	
+	/**
+	 * Returns cache ({@link Map})
+	 * 
+	 * @param <K>
+	 * @param <V>
+	 * @param cacheName
+	 * @param timeToLive - time in seconds
+	 * @return
+	 */
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive) {
 		try {
 			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, timeToLive);
