@@ -42,7 +42,6 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	private int iNumberOfEntriesPerPage = 10;
 	
 	private String navigationFunction;
-	
 	private String dropdownFunction;
 	
 	private int currentPage = 1;
@@ -57,6 +56,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		this.iSize = size;
 	}
 	
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		UIComponent container = null;
 		if (navigationFunction == null) {
@@ -92,7 +92,9 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		if (currentPage > 1) {
 			ListItem item = new ListItem();
 			Link link = new Link("&lt;");
+			link.setStyleClass("listNavigatorPager");
 			if (navigationFunction != null) {
+				link.getId();
 				link.setURL("javascript:void(0);");
 				link.setOnClick(getNavigationFunction(currentPage - 1));
 			} else {
@@ -106,11 +108,13 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		for (int i = start; i <= end; i++) {
 			ListItem item = new ListItem();
 			Link link = new Link(String.valueOf(i));
+			link.setStyleClass("listNavigatorPager");
 			if (i == currentPage) {
 				link.setStyleClass("currentPage");
 			}
 			
 			if (navigationFunction != null) {
+				link.getId();
 				link.setURL("javascript:void(0);");
 				link.setOnClick(getNavigationFunction(i));
 			} else {
@@ -124,7 +128,9 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		if (currentPage < numberOfPages) {
 			ListItem item = new ListItem();
 			Link link = new Link("&gt;");
+			link.setStyleClass("listNavigatorPager");
 			if (navigationFunction != null) {
+				link.getId();
 				link.setURL("javascript:void(0);");
 				link.setOnClick(getNavigationFunction(currentPage + 1));
 			} else {
@@ -138,12 +144,14 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		}
 
 		DropdownMenu menu = new DropdownMenu(getNumberOfEntriesParameter());
+		menu.setStyleClass("listPagerSize");
 		menu.addMenuElement(5, "5 " + this.dropdownEntryName);
 		menu.addMenuElement(10, "10 " + this.dropdownEntryName);
 		menu.addMenuElement(20, "20 " + this.dropdownEntryName);
 		menu.addMenuElement(50, "50 " + this.dropdownEntryName);
 		menu.setSelectedElement(getNumberOfEntriesPerPage(iwc));
 		if (dropdownFunction != null) {
+			menu.getId();
 			menu.setOnChange(dropdownFunction);
 		} else {
 			menu.setToSubmit();
@@ -216,7 +224,6 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		this.iUniqueIdentifier = identifier;
 	}
 
-	
 	public void setDropdownEntryName(String dropdownEntryName) {
 		this.dropdownEntryName = dropdownEntryName;
 	}
@@ -260,6 +267,4 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
-	
-	
 }
