@@ -19,6 +19,8 @@ import com.idega.presentation.text.Lists;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.presentation.ui.Form;
+import com.idega.presentation.ui.HiddenInput;
+import com.idega.util.StringUtil;
 
 
 /**
@@ -44,6 +46,8 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	private String navigationFunction;
 	private String dropdownFunction;
 	
+	private String navigatorIdentifier;
+	
 	private int currentPage = 1;
 	private int pageSize = -1;
 	
@@ -65,6 +69,12 @@ public class ListNavigator extends Block implements IWPageEventListener {
 			((Form)container).addParameter(PARAMETER_UNIQUE_IDENTIFIER, this.iUniqueIdentifier);
 		} else {
 			container = new Layer();
+		}
+		
+		if (!StringUtil.isEmpty(navigatorIdentifier)) {
+			HiddenInput identifier = new HiddenInput("navigatorIdentifier", navigatorIdentifier);
+			identifier.setStyleClass("listNavigatorIdentifier");
+			container.getChildren().add(identifier);
 		}
 		
 		Lists list = new Lists();
@@ -267,4 +277,13 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	public void setPageSize(int pageSize) {
 		this.pageSize = pageSize;
 	}
+
+	public String getNavigatorIdentifier() {
+		return navigatorIdentifier;
+	}
+
+	public void setNavigatorIdentifier(String navigatorIdentifier) {
+		this.navigatorIdentifier = navigatorIdentifier;
+	}
+	
 }
