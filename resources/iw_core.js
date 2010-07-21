@@ -1245,7 +1245,7 @@ IWCORE.insertRenderedComponent = function(component, options) {
 	});
 }
 
-IWCORE.renderComponent = function(uuid, container, callback, properties) {
+IWCORE.renderComponent = function(uuid, container, callback, properties, options) {
 	LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/BuilderService.js'], function() {
 		if (!properties) {
 			properties = null;
@@ -1253,7 +1253,14 @@ IWCORE.renderComponent = function(uuid, container, callback, properties) {
 		
 		BuilderService.getRenderedComponentById(uuid, window.location.pathname, properties, {
 			callback: function(component) {
-				IWCORE.insertRenderedComponent(component, {container: container, callback: callback, replace: true});
+				if (!options) {
+					options = {};
+					options.replace = true;
+				}
+				options.container = container;
+				options.callback = callback;
+				
+				IWCORE.insertRenderedComponent(component, options);
 			},
 			errorHandler: function() {
 				closeAllLoadingMessages();
