@@ -40,6 +40,10 @@ public class PagedDataCollection<T> {
 		return totalCount;
 	}
 	
+	public void setData(Collection<T> data) {
+		this.data = data;
+	}
+	
 	@Override
 	public String toString() {
 		return ListUtil.isEmpty(data) ? CoreConstants.MINUS : data.toString();
