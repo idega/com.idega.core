@@ -36,6 +36,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		EntityControl.limitTableNameToThirtyCharacters = true;
 	}
 	
+	@Override
 	public String getSQLType(String javaClassName, int maxlength) {
 		String theReturn;
 		if (javaClassName.equals("java.lang.Integer")) {
@@ -96,6 +97,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		return theReturn;
 	}
 	
+	@Override
 	public void createTrigger(GenericEntity entity) throws Exception {
 		createSequence(entity);
 		Connection conn = null;
@@ -164,24 +166,10 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	}
 	
 	public void createSequence(GenericEntity entity, int startNumber) throws Exception {
-		Connection conn = null;
-		Statement Stmt = null;
-		try {
-			conn = entity.getConnection();
-			Stmt = conn.createStatement();
-			String seqCreate = "create sequence " + entity.getTableName() + "_seq INCREMENT BY 1 START WITH " + startNumber + " MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
-			Stmt.executeUpdate(seqCreate);
-		}
-		finally {
-			if (Stmt != null) {
-				Stmt.close();
-			}
-			if (conn != null) {
-				entity.freeConnection(conn);
-			}
-		}
+		createSequence(entity, null, startNumber);
 	}
-
+	
+	@Override
 	public void deleteEntityRecord(GenericEntity entity) throws Exception {
 		super.deleteEntityRecord(entity);
 		deleteTrigger(entity);
@@ -224,12 +212,14 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 	}
 	
+	@Override
 	protected void executeBeforeInsert(GenericEntity entity) throws Exception {
 		if (entity.isNull(entity.getIDColumnName())) {
 			entity.setID(createUniqueID(entity));
 		}
 	}
 
+	@Override
 	protected String getCreateUniqueIDQuery(GenericEntity entity) {
 		return "SELECT " + getOracleSequenceName(entity) + ".nextval FROM dual";
 	}
@@ -243,6 +233,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		return entityName + "_seq";
 	}
 
+	@Override
 	public void setNumberGeneratorValue(GenericEntity entity, int value) {
 		String statement = "drop sequence " + OracleDatastoreInterface.getSequenceName(entity);
 		try {
@@ -257,6 +248,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	/**
 	 * Override in subclasses
 	 **/
+	@Override
 	public void onConnectionCreate(Connection newConn) {
 		try {
 			Locale locale = getDefaultLocale();
@@ -291,6 +283,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	 * This is a callback method and is called by the idegaWeb when it starts up and connects to the Oracle database first<br>.
 	 * This is overrided to create the 'set_nls_date_formats' logon trigger.
 	 */
+	@Override
 	public void onApplicationStart(Connection newConn) {
 		try {
 			onConnectionCreate(newConn);
@@ -366,6 +359,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	 * oracle.jdbc2 (interfaces equivalent to standard JDBC 2.0 interfaces)
 	 * 
 	 */
+	@Override
 	protected void fillStringColumn(GenericEntity entity, String columnName, ResultSet rs) throws SQLException {
 
 		int maxlength = entity.getMaxLength(columnName);
@@ -458,6 +452,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		}
 	}
 
+	@Override
 	protected void setStringForPreparedStatement(String columnName, PreparedStatement statement, int index, GenericEntity entity) throws SQLException {
 		try {
 			int maxlength = entity.getMaxLength(columnName);
@@ -480,6 +475,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#getTableColumnNames(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public String[] getTableColumnNames(String dataSourceName, String tableName) {
 		Connection conn = null;
 		Statement stmt = null;
@@ -511,6 +507,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#doesTableExist(java.lang.String, java.lang.String)
 	 */
+	@Override
 	public boolean doesTableExist(String dataSourceName, String tableName) throws Exception {
 		 String checkQuery = "select count(*) from " + tableName;
 			try {
@@ -522,6 +519,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 			}
 	}
 
+	@Override
 	public HashMap getTableIndexes(String dataSourceName, String tableName) {
 		Connection conn = null;
 		ResultSet rs = null;
@@ -578,6 +576,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 		 */
 	}
 	
+	@Override
 	public boolean isCabableOfRSScroll(){
 		return true;
 	}
@@ -585,6 +584,7 @@ public class OracleDatastoreInterface extends DatastoreInterface {
 	/**
 	 * returns the optimal or allowed fetch size when going to database to load IDOEntities using 'where primarikey_name in (list_of_priamrykeys)'
 	 */
+	@Override
 	public int getOptimalEJBLoadFetchSize(){
 		return 1000;
 	}
