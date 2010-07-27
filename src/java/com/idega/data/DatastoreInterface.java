@@ -371,8 +371,23 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	public abstract void createTrigger(GenericEntity entity) throws Exception;
 
-	//public abstract void createForeignKeys(IDOLegacyEntity entity)throws
-	// Exception;
+	public void createTrigger(String triggerSQL) throws Exception {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = ConnectionBroker.getConnection();
+			stmt = conn.createStatement();
+			stmt.executeUpdate(triggerSQL);
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+	}
+	
 	/**
 	 * Executes a query to the entity's set datasource and returns the first
 	 * result (ResultSet.getObject(1)). Returns null if there was no result.
