@@ -371,8 +371,23 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	public abstract void createTrigger(GenericEntity entity) throws Exception;
 
-	//public abstract void createForeignKeys(IDOLegacyEntity entity)throws
-	// Exception;
+	public void createTrigger(String triggerSQL) throws Exception {
+		Connection conn = null;
+		Statement stmt = null;
+		try {
+			conn = ConnectionBroker.getConnection();
+			stmt = conn.createStatement();
+			stmt.executeUpdate(triggerSQL);
+		} finally {
+			if (stmt != null) {
+				stmt.close();
+			}
+			if (conn != null) {
+				ConnectionBroker.freeConnection(conn);
+			}
+		}
+	}
+	
 	/**
 	 * Executes a query to the entity's set datasource and returns the first
 	 * result (ResultSet.getObject(1)). Returns null if there was no result.
@@ -1507,6 +1522,34 @@ public abstract class DatastoreInterface implements MutableClass {
 		return returnString.toString();
 	}
 
+	public void createSequence(String tableName, int startNumber) throws Exception {
+		createSequence(null, tableName, startNumber);
+	}
+	
+	protected void createSequence(GenericEntity entity, String tableName, int startNumber) throws Exception {
+		tableName = entity == null ? tableName : entity.getTableName();
+		
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			conn = entity == null ? ConnectionBroker.getConnection() : entity.getConnection();
+			Stmt = conn.createStatement();
+			String seqCreate = "create sequence " + tableName + "_seq INCREMENT BY 1 START WITH " + startNumber + " MAXVALUE 1.0E28 MINVALUE 0 NOCYCLE CACHE 20 NOORDER";
+			Stmt.executeUpdate(seqCreate);
+		} finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				if (entity == null) {
+					ConnectionBroker.freeConnection(conn);
+				} else {
+					entity.freeConnection(conn);
+				}
+			}
+		}
+	}
+	
 	protected void createForeignKey(GenericEntity entity, String baseTableName, String columnName, String refrencingTableName, String referencingColumnName) throws Exception {
 		String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
 		executeUpdate(entity, SQLCommand);

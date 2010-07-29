@@ -511,7 +511,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInGroup
 	 */
-	public Collection getUsersInGroup(Group aGroup) throws java.rmi.RemoteException;
+	public Collection<User> getUsersInGroup(Group aGroup) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsers
@@ -593,7 +593,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getAllUsersOrderedByFirstName
 	 */
-	public Collection getAllUsersOrderedByFirstName() throws FinderException, RemoteException;
+	public Collection<User> getAllUsersOrderedByFirstName() throws FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersMainEmail

@@ -15,6 +15,7 @@ import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -1314,19 +1315,38 @@ public class StringHandler {
 		}
 		
 		BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.forName(CoreConstants.ENCODING_UTF8)));
+		try {
+			return getContentFromReader(br);
+		} finally {
+			IOUtil.close(stream);
+		}
+	}
+	
+	public static String getContentFromReader(Reader reader) throws Exception {
+		if (reader == null) {
+			return null;
+		}
+		
+		BufferedReader bReader = null;
+		if (reader instanceof BufferedReader) {
+			bReader = (BufferedReader) reader;
+		} else {
+			bReader = new BufferedReader(reader);
+		}
+		
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 
 		try {
-			while ((line = br.readLine()) != null) {
+			while ((line = bReader.readLine()) != null) {
 				sb.append(line).append("\n");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();
 			return null;
 		} finally {
-			IOUtil.closeInputStream(stream);
-			IOUtil.closeReader(br);
+			IOUtil.closeReader(reader);
+			IOUtil.closeReader(bReader);
 		}
 		
 		return sb.toString();
