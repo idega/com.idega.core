@@ -1536,31 +1536,27 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @param plugins
 	 * @return a collection of UserGroupPluginBusiness implementing classes
 	 */
-	protected Collection getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(Collection plugins) {
-
+	protected Collection<UserGroupPlugInBusiness> getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(Collection<UserGroupPlugIn> plugins) {
 		if (plugins == null || plugins.isEmpty()) {
 			return ListUtil.getEmptyList();
 		}
-		ArrayList list = new ArrayList();
+		
+		List<UserGroupPlugInBusiness> list = new ArrayList<UserGroupPlugInBusiness>();
 		Iterator iter = plugins.iterator();
-		while (iter.hasNext()) {
-			UserGroupPlugIn element = (UserGroupPlugIn) iter.next();
+		for (UserGroupPlugIn element: plugins) {
 			UserGroupPlugInBusiness pluginBiz;
 			try {
 				ICObject icObject = element.getBusinessICObject();
-				if(icObject!=null){
+				if (icObject != null) {
 					pluginBiz = (UserGroupPlugInBusiness) getServiceInstance(RefactorClassRegistry.forName(icObject.getClassName()));
 					list.add(pluginBiz);
 				}
 				//else should we delete the record?
-			}
-			catch (IBOLookupException e) {
+			} catch (IBOLookupException e) {
 				e.printStackTrace();
-			}
-			catch (RemoteException e) {
+			} catch (RemoteException e) {
 				e.printStackTrace();
-			}
-			catch (ClassNotFoundException e) {
+			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
@@ -1575,20 +1571,16 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPluginsForGroupType(String groupType) throws RemoteException {
-
+	public Collection<UserGroupPlugInBusiness> getUserGroupPluginsForGroupType(String groupType) throws RemoteException {
 		try {
 			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForGroupType(groupType));
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			// no big deal, there are no plugins registered. Return an empty list
-		}
-		catch (IDORelationshipException e) {
+		} catch (IDORelationshipException e) {
 			// no big deal, there are no plugins registered. Return an empty list
 		}
 
 		return ListUtil.getEmptyList();
-
 	}
 
 	/**
@@ -1599,11 +1591,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPluginsForGroup(Group group) throws RemoteException {
+	public Collection<UserGroupPlugInBusiness> getUserGroupPluginsForGroup(Group group) throws RemoteException {
 		try {
 			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForGroup(group));
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			// no big deal, there are no plugins registered. Return an empty list
 		}
 
@@ -1618,14 +1609,11 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPluginsForUser(User user) throws RemoteException {
+	public Collection<UserGroupPlugInBusiness> getUserGroupPluginsForUser(User user) throws RemoteException {
 		try {
-			// TODO finna allar gruppur tengdar thessum user og gera find fall sem
-			// tekur inn i sig collection a groups
 			// THIS METHOD IS NOT FINISHED AND THE FIND METHOD ONLY GETS ALL PLUGINS
 			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findRegisteredPlugInsForUser(user));
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			// no big deal, there are no plugins registered. Return an empty list
 		}
 
@@ -1638,11 +1626,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of plugins
 	 * @throws RemoteException
 	 */
-	public Collection getUserGroupPlugins() throws RemoteException {
+	public Collection<UserGroupPlugInBusiness> getUserGroupPlugins() throws RemoteException {
 		try {
 			return getUserGroupPluginBusinessBeansFromUserGroupPluginEntities(getUserGroupPlugInHome().findAllPlugIns());
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			// no big deal, there are no plugins registered. Return an empty list
 		}
 

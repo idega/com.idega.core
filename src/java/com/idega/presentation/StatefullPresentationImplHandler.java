@@ -20,7 +20,7 @@ import com.idega.repository.data.RefactorClassRegistry;
 
 public class StatefullPresentationImplHandler {
 
-  private Class _class = null;
+  private Class<? extends IWPresentationState> _class = null;
 
   IWPresentationState _presentationState = null;
 
@@ -53,11 +53,11 @@ public class StatefullPresentationImplHandler {
   }
 
 
-  public Class getPresentationStateClass(){
+  public Class<? extends IWPresentationState> getPresentationStateClass(){
     return this._class;
   }
 
-  public void setPresentationStateClass(Class stateClass){
+  public void setPresentationStateClass(Class<? extends IWPresentationState> stateClass){
     this._class = stateClass;
   }
 
@@ -65,12 +65,7 @@ public class StatefullPresentationImplHandler {
     if(this._presentationState == null){
       try {
         IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-        //if(obj.getICObjectInstanceID() == 0){
           this._presentationState = stateMachine.getStateFor(obj.getCompoundId(), this._class);
-         // _presentationState = stateMachine.getStateFor(obj.getLocation(),_class);
-        //} else {
-        //  _presentationState = stateMachine.getStateFor(obj.getICObjectInstance());
-        //}
       }
       catch (RemoteException re) {
         throw new RuntimeException(re.getMessage());

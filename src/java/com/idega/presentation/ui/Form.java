@@ -1001,9 +1001,8 @@ public class Form
 //	}
 
 	public void addEventModel(IWPresentationEvent model, IWContext iwc) {
-		Iterator iter = model.getParameters();
-		while (iter.hasNext()) {
-			Parameter prm = (Parameter) iter.next();
+		for (Iterator<Parameter> prmIter = model.getParameters(); prmIter.hasNext();) {
+			Parameter prm = prmIter.next();
 			this.add(prm);
 		}
 		setTarget(model.getEventTarget());

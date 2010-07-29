@@ -441,22 +441,22 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroupType
 	 */
-	public Collection getUserGroupPluginsForGroupType(String groupType) throws RemoteException;
+	public Collection<UserGroupPlugInBusiness> getUserGroupPluginsForGroupType(String groupType) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForGroup
 	 */
-	public Collection getUserGroupPluginsForGroup(Group group) throws RemoteException;
+	public Collection<UserGroupPlugInBusiness> getUserGroupPluginsForGroup(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPluginsForUser
 	 */
-	public Collection getUserGroupPluginsForUser(User user) throws RemoteException;
+	public Collection<UserGroupPlugInBusiness> getUserGroupPluginsForUser(User user) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserGroupPlugins
 	 */
-	public Collection getUserGroupPlugins() throws RemoteException;
+	public Collection<UserGroupPlugInBusiness> getUserGroupPlugins() throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupTypeHome
