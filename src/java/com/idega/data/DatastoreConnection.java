@@ -912,86 +912,57 @@ public class DatastoreConnection implements Connection {
 		return null;
 	}
 
-	@Override
 	public Array createArrayOf(String typeName, Object[] elements)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Blob createBlob() throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Clob createClob() throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public NClob createNClob() throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public SQLXML createSQLXML() throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Struct createStruct(String typeName, Object[] attributes)
 			throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public Properties getClientInfo() throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public String getClientInfo(String name) throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public boolean isValid(int timeout) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public void setClientInfo(Properties properties)
 			throws SQLClientInfoException {
-		// TODO Auto-generated method stub
-		
 	}
 
-	@Override
 	public void setClientInfo(String name, String value)
 			throws SQLClientInfoException {
-		// TODO Auto-generated method stub
-		
 	}
 
-
-	@Override
 	public boolean isWrapperFor(Class<?> iface) throws SQLException {
-		// TODO Auto-generated method stub
 		return false;
 	}
 
-	@Override
 	public <T> T unwrap(Class<T> iface) throws SQLException {
-		// TODO Auto-generated method stub
 		return null;
 	}
 }

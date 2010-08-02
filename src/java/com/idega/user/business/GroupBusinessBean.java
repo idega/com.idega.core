@@ -1542,7 +1542,6 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 		
 		List<UserGroupPlugInBusiness> list = new ArrayList<UserGroupPlugInBusiness>();
-		Iterator iter = plugins.iterator();
 		for (UserGroupPlugIn element: plugins) {
 			UserGroupPlugInBusiness pluginBiz;
 			try {
