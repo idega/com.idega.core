@@ -731,20 +731,29 @@ function addFeedSymbolInHeader(linkToFeed, feedType, feedTitle) {
 	if (linkToFeed == null || feedType == null || feedTitle == null) {
 		return;
 	}
-	//check if such feed already has been added
-	var headElement = document.getElementsByTagName("head")[0];
-	var alreadyAdded = false;
-	for (var i = 0; i < headElement.getElementsByTagName("link").length; i++){
-		var linkElement = headElement.getElementsByTagName("link")[i];
-		if (linkElement.getAttribute("href") == linkToFeed)
-			return;
+	
+	var headElement = document.getElementsByTagName('head')[0];
+	if (headElement == null) {
+		return;
 	}
-	var linkToAtomInHeader = document.createElement("link");
-	linkToAtomInHeader.setAttribute("href", linkToFeed);
-	linkToAtomInHeader.setAttribute("title", feedTitle);
-	linkToAtomInHeader.setAttribute("type", "application/"+feedType+"+xml");
-	linkToAtomInHeader.setAttribute("rel", "alternate");
-	document.getElementsByTagName("head")[0].appendChild(linkToAtomInHeader);
+
+	//	Check if such feed already has been added	
+	var linksInHead = headElement.getElementsByTagName('link');
+	if (linksInHead != null) {
+		for (var i = 0; i < linksInHead.length; i++) {
+			var linkElement = linksInHead[i];
+			if (linkElement.getAttribute('href') == linkToFeed) {
+				return;
+			}
+		}
+	}
+	
+	var linkToAtomInHeader = document.createElement('link');
+	linkToAtomInHeader.setAttribute('href', linkToFeed);
+	linkToAtomInHeader.setAttribute('title', feedTitle);
+	linkToAtomInHeader.setAttribute('type', 'application/' + feedType + '+xml');
+	linkToAtomInHeader.setAttribute('rel', 'alternate');
+	headElement.appendChild(linkToAtomInHeader);
 }
 
 // Returns element postition from left (px)
