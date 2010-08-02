@@ -23,8 +23,9 @@ public class PageResourceConstants {
 	public final static String MEDIA_AURAL="aural";
 	public final static String MEDIA_ALL="all";
 	
-	public final static String TYPE_CSS=MimeTypeUtil.MIME_TYPE_CSS;
-	public final static String TYPE_RSS="application/rss+xml";
+	public final static String TYPE_CSS = MimeTypeUtil.MIME_TYPE_CSS;
+	public final static String TYPE_RSS = "application/rss+xml";
+	public final static String TYPE_ATOM = "application/atom+xml";
 	public final static String TYPE_JAVA_SCRIPT = "text/javascript";
 	
 	protected final static String RELATIONSHIP_STYLESHEET="stylesheet";

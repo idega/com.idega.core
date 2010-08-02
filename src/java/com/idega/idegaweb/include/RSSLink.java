@@ -9,6 +9,10 @@
  */
 package com.idega.idegaweb.include;
 
+import java.util.Random;
+
+import com.idega.util.StringUtil;
+
 
 /**
  * <p>
@@ -19,28 +23,33 @@ package com.idega.idegaweb.include;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
  */
-public class RSSLink extends ExternalLink{
+public class RSSLink extends ExternalLink {
 
 	private static final long serialVersionUID = -5443508768481787898L;
+	
+	private int hashCode;
 	
 	private String title;
 	
 	/**
 	 * By default the relation to alternate
 	 */
-	public RSSLink(){
+	public RSSLink() {
+		hashCode = new Random().nextInt();
+		
 		setType(PageResourceConstants.TYPE_RSS);
 		setRelationship(PageResourceConstants.RELATIONSHIP_ALTERNATE);
 	}
+	
 	/**
 	 * By default the relation to alternate
 	 */
-	public RSSLink(String url){
+	public RSSLink(String url) {
 		this();
 		setUrl(url);
 	}
 	
-	public RSSLink(String url,String relationship){
+	public RSSLink(String url, String relationship) {
 		this(url);
 		setRelationship(relationship);
 	}
@@ -56,5 +65,18 @@ public class RSSLink extends ExternalLink{
 	 */
 	public void setTitle(String title) {
 		this.title = title;
+	}
+
+	@Override
+	public int hashCode() {
+		return hashCode;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof RSSLink) {
+			return StringUtil.isEmpty(getUrl()) ? false : getUrl().equals(((RSSLink) obj).getUrl());
+		}
+		return false;
 	}
 }

@@ -8,6 +8,7 @@ import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.AddResourceFactory;
 
 import com.idega.idegaweb.include.PageResourceConstants;
+import com.idega.idegaweb.include.RSSLink;
 import com.idega.presentation.IWContext;
 import com.idega.util.resources.ResourcesAdder;
 
@@ -86,14 +87,13 @@ public class PresentationUtil {
 		return true;
 	}
 	
-	@SuppressWarnings("unchecked")
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	private static synchronized void manageCientResource(IWContext iwc, String attributeName, String resource) {
 		List<String> resources = null;
 		Object o = iwc.getSessionAttribute(attributeName);
 		if (o instanceof List) {
 			resources = (List) o;
-		}
-		else {
+		} else {
 			resources = new ArrayList<String>();
 		}
 		
@@ -323,5 +323,24 @@ public class PresentationUtil {
 		}
 		
 		return styles.toString();
+	}
+	
+	public static boolean addFeedLink(IWContext iwc, RSSLink feedLink) {
+		if (iwc == null || feedLink == null) {
+			return false;
+		}
+		
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			addJavaScriptActionToBody(iwc, new StringBuffer("addFeedSymbolInHeader('").append(feedLink.getUrl()).append("', 'atom', 'Atom 1.0');").toString());
+			return true;
+		}
+		
+		AddResource adder = getResourceAdder(iwc);
+		if (!(adder instanceof ResourcesAdder)) {
+			return false;
+		}
+		
+		((ResourcesAdder) adder).addFeedLink(feedLink);
+		return true;
 	}
 }

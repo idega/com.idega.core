@@ -6,6 +6,7 @@ import java.util.Map;
 
 import com.idega.idegaweb.include.ExternalLink;
 import com.idega.idegaweb.include.JavaScriptLink;
+import com.idega.idegaweb.include.RSSLink;
 import com.idega.idegaweb.include.StyleSheetLink;
 
 public interface ResourcesManager extends Serializable {
@@ -17,6 +18,8 @@ public interface ResourcesManager extends Serializable {
 	public List<JavaScriptLink> getJavaScriptActions();
 	
 	public List<StyleSheetLink> getCSSFiles();
+	
+	public List<RSSLink> getFeedLinks();
 	
 	public String getConcatenatedResources(List<? extends ExternalLink> resources, String fileType, String serverName);
 	

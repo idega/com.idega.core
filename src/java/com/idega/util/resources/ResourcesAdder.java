@@ -7,15 +7,19 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
+import javax.faces.context.ResponseWriter;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.myfaces.renderkit.html.util.AddResource;
 import org.apache.myfaces.renderkit.html.util.DefaultAddResource;
 import org.apache.myfaces.renderkit.html.util.ResourcePosition;
+import org.apache.myfaces.shared_tomahawk.renderkit.html.HTML;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.include.ExternalLink;
 import com.idega.idegaweb.include.JavaScriptLink;
+import com.idega.idegaweb.include.RSSLink;
 import com.idega.idegaweb.include.StyleSheetLink;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
@@ -123,6 +127,11 @@ public class ResourcesAdder extends DefaultAddResource {
 		return null;
 	}
 	
+	private List<RSSLink> getFeedResources() {
+		ResourcesManager manager = getResourcesManager();
+		return manager == null ? null : manager.getFeedLinks();
+	}
+	
 	private List<JavaScriptLink> getJavaScriptResources() {
 		ResourcesManager manager = getResourcesManager();
 		return manager == null ? null : manager.getJavaScriptResources();
@@ -156,7 +165,8 @@ public class ResourcesAdder extends DefaultAddResource {
 	}
 	
 	private void manageHeader(String serverName) {
-		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles())) {
+		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles())
+				&& ListUtil.isEmpty(getFeedResources())) {
 			return;
 		}
 		
@@ -194,11 +204,13 @@ public class ResourcesAdder extends DefaultAddResource {
 			getJavaScriptResources().clear();
 			getCSSFiles().clear();
 			getJavaScriptActions().clear();
+			getFeedResources().clear();
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error emptying lists", e);
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	private void addResources(FacesContext facesContext, List<? extends ExternalLink> resources, String fileType, String serverName) {
 		if (ListUtil.isEmpty(resources)) {
 			return;
@@ -212,11 +224,10 @@ public class ResourcesAdder extends DefaultAddResource {
 		String concatenatedResourcesUri = resourcesManager.getConcatenatedResources(resources, fileType, serverName);
 		if (!ListUtil.isEmpty(resources)) {
 			//	Restoring original resources
-			for (ExternalLink link: resources) {
+			for (final ExternalLink link: resources) {
 				if (link instanceof JavaScriptLink) {
 					super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, link.getUrl());
-				}
-				else {
+				} else if (link instanceof StyleSheetLink) {
 					super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, link.getUrl());
 				}
 			}
@@ -225,10 +236,13 @@ public class ResourcesAdder extends DefaultAddResource {
 			//	Adding concatenated file to page
 			if (concatenatedResourcesUri.endsWith(FILE_TYPE_JAVA_SCRIPT)) {
 				super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, concatenatedResourcesUri);
-			}
-			else {
+			} else {
 				super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, concatenatedResourcesUri);
 			}
+		}
+		
+		for (RSSLink feed: getFeedResources()) {
+			getHeaderBeginInfos().add(new FeedInfo(feed));
 		}
 	}
 	
@@ -243,5 +257,29 @@ public class ResourcesAdder extends DefaultAddResource {
 		}
 		
 		mediaMap.put(resourceUri, mediaType);
+	}
+	
+	public void addFeedLink(RSSLink feedLink) {
+		if (!getFeedResources().contains(feedLink)) {
+			getFeedResources().add(feedLink);
+		}
+	}
+	
+	private class FeedInfo implements WritablePositionedInfo {
+		
+		private RSSLink feed;
+		
+		private FeedInfo(RSSLink feed) {
+			this.feed = feed;
+		}
+		
+		public void writePositionedInfo(HttpServletResponse response, ResponseWriter writer) throws IOException {
+			writer.startElement(HTML.LINK_ELEM, null);
+			writer.writeAttribute(HTML.REL_ATTR, StringUtil.isEmpty(feed.getRelationship()) ? "alternate" : feed.getRelationship(), null);
+			writer.writeAttribute(HTML.HREF_ATTR, response.encodeURL(feed.getUrl()), null);
+			writer.writeAttribute(HTML.TYPE_ATTR, feed.getType(), null);
+			writer.writeAttribute(HTML.TITLE_ATTR, StringUtil.isEmpty(feed.getTitle()) ? "Feed" : feed.getTitle(), null);
+			writer.endElement(HTML.LINK_ELEM);
+		}
 	}
 }
