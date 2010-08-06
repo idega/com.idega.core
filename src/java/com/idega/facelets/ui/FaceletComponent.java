@@ -1,7 +1,11 @@
 package com.idega.facelets.ui;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
 
 import com.idega.presentation.IWBaseComponent;
@@ -54,8 +58,15 @@ public class FaceletComponent extends IWBaseComponent {
 			
 			if(resourceURI == null || CoreConstants.EMPTY.equals(resourceURI))
 				return;
+			
+			List<UIParameter> paramList = new ArrayList<UIParameter>();
+			for(UIComponent c : getChildren()){
+				if(c instanceof UIParameter){
+					paramList.add((UIParameter) c);
+				}
+			}
 
-			FaceletFactory faceletFactory = ((FaceletFactoryFactory)getBeanInstance(faceletFactoryFactoryBeanId)).createFaceletFactory();
+			FaceletFactory faceletFactory = ((FaceletFactoryFactory)getBeanInstance(faceletFactoryFactoryBeanId)).createFaceletFactory(paramList);
 			
 			Facelet facelet;
 			
