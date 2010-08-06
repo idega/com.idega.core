@@ -109,7 +109,7 @@ public class DownloadLink extends Link {
     	for(UIComponent child : children) {
     		if (child instanceof UIParameter) {
     			UIParameter param = (UIParameter) child;
-				addParameter(param.getId(), String.valueOf(param.getValue()));
+				addParameter(param.getName(), String.valueOf(param.getValue()));
 			}
     	}
     	
