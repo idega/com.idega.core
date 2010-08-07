@@ -96,13 +96,20 @@ public abstract class DefaultSpringBean {
 	}
 	
 	protected User getCurrentUser() {
+		User user = null;
 		try {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			return loginSession.getUser();
+			user = loginSession.getUser();
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current user", e);
 		}
-		return null;
+		
+		if (user == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			user = iwc == null ? null : iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
+		}
+		
+		return user;
 	}
 	
 	@SuppressWarnings("unchecked")
