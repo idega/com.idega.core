@@ -266,14 +266,16 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 				return;
 			}
 			
-			getCache().removeAll();
+			if (getCache().getSize() > 0) {
+				getCache().removeAll();
+				LOGGER.info("Cleared cache: " + this.cache.getName());
+			}
 			if (getCacheListeners() != null) {
 				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 					CacheMapListener<K, V> listener = iterator.next();
 					listener.cleared();
 				}
 			}
-			LOGGER.info("Clearing cache: " + this.cache.getName());
 		}
 		catch (IllegalStateException e) {
 			throw new RuntimeException(e);
