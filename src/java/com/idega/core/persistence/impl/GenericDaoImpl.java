@@ -56,6 +56,11 @@ public class GenericDaoImpl implements GenericDao {
 	}
 	
 	@Transactional(readOnly = true)
+	public <T> T getReference(Class<T> clazz, Object primaryKey) {
+		return entityManager.getReference(clazz, primaryKey);
+	}
+	
+	@Transactional(readOnly = true)
 	public <T> T find(Class<T> clazz, Object primaryKey) {
 		
 		return entityManager.find(clazz, primaryKey);

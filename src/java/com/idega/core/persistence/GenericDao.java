@@ -14,6 +14,8 @@ public interface GenericDao {
 	
 	public abstract <T> T merge(T product);
 	
+	public abstract <T> T getReference(Class<T> clazz, Object primaryKey);
+	
 	public abstract <T> T find(Class<T> clazz, Object primaryKey);
 	
 	public abstract Query createNamedQuery(String queryName);
