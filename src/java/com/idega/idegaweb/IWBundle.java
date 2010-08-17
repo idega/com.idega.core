@@ -15,12 +15,14 @@ import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.FinderException;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
 import javax.faces.el.ValueBinding;
+
 import com.idega.core.component.data.ICObject;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
@@ -29,19 +31,19 @@ import com.idega.presentation.Image;
 /**
  * This is the declaration of the class that represents each bundle folder (or file).
  * An instance of this class is loaded on startup for each bundle that is installed
- * in the idegaWeb application. (by default in /idegaweb/bundles/). 
+ * in the idegaWeb application. (by default in /idegaweb/bundles/).
  * An idegaWeb Bundle is convenient class to access properties and resources etc. for the
  * components contained in the bundle.<br>
  * The default implementation for this is DefaultIWBundle.<br>
- * 
+ *
  * Last modified: $Date: 2009/03/11 08:07:35 $ by $Author: civilis $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.100 $
  */
 public interface IWBundle extends IWModule{
 	/**
-	 * Discards all unsaved changes to this bundle and loads it up again 
+	 * Discards all unsaved changes to this bundle and loads it up again
 	 */
 	public abstract void reloadBundle();
 
@@ -54,6 +56,7 @@ public interface IWBundle extends IWModule{
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
+	@Override
 	public abstract void unload();
 
 	/**
@@ -98,7 +101,7 @@ public interface IWBundle extends IWModule{
 	public abstract void setProperty(String propertyName);
 
 	public abstract void setRootVirtualPath(String path);
-	
+
 	public String getRootVirtualPath();
 
 	public abstract Image getLocalizedImage(String name, Locale locale);
@@ -141,7 +144,7 @@ public interface IWBundle extends IWModule{
 	public abstract String getResourcesURL(Locale locale);
 
 	public abstract String getResourcesURL();
-	
+
 	public String getResourcesPath();
 
 	public abstract String getResourcesVirtualPath(Locale locale);
@@ -162,7 +165,7 @@ public interface IWBundle extends IWModule{
 	public abstract String getBundleName();
 
 	public abstract Image getImage(String urlInBundle);
-	
+
 	public abstract String getImageURI(String urlInBundle);
 
 	public abstract String getVirtualPathWithFileNameString(String filename);
@@ -269,43 +272,42 @@ public interface IWBundle extends IWModule{
 
 	public abstract List getComponentKeys();
 
-	public abstract int compareTo(Object o);
-
 	public abstract void addLocalizableString(String key, String value);
 
 	public abstract boolean containsLocalizedString(String key);
 
+	@Override
 	public abstract String toString();
-	
+
 	public void runBundleStarters();
-	
+
 	/**
 	 * Returns the URI of a jsp page found inside this bundle
 	 * @param jspInBundle
 	 * @return
 	 */
 	public String getJSPURI(String jspInBundle);
-	
+
 	/**
 	 * Returns the URI of a facelet page found inside this bundle
 	 * @param faceletInBundle
 	 * @return
 	 */
 	public abstract String getFaceletURI(String faceletUri);
-	
+
 	public HtmlGraphicImage getLocalizedImage(String pathAndName);
 	public HtmlGraphicImage getLocalizedImage(String pathAndName, IWContext context);
-	
-	
+
+
 	/**
 	 * Returns a valueBinding for a localizationKey
 	 * @param localizationKey LocalizationKey
 	 * @return
 	 */
 	public ValueBinding getValueBinding(String expression);
-	
+
 	public ValueExpression getValueExpression(String localizationKey);
-	
+
 	/**
 	 * Returns a valueBinding for a localizationKey
 	 * @param localizationKey LocalizationKey
@@ -313,18 +315,18 @@ public interface IWBundle extends IWModule{
 	 * @return
 	 */
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue);
-	
+
 	/**
 	 * Returns a localized HtmlOutputText object.
 	 * @param localizationKey LocalizationKey
-	 * @return 
+	 * @return
 	 */
 	public HtmlOutputText getLocalizedText(String localizationKey);
 
 	/**
 	 * Returns a localized UIComponent object. Value is bound to the <code>value</code> attribute.
 	 * @param localizationKey LocalizationKey
-	 * @return 
+	 * @return
 	 */
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component);
 
@@ -332,28 +334,28 @@ public interface IWBundle extends IWModule{
 	 * Returns a localized UIComponent object. Value is bound to the <code>value</code> attribute.
 	 * @param localizationKey LocalizationKey
 	 * @param defaultValue The default value
-	 * @return 
+	 * @return
 	 */
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component, String defaultValue);
 
-	
+
 	/**
 	 * Returns a localized string.
 	 * Use ONLY if you need the string, otherwise use the getLocalizedText or getLocalizeUIComponent
 	 * @param localizationKey LocalizationKey
-	 * @return 
+	 * @return
 	 */
 	public String getLocalizedString(String localizationKey);
-	
+
 	/**
 	 * Returns a localized string.
 	 * Use ONLY if you need the string, otherwise use the getLocalizedText or getLocalizeUIComponent
 	 * @param localizationKey LocalizationKey
 	 * @param defaultValue The default value
-	 * @return 
+	 * @return
 	 */
 	public String getLocalizedString(String localizationKey, String defaultValue);
-	
+
 	/**
 	 * Returns all the DATA component types registered to this bundle
 	 * @return a collection of ICObjects.
@@ -368,7 +370,7 @@ public interface IWBundle extends IWModule{
 	 * @return returns vitual path to the current locale resource folder, without the context.
 	 */
 	public String getResourcesPathForCurrentLocale();
-	
+
 	/**
 	 * <p>
 	 * Returns the URI to a resource inside the '/resources/' folder inside this bundle.<br/>
@@ -389,7 +391,7 @@ public interface IWBundle extends IWModule{
 	 * @throws IOException
 	 */
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException;
-	
+
 	/**
 	 * <p>
 	 * Returns time when resource identified by <code>pathWithinBundle</code> was last modified.
@@ -399,7 +401,7 @@ public interface IWBundle extends IWModule{
 	 * @return miliseconds since Epoch, or 0 if not found
 	 */
 	public long getResourceTime(String pathWithinBundle);
-	
+
 	public abstract boolean isPostponedBundleStartersRun();
 
 	public abstract void setPostponedBundleStartersRun(boolean postponedBundleStartersRun);
