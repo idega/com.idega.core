@@ -1,37 +1,11 @@
-<?xml version="1.0"?>
+<?xml version="1.0" encoding="UTF-8"?>
 
-<!DOCTYPE faces-config PUBLIC
-  "-//Sun Microsystems, Inc.//DTD JavaServer Faces Config 1.0//EN"
-  "http://java.sun.com/dtd/web-facesconfig_1_0.dtd"
-[
- <!ELEMENT idegaweb-info ANY>
- <!ELEMENT builder-visible (#PCDATA)>
- <!ELEMENT object-type (#PCDATA)>
- <!ELEMENT component-metadata ANY>
- <!ATTLIST component-metadata
-     component-type CDATA #IMPLIED>
- <!ELEMENT facet-metadata ANY>
- <!ELEMENT attribute-metadata ANY>
- <!ELEMENT property-metadata ANY>
- <!ELEMENT accepts-child-components (#PCDATA)>
- <!ELEMENT attribute-values (#PCDATA)>
- <!ELEMENT base-component-type  (#PCDATA)>
- <!ELEMENT deprecated  (#PCDATA)>
- <!ELEMENT display-order  (#PCDATA)>
- <!ELEMENT expert  (#PCDATA)>
- <!ELEMENT favorite-property  (#PCDATA)>
- <!ELEMENT group  (#PCDATA)>
- <!ELEMENT help-topic  (#PCDATA)>
- <!ELEMENT hidden  (#PCDATA)>
- <!ELEMENT initial-value  (#PCDATA)>
- <!ELEMENT preferred  (#PCDATA)>
- <!ELEMENT preferred-child-tags  (#PCDATA)>
- <!ELEMENT property-editor  (#PCDATA)>
- <!ELEMENT short-description  (#PCDATA)>
- <!ELEMENT writable  (#PCDATA)> 
-]
->
-<faces-config>
+<faces-config
+	xmlns="http://java.sun.com/xml/ns/javaee"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-facesconfig_1_2.xsd"
+version="1.2">
+
 	<application>
 		<navigation-handler>com.idega.faces.navigation.IWNavigationHandlerImpl</navigation-handler>
 	</application>
