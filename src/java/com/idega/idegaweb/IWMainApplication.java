@@ -1,7 +1,7 @@
 /*
  * $Id: IWMainApplication.java,v 1.207 2009/04/17 10:45:19 valdas Exp $
  * Created in 2001 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
@@ -111,9 +111,9 @@ import com.idega.util.text.TextSoap;
  * There is typically one instance of this class per application (i.e. per servlet context).
  * This class is instanciated at startup and loads all Bundles, which can then be accessed through
  * this class.
- * 
+ *
  *  Last modified: $Date: 2009/04/17 10:45:19 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.207 $
  */
@@ -127,24 +127,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * In JSF this can also be used to reference the instance as a ManagedBean.
 	 */
 	public final static String APPLICATION_BEAN_ID = "idegawebApplication";
-	
+
     public final static String IdegaEventListenerClassParameter = "idegaweb_event_classname";
     public final static String ApplicationEventListenersParameter = "idegaweb_application_events";
     public final static String IWEventSessionAddressParameter = "iw_event_address"; // added
 	public final static String windowOpenerParameter = Page.IW_FRAME_STORAGE_PARMETER;
-	
+
     private final static String PARAM_IW_FRAME_CLASS_PARAMETER = com.idega.presentation.Page.IW_FRAME_CLASS_PARAMETER;
-    
+
     public final static String templateParameter = "idegaweb_template";
     public final static String templateClassParameter = "idegaweb_template_class";
-    
+
     public final static String classToInstanciateParameter = "idegaweb_instance_class";
-    
+
     private final static String BUNDLES_STANDARD_DIRECTORY = "bundles";
     private final static String IDEGAWEB_SPECIAL_DIRECTORY = "idegaweb";
     private final static String IDEGAWEB_PRIVATE_DIRECTORY = "WEB-INF/idegaweb";
     private final static String PROPERTIES_STANDARD_DIRECTORY = "properties";
-    
+
     public final static String CORE_BUNDLE_IDENTIFIER = PresentationObject.CORE_IW_BUNDLE_IDENTIFIER;
     public final static String CORE_BUNDLE_FONT_FOLDER_NAME = "iw_fonts";
     public final static String CORE_DEFAULT_FONT = "default.ttf";
@@ -152,35 +152,35 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public final static String _PROPERTY_USING_EVENTSYSTEM = "using_eventsystem";
     public final static String _ADDRESS_ACCESSCONTROLER = "iwmainapplication.ic_accesscontroler";
     public final static String _PARAMETER_IC_OBJECT_INSTANCE_ID = "parent.ic_object_instance_id";
-    
+
     private static final String SETTINGS_STORAGE_PARAMETER = "idegaweb_main_application_settings";
     private static final String bundlesFileName = "bundles.properties";
-    
+
     private final static String APACHE_RESTART_PARAMETER = "restart_apache";
     private final static String CONTEXT_PATH_KEY = "IW_CONTEXT_PATH";
-	
+
     public final static String PROPERTY_NEW_URL_STRUCTURE = "new_url_structure";
 	public final static String PROPERTY_JSF_RENDERING = "jsf_rendering";
-    
+
 	//private final static String APP_CONTEXT_URI_KEY = "IW_APP_CONTEXT_URI";
     private final static String SLASH = "/";
     private final static String windowOpenerURL = "/servlet/WindowOpener";
     private final static String objectInstanciatorURL = "/servlet/ObjectInstanciator";
-    
+
     public final static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
     public final static String FILE_SERVLET_URL = "/servlet/FileServlet/";
-    
+
     private final static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
     private final static String BUILDER_SERVLET_URL = "/servlet/IBMainServlet/";
     private final static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
     private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
-    
+
     private final static String NEW_WINDOW_URL="/workspace/window/";
     private final static String NEW_PUBLIC_WINDOW_URL="/window/";
     private final static String NEW_BUILDER_PAGE_URL="/pages/";
     private final static String WORKSPACE_URI="/workspace/";
     private final static String LOGIN_URI="/login/";
-    
+
     //mutable class variables:
     protected static IWMainApplication defaultIWMainApplication = null;
     private static IWCacheManager cacheManager = null;
@@ -192,7 +192,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public static boolean useJSF = DEFAULT_USE_JSF;
     public static final boolean DEFAULT_DEBUG_FLAG = false;
     public static boolean debug = DEFAULT_DEBUG_FLAG;
-    
+
     //Member variables:
     private Map<String, IWBundle> loadedBundles;
     private Properties bundlesFile;
@@ -201,7 +201,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private String propertiesRealPath;
     private String bundlesRealPath;
     private String defaultLightInterfaceColor = IWConstants.DEFAULT_LIGHT_INTERFACE_COLOR;
-    private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;    
+    private String defaultDarkInterfaceColor = IWConstants.DEFAULT_DARK_INTERFACE_COLOR;
      //private String appContext;
     //private boolean checkedAppContext;
     private String cacheDirURI;
@@ -210,7 +210,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	//Holds a map of Window classes to know its dimensions etc.
     private Map windowClassesStaticInstances;
     private Application facesApplication;
-    
+
 
 	private ApplicationProductInfo applicationProductInfo;
 	private ApplicationInstallationInfo applicationInstallationInfo;
@@ -225,7 +225,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		loadBundlesFromWorkspace=true;
     	}
     }
-    
+
     private boolean alreadyUnloaded = false; // for restart application
 	//Defined as private variables to speed up reflection:
 	private Object builderLogicInstance;
@@ -238,7 +238,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
 	//Flag to set if bundles should be loaded the older way by reading /idegaweb/bundles folder
 	public static boolean loadBundlesLegacy=false;
-	
+
+	@Autowired
+	private BundleLocalizer bundleLocalizer;
+
     public static void unload()	{
     	defaultIWMainApplication = null;
     	cacheManager = null;
@@ -261,14 +264,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		DatastoreInterface.unload();
 		EntityControl.unload();
     }
-    
+
     public IWMainApplication(){
     	//Constructor exists for subclasses
     }
-    
+
     public IWMainApplication(ServletContext application,AppServer appserver) {
         this.application = application;
-        setApplicationServer(appserver);        
+        setApplicationServer(appserver);
         application.setAttribute(APPLICATION_BEAN_ID, this);
         //set the default application instance to this
         if(defaultIWMainApplication==null){
@@ -276,7 +279,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         }
         //attention this must be reviewed if we implement multi domains within
         // one virtualmachine
-        // comment by thomas: 
+        // comment by thomas:
         // The implementation is wrong and not fixed yet:
         // The cacheManager is a singleton and is stored twice:
         // As an attribute of an instance of the IWMainApplication and in a class variable
@@ -319,7 +322,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		}
     		return this.applicationProductInfo;
     }
-    
+
     /**
      * Gets information about the installed application.
      * @return
@@ -330,7 +333,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		}
     		return this.applicationInstallationInfo;
     }
-    
+
     private void load() {
         this.setPropertiesRealPath();
         this.setBundlesRealPath();
@@ -346,41 +349,37 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
 	 */
 	void regData() {
-		/*try{
-			reg(this.defKey,getIWApplicationContext().getDomain().getName(),getProductInfo().getName());
-		}
-		catch(Exception e){}*/
 	}
-	
+
 	private boolean postponeBundleStarters = false;
-	
+
 	public void loadBundles() {
-		
+
 		postponeBundleStarters = true;
-		
+
 		loadBundlesFromWorkspace();
 		loadBundlesLegacy();
     	loadBundlesFromJars();
         loadBundlesLocalizationsForJSF();
         loadBundlesResourcesResolvers();
-        
+
         postponeBundleStarters = false;
-        
+
         this.setAttribute("bundles",getLoadedBundles());
-        
+
         for (IWBundle bundle : getLoadedBundles().values()) {
-	        
+
         	if(bundle.isPostponedBundleStartersRun()) {
-        	
+
         		bundle.setPostponedBundleStartersRun(false);
         		bundle.runBundleStarters();
         	}
         }
     }
-    
+
     /**
 	 * <p>
-	 * This method loads the bundle instances from the jar files - this is the newer method 
+	 * This method loads the bundle instances from the jar files - this is the newer method
 	 * instead of loading them from the /idegaweb/bundles folder.
 	 * </p>
 	 */
@@ -390,13 +389,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			loader.loadBundlesFromJars();
 		}
 	}
-	
+
 	public IWModuleLoader getModuleLoader(){
 		if(moduleLoader==null){
 			moduleLoader = new IWModuleLoader(this,this.application);
 			if(loadBundlesFromJars){
 				moduleLoader.getJarLoaders().add(new IWBundleLoader(this));
-				
+
 			}
 		}
 		return moduleLoader;
@@ -407,90 +406,85 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Key is a string (bundle identifier) and value is a IWBundle instance
      */
     public Map<String, IWBundle> getLoadedBundles() {
-    	
+
     	if(loadedBundles == null)
     		 loadedBundles = new HashMap<String, IWBundle>();
-    	
+
     	return loadedBundles;
     }
-    
+
     /*
      * method that loads the bundle localizations that can be used as value bindings for JSF
      */
     private void loadBundlesLocalizationsForJSF() {
-    	Map<String, BundleLocalizationMap> bundleForLocalizations = new HashMap<String, BundleLocalizationMap>();
-    	for (Iterator<IWBundle> iter = getLoadedBundles().values().iterator(); iter.hasNext();) {
-    		IWBundle bundle = iter.next();
-			BundleLocalizationMap bLocalizationMap = new BundleLocalizationMap(bundle);
-			bundleForLocalizations.put(bundle.getBundleIdentifier(),bLocalizationMap);
+    	for (IWBundle bundle: getLoadedBundles().values()) {
+    		getBundleLocalizer().addBundle(bundle.getBundleIdentifier(), bundle);
     	}
-    	this.setAttribute("localizedStrings", bundleForLocalizations);
     }
-    
+
+    private BundleLocalizer getBundleLocalizer() {
+    	if (bundleLocalizer == null) {
+    		ELUtil.getInstance().autowire(this);
+    	}
+    	return bundleLocalizer;
+    }
+
     private void loadBundlesResourcesResolvers() {
     	Map<String, Map<String, String>> resources = new HashMap<String, Map<String,String>>();
     	for (IWBundle bundle: getLoadedBundles().values()) {
     		Map<String, String> bundleResolver = new WebResourceResolver(bundle.getBundleIdentifier());
     		resources.put(bundle.getBundleIdentifier(), bundleResolver);
     	}
-    	IWMainApplication.getDefaultIWMainApplication().setAttribute("iwResourceResolver", resources);
+    	setAttribute("iwResourceResolver", resources);
     }
 
-    public void loadViewManager(){
-    		
-
+    public void loadViewManager() {
 		ViewManager viewManager = ViewManager.getInstance(this);
-		if(useJSF){
-	    	
-	    		ApplicationFactory factory = getApplicationFactory();
+
+		if (useJSF) {
+    		ApplicationFactory factory = getApplicationFactory();
 			replaceJSFApplication(factory);
-			
+
 			Application app = factory.getApplication();
 			ViewHandler standardViewHandler = app.getViewHandler();
-			//ViewHandler iwViewHandler=origViewHandler;
-			
+
 			viewManager.initializeStandardViews(standardViewHandler);
-			
-			//Note: this ViewHandler instance will be changed later by 
-			// the IWFacesInstaller and IWViewHandlerImpl.
-		}
-		else{
+		} else {
 			//Here there is no default ViewHandler
 			viewManager.initializeStandardViews(null);
 		}
     }
-    
+
     private ApplicationFactory applicationFactory;
-    
-    public void setApplicationFactory(ApplicationFactory factory){
+
+    public void setApplicationFactory(ApplicationFactory factory) {
     	this.applicationFactory=factory;
     }
-    
+
     /**
      * Get the JSF ApplicationFactory
      * @return
      */
     public ApplicationFactory getApplicationFactory(){
-    		if(this.applicationFactory==null){
-    			return (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
-    		}
-    		else{
-    			return this.applicationFactory;
-    		}
+    	if (this.applicationFactory == null) {
+    		return (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
+    	} else {
+    		return this.applicationFactory;
+    	}
     }
-    
+
     /**
      * Replaces the JSF Application instance set by default in the ApplicationFactory to be an instance of this class.
      * @param factory
      */
     protected void replaceJSFApplication(ApplicationFactory factory){
-    		Application oldApp = factory.getApplication();
-    		this.setFacesApplication(oldApp);
-    		factory.setApplication(this);
-    		log("Replaced the JSF Application of instance "+oldApp.getClass()+" with IWMainApplication");      
+    	Application oldApp = factory.getApplication();
+    	this.setFacesApplication(oldApp);
+    	factory.setApplication(this);
+    	log("Replaced the JSF Application of instance "+oldApp.getClass()+" with IWMainApplication");
     }
-    
-    
+
+
     public String getObjectInstanciatorURI(Class className, String templateName) {
         //return getObjectInstanciatorURI(className.getName(), templateName);
     	StringBuffer buffer = new StringBuffer();
@@ -512,10 +506,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			buffer.append('=').append(getEncryptedClassName(className));
 			buffer.append('&').append(templateParameter);
 			buffer.append('=').append(getEncryptedClassName(templateName));
-		} 
+		}
 		return buffer.toString();
     }
-    
+
     public String getPublicObjectInstanciatorURI(Class<? extends UIComponent> className, String templateName) {
         //return getObjectInstanciatorURI(className.getName(), templateName);
     	StringBuffer buffer = new StringBuffer();
@@ -537,14 +531,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			buffer.append('=').append(getEncryptedClassName(className));
 			buffer.append('&').append(templateParameter);
 			buffer.append('=').append(getEncryptedClassName(templateName));
-		} 
+		}
 		return buffer.toString();
     }
     public String getObjectInstanciatorURI(String className, String templateName) {
 		try {
 			return getObjectInstanciatorURI(RefactorClassRegistry.forName(className),templateName);
 		} catch (ClassNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 			throw new RuntimeException(e);
 		}
@@ -577,16 +570,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     	buffer.append('=').append(getEncryptedClassName(className));
     	return buffer.toString();
     }
-    
-    
-    /*public String getObjectInstanciatorURI(Class classToInstanciate,
-            Class templateClass) {
-        return this.getObjectInstanciatorURI() + "?"
-                + classToInstanciateParameter + "="
-                + getEncryptedClassName(classToInstanciate) + "&"
-                + templateClassParameter + "="
-                + getEncryptedClassName(templateClass);
-    }*/
 
     /**
      * @todo: Change this so it encrypts the classToInstanciateName
@@ -602,10 +585,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public static String decryptClassName(String encryptedClassName) {
         return getHashCodedClassName(encryptedClassName);
     }
-
-    //public ServletContext getContext(String p0){
-    //  return application.getContext(p0);
-    //}
 
     public int getMajorVersion() {
         return this.application.getMajorVersion();
@@ -626,14 +605,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public InputStream getResourceAsStream(String p0) {
         return this.application.getResourceAsStream(p0);
     }
-
-    //public RequestDispatcher getRequestDispatcher(String p0){
-    //  return application.getRequestDispatcher(p0);
-    //}
-
-    //public RequestDispatcher getNamedDispatcher(String p0){
-    //  return application.getNamedDispatcher(p0);
-    //}
 
     public void log(String p0) {
         this.application.log(p0);
@@ -658,15 +629,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public Object getAttribute(String parameterName) {
         return this.application.getAttribute(parameterName);
     }
-    
+
     public Object getAttribute(String parameterName, Object defaultObjectToReturnIfValueIsNull){
-    		Object value = getAttribute(parameterName);
-    		if(value==null){
-    			value = defaultObjectToReturnIfValueIsNull;
-    		}
-    		return value;
+    	Object value = getAttribute(parameterName);
+    	if (value == null) {
+    		value = defaultObjectToReturnIfValueIsNull;
+    	}
+    	return value;
     }
-    
+
     public Enumeration getAttributeNames() {
         return this.application.getAttributeNames();
     }
@@ -687,10 +658,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * @param application
      * @return
      */
-    public static IWMainApplication getIWMainApplication(
-            ServletContext application) {
-        return (IWMainApplication) application
-                .getAttribute(IWMainApplication.APPLICATION_BEAN_ID);
+    public static IWMainApplication getIWMainApplication(ServletContext application) {
+        return (IWMainApplication) application.getAttribute(IWMainApplication.APPLICATION_BEAN_ID);
     }
 
     /**
@@ -701,16 +670,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * @param application
      * @return
      */
-    public static IWMainApplication getIWMainApplication(
-    	FacesContext facesContext) {
-		try{
+    public static IWMainApplication getIWMainApplication(FacesContext facesContext) {
+		try {
 			HttpServletRequest request = (HttpServletRequest)facesContext.getExternalContext().getRequest();
 			return getIWMainApplication(request);
-		}
-		catch(ClassCastException cce){
-			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a HttpServletRequest",cce);
+		} catch(ClassCastException cce) {
+			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a HttpServletRequest", cce);
 		}
     }
+
     /**
      * <p>
      * Gets the application context from the given HttpServletRequest instance.<br/>
@@ -733,7 +701,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public static IWMainApplication getIWMainApplication(HttpServletRequest request){
 
 		ICDomain domain = ICDomainLookup.getInstance().getDomainByRequest(request);
-		
+
 		if(domain.isDefaultDomain()){
 			return IWMainApplication.getDefaultIWMainApplication();
 		}
@@ -743,7 +711,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			return subApplication;
 		}
     }
-    
+
     public String getDefaultDarkInterfaceColor() {
         return this.defaultDarkInterfaceColor;
     }
@@ -760,24 +728,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
         this.defaultLightInterfaceColor = color;
     }
 
-    /*
-     * public Properties getDefaultProperties(){ IdegaWebProperties properties =
-     * (IdegaWebProperties)application.getAttribute(this.DefaultPropertiesStorageParameterName);
-     * //if (properties==null){ // properties = new
-     * IdegaWebProperties(this.application); //
-     * application.setAttribute(this.DefaultPropertiesStorageParameterName,properties);
-     * //} return properties; }
-     */
-
     public IWMainApplicationSettings getSettings() {
-        IWMainApplicationSettings settings = (IWMainApplicationSettings) this.application
-                .getAttribute(SETTINGS_STORAGE_PARAMETER);
+        IWMainApplicationSettings settings = (IWMainApplicationSettings) this.application.getAttribute(SETTINGS_STORAGE_PARAMETER);
         return settings;
     }
 
     public IWSystemProperties getSystemProperties() {
-        IWSystemProperties settings = (IWSystemProperties) this.application
-                .getAttribute(this.SYSTEM_PROPERTIES_STORAGE_PARAMETER);
+        IWSystemProperties settings = (IWSystemProperties) this.application.getAttribute(this.SYSTEM_PROPERTIES_STORAGE_PARAMETER);
         if (settings == null) {
             settings = new IWSystemProperties(this);
             setAttribute(this.SYSTEM_PROPERTIES_STORAGE_PARAMETER, settings);
@@ -785,10 +742,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return settings;
     }
 
-    //public IWBundleList getBundlesRegistered(){
-    //
-    //}
-    
     public synchronized void unloadInstanceAndClass() {
         if (!this.alreadyUnloaded) {
         	unloadInstance();
@@ -796,7 +749,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         	this.alreadyUnloaded = true;
         }
     }
-    
+
     private void unloadInstance() {
         log("[idegaWeb] : shutdown : Storing application state and deleting cached/generated content");
         storeStatus();
@@ -809,27 +762,27 @@ public class IWMainApplication	extends Application  implements MutableClass {
         }
         this.loadedBundles=null;
         this.bundlesFile=null;
-        
+
         // see comment above!
         if(cacheManager!=null){
     		cacheManager.unload(this);
         }
         cacheManager=null;
-        
+
         this.windowClassesStaticInstances=null;
-        
+
         shutdownApplicationServices();
         SingletonRepository.stop();
-        
+
         this.application.removeAttribute(APPLICATION_BEAN_ID);
 
         removeAllApplicationAttributes();
-        
+
         getIWCacheManager2().shutdown();
-        
+
         this.application=null;
     }
-    
+
     protected void removeAllApplicationAttributes(){
         //Temp: removing all application attributes:
         Enumeration enumeration = this.application.getAttributeNames();
@@ -846,7 +799,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
 
-    
+
     public void storeStatus() {
         getSystemProperties().store();
         storeCryptoProperties();
@@ -872,18 +825,18 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return this.bundlesFile;
     }
 
-    
+
     /**
      * Gets the Path to the folder where application properties are located by default.
      * e.g. /home/idegaweb/webapp1/idegaweb/properties
      * @return the path as a String
-     */    
+     */
     public String getPropertiesRealPath() {
         return this.propertiesRealPath;
     }
 
     private void setPropertiesRealPath() {
-    	
+
     		String privatePath = this.getApplicationPrivateRealPath()
             + File.separator + PROPERTIES_STANDARD_DIRECTORY;
     		String publicPath = this.getApplicationSpecialRealPath() + File.separator + PROPERTIES_STANDARD_DIRECTORY;
@@ -895,11 +848,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
     		}
     		else{
         		//Setting to the private path - this is the default in platform 3.0
-    			this.propertiesRealPath = privatePath;    			
+    			this.propertiesRealPath = privatePath;
     		}
     }
 
-    
+
     /**
      * Gets the Path to the folder where bundles are located by default.
      * e.g. /home/idegaweb/webapp1/idegaweb/bundles
@@ -912,8 +865,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private void setBundlesRealPath() {
 		this.bundlesRealPath = this.getApplicationSpecialRealPath() + File.separator + BUNDLES_STANDARD_DIRECTORY;
 	}
-    
-    
+
+
     /**
 	 * <p>
 	 * This method returns the "real" filesystem path in the operating system to
@@ -955,7 +908,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * Gets the private application directctory under /WEB-INF/idegaweb/ under the webapp root
      * @return
-     */    
+     */
     public String getApplicationPrivateVirtualPath() {
         return IDEGAWEB_PRIVATE_DIRECTORY;
     }
@@ -972,11 +925,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     private String getBundleRealPath(String bundleIdentifier) {
-    	
+
 		if(loadBundlesFromWorkspace){
 	        //check for the workpace in eclipse if property is set:
 			String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-			
+
 			//First try the default name (with .bundle extension)
 			String sBundleDirWithBundleExtension = directory+ File.separator+bundleIdentifier+DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 			File bundleDir = new File(sBundleDirWithBundleExtension);
@@ -990,7 +943,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				return sBundleDirWithoutBundleExtension;
 			}
 		}
-    	
+
         //String sBundle = getBundlesFile().getProperty(bundleIdentifier);
         String sBundle = getInternalBundleVirtualPath(bundleIdentifier);
         if (sBundle != null) {
@@ -1002,7 +955,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         }
         //debug
         //System.out.println("IWMainApplication : sBundle = "+sBundle);
-        
+
 		//default method:
         return getApplicationSpecialRealPath() + File.separator + sBundle;
     }
@@ -1136,7 +1089,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * <p>
 	 * TODO tryggvil describe method loadBundleLegacy
 	 * </p>
-	 * 
+	 *
 	 * @param bundleIdentifier
 	 * @param autoCreate
 	 * @param bundle
@@ -1157,7 +1110,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				autoCreate);
 		return bundle;
 	}
-    
+
     /**
 	 * Regsters and loads a IWBundle with the default bundlePath and the bundle
 	 * is automatically created if it does not exist and autoCreate==true
@@ -1168,8 +1121,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			bundleDir = IWMainApplication.BUNDLES_STANDARD_DIRECTORY + File.separator + bundleDir;
 		}
         return registerBundle(bundleIdentifier, bundleDir, autoCreate);
-    }    
-    
+    }
+
     /**
      * Regsters and loads a IWBundle with the abstact pathname relative to
      * /idegaweb on the WebServer and the identifier specified by
@@ -1217,7 +1170,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Only works when running on Tomcat
      */
     public boolean restartApplication() {
-    	String apache = getSettings().getProperty(APACHE_RESTART_PARAMETER);//restart string)  		
+    	String apache = getSettings().getProperty(APACHE_RESTART_PARAMETER);//restart string)
 
 
         String restartScript = "/idega/bin/apache_restart.sh";
@@ -1315,7 +1268,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public IWCacheManager getIWCacheManager() {
         return cacheManager;
     }
-    
+
     public IWCacheManager2 getIWCacheManager2(){
     	return IWCacheManager2.getInstance(this);
     }
@@ -1406,7 +1359,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     /**
      * Method getHashCode. Used to get the encrypted classname of a class.
-     * 
+     *
      * @param classObject
      * @param addon
      *            an integer to that is added to the number calculate() makes to
@@ -1452,7 +1405,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
             return crypto;
         } else {
             crypto = calculateClassId(className);
-            
+
             try{
 	            int iCrypto = Integer.parseInt(crypto);
 	            while (cryptoClassNamesPropertiesKeyedByCode.containsKey(crypto)) {
@@ -1484,7 +1437,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				}
     }
 
-    
+
     /**
      * Returns a unique stirng for a class name:
      */
@@ -1603,11 +1556,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		if(useNewURLScheme){
 			return getTranslatedURIWithContext(NEW_PUBLIC_WINDOW_URL);
 		}
-		else{	
+		else{
 			return getTranslatedURIWithContext(windowOpenerURL);
 		}
     }
-    
+
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
      * For the new platform this is '/window/' but for older versions this is '/servlet/ObjectInstanciator'
@@ -1616,11 +1569,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		if(useNewURLScheme){
 			return getTranslatedURIWithContext(NEW_PUBLIC_WINDOW_URL);
 		}
-		else{	
+		else{
 			return getTranslatedURIWithContext(objectInstanciatorURL);
 		}
     }
-    
+
     /**
      * Returns the prefix for the 'window opener' URI, for the new platform this is by default only avaiable for logged in users<br>
      * For the new platform this is '/window/' but for older versions this is '/servlet/WindowOpener'
@@ -1629,11 +1582,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		if(useNewURLScheme){
 			return getTranslatedURIWithContext(NEW_WINDOW_URL);
 		}
-		else{	
+		else{
 			return getTranslatedURIWithContext(windowOpenerURL);
 		}
     }
-    
+
     /**
      * Returns the prefix for the 'window opener' URI, for the new platform this is by default only avaiable for logged in users<br>
      * For the new platform this is '/window/' but for older versions this is '/servlet/WindowOpener'
@@ -1642,30 +1595,30 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		if(useNewURLScheme){
 			return NEW_WINDOW_URL;
 		}
-		else{	
+		else{
 			return windowOpenerURL;
 		}
     }
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open only for logged in users<br>
-     * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962'
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getWindowOpenerURI(Class<? extends UIComponent> windowToOpen) {
     	return getBufferedWindowOpenerURI(windowToOpen,true).toString();
     }
-    	
+
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open only for logged in users<br>
-     * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * For the new platform this is '/workspace/window/E0410143-CF32-42B1-A97B-E712AA702962'
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'<br/>
      * This Method does not prefix the URI with the webapplication context path if any.
-     * 
+     *
      */
     public String getWindowOpenerURIWithoutContextPath(Class<? extends UIComponent> windowToOpen) {
     	return getBufferedWindowOpenerURI(windowToOpen,false).toString();
     }
-    
+
     private StringBuffer getBufferedWindowOpenerURI(Class<? extends UIComponent> windowToOpen,boolean includeContextPath) {
     	StringBuffer buffer = new StringBuffer();
 	String windowUri = null;
@@ -1686,29 +1639,29 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	    //return
 	    // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
     }
-    
-    
+
+
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
-     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962'
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getPublicWindowOpenerURI(Class<? extends UIComponent> windowToOpen) {
     	return getPublicWindowOpenerURI(windowToOpen, -1);
-    }    
-    
+    }
+
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
-     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962'
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getPublicObjectInstanciatorURI(Class<? extends UIComponent> windowToOpen) {
     	return getPublicObjectInstanciatorURI(windowToOpen, -1);
-    }    
-    
+    }
+
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
-     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962'
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getPublicWindowOpenerURI(Class<? extends UIComponent> windowToOpen, int ICObjectInstanceIDToOpen) {
@@ -1717,7 +1670,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			url.append(getPublicWindowOpenerURI()+getEncryptedClassName(windowToOpen));
 	        if (ICObjectInstanceIDToOpen > 0) {
 	        	url.append("?").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
-	
+
 	        }
 			return url.toString();
 		}
@@ -1726,20 +1679,20 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	        url.append(getWindowOpenerURI()).append('?').append(
 	                PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(
 	                getEncryptedClassName(windowToOpen));
-	        
+
 	        if (ICObjectInstanceIDToOpen > 0) {
 	        	url.append("&").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
-	
+
 	        }
 	        return url.toString();
 	        //return
 	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
 			}
-    	}    
-    
+    	}
+
     /**
      * Returns the prefix for the 'window opener' URI that is meant for windows to be open for all users (even not logged on)<br>
-     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962' 
+     * For the new platform this is '/window/E0410143-CF32-42B1-A97B-E712AA702962'
      * but for older versions this is '/servlet/ObjectInstanciator?idegaweb_frame_class=1234'
      */
     public String getPublicObjectInstanciatorURI(Class<? extends UIComponent> windowToOpen, int ICObjectInstanceIDToOpen) {
@@ -1748,24 +1701,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			url.append(getPublicObjectInstanciatorURI()+getEncryptedClassName(windowToOpen));
 	        if (ICObjectInstanceIDToOpen > 0) {
 	        	url.append("?").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
-	
+
 	        }
 			return url.toString();
 		}
 		else{
 	        StringBuffer url = new StringBuffer();
 	        url.append(getObjectInstanciatorURIOldURLScheme(windowToOpen.getName()));
-	
+
 	        if (ICObjectInstanceIDToOpen > 0) {
 	        	url.append("&").append( _PARAMETER_IC_OBJECT_INSTANCE_ID).append('=').append(ICObjectInstanceIDToOpen);
-	
+
 	        }
 	        return url.toString();
 	        //return
 	        // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
 			}
-    	}    
-    
+    	}
+
     public String getWindowOpenerURI(Class<? extends UIComponent> windowToOpen, int ICObjectInstanceIDToOpen) {
     	StringBuffer windowOpenerUri = getBufferedWindowOpenerURI(windowToOpen,true);
     	if (windowOpenerUri.indexOf("?") < 0) {
@@ -1782,10 +1735,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     public String getObjectInstanciatorURI() {
     		if(useNewURLScheme){
-    			return getTranslatedURIWithContext(NEW_WINDOW_URL);  
+    			return getTranslatedURIWithContext(NEW_WINDOW_URL);
     		}
     		else{
-    			return getTranslatedURIWithContext(objectInstanciatorURL);    
+    			return getTranslatedURIWithContext(objectInstanciatorURL);
     		}
     }
 
@@ -1801,8 +1754,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
     			return getTranslatedURIWithContext(BUILDER_SERVLET_URL);
     		}
     }
-    
-   
+
+
     public String getIFrameContentURI() {
         return getTranslatedURIWithContext(_IFRAME_CONTENT_URL);
     }
@@ -1815,7 +1768,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     			return getTranslatedURIWithContext(IDEGAWEB_APP_SERVLET_URI);
     		}
     	}
-    
+
     /**
      * Gets the URI to the workspace environment (/workspace) with prefixed application context path if any.
      * @return
@@ -1823,7 +1776,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public String getWorkspaceURI(){
     		return getTranslatedURIWithContext(WORKSPACE_URI);
     }
-    
+
     /**
      * Gets the URI to the standard login page  (/login) with prefixed application context path if any.
      * @return
@@ -1889,11 +1842,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Gets the context for the default IWMainApplication instance running.
      * This is set when the first IWMainApplication is instanciated.
      * @return the default application context
-     */    
+     */
     public static IWApplicationContext getDefaultIWApplicationContext(){
 		return getDefaultIWMainApplication().getIWApplicationContext();
 	}
-    
+
     public IWMainApplication getSubApplication(String domainServerName) {
 		IWMainApplication subApplication = getSubApplications().get(domainServerName);
 		if(subApplication==null){
@@ -1901,9 +1854,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			getSubApplications().put(domainServerName, subApplication);
 		}
 		return subApplication;
-    	
+
 	}
-    
+
     protected Map<String,IWMainApplication> getSubApplications(){
     	if(subApplications==null){
     		subApplications=new HashMap<String,IWMainApplication>();
@@ -1920,7 +1873,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		if(!contextUri.equals("/") ){
 			URL = URL.substring(URL.indexOf(contextUri)+contextUri.length());
 		}
-	
+
 		return URL;
     }
 
@@ -1930,7 +1883,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public void setApplicationServer(AppServer appServer) {
         this.applicationServer = appServer;
     }
-    
+
     /**
      * Returns the AppServer instance detected for this application
      * @param appServer
@@ -1954,7 +1907,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * Returns true if the Builder Application is running for the user.
      * @return
-     */	
+     */
 	public boolean isBuilderApplicationRunning(IWUserContext iwuc){
 		//This method was moved from IWContext but moved here because of static references
 		//Reflection workaround:
@@ -1986,10 +1939,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 		this.facesApplication=jsfApplication;
 	}
-	
+
 	//Begin JSF Application implementation
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getActionListener()
 	 */
@@ -2137,7 +2090,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	@Override
 	public void setStateManager(StateManager manager) {
-		getFacesApplication().setStateManager(manager);	
+		getFacesApplication().setStateManager(manager);
 	}
 
 	/* (non-Javadoc)
@@ -2145,20 +2098,20 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	@Override
 	public void addComponent(String componentType, String componentClass) {
-		getFacesApplication().addComponent(componentType,componentClass);		
+		getFacesApplication().addComponent(componentType,componentClass);
 	}
 
 	//TODO: Move this logic to the builder package.
 	public static String BUILDER_PAGE_PREFIX="BuilderPage";
 	public static String BUILDER_MODULE_PREFIX="BuilderModule";
 	public static String BUILDER_PREFIX="Builder";
-	
+
 	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#createComponent(java.lang.String)
 	 */
 	@Override
 	public UIComponent createComponent(String componentType) throws FacesException {
-		
+
 		if(componentType.startsWith(BUILDER_PREFIX)){
 			if(componentType.startsWith(BUILDER_PAGE_PREFIX)){
 				String sPageId = componentType.substring(BUILDER_PAGE_PREFIX.length()+1,componentType.length());
@@ -2184,10 +2137,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				if (moduleId.startsWith("#{") && moduleId.endsWith("}")) {
 					moduleId = Property.getValueFromExpression(moduleId, String.class);
 				}
-				
+
 				//String icObjectId=parameters[2];
 				String componentClass;
-				
+
 				/*if(componentType.indexOf("uuid_")!=-1){
 					componentClass = parameters[4];
 				}
@@ -2210,7 +2163,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				catch (ClassNotFoundException e) {
 					e.printStackTrace();
 				}
-				
+
 			}
 			throw new RuntimeException("Error creating component for componentType: "+componentType);
 		}
@@ -2339,14 +2292,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
 		return getFacesApplication().createValueBinding(ref);
 	}
-	
+
 	//End JSF Application implementation
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public static void reg(String encrLic, String systemIdentifier, String productInfo) {
-		
+
 		byte[] bServUrl = {104, 116, 116, 112, 58, 47, 47, 115, 116, 111, 114, 101, 46, 105, 100, 101, 103, 97, 46, 99, 111, 109, 47, 115, 101, 114, 118, 105, 99, 101, 115, 47, 76, 105, 99, 101, 110, 99, 101, 83, 101, 114, 118, 105, 99, 101};
 		String serviceUrl = null;
 		try {
@@ -2367,7 +2320,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		}
-		
+
 		URL url;
 		try {
 			url = new URL(serviceUrl);
@@ -2399,7 +2352,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public void setInDatabaseLessMode(boolean inDatabaseLessMode) {
 		this.inDatabaseLessMode = inDatabaseLessMode;
 	}
-	
+
 	/**
 	 * Gets if the application is in "setup" mode, i.e. when the application hasn't been configured.
 	 * This is set to true when no db.properties and installation.properties is found.
@@ -2435,22 +2388,22 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			// must be put in the loadedBundles map FIRST to prevent looping if
 			// a starter class calls IWMainApplication.getBundle(...) for the
 			// same bundleidentifier
-			
+
 			if(postponeBundleStarters) {
-				
+
 				bundle.setPostponedBundleStartersRun(true);
-				
+
 			} else {
-			
+
 				bundle.runBundleStarters();
 			}
 		}
 	}
-	
+
 //	public void loadBundle(IWBundle bundle) {
 //		loadBundle(bundle, false);
 //	}
-	
+
 	public ServletContext getServletContext(){
 		return this.application;
 	}
@@ -2458,7 +2411,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public Set getResourcePaths(String s){
 		return this.application.getResourcePaths(s);
 	}
-	
+
 	private MessagingSettings messagingSettings;
 	public MessagingSettings getMessagingSettings(){
 		if(messagingSettings==null){
@@ -2466,7 +2419,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 		return messagingSettings;
 	}
-	
+
 	/**
 	 * <p>
 	 * Gets localised String message from one of many messageResources
@@ -2484,7 +2437,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			return String.valueOf(foundValue);
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * Gets localised String message from one of many messageResources
@@ -2502,10 +2455,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			return String.valueOf(foundValue);
 		}
 	}
-	
+
 	public List<String> getAvailableMessageStorageTypes() {
 		List<MessageResource> resources = getMessageFactory().getAvailableUninitializedMessageResources();
-		
+
 		List<String> stringTypes = new ArrayList<String>(resources.size());
 		for(MessageResource resource : resources) {
 			stringTypes.add(resource.getIdentifier());
@@ -2524,10 +2477,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
 	@Override
 	public void addELResolver(ELResolver resolver) {
-		
 		getFacesApplication().addELResolver(resolver);
 	}
-	
+
 	@Override
 	public void addELContextListener(ELContextListener listener) {
 		getFacesApplication().addELContextListener(listener);
@@ -2542,10 +2494,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	}
 
 	@Override
-	public Object evaluateExpressionGet(FacesContext context,
-			String expression, Class expectedType) throws ELException {
-		return getFacesApplication().evaluateExpressionGet(context, expression,
-				expectedType);
+	public Object evaluateExpressionGet(FacesContext context, String expression, Class expectedType) throws ELException {
+		return getFacesApplication().evaluateExpressionGet(context, expression,	expectedType);
 	}
 
 	@Override
