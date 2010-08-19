@@ -120,7 +120,7 @@
     <dependency>
       <groupId>org.apache.myfaces.core</groupId>
       <artifactId>myfaces-api</artifactId>
-      <version>1.2.7</version>
+      <version>1.2.9</version>
       <type>jar</type>
     </dependency>
    <dependency>
@@ -137,9 +137,9 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>poi</groupId>
+      <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>${poi-poi-version}</version>
+      <version>${org.apache.poi-poi-version}</version>
       <type>jar</type>
     </dependency>
     <dependency>
@@ -154,6 +154,7 @@
       <version>${commons-fileupload-commons-fileupload-version}</version>
       <type>jar</type>
     </dependency>
+    
     <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
     <dependency>
       <groupId>commons-collections</groupId>
@@ -207,9 +208,9 @@
       <version>${javax.annotation-jsr250-api-version}</version>
     </dependency>
     <dependency>
-      <groupId>jsr170</groupId>
+      <groupId>javax.jcr</groupId>
       <artifactId>jcr</artifactId>
-      <version>1.0</version>
+      <version>${javax.jcr-jcr-version}</version>
     </dependency>
     <dependency>
       <groupId>jaxen</groupId>

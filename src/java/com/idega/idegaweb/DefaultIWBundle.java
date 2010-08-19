@@ -1,8 +1,8 @@
 /*
  * $Id: DefaultIWBundle.java,v 1.55 2009/03/11 08:07:35 civilis Exp $
- * 
+ *
  * Created in 2001 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
@@ -52,6 +52,7 @@ import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringUtil;
 import com.idega.xml.XMLElement;
 /**
  * The Default implementation if the IWBundle class to serve as a wrapper for an idegaWeb Bundle.
@@ -63,12 +64,12 @@ import com.idega.xml.XMLElement;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class DefaultIWBundle implements java.lang.Comparable, IWBundle
-{
+public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
+
 	private static final Logger LOGGER = Logger.getLogger(DefaultIWBundle.class.getName());
-	
+
 	//Static final constants:
-	private static final String DOT = "."; 
+	private static final String DOT = ".";
 	static final String propertyFileName = "bundle" + IWPropertyList.DEFAULT_FILE_ENDING;
 	static final String BUNDLE_IDENTIFIER_PROPERTY_KEY = "iw_bundle_identifier";
 	static final String COMPONENTLIST_KEY = "iw_components";
@@ -82,8 +83,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private final static String BUNDLE_STARTER_CLASS = "iw_bundle_starter_class";
 	private static final String slash = "/";
 	private static final String shared = "shared";
-	
-	
+
+
 	//Parameter that can be passed to the system to let it read bundles from another directory
 	//than directly under the webapp, e.g. an Eclipse workspace folder.
 	public static final String SYSTEM_BUNDLES_RESOURCE_DIR="idegaweb.bundles.resource.dir";
@@ -110,24 +111,21 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	private File localizableStringsFile;
 	private IWPropertyList propertyList;
 	private List bundleStarters;
-	
+
 	private boolean postponedBundleStartersRun = false;
-	
+
 	/**
 	 * <p>
 	 * Empty initialization, does nothing
 	 * </p>
 	 *
 	 */
-	protected DefaultIWBundle(){
-	}
-	
-	protected DefaultIWBundle(String rootRealPath, String bundleIdentifier, IWMainApplication superApplication)
-	{
+	protected DefaultIWBundle(){}
+
+	protected DefaultIWBundle(String rootRealPath, String bundleIdentifier, IWMainApplication superApplication)	{
 		this(rootRealPath, rootRealPath, bundleIdentifier, superApplication);
 	}
-	protected DefaultIWBundle(String rootRealPath, String rootVirtualPath, String bundleIdentifier, IWMainApplication superApplication)
-	{
+	protected DefaultIWBundle(String rootRealPath, String rootVirtualPath, String bundleIdentifier, IWMainApplication superApplication)	{
 		this(rootRealPath, rootVirtualPath, bundleIdentifier, superApplication, false);
 	}
 	protected DefaultIWBundle(
@@ -135,8 +133,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		String rootVirtualPath,
 		String bundleIdentifier,
 		IWMainApplication superApplication,
-		boolean autoCreate)
-	{
+		boolean autoCreate)	{
 		initialize(rootRealPath, rootVirtualPath, bundleIdentifier, superApplication, autoCreate);
 	}
 
@@ -154,44 +151,37 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		this.autoCreate = autoCreate;
 		this.superApplication = superApplication;
 		this.identifier = bundleIdentifier;
-		//handlers = new HashMap();
-		//localeRealPaths = new HashMap();
-		//resourceBundles = new HashMap();
 		setBundleBaseRealPath(rootRealPath);
 		setRootVirtualPath(rootVirtualPath);
-		try
-		{
+		try	{
 			loadBundle();
 			setProperty(BUNDLE_IDENTIFIER_PROPERTY_KEY, bundleIdentifier);
-		}
-		catch (Exception e)
-		{
+		} catch (Exception e) {
 		    LOGGER.log(Level.WARNING, "Error loading bundle " + bundleIdentifier, e);
 		}
 	}
-	
-	
+
+
 	/**
-	 * Discards all unsaved changes to this bundle and loads it up again 
+	 * Discards all unsaved changes to this bundle and loads it up again
 	 */
-	public void reloadBundle()
-	{
+	@Override
+	public void reloadBundle() {
 		reloadBundle(false);
 	}
 	/**
 	 *Reloads all resources for this bundle and stores the state of this bundle first if storeState==true
 	 *@param storeState to say if to store the state (call storeState) before the bundle is loaded again
 	 */
-	public void reloadBundle(boolean storeState)
-	{
+	@Override
+	public void reloadBundle(boolean storeState) {
 		this.unload(storeState);
 		loadBundle();
 	}
 	/**
 	 *Loads all necessary resources for this bundle
 	 */
-	protected void loadBundle()
-	{
+	protected void loadBundle() {
 		setResourcesVirtualPath(getRootVirtualPath() + "/" + "resources");
 		setResourcesRealPath(getBundleBaseRealPath() + File.separator + "resources");
 		setPropertiesRealPath(getBundleBaseRealPath() + File.separator + "properties");
@@ -204,19 +194,14 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		if(!getApplication().isInDatabaseLessMode()){
 			installComponents();
 		}
-		try
-		{
+		try	{
 			if(!getApplication().isInDatabaseLessMode()){
 				createDataRecords();
 				registerBlockPermisionKeys();
 			}
-		}
-		catch (IDOLookupException e)
-		{
+		} catch (IDOLookupException e) {
 			LOGGER.log(Level.WARNING, null, e);
-		}
-		catch (FinderException e)
-		{
+		} catch (FinderException e) {
 			LOGGER.fine("No bundle components found for " + getBundleIdentifier());
 		}
 	}
@@ -238,13 +223,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return propList;
 	}
-	
+
 	private void createDataRecords() throws IDOLookupException, FinderException
 	{
 		Collection entities = getDataObjects();
-		//eiki used to be (SLOW!): 
+		//eiki used to be (SLOW!):
 		//Collection entities = icoHome.findAllByObjectType(ICObjectBMPBean.COMPONENT_TYPE_DATA);
-		
+
 		if (entities != null){
 			Iterator iter = entities.iterator();
 			while (iter.hasNext())
@@ -268,6 +253,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @throws IDOLookupException
 	 * @throws FinderException
 	 */
+	@Override
 	public Collection getDataObjects() throws IDOLookupException, FinderException {
 		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
 		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, this.identifier);
@@ -313,12 +299,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 *	call the default bundle starter first (IWBundleStarter) because this starter might register some classes that are used by the other starters.
 	 */
+	@Override
 	public void runBundleStarters()
 	{
 		// starting of default bundle starter
-		// call the default start first because this starter might register some classes that are used by 
+		// call the default start first because this starter might register some classes that are used by
 		// the other starters
-		// 
+		//
 		IWBundleStartable defaultStarter = getNewDefaultBundleStarterInstance();
 		if(defaultStarter!=null){
 			LOGGER.fine("Running default bundle starter " + defaultStarter.getClass().getName());
@@ -350,8 +337,8 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return this.bundleStarters;
 	}
-	
-	
+
+
 	private IWBundleStartable getNewDefaultBundleStarterInstance() {
 		StringBuffer buffer = new StringBuffer(getBundleName());
 		buffer.append(DOT);
@@ -372,10 +359,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	  	}
 	  	return null;
 	}
-	
+
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
+	@Override
 	public synchronized void unload()
 	{
 		if(getApplication().getSettings().getWriteBundleFilesOnShutdown()){
@@ -389,6 +377,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 *Unloads all resources for this bundle and stores the state of this bundle if storeState==true
 	 *@param storeState to say if to store the state (call storeState)
 	 */
+	@Override
 	public synchronized void unload(boolean storeState){
 		//resourceBundles.clear();
 		this.resourceBundlesLookup=null;
@@ -434,7 +423,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			String className = (String) iter.next();
 			String componentName = getComponentName(className);
 			String componentType = this.getComponentType(className);
-			
+
 			String blockValue = getComponentProperty(className, COMPONENT_BLOCK_PROPERTY);
 			boolean isBlock = blockValue != null ? new Boolean(blockValue).booleanValue() : false;
 
@@ -455,29 +444,34 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			else{
 				LOGGER.warning("Error registering component className="+className+",componentName="+componentName+",componentType="+componentType+" in bundle="+this.getBundleIdentifier());
 			}
-			
+
 		}
 	}
 	/**
 	 * gets the base path of this bundle.<br>
 	 * e.g. /home/idegaweb/webapp/iw1/idegaweb/bundles/com.idega.core.bundle
-	 */	
+	 */
+	@Override
 	public String getBundleBaseRealPath()
 	{
 		return this.rootRealPath;
 	}
+	@Override
 	public String getRootVirtualPath()
 	{
 		return this.rootVirtualPath;
 	}
+	@Override
 	public Image getIconImage()
 	{
 		return new Image(getProperty("iconimage"));
 	}
+	@Override
 	public String getProperty(String propertyName)
 	{
 		return this.propertyList.getProperty(propertyName);
 	}
+	@Override
 	public String getProperty(String propertyName, String returnValueIfNull)
 	{
 		String prop = getProperty(propertyName);
@@ -496,10 +490,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			return prop;
 		}
 	}
+	@Override
 	public boolean getBooleanProperty(String propertyName)
 	{
 		return Boolean.valueOf(getProperty(propertyName)).booleanValue();
 	}
+	@Override
 	public boolean getBooleanProperty(String propertyName, boolean returnValueIfNull)
 	{
 		String prop = getProperty(propertyName);
@@ -518,29 +514,36 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			return Boolean.valueOf(prop).booleanValue();
 		}
 	}
+	@Override
 	public void setBooleanProperty(String propertyName, boolean setValue){
 		setProperty(propertyName,Boolean.toString(setValue));
 	}
+	@Override
 	public void removeProperty(String propertyName)
 	{
 		this.propertyList.removeProperty(propertyName);
 	}
+	@Override
 	public void setProperty(String propertyName, String propertyValue)
 	{
 		this.propertyList.setProperty(propertyName, propertyValue);
 	}
+	@Override
 	public void setProperty(String propertyName, String[] propertyValues)
 	{
 		this.propertyList.setProperty(propertyName, propertyValues);
 	}
+	@Override
 	public void setArrayProperty(String propertyName, String propertyValue)
 	{
 		this.propertyList.setArrayProperty(propertyName, propertyValue);
 	}
+	@Override
 	public IWMainApplication getApplication()
 	{
 		return this.superApplication;
 	}
+	@Override
 	public void setProperty(String propertyName)
 	{
 		this.propertyList.removeProperty(propertyName);
@@ -566,10 +569,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		this.rootRealPath = path;
 	}
+	@Override
 	public void setRootVirtualPath(String path)
 	{
 		this.rootVirtualPath = path;
 	}
+	@Override
 	public Image getLocalizedImage(String name, Locale locale)
 	{
 		return getResourceBundle(locale).getImage(name);
@@ -577,6 +582,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 * Convenience method - Recommended to create a ResourceBundle (through getResourceBundle(locale)) to use instead more efficiently
 	 */
+	@Override
 	public String getLocalizedString(String name, Locale locale)
 	{
 		return getResourceBundle(locale).getString(name);
@@ -589,15 +595,18 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		this.classesRealPath = this.getBundleBaseRealPath() + File.separator + "classes";
 	}
+	@Override
 	public String[] getAvailableProperties()
 	{
 		return ((String[]) this.propertyList.getKeys().toArray(new String[0]));
 	}
+	@Override
 	public String[] getLocalizableStrings()
 	{
 		//return (String[]) getLocalizableStringsMap().keySet().toArray(new String[0]);
 		return getLocalizableStringsProperties().keySet().toArray(new String[0]);
 	}
+	@Override
 	public boolean removeLocalizableString(String key)
 	{
 		Iterator iter = getResourceBundles().values().iterator();
@@ -618,6 +627,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return this.localizableStringsProperties;
 	}
+	@Override
 	public String getLocalizableStringDefaultValue(String key)
 	{
 		return getLocalizableStringsProperties().getProperty(key);
@@ -663,6 +673,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected String getLocalizableStringsFileName(){
 		return "Localizable.strings";
 	}
+	@Override
 	public IWPropertyList getUserProperties(IWUserContext iwuc)
 	{
 		UserProperties properties = (UserProperties) getUserProperties(iwuc);
@@ -671,14 +682,16 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return null;
 	}
+	@Override
 	public IWResourceBundle getResourceBundle(IWContext iwc)
 	{
 		return getResourceBundle(iwc.getCurrentLocale());
 	}
+	@Override
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
 		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
-		
+
 		try
 		{
 			if (theReturn == null)
@@ -724,7 +737,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return theReturn;
 	}
-	
+
 	protected boolean isUsingLocalVariants(){
 		String localeVariant = getApplication().getSettings().getProperty("com.idega.core.localevariant");
 		if(localeVariant!=null){
@@ -732,29 +745,31 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return false;
 	}
-	
+
 	protected String getLocalizedStringsFileName(){
 		return "Localized.strings";
 	}
-	
+
 	protected String getLocalizedStringsVariantFileName(){
 
 		String localeVariant = getApplication().getSettings().getProperty("com.idega.core.localevariant");
 		String variantfileName = "Localized_"+localeVariant+".strings";
 		return variantfileName;
 	}
-	
+
 	/**
 	 * Returns a Map of all loaded resourcebundles
 	 * @return
 	 */
+	@Override
 	public Map getResourceBundles(){
 		if(this.resourceBundlesLookup==null){
 			this.resourceBundlesLookup=new HashMap();
 		}
 		return this.resourceBundlesLookup;
 	}
-	
+
+	@Override
 	public String getVersion()
 	{
 		String theReturn = getProperty("version");
@@ -764,6 +779,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return theReturn;
 	}
+	@Override
 	public String getBundleType()
 	{
 		String theReturn = getProperty("bundletype");
@@ -773,10 +789,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return theReturn;
 	}
+	@Override
 	public synchronized void storeState(boolean storeAllComponents)
 	{
 		//This method is not called on shutdown if getApplication().getSettings().getWriteBundleFilesOnShutdown() is false
-		LOGGER.fine("Storing state of bundle " + getBundleIdentifier());		
+		LOGGER.fine("Storing state of bundle " + getBundleIdentifier());
 		this.propertyList.store();
 		boolean storeResourcesOnStore=getIfStoreResourcesOnStore();
 		if(storeResourcesOnStore){
@@ -793,6 +810,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			}
 		}
 	}
+	@Override
 	public synchronized void storeState()
 	{
 		storeState(true);
@@ -834,7 +852,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return true;
 	}
-	
+
 	synchronized void storeResourceBundles(){
 		Iterator iter = getResourceBundles().values().iterator();
 		while (iter.hasNext())
@@ -843,31 +861,37 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			item.storeState();
 		}
 	}
-	
+
+	@Override
 	public String getResourcesRealPath()
 	{
 		return this.resourcesRealPath;
 	}
+	@Override
 	public String getResourcesURL(Locale locale)
 	{
 		return getResourcesVirtualPath(locale);
 	}
+	@Override
 	public String getResourcesURL()
 	{
 		return getResourcesVirtualPath();
 	}
+	@Override
 	public String getResourcesVirtualPath(Locale locale)
 	{
 		return this.getResourceBundle(locale).getResourcesURL();
 	}
+	@Override
 	public String getResourcesVirtualPath()
 	{
 		return getApplication().getTranslatedURIWithContext(this.resourcesVirtualPath);
 	}
-	
+
 	/**
-	* @returns Returns the virtual path to the resources folder in the bundle, without the context.	
+	* @returns Returns the virtual path to the resources folder in the bundle, without the context.
 	**/
+	@Override
 	public String getResourcesPath()
 	{
 		return this.resourcesVirtualPath;
@@ -876,12 +900,14 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Current locale for the user comes from IWContext.
 	 * @return returns vitual path to the current locale resource folder, without the context.
 	 */
+	@Override
 	public String getResourcesPathForCurrentLocale()
 	{
 		IWContext iwc = IWContext.getInstance();
 		return getResourcesPath(iwc.getCurrentLocale());
 	}
-	
+
+	@Override
 	public String getResourcesRealPath(Locale locale)
 	{
 		String path = (String) getLocaleRealPaths().get(locale);
@@ -892,9 +918,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return path;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param locale
 	 * @return returns the veirtual path to the locale resource folder within the webapplication, without the context.
 	 */
@@ -908,7 +934,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return path;
 	}
-	
+
 	protected Map getLocaleRealPaths(){
 		if(this.localeRealPathsLookup==null){
 			this.localeRealPathsLookup=new HashMap();
@@ -921,10 +947,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return this.localePathsLookup;
 	}
+	@Override
 	public String getPropertiesRealPath()
 	{
 		return this.propertiesRealPath;
 	}
+	@Override
 	public void addLocale(Locale locale)
 	{
 		String LocalePath = getResourcesRealPath(locale);
@@ -952,6 +980,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			file.mkdirs();
 		}
 	}
+	@Override
 	public String getBundleIdentifier()
 	{
 		return this.identifier;
@@ -959,6 +988,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 * temp implementation
 	 */
+	@Override
 	public String getBundleName()
 	{
 		String theReturn = getProperty("name");
@@ -968,11 +998,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return theReturn;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getImageURI(java.lang.String)
 	 */
+	@Override
 	public String getImageURI(String urlInBundle){
 		StringBuffer buf = new StringBuffer(getResourcesURL());
 		if(!urlInBundle.startsWith(CoreConstants.SLASH)){
@@ -981,47 +1012,58 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		buf.append(urlInBundle);
 	    return buf.toString();
 	}
-	
+
+	@Override
 	public Image getImage(String urlInBundle)
 	{
 		return new Image(getImageURI(urlInBundle));
 	}
+	@Override
 	public String getVirtualPathWithFileNameString(String filename)
 	{
 		return getResourcesURL() + slash + filename;
 	}
+	@Override
 	public String getVirtualPath()
 	{
 		return getResourcesURL();
 	}
+	@Override
 	public String getRealPathWithFileNameString(String filename)
 	{
 		return getResourcesRealPath() + File.separator + filename;
 	}
+	@Override
 	public String getRealPath()
 	{
 		return getResourcesRealPath();
 	}
+	@Override
 	public Image getImage(String urlInBundle, int width, int height)
 	{
 		return getImage(urlInBundle, "", width, height);
 	}
+	@Override
 	public Image getImageButton(String text)
 	{
 		return this.getApplication().getImageFactory().createButton(text, this);
 	}
+	@Override
 	public Image getImageTab(String text, boolean flip)
 	{
 		return this.getApplication().getImageFactory().createTab(text, this, flip);
 	}
+	@Override
 	public Image getImage(String urlInBundle, String name, int width, int height)
 	{
 		return new Image(getResourcesURL() + slash + urlInBundle, name, width, height);
 	}
+	@Override
 	public Image getSharedImage(String urlInBundle, String name)
 	{
 		return new Image(getResourcesURL() + slash + shared + slash + urlInBundle, name);
 	}
+	@Override
 	public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height)
 	{
 		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
@@ -1029,11 +1071,13 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		returnImage.setHeight(height);
 		return returnImage;
 	}
+	@Override
 	public Image getImage(String urlInBundle, String overUrlInBundle, String name)
 	{
 		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
 		return returnImage;
 	}
+	@Override
 	public Image getImage(String urlInBundle, String name)
 	{
 		return new Image(getResourcesURL() + slash + urlInBundle, name);
@@ -1042,6 +1086,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Returns the ICObjects associated with this bundle
 	 * Returns an empty list if nothing found
 	 */
+	@Override
 	public Collection getICObjectsList() throws FinderException, IDOLookupException
 	{
 		return getICObjectHome().findAllByBundle(this.getBundleIdentifier());
@@ -1051,6 +1096,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Returns null if there is an exception
 	 * @deprecated Replaced with getICObjectsList()
 	 */
+	@Override
 	@Deprecated
 	public ICObject[] getICObjects()
 	{
@@ -1068,6 +1114,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Returns the ICObjects associated with this bundle and of the specified componentType
 	 * Returns null if there is an exception
 	 */
+	@Override
 	public Collection getICObjectsList(String componentType) throws FinderException, IDOLookupException
 	{
 		return getICObjectHome().findAllByObjectTypeAndBundle(componentType, this.getBundleIdentifier());
@@ -1077,6 +1124,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * Returns null if there is an exception
 	 * @deprecated replaced with getICObjectsList(componentType);
 	 */
+	@Override
 	@Deprecated
 	public ICObject[] getICObjects(String componentType)
 	{
@@ -1104,10 +1152,12 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return list;
 	}
+	@Override
 	public void addComponent(String className, String componentType, boolean block, boolean widget, String description, String iconURI)
 	{
 		addComponent(className, componentType, className.substring(className.lastIndexOf(".") + 1), block, widget, description, iconURI);
 	}
+	@Override
 	public void addComponent(String className, String componentType, String componentName, boolean block, boolean widget, String description, String iconURI)
 	{
 		IWProperty prop = getComponentList().getNewProperty();
@@ -1142,7 +1192,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		getComponentPropertiesListMap().put(className, pl);
 		return pl;
 	}
-	
+
 	/**
 	 * <p>
 	 * Initializes a IWPropertyList relative to the 'properties' folder within the bundle
@@ -1153,7 +1203,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	protected IWPropertyList initializePropertyList(String pathWitinPropertiesFolder) {
 		return initializePropertyList(pathWitinPropertiesFolder, true);
 	}
-	
+
 	/**
 	 * <p>
 	 * Initializes a IWPropertyList relative to the 'properties' folder within the bundle
@@ -1252,7 +1302,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 						//Update the ComponentRegistry with the new component
 						ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
 						registry.registerComponent(new ICObjectComponentInfo(ico));
-						
+
 						if (componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_ELEMENT)
 							|| componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_BLOCK))
 						{
@@ -1321,6 +1371,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		getComponentList().removeProperty(className);
 	}
 
+	@Override
 	public void setComponentProperty(String className, String propertyName, String propertyValue)
 	{
 		if (propertyName.equals(COMPONENT_PROPERTY_FILE))
@@ -1337,6 +1388,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			propl.setProperty(propertyName, propertyValue);
 		}
 	}
+	@Override
 	public IWPropertyList getComponentPropertyList(String className)
 	{
 		boolean fetchFromBundlePropertyFile = getIfFetchComponentPropertyFromBundlePropertiesFile(className);
@@ -1445,6 +1497,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		list.setProperty(propertyName, propertyValue);
 	}
+	@Override
 	public String getComponentProperty(String className, String propertyName)
 	{
 		if (propertyName.equals(COMPONENT_PROPERTY_FILE))
@@ -1465,18 +1518,22 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		}
 		return null;
 	}
+	@Override
 	public String getComponentName(Class componentClass)
 	{
 		return getComponentName(componentClass.getName());
 	}
+	@Override
 	public String getComponentName(String className)
 	{
 		return getComponentProperty(className, COMPONENT_NAME_PROPERTY);
 	}
+	@Override
 	public String getComponentType(Class componentClass)
 	{
 		return getComponentType(componentClass.getName());
 	}
+	@Override
 	public String getComponentType(String className)
 	{
 		return getComponentProperty(className, COMPONENT_TYPE_PROPERTY);
@@ -1484,6 +1541,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 * Returns getComponentName(componentClass) if localized name not found
 	 */
+	@Override
 	public String getComponentName(Class componentClass, Locale locale)
 	{
 		String name = getComponentName(componentClass.getName(), locale);
@@ -1497,6 +1555,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/**
 	 * Returns getComponentName(className) if localized name not found
 	 */
+	@Override
 	public String getComponentName(String className, Locale locale)
 	{
 		String name = getComponentName(className, locale, getComponentName(className));
@@ -1507,22 +1566,27 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 			return className;
 		}
 	}
+	@Override
 	public void setComponentName(Class componentClass, Locale locale, String sName)
 	{
 		setComponentName(componentClass.getName(), locale, sName);
 	}
+	@Override
 	public String getComponentName(Class componentClass, Locale locale, String returnIfNameNotLocalized)
 	{
 		return getComponentName(componentClass.getName(), locale, returnIfNameNotLocalized);
 	}
+	@Override
 	public String getComponentName(String className, Locale locale, String returnIfNameNotLocalized)
 	{
 		return this.getResourceBundle(locale).getLocalizedString("iw.component." + className + ".name", returnIfNameNotLocalized);
 	}
+	@Override
 	public void setComponentName(String className, Locale locale, String sName)
 	{
 		this.getResourceBundle(locale).setString("iw.component." + className + ".name", sName);
 	}
+	@Override
 	public void removeComponent(String className)
 	{
 		IWPropertyList pl = this.getComponentPropertyList(className);
@@ -1530,7 +1594,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		getComponentPropertiesListMap().remove(className);
 		getComponentList().removeProperty(className);
 		//com.idega.core.component.data.ICObjectBMPBean.removeICObject(className);
-		
+
 		ICObjectHome home;
 		try {
 			home = (ICObjectHome)IDOLookup.getHome(ICObject.class);
@@ -1540,51 +1604,57 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 		catch (Exception e) {
 			LOGGER.log(Level.WARNING, null, e);
 		}
-		
+
 		this.propertyList.store();
 	}
+	@Override
 	public List getComponentKeys()
 	{
 		return getComponentList().getKeys();
 	}
-	public int compareTo(Object o)
-	{
-		IWBundle bundle = (IWBundle) o;
+
+	@Override
+	public int compareTo(IWBundle bundle) {
 		return this.getBundleIdentifier().compareTo(bundle.getBundleIdentifier());
 	}
-	public void addLocalizableString(String key, String value)
-	{
+
+	@Override
+	public void addLocalizableString(String key, String value) {
 		getLocalizableStringsProperties().put(key, value);
 		storeLocalizableStrings();
 	}
-	public boolean containsLocalizedString(String key)
-	{
+
+	@Override
+	public boolean containsLocalizedString(String key) {
 		return (getLocalizableStringsProperties().containsKey(key));
 	}
-	private ICObjectHome getICObjectHome() throws IDOLookupException
-	{
+
+	private ICObjectHome getICObjectHome() throws IDOLookupException {
 		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
 	}
+
 	@Override
 	public String toString(){
 		return this.getBundleIdentifier();
 	}
-	
+
 	/**
 	 * Returns the path to the jsp inside the bundle structure.<br/>
 	 * The default path is under 'jsp/' relative to the bundle folder.<br/>
 	 * This method does not include a potential webapplication context path.
 	 */
+	@Override
 	public String getJSPURI(String jspInBundle) {
 		String jspPath = "/jsp/"+jspInBundle;
 		return this.rootVirtualPath+jspPath;
 	}
-	
+
 	/**
 	 * Returns the path to the facelet inside the bundle structure.<br/>
 	 * The default path is under 'facelets/' relative to the bundle folder.<br/>
 	 * This method does not include a potential web application context path.
 	 */
+	@Override
 	public String getFaceletURI(String faceletInBundle) {
 		return rootVirtualPath+"/facelets/"+faceletInBundle;
 	}
@@ -1597,38 +1667,43 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param pathInResourceFolder path relative to this bundles resource virtual path
 	 * @return Something like '/idegaweb/bundles/com.idega.core.bundle/resources/style/style.css'
 	 */
+	@Override
 	public String getResourceURIWithoutContextPath(String pathInResourceFolder) {
 		return this.resourcesVirtualPath+pathInResourceFolder;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getLocalizedText(java.lang.String)
 	 */
+	@Override
 	public HtmlOutputText getLocalizedText(String localizationKey) {
 		HtmlOutputText t = new HtmlOutputText();
 		t = (HtmlOutputText) getLocalizedUIComponent(localizationKey, t);
 		return t;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getValueBinding(java.lang.String)
 	 */
+	@Override
 	public ValueBinding getValueBinding(String localizationKey) {
 		String valueBinding = getLocalizedStringExpr(localizationKey);
 		ValueBinding vb = getApplication().createValueBinding(valueBinding);
 		return vb;
 	}
-	
+
+	@Override
 	public ValueExpression getValueExpression(String localizationKey) {
 		return getApplication().getExpressionFactory().createValueExpression(FacesContext.getCurrentInstance().getELContext(),
 				getLocalizedStringExpr(localizationKey), String.class);
 	}
-	
+
+	@Override
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		return getValueBinding(ctx,localizationKey,defaultValue);
 	}
-	
+
 	public ValueBinding getValueBinding(FacesContext ctx, String localizationKey, String defaultValue) {
 		String valueBinding = getLocalizedStringExpr(localizationKey);
 		ValueBinding vb = getApplication().createValueBinding(valueBinding);
@@ -1648,22 +1723,32 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	public String getLocalizedStringExpr(String localizationKey) {
 		return "#{localizedStrings['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
 	}
-	
+
+	@Override
 	public String getLocalizedString(String localizationKey) {
 		return getLocalizedString(localizationKey,localizationKey);
 	}
 
-	
+	@Override
 	public String getLocalizedString(String localizationKey, String defaultValue) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
-		ValueBinding vb = getValueBinding(ctx,localizationKey,defaultValue);
-		return (String)vb.getValue(ctx);
+		ValueExpression ve = getValueExpression(localizationKey);
+		Object value = ve.getValue(ctx.getELContext());
+		if (value instanceof String) {
+			String realValue = (String) value;
+			if (!StringUtil.isEmpty(realValue) && !realValue.equals(defaultValue)) {
+				return realValue;
+			}
+		}
+		return defaultValue;
 	}
-	
+
+	@Override
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component) {
 		return getLocalizedUIComponent(localizationKey,component,localizationKey);
 	}
-	
+
+	@Override
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component, String defaultValue) {
 //		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
 		FacesContext ctx = FacesContext.getCurrentInstance();
@@ -1673,9 +1758,11 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getLocalizedImage(java.lang.String)
 	 */
+	@Override
 	public HtmlGraphicImage getLocalizedImage(String pathAndName) {
 		return getLocalizedImage(pathAndName, IWContext.getInstance());
-	}	
+	}
+	@Override
 	public HtmlGraphicImage getLocalizedImage(String pathAndName, IWContext context) {
 		HtmlGraphicImage t = new HtmlGraphicImage();
 		Locale locale = context.getCurrentLocale();
@@ -1686,6 +1773,7 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#canLoadLazily()
 	 */
+	@Override
 	public boolean canLoadLazily() {
 		// TODO Auto-generated method stub
 		return false;
@@ -1693,18 +1781,21 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleIdentifier()
 	 */
+	@Override
 	public String getModuleIdentifier() {
 		return getBundleIdentifier();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleName()
 	 */
+	@Override
 	public String getModuleName() {
 		return getBundleName();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVendor()
 	 */
+	@Override
 	public String getModuleVendor() {
 		String theReturn = getProperty("vendor");
 		if (theReturn == null)
@@ -1716,41 +1807,41 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVersion()
 	 */
+	@Override
 	public String getModuleVersion() {
 		return getVersion();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#load()
 	 */
+	@Override
 	public void load() {
 		this.loadBundle();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#reload()
 	 */
+	@Override
 	public void reload() {
 		this.reloadBundle();
 	}
-	
+
 	/**
 	 * Returns input stream for a file inside the bundle real path.
 	 * @param pathWithinBundle
 	 * @return FileInputStream
 	 */
+	@Override
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
-		
 		String workspaceDir = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		String bundleInWorkspace;
-		
-		if(workspaceDir != null) {
-			
+
+		if (workspaceDir != null) {
 			bundleInWorkspace = new StringBuilder(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier()).append(CoreConstants.SLASH).toString();
 		} else
 			bundleInWorkspace = getBundleBaseRealPath();
-		
-		
+
 		File file = new File(bundleInWorkspace, pathWithinBundle);
-		
 		if (!file.exists())
 			throw new FileNotFoundException("File not found within bundle " + bundleInWorkspace + ": " + pathWithinBundle);
 
@@ -1762,22 +1853,24 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	 * @param pathWithinBundle
 	 * @return miliseconds since Epoch, or 0 if not found
 	 */
+	@Override
 	public long getResourceTime(String pathWithinBundle) {
 		File file = new File(getBundleBaseRealPath(), pathWithinBundle);
 		return file.lastModified();
 	}
-	
+
 	public static boolean isProductionEnvironment() {
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		return (directory == null) ? true : false;
 	}
 
+	@Override
 	public boolean isPostponedBundleStartersRun() {
     	return postponedBundleStartersRun;
     }
 
+	@Override
 	public void setPostponedBundleStartersRun(boolean postponedBundleStartersRun) {
     	this.postponedBundleStartersRun = postponedBundleStartersRun;
     }
-
 }

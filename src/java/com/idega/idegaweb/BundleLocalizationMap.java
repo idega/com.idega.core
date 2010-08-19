@@ -26,46 +26,28 @@ import javax.faces.context.FacesContext;
  * #{localizedStrings['com.idega.manager']['store']}
  * </p>
  * Last modified: $Date: 2009/01/05 10:27:32 $ by $Author: anton $<br/>
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.8 $
  */
-public class BundleLocalizationMap implements Map {
+public class BundleLocalizationMap implements Map<String, String> {
 
-	//private ResourceBundle _bundle;
 	private IWBundle bundle;
-	private List _values;
+	private List<String> values;
 
 	public BundleLocalizationMap(IWBundle bundle) {
 		this.bundle = bundle;
 	}
 
-	//Changed to support MessageResourceFactory
-	public Object get(Object key) {
+	@Override
+	public String get(Object key) {
 		return getIWMainAppliction().getLocalisedStringMessage(String.valueOf(key), String.valueOf(key), bundle.getBundleIdentifier());
 	}
-	
+
 	private IWMainApplication getIWMainAppliction() {
 		return IWMainApplication.getDefaultIWMainApplication();
 	}
-	
-	//Optimized methods
 
-//	/**
-//	 * Gets a value for a localized key in the idegaWeb bundle for this Map and the current (JSF) Locale.
-//	 */
-//	public Object get(Object key) {
-//		try{
-//			return getResourceBundle().getObject(key.toString());
-//		}
-//		catch(MissingResourceException msre){
-//			//System.err.println(msre.getMessage());
-//			//return null;
-//			return handleKeyNotFound((String)key);
-//			
-//		}
-//	}
-	
 	/**
 	 * <p>
 	 * Block that handles if the key is not found in the resourcebundle:
@@ -84,65 +66,70 @@ public class BundleLocalizationMap implements Map {
 		//set the default value as the key and auto create it for the english resourcebundle:
 		return iwrb.getLocalizedString(key,key);
 	}
-	
+
 	protected IWBundle getBundle() {
 		return this.bundle;
 	}
-	
+
 	public ResourceBundle getResourceBundle() {
 		Locale locale = FacesContext.getCurrentInstance().getViewRoot().getLocale();
 		return getBundle().getResourceBundle(locale);
 	}
-	
-	
+
 	protected IWResourceBundle getIWResourceBundle(){
 		return (IWResourceBundle)getResourceBundle();
 	}
-	
+
+	@Override
 	public boolean isEmpty() {
 		return !getResourceBundle().getKeys().hasMoreElements();
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		return getResourceBundle().getObject(key.toString()) != null;
 	}
 
-
-	//Unoptimized methods
-
-	public Collection values() {
-		if (this._values == null) {
-			this._values = new ArrayList();
-			for (Enumeration enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
-				String v = getResourceBundle().getString((String)enumer.nextElement());
-				this._values.add(v);
+	@Override
+	public Collection<String> values() {
+		if (this.values == null) {
+			this.values = new ArrayList<String>();
+			for (Enumeration<String> enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
+				String v = getResourceBundle().getString(enumer.nextElement());
+				this.values.add(v);
 			}
 		}
-		return this._values;
+		return this.values;
 	}
 
+	@Override
 	public int size() {
 		return values().size();
 	}
 
+	@Override
 	public boolean containsValue(Object value) {
 		return values().contains(value);
 	}
 
-	public Set entrySet() {
-		Set set = new HashSet();
-		for (Enumeration enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
-			final String k = (String) enumer.nextElement();
-			set.add(new Map.Entry() {
-				public Object getKey() {
+	@Override
+	public Set<Map.Entry<String, String>> entrySet() {
+		Set<Map.Entry<String, String>> set = new HashSet<Map.Entry<String, String>>();
+		for (Enumeration<String> enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
+			final String k = enumer.nextElement();
+			set.add(new Map.Entry<String, String>() {
+				@Override
+				public String getKey() {
 					return k;
 				}
 
-				public Object getValue() {
-					return getResourceBundle().getObject(k);
+				@Override
+				public String getValue() {
+					return (String) getResourceBundle().getObject(k);
 				}
 
-				public Object setValue(Object value) {
+				@Override
+				public String setValue(String value) {
 					throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 				}
 			});
@@ -150,33 +137,33 @@ public class BundleLocalizationMap implements Map {
 		return set;
 	}
 
-	public Set keySet() {
-		Set set = new HashSet();
-		for (Enumeration enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
+	@Override
+	public Set<String> keySet() {
+		Set<String> set = new HashSet<String>();
+		for (Enumeration<String> enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
 			set.add(enumer.nextElement());
 		}
 		return set;
 	}
 
-
-	//Unsupported methods
-
-	public Object remove(Object key) {
+	@Override
+	public String remove(Object key) {
 		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 	}
 
-	public void putAll(Map t) {
+	@Override
+	public void putAll(Map<? extends String, ? extends String> t) {
 		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 	}
 
-	public Object put(Object key, Object value) {
-		//throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
-		Object oldValue = get(key);
-		((IWResourceBundle) getResourceBundle()).setLocalizedString((String)key,(String)value);
-		
+	@Override
+	public String put(String key, String value) {
+		String oldValue = get(key);
+		((IWResourceBundle) getResourceBundle()).setLocalizedString(key, value);
 		return oldValue;
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 	}

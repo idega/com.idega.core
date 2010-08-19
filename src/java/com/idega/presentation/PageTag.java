@@ -1,7 +1,7 @@
 /*
  * $Id: PageTag.java,v 1.7 2009/01/14 15:12:24 tryggvil Exp $
  * Created on 17.01.2005 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
  * This software is the proprietary information of Idega.
@@ -10,11 +10,14 @@
  */
 package com.idega.presentation;
 
+import java.util.Iterator;
+
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
-import javax.faces.webapp.UIComponentTag;
 import javax.servlet.jsp.JspException;
-import java.util.Iterator;
+
+import com.idega.util.CoreConstants;
 
 /**
  * <p>
@@ -25,74 +28,64 @@ import java.util.Iterator;
  * @author tryggvil
  * @version $Revision: 1.7 $
  */
-public class PageTag extends UIComponentTag {
-	
-	String urls;
-	private String styleSheetUrls = null;
-	String onload;
-	String styleClass;
-	boolean logIds=false;
-	String type;
-	
-	/**
-	 * @see javax.faces.webapp.UIComponentTag#getRendererType()
-	 */
+public class PageTag extends ComponentTag {
+
+	private Object id;
+	private Object javascripturls;
+	private Object stylesheeturls;
+
+	private String onload;
+	private String styleClass;
+	private String type;
+
+	private boolean logIds;
+
+	@Override
 	public String getRendererType() {
 		return null;
 	}
-		
-	/**
-	 * @see javax.faces.webapp.UIComponentTag#getComponentType()
-	 */
+
+	@Override
 	public String getComponentType() {
 		return "Page";
 	}
-	
-	public void setJavascripturls(String urls) {
-		this.urls = urls;
-	}
-	
-	public void setOnload(String onload) {
-		this.onload = onload;
-	}
-	
+
+	@Override
 	public void release() {
-		this.urls = null;
+		this.id = null;
+		this.javascripturls = null;
+		this.stylesheeturls = null;
+
 		this.onload = null;
-		styleSheetUrls = null;
+		this.styleClass = null;
+		this.type = null;
 	}
 
-	public void setStyleClass(String styleClass){
-		this.styleClass=styleClass;
-	}
-	
-	public void setStylesheeturls(String stlyleUrls) {
-		this.styleSheetUrls = stlyleUrls;
-	}
-	
-	protected void setProperties(UIComponent component) {      
-		super.setProperties(component);
-		if (component != null) {
+	@Override
+	protected void setProperties(UIComponent component) {
+		if (component instanceof Page) {
 			Page page = (Page) component;
-			page.setJavascriptURLs(this.urls);
-			page.setOnLoad(this.onload);
-			page.setStyleSheetURL(styleSheetUrls);
-			if(this.styleClass!=null){
-				page.setStyleClass(this.styleClass);
+
+			super.setProperties(component);
+
+			String id = getId();
+			if (id != null) {
+				page.setId(id);
 			}
+			page.setJavascriptURLs(getValue(javascripturls));
+			page.setStyleSheetURL(getValue(stylesheeturls));
+
+			page.setOnLoad(getOnload());
+			page.setStyleClass(getStyleClass());
 		}
 	}
-	
-	
-	/* (non-Javadoc)
-	 * @see javax.faces.webapp.UIComponentTag#doEndTag()
-	 */
+
+	@Override
 	public int doEndTag() throws JspException {
 		FacesContext context = getFacesContext();
 		UIComponent instance = getComponentInstance();
-		//logClientIds(instance,context);
 		int theReturn = super.doEndTag();
-		logIds(instance,context,"");
+		logIds(instance,context,CoreConstants.EMPTY);
 		return theReturn;
 	}
 
@@ -105,25 +98,21 @@ public class PageTag extends UIComponentTag {
 	private void logIds(UIComponent componentInstance,FacesContext context,String prefix) {
 		if(getLogIds()){
 			if(componentInstance!=null){
-				System.out.println(prefix+"ComponentClass="+componentInstance.getClass()+":id="+componentInstance.getId()+":clientId="+componentInstance.getClientId(context));
-				Iterator facetsAndChildren = componentInstance.getFacetsAndChildren();
-				while(facetsAndChildren.hasNext()){
-					UIComponent component = (UIComponent) facetsAndChildren.next();
+				System.out.println(prefix+"ComponentClass="+componentInstance.getClass()+":id="+componentInstance.getId()+":clientId="+
+						componentInstance.getClientId(context));
+				for (Iterator<UIComponent> facetsAndChildren = componentInstance.getFacetsAndChildren(); facetsAndChildren.hasNext();) {
+					UIComponent component = facetsAndChildren.next();
 					logIds(component,context," - "+prefix);
 				}
 			}
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.faces.webapp.UIComponentTag#doStartTag()
-	 */
+	@Override
 	public int doStartTag() throws JspException {
-		// TODO Auto-generated method stub
 		return super.doStartTag();
 	}
 
-	
 	/**
 	 * @return Returns the logIds.
 	 */
@@ -131,12 +120,68 @@ public class PageTag extends UIComponentTag {
 		return this.logIds;
 	}
 
-	
 	/**
 	 * @param logIds The logIds to set.
 	 */
 	public void setLogIds(boolean logIds) {
 		this.logIds = logIds;
 	}
-	
+
+	public void setJavascripturls(ValueExpression javascripturls) {
+		this.javascripturls = javascripturls;
+	}
+	public void setJavascripturls(String javascripturls) {
+		this.javascripturls = javascripturls;
+	}
+	public void setJavascripturls(Object javascripturls) {
+		this.javascripturls = javascripturls;
+	}
+
+	public void setStylesheeturls(ValueExpression stylesheeturls) {
+		this.stylesheeturls = stylesheeturls;
+	}
+	public void setStylesheeturls(String stylesheeturls) {
+		this.stylesheeturls = stylesheeturls;
+	}
+	public void setStylesheeturls(Object stylesheeturls) {
+		this.stylesheeturls = stylesheeturls;
+	}
+
+	public String getOnload() {
+		return onload;
+	}
+
+	public void setOnload(String onload) {
+		this.onload = onload;
+	}
+
+	public String getStyleClass() {
+		return styleClass;
+	}
+
+	public void setStyleClass(String styleClass) {
+		this.styleClass = styleClass;
+	}
+
+	public String getType() {
+		return type;
+	}
+
+	public void setType(String type) {
+		this.type = type;
+	}
+
+	public void setId(ValueExpression id) {
+		this.id = id;
+	}
+
+	@Override
+	public void setId(String id) {
+		this.id = id;
+	}
+
+	@Override
+	public String getId() {
+		return getValue(id);
+	}
 }
