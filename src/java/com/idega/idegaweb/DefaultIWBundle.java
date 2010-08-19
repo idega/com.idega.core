@@ -165,7 +165,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 * Discards all unsaved changes to this bundle and loads it up again
 	 */
-	@Override
 	public void reloadBundle() {
 		reloadBundle(false);
 	}
@@ -173,7 +172,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 *Reloads all resources for this bundle and stores the state of this bundle first if storeState==true
 	 *@param storeState to say if to store the state (call storeState) before the bundle is loaded again
 	 */
-	@Override
 	public void reloadBundle(boolean storeState) {
 		this.unload(storeState);
 		loadBundle();
@@ -253,7 +251,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * @throws IDOLookupException
 	 * @throws FinderException
 	 */
-	@Override
 	public Collection getDataObjects() throws IDOLookupException, FinderException {
 		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
 		Collection entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, this.identifier);
@@ -299,7 +296,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 *	call the default bundle starter first (IWBundleStarter) because this starter might register some classes that are used by the other starters.
 	 */
-	@Override
 	public void runBundleStarters()
 	{
 		// starting of default bundle starter
@@ -363,7 +359,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
-	@Override
 	public synchronized void unload()
 	{
 		if(getApplication().getSettings().getWriteBundleFilesOnShutdown()){
@@ -377,7 +372,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 *Unloads all resources for this bundle and stores the state of this bundle if storeState==true
 	 *@param storeState to say if to store the state (call storeState)
 	 */
-	@Override
 	public synchronized void unload(boolean storeState){
 		//resourceBundles.clear();
 		this.resourceBundlesLookup=null;
@@ -451,27 +445,22 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * gets the base path of this bundle.<br>
 	 * e.g. /home/idegaweb/webapp/iw1/idegaweb/bundles/com.idega.core.bundle
 	 */
-	@Override
 	public String getBundleBaseRealPath()
 	{
 		return this.rootRealPath;
 	}
-	@Override
 	public String getRootVirtualPath()
 	{
 		return this.rootVirtualPath;
 	}
-	@Override
 	public Image getIconImage()
 	{
 		return new Image(getProperty("iconimage"));
 	}
-	@Override
 	public String getProperty(String propertyName)
 	{
 		return this.propertyList.getProperty(propertyName);
 	}
-	@Override
 	public String getProperty(String propertyName, String returnValueIfNull)
 	{
 		String prop = getProperty(propertyName);
@@ -490,12 +479,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			return prop;
 		}
 	}
-	@Override
 	public boolean getBooleanProperty(String propertyName)
 	{
 		return Boolean.valueOf(getProperty(propertyName)).booleanValue();
 	}
-	@Override
 	public boolean getBooleanProperty(String propertyName, boolean returnValueIfNull)
 	{
 		String prop = getProperty(propertyName);
@@ -514,36 +501,29 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			return Boolean.valueOf(prop).booleanValue();
 		}
 	}
-	@Override
 	public void setBooleanProperty(String propertyName, boolean setValue){
 		setProperty(propertyName,Boolean.toString(setValue));
 	}
-	@Override
 	public void removeProperty(String propertyName)
 	{
 		this.propertyList.removeProperty(propertyName);
 	}
-	@Override
 	public void setProperty(String propertyName, String propertyValue)
 	{
 		this.propertyList.setProperty(propertyName, propertyValue);
 	}
-	@Override
 	public void setProperty(String propertyName, String[] propertyValues)
 	{
 		this.propertyList.setProperty(propertyName, propertyValues);
 	}
-	@Override
 	public void setArrayProperty(String propertyName, String propertyValue)
 	{
 		this.propertyList.setArrayProperty(propertyName, propertyValue);
 	}
-	@Override
 	public IWMainApplication getApplication()
 	{
 		return this.superApplication;
 	}
-	@Override
 	public void setProperty(String propertyName)
 	{
 		this.propertyList.removeProperty(propertyName);
@@ -569,12 +549,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	{
 		this.rootRealPath = path;
 	}
-	@Override
 	public void setRootVirtualPath(String path)
 	{
 		this.rootVirtualPath = path;
 	}
-	@Override
 	public Image getLocalizedImage(String name, Locale locale)
 	{
 		return getResourceBundle(locale).getImage(name);
@@ -582,7 +560,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 * Convenience method - Recommended to create a ResourceBundle (through getResourceBundle(locale)) to use instead more efficiently
 	 */
-	@Override
 	public String getLocalizedString(String name, Locale locale)
 	{
 		return getResourceBundle(locale).getString(name);
@@ -595,18 +572,15 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	{
 		this.classesRealPath = this.getBundleBaseRealPath() + File.separator + "classes";
 	}
-	@Override
 	public String[] getAvailableProperties()
 	{
 		return ((String[]) this.propertyList.getKeys().toArray(new String[0]));
 	}
-	@Override
 	public String[] getLocalizableStrings()
 	{
 		//return (String[]) getLocalizableStringsMap().keySet().toArray(new String[0]);
 		return getLocalizableStringsProperties().keySet().toArray(new String[0]);
 	}
-	@Override
 	public boolean removeLocalizableString(String key)
 	{
 		Iterator iter = getResourceBundles().values().iterator();
@@ -627,7 +601,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return this.localizableStringsProperties;
 	}
-	@Override
 	public String getLocalizableStringDefaultValue(String key)
 	{
 		return getLocalizableStringsProperties().getProperty(key);
@@ -673,7 +646,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	protected String getLocalizableStringsFileName(){
 		return "Localizable.strings";
 	}
-	@Override
 	public IWPropertyList getUserProperties(IWUserContext iwuc)
 	{
 		UserProperties properties = (UserProperties) getUserProperties(iwuc);
@@ -682,12 +654,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return null;
 	}
-	@Override
 	public IWResourceBundle getResourceBundle(IWContext iwc)
 	{
 		return getResourceBundle(iwc.getCurrentLocale());
 	}
-	@Override
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
 		IWResourceBundle theReturn = (IWResourceBundle) getResourceBundles().get(locale);
@@ -761,7 +731,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * Returns a Map of all loaded resourcebundles
 	 * @return
 	 */
-	@Override
 	public Map getResourceBundles(){
 		if(this.resourceBundlesLookup==null){
 			this.resourceBundlesLookup=new HashMap();
@@ -769,7 +738,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		return this.resourceBundlesLookup;
 	}
 
-	@Override
 	public String getVersion()
 	{
 		String theReturn = getProperty("version");
@@ -779,7 +747,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return theReturn;
 	}
-	@Override
 	public String getBundleType()
 	{
 		String theReturn = getProperty("bundletype");
@@ -789,7 +756,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return theReturn;
 	}
-	@Override
 	public synchronized void storeState(boolean storeAllComponents)
 	{
 		//This method is not called on shutdown if getApplication().getSettings().getWriteBundleFilesOnShutdown() is false
@@ -810,7 +776,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			}
 		}
 	}
-	@Override
 	public synchronized void storeState()
 	{
 		storeState(true);
@@ -862,27 +827,22 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 	}
 
-	@Override
 	public String getResourcesRealPath()
 	{
 		return this.resourcesRealPath;
 	}
-	@Override
 	public String getResourcesURL(Locale locale)
 	{
 		return getResourcesVirtualPath(locale);
 	}
-	@Override
 	public String getResourcesURL()
 	{
 		return getResourcesVirtualPath();
 	}
-	@Override
 	public String getResourcesVirtualPath(Locale locale)
 	{
 		return this.getResourceBundle(locale).getResourcesURL();
 	}
-	@Override
 	public String getResourcesVirtualPath()
 	{
 		return getApplication().getTranslatedURIWithContext(this.resourcesVirtualPath);
@@ -891,7 +851,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	* @returns Returns the virtual path to the resources folder in the bundle, without the context.
 	**/
-	@Override
 	public String getResourcesPath()
 	{
 		return this.resourcesVirtualPath;
@@ -900,14 +859,12 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * Current locale for the user comes from IWContext.
 	 * @return returns vitual path to the current locale resource folder, without the context.
 	 */
-	@Override
 	public String getResourcesPathForCurrentLocale()
 	{
 		IWContext iwc = IWContext.getInstance();
 		return getResourcesPath(iwc.getCurrentLocale());
 	}
 
-	@Override
 	public String getResourcesRealPath(Locale locale)
 	{
 		String path = (String) getLocaleRealPaths().get(locale);
@@ -947,12 +904,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return this.localePathsLookup;
 	}
-	@Override
 	public String getPropertiesRealPath()
 	{
 		return this.propertiesRealPath;
 	}
-	@Override
 	public void addLocale(Locale locale)
 	{
 		String LocalePath = getResourcesRealPath(locale);
@@ -980,7 +935,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			file.mkdirs();
 		}
 	}
-	@Override
 	public String getBundleIdentifier()
 	{
 		return this.identifier;
@@ -988,7 +942,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 * temp implementation
 	 */
-	@Override
 	public String getBundleName()
 	{
 		String theReturn = getProperty("name");
@@ -1003,7 +956,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getImageURI(java.lang.String)
 	 */
-	@Override
 	public String getImageURI(String urlInBundle){
 		StringBuffer buf = new StringBuffer(getResourcesURL());
 		if(!urlInBundle.startsWith(CoreConstants.SLASH)){
@@ -1013,57 +965,46 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	    return buf.toString();
 	}
 
-	@Override
 	public Image getImage(String urlInBundle)
 	{
 		return new Image(getImageURI(urlInBundle));
 	}
-	@Override
 	public String getVirtualPathWithFileNameString(String filename)
 	{
 		return getResourcesURL() + slash + filename;
 	}
-	@Override
 	public String getVirtualPath()
 	{
 		return getResourcesURL();
 	}
-	@Override
 	public String getRealPathWithFileNameString(String filename)
 	{
 		return getResourcesRealPath() + File.separator + filename;
 	}
-	@Override
 	public String getRealPath()
 	{
 		return getResourcesRealPath();
 	}
-	@Override
 	public Image getImage(String urlInBundle, int width, int height)
 	{
 		return getImage(urlInBundle, "", width, height);
 	}
-	@Override
 	public Image getImageButton(String text)
 	{
 		return this.getApplication().getImageFactory().createButton(text, this);
 	}
-	@Override
 	public Image getImageTab(String text, boolean flip)
 	{
 		return this.getApplication().getImageFactory().createTab(text, this, flip);
 	}
-	@Override
 	public Image getImage(String urlInBundle, String name, int width, int height)
 	{
 		return new Image(getResourcesURL() + slash + urlInBundle, name, width, height);
 	}
-	@Override
 	public Image getSharedImage(String urlInBundle, String name)
 	{
 		return new Image(getResourcesURL() + slash + shared + slash + urlInBundle, name);
 	}
-	@Override
 	public Image getImage(String urlInBundle, String overUrlInBundle, String name, int width, int height)
 	{
 		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
@@ -1071,13 +1012,11 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		returnImage.setHeight(height);
 		return returnImage;
 	}
-	@Override
 	public Image getImage(String urlInBundle, String overUrlInBundle, String name)
 	{
 		Image returnImage = new Image(name, getResourcesURL() + slash + urlInBundle, getResourcesURL() + slash + overUrlInBundle);
 		return returnImage;
 	}
-	@Override
 	public Image getImage(String urlInBundle, String name)
 	{
 		return new Image(getResourcesURL() + slash + urlInBundle, name);
@@ -1086,7 +1025,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * Returns the ICObjects associated with this bundle
 	 * Returns an empty list if nothing found
 	 */
-	@Override
 	public Collection getICObjectsList() throws FinderException, IDOLookupException
 	{
 		return getICObjectHome().findAllByBundle(this.getBundleIdentifier());
@@ -1096,7 +1034,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * Returns null if there is an exception
 	 * @deprecated Replaced with getICObjectsList()
 	 */
-	@Override
 	@Deprecated
 	public ICObject[] getICObjects()
 	{
@@ -1114,7 +1051,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * Returns the ICObjects associated with this bundle and of the specified componentType
 	 * Returns null if there is an exception
 	 */
-	@Override
 	public Collection getICObjectsList(String componentType) throws FinderException, IDOLookupException
 	{
 		return getICObjectHome().findAllByObjectTypeAndBundle(componentType, this.getBundleIdentifier());
@@ -1124,7 +1060,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * Returns null if there is an exception
 	 * @deprecated replaced with getICObjectsList(componentType);
 	 */
-	@Override
 	@Deprecated
 	public ICObject[] getICObjects(String componentType)
 	{
@@ -1152,12 +1087,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return list;
 	}
-	@Override
 	public void addComponent(String className, String componentType, boolean block, boolean widget, String description, String iconURI)
 	{
 		addComponent(className, componentType, className.substring(className.lastIndexOf(".") + 1), block, widget, description, iconURI);
 	}
-	@Override
 	public void addComponent(String className, String componentType, String componentName, boolean block, boolean widget, String description, String iconURI)
 	{
 		IWProperty prop = getComponentList().getNewProperty();
@@ -1371,7 +1304,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		getComponentList().removeProperty(className);
 	}
 
-	@Override
 	public void setComponentProperty(String className, String propertyName, String propertyValue)
 	{
 		if (propertyName.equals(COMPONENT_PROPERTY_FILE))
@@ -1388,7 +1320,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			propl.setProperty(propertyName, propertyValue);
 		}
 	}
-	@Override
 	public IWPropertyList getComponentPropertyList(String className)
 	{
 		boolean fetchFromBundlePropertyFile = getIfFetchComponentPropertyFromBundlePropertiesFile(className);
@@ -1497,7 +1428,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		list.setProperty(propertyName, propertyValue);
 	}
-	@Override
 	public String getComponentProperty(String className, String propertyName)
 	{
 		if (propertyName.equals(COMPONENT_PROPERTY_FILE))
@@ -1518,22 +1448,18 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		}
 		return null;
 	}
-	@Override
 	public String getComponentName(Class componentClass)
 	{
 		return getComponentName(componentClass.getName());
 	}
-	@Override
 	public String getComponentName(String className)
 	{
 		return getComponentProperty(className, COMPONENT_NAME_PROPERTY);
 	}
-	@Override
 	public String getComponentType(Class componentClass)
 	{
 		return getComponentType(componentClass.getName());
 	}
-	@Override
 	public String getComponentType(String className)
 	{
 		return getComponentProperty(className, COMPONENT_TYPE_PROPERTY);
@@ -1541,7 +1467,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 * Returns getComponentName(componentClass) if localized name not found
 	 */
-	@Override
 	public String getComponentName(Class componentClass, Locale locale)
 	{
 		String name = getComponentName(componentClass.getName(), locale);
@@ -1555,7 +1480,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/**
 	 * Returns getComponentName(className) if localized name not found
 	 */
-	@Override
 	public String getComponentName(String className, Locale locale)
 	{
 		String name = getComponentName(className, locale, getComponentName(className));
@@ -1566,27 +1490,22 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			return className;
 		}
 	}
-	@Override
 	public void setComponentName(Class componentClass, Locale locale, String sName)
 	{
 		setComponentName(componentClass.getName(), locale, sName);
 	}
-	@Override
 	public String getComponentName(Class componentClass, Locale locale, String returnIfNameNotLocalized)
 	{
 		return getComponentName(componentClass.getName(), locale, returnIfNameNotLocalized);
 	}
-	@Override
 	public String getComponentName(String className, Locale locale, String returnIfNameNotLocalized)
 	{
 		return this.getResourceBundle(locale).getLocalizedString("iw.component." + className + ".name", returnIfNameNotLocalized);
 	}
-	@Override
 	public void setComponentName(String className, Locale locale, String sName)
 	{
 		this.getResourceBundle(locale).setString("iw.component." + className + ".name", sName);
 	}
-	@Override
 	public void removeComponent(String className)
 	{
 		IWPropertyList pl = this.getComponentPropertyList(className);
@@ -1607,24 +1526,20 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 
 		this.propertyList.store();
 	}
-	@Override
 	public List getComponentKeys()
 	{
 		return getComponentList().getKeys();
 	}
 
-	@Override
 	public int compareTo(IWBundle bundle) {
 		return this.getBundleIdentifier().compareTo(bundle.getBundleIdentifier());
 	}
 
-	@Override
 	public void addLocalizableString(String key, String value) {
 		getLocalizableStringsProperties().put(key, value);
 		storeLocalizableStrings();
 	}
 
-	@Override
 	public boolean containsLocalizedString(String key) {
 		return (getLocalizableStringsProperties().containsKey(key));
 	}
@@ -1633,7 +1548,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
 	}
 
-	@Override
 	public String toString(){
 		return this.getBundleIdentifier();
 	}
@@ -1643,7 +1557,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * The default path is under 'jsp/' relative to the bundle folder.<br/>
 	 * This method does not include a potential webapplication context path.
 	 */
-	@Override
 	public String getJSPURI(String jspInBundle) {
 		String jspPath = "/jsp/"+jspInBundle;
 		return this.rootVirtualPath+jspPath;
@@ -1654,7 +1567,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * The default path is under 'facelets/' relative to the bundle folder.<br/>
 	 * This method does not include a potential web application context path.
 	 */
-	@Override
 	public String getFaceletURI(String faceletInBundle) {
 		return rootVirtualPath+"/facelets/"+faceletInBundle;
 	}
@@ -1667,7 +1579,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * @param pathInResourceFolder path relative to this bundles resource virtual path
 	 * @return Something like '/idegaweb/bundles/com.idega.core.bundle/resources/style/style.css'
 	 */
-	@Override
 	public String getResourceURIWithoutContextPath(String pathInResourceFolder) {
 		return this.resourcesVirtualPath+pathInResourceFolder;
 	}
@@ -1675,7 +1586,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getLocalizedText(java.lang.String)
 	 */
-	@Override
 	public HtmlOutputText getLocalizedText(String localizationKey) {
 		HtmlOutputText t = new HtmlOutputText();
 		t = (HtmlOutputText) getLocalizedUIComponent(localizationKey, t);
@@ -1685,20 +1595,17 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getValueBinding(java.lang.String)
 	 */
-	@Override
 	public ValueBinding getValueBinding(String localizationKey) {
 		String valueBinding = getLocalizedStringExpr(localizationKey);
 		ValueBinding vb = getApplication().createValueBinding(valueBinding);
 		return vb;
 	}
 
-	@Override
 	public ValueExpression getValueExpression(String localizationKey) {
 		return getApplication().getExpressionFactory().createValueExpression(FacesContext.getCurrentInstance().getELContext(),
 				getLocalizedStringExpr(localizationKey), String.class);
 	}
 
-	@Override
 	public ValueBinding getValueBinding(String localizationKey, String defaultValue) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		return getValueBinding(ctx,localizationKey,defaultValue);
@@ -1724,12 +1631,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		return "#{localizedStrings['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
 	}
 
-	@Override
 	public String getLocalizedString(String localizationKey) {
 		return getLocalizedString(localizationKey,localizationKey);
 	}
 
-	@Override
 	public String getLocalizedString(String localizationKey, String defaultValue) {
 		FacesContext ctx = FacesContext.getCurrentInstance();
 		ValueExpression ve = getValueExpression(localizationKey);
@@ -1743,12 +1648,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		return defaultValue;
 	}
 
-	@Override
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component) {
 		return getLocalizedUIComponent(localizationKey,component,localizationKey);
 	}
 
-	@Override
 	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component, String defaultValue) {
 //		String valueBinding = "#{bundles['"+getBundleIdentifier()+"']['"+localizationKey+"']}";
 		FacesContext ctx = FacesContext.getCurrentInstance();
@@ -1758,11 +1661,9 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWBundle#getLocalizedImage(java.lang.String)
 	 */
-	@Override
 	public HtmlGraphicImage getLocalizedImage(String pathAndName) {
 		return getLocalizedImage(pathAndName, IWContext.getInstance());
 	}
-	@Override
 	public HtmlGraphicImage getLocalizedImage(String pathAndName, IWContext context) {
 		HtmlGraphicImage t = new HtmlGraphicImage();
 		Locale locale = context.getCurrentLocale();
@@ -1773,7 +1674,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#canLoadLazily()
 	 */
-	@Override
 	public boolean canLoadLazily() {
 		// TODO Auto-generated method stub
 		return false;
@@ -1781,21 +1681,18 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleIdentifier()
 	 */
-	@Override
 	public String getModuleIdentifier() {
 		return getBundleIdentifier();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleName()
 	 */
-	@Override
 	public String getModuleName() {
 		return getBundleName();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVendor()
 	 */
-	@Override
 	public String getModuleVendor() {
 		String theReturn = getProperty("vendor");
 		if (theReturn == null)
@@ -1807,21 +1704,18 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#getModuleVersion()
 	 */
-	@Override
 	public String getModuleVersion() {
 		return getVersion();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#load()
 	 */
-	@Override
 	public void load() {
 		this.loadBundle();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.IWModule#reload()
 	 */
-	@Override
 	public void reload() {
 		this.reloadBundle();
 	}
@@ -1831,7 +1725,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * @param pathWithinBundle
 	 * @return FileInputStream
 	 */
-	@Override
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
 		String workspaceDir = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		String bundleInWorkspace;
@@ -1853,7 +1746,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 	 * @param pathWithinBundle
 	 * @return miliseconds since Epoch, or 0 if not found
 	 */
-	@Override
 	public long getResourceTime(String pathWithinBundle) {
 		File file = new File(getBundleBaseRealPath(), pathWithinBundle);
 		return file.lastModified();
@@ -1864,12 +1756,10 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		return (directory == null) ? true : false;
 	}
 
-	@Override
 	public boolean isPostponedBundleStartersRun() {
     	return postponedBundleStartersRun;
     }
 
-	@Override
 	public void setPostponedBundleStartersRun(boolean postponedBundleStartersRun) {
     	this.postponedBundleStartersRun = postponedBundleStartersRun;
     }

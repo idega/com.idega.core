@@ -56,7 +56,6 @@ public interface IWBundle extends IWModule{
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
-	@Override
 	public abstract void unload();
 
 	/**
