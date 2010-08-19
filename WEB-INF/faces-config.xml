@@ -69,6 +69,16 @@
 	      <property-name>disabled</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
+	    <property>
+	      <display-name>Required</display-name>
+	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Auto focus</display-name>
+	      <property-name>autofocus</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
 	</component>
 	
 	<component>
@@ -119,6 +129,26 @@
 	      <property-name>maxLength</property-name>
 	      <property-class>java.lang.Integer</property-class>
 	    </property>
+	    <property>
+	      <display-name>Required</display-name>
+	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Auto focus</display-name>
+	      <property-name>autofocus</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Pattern</display-name>
+	      <property-name>pattern</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Placeholder</display-name>
+	      <property-name>placeholder</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
 	</component>
 	
 	<component>
@@ -163,6 +193,21 @@
 	      <display-name>Length</display-name>
 	      <property-name>length</property-name>
 	      <property-class>java.lang.Integer</property-class>
+	    </property>
+	    <property>
+	      <display-name>Required</display-name>
+	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Auto focus</display-name>
+	      <property-name>autofocus</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Pattern</display-name>
+	      <property-name>pattern</property-name>
+	      <property-class>java.lang.String</property-class>
 	    </property>
 	</component>
 	
@@ -209,6 +254,11 @@
 	      <property-name>selected</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
+	    <property>
+	      <display-name>Required</display-name>
+	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
 	</component>
 	
 	<component>
@@ -252,6 +302,11 @@
 	    <property>
 	      <display-name>Checked</display-name>
 	      <property-name>checked</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Required</display-name>
+	      <property-name>required</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
 	</component>
@@ -360,9 +415,19 @@
 	      <property-class>java.util.List</property-class>
 	    </property>
 	    <property>
+	      <display-name>Strings</display-name>
+	      <property-name>strings</property-name>
+	      <property-class>java.util.List</property-class>
+	    </property>
+	    <property>
 	      <display-name>Selected option</display-name>
 	      <property-name>selected</property-name>
 	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Required</display-name>
+	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
 	    </property>
 	</component>
 	

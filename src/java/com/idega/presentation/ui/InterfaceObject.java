@@ -59,6 +59,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public static final String CONTENT_PROPERTY = "content";
 	public static final String KEEP_STATUS_PROPERTY = "keepStatus";
 	public static final String DISABLED_PROPERTY = "disabled";
+	private static final String REQUIRED_PROPERTY = "required";
 	
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[9];
@@ -128,6 +129,12 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
     	if (ve != null) {
 	    	boolean disabled = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setDisabled(disabled);
+    	}
+    	
+		ve = getValueExpression(REQUIRED_PROPERTY);
+    	if (ve != null) {
+	    	boolean required = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setRequired(required);
     	}
     	
     	super.encodeBegin(context);
@@ -962,4 +969,17 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
 	public abstract boolean isContainer();
+	
+	/**
+	 * Sets whether the interface object is required or not.
+	 * @param required	The status to set.
+	 */
+	public void setRequired(boolean required) {
+		if (required) {
+			setMarkupAttribute("required", "required");
+		}
+		else {
+			this.removeMarkupAttribute("required");
+		}
+	}
 }

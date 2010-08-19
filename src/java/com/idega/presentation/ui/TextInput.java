@@ -61,6 +61,9 @@ public class TextInput extends GenericInput {
 	
 	private static final String LENGTH_PROPERTY = "length";
 	private static final String MAX_LENGTH_PROPERTY = "maxLength";
+	private static final String AUTOFOCUS_PROPERTY = "autofocus";
+	private static final String PATTERN_PROPERTY = "pattern";
+	private static final String PLACEHOLDER_PROPERTY = "placeholder";
     
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[28];
@@ -140,6 +143,24 @@ public class TextInput extends GenericInput {
     		setMaxlength(maxLength);
     	}    
     	    	
+		ve = getValueExpression(AUTOFOCUS_PROPERTY);
+    	if (ve != null) {
+	    	boolean autofocus = Boolean.valueOf(ve.getValue(context.getELContext()).toString());
+    		setAutofocus(autofocus);
+    	}    
+    	    	
+		ve = getValueExpression(PATTERN_PROPERTY);
+    	if (ve != null) {
+	    	String pattern = ve.getValue(context.getELContext()).toString();
+    		setPattern(pattern);
+    	}    
+    	    	
+		ve = getValueExpression(PLACEHOLDER_PROPERTY);
+    	if (ve != null) {
+	    	String placeholder = ve.getValue(context.getELContext()).toString();
+    		setPlaceholder(placeholder);
+    	}    
+    	    	
     	super.encodeBegin(context);
     }
  		
@@ -210,6 +231,26 @@ public class TextInput extends GenericInput {
      */
     public void setMaxlength(int maxlength) {
         setMarkupAttribute("maxlength", Integer.toString(maxlength));
+    }
+
+    /**
+     * Sets the allowed pattern (regex) that the input allows.
+     * 
+     * @param pattern
+     *            The pattern to set.
+     */
+    public void setPattern(String pattern) {
+        setMarkupAttribute("pattern", pattern);
+    }
+
+    /**
+     * Sets the placeholder for the input.
+     * 
+     * @param placeholder
+     *            The placeholder to set.
+     */
+    public void setPlaceholder(String placeholder) {
+        setMarkupAttribute("placeholder", placeholder);
     }
 
     /**
@@ -686,4 +727,17 @@ public class TextInput extends GenericInput {
     	}
     }
     
+	/**
+	 * Sets whether the interface object should get autofocus or not.
+	 * @param autofocus	The status to set.
+	 */
+	public void setAutofocus(boolean autofocus) {
+		if (autofocus) {
+			setMarkupAttribute("autofocus", "autofocus");
+		}
+		else {
+			this.removeMarkupAttribute("autofocus");
+		}
+	}
+
 }
