@@ -39,7 +39,7 @@ public class GenericSelect extends InterfaceObject {
 	public static final String SET_TO_SUBMIT_PROPERTY = "setToSubmit";
 	public static final String OPTIONS_PROPERTY = "options";
 	public static final String ENTITIES_PROPERTY = "entities";
-	public static final String STRINGS_PROPERTY = "strings";
+	public static final String OBJECTS_PROPERTY = "objects";
 	public static final String SELECTED_PROPERTY = "selected";
 	
 	public Object saveState(FacesContext ctx) {
@@ -96,12 +96,14 @@ public class GenericSelect extends InterfaceObject {
     		setEntities(entities);
     	}    
     	
-		ve = getValueExpression(STRINGS_PROPERTY);
+		ve = getValueExpression(OBJECTS_PROPERTY);
     	if (ve != null) {
-    		List<String> strings = (List<String>) ve.getValue(context.getELContext());
-    		for (String string : strings) {
-				addOption(new SelectOption(string));
-			}
+    		List<Object> objects = (List<Object>) ve.getValue(context.getELContext());
+    		if (objects != null) {
+	    		for (Object object : objects) {
+					addOption(new SelectOption(object != null ? object.toString() : ""));
+				}
+    		}
     	}    
     	
     	super.encodeBegin(context);

@@ -415,8 +415,8 @@ version="1.2">
 	      <property-class>java.util.List</property-class>
 	    </property>
 	    <property>
-	      <display-name>Strings</display-name>
-	      <property-name>strings</property-name>
+	      <display-name>Objects</display-name>
+	      <property-name>objects</property-name>
 	      <property-class>java.util.List</property-class>
 	    </property>
 	    <property>
