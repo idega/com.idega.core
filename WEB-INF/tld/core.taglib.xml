@@ -13,6 +13,20 @@
     </tag>
 
     <tag>
+        <tag-name>creditCardConverter</tag-name>
+        <converter>
+        	<converter-id>iw.CreditCard</converter-id>
+        </converter>
+    </tag>
+
+    <tag>
+        <tag-name>personalIDConverter</tag-name>
+        <converter>
+        	<converter-id>iw.PersonalID</converter-id>
+        </converter>
+    </tag>
+
+    <tag>
         <tag-name>datePicker</tag-name>
         <component>
             <component-type>IWDatePicker</component-type>

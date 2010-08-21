@@ -456,6 +456,36 @@ version="1.2">
 	    </property>
 	</component>
 	
+	<converter>
+		<converter-id>iw.CreditCard</converter-id>
+		<converter-class>com.idega.util.converter.CreditCardConverter</converter-class>
+		<property>
+			<display-name>Pattern</display-name>
+			<property-name>pattern</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>Seperator</display-name>
+			<property-name>seperator</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>Digits</display-name>
+			<property-name>digits</property-name>
+			<property-class>java.lang.Integer</property-class>
+		</property>
+   	</converter>
+
+	<converter>
+		<converter-id>iw.PersonalID</converter-id>
+		<converter-class>com.idega.util.converter.PersonalIDConverter</converter-class>
+		<property>
+			<display-name>Locale</display-name>
+			<property-name>locale</property-name>
+			<property-class>java.util.Locale</property-class>
+		</property>
+	</converter>
+
 	<managed-bean>
 		<managed-bean-name>pageSessionPoller</managed-bean-name>
 		<managed-bean-class>com.idega.business.PageSessionPoller</managed-bean-class>
