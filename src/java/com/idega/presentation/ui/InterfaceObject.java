@@ -10,7 +10,9 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
@@ -755,11 +757,15 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @return Script
 	 */
 	protected Script getScript() {
-		if ( getForm() != null ) {
-			if (getForm().getAssociatedFormScript() == null) {
-				getForm().setAssociatedFormScript(new Script());
+		return getScript(getForm());
+	}
+	
+	public Script getScript(Form form) {
+		if (form != null ) {
+			if (form.getAssociatedFormScript() == null) {
+				form.setAssociatedFormScript(new Script());
 			}
-			return getForm().getAssociatedFormScript();
+			return form.getAssociatedFormScript();
 		}
 		return null;
 	}
@@ -833,8 +839,16 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	protected void setCheckSubmit() {
-		if (getScript().getFunction("checkSubmit") == null) {
-			getScript().addFunction("checkSubmit", "function checkSubmit"+getForm().getId()+"(inputs){\n\n}");
+		setCheckSubmit(getForm());
+	}
+	
+	protected void setCheckSubmit(Form form) {
+		if (form == null) {
+			return;
+		}
+		
+		if (getScript(form).getFunction("checkSubmit") == null) {
+			getScript(form).addFunction("checkSubmit", "function checkSubmit"+form.getId()+"(inputs){\n\n}");
 		}
 	}
 	
@@ -845,11 +859,15 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * @param function			The function to perform.
 	 */
 	public void setOnSubmitFunction(String functionName, String function) {
-		if (getForm() != null) {
-			getParentForm().setOnSubmit("return checkSubmit"+getForm().getId()+"(this)");
-			setCheckSubmit();
-			getScript().addToBeginningOfFunction("checkSubmit", "if ("+functionName+"() == false ){\nreturn false;\n}\n");
-			getScript().addFunction(functionName, function);
+		setOnSubmitFunction(getForm(), functionName, function);
+	}
+	
+	public void setOnSubmitFunction(Form form, String functionName, String function) {
+		if (form != null) {
+			form.setOnSubmit("return checkSubmit"+form.getId()+"(this)");
+			setCheckSubmit(form);
+			getScript(form).addToBeginningOfFunction("checkSubmit", "if ("+functionName+"() == false ){\nreturn false;\n}\n");
+			getScript(form).addFunction(functionName, function);
 		}
 	}
 
