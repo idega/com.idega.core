@@ -93,6 +93,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	static final String META_DATA_HOME_PAGE = "homepage";
   
 	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
+	private static final String COLUMN_LAST_READ_FROM_IMPORT = "last_imported";
 	
 	@Override
 	public String getEntityName() {
@@ -116,6 +117,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
     	addAttribute(User.FIELD_JURIDICAL_PERSON, "Juridical person", true, true, Boolean.class);
+    	
+    	addAttribute(COLUMN_LAST_READ_FROM_IMPORT, "Last read from national import", Timestamp.class);
     	
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
@@ -1247,6 +1250,14 @@ public void delete() throws SQLException {
 		return this.getID();
 	}
 
+	public void setLastReadFromImport(Timestamp timestamp) {
+		setColumn(COLUMN_LAST_READ_FROM_IMPORT, timestamp);
+	}
+	
+	public Timestamp getLastReadFromImport() {
+		return getTimestampColumnValue(COLUMN_LAST_READ_FROM_IMPORT);
+	}
+	
 	public Integer ejbFindUserByUniqueId(String uniqueIdString) throws FinderException {
 		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
 	}
