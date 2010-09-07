@@ -230,7 +230,18 @@ public class Form
 	}
 
 	public void setOnSubmit(String script) {
-		setOnAction("onsubmit", script);
+		String previous = getMarkupAttribute("onsubmit");
+		if (previous != null && !"".equals(previous)) {
+			if (previous.startsWith("return ")) {
+				removeMarkupAttribute("onsubmit");
+				setOnAction("onsubmit", script);							
+				setOnAction("onsubmit", previous);							
+			} else {
+				setOnAction("onsubmit", script);							
+			}
+		} else {
+			setOnAction("onsubmit", script);			
+		}
 	}
 
 	public void setOnClick(String script) {
