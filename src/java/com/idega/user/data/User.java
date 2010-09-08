@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 
 import javax.ejb.EJBException;
 
@@ -150,4 +151,6 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setJuridicalPerson(boolean juridicalPerson);
  public boolean getDisplayNameSetManually();
  public void setDisplayNameSetManually(boolean diplayNameSetManually);
+ public void setLastReadFromImport(Timestamp timestamp);
+ public Timestamp getLastReadFromImport();
 }
