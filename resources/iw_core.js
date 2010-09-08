@@ -1277,7 +1277,7 @@ IWCORE.renderComponent = function(uuid, container, callback, properties, options
 					reloadPage();
 				}
 			},
-			timeout: 30000
+			timeout: 60000
 		});
 	});
 }
@@ -1294,7 +1294,7 @@ IWCORE.getRenderedComponentByClassName = function(options) {
 					reloadPage();
 				}
 			},
-			timeout: 30000
+			timeout: 60000
 		});
 	});
 }
@@ -1998,7 +1998,7 @@ IWCORE.pingServer = function(sleepTime, id) {
 					
 					IWCORE.activeSessionPolling(sleepTime, false);
 				},
-				timeout: 10000
+				timeout: 500000
 			});
 		}, null);
 	} catch (ex) {
