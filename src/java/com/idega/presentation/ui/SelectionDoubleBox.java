@@ -6,6 +6,7 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+import java.util.List;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
@@ -36,8 +37,10 @@ public class SelectionDoubleBox extends InterfaceObject {
 
 	public static final String LEFT_INPUT_NAME = "leftName";
 	public static final String LEFT_INPUT_LABEL = "leftLabel";
+	public static final String LEFT_INPUT_OPTIONS = "leftOptions";
 	public static final String RIGHT_INPUT_NAME = "rightName";
 	public static final String RIGHT_INPUT_LABEL = "rightLabel";
+	public static final String RIGHT_INPUT_OPTIONS = "rightOptions";
 
 	public SelectionDoubleBox(){
 		this("untitled");
@@ -72,6 +75,14 @@ public class SelectionDoubleBox extends InterfaceObject {
 	    	setLeftLabel(label);
     	}    
 
+		ve = getValueExpression(LEFT_INPUT_OPTIONS);
+    	if (ve != null) {
+    		List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
+    		for (SelectOption selectOption : options) {
+				addToLeftBox(selectOption.getValueAsString(), selectOption.getName());
+			}
+    	}    
+    	
     	ve = getValueExpression(RIGHT_INPUT_NAME);
     	if (ve != null) {
 	    	String name = (String) ve.getValue(context.getELContext());
@@ -84,6 +95,14 @@ public class SelectionDoubleBox extends InterfaceObject {
 	    	setRightLabel(label);
     	}    
 
+		ve = getValueExpression(RIGHT_INPUT_OPTIONS);
+    	if (ve != null) {
+    		List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
+    		for (SelectOption selectOption : options) {
+				addToRightBox(selectOption.getValueAsString(), selectOption.getName());
+			}
+    	}    
+    	
     	super.encodeBegin(context);
     }
     
