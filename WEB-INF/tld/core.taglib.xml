@@ -48,6 +48,13 @@
     </tag>
 
     <tag>
+        <tag-name>selectMany</tag-name>
+        <component>
+            <component-type>SelectionDoubleBox</component-type>
+        </component>
+    </tag>
+
+    <tag>
         <tag-name>textArea</tag-name>
         <component>
             <component-type>TextArea</component-type>

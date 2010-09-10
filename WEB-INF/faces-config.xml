@@ -456,6 +456,36 @@ version="1.2">
 	    </property>
 	</component>
 	
+	<component>
+	    <component-type>SelectionDoubleBox</component-type>
+	    <component-class>com.idega.presentation.ui.SelectionDoubleBox</component-class>
+	    <property>
+	      <display-name>Keep status</display-name>
+	      <property-name>keepStatus</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Left lame</display-name>
+	      <property-name>leftName</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Left label</display-name>
+	      <property-name>leftLabel</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Right lame</display-name>
+	      <property-name>rightName</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Right label</display-name>
+	      <property-name>rightLabel</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	</component>
+	
 	<converter>
 		<converter-id>iw.CreditCard</converter-id>
 		<converter-class>com.idega.util.converter.CreditCardConverter</converter-class>

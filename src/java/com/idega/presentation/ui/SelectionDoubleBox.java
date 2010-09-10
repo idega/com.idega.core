@@ -5,6 +5,11 @@
 
 package com.idega.presentation.ui;
 
+import java.io.IOException;
+
+import javax.el.ValueExpression;
+import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
@@ -29,6 +34,11 @@ public class SelectionDoubleBox extends InterfaceObject {
 	private boolean isSetAsNotEmpty = false;
 	private String notEmptyErrorMessage;
 
+	public static final String LEFT_INPUT_NAME = "leftName";
+	public static final String LEFT_INPUT_LABEL = "leftLabel";
+	public static final String RIGHT_INPUT_NAME = "rightName";
+	public static final String RIGHT_INPUT_LABEL = "rightLabel";
+
 	public SelectionDoubleBox(){
 		this("untitled");
 	}
@@ -48,6 +58,35 @@ public class SelectionDoubleBox extends InterfaceObject {
 		this.rightName = nameOfRightBox;
 	}
 
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+    	ValueExpression ve = getValueExpression(LEFT_INPUT_NAME);
+    	if (ve != null) {
+	    	String name = (String) ve.getValue(context.getELContext());
+	    	setLeftName(name);
+    	}    
+    	
+    	ve = getValueExpression(LEFT_INPUT_LABEL);
+    	if (ve != null) {
+	    	String label = (String) ve.getValue(context.getELContext());
+	    	setLeftLabel(label);
+    	}    
+
+    	ve = getValueExpression(RIGHT_INPUT_NAME);
+    	if (ve != null) {
+	    	String name = (String) ve.getValue(context.getELContext());
+	    	setRightName(name);
+    	}
+
+    	ve = getValueExpression(RIGHT_INPUT_LABEL);
+    	if (ve != null) {
+	    	String label = (String) ve.getValue(context.getELContext());
+	    	setRightLabel(label);
+    	}    
+
+    	super.encodeBegin(context);
+    }
+    
 	public void main(IWContext iwc) throws Exception {
 	    this.leftBox = getLeftBox();
 	    this.rightBox = getRightBox();
@@ -146,30 +185,6 @@ public class SelectionDoubleBox extends InterfaceObject {
 		addToSelectedBox(value, displayString);
 	}
 
-	/*public Object clone() {
-		SelectionDoubleBox obj = null;
-		try {
-			obj = (SelectionDoubleBox) super.clone();
-
-			if (this.leftBox != null) {
-				obj.leftBox = (SelectionBox) this.leftBox.clone();
-			}
-			if (this.rightBox != null) {
-				obj.rightBox = (SelectionBox) this.rightBox.clone();
-			}
-			if (this.toTheRight != null) {
-				obj.toTheRight = (GenericButton) this.toTheRight.clone();
-			}
-			if (this.toTheLeft != null) {
-				obj.toTheLeft = (GenericButton) this.toTheLeft.clone();
-			}
-		}
-		catch (Exception ex) {
-			ex.printStackTrace(System.err);
-		}
-		return obj;
-	}*/
-	
 	public void setLeftName(String name) {
 		getLeftBox().setName(name);	
 	}
