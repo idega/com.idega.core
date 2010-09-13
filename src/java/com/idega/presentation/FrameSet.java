@@ -8,8 +8,12 @@ package com.idega.presentation;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
+import javax.faces.component.UIComponent;
+
 import com.idega.idegaweb.IWURL;
 import com.idega.presentation.ui.Window;
+import com.idega.util.StringUtil;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -30,7 +34,7 @@ public class FrameSet extends Window{
   private static final String star = "*";
   private static final String PERCENTSIGN = "%";
 
-  private Map framesMap;
+  private Map<Integer, Map<String, String>> framesMap;
 
   public FrameSet(){
     setFrameBorder(0);
@@ -39,112 +43,91 @@ public class FrameSet extends Window{
     setVertical();
   }
 
-  public void add(String frameURL){
+  @Override
+public void add(String frameURL){
     this.numberOfFrames++;
     setPage(this.numberOfFrames, frameURL);
   }
 
-  public void add(Class pageClass){
+  public void add(Class<? extends UIComponent> pageClass){
     this.numberOfFrames++;
     setPage(this.numberOfFrames, pageClass);
   }
 
-  public void add(Class pageClass, String frameName ){
+  public void add(Class<? extends UIComponent> pageClass, String frameName ){
     this.numberOfFrames++;
     setPage(this.numberOfFrames, pageClass);
     this.setFrameName(this.numberOfFrames, frameName);
   }
 
-  private void setPage(int frameIndex, Class pageClass){
-    this.getFramesMap().put(new Integer(frameIndex),new HashMap());
-    this.getFramesPropertyMap(frameIndex).put(CLASS_PROPERTY,pageClass);
+  private void setPage(int frameIndex, Class<? extends UIComponent> pageClass){
+    this.getFramesMap().put(new Integer(frameIndex),new HashMap<String, String>());
+    this.getFramesPropertyMap(frameIndex).put(CLASS_PROPERTY, pageClass.getName());
   }
 
   private void setPage(int frameIndex, String url){
-    this.getFramesMap().put(new Integer(frameIndex),new HashMap());
+    this.getFramesMap().put(new Integer(frameIndex), new HashMap<String, String>());
     setFrameSource(frameIndex,url);
   }
 
-  public Class getClass(int frameIndex){
-    return (Class)getFramesPropertyMap(frameIndex).get(CLASS_PROPERTY);
-  }
-
-
-  /**
-   * Does nothing
-   */
-  protected void add(int index,PresentationObject modObject) {
-  }
-
-  /**
-   * Does nothing
-   */
-  public void add(PresentationObject modObject) {
-  }
-
-  /**
-   * Does nothing
-   */
-  public void add(Object presentationObject) {
-  }
-
-  /**
-   * Does nothing
-   */
-  public void addAtBeginning(PresentationObject modObject) {
-  }
-
-
-  /* //
-   //adds the Object to the First Page;
-   //
-  public void add(PresentationObject obj){
-    if(obj instanceof Page){
-      add((Page)obj);
+  @SuppressWarnings("unchecked")
+public Class<? extends UIComponent> getClass(int frameIndex){
+    String className = getFramesPropertyMap(frameIndex).get(CLASS_PROPERTY);
+    if (StringUtil.isEmpty(className)) {
+    	return null;
     }
-    else{
-       getFirstFrame().add(obj);
-    }
+    
+    Class<?> theClass = null;
+    try {
+		theClass = Class.forName(className);
+	} catch (Exception e) {
+		e.printStackTrace();
+	}
+	return (Class<? extends UIComponent>) theClass;
   }
 
-
-  public void add(Page page){
-    numberOfFrames += 1;
-    super.add(numberOfFrames-1,page);
-    setFrameName(numberOfFrames,page.getID());
-    setAllMargins(numberOfFrames,0);
+  /**
+   * Does nothing
+   */
+  @Override
+protected void add(int index,PresentationObject modObject) {
   }
 
-  //
-  // adds the Object to the First Page;
-  //
-  public void add(String string){
-    getFirstFrame().add(string);
+  /**
+   * Does nothing
+   */
+  @Override
+public void add(PresentationObject modObject) {
   }
-*/
 
-    /*private Map getClassesMap(){
-      if(classesMap==null){
-        classesMap = new Hashtable();
-      }
-      return classesMap;
-    }*/
+  /**
+   * Does nothing
+   */
+  @Override
+public void add(Object presentationObject) {
+  }
 
-    private Map getFramesMap(){
+  /**
+   * Does nothing
+   */
+  @Override
+public void addAtBeginning(PresentationObject modObject) {
+  }
+
+    private Map<Integer, Map<String, String>> getFramesMap(){
       if(this.framesMap==null){
-        this.framesMap = new HashMap();
+        this.framesMap = new HashMap<Integer, Map<String, String>>();
       }
       return this.framesMap;
     }
 
-    /*private Map getFramesPropertyMap(Class c){
-      return (Map) getPagesMap().get(c);
-    }*/
-
-    private Map getFramesPropertyMap(int frameIndex){
-      //Class c = (Class)this.getIndexesMap().get(Integer.toString(frameIndex));
-      //return getFramesPropertyMap(c);
-      return (Map) getFramesMap().get(new Integer(frameIndex));
+    private Map<String, String> getFramesPropertyMap(int frameIndex){
+    	Map<String, String> props = getFramesMap().get(frameIndex);
+    	if (props == null) {
+    		props = new HashMap<String, String>();
+    		getFramesMap().put(frameIndex, props);
+    	}
+    	return props;
     }
 
     protected void setFrameSetProperty(String name,String value){
@@ -155,7 +138,8 @@ public class FrameSet extends Window{
       return getMarkupAttributesString();
     }
 
-    public void _main(IWContext iwc)throws Exception{
+    @Override
+	public void _main(IWContext iwc)throws Exception{
       this.isInAWindow = isChildOfOtherPage();
       if( this.isInAWindow ){
         this.getParentPage().setAddBody(false);
@@ -176,7 +160,7 @@ public class FrameSet extends Window{
       int i = 1;
       while (i<=this.numberOfFrames) {
 
-        Class item = this.getClass(i);
+        Class<? extends UIComponent> item = this.getClass(i);
         if(item!=null){
           setFrameSource(i,getFrameURI(item,iwc));
         }
@@ -185,7 +169,8 @@ public class FrameSet extends Window{
 
     }
 
-    public void print(IWContext iwc) throws Exception{
+    @Override
+	public void print(IWContext iwc) throws Exception{
       //goneThroughMain = false;
 
     		printBegin(iwc);
@@ -194,7 +179,8 @@ public class FrameSet extends Window{
     }
     
     
-    public void printBegin(IWContext iwc){
+    @Override
+	public void printBegin(IWContext iwc){
         StringBuffer buf = new StringBuffer();
 
         if( !this.isInAWindow ){
@@ -213,7 +199,8 @@ public class FrameSet extends Window{
         print(buf.toString());
     }
 
-    public void printEnd(IWContext iwc){
+    @Override
+	public void printEnd(IWContext iwc){
     		StringBuffer buf = new StringBuffer();
 
 		int counter = 1;
@@ -231,35 +218,17 @@ public class FrameSet extends Window{
           buf.append(getEndTag());
         }
 
-        //System.out.println("FrameSet - in print()\n"+ buf.toString());
         print(buf.toString());
     }
     
-    /*private String getFrameURI(Page page,IWContext iwc){
-      String uri = iwc.getRequestURI()+"?"+this.IW_FRAME_STORAGE_PARMETER+"="+page.getID();
-      return uri;
-    }*/
-
-    private static String getFrameURI(Class pageClass,IWContext iwc){
-    		//String uri = iwc.getRequestURI()+"?"+IW_FRAME_CLASS_PARAMETER+"="+IWMainApplication.getEncryptedClassName(pageClass);
+    private static String getFrameURI(Class<? extends UIComponent> pageClass,IWContext iwc){
     		String uri = iwc.getIWMainApplication().getWindowOpenerURI(pageClass);
     		return uri;
     }
 
-    public static IWURL getFrameURL(Class pageClass,IWContext iwc){
-      /*String uri = getFrameURI(pageClass,iwc);
-      IWURL url = new IWURL(uri);
-      return url;
-      */
+    public static IWURL getFrameURL(Class<? extends UIComponent> pageClass,IWContext iwc){
       return new IWURL(iwc.getIWMainApplication().getWindowOpenerURI(pageClass));
     }
-
-    /*public static IWURL getFrameURL(Class pageClass){
-      String baseURL = IWConstants.SERVLET_WINDOWOPENER_URL;
-      IWURL url = new IWURL(baseURL);
-      url.addPageClassParameter(pageClass);
-      return url;
-    }*/
 
     public void setFrameBorder(int width){
       setFrameSetProperty("frameborder",Integer.toString(width));
@@ -392,26 +361,25 @@ public class FrameSet extends Window{
     }
 
     protected String getFrameProperty(int frameIndex,String propertyName){
-      Map frameProperties = getFramesPropertyMap(frameIndex);
+      Map<String, String> frameProperties = getFramesPropertyMap(frameIndex);
       if(frameProperties == null){
         return null;
       }
-      return (String)frameProperties.get(propertyName);
+      return frameProperties.get(propertyName);
     }
 
     protected String getFramePropertiesString(int frameIndex){
-      Map frameProperties = getFramesPropertyMap(frameIndex);
+      Map<String, String> frameProperties = getFramesPropertyMap(frameIndex);
       StringBuffer returnString = new StringBuffer();
-      String Attribute ="";
+      String attribute ="";
       if (frameProperties != null) {
-        Iterator e = frameProperties.keySet().iterator();
-        while (e.hasNext()){
-          Attribute = (String)e.next();
-          if(!(Attribute.equals(ROWS_PROPERTY)||Attribute.equals(CLASS_PROPERTY))){
+        for (Iterator<String> e = frameProperties.keySet().iterator(); e.hasNext();) {
+          attribute = e.next();
+          if(!(attribute.equals(ROWS_PROPERTY)||attribute.equals(CLASS_PROPERTY))){
             returnString.append(" ");
-            returnString.append(Attribute);
+            returnString.append(attribute);
 
-            String AttributeValue = (String)frameProperties.get(Attribute);
+            String AttributeValue = frameProperties.get(attribute);
             if(!AttributeValue.equals(slash)){
 
               returnString.append("=\"");
@@ -477,5 +445,4 @@ public class FrameSet extends Window{
         }
       }
     }
-
-}//End class
+}
