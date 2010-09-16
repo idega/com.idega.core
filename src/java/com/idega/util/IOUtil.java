@@ -123,18 +123,9 @@ public class IOUtil {
 			return null;
 		}
 
-		int kiloByte = 1024;
-		ByteArrayOutputStream output = new ByteArrayOutputStream(kiloByte);
-		
+		ByteArrayOutputStream output = new ByteArrayOutputStream();
 		try {
-			int length = 0;
-			int position = 0;
-			byte[] buffer = new byte[kiloByte];
-			while((length = stream.read(buffer)) >= 0) {
-				output.write(buffer, position, length);
-				position += length;
-			}
-			
+			FileUtil.streamToOutputStream(stream, output);
 			return output.toByteArray();
 		} catch (Exception e) {
 			e.printStackTrace();

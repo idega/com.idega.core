@@ -11,6 +11,7 @@ package com.idega.util;
 
  import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -37,7 +38,10 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.idega.file.bean.EmptyItem;
+import com.idega.file.bean.FileItem;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.bean.RepositoryItem;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 
 public class FileUtil {
@@ -246,16 +250,13 @@ public static String getFileSeparator(){
 
         return file;
     }
-    
-/*
-* streams an inputstream to a file
-*/
-  public static void streamToOutputStream( InputStream input, OutputStream out)throws IOException{
+
+  public static void streamToOutputStream( InputStream input, OutputStream out) throws IOException {
 	  streamToOutputStream(input, out, Boolean.TRUE);
   }
 
   private static void streamToOutputStream(InputStream input, OutputStream out, boolean closeInputStream) throws IOException {
-	  try{
+	  try {
 	      if (input == null) {
 	    	  LOGGER.warning("Provided InputStream is undefined!");
 	    	  return;
@@ -266,10 +267,10 @@ public static String getFileSeparator(){
 	      int noRead = 0;
 	      noRead = input.read(buffer, 0, 1024);
 	
-	      //	Write out the stream to the file
+	      //	Write out the stream to the output stream
 	      while (noRead != -1) {
-	    	  out.write( buffer, 0, noRead );
-	          noRead = input.read( buffer, 0, 1024 );
+	    	  out.write(buffer, 0, noRead);
+	          noRead = input.read(buffer, 0, 1024);
 	      }
 	
 	      out.flush();
@@ -868,28 +869,59 @@ public static String getFileSeparator(){
   }
   
   public static final File getZippedFiles(Collection<File> filesToZip) throws IOException {
-	  return getZippedFiles(filesToZip, "Archive.zip", true);
+	  return getZippedFiles(filesToZip, "Archive.zip");
   }
-  
   public static final File getZippedFiles(Collection<File> filesToZip, String fileName) throws IOException {
-	  return getZippedFiles(filesToZip, fileName, true);
-  }
-  
-  public static final File getZippedFiles(Collection<File> filesToZip, String fileName, boolean deleteZippedFiles) throws IOException {
 	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
 		  return null;
 	  }
 	  
+	  Collection<RepositoryItem> files = new ArrayList<RepositoryItem>(filesToZip.size());
+	  for (File file: filesToZip) {
+		  files.add(new FileItem(file));
+	  }
+	  return getZippedFiles(files, fileName, true);
+  }
+  
+  public static final File getZippedItems(Collection<RepositoryItem> itemsToZip, String fileName) throws IOException {
+	  return getZippedFiles(itemsToZip, fileName, true);
+  }
+  
+  public static final File getZippedFiles(Collection<RepositoryItem> filesToZip, String fileName, boolean deleteZippedFiles) throws IOException {
+	  return getZippedFiles(filesToZip, fileName, deleteZippedFiles, false);
+  }
+  
+  public static final File getZippedFiles(Collection<RepositoryItem> filesToZip, String fileName, boolean deleteZippedFiles, boolean handleEmptyDir) throws IOException {
+	  if (StringUtil.isEmpty(fileName)) {
+		  return null;
+	  }
+	  
+	  if (ListUtil.isEmpty(filesToZip) && !handleEmptyDir) {
+		  return null;
+	  }
+	  
 	  File zippedFile = new File(fileName);
+	  if (filesToZip == null) {
+		  filesToZip = new ArrayList<RepositoryItem>(1);
+	  }
+	  if (filesToZip.size() == 0) {
+		  filesToZip.add(new EmptyItem());
+	  }
+	  
 	  ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zippedFile));
 
 	  int bytesRead;
 	  CRC32 crc = new CRC32();
 	  byte[] buffer = new byte[1024];
-	  for (File file: filesToZip) {
-		  InputStream bis = new BufferedInputStream(new FileInputStream(file));
+	  for (RepositoryItem item: filesToZip) {
+		  //	Do not want to open stream from the same source twice - keeping contents of an item in memory
+		  byte[] contents = IOUtil.getBytesFromInputStream(item.getInputStream());
+		  if (contents == null) {
+			  continue;
+		  }
 		  
 		  //	Compressing
+		  InputStream bis = new BufferedInputStream(new ByteArrayInputStream(contents));
 		  crc.reset();
 		  while ((bytesRead = bis.read(buffer)) != -1) {
               crc.update(buffer, 0, bytesRead);
@@ -897,11 +929,12 @@ public static String getFileSeparator(){
           bis.close();
 
           //	Adding new entry
-          bis = new BufferedInputStream(new FileInputStream(file));
-          ZipEntry entry = new ZipEntry(file.getName());
+          long itemSize = item.getLength();
+          bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+          ZipEntry entry = new ZipEntry(item.getName());
           entry.setMethod(ZipEntry.STORED);
-          entry.setCompressedSize(file.length());
-          entry.setSize(file.length());
+          entry.setCompressedSize(itemSize);
+          entry.setSize(itemSize);
           entry.setCrc(crc.getValue());
           zos.putNextEntry(entry);
           while ((bytesRead = bis.read(buffer)) != -1) {
@@ -910,7 +943,7 @@ public static String getFileSeparator(){
           bis.close();
           
           if (deleteZippedFiles) {
-        	  file.delete();
+        	  item.delete();
           }
 	  }
 	  

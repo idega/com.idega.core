@@ -54,6 +54,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_CSS = "text/css";
 	public static final String MIME_TYPE_HTML = "text/html";
 	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
+	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
 
 	private String pathToConfigFile;
 	private Properties properties;
@@ -73,7 +74,7 @@ public class MimeTypeUtil implements Singleton {
 	private String[] folder = { "application/vnd.iw-folder" };
 
 	// executable applications, binaries or unknown types
-	private String[] binary = { "application/octet-stream", "application/acad",
+	private String[] binary = { MIME_TYPE_APPLICATION, "application/acad",
 			"application/arj", "application/book", "application/cdf",
 			"application/clariscad", "application/commonground",
 			"application/drafting", "application/dxf", "application/envoy",
@@ -82,7 +83,7 @@ public class MimeTypeUtil implements Singleton {
 			"application/inf", "application/java",
 			"application/java-byte-code", "application/lha", "application/lzx",
 			"application/mbedlet", "application/mime",
-			"application/octet-stream", "application/pkcs-crl",
+			"application/pkcs-crl",
 			"application/pkix-cert", "application/pkix-crl",
 			"application/vnd.fdf", "application/vnd.hp-HPGL",
 			"application/vnd.ms-pki.seccat", "application/x-aim",

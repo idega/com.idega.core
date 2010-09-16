@@ -123,7 +123,7 @@ public class IWCacheManager2 {
 		return getCache(cacheName, cacheSize, overFlowToDisk, isEternal, -1);
 	}
 	
-	private <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal, long cacheTTLSeconds) {
+	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal, long cacheTTLSeconds) {
 		if (cacheTTLSeconds < 0) {
 			cacheTTLSeconds = DEFAULT_CACHE_TTL_SECONDS;
 		}
