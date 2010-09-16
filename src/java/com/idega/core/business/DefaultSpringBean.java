@@ -140,8 +140,12 @@ public abstract class DefaultSpringBean {
 	 * @return
 	 */
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive) {
+		return getCache(cacheName, timeToLive, IWCacheManager2.DEFAULT_CACHE_SIZE);
+	}
+	
+	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive, int size) {
 		try {
-			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, timeToLive);
+			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, size, IWCacheManager2.DEFAULT_OVERFLOW_TO_DISK, IWCacheManager2.DEFAULT_ETERNAL, timeToLive);
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting cache!", e);
 		}
