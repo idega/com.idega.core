@@ -68,14 +68,21 @@ public class XmlUtil {
 			new AdvancedProperty("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", Boolean.FALSE.toString()),
 			new AdvancedProperty("http://apache.org/xml/features/nonvalidating/load-external-dtd", Boolean.FALSE.toString())
 	));
+	
+	public static DocumentBuilder getXMLBuilder() {
+		try {
+			return getDocumentBuilder(true);
+		} catch (ParserConfigurationException e) {
+			logger.log(Level.SEVERE, "Error getting document builder", e);
+		}
+		return null;
+	}
 		
 	public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
-		
 		return getDocumentBuilder(true);
 	}
 	
 	public static DocumentBuilder getDocumentBuilder(boolean namespaceAware) throws ParserConfigurationException {
-		
 		DocumentBuilderFactory factory = getDocumentBuilderFactory(namespaceAware);
 		
 		synchronized (factory) {
