@@ -30,6 +30,9 @@ public class IWDatePicker extends TextInput {
 	private Date date = null;
 	private Date dateTo = null;
 
+	private Date maxDate = null;
+	private Date minDate = null;
+	
 	private boolean dateRange = false;
 	private boolean useCurrentDateIfNotSet = true;
 	private boolean showCalendarImage = true;
@@ -43,6 +46,8 @@ public class IWDatePicker extends TextInput {
 	
 	private static final String INITIAL_DATE_PROPERTY = "initialDate";
 	private static final String INITIAL_DATE_TO_PROPERTY = "initialDateTo";
+	private static final String MAX_DATE_PROPERTY = "maxDate";
+	private static final String MIN_DATE_PROPERTY = "minDate";
 	private static final String INPUT_NAME_PROPERTY = "inputName";
 	private static final String DATE_RANGE_SEPARATOR_PROPERTY = "dateRangeSeparator";
 	private static final String SHOW_DATE_RANGE_PROPERTY = "showDateRange";
@@ -78,6 +83,18 @@ public class IWDatePicker extends TextInput {
     	if (ve != null) {
 	    	Date date = (Date) ve.getValue(context.getELContext());
 	    	setDateTo(date);
+    	}
+
+    	ve = getValueExpression(MAX_DATE_PROPERTY);
+    	if (ve != null) {
+	    	Date date = (Date) ve.getValue(context.getELContext());
+	    	setMaxDate(date);
+    	}
+
+    	ve = getValueExpression(MIN_DATE_PROPERTY);
+    	if (ve != null) {
+	    	Date date = (Date) ve.getValue(context.getELContext());
+	    	setMinDate(date);
     	}
 
 		ve = getValueExpression(INPUT_NAME_PROPERTY);
@@ -189,6 +206,26 @@ public class IWDatePicker extends TextInput {
 		initAction.append(", changeMonth: ").append(isChangeMonth()).append(
 				", changeYear: ").append(isChangeYear());
 
+		// Max date
+		if (getMaxDate() != null) {
+			IWTimestamp maxDate = new IWTimestamp(getMaxDate());
+			initAction.append(", maxDate: ").append(
+					new StringBuilder("new Date(")
+							.append(maxDate.getYear()).append(", ").append(
+									maxDate.getMonth() - 1).append(", ").append(
+									maxDate.getDay()).append(")").toString());
+		}
+		
+		// Min date
+		if (getMinDate() != null) {
+			IWTimestamp maxDate = new IWTimestamp(getMinDate());
+			initAction.append(", minDate: ").append(
+					new StringBuilder("new Date(")
+							.append(maxDate.getYear()).append(", ").append(
+									maxDate.getMonth() - 1).append(", ").append(
+									maxDate.getDay()).append(")").toString());
+		}
+		
 		// Calendar image
 		if (isShowCalendarImage()) {
 			initAction.append(", showOn: 'button', buttonImage: '").append(
@@ -334,6 +371,22 @@ public class IWDatePicker extends TextInput {
 
 	public void setDateRangeSeparator(String dateRangeSeparator) {
 		this.dateRangeSeparator = dateRangeSeparator;
+	}
+
+	public Date getMaxDate() {
+		return maxDate;
+	}
+
+	public void setMaxDate(Date maxDate) {
+		this.maxDate = maxDate;
+	}
+
+	public Date getMinDate() {
+		return minDate;
+	}
+
+	public void setMinDate(Date minDate) {
+		this.minDate = minDate;
 	}
 
 }

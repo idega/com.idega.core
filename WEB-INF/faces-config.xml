@@ -334,6 +334,16 @@ version="1.2">
 			<property-name>initialDateTo</property-name>
 			<property-class>java.util.Date</property-class>
 		</property>
+	    <property>
+	      <display-name>Max date</display-name>
+	      <property-name>maxDate</property-name>
+	      <property-class>java.util.Date</property-class>
+	    </property>
+	    <property>
+	      <display-name>Min date</display-name>
+	      <property-name>minDate</property-name>
+	      <property-class>java.util.Date</property-class>
+	    </property>
 		<property>
 			<display-name>Date range separator</display-name>
 			<property-name>dateRangeSeparator</property-name>
