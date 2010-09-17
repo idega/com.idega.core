@@ -9,12 +9,10 @@
 package com.idega.presentation.text;
 
 import java.io.IOException;
-import java.util.Collection;
 
 import javax.el.ValueExpression;
-import javax.faces.component.UIComponent;
-import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.file.data.ICFile;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.DownloadWriter;
@@ -105,29 +103,14 @@ public class DownloadLink extends Link {
     		setText(text);
     	}
     	
-    	Collection<UIComponent> children = this.getChildren();
-    	for(UIComponent child : children) {
-    		if (child instanceof UIParameter) {
-    			UIParameter param = (UIParameter) child;
-				addParameter(param.getName(), String.valueOf(param.getValue()));
-			}
-    	}
-    	
     	super.encodeBegin(context);
     }
     
-    
-    /* (non-Javadoc)
-     * @see com.idega.presentation.text.Link#setFile(com.idega.core.file.data.ICFile)
-     */
     @Override
 	public void setFile(ICFile file) {
         addParameter(DownloadWriter.PRM_FILE_ID,((Integer)file.getPrimaryKey()).intValue());
     }
     
-    /* (non-Javadoc)
-     * @see com.idega.presentation.text.Link#setFile(int)
-     */
     @Override
 	public void setFile(int fileId) {
         addParameter(DownloadWriter.PRM_FILE_ID,fileId);

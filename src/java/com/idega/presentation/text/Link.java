@@ -10,10 +10,13 @@
 package com.idega.presentation.text;
 
 
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -22,8 +25,9 @@ import java.util.ListIterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
 
 import com.idega.core.builder.business.ICBuilderConstants;
@@ -69,7 +73,6 @@ public class Link extends Text {
 	public static final String JAVASCRIPT = "javascript:";
 	public static final String TARGET_ATTRIBUTE = "target";
 	public static final String HREF_ATTRIBUTE = "href";
-	//private static final String OBJECT_TYPE_WINDOW = "Window";
 	protected static final String OBJECT_TYPE_MODULEOBJECT = "PresentationObject";
 	protected static final String OBJECT_TYPE_TEXT = "Text";
 	protected static final String OBJECT_TYPE_IMAGE = "Image";
@@ -83,11 +86,10 @@ public class Link extends Text {
 	private PresentationObject _obj;
 	private Window _myWindow = null;
 	private boolean iFormToSubmit = false;
-	private Class _windowClass = null;
+	private Class<? extends UIComponent> _windowClass = null;
 	private Window _windowInstance = null;
 	private int icObjectInstanceIDForWindow = -1;
 	protected StringBuffer _parameterString;
-	//private String displayString;
 	private String _objectType;
 	private String windowOpenerJavascriptString = null;
 	private boolean isImageButton = false;
@@ -109,11 +111,11 @@ public class Link extends Text {
 	private boolean usePublicWindow = false;
 
 	//If Link is constructed to open an instance of an object in a new page via ObjectInstanciator
-	private Class classToInstanciate;
+	private Class<? extends UIComponent> classToInstanciate;
 	//private Class templatePageClass;
 	private String templateForObjectInstanciation;
-	private List listenerInstances = null;
-	private List maintainedParameters = null;
+	private List<Object> listenerInstances = null;
+	private List<String> maintainedParameters = null;
 	private boolean https = false;
 	private String protocol = null;
 	private int fileId = -1;
@@ -123,9 +125,9 @@ public class Link extends Text {
 	//A BuilderPage to link to:
 	private int ibPage=0;
 	//todo use the methods in the image object
-	private Map _overImageLocalizationMap;
-	private Map _ImageLocalizationMap;
-	private Map _toolTipLocalizationMap;
+	private Map<Locale, Object> _overImageLocalizationMap;
+	private Map<Locale, Object> _ImageLocalizationMap;
+	private Map<Locale, String> _toolTipLocalizationMap;
 	private boolean usePublicOjbectInstanciator = false;
 	
 	private String charEncoding = CoreConstants.ENCODING_UTF8;
@@ -143,7 +145,6 @@ public class Link extends Text {
 	 */
 	public Link(String text) {
 		this(new Text(text));
-		//displayString = text;
 	}
 
 	/**
@@ -172,9 +173,7 @@ public class Link extends Text {
 	 *
 	 */
 	public Link(Text text) {
-		//text.setFontColor("");
 		this.setText(text);
-
 	}
 
 	/**
@@ -188,11 +187,6 @@ public class Link extends Text {
 	 *
 	 */
 	public Link(PresentationObject mo, String url) {
-		/*_obj = mo;
-		setURL(url);
-		_obj.setParentObject(this);
-		_objectType = OBJECT_TYPE_MODULEOBJECT;
-		*/
 		this.setPresentationObject(mo);
 		this.setURL(url);
 	}
@@ -201,19 +195,9 @@ public class Link extends Text {
 	 *
 	 */
 	public Link(Text text, String url) {
-		//    text.setFontColor("");
 		this.text = text.getText();
 		this.setText(text);
-		//    _obj = (PresentationObject)text;
-		//    System.err.println("setUrl"+url);
 		setURL(url);
-		/*    System.err.println("getUrl"+this.getURL());
-		    if(this._parameterString != null){
-		      System.err.println("prm"+this._parameterString.toString());
-		    } else{
-		      System.err.println("noParameters");
-		    }
-		    */
 		this._obj.setParentObject(this);
 		this._objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
@@ -222,27 +206,18 @@ public class Link extends Text {
 	 * Construct a link to a file
 	 */
 	public Link(int icFileId) {
-	
 		this("File");
 		String uri;
-		try
-		{
+		try	{
 			uri = this.getICFileSystem(IWContext.getInstance()).getFileURI(icFileId);
 			setURL(uri);
-		}
-		catch (RemoteException e)
-		{
-			// TODO Auto-generated catch block
+		} catch (RemoteException e)	{
+			e.printStackTrace();
+		} catch (UnavailableIWContext e) {
 			e.printStackTrace();
 		}
-		catch (UnavailableIWContext e)
-		{
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
-		
-		//this(new Text("File"),com.idega.idegaweb.IWMainApplication.MEDIA_SERVLET_URL+"?file_id="+file_id);
 	}
+	
 	/**
 	 * Construct a link to a file with text
 	 */
@@ -261,82 +236,42 @@ public class Link extends Text {
 		this._objectType = OBJECT_TYPE_MODULEOBJECT;
 	}
 
-
-
-	/**
-	 *
-	 */
-	public Link(PresentationObject mo, Class classToInstanciate) {
-		//this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+	public Link(PresentationObject mo, Class<? extends UIComponent> classToInstanciate) {
 		this.setPresentationObject(mo);
 		setClassToInstanciate(classToInstanciate);
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
-
 	}
 
-	/*
-	public Link(PresentationObject mo, Class classToInstanciate, Class templatePageClass) {
-		//this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templatePageClass));
-		this.setPresentationObject(mo);
-		this.setClassToInstanciate(classToInstanciate, templatePageClass);
-		//if(_parameterString == null){
-		//  _parameterString = new StringBuffer();
-		//}
-	}
-	*/
-
-	public Link(Class classToInstanciate) {
-		//this(Link.DEFAULT_TEXT_STRING,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+	public Link(Class<? extends UIComponent> classToInstanciate) {
 		this(Link.DEFAULT_TEXT_STRING);
 		this.setClassToInstanciate(classToInstanciate);
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
 	}
 
-	/**
-	 *
-	 */
+	@SuppressWarnings("unchecked")
 	public Link(PresentationObject mo, String classToInstanciate, String template) {
-		//this(mo,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
 		this.setPresentationObject(mo);
 		try {
 			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), template);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());
 		}
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
 	}
 
 	/**
 	 * Opens a new object of type classToInstanciate (has to be a PresentationObject)
 	 * in the same window.
 	 */
-	public Link(String displayText, Class classToInstanciate) {
-		//this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+	public Link(String displayText, Class<? extends UIComponent> classToInstanciate) {
 		this.setText(displayText);
 		this.setClassToInstanciate(classToInstanciate);
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
 	}
 
 	/**
 	 * Opens a new object of type classToInstanciate (has to be a PresentationObject)
 	 * in the window of target specified by "target"
 	 */
-	public Link(String displayText, Class classToInstanciate, String target) {
-		//this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate));
+	public Link(String displayText, Class<? extends UIComponent> classToInstanciate, String target) {
 		this.setText(displayText);
 		this.setClassToInstanciate(classToInstanciate);
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
 		setTarget(target);
 	}
 
@@ -344,18 +279,14 @@ public class Link extends Text {
 	 * Opens a new object of type classToInstanciate (has to be a PresentationObject)
 	 * in the same window with the template of name templateName
 	 */
+	@SuppressWarnings("unchecked")
 	public Link(String displayText, String classToInstanciate, String templateName) {
-		//this(displayText,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,templateName));
 		this.setText(displayText);
 		try {
 			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), templateName);
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());
 		}
-		/*if(_parameterString == null){
-		  _parameterString = new StringBuffer();
-		}*/
 	}
 
 	/**
@@ -363,8 +294,6 @@ public class Link extends Text {
 	 */
 	public void setWindow(Window window) {
 		this._myWindow = window;
-		//_objectType = OBJECT_TYPE_WINDOW;
-		//_myWindow.setParentObject(this);
 		if (this._obj == null) {
 			setText(this._myWindow.getName());
 		}
@@ -430,7 +359,6 @@ public class Link extends Text {
 			setLocale(iwc.getCurrentLocale());
 		}
 
-		//if (_objectType==(OBJECT_TYPE_WINDOW)) {
 		if (this._myWindow != null) {
 			String windowOpenerURI = iwc.getIWMainApplication().getWindowOpenerURI();
 			if (this._myWindow.getURL(iwc).indexOf(windowOpenerURI) != -1) {
@@ -438,7 +366,6 @@ public class Link extends Text {
 				addParameter(_sessionStorageName, sessionParameterName);
 			}
 		}
-		//}
 
 		if (this._obj != null) {
 			if (this._obj instanceof Image) {
@@ -449,7 +376,6 @@ public class Link extends Text {
 					((Image) this._obj).setOverImage(new Image(this._onMouseOverImageId));
 				}
 				
-				//add localizedcrap
 				if (this._onClickImage != null) {
 					((Image) this._obj).setOnClickImage(this._onClickImage);
 				}
@@ -616,13 +542,7 @@ public class Link extends Text {
 						token.nextToken();
 						if (prmName.equals(st)) {
 							return true;
-							//System.out.println("token "+index+" : "+st+" / true");
-							//System.err.println("token "+index+" : "+st+" / true");
 						}
-						//else{
-						//System.out.println("token "+index+" : "+st+" / false");
-						//System.err.println("token "+index+" : "+st+" / false");
-						//}
 						index++;
 					}
 				}
@@ -631,21 +551,20 @@ public class Link extends Text {
 				return false;
 			}
 		}
-		return false; // false
+		return false;
 	}
 
-	public void setParameter(Map parameterMap) {
+	public void setParameter(Map<String, String> parameterMap) {
 		if (parameterMap != null) {
-			Iterator parameters = parameterMap.entrySet().iterator();
+			Iterator<Map.Entry<String, String>> parameters = parameterMap.entrySet().iterator();
 			while (parameters.hasNext()) {
-				Map.Entry entry = (Map.Entry) parameters.next();
-				String key = (String) entry.getKey();
-				String value = (String) entry.getValue();
+				Map.Entry<String, String> entry = parameters.next();
+				String key = entry.getKey();
+				String value = entry.getValue();
 				setParameter(key, value);
 			}
 		}
 	}
-	
 	
 	public void setParameter(String parameterName, String parameterValue) {
 		addParameter(parameterName, parameterValue);
@@ -744,7 +663,6 @@ public class Link extends Text {
 	 *
 	 */
 	public void maintainParameter(String parameterName, IWContext iwc) {
-		
 		if(parameterName == null)
 			return;
 		
@@ -756,7 +674,7 @@ public class Link extends Text {
 
 	public void setToMaintainParameter(String name, boolean maintain) {
 		if (this.maintainedParameters == null) {
-			this.maintainedParameters = new Vector();
+			this.maintainedParameters = new ArrayList<String>();
 		}
 		if (maintain) {
 			this.maintainedParameters.add(name);
@@ -772,9 +690,9 @@ public class Link extends Text {
 	 * for the link to maintain from the request
 	 * @param parameterNames
 	 */
-	public void setToMaintainParameters(java.util.Collection parameterNames){
+	public void setToMaintainParameters(Collection<String> parameterNames){
 		if (this.maintainedParameters == null) {
-			this.maintainedParameters = new Vector();
+			this.maintainedParameters = new ArrayList<String>();
 		}
 		this.maintainedParameters.addAll(parameterNames);
 	}
@@ -1144,18 +1062,16 @@ public class Link extends Text {
 		getOverImageLocalizationMap().put(ICLocaleBusiness.getLocaleFromLocaleString(localeString), new Integer(overImageID));
 	}
 
-	private Map getImageLocalizationMap() {
+	private Map<Locale, Object> getImageLocalizationMap() {
 		if (this._ImageLocalizationMap == null) {
-			this._ImageLocalizationMap = new HashMap();
+			this._ImageLocalizationMap = new HashMap<Locale, Object>();
 		}
 		return this._ImageLocalizationMap;
 	}
 	
-	
-	
-	private Map getOverImageLocalizationMap() {
+	private Map<Locale, Object> getOverImageLocalizationMap() {
 		if (this._overImageLocalizationMap == null) {
-			this._overImageLocalizationMap = new HashMap();
+			this._overImageLocalizationMap = new HashMap<Locale, Object>();
 		}
 		return this._overImageLocalizationMap;
 	}
@@ -1415,11 +1331,11 @@ public class Link extends Text {
 	 *
 	 */
 	private void addTheMaintainedParameters(IWContext iwc) {
-		List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
+		List<String> list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
 		if (list != null && !list.isEmpty()) {
-			Iterator iter = list.iterator();
+			Iterator<String> iter = list.iterator();
 			while (iter.hasNext()) {
-				String parameterName = (String) iter.next();
+				String parameterName = iter.next();
 				String parameterValue = iwc.getParameter(parameterName);
 				if (parameterValue != null) {
 					if (!this.isParameterSet(parameterName)) {
@@ -1434,15 +1350,12 @@ public class Link extends Text {
 	*
 	*/
 	private void addTheMaintainedBuilderParameters(IWContext iwc) {
-		List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
-		//System.out.println("--------------------------------------");
-		//System.out.println("builderPrm");
+		List<String> list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
 		if (list != null) {
-			Iterator iter = list.iterator();
+			Iterator<String> iter = list.iterator();
 			while (iter.hasNext()) {
-				String parameterName = (String) iter.next();
+				String parameterName = iter.next();
 				String parameterValue = iwc.getParameter(parameterName);
-				//System.out.print("parameterName = "+parameterName+" , parameterValue = "+parameterValue+" parameterSet = ");
 				if (parameterValue != null) {
 					if (!this.isParameterSet(parameterName)) {
 						//System.out.println("false");
@@ -1470,27 +1383,18 @@ public class Link extends Text {
 		this._maintainBuilderParameters = value;
 	}
 
-	//  public static String getIWLinkURL(IWContext iwc, String URL){
-	//    Link srcLink = new Link();
-	//    return srcLink.getParameterString(iwc, URL);
-	//  }
-
 	/**
 	 *
 	 */
 	protected String getParameterString(IWContext iwc, String URL) {
 		if (usingEventSystem) {
-			//if(!this.isParameterSet(BuilderLogic.PRM_HISTORY_ID)){
 			this.removeParameter(PRM_HISTORY_ID);
 			this.addParameter(PRM_HISTORY_ID, (String) iwc.getSessionAttribute(PRM_HISTORY_ID));
-			//this.addParameter(BuilderLogic.PRM_HISTORY_ID,"1000");
-			//}
 		}
 
 		if (this._maintainBuilderParameters) {
 			addTheMaintainedBuilderParameters(iwc);
-		}
-		else {
+		} else {
 			if (isLinkOpeningOnSamePage()) {
 				addTheMaintainedParameters(iwc);
 			}
@@ -1498,20 +1402,18 @@ public class Link extends Text {
 
 		if (this._maintainAllGlobalParameters) {
 			addTheMaintainedParameters(iwc);
-		}
-		else {
+		} else {
 			if (isLinkOpeningOnSamePage()) {
 				addTheMaintainedParameters(iwc);
 			}
 		}
-		List l = getIWPOListeners();
+		List<Object> l = getIWPOListeners();
 		if (l != null) {
 			int size = l.size();
-			//BuilderLogic logic = BuilderLogic.getInstance();
 			if (size > 1) {
 				int[] pages = new int[size];
 				int[] inst = new int[size];
-				ListIterator lIter = l.listIterator();
+				ListIterator<Object> lIter = l.listIterator();
 				while (lIter.hasNext()) {
 					int index = lIter.nextIndex();
 					Object lItem = lIter.next();
@@ -1690,9 +1592,9 @@ public class Link extends Text {
 	}
 	
 	private void maintainParameters(IWContext iwc) {
-		Iterator iter = this.maintainedParameters.iterator();
+		Iterator<String> iter = this.maintainedParameters.iterator();
 		while (iter.hasNext()) {
-			String name = (String) iter.next();
+			String name = iter.next();
 			String value = iwc.getParameter(name);
 			if (value != null) {
 				addParameter(name, value);
@@ -1701,10 +1603,10 @@ public class Link extends Text {
 	}
 	
 	private void maintainAllParameters(IWContext iwc) {
-		Enumeration pNames = iwc.getParameterNames();
+		Enumeration<String> pNames = iwc.getParameterNames();
 		if(pNames != null) {
 			while (pNames.hasMoreElements()) {
-				String pName = (String) pNames.nextElement();
+				String pName = pNames.nextElement();
 				if(!isParameterSet(pName)) {
 					String[] pValues = iwc.getParameterValues(pName);
 					if(pValues!=null) {
@@ -1722,13 +1624,12 @@ public class Link extends Text {
 	 */
 	@Override
 	public void print(IWContext iwc) throws Exception {
-
 		boolean addParameters = true;
 		String oldURL = getURL(iwc);
 
-		if(this._maintainAllParameters) {
+		if (this._maintainAllParameters) {
 			maintainAllParameters(iwc);
-		}else if (this.maintainedParameters != null) {
+		} else if (this.maintainedParameters != null) {
 			maintainParameters(iwc);
 		}
 
@@ -1742,16 +1643,14 @@ public class Link extends Text {
 		if (oldURL == null) {
 			oldURL = iwc.getRequestURI();
 			setFinalUrl(oldURL);
-		}
-		else if (oldURL.equals(com.idega.util.StringHandler.EMPTY_STRING)) {
+		} else if (oldURL.equals(com.idega.util.StringHandler.EMPTY_STRING)) {
 			oldURL = iwc.getRequestURI();
 			setFinalUrl(oldURL);
 		}
 
 		if (oldURL.equals(HASH)) {
 			addParameters = false;
-		}
-		else if (oldURL.startsWith(JAVASCRIPT)) {
+		} else if (oldURL.startsWith(JAVASCRIPT)) {
 			addParameters = false;
 		}
 
@@ -1766,46 +1665,36 @@ public class Link extends Text {
 
 			if (openInNewWindow) {
 				setFinalUrl(this.getWindowOpenerJavascriptString(iwc));
-			}
-			else if (!this.isOutgoing) {
+			} else if (!this.isOutgoing) {
 				//Should not happen when a new window is opened AND not if isOutgoing
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
-			} //end if (_objectType==(OBJECT_TYPE_WINDOW))
+			}
 
 			print("<a " + getMarkupAttributesString() + " >");
 			if (this.isText()) {
 				if (this.hasClass) {
-					/*if ( displayString != null ) {
-					print(displayString);
-					}
-					else {*/
 					if (this._obj != null) {
 						String text = ((Text) this._obj).getLocalizedText(iwc);
 						if (text != null) {
 							print(text);
 						}
 					}
-					/*}*/
-				}
-				else {
+				} else {
 					if (this._obj != null) {
 						renderChild(iwc,this._obj);
 					}
 				}
-			}
-			else if (this.isImage()) {
+			} else if (this.isImage()) {
 				Image image = this.getTheCorrectDefaultImage(iwc);
 				if (image != null) {
-					
 					if(this._overImageLocalizationMap!=null){
 						image.setOverImageLocalizationMap(getOverImageLocalizationMap());
 					}
 					renderChild(iwc,image);
 				}
-			}
-			else {
+			} else {
 				if (this._obj != null) {
 					renderChild(iwc,this._obj);
 				}
@@ -1815,21 +1704,17 @@ public class Link extends Text {
 			if (alignSet) {
 				print("</div>");
 			}
-		}
-		else if (getMarkupLanguage().equals("WML")) {
+		} else if (getMarkupLanguage().equals("WML")) {
 			if (this._myWindow != null) {
-				//if (_objectType.equals(OBJECT_TYPE_WINDOW)) {
 				setFinalUrl(this._myWindow.getURL(iwc) + getParameterString(iwc, oldURL)); // ????????????
 				setFinalUrl(HASH);
 				String url = getURL();
 				url = iwc.getResponse().encodeURL(url);
 				setFinalUrl(url);
-				//System.out.println("Url after setFinalUrl " + getURL());
 				print("<a " + getMarkupAttributesString() + " >");
 				print(this._myWindow.getName());
 				print("</a>");
-			}
-			else {
+			} else {
 				if (addParameters) {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));
 				}
@@ -1988,7 +1873,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
-	public void setEventListener(Class eventListenerClass) {
+	public void setEventListener(Class<?> eventListenerClass) {
 		String eventListenerEncryptedClassName = IWMainApplication.getEncryptedClassName(eventListenerClass.getName());
 		setEventListener(eventListenerEncryptedClassName);
 	}
@@ -2144,7 +2029,7 @@ public void setWindowToOpen(String className) {
 
 	public void addIWPOListener(PresentationObject obj) {
 		if (this.listenerInstances == null) {
-			this.listenerInstances = new Vector();
+			this.listenerInstances = new ArrayList<Object>();
 		}
 		if (!this.listenerInstances.contains(obj)) {
 			this.listenerInstances.add(obj);
@@ -2153,7 +2038,7 @@ public void setWindowToOpen(String className) {
 
 	public void addIWPOListener(String page_instID) {
 		if (this.listenerInstances == null) {
-			this.listenerInstances = new Vector();
+			this.listenerInstances = new ArrayList<Object>();
 		}
 		if (page_instID != null) {
 			StringTokenizer token = new StringTokenizer(page_instID, ",", false);
@@ -2166,7 +2051,7 @@ public void setWindowToOpen(String className) {
 		}
 	}
 
-	public List getIWPOListeners() {
+	public List<Object> getIWPOListeners() {
 		return this.listenerInstances;
 	}
 
@@ -2278,17 +2163,11 @@ public void setWindowToOpen(String className) {
 	 * 
 	 * @uml.property name="classToInstanciate"
 	 */
-	public void setClassToInstanciate(Class presentationObjectClass) {
+	public void setClassToInstanciate(Class<? extends UIComponent> presentationObjectClass) {
 		this.classToInstanciate = presentationObjectClass;
 	}
 
-	/*
-	public void setClassToInstanciate(Class presentationObjectClass, Class pageTemplateClass) {
-		setClassToInstanciate(presentationObjectClass);
-		this.templatePageClass = pageTemplateClass;
-	}*/
-
-	public void setClassToInstanciate(Class presentationObjectClass, String template) {
+	public void setClassToInstanciate(Class<? extends UIComponent> presentationObjectClass, String template) {
 		setClassToInstanciate(presentationObjectClass);
 		this.templateForObjectInstanciation = template;
 	}
@@ -2299,18 +2178,13 @@ public void setWindowToOpen(String className) {
 
 	private void setURIToClassToInstanciate(IWContext iwc) {
 		if (this.classToInstanciate != null) {
-			//if (this.templatePageClass != null) {
-			//	this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(classToInstanciate, templatePageClass));
-			//}
-			//else
 			if (this.templateForObjectInstanciation != null) {
 				if (this.usePublicOjbectInstanciator) {
 					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(this.classToInstanciate, this.templateForObjectInstanciation));
 				} else {
 					this.setURL(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate, this.templateForObjectInstanciation));
 				}
-			}
-			else {
+			} else {
 				if (this.usePublicOjbectInstanciator) {
 					this.setURL(iwc.getIWMainApplication().getPublicObjectInstanciatorURI(this.classToInstanciate));
 				} else {
@@ -2322,17 +2196,12 @@ public void setWindowToOpen(String className) {
 
 	private void setURIToWindowOpenerClass(IWContext iwc) {
 		if (this._windowClass != null) {
-
-			//setURL(iwc.getApplication().getWindowOpenerURI());
-			//addParameter(Page.IW_FRAME_CLASS_PARAMETER,_windowClass);
-			
 			if (this.usePublicWindow) {
 				if (this.icObjectInstanceIDForWindow <= 0) {
 					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(this._windowClass));
 				}
 				else {
 					setURL(iwc.getIWMainApplication().getPublicWindowOpenerURI(this._windowClass, this.icObjectInstanceIDForWindow));
-					//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
 				}
 			} else {
 				if (this.icObjectInstanceIDForWindow <= 0) {
@@ -2340,24 +2209,21 @@ public void setWindowToOpen(String className) {
 				}
 				else {
 					setURL(iwc.getIWMainApplication().getWindowOpenerURI(this._windowClass, this.icObjectInstanceIDForWindow));
-					//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,icObjectInstanceIDForWindow);
 				}
 			}
 		}
 	}
 
 	public void addEventModel(IWPresentationEvent model) {
-		Iterator iter = model.getParameters();
-		while (iter.hasNext()) {
-			Parameter prm = (Parameter) iter.next();
+		for (Iterator<Parameter> iter = model.getParameters(); iter.hasNext();) {
+			Parameter prm = iter.next();
 			this.addParameter(prm);
 		}
   }
 
   public void addEventModel(IWPresentationEvent model, IWContext iwc) {
-    Iterator iter = model.getParameters();
-    while (iter.hasNext()) {
-      Parameter prm = (Parameter) iter.next();
+    for (Iterator<Parameter> iter = model.getParameters(); iter.hasNext();) {
+      Parameter prm = iter.next();
       this.addParameter(prm);
     }
     setTarget(model.getEventTarget());
@@ -2404,9 +2270,9 @@ public void setWindowToOpen(String className) {
 		}
 	}
 	
-	private Map getToolTipLocalizationMap() {
+	private Map<Locale, String> getToolTipLocalizationMap() {
 		if (this._toolTipLocalizationMap == null) {
-			this._toolTipLocalizationMap = new HashMap();
+			this._toolTipLocalizationMap = new HashMap<Locale, String>();
 		}
 		return this._toolTipLocalizationMap;
 	}
@@ -2569,9 +2435,9 @@ public void setWindowToOpen(String className) {
 			e.printStackTrace();
 		}		
 		usePublicWindow = ((Boolean) values[31]).booleanValue();
-		classToInstanciate = (Class) values[32];
+		classToInstanciate = (Class<? extends UIComponent>) values[32];
 		templateForObjectInstanciation = (String) values[33];
-		listenerInstances = (List) values[34];
+		listenerInstances = (List<Object>) values[34];
 		maintainedParameters = (List) values[35];
 		https = ((Boolean) values[36]).booleanValue();
 		protocol = (String) values[37];
@@ -2652,5 +2518,18 @@ public void setWindowToOpen(String className) {
 		values[45] = charEncoding;
 		values[46] = Boolean.valueOf(forceToReplaceAfterEncoding);
 		return values;
+	}
+	
+	@Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+		Collection<UIComponent> children = this.getChildren();
+    	for(UIComponent child : children) {
+    		if (child instanceof UIParameter) {
+    			UIParameter param = (UIParameter) child;
+				addParameter(param.getName(), String.valueOf(param.getValue()));
+			}
+    	}
+    	
+    	super.encodeBegin(context);
 	}
 }
