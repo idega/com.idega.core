@@ -930,6 +930,7 @@ public static String getFileSeparator(){
 
           //	Adding new entry
           long itemSize = item.getLength();
+          itemSize = itemSize < 0 ? 0 : itemSize > 0xFFFFFFFFL ? Long.MAX_VALUE : itemSize;
           bis = new BufferedInputStream(new ByteArrayInputStream(contents));
           ZipEntry entry = new ZipEntry(item.getName());
           entry.setMethod(ZipEntry.STORED);
