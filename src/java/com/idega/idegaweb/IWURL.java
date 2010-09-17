@@ -9,13 +9,14 @@ package com.idega.idegaweb;
  * @version 1.0
  */
 
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
-import java.util.Vector;
+
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -27,21 +28,21 @@ public class IWURL {
   private static final String equalsMark = "=";
   private static final String ampersand = "&";
   private String baseURL;
-  private static List globalMaintainedParameters;
-  private static List globalMaintainedBuilderParameters;
+  private static List<String> globalMaintainedParameters;
+  private static List<String> globalMaintainedBuilderParameters;
 
   static{
-    globalMaintainedParameters = new Vector();
+    globalMaintainedParameters = new ArrayList<String>();
     globalMaintainedParameters.add(Page.IW_FRAME_STORAGE_PARMETER);
     globalMaintainedParameters.add(Page.IW_FRAME_CLASS_PARAMETER);
     globalMaintainedParameters.add(IWMainApplication.classToInstanciateParameter);
     globalMaintainedParameters.add(IWConstants.PARAM_NAME_OUTPUT_MARKUP_LANGUAGE);
 
-    globalMaintainedBuilderParameters = new Vector();
+    globalMaintainedBuilderParameters = new ArrayList<String>();
     globalMaintainedBuilderParameters.add(ICBuilderConstants.IB_PAGE_PARAMETER);
   }
 
-  private Map parametersMap;
+  private Map<String, String> parametersMap;
 
   public IWURL(String baseURL){
     setBaseURL(baseURL);
@@ -90,12 +91,12 @@ public class IWURL {
     return new IWURL(baseURL);
   }
 
-  public void addPageClassParameter(Class pageClass){
+  public void addPageClassParameter(Class<?> pageClass){
     addParameter(Page.IW_FRAME_CLASS_PARAMETER,IWMainApplication.getEncryptedClassName(pageClass));
   }
 
   public void addParameter(String parameterName,String parameterValue){
-  	String value = (String) getParametersMap().get(parameterName);
+  	String value = getParametersMap().get(parameterName);
   	//multivalue handling
   	if(value!=null){
   		
@@ -128,9 +129,9 @@ public class IWURL {
     }
   }
 
-  private Map getParametersMap(){
+  private Map<String, String> getParametersMap(){
     if(this.parametersMap == null){
-      this.parametersMap = new TreeMap();
+      this.parametersMap = new TreeMap<String, String>();
     }
     return this.parametersMap;
   }
@@ -139,37 +140,21 @@ public class IWURL {
     return null;
   }
 
-  /*public static IWURL getWindowOpenerURL(Class windowClass){
-    IWURL url = getURL(IWMainApplication.windowOpenerURL);
-    url.addParameter("","");
-    return url;
-  }*/
-
-  /*public static IWURL getBuilderURL(int pageID){
-    return getBuilderURL(Integer.toString(pageID));
-  }*/
-
-  /*public static IWURL getBuilderURL(String pageKey){
-    IWURL url = getURL(IWMainApplication.BUILDER_SERVLET_URL);
-    url.addParameter("","");
-    return url;
-  }*/
-
   /**
    * Returns the BaseURL + all parameters
    */
   public String getFullURL(){
     if(hasParameters()){
       String theReturn = this.baseURL+questionMark;
-      Map map = getParametersMap();
-      Set keySet = map.keySet();
+      Map<String, String> map = getParametersMap();
+      Set<String> keySet = map.keySet();
       int last = keySet.size();
       int counter = 0;
-      Iterator iter = keySet.iterator();
+      Iterator<String> iter = keySet.iterator();
       while (iter.hasNext()) {
       	counter++;
-        String key = (String)iter.next();
-        String value = (String)map.get(key);
+        String key = iter.next();
+        String value = map.get(key);
         if(counter<last){
         		theReturn += key+equalsMark+value+ampersand;
         }
@@ -191,17 +176,18 @@ public class IWURL {
   /**
    * Returns the BaseURL + all parameters
    */
-  public String toString(){
+  @Override
+public String toString(){
     return getFullURL();
   }
 
   public static void removeGloballyMaintainedParameter(String parameterName){
-    List l = globalMaintainedParameters;
+    List<String> l = globalMaintainedParameters;
     l.remove(parameterName);
   }
 
   public static void addGloballyMaintainedParameter(String parameterName){
-    List l = globalMaintainedParameters;
+    List<String> l = globalMaintainedParameters;
     if(l!=null){
       if(!l.contains(parameterName)){
         l.add(parameterName);
@@ -209,12 +195,12 @@ public class IWURL {
     }
   }
 
-  public static List getGloballyMaintainedParameters(IWContext iwc){
+  public static List<String> getGloballyMaintainedParameters(IWContext iwc){
     return globalMaintainedParameters;
   }
 
   public static void addGloballyMaintainedBuilderParameter(String parameterName){
-    List l = globalMaintainedBuilderParameters;
+    List<String> l = globalMaintainedBuilderParameters;
     if(l!=null){
       if(!l.contains(parameterName)){
         l.add(parameterName);
@@ -222,9 +208,8 @@ public class IWURL {
     }
   }
 
-  public static List getGloballyMaintainedBuilderParameters(IWContext iwc){
+  public static List<String> getGloballyMaintainedBuilderParameters(IWContext iwc){
     return globalMaintainedBuilderParameters;
   }
-
 
 }
