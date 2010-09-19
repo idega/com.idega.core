@@ -15,24 +15,19 @@ public class FileItem implements RepositoryItem {
 		this.file = file;
 	}
 	
-	@Override
 	public InputStream getInputStream() throws IOException {
 		return new FileInputStream(file);
 	}
 
-	@Override
 	public String getName() {
 		return file.getName();
 	}
 
-	@Override
 	public long getLength() {
 		return file.length();
 	}
 
-	@Override
 	public boolean delete() {
 		return file.delete();
 	}
-
 }
