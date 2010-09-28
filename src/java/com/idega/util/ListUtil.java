@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 
 public class ListUtil {
 
-  private static final ArrayList<Object> emptyVector = new EmptyList<Object>();
+  private static final ArrayList emptyVector = new EmptyList();
 
   private ListUtil() {
   }
@@ -31,7 +31,7 @@ public class ListUtil {
 
   @SuppressWarnings("unchecked")
 private static <T> ArrayList<T> getEmptyVector(){
-    return (ArrayList<T>) emptyVector;
+    return emptyVector;
   }
 
 /**
