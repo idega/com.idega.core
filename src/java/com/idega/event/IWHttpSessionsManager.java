@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -70,11 +71,15 @@ public class IWHttpSessionsManager {
 	
 	@SuppressWarnings("deprecation")
 	String removeUselessSessions() {
-		if (sessions.isEmpty()) {
+		if (sessions.isEmpty() || sessions.size() <= 0) {
 			return CoreConstants.EMPTY;
 		}
 		
-		List<String> keys = new ArrayList<String>(sessions.keySet());
+		Set<String> keysSet = sessions.keySet();
+		if (ListUtil.isEmpty(keysSet)) {
+			return CoreConstants.EMPTY;
+		}
+		List<String> keys = new ArrayList<String>(keysSet);
 		
 		List<String> sessionsToRemove = new ArrayList<String>();
 		long currentTime = System.currentTimeMillis();
