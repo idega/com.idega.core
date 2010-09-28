@@ -17,7 +17,7 @@ import java.util.StringTokenizer;
 
 public class ListUtil {
 
-  private static final ArrayList emptyVector = new EmptyList();
+  private static final ArrayList<Object> emptyVector = new EmptyList<Object>();
 
   private ListUtil() {
   }
@@ -25,34 +25,36 @@ public class ListUtil {
  * Gets an instance of a list that is empty.
  * @return An immutable unsynchronized List with no values
  **/
-  public static List getEmptyList(){
+  public static <T> ArrayList<T> getEmptyList(){
     return getEmptyVector();
   }
 
-  private static ArrayList getEmptyVector(){
-    return emptyVector;
+  @SuppressWarnings("unchecked")
+private static <T> ArrayList<T> getEmptyVector(){
+    return (ArrayList<T>) emptyVector;
   }
 
 /**
  * Converts an instance of List to an instance of Collection.
+ * @param <T>
  * @param coll An input Collection
  * @return The input value coll if it is an instance of List. Else it will construct a list with the same values and return it.
  **/
-  public static List convertCollectionToList(Collection coll){
+  public static <T> List<T> convertCollectionToList(Collection<T> coll){
     if(coll instanceof List){
-      return (List)coll;
+      return (List<T>)coll;
     }
     else{
-      List theReturn = new ArrayList(coll);
+      List<T> theReturn = new ArrayList<T>(coll);
       return theReturn;
     }
   }
 
-  public static List reverseList(List list){
-    List theReturn = new ArrayList();
+  public static <T> List<T> reverseList(List<T> list){
+    List<T> theReturn = new ArrayList<T>();
     int size = list.size();
     for (int i = size-1 ; i >= 0 ; i--) {
-      Object item = list.get(i);
+      T item = list.get(i);
       if(item!=null){
         theReturn.add(item);
       }
@@ -153,31 +155,31 @@ public class ListUtil {
 		return filtered;
 	}
 
-  protected static class EmptyList extends ArrayList{
+  protected static class EmptyList<T> extends ArrayList<T>{
+	private static final long serialVersionUID = 4998333443520433621L;
 
-
-    @Override
-	public boolean add(Object o){
+	@Override
+	public boolean add(T o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
     @Override
-	public void add(int index,Object o){
+	public void add(int index, T o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
     @Override
-	public boolean addAll(Collection o){
+	public boolean addAll(@SuppressWarnings("rawtypes") Collection o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
     @Override
-	public boolean addAll(int index, Collection o){
+	public boolean addAll(int index, @SuppressWarnings("rawtypes") Collection o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
     @Override
-	public Object set(int index,Object o){
+	public T set(int index, T o){
       throw new RuntimeException("This empty list is final and cannot be modified");
     }
 
