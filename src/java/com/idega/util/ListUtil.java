@@ -137,7 +137,7 @@ private static <T> ArrayList<T> getEmptyVector(){
 	}
 	
 	public static final boolean isEmpty(Collection<?> collection) {
-		if (collection == null || collection.isEmpty()) {
+		if (collection == null || collection.isEmpty() || collection.size() <= 0) {
 			return true;
 		}
 		
