@@ -313,6 +313,9 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		query.addOrder(idoQueryTable(),getContextValueColumnName(),true);
 		
 		//return super.idoFindPKsByQuery(sql);
+		
+		System.out.println("query = " + query.toString());
+		
 		return super.idoFindPKsByQueryUsingLoadBalance(query, 10000);
 	}
 	
