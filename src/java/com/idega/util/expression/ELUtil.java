@@ -9,12 +9,16 @@ import java.util.logging.Logger;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
+
+import bsh.Interpreter;
 
 import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
@@ -26,14 +30,20 @@ import com.idega.util.CoreConstants;
  * Last modified: $Date: 2009/05/15 07:22:30 $ by $Author: valdas $
  *
  */
-@Scope("singleton")
-@Service
-public class ELUtil implements ApplicationContextAware {
 
+@Service
+@Scope(BeanDefinition.SCOPE_SINGLETON)
+public class ELUtil implements ApplicationContextAware {
+	
 	private ApplicationContext applicationcontext;
+	
 	private static ELUtil me;
-	public static final String EXPRESSION_BEGIN	=	"#{";
-	public static final String EXPRESSION_END	=	"}";
+	private static Logger LOGGER = Logger.getLogger(ELUtil.class.getName());
+	
+	public static final String	EXPRESSION_BEGIN	=	"#{",
+								EXPRESSION_END	=	"}";
+	
+	private Interpreter interpreter;
 	
 	public static ELUtil getInstance() {
 		return me;
@@ -45,23 +55,18 @@ public class ELUtil implements ApplicationContextAware {
 			ELUtil.me = this;
 		}
 		else {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Tried to repeatedly create singleton instance");
+			LOGGER.warning("Tried to repeatedly create singleton instance");
 		}
 	}
 	
 	public <T>T getBean(String expression) {
-
-		if(expression.contains(CoreConstants.DOT)) {
-			
+		if (expression.contains(CoreConstants.DOT)) {
 			FacesContext fctx = FacesContext.getCurrentInstance();
-			
-			if(fctx != null) {
-			
-				if(!expression.startsWith(EXPRESSION_BEGIN)) {
+			if (fctx != null) {
+				if (!expression.startsWith(EXPRESSION_BEGIN)) {
 					expression = EXPRESSION_BEGIN + expression;
 				}
-				
-				if(!expression.endsWith(EXPRESSION_END)) {
+				if (!expression.endsWith(EXPRESSION_END)) {
 					expression += EXPRESSION_END;
 				}
 				
@@ -70,32 +75,29 @@ public class ELUtil implements ApplicationContextAware {
 				@SuppressWarnings("unchecked")
 				T bean = (T) ve.getValue(fctx.getELContext());
 				return bean;
-				
 			} else 
 				throw new UnsupportedOperationException("Method binding without faces context not supported yet");
 		}
-			
+		
 		expression = cleanupExp(expression);
 
 		ApplicationContext ac = getApplicationContext();
 		@SuppressWarnings("unchecked")
-		T val = (T)ac.getBean(expression);
+		T val = (T) ac.getBean(expression);
 		return val;
 	}
 	
 	public void autowire(Object obj) {
 		ApplicationContext ac = getApplicationContext();
 		ac.getAutowireCapableBeanFactory().autowireBean(obj);
-		//ac.getAutowireCapableBeanFactory().autowireBeanProperties(obj, AutowireCapableBeanFactory.AUTOWIRE_AUTODETECT, false);
 	}
 	
 	public static String cleanupExp(String exp) {
-		
-		if(exp.startsWith(EXPRESSION_BEGIN)) {
+		if (exp.startsWith(EXPRESSION_BEGIN)) {
 			exp = exp.substring(EXPRESSION_BEGIN.length());
 		}
 		
-		if(exp.endsWith(EXPRESSION_END)) {
+		if (exp.endsWith(EXPRESSION_END)) {
 			exp = exp.substring(0, exp.length()-EXPRESSION_END.length());
 		}
 		
@@ -103,17 +105,14 @@ public class ELUtil implements ApplicationContextAware {
 	}
 	
 	public ApplicationContext getApplicationContext() {
-		
 		return applicationcontext;
 	}
 	
-	public void setApplicationContext(ApplicationContext applicationcontext)
-			throws BeansException {
+	public void setApplicationContext(ApplicationContext applicationcontext) throws BeansException {
 		this.applicationcontext = applicationcontext;
 	}
 	
 	public void publishEvent(ApplicationEvent event) {
-		
 		ApplicationContext ac = getApplicationContext();
 		ac.publishEvent(event);
 	}
@@ -144,8 +143,7 @@ public class ELUtil implements ApplicationContextAware {
 		String methodName = getMethodName(exp);
 		List<String> argsList = getArgs(exp);
 		
-		@SuppressWarnings("unchecked")
-		Class[] classParams = new Class[argsList.size()];
+		Class<?>[] classParams = new Class[argsList.size()];
 		
 		Object[] strParams = new String[argsList.size()];
 		for(int i = 0;i<argsList.size();i++){
@@ -154,7 +152,6 @@ public class ELUtil implements ApplicationContextAware {
 			
 		}
 	
-		
 		Object obj = ELUtil.getInstance().getBean(beanName);
 		Object returnedObj = null;
 		try {
@@ -163,10 +160,43 @@ public class ELUtil implements ApplicationContextAware {
 		} catch (Exception e) {
 			throw new Exception("Exeption accured while trying to invoke method " + methodName, e);
 		} 
+
+		returnedObj = getPostConditionValue(exp, returnedObj, "==");
+		returnedObj = getPostConditionValue(exp, returnedObj, "!=");
 		
 		return returnedObj;
+	}
+	
+	private Object getPostConditionValue(String exp, Object returnedObj, String condition) {
+		if (exp == null || returnedObj == null) {
+			return returnedObj;
+		}
 		
+		int conditionIndex = exp.indexOf(condition);
+		if (conditionIndex == -1) {
+			return returnedObj;
+		}
 		
+		String conditionParameter = exp.substring(conditionIndex + condition.length());
+		conditionParameter = cleanupExp(conditionParameter);
+		
+		String expression = null;
+		if (returnedObj instanceof Boolean || returnedObj instanceof Number) {
+			expression = String.valueOf(returnedObj).concat(condition).concat(conditionParameter);
+		}	//	More expressions can be added here
+		
+		if (expression == null) {
+			return returnedObj;
+		}
+		
+		try {
+			returnedObj = getInterpreter().eval(expression);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error evaluating expression: " + expression, e);
+			return returnedObj;
+		}
+		
+		return returnedObj;
 	}
 	
 	private String getBeanName(String exp){
@@ -200,5 +230,12 @@ public class ELUtil implements ApplicationContextAware {
 		}
 		
 		return returnArray;
+	}
+	
+	private Interpreter getInterpreter() {
+		if (interpreter == null) {
+			interpreter = new Interpreter();
+		}
+		return interpreter;
 	}
 }

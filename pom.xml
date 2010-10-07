@@ -154,7 +154,6 @@
       <version>${commons-fileupload-commons-fileupload-version}</version>
       <type>jar</type>
     </dependency>
-    
     <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
     <dependency>
       <groupId>commons-collections</groupId>
@@ -222,27 +221,14 @@
       <version>1.0-FCS</version>
       <type>jar</type>
     </dependency>
-    
     <dependency>
     <!-- this dependency is here, because of maven exclusion mechanism not working correctly (civilis) -->
         <groupId>org.hibernate</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
     </dependency>
- 
-    <!-- dependencies that excluded from other jars, and need to be added explicitlyvc -->
-    <!--  
     <dependency>
-      <groupId>xml-apis</groupId>
-      <artifactId>xml-apis</artifactId>
-      <version>${xml-apis-xml-apis-version}</version>
-      <type>jar</type>
+    	<groupId>org.beanshell</groupId>
+    	<artifactId>bsh</artifactId>
     </dependency>
-    <dependency>
-      <groupId>xerces</groupId>
-      <artifactId>xercesImpl</artifactId>
-      <version>${xerces-xercesImpl-version}</version>
-      <type>jar</type>
-    </dependency>
-    -->
   </dependencies>
 </project>
