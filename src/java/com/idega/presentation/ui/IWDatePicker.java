@@ -9,7 +9,9 @@ import java.util.Locale;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
-import com.idega.block.web2.business.Web2Business;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.block.web2.business.JQuery;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -27,6 +29,9 @@ import com.idega.util.expression.ELUtil;
  */
 public class IWDatePicker extends TextInput {
 
+	@Autowired
+	private JQuery jQuery;
+	
 	private Date date = null;
 	private Date dateTo = null;
 
@@ -173,75 +178,53 @@ public class IWDatePicker extends TextInput {
 			}
 		}
 		if (iwDate != null) {
-			StringBuilder value = new StringBuilder(iwDate.getLocaleDate(
-					locale, IWTimestamp.SHORT));
+			StringBuilder value = new StringBuilder(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
 
 			if (isDateRange()) {
-				iwDateTo = dateTo == null ? new IWTimestamp(System
-						.currentTimeMillis()) : new IWTimestamp(dateTo);
-				value.append(dateRangeSeparator).append(
-						iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+				iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
+				value.append(dateRangeSeparator).append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
 			}
 
 			setValue(value.toString());
 		}
 
-		boolean canUseLocalizedText = language != null
-				&& !CoreConstants.EMPTY.equals(language)
-				&& !Locale.ENGLISH.getLanguage().equals(language);
-		StringBuffer initAction = new StringBuffer("jQuery('#").append(
-				this.getId()).append("').datepicker({");
+		boolean canUseLocalizedText = language != null && !CoreConstants.EMPTY.equals(language) && !Locale.ENGLISH.getLanguage().equals(language);
+		StringBuffer initAction = new StringBuffer("jQuery('#").append(this.getId()).append("').datepicker({");
 		// Is date range?
-		initAction.append("rangeSelect: ").append(isDateRange()).append(
-				", rangeSeparator: '").append(dateRangeSeparator).append("', ");
+		initAction.append("rangeSelect: ").append(isDateRange()).append(", rangeSeparator: '").append(dateRangeSeparator).append("', ");
 
 		// Default date
-		initAction.append("defaultDate: ").append(
-				iwDate == null ? "null" : new StringBuilder("new Date(")
-						.append(iwDate.getYear()).append(", ").append(
-								iwDate.getMonth() - 1).append(", ").append(
-								iwDate.getDay()).append(")").toString());
+		initAction.append("defaultDate: ").append(iwDate == null ? "null" : new StringBuilder("new Date(").append(iwDate.getYear()).append(", ")
+				.append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay()).append(")").toString());
 
 		// Show month/year select
-		initAction.append(", changeMonth: ").append(isChangeMonth()).append(
-				", changeYear: ").append(isChangeYear());
+		initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear());
 
 		// Max date
 		if (getMaxDate() != null) {
 			IWTimestamp maxDate = new IWTimestamp(getMaxDate());
-			initAction.append(", maxDate: ").append(
-					new StringBuilder("new Date(")
-							.append(maxDate.getYear()).append(", ").append(
-									maxDate.getMonth() - 1).append(", ").append(
-									maxDate.getDay()).append(")").toString());
+			initAction.append(", maxDate: ").append(new StringBuilder("new Date(").append(maxDate.getYear()).append(", ").append(maxDate.getMonth() - 1).append(", ")
+					.append(maxDate.getDay()).append(")").toString());
 		}
 		
 		// Min date
 		if (getMinDate() != null) {
 			IWTimestamp maxDate = new IWTimestamp(getMinDate());
-			initAction.append(", minDate: ").append(
-					new StringBuilder("new Date(")
-							.append(maxDate.getYear()).append(", ").append(
-									maxDate.getMonth() - 1).append(", ").append(
-									maxDate.getDay()).append(")").toString());
+			initAction.append(", minDate: ").append(new StringBuilder("new Date(").append(maxDate.getYear()).append(", ").append(maxDate.getMonth() - 1).append(", ")
+					.append(maxDate.getDay()).append(")").toString());
 		}
 		
 		// Calendar image
 		if (isShowCalendarImage()) {
-			initAction.append(", showOn: 'button', buttonImage: '").append(
-					getBundle(iwc).getVirtualPathWithFileNameString(
-							"calendar.gif")).append("', buttonImageOnly: true");
+			initAction.append(", showOn: 'button', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif")).append("', buttonImageOnly: true");
 		}
 
 		// onSelect action
 		if (onSelectAction != null) {
-			initAction.append(", onSelect: function() {")
-					.append(onSelectAction).append("}");
+			initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
 		}
 
-		initAction.append(", buttonText: '").append(
-				getResourceBundle(iwc).getLocalizedString("select_date",
-						"Select date")).append("'");
+		initAction.append(", buttonText: '").append(getResourceBundle(iwc).getLocalizedString("select_date", "Select date")).append("'");
 
 		// Localization
 		if (canUseLocalizedText) {
@@ -252,8 +235,7 @@ public class IWDatePicker extends TextInput {
 
 		// Initialization action
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
-			initAction = new StringBuffer("jQuery(window).load(function() {")
-					.append(initAction.toString()).append("});");
+			initAction = new StringBuffer("jQuery(window).load(function() {").append(initAction.toString()).append("});");
 		}
 		PresentationUtil.addJavaScriptActionToBody(iwc, initAction.toString());
 
@@ -264,28 +246,18 @@ public class IWDatePicker extends TextInput {
 	private void addRequiredLibraries(IWContext iwc, String language) {
 		List<String> scripts = new ArrayList<String>();
 
-		Web2Business web2 = ELUtil.getInstance().getBean(
-				Web2Business.SPRING_BEAN_IDENTIFIER);
-		scripts.add(web2.getBundleURIToJQueryLib());
-		scripts.add(web2
-				.getBundleURIToJQueryUILib("1.6rc5", "ui.datepicker.js"));
+		JQuery jQuery = getJQuery();
+		scripts.add(jQuery.getBundleURIToJQueryLib());
+		scripts.add(jQuery.getBundleURIToJQueryUILib("1.6rc5", "ui.datepicker.js"));
 
 		if (language != null) {
-			scripts.add(web2.getBundleURIToJQueryUILib(
-					"1.6rc5/datepicker/i18n", "ui.datepicker-" + language
-							+ ".js"));
+			scripts.add(jQuery.getBundleURIToJQueryUILib("1.6rc5/datepicker/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 
-		PresentationUtil
-				.addStyleSheetToHeader(iwc, web2.getBundleURIToJQueryUILib(
-						"1.6rc5/themes/base", "ui.core.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc,
-				web2.getBundleURIToJQueryUILib("1.6rc5/themes/base",
-						"ui.theme.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, web2
-				.getBundleURIToJQueryUILib("1.6rc5/themes/base",
-						"ui.datepicker.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.core.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.theme.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.datepicker.css"));
 	}
 
 	@Override
@@ -388,5 +360,11 @@ public class IWDatePicker extends TextInput {
 	public void setMinDate(Date minDate) {
 		this.minDate = minDate;
 	}
-
+	
+	JQuery getJQuery() {
+		if (jQuery == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return jQuery;
+	}
 }
