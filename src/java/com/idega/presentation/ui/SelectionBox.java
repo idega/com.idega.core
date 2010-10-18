@@ -284,7 +284,7 @@ public class SelectionBox extends InterfaceObject
 			Script script = this.getParentPage().getAssociatedScript();
 			script.addFunction(
 				"selectAllInSelectionBox",
-				"function selectAllInSelectionBox(input){\n  for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n}");
+				"function selectAllInSelectionBox(input){for( i=0;i<input.length; i++ ) {\n	input[i].selected=1;\n    }\n}");
 			this.getParentForm().setOnSubmit("selectAllInSelectionBox(this." + this.getName() + ")");
 		}
 		if (this.selectAllOnSubmitIfNoneSelected)

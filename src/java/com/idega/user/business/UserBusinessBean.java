@@ -2347,6 +2347,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Iterator iterator = allPermissions.iterator();
 		while (iterator.hasNext()) {
 			ICPermission perm = (ICPermission) iterator.next();
+			if (perm.getPermissionValue()) {
 			try {
 				String groupId = perm.getContextValue();
 				//				Group group =
@@ -2357,6 +2358,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			catch (NumberFormatException e1) {
 				e1.printStackTrace();
+			}
 			}
 			//			catch (FinderException e1) {
 			//				System.out.println("UserBusiness: In
@@ -2420,6 +2422,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Iterator iterator = allPermissions.iterator();
 		while (iterator.hasNext()) {
 			ICPermission perm = (ICPermission) iterator.next();
+			if (perm.getPermissionValue()) {
 			try {
 				String groupId = perm.getContextValue();
 				//				Group group =
@@ -2430,6 +2433,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			catch (NumberFormatException e1) {
 				e1.printStackTrace();
+			}
 			}
 			//			catch (FinderException e1) {
 			//				System.out.println("UserBusiness: In
@@ -3643,10 +3647,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 			if (o instanceof ICPermission) {
 				permission = (ICPermission) o;
-
-				id = permission.getContextValue();
-				if (!ids.contains(id)) {
-					ids.add(id);
+				if (permission.getPermissionValue()) {
+					id = permission.getContextValue();
+					if (!ids.contains(id)) {
+						ids.add(id);
+					}
 				}
 			}
 		}
