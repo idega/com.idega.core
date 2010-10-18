@@ -1706,7 +1706,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public String getMetaInformation(String markup, String characterEncoding) {
 		boolean addIdegaAuthorAndCopyRight = false;
-		String theReturn = "<meta http-equiv=\"content-type\" content=\"text/html; charset=" + characterEncoding + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb " + IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
+		String theReturn = "<meta http-equiv=\"Content-Type\" content=\"text/html;charset=" + characterEncoding.toLowerCase() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n<meta name=\"generator\" content=\"idegaWeb " + IWContext.getInstance().getIWMainApplication().getProductInfo().getVersion() + "\" " + (!markup.equals(HTML) ? "/" : "") + ">\n";
 		// If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 		if (notUseProxyCaching) {
