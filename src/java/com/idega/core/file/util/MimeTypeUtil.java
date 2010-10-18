@@ -5,6 +5,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.Properties;
+
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
@@ -44,7 +45,8 @@ public static final String MIME_TYPE_WORD = "application/msword";
 public static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 public static final String MIME_TYPE_POWERPOINT = "application/vnd.ms-powerpoint";
 public static final String MIME_TYPE_PDF_2 = "application/x-pdf";
-public static final String MIME_TYPE_PDF_1 = "application/pdf";
+public static final String MIME_TYPE_PDF_1 = "application/pdf",
+							HTML_TYPE = "text/html";
 
 	private String pathToConfigFile;
 	private Properties properties;
@@ -169,7 +171,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf";
 			};
 	
 	private String[] document = {
-			"text/html",
+			HTML_TYPE,
 			"text/plain",
 			"text/xml",
 			"text/richtext",
