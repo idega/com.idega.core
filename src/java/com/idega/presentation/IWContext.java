@@ -11,7 +11,6 @@ package com.idega.presentation;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
 import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Collection;
@@ -22,10 +21,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.WeakHashMap;
+import java.util.logging.Logger;
 
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
+import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
@@ -41,6 +42,7 @@ import javax.servlet.http.HttpSession;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.core.builder.business.ICBuilderConstants;
@@ -135,11 +137,11 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		setResponse(response);
 		setServletContext(context);
 		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
-		initializeAfterRequestIsSet(request);
+		initializeAfterRequestIsSet(request, response);
 	}
 
-	protected void initializeAfterRequestIsSet(HttpServletRequest request) {
-		setCharactersetEncoding(request);
+	protected void initializeAfterRequestIsSet(HttpServletRequest request, HttpServletResponse response) {
+		setCharactersetEncoding(request, response);
 		// CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE
 		// THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE
 		// PREFERRED ENCODING!
@@ -156,19 +158,30 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * 
 	 * @param request
 	 */
-	public static void setCharactersetEncoding(HttpServletRequest request) {
-		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+	public static void setCharactersetEncoding(HttpServletRequest request, HttpServletResponse response) {
+		HttpSession session = request == null ? null : request.getSession();
+		if (session == null) {
+			Logger.getLogger(IWContext.class.getName()).severe("HttpSession is null for the request: " + request + " Can not set character encoding!");
+			return;
+		}
+
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
 		if (getIfSetRequestCharacterEncoding(iwma)) {
 			try {
 				String characterSetEncoding = iwma.getSettings().getCharacterEncoding();
 				request.setCharacterEncoding(characterSetEncoding);
-				// isRequestCharacterEncodingSet = true;
-			}
-			catch (UnsupportedEncodingException e) {
+				
+				//	Encoding for JSF
+				session.setAttribute(ViewHandler.CHARACTER_ENCODING_KEY, characterSetEncoding);
+				
+				if (response != null) {
+					response.setCharacterEncoding(characterSetEncoding);
+				}
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		
 		// CANNOT BE DONE UNTIL AFTER THE CHARACTER ENCODING IS DONE, OTHERWISE
 		// THE ENCODING WILL DEFAULT TO ISO-8859-1 BUT DISPLAY ITSELF AS THE
 		// PREFERRED ENCODING!
@@ -439,7 +452,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		else {
 			this._request = request;
-			initializeAfterRequestIsSet(request);
+			initializeAfterRequestIsSet(request, null);
 		}
 	}
 
