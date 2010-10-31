@@ -1,8 +1,8 @@
 /*
  * $Id: LoggedOnInfo.java,v 1.21 2007/01/22 08:16:38 tryggvil Exp $
- * 
+ *
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -12,9 +12,11 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
+
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.jaas.IWCredential;
@@ -25,7 +27,7 @@ import com.idega.util.IWTimestamp;
 /**
  * <p>
  * An instance of this class is stored in HttpSession for each logged in user in idegaWeb.<br/>
- * This class implements HttpSessionBindingListener so that the login information is cleaned 
+ * This class implements HttpSessionBindingListener so that the login information is cleaned
  * up when the users session times out.
  * </p>
  *
@@ -38,25 +40,20 @@ import com.idega.util.IWTimestamp;
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private static final String TICKET_CREDENTIAL = "ticket";
- 
+
   private User _user = null;
-//  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
   private LoginTable _loginTable;
   private String _login = null;
   private LoginRecord _loginRecord;
   private String _encryptionType = null;
   private String _loginType = null;
-  private Set _userRoles = null;
-  private Map _loggedOnInfoAttribute = new HashMap();
-  private Map credentials = new HashMap(0);
+  private Set<String> _userRoles = null;
+  private Map<Object, Object> _loggedOnInfoAttribute = new HashMap<Object, Object>();
+  private Map<String, IWCredential> credentials = new HashMap<String, IWCredential>();
 
-  
+  public LoggedOnInfo() {}
 
-public LoggedOnInfo() {
-	// empty
-  }
-  //setters
   public void setUser(User user){
 	  this._user = user;
 	  if(user!=null){
@@ -71,18 +68,13 @@ public LoggedOnInfo() {
  * @param user
  */
 private void initializePersonalIdCredential(User user) {
-	Map credentials = getCredentials();
+	Map<String, IWCredential> credentials = getCredentials();
 	String personalId = user.getPersonalID();
 	if(personalId!=null){
 		PersonalIdCredential pidCredential = new PersonalIdCredential(personalId);
 		credentials.put("PersonalIdCredential",pidCredential);
 	}
 }
-/*
-  public void setSession(HttpSession session){
-    _session = session;
-  }
-*/
 
   public void setTimeOfLogon(IWTimestamp timeOfLogon){
     this._timeOfLogon = timeOfLogon;
@@ -95,22 +87,14 @@ private void initializePersonalIdCredential(User user) {
   public void setLoginRecord(LoginRecord loginRecord){
     this._loginRecord = loginRecord;
   }
-  
+
   public void setEncryptionType(String encryptionType){
   	this._encryptionType = encryptionType;
   }
 
-  //getters
   public User getUser(){
     return this._user;
   }
-
-/*
-  public HttpSession getSession(){
-    return _session;
-  }
-*/
-
 
   public IWTimestamp getTimeOfLogon(){
     return this._timeOfLogon;
@@ -128,115 +112,68 @@ private void initializePersonalIdCredential(User user) {
   	return this._encryptionType;
   }
 
-
-  //
-
-  public boolean equals(Object obj){
-    if(obj instanceof LoggedOnInfo ){
+  @Override
+public boolean equals(Object obj){
+    if (obj instanceof LoggedOnInfo) {
       return this.equals((LoggedOnInfo)obj);
     }
-    
     return false;
-    /*else if(obj instanceof HttpSession){
-      return this.equals((HttpSession)obj);
-    }
-    else {
-      return super.equals(obj);
-    }*/
   }
-
 
   public boolean equals(LoggedOnInfo obj){
     return this.getUser().equals(obj.getUser());
   }
-/*
-  public boolean equals(HttpSession obj){
-    return this.getSession().equals((HttpSession)obj);
-  }
-  
-  
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSessionBindingListener#valueBound(javax.servlet.http.HttpSessionBindingEvent)
-	 */
-	public void valueBound(HttpSessionBindingEvent event) {
-		//do nothing
-		
-	}
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
-	 */
-	public void valueUnbound(HttpSessionBindingEvent event) {
-		//log out!
-		String name = "Unknown";
-		if(this._user != null){
-			name = this._user.getName();
-		}
-		HttpSession session = event.getSession();
-		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
-		boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
-		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
-		
-	}
-  
-  	
 
-	/**
-	 * @return
-	 */
-	public String getLoginType() {
+  @Override
+public void valueBound(HttpSessionBindingEvent event) {
+  }
+
+  @Override
+public void valueUnbound(HttpSessionBindingEvent event) {
+	  String name = this._user == null ? "Unknown" : this._user.getName();
+	  HttpSession session = event.getSession();
+	  LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
+	  boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
+	  System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
+	}
+
+  	public String getLoginType() {
 		return this._loginType;
 	}
-	
-	/**
-	 * @param loginType
-	 */
+
 	public void setLoginType(String loginType) {
 		this._loginType = loginType;
 	}
 
-	/**
-	 * @return
-	 */
 	public LoginTable getLoginTable() {
 		return this._loginTable;
 	}
 
-	/**
-	 * @param id
-	 */
 	public void setLoginTable(LoginTable login) {
 		this._loginTable = login;
 	}
 
-	/**
-	 * @return Returns the user role String's.
-	 */
-	public Set getUserRoles() {
+	public Set<String> getUserRoles() {
 		return this._userRoles;
 	}
-	/**
-	 * @param roles Collections of the role String's that the user has.
-	 */
-	public void setUserRoles(Set roles) {
+
+	public void setUserRoles(Set<String> roles) {
 		this._userRoles = roles;
 	}
-	
+
 	public void setAttribute(Object key, Object value){
 		this._loggedOnInfoAttribute.put(key,value);
 	}
-	
+
 	public Object getAttribute(Object key){
 		return this._loggedOnInfoAttribute.get(key);
 	}
-	
+
 	public IWCredential putCredential(String originator, IWCredential credential) {
-		return (IWCredential) this.credentials.put(originator, credential);
+		return this.credentials.put(originator, credential);
 	}
-	
-	/**
-	 * @return Returns the credentials.
-	 */
-	public Map getCredentials() {
+
+	public Map<String, IWCredential> getCredentials() {
 		return this.credentials;
 	}
 	/**
@@ -247,22 +184,20 @@ private void initializePersonalIdCredential(User user) {
 	 * @return
 	 */
 	public String getTicket() {
-		Map credentials = getCredentials();
-		if(credentials!=null){
-			for (Iterator iter = credentials.keySet().iterator(); iter.hasNext();) {
-				Object ckey = iter.next();
-				IWCredential credential = (IWCredential) credentials.get(ckey);
-				
+		Map<String, IWCredential> credentials = getCredentials();
+		if (credentials != null) {
+			for (Iterator<String> iter = credentials.keySet().iterator(); iter.hasNext();) {
+				IWCredential credential = credentials.get(iter.next());
+
 				String name = credential.getName();
 				Object key = credential.getKey();
 				String sKey = key.toString();
-				
-				if(name.equals(TICKET_CREDENTIAL)){
+
+				if (name.equals(TICKET_CREDENTIAL)) {
 					return sKey;
 				}
 			}
 		}
 		return null;
 	}
-
 }
