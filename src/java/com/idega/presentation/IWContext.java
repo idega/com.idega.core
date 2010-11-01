@@ -1,9 +1,9 @@
 /*
  * $Id: IWContext.java,v 1.164 2009/06/22 09:55:45 valdas Exp $ Created 2000 by
  * Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2000-2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -26,15 +26,14 @@ import java.util.logging.Logger;
 
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
-import javax.faces.application.ViewHandler;
 import javax.faces.application.FacesMessage.Severity;
+import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseStream;
 import javax.faces.context.ResponseWriter;
 import javax.faces.render.RenderKit;
-import javax.jcr.Repository;
 import javax.jcr.Session;
 import javax.jcr.SimpleCredentials;
 import javax.servlet.ServletContext;
@@ -42,6 +41,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -53,7 +54,6 @@ import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
-import com.idega.core.content.IdegaRepository;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.user.data.User;
@@ -67,6 +67,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.io.UploadFile;
 import com.idega.presentation.ui.Parameter;
+import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.UserProperties;
 import com.idega.util.CoreConstants;
@@ -90,9 +91,9 @@ import com.idega.util.expression.ELUtil;
  * com.idega.idegaweb.IWUserContext and com.idega.idegaweb.IWApplicationContext
  * where it is applicable (i.e. when only working with User scoped functionality
  * or Application scoped functionality). <br>
- * 
+ *
  * Last modified: $Date: 2009/06/22 09:55:45 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.164 $
 $
  */
@@ -103,7 +104,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 */
 	private static final long serialVersionUID = 3761970466885022262L;
 	private static final Logger LOGGER = Logger.getLogger(IWContext.class.getName());
-	
+
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
 	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
@@ -127,7 +128,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	private static final String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	public static final String[] WML_USER_AGENTS = new String[] { "nokia", "ericsson", "wapman", "upg1", "symbian",
 			"wap" }; // NB: must be lowercase
-	
+
 	private static final String COLONSLASHSLASH = "://";
 	private static final String HTTP = "http";
 	private static final String HTTPS = "https";
@@ -149,7 +150,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			FacesContext fc = facesContextInitializer.getInitializedFacesContext(context, request, response);
 			setRealFacesContext(fc);
 		}
-		
+
 		if (request.getSession() == null) {
 			LOGGER.warning("Session is null in request ("+request.getClass()+")! Trying to re-initialize session");
 			if (reInitializeRequest()) {
@@ -163,19 +164,19 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				}
 			}
 		}
-		
+
 		setRequest(request);
 		setResponse(response);
 		setServletContext(context);
-		
+
 		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
 		initializeAfterRequestIsSet(request);
 		setServerURLToSystemProperties();
-		
+
 		// Put it to the request map
 		storeContext();
 	}
-	
+
 	/**
 	 * @param request
 	 * @param response
@@ -200,12 +201,12 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * this is called both from IWEncodingFilter (which is the first mapped
 	 * filter and the IWContext() constructor.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 */
 	public static void setCharactersetEncoding(HttpServletRequest request) {
 		// MUST BE DONE BEFORE ANYTHING IS GOTTEN FROM THE REQUEST!
-		
+
 		HttpSession session = request == null ? null : request.getSession();
 		if (session == null) {
 			LOGGER.warning("Request: " + request + " and/or session: " + session + " is null");
@@ -219,7 +220,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				LOGGER.info("Session was resolved");
 			}
 		}
-		
+
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
 		if (getIfSetRequestCharacterEncoding(iwma)) {
 			try {
@@ -260,7 +261,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		IWContext iwc = null;
 		// try to look up from request map
 		iwc = (IWContext) ((HttpServletRequest) fc.getExternalContext().getRequest()).getAttribute(IWCONTEXT_REQUEST_KEY);
-		
+
 		// reason for the second condition below:
 		// After forwarding the faces context has changed, check if the stored
 		// iwc holds the same faces context
@@ -273,10 +274,10 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			//	Create new instance
 			iwc = new IWContext(fc);
 		}
-		
+
 		return iwc;
 	}
-	
+
 	private void storeContext() {
 		try {
 			getRequest().setAttribute(IWCONTEXT_REQUEST_KEY, this);
@@ -286,6 +287,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 	}
 
+	@Override
 	public HttpSession getSession() {
 		return getRequest().getSession();
 	}
@@ -311,21 +313,21 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		if (this._multipartParameters == null) {
 			return null;
 		}
-		
+
 		Collection<String> values = this._multipartParameters.get(key);
 		if (ListUtil.isEmpty(values)) {
 			return null;
 		}
-		
+
 		StringBuffer value = new StringBuffer();
 		for (Iterator<String> valuesIter = values.iterator(); valuesIter.hasNext();) {
 			value.append(valuesIter.next());
-			
+
 			if (valuesIter.hasNext()) {
 				value.append(CoreConstants.COMMA);
 			}
 		}
-		
+
 		return value.toString();
 	}
 
@@ -370,7 +372,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return isMac;
 	}
-	
+
 	public boolean isWindows() {
 		String userAgent = getUserAgent();
 		if (userAgent == null) {
@@ -449,10 +451,10 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return false;
 	}
-	
+
 	public String getFullBrowserVersion() {
 		String userAgent = getUserAgent();
-		
+
 		try {
 			if (isIE()) {
 				String agentInfo[] = userAgent.split("MSIE ");
@@ -472,31 +474,31 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 					return agentInfo[1];
 				}
 			}
-			
+
 			LOGGER.warning("Couldn't detect version from user agent info:\n" + userAgent);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Some error occured while trying to resolve browser's version from:\n" + userAgent, e);
 		}
-		
+
 		return CoreConstants.EMPTY;
 	}
-	
+
 	public Double getBrowserVersion() {
 		String version = getFullBrowserVersion();
 		if (StringUtil.isEmpty(version)) {
 			return 0.0;
 		}
-		
+
 		if (version.indexOf(CoreConstants.DOT) != -1) {
 			version = version.substring(0, version.lastIndexOf(CoreConstants.DOT));
 		}
-		
+
 		try {
 			return Double.valueOf(version);
 		} catch (NumberFormatException e) {
 			LOGGER.warning("Error converting to Double: " + version);
 		}
-		
+
 		return 0.0;
 	}
 
@@ -516,7 +518,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * <code>IWConstants.MARKUP_LANGUAGE_WML</code>. This methods just checks
 	 * the User-agent header to see if the device is a known wap device,
 	 * otherwise html is assumed
-	 * 
+	 *
 	 * @param request
 	 *            The request, needed to find output
 	 */
@@ -575,13 +577,13 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 						session = (HttpSession) o;
 					}
 				}
-				
+
 				if (session == null) {
 					LOGGER.warning("Session is null, failed to re-initialize");
 					return false;
 				}
 			}
-			
+
 			LOGGER.fine("Session was re-initialized sucessfully");
 			setRequest(request);
 			getExternalContext().setRequest(getRequest());
@@ -592,7 +594,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return true;
 	}
-	
+
 	public boolean isParameterSet(String parameterName) {
 		return RequestUtil.isParameterSet(getRequest(), parameterName);
 	}
@@ -696,14 +698,14 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return prm;
 	}
-	
+
 	public Boolean getBooleanParameter(String parameterName) {
 		if (isParameterSet(parameterName)) {
 			return new Boolean(getParameter(parameterName));
 		}
 		return null;
 	}
-	
+
 	public Integer getIntegerParameter(String parameterName) {
 		if (isParameterSet(parameterName)) {
 			try {
@@ -713,10 +715,10 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				LOGGER.log(Level.WARNING, "Invalid integer: " + getParameter(parameterName), nfe);
 			}
 		}
-		
+
 		return null;
 	}
-	
+
 	public Float getFloatParameter(String parameterName) {
 		if (isParameterSet(parameterName)) {
 			try {
@@ -726,7 +728,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				LOGGER.log(Level.WARNING, "Invalid float number: " + getParameter(parameterName), nfe);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -763,14 +765,17 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return this._response;
 	}
 
+	@Override
 	public Object getSessionAttribute(String attributeName) {
 		return getSession().getAttribute(attributeName);
 	}
 
+	@Override
 	public void setSessionAttribute(String attributeName, Object attribute) {
 		getSession().setAttribute(attributeName, attribute);
 	}
 
+	@Override
 	public String getSessionId() {
 		return getSession().getId();
 	}
@@ -783,6 +788,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		removeSessionAttribute(attributeName);
 	}
 
+	@Override
 	public void removeSessionAttribute(String attributeName) {
 		getSession().removeAttribute(attributeName);
 	}
@@ -808,7 +814,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public void setServletContext(ServletContext context) {
 		this.servletContext = context;
 	}
-	
+
 	private void setServerURLToSystemProperties() {
 		this.getApplicationSettings().setProperty(IWConstants.SERVER_URL_PROPERTY_NAME, this.getServerURL());
 	}
@@ -845,7 +851,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 			return getRequest().getRequestURI();
 		}
 	}
-	
+
 	public String getRequestURI(boolean https) {
 		String protocol = getProtocol().toLowerCase();
 		if (protocol.startsWith(HTTP)) {
@@ -901,24 +907,29 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 	}
 
+	@Override
 	public void setApplicationAttribute(String attributeName, Object attributeValue) {
 		getIWMainApplication().setAttribute(attributeName, attributeValue);
 	}
 
+	@Override
 	public Object getApplicationAttribute(String attributeName) {
 		return getIWMainApplication().getAttribute(attributeName);
 	}
 
+	@Override
 	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
 		return getIWMainApplication().getAttribute(attributeName, defaultObjectToReturnIfValueIsNull);
 	}
 
+	@Override
 	public void removeApplicationAttribute(String attributeName) {
 		getIWMainApplication().removeAttribute(attributeName);
 	}
 
+	@Override
 	public IWMainApplication getIWMainApplication() {
-		
+
 		HttpServletRequest request = getRequest();
 		if(request!=null){
 			return IWMainApplication.getIWMainApplication(request);
@@ -926,21 +937,25 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		else{
 			ServletContext servletContext = getServletContext();
 			return IWMainApplication.getIWMainApplication(servletContext);
-		}	
+		}
 	}
 
+	@Override
 	public IWMainApplicationSettings getApplicationSettings() {
 		return getIWMainApplication().getSettings();
 	}
 
+	@Override
 	public IWSystemProperties getSystemProperties() {
 		return getIWMainApplication().getSystemProperties();
 	}
 
+	@Override
 	public UserProperties getUserProperties() {
 		return LoginBusinessBean.getUserProperties(this);
 	}
 
+	@Override
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {
@@ -954,6 +969,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return ICLocaleBusiness.getLocaleId(getCurrentLocale());
 	}
 
+	@Override
 	public void setCurrentLocale(Locale locale) {
 		this.setSessionAttribute(LOCALE_ATTRIBUTE, locale);
 	}
@@ -983,7 +999,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Only handles http and https, use getServerURLWithoutProtocol() for other
 	 * stuff.
-	 * 
+	 *
 	 * @return the servername with port and protocol, e.g.
 	 *         http://www.idega.com:8080/
 	 */
@@ -992,7 +1008,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	/**
-	 * 
+	 *
 	 * @return the servername with port and protocol, e.g.
 	 *         http://www.idega.com:8080/
 	 */
@@ -1040,6 +1056,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * @deprecated Replaced with getCurrentUser()
 	 */
+	@Override
 	@Deprecated
 	public User getUser() {
 		return (LoginBusinessBean.getUser(this));
@@ -1080,7 +1097,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public boolean hasRole(String role){
 		return this.getAccessController().hasRole(role,this);
 	}
-	
+
 	public boolean hasPermission(String permissionKey, Object obj) {
 		try {
 			return this.getAccessController().hasPermission(permissionKey, obj, this);
@@ -1137,6 +1154,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_EDIT, obj);
 	}
 
+	@Override
 	public boolean isSuperAdmin() {
 		if(isLoggedOn()){
 			try {
@@ -1149,16 +1167,17 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return false;
 	}
 
+	@Override
 	public boolean isLoggedOn() {
 		return com.idega.core.accesscontrol.business.LoginBusinessBean.isLoggedOn(this);
 	}
 
 	/**
 	 * Expensive method, not recommended to use frequently
-	 * 
+	 *
 	 * @throws UnavailableIWContext
 	 *             if the IWContext is not set
-	 * 
+	 *
 	 */
 	public static IWContext getInstance() throws UnavailableIWContext {
 		IWContext theReturn = null;
@@ -1182,20 +1201,20 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return theReturn;
 	}
-	
+
 	public static IWContext getCurrentInstance() {
-		
+
 		try {
 			IWContext iwc;
 			FacesContext fctx = FacesContext.getCurrentInstance();
-			
+
 			if (fctx != null) {
 				iwc = getIWContext(fctx);
 			} else
 				iwc = null;
 
 			return iwc;
-			
+
 		} catch (Exception e) {
 			throw new UnavailableIWContext(e);
 		}
@@ -1239,6 +1258,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return null;
 	}
 
+	@Override
 	public IWApplicationContext getApplicationContext() {
 		return this.getIWMainApplication().getIWApplicationContext();
 	}
@@ -1246,7 +1266,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Gets if this object is in "Preview" mode in the Builder or in regular
 	 * view not inside the Builder.
-	 * 
+	 *
 	 * @return true if in preview mode
 	 */
 	public boolean isInPreviewMode() {
@@ -1264,7 +1284,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/**
 	 * Gets if this object is in "Edit" mode in the Builder
-	 * 
+	 *
 	 * @return true if in edit mode
 	 */
 	public boolean isInEditMode() {
@@ -1317,6 +1337,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return this._clientIsHandHeld;
 	}
 
+	@Override
 	public ICDomain getDomain() {
 		//ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
 		String serverName = getServerName();
@@ -1324,6 +1345,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return domain;
 	}
 
+	@Override
 	public ICDomain getDomainByServerName(String serverName) {
 		return getIWMainApplication().getIWApplicationContext().getDomainByServerName(serverName);
 	}
@@ -1347,7 +1369,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public void forwardToIBPage(Page fromPage, int pageID, int secondInterval) {
 		forwardToIBPage(fromPage, pageID, secondInterval, false);
 	}
-	
+
 	public void forwardToIBPage(Page fromPage, int pageID, int secondInterval, boolean includeQueryString) {
 		try {
 			BuilderService bs;
@@ -1364,7 +1386,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Forwards to the url specified by setting a meta (refresh) header into the
 	 * page object given by fromPage.
-	 * 
+	 *
 	 * @param fromPage
 	 * @param url
 	 */
@@ -1375,7 +1397,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Forwards to the url specified by setting a meta (refresh) header into the
 	 * page object given by fromPage.
-	 * 
+	 *
 	 * @param fromPage
 	 * @param url
 	 * @param includeQueryString
@@ -1387,7 +1409,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Forwards to the url specified by setting a meta (refresh) header into the
 	 * page object given by fromPage.
-	 * 
+	 *
 	 * @param fromPage
 	 * @param url
 	 * @param secondInterval
@@ -1395,11 +1417,11 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public void forwardToURL(Page fromPage, String url, int secondInterval) {
 		forwardToURL(fromPage, url, secondInterval, true);
 	}
-	
+
 	/**
 	 * Forwards to the url specified by setting a meta (refresh) header into the
 	 * page object given by fromPage.
-	 * 
+	 *
 	 * @param fromPage
 	 * @param url
 	 * @param secondInterval
@@ -1426,7 +1448,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 				URL.append(requestString);
 			}
 		}
-		
+
 		if (secondInterval > 0) {
 			fromPage.setToRedirect(URL.toString(), secondInterval);
 		}
@@ -1445,12 +1467,13 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Gets the current user associated with this context <br>
 	 * This method is meant to replace getUser()
-	 * 
+	 *
 	 * @return The current user if there is one associated with the current
 	 *         context. If there is none the method returns null.
 	 * @throws NotLoggedOnException
 	 *             if no user is logged on.
 	 */
+	@Override
 	public com.idega.user.data.User getCurrentUser() {
 		HttpSession session = getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
@@ -1460,7 +1483,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	/**
 	 * Gets the Id of the current user associated with this context <br>
 	 * This method is meant to replace getUserId()
-	 * 
+	 *
 	 * @return The Id of the current user. If there is one associated with the
 	 *         current context.
 	 * @throws NotLoggedOnException
@@ -1475,7 +1498,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/**
 	 * TODO reimplement
-	 * 
+	 *
 	 * @return The pageId for the current IBPage that is being displayed.
 	 *         Returns -1 if an error occurred.
 	 */
@@ -1500,7 +1523,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 */
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getLocale()
 	 */
 	public Locale getLocale() {
@@ -1509,7 +1532,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#release()
 	 */
 	@Override
@@ -1519,7 +1542,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#renderResponse()
 	 */
 	@Override
@@ -1529,7 +1552,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#responseComplete()
 	 */
 	@Override
@@ -1539,7 +1562,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#setLocale(java.util.Locale)
 	 */
 	public void setLocale(Locale arg0) {
@@ -1548,7 +1571,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#addMessage(java.lang.String,
 	 *      javax.faces.application.FacesMessage)
 	 */
@@ -1559,7 +1582,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getClientIdsWithMessages()
 	 */
 	@Override
@@ -1569,7 +1592,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getExternalContext()
 	 */
 	@Override
@@ -1580,14 +1603,14 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return extContext;
 	}
-	
+
 	private FacesContextInitializer getFacesContextInitializer() {
 		return ELUtil.getInstance().getBean(FacesContextInitializer.class);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getMaximumSeverity()
 	 */
 	@Override
@@ -1597,7 +1620,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getMessages()
 	 */
 	@Override
@@ -1607,7 +1630,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getMessages(java.lang.String)
 	 */
 	@Override
@@ -1617,7 +1640,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getRenderKit()
 	 */
 	@Override
@@ -1627,7 +1650,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getRenderResponse()
 	 */
 	@Override
@@ -1637,7 +1660,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getResponseComplete()
 	 */
 	@Override
@@ -1647,7 +1670,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getResponseStream()
 	 */
 	@Override
@@ -1657,7 +1680,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getResponseWriter()
 	 */
 	@Override
@@ -1672,7 +1695,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getViewRoot()
 	 */
 	@Override
@@ -1682,7 +1705,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#setResponseStream(javax.faces.context.ResponseStream)
 	 */
 	@Override
@@ -1692,7 +1715,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#setResponseWriter(javax.faces.context.ResponseWriter)
 	 */
 	@Override
@@ -1702,7 +1725,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#setViewRoot(javax.faces.component.UIViewRoot)
 	 */
 	@Override
@@ -1712,7 +1735,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.faces.context.FacesContext#getApplication()
 	 */
 	@Override
@@ -1738,7 +1761,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 * This method gets the header value for the attribute "Authorization" which
 	 * is used e.g. for getting username and password in BASIC
 	 * Authorization/Authentication request
-	 * 
+	 *
 	 * @return Returns the header value for "Authorization" attribute
 	 */
 	public String getAuthorizationHeader() {
@@ -1747,27 +1770,30 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.idegaweb.IWUserContext#getUserPrincipal()
 	 */
+	@Override
 	public Principal getUserPrincipal() {
 		return getRequest().getUserPrincipal();
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.idegaweb.IWUserContext#isUserInRole(java.lang.String)
 	 */
+	@Override
 	public boolean isUserInRole(String role) {
 		return getRequest().isUserInRole(role);
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.idegaweb.IWUserContext#getRemoteUser()
 	 */
+	@Override
 	public String getRemoteUser() {
 		return getRequest().getRemoteUser();
 	}
@@ -1780,28 +1806,33 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 		return sessionId;
 	}
-	
-	
-	public Repository getRepository(){
-		return (Repository)ELUtil.getInstance().getBean(IdegaRepository.SPRING_BEAN_IDENTIFIER);
-	}
-	public static final String JCR_SESSION_REQUEST_KEY="jcrSession";
-	
-	public Session getRepositorySession() throws javax.jcr.RepositoryException{
-		 Session session = (Session) getExternalContext().getRequestMap().get(JCR_SESSION_REQUEST_KEY);
-		 if(session==null){
-			 session=createNewRepositorySession();
-			 getExternalContext().getRequestMap().put(JCR_SESSION_REQUEST_KEY, session);
-		 }
-		 return session;
-	}
-	
-	public Session createNewRepositorySession() throws javax.jcr.RepositoryException{
-		if(this.isLoggedOn()){
-			return getRepository().login(new SimpleCredentials(getRemoteUser(),"".toCharArray()));
+
+	@Autowired
+	private RepositoryService repository;
+
+	public RepositoryService getRepository() {
+		if (repository == null) {
+			ELUtil.getInstance().autowire(this);
 		}
-		else{
+		return repository;
+	}
+
+//	public static final String JCR_SESSION_REQUEST_KEY = "jcrSession";
+	public Session getRepositorySession() throws javax.jcr.RepositoryException{
+//		 Session session = (Session) getExternalContext().getRequestMap().get(JCR_SESSION_REQUEST_KEY);
+//		 if (session == null) {
+//			 session = createNewRepositorySession();
+//			 getExternalContext().getRequestMap().put(JCR_SESSION_REQUEST_KEY, session);
+//		 }
+//		 return session;
+		return createNewRepositorySession();
+	}
+
+	public Session createNewRepositorySession() throws javax.jcr.RepositoryException{
+		if (this.isLoggedOn()) {
+			return getRepository().login(new SimpleCredentials(getRemoteUser(), CoreConstants.EMPTY.toCharArray()));
+		} else {
 			return getRepository().login();
-		}	
+		}
 	}
 }
