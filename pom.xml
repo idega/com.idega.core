@@ -3,12 +3,12 @@
   <parent>
   	<groupId>com.idega.block.platform</groupId>
   	<artifactId>com.idega.block.platform</artifactId>
-  	<version>4.1.3-SNAPSHOT</version>
+  	<version>5.0.0-SNAPSHOT</version>
   </parent>
   <packaging>jar</packaging>
   <groupId>com.idega.block.platform</groupId>
   <artifactId>com.idega.core</artifactId>
-  <version>4.1.3-SNAPSHOT</version>
+  <version>5.0.0-SNAPSHOT</version>
   <name>idegaWeb Core</name>
   
   <scm>
