@@ -19,7 +19,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<servlet-name>Excel</servlet-name>
 		<servlet-class>com.idega.io.ExcelOutput</servlet-class>
 	</servlet>
-
 	<servlet>
 		<display-name>ObjectInstanciator</display-name>
 		<servlet-name>ObjectInstanciator</servlet-name>
@@ -47,17 +46,15 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<servlet-name>IWEventHandler</servlet-name>
 		<servlet-class>com.idega.servlet.IWEventHandler</servlet-class>
 	</servlet>
+	
 	<servlet-mapping>
 		<servlet-name>IWEventHandler</servlet-name>
 		<url-pattern>/servlet/IWEventHandler</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>Excel</servlet-name>
 		<url-pattern>/excel</url-pattern>
 	</servlet-mapping>
-
-
 	<servlet-mapping>
 		<servlet-name>ObjectInstanciator</servlet-name>
 		<url-pattern>/servlet/ObjectInstanciator</url-pattern>
@@ -70,12 +67,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<servlet-name>ObjectInstanciator</servlet-name>
 		<url-pattern>/servlet/ObjectInstanciator/*</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>PageInstanciator</servlet-name>
 		<url-pattern>/servlet/PageInstanciator</url-pattern>
 	</servlet-mapping>
-
 	<servlet-mapping>
 		<servlet-name>WindowOpener</servlet-name>
 		<url-pattern>/servlet/WindowOpener</url-pattern>
@@ -96,9 +91,18 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 			com.idega.servlet.filter.IWEncodingFilter
 		</filter-class>
 	</filter>
-
 	<filter-mapping>
 		<filter-name>IWEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+	
+	<!-- Repository authenticator filter -->
+	<filter>
+		<filter-name>RepositoryAuthenticator</filter-name>
+		<filter-class>com.idega.repository.authentication.RepositoryAuthenticator</filter-class>
+	</filter>
+	<filter-mapping>
+		<filter-name>RepositoryAuthenticator</filter-name>
 		<url-pattern>/*</url-pattern>
 	</filter-mapping>
 
@@ -349,13 +353,11 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 	  </init-param>
 	</filter>
 	
-
 	<filter-mapping>
 	  <filter-name>ResponseHeaderFilter</filter-name>
 	  <url-pattern>/idegaweb/bundles/*</url-pattern>
 	</filter-mapping>
 End of ResponseHeaderFilter -->
-
 
 	<filter> 
 	  <filter-name>ExpiresFilter</filter-name> 
@@ -371,8 +373,6 @@ End of ResponseHeaderFilter -->
 	  <url-pattern>/idegaweb/bundles/*</url-pattern>
 	</filter-mapping>
 	
-	
-
 	<welcome-file-list>
 		<welcome-file>index.jsp</welcome-file>
 		<welcome-file>index.html</welcome-file>
