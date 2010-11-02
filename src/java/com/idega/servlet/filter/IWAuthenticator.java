@@ -52,7 +52,7 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CypherText;
 import com.idega.util.RequestUtil;
@@ -288,7 +288,7 @@ public class IWAuthenticator extends BaseFilter {
 	 */
 	protected boolean redirectToUserHomepage(HttpServletRequest request, HttpServletResponse response, LoginBusinessBean loginBusiness) throws IOException, RemoteException {
 		HttpSession session = request.getSession();
-		User user = loginBusiness.getCurrentUser(session);
+		com.idega.user.data.User user = loginBusiness.getCurrentUserLegacy(session);
 		IWMainApplication iwMainApplication = getIWMainApplication(request);
 		IWApplicationContext iwac = iwMainApplication.getIWApplicationContext();
 		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
@@ -300,7 +300,7 @@ public class IWAuthenticator extends BaseFilter {
 			return true;
 		}
 		
-		log.log(Level.INFO, "Didn't find user's " + user.getName() + " home page");
+		log.log(Level.INFO, "Didn't find user's " + user.getDisplayName() + " home page");
 		
 		return false;
 	}

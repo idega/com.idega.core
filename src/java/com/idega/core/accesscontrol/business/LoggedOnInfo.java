@@ -17,11 +17,11 @@ import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionBindingEvent;
 import javax.servlet.http.HttpSessionBindingListener;
 
-import com.idega.core.accesscontrol.data.LoginRecord;
-import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.bean.LoginRecord;
+import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.core.accesscontrol.jaas.PersonalIdCredential;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -43,7 +43,7 @@ public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private User _user = null;
   private IWTimestamp _timeOfLogon = null;
-  private LoginTable _loginTable;
+  private UserLogin _userLogin;
   private String _login = null;
   private LoginRecord _loginRecord;
   private String _encryptionType = null;
@@ -127,14 +127,22 @@ public boolean equals(Object obj){
   @Override
 public void valueBound(HttpSessionBindingEvent event) {
   }
-
-  @Override
-public void valueUnbound(HttpSessionBindingEvent event) {
-	  String name = this._user == null ? "Unknown" : this._user.getName();
-	  HttpSession session = event.getSession();
-	  LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
-	  boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
-	  System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
+		
+	}
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
+	 */
+	public void valueUnbound(HttpSessionBindingEvent event) {
+		//log out!
+		String name = "Unknown";
+		if(this._user != null){
+			name = this._user.getDisplayName();
+		}
+		HttpSession session = event.getSession();
+		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
+		boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
+		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
+		
 	}
 
   	public String getLoginType() {
@@ -145,12 +153,18 @@ public void valueUnbound(HttpSessionBindingEvent event) {
 		this._loginType = loginType;
 	}
 
-	public LoginTable getLoginTable() {
-		return this._loginTable;
+	/**
+	 * @return
+	 */
+	public UserLogin getUserLogin() {
+		return this._userLogin;
 	}
 
-	public void setLoginTable(LoginTable login) {
-		this._loginTable = login;
+	/**
+	 * @param id
+	 */
+	public void setUserLogin(UserLogin login) {
+		this._userLogin = login;
 	}
 
 	public Set<String> getUserRoles() {

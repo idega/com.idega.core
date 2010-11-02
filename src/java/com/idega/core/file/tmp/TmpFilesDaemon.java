@@ -74,18 +74,15 @@ public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListe
 	}
 
 	public void onApplicationEvent(ApplicationEvent applicationevent) {
-
 		if (applicationevent instanceof IWMainApplicationStartedEvent) {
-
 			getFManager().init(resResolvers);
 
 			deamon = new TmpFilesDaemon();
 			deamon.setApplicationContext(ctx);
 			deamon.setFManager(getFManager());
 			deamon.start();
-
 		}
-		else if (applicationevent instanceof IWMainApplicationShutdownEvent) {
+		else if (applicationevent instanceof IWMainApplicationShutdownEvent && deamon != null) {
 			deamon.stop();
 		}
 	}

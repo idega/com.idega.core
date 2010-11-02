@@ -56,7 +56,6 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.core.user.data.User;
 import com.idega.event.IWEventProcessor;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWConstants;
@@ -70,6 +69,7 @@ import com.idega.presentation.ui.Parameter;
 import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.UserProperties;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
@@ -1065,7 +1065,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public int getUserId() {
 		User usr = getUser();
 		if (usr != null) {
-			Number id = (Number) usr.getPrimaryKey();
+			Number id = usr.getId();
 			if (id != null) {
 				return id.intValue();
 			}
@@ -1477,6 +1477,12 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	public com.idega.user.data.User getCurrentUser() {
 		HttpSession session = getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
+		return loginBean.getCurrentUserLegacy(session);
+	}
+	
+	public User getLoggedInUser() {
+		HttpSession session = getSession();
+		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
 		return loginBean.getCurrentUser(session);
 	}
 
@@ -1490,10 +1496,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	 *             if no user is logged on
 	 */
 	public int getCurrentUserId() {
-		com.idega.user.data.User user = getCurrentUser();
-		// if(user!=null){
-		return ((Integer) user.getPrimaryKey()).intValue();
-		// }
+		return getCurrentUser().getID();
 	}
 
 	/**

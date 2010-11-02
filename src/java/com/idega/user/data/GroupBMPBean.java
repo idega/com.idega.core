@@ -12,6 +12,8 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
@@ -45,6 +47,7 @@ import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -61,8 +64,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	private static final long serialVersionUID = -5276962419455614341L;
 	
 	private static final int PREFETCH_SIZE = 100;
-	public static final int GROUP_ID_EVERYONE = -7913;
-	public static final int GROUP_ID_USERS = -1906;
 
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final String SQL_RELATION_ADDRESS = "IC_GROUP_ADDRESS";
@@ -1596,7 +1597,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Integer ejbFindSystemUsersGroup() throws FinderException {
-		return new Integer(GroupBMPBean.GROUP_ID_USERS);
+		AccessController instance = IWMainApplication.getDefaultIWMainApplication().getAccessController();
+		return new Integer(instance.getUsersGroupID());
 	}
 
 	private GroupTypeHome getGroupTypeHome() {
@@ -1694,12 +1696,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Collection getChildren() {
-		/**
-		 * @todo: Change implementation this first part may not be needed.
-		 *        (Eiki,gummi)
-		 * 
-		 */
-		if (this.getID() == GroupBMPBean.GROUP_ID_USERS) {
+		AccessController instance = IWMainApplication.getDefaultIWMainApplication().getAccessController();
+		if (this.getID() == instance.getUsersGroupID()) {
 			// String[] groupTypes = {"ic_user_representative"};
 			try {
 				String[] groupTypes = new String[1];
@@ -1729,7 +1727,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public int getChildCount() {
-		if (this.getID() == GroupBMPBean.GROUP_ID_USERS) {
+		AccessController instance = IWMainApplication.getDefaultIWMainApplication().getAccessController();
+		if (this.getID() == instance.getUsersGroupID()) {
 			try {
 				String[] groupTypes = new String[1];
 				groupTypes[0] = ((GroupHome) IDOLookup.getHome(User.class)).getGroupType();

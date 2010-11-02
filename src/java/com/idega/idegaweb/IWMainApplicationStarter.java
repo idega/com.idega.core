@@ -654,6 +654,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	}
 	
 	protected void updateStartDataInDatabase() {
+		IWStartDataInserter.getInstance().insertStartData();
+
 		updateStartDataGroupRelationType();
 		updateStartTypeEmailType();
 		updateDomainData();

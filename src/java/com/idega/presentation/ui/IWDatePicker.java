@@ -31,7 +31,7 @@ public class IWDatePicker extends TextInput {
 
 	@Autowired
 	private JQuery jQuery;
-	
+
 	private Date date = null;
 	private Date dateTo = null;
 
@@ -153,7 +153,7 @@ public class IWDatePicker extends TextInput {
 			inputName = this.getId();
 		}
 		setName(inputName);
-
+		
 		Locale locale = iwc.getCurrentLocale();
 		if (locale == null) {
 			locale = Locale.ENGLISH;

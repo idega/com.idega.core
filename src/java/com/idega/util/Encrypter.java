@@ -1,10 +1,9 @@
 package com.idega.util;
 
 /**
- * Title:        idega Framework
- * Description:
- * Copyright:    Copyright (c) 2001
- * Company:      idega
+ * Title: idega Framework Description: Copyright: Copyright (c) 2001 Company:
+ * idega
+ * 
  * @author <a href=mailto:"tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
@@ -82,74 +81,45 @@ public class Encrypter {
 
 
 
-  public static boolean verifyOneWayEncrypted(String encryptedString,String unEncryptedString){
-//    return(true);
-    return encryptOneWay(unEncryptedString).equals(encryptedString);
+ 	public static void main(String[] args) {
+		System.out.println(encryptOneWay("idega"));
+	}
 
-    //String secondEncrypted = encryptOneWay(unEncryptedString);
-    //return secondEncrypted.equals(encryptedString);
-  }
+	public static boolean verifyOneWayEncrypted(String encryptedString, String unEncryptedString) {
+		return encryptOneWay(unEncryptedString).equals(encryptedString);
+	}
 
-  /*
-  public static String encryptTwoWay(String textToEncrypt){
-    return null;
-  }
-
-  public static String decryptTwoWay(String encryptedText){
-    return null;
-  }*/
-
-
-/*
-public static void main (String[] args) {
-
-	try {
-	FileOutputStream outFile1 = new FileOutputStream("DES.out");
-	// Note: PrintStream is deprecated, but still works fine in jdk1.1.7b
-	PrintStream output1 = new PrintStream(outFile1);
-
-	// convert a string to a DES key and print out the result
-	RawSecretKey key2 = new RawSecretKey("DES",Hex.fromString("3812A419C63BE771"));
-	RawKey rkey = (RawKey) key2;
-	byte[] yval = rkey.getEncoded();
-	BigInteger Bkey = new BigInteger(yval);
-	String w = cryptix.util.core.BI.dumpString(Bkey);
-	output1.println("The Encryption Key = " + w);
-
-	// use the DES key to encrypt a string
-	Cipher des=Cipher.getInstance("DES/ECB/NONE","Cryptix");
-	des.initEncrypt(key2);
-	byte[] ciphertext = des.crypt(Hex.fromString("01010101010101010102030405060708090A0B0C0D0E0F101112131415161718"));
-
-	// print out length and representation of ciphertext
-	output1.print("\n");
-	output1.println("ciphertext.length = " + ciphertext.length);
-
-	BigInteger Bciph = new BigInteger(ciphertext);
-	w = cryptix.util.core.BI.dumpString(Bciph);
-	output1.println("Ciphertext for DES encryption = " + w);
-
-	// decrypt ciphertext
-	des.initDecrypt(key2);
-	ciphertext = des.crypt(ciphertext);
-	output1.print("\n");
-	output1.println("plaintext.length = " + ciphertext.length);
-
-	// print out representation of decrypted ciphertext
-	Bciph = new BigInteger(ciphertext);
-	w = cryptix.util.core.BI.dumpString(Bciph);
-	output1.println("Plaintext for DES encryption = " + w);
-
-	output1.println(" ");
-	output1.close();
-
-      } catch (Exception e) {
-            System.err.println("Caught exception " + e.toString());
-      }
-
-    }*/
-
-
-
-
+	public static String hexToAscii(String str) {
+		char[] pass = new char[str.length() / 2];
+		try {
+			for (int i = 0; i < pass.length; i++) {
+				pass[i] = (char) Integer.decode("0x" + str.charAt(i * 2) + str.charAt((i * 2) + 1)).intValue();
+			}
+			return String.valueOf(pass);
+		}
+		catch (Exception ex) {
+			ex.printStackTrace();
+			return str;
+		}
+	}
+	
+	public static String asciiToHex(String str) {
+		char[] pass = str.toCharArray();
+		
+		String hexString = "";
+		for (int i = 0; i < pass.length; i++) {
+			String hex = Integer.toHexString(pass[i]);
+			while (hex.length() < 2) {
+				String s = "0";
+				s += hex;
+				hex = s;
+			}
+			hexString += hex;
+		}
+		if (hexString.equals("")) {
+			hexString = null;
+		}
+		
+		return hexString;
+	}
 }

@@ -17,13 +17,13 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 
-import com.idega.core.data.GenericGroup;
-import com.idega.presentation.IWContext;
-import com.idega.user.data.User;
-import com.idega.core.user.data.UserGroupRepresentative;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.user.business.UserProperties;
+import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.User;
+import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreUtil;
 
 /**
@@ -50,7 +50,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the permissionGroups.
 	 */
-	public List getPermissionGroups() {
+	public List<Group> getPermissionGroups() {
 		return this.sessionHelper.permissionGroups;
 	}
 
@@ -58,14 +58,14 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param permissionGroups
 	 *          The permissionGroups to set.
 	 */
-	public void setPermissionGroups(List permissionGroups) {
+	public void setPermissionGroups(List<Group> permissionGroups) {
 		this.sessionHelper.permissionGroups = permissionGroups;
 	}
 
 	/**
 	 * @return Returns the primaryGroup.
 	 */
-	public GenericGroup getPrimaryGroup() {
+	public Group getPrimaryGroup() {
 		return this.sessionHelper.primaryGroup;
 	}
 
@@ -73,7 +73,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param primaryGroup
 	 *          The primaryGroup to set.
 	 */
-	public void setPrimaryGroup(GenericGroup primaryGroup) {
+	public void setPrimaryGroup(Group primaryGroup) {
 		this.sessionHelper.primaryGroup = primaryGroup;
 	}
 
@@ -213,8 +213,8 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		private static final long serialVersionUID = 8659431184858479401L;
 
 		protected User user = null;
-		protected List permissionGroups = null;
-		protected GenericGroup primaryGroup = null;
+		protected List<Group> permissionGroups = null;
+		protected Group primaryGroup = null;
 		protected UserGroupRepresentative repGroup = null;
 		protected LoggedOnInfo loggedOnInfo = null;
 		protected LoginState loginState = LoginState.NoState;
@@ -256,7 +256,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	public String getSuperAdminId() {
 		if (isSuperAdmin()) {
-			return getUser().getId();
+			return getUser().getId().toString();
 		}
 		return null;
 	}
