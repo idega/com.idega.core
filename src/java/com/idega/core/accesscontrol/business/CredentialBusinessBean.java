@@ -33,7 +33,6 @@ public class CredentialBusinessBean extends IBOServiceBean  implements Credentia
 
 	private static final long serialVersionUID = 8019421364512045310L;
 
-	@Override
 	public void addCredentialsToLink(Link link, IWContext iwc) {
 		if (!LoginBusinessBean.isLoggedOn(iwc)) {
 			// not logged in  - do nothing!
