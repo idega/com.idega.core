@@ -30,6 +30,23 @@ public abstract class ExternalLink implements Serializable {
 	
 	private static final long serialVersionUID = -3223586255509071468L;
 	
+	//static contants
+	public final static String MEDIA_SCREEN="screen";
+	public final static String MEDIA_TTY="tty";
+	public final static String MEDIA_TV="tv";
+	public final static String MEDIA_PROJECTION="projection";
+	public final static String MEDIA_HANDHELD="handheld";
+	public final static String MEDIA_PRINT="print";
+	public final static String MEDIA_BRAILLE="braille";
+	public final static String MEDIA_AURAL="aural";
+	public final static String MEDIA_ALL="all";
+	
+	protected final static String TYPE_CSS="text/css";
+	protected final static String TYPE_RSS="application/rss+xml";
+	
+	protected final static String RELATIONSHIP_STYLESHEET="stylesheet";
+	protected final static String RELATIONSHIP_ALTERNATE="alternate";
+	
 	//href attribute
 	private String url;
 	//charset attribute

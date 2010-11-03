@@ -11,7 +11,9 @@ package com.idega.idegaweb.widget.navigation;
 
 import java.rmi.RemoteException;
 
-import com.idega.core.builder.data.ICPage;
+import com.idega.core.builder.business.BuilderService;
+import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.widget.Widget;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -34,7 +36,8 @@ public class Page extends Widget {
 	@Override
 	protected PresentationObject getWidget(IWContext iwc) {
 		try {
-			ICPage currentPage = getBuilderService(iwc).getCurrentPage(iwc);
+			BuilderService service = BuilderServiceFactory.getBuilderService(iwc);
+			ICTreeNode currentPage = service.getPageTree(service.getCurrentPageId(iwc));
 			
 			Text text = new Text(currentPage.getNodeName(iwc.getCurrentLocale()));
 			return text;

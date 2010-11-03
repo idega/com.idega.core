@@ -260,7 +260,8 @@ public class Table extends PresentationObjectContainer implements TableType{
 				}
 			}
 			catch (Exception ex) {
-				add(new ExceptionWrapper(ex, this));
+				ex.printStackTrace();
+				//add(new ExceptionWrapper(ex, this));
 			}
 		}
 	}
