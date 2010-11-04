@@ -1,172 +1,75 @@
 //idega 2000 - Tryggvi Larusson
 
 /*
-
-*Copyright 2000 idega.is All Rights Reserved.
-
-*/
-
-
-
+ *Copyright 2000 idega.is All Rights Reserved.
+ */
 package com.idega.presentation.text;
-
-
 
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
-import com.idega.presentation.ui.Window;
-
-
-
-
 
 /**
+ * 
+ * @author <a href="mailto:gimmi@idega.is">Grimur Jonsson</a>
+ * 
+ * @version 1.2
+ */
 
-*@author <a href="mailto:gimmi@idega.is">Grimur Jonsson</a>
+public class EmailAddress extends Link {
 
-*@version 1.2
+	private PresentationObject obj;
+	private String parameterString;
 
-*/
+	public EmailAddress() {
+		super("");
+	}
 
-public class EmailAddress extends Link{
+	public EmailAddress(String text) {
+		super(new Text(text));
+		setURL("mailto:" + text);
+	}
 
+	public EmailAddress(PresentationObject mo) {
+		super();
+		this.obj = mo;
+		this.obj.setParentObject(this);
+	}
 
+	public EmailAddress(Text text) {
+		super();
+		text.setFontColor("");
+		this.obj = text;
+		this.obj.setParentObject(this);
+	}
 
-private PresentationObject obj;
+	public EmailAddress(String text, String url) {
+		this(new Text(text), url);
+	}
 
-private String parameterString;
+	public EmailAddress(PresentationObject mo, String url) {
+		super();
+		this.obj = mo;
+		setURL("mailto:" + url);
+		this.obj.setParentObject(this);
+	}
 
+	public EmailAddress(Text text, String url) {
+		super();
+		text.setFontColor("");
+		this.obj = text;
+		setURL("mailto:" + url);
+		this.obj.setParentObject(this);
+	}
 
+	protected String getParameterString(IWContext iwc) {
+		if (this.parameterString == null) {
+			this.parameterString = "";
+		}
 
-public EmailAddress(){
+		return this.parameterString;
+	}
 
-	super("");
-
+	public void setEmailAddress(String email) {
+		setURL("mailto" + email);
+	}
 }
-
-
-
-public EmailAddress(String text){
-
-	super( new Text(text) );
-
-	setURL("mailto:"+text);
-
-}
-
-
-
-public EmailAddress(PresentationObject mo, Window myWindow){
-
-}
-
-
-
-public EmailAddress(Window myWindow){
-
-
-
-}
-
-
-
-public EmailAddress(PresentationObject mo){
-
-	super();
-
-	this.obj = mo;
-
-	this.obj.setParentObject(this);
-
-}
-
-
-
-public EmailAddress(Text text){
-
-	super();
-
-	text.setFontColor("");
-
-	this.obj = text;
-
-	this.obj.setParentObject(this);
-
-
-
-}
-
-
-
-public EmailAddress(String text,String url){
-
-	this(new Text(text),url);
-
-}
-
-
-
-public EmailAddress(PresentationObject mo,String url){
-
-	super();
-
-	this.obj = mo;
-
-	setURL("mailto:"+url);
-
-	this.obj.setParentObject(this);
-
-}
-
-
-
-public EmailAddress(Text text,String url){
-
-	super();
-
-	text.setFontColor("");
-
-	this.obj = text;
-
-	setURL("mailto:"+url);
-
-	this.obj.setParentObject(this);
-
-}
-
-
-
-protected String getParameterString(IWContext iwc){
-
-
-
-if ( this.parameterString==null) {
-	this.parameterString="";
-}
-
-return this.parameterString;
-
-
-
-}
-
-
-
-public void setEmailAddress(String email){
-
-
-
-	setURL("mailto"+email);
-
-
-
-}
-
-
-
-
-
-}
-
-
-
