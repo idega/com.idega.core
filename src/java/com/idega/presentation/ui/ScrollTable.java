@@ -194,22 +194,22 @@ public class ScrollTable extends Block implements TableType {
 			headerLayer.add(headerTable);
 			
 			Layer layer = new Layer(Layer.DIV);
-			layer.setOverflow("auto");
-			layer.setPositionType(Layer.RELATIVE);
+			layer.setStyleAttribute("overflow", "auto");
+			layer.setStyleAttribute("position", "relative");
 			if(this.scrollLayerWidth>0) {
-				layer.setWidth(this.scrollLayerWidth);
+				layer.setStyleAttribute("width", this.scrollLayerWidth + "px");
 			}
 			else if(layerWidth>0) {
-				layer.setWidth(layerWidth);
+				layer.setStyleAttribute("width", layerWidth + "px");
 			}
 			if(layerHeight>0) {
-				layer.setHeight(layerHeight);
+				layer.setStyleAttribute("height", layerHeight + "px");
 			}
-			theTable.setStyleAttribute(Layer.POSITION,Layer.RELATIVE);
+			theTable.setStyleAttribute("position","relative");
 			if(this.scrollLayerHeaderRowThickness>0) {
 				this.scrollLayerHeaderRowThickness *= -1;
 			}
-			theTable.setStyleAttribute(Layer.TOP,String.valueOf(this.scrollLayerHeaderRowThickness*this.numberOfHeaderRows));
+			theTable.setStyleAttribute("top",String.valueOf(this.scrollLayerHeaderRowThickness*this.numberOfHeaderRows));
 			layer.add(theTable);
 			
 			String scriptName = "measureCells";
