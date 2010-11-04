@@ -100,8 +100,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private static final String PROPERTY_USERS_GROUP_ID = "accesscontrol.users.id";
 	private static final String PROPERTY_EVERYONE_GROUP_ID = "accesscontrol.everyone.id";
 	
+<<<<<<< HEAD
 	public static final int _GROUP_ID_EVERYONE = -7913;
 	public static final int _GROUP_ID_USERS = -1906;
+=======
+	private static final int _GROUP_ID_EVERYONE = -7913;
+	private static final int _GROUP_ID_USERS = -1906;
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 
 	private static final int _notBuilderPageID = -1;
 	private PermissionCacher permissionCacher;

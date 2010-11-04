@@ -467,6 +467,7 @@ version="1.2">
 	</component>
 
 	<component>
+<<<<<<< HEAD
 		<component-type>IWDatePicker</component-type>
 		<component-class>com.idega.presentation.ui.IWDatePicker</component-class>
 		<property>
@@ -521,6 +522,11 @@ version="1.2">
 		<component-class>com.idega.idegaweb.widget.user.UserImage</component-class>
 	</component>
 <<<<<<< HEAD
+=======
+		<component-type>UserImage</component-type>
+		<component-class>com.idega.idegaweb.widget.user.UserImage</component-class>
+	</component>
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 	
 	<component>
 	    <component-type>SelectionDoubleBox</component-type>
@@ -606,7 +612,11 @@ version="1.2">
 	</converter>
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 </faces-config>
 =======
 </faces-config>
 >>>>>>> Adding JPA changes
+=======
+</faces-config>
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3

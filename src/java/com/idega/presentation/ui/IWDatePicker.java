@@ -31,7 +31,7 @@ public class IWDatePicker extends TextInput {
 
 	@Autowired
 	private JQuery jQuery;
-	
+
 	private Date date = null;
 	private Date dateTo = null;
 

@@ -895,6 +895,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginInfo loginInfo = userLogin.getLoginInfo();
 
 		if (verifyPassword(userLogin, password)) {
+<<<<<<< HEAD
 			if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
 				// return STATE_LOGIN_EXPIRED;
 				return LoginState.Expired;
@@ -937,6 +938,18 @@ public class LoginBusinessBean implements IWPageEventListener {
 					System.out.println("Maximum loggin attemps, disabling account " + login);
 					loginInfo.setAccountEnabled(false);
 					loginInfo.setFailedAttemptCount(0);
+=======
+			if (userLogin != null) {
+				if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
+					// return STATE_LOGIN_EXPIRED;
+					return LoginState.Expired;
+				}
+				if (logIn(request, userLogin)) {
+					loginInfo.setFailedAttemptCount(0);
+					getUserLoginDAO().merge(loginInfo);
+					// return STATE_LOGGED_ON;
+					return LoginState.LoggedOn;
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 				}
 				else {
 					System.out.println("Login failed, #" + failedAttempts);
@@ -951,6 +964,47 @@ public class LoginBusinessBean implements IWPageEventListener {
 					e1.printStackTrace();
 				}
 			}
+<<<<<<< HEAD
+=======
+		}
+		else {
+			if (isAdmin) { // admin must get unlimited attempts
+				// return STATE_WRONG_PASSW;
+				return LoginState.WrongPassword;
+			}
+			// int returnCode = STATE_WRONG_PASSW;
+			LoginState returnCode = LoginState.WrongPassword;
+			int maxFailedLogginAttempts = 0;
+			try {
+				String maxStr = iwma.getIWApplicationContext().getApplicationSettings().getProperty("max_failed_login_attempts", "0");
+				if(maxStr==null){
+					maxStr="100";
+				}
+				maxFailedLogginAttempts = Integer.parseInt(maxStr);
+			}
+			catch (Exception e) {
+				// default used, no maximum
+			}
+			if (maxFailedLogginAttempts != 0) {
+				int failedAttempts = loginInfo.getFailedAttemptCount();
+				failedAttempts++;
+				loginInfo.setFailedAttemptCount(failedAttempts);
+				if (failedAttempts == maxFailedLogginAttempts - 1) {
+					System.out.println("login failed, disabled next time");
+					// returnCode = STATE_LOGIN_FAILED_DISABLED_NEXT_TIME;
+					returnCode = LoginState.FailedDisabledNextTime;
+				}
+				else if (failedAttempts >= maxFailedLogginAttempts) {
+					System.out.println("Maximum loggin attemps, disabling account " + login);
+					loginInfo.setAccountEnabled(false);
+					loginInfo.setFailedAttemptCount(0);
+				}
+				else {
+					System.out.println("Login failed, #" + failedAttempts);
+				}
+				getUserLoginDAO().merge(loginInfo);
+			}
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 			return returnCode;
 		}
 

@@ -19,7 +19,10 @@ import javax.servlet.http.HttpSessionBindingListener;
 
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
+<<<<<<< HEAD
 
+=======
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.core.accesscontrol.jaas.PersonalIdCredential;
 import com.idega.user.data.bean.User;
@@ -133,6 +136,7 @@ public LoggedOnInfo() {
 		return this.getUser().equals(obj.getUser());
 	}
 
+<<<<<<< HEAD
 	public void valueBound(HttpSessionBindingEvent event) {
 	}
 
@@ -145,6 +149,27 @@ public LoggedOnInfo() {
 		System.out
 				.println("LoggedOnInfo: Session has expired logging off user: "
 						+ name + ". Success = " + success);
+=======
+  @Override
+public void valueBound(HttpSessionBindingEvent event) {
+  }
+		
+	}
+	/* (non-Javadoc)
+	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
+	 */
+	public void valueUnbound(HttpSessionBindingEvent event) {
+		//log out!
+		String name = "Unknown";
+		if(this._user != null){
+			name = this._user.getDisplayName();
+		}
+		HttpSession session = event.getSession();
+		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
+		boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
+		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
+		
+>>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 	}
 
 	public String getLoginType() {
