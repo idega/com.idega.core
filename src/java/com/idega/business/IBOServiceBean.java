@@ -350,6 +350,10 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 	}
 
 	protected com.idega.user.data.User getOldUser(User newUser) throws RemoteException {
+		if (newUser == null) {
+			return null;
+		}
+
 		UserHome userHome = (UserHome) getIDOHome(com.idega.user.data.User.class);
 		try {
 			return userHome.findByPrimaryKey(newUser.getId());
