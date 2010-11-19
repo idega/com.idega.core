@@ -1,13 +1,13 @@
 /*
  * $Id: PresentationObjectContainer.java,v 1.59 2009/05/27 16:08:46 valdas Exp $
- * 
+ *
  * Created in 2001 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2001-2004 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- *  
+ *
  */
 package com.idega.presentation;
 import java.io.IOException;
@@ -19,6 +19,7 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 import java.util.logging.Level;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
@@ -34,7 +35,7 @@ import com.idega.presentation.text.Text;
  * As of JSF this class is basically obsolete, as all UIComponents are "containers".<br>
  * <br>
  * Last modified: $Date: 2009/05/27 16:08:46 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.59 $
  */
@@ -55,7 +56,7 @@ public class PresentationObjectContainer extends PresentationObject
 	public PresentationObjectContainer()
 	{
 	}
-	
+
 	@Override
 	public List<UIComponent> getChildren(){
 		/*if (this.children == null)
@@ -136,7 +137,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 	/**
 	 * Add an object inside this container - same as the add() function
-	 * 
+	 *
 	 * @deprecated replaced by the add function
 	 */
 	@Deprecated
@@ -196,7 +197,7 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		addText(Integer.toString(integerToInsert));
 	}
-	
+
 	public UIComponent getContainedObject(Class<?> objectClass) {
 		List<UIComponent> objects = getChildren();
 		if (objects != null) {
@@ -253,13 +254,13 @@ public class PresentationObjectContainer extends PresentationObject
 	{
 		return getChildren().isEmpty();
 	}
-	
+
 	@Override
 	public void _main(IWContext iwc) throws Exception {
 		if (!this.initializedInMain) {
 			this.initInMain(iwc);
 		}
-		
+
 		if (mayGoThroughMain()) {
 			try	{
 				main(iwc);
@@ -270,7 +271,7 @@ public class PresentationObjectContainer extends PresentationObject
 				add(new ExceptionWrapper(ex, this));
 				getLogger().log(Level.WARNING, "Some error occured rendering " + this, ex);
 			}
-			
+
 			if (IWMainApplication.useJSF) {
 				//Do not go through the children in JSF as that is done through the encode/begin/children methods:
 			} else {
@@ -298,7 +299,7 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="children"
 	 */
 	protected void setChildren(List<UIComponent> newChildren) {
@@ -314,7 +315,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 *  // if (this.theObjects!=null){
 	 * //((PresentationObjectContainer)newObjToCreate).setObjects((Vector)this.theObjects.clone()); // }
 	 */
-	
+
 	/*public void _print(IWContext iwc) throws Exception
 	{
 		goneThroughMain = false;
@@ -322,14 +323,14 @@ public class PresentationObjectContainer extends PresentationObject
 	}*/
 	/**
 	 * The default implementation for the print function for a container.
-	 * 
+	 *
 	 * This function is invoked on each request by the user for each
 	 * PresentationObject instance (after main(iwc)).
-	 * 
+	 *
 	 * Override this function where it is needed to print out the specified
 	 * content. This function should only be overrided in idegaWeb Elements.
 	 */
-	
+
 	@Override
 	public void print(IWContext iwc) throws Exception
 	{
@@ -371,14 +372,14 @@ public class PresentationObjectContainer extends PresentationObject
 		//}
 	}
 
-	
+
 	/**
 	 * @see com.idega.presentation.PresentationObject#initVariables(com.idega.presentation.IWContext)
 	 */
 	@Override
 	public void initVariables(IWContext iwc) throws IOException {
 		//goneThroughMain = false;
-		//This is a legacy fix to make sure the goneThroughMain variable is reset back for 
+		//This is a legacy fix to make sure the goneThroughMain variable is reset back for
 		// components that are stored in session.
 		// For the JSF environment this is done instead in the encodeEnd method.
 		if(!IWMainApplication.useJSF){
@@ -388,18 +389,18 @@ public class PresentationObjectContainer extends PresentationObject
 	}
 
 	/**
-	 *  
+	 *
 	 */
 	public UIComponent getContainedObject(String instanceId){
 		try{
 			try{
 				//is it a region or a pure UIComponent?
 				boolean isRegion = (instanceId.indexOf(".")>=0);
-				if(isRegion){			
+				if(isRegion){
 					//Try to assume that the objectInstanceID is in format 1234.2.2 (icobjectinstanceid.xpox.ypos)
 					String regionOwnerInstanceId = instanceId.substring(0, instanceId.indexOf("."));
 					String index = instanceId.substring(instanceId.indexOf(".") + 1, instanceId.length());
-					
+
 					if (index.indexOf(".") == -1){
 						//not a table...don't actually now what kind of object this might be...eiki
 						return (((PresentationObjectContainer) getContainedObject(regionOwnerInstanceId)).objectAt(Integer.parseInt(index)));
@@ -422,9 +423,9 @@ public class PresentationObjectContainer extends PresentationObject
 						//Try to interpret the objectInstanceID as an integer
 						//backward compatability for PresentationObjects
 						int instanceIdINT = Integer.parseInt(instanceId);
-						
+
 						Iterator<UIComponent> iter = this.getFacetsAndChildren();
-						
+
 						while (iter.hasNext()){
 							UIComponent item = iter.next();
 							if ( item instanceof PresentationObject &&  ((PresentationObject) item).getICObjectInstanceID() == instanceIdINT){
@@ -441,25 +442,25 @@ public class PresentationObjectContainer extends PresentationObject
 					}
 					catch (NumberFormatException nfe)
 					{
-						//must be one of those spiffy new UIComponents and what'not's 
+						//must be one of those spiffy new UIComponents and what'not's
 						Iterator<UIComponent> iter = this.getFacetsAndChildren();
-						
+
 						while (iter.hasNext()){
 							UIComponent item = iter.next();
 							if(instanceId.equals(item.getId())){
 								return item;
-							}	
+							}
 						}
 						return null;
 					}
-					
+
 				}
 			}
 			catch(StringIndexOutOfBoundsException se){
 				return null;
 			}
-			
-			
+
+
 		}
 		catch (NullPointerException ex)
 		{
@@ -467,7 +468,7 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 	}
 	/**
-	 * 
+	 *
 	 */
 	public UIComponent getContainedLabeledObject(String label){
 		Iterator<UIComponent> iter = this.getFacetsAndChildren();
@@ -491,7 +492,7 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		return (null);
 	}
-	
+
 	/*
 	 * public PresentationObject getContainedObject(String objectTreeID) { if
 	 * (objectTreeID.indexOf(".") == -1) { return
@@ -499,7 +500,7 @@ public class PresentationObjectContainer extends PresentationObject
 	 * objectTreeID.substring(objectTreeID.indexOf(".") +
 	 * 1,objectTreeID.length()); String index =
 	 * objectTreeID.substring(0,objectTreeID.indexOf("."));
-	 * 
+	 *
 	 * PresentationObject obj = objectAt(Integer.parseInt(index)); if (obj
 	 * instanceof PresentationObjectContainer){ return
 	 * ((PresentationObjectContainer)obj).getContainedObject(newString); } else {
@@ -587,7 +588,7 @@ public class PresentationObjectContainer extends PresentationObject
 		//}
 	}*/
 	/**
-	 * This method is overrided from the PresentationObject superclass here 
+	 * This method is overrided from the PresentationObject superclass here
 	 * to call clone(iwc,askForPermission) if askForPermission is true instead of plain clone() to handle children
 	 */
 	@Override
@@ -631,10 +632,10 @@ public class PresentationObjectContainer extends PresentationObject
 			//if (this.theObjects != null)
 			//{
 				//obj.setObjects((Vector)this.theObjects.clone());
-				
+
 				/**TL:
 				 * Disabled cloning of the list, it shouldn't be necessary:
-				 * 
+				 *
 					ArrayList alChildren = (ArrayList)myChildren;
 					List clonedChildren = (List)alChildren.clone();
 					if(clonedChildren instanceof PresentationObjectList){
@@ -655,13 +656,13 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 		return obj;
 	}
-	
+
 	private void cloneJSFChildrenAndFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//Cloning the JSF Facets:
 		cloneJSFChildren(obj,iwc,askForPermission);
 		cloneJSFFacets(obj,iwc,askForPermission);
 		//TODO: move the cloning of this to PresentationObject. Now it is inside PresentationObjectContainer
-		
+
 	}
 
 	protected void cloneJSFChildren(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
@@ -670,7 +671,7 @@ public class PresentationObjectContainer extends PresentationObject
 			//First clone the children List instance itself:
 			obj.childrenList=(List) ((PresentationObjectComponentList)this.childrenList).clone();
 			((PresentationObjectComponentList)obj.childrenList).setComponent(obj);
-			
+
 			//Iterate over the children to clone each child:
 			ListIterator<UIComponent> iter = obj.getChildren().listIterator();
 			while (iter.hasNext())
@@ -696,18 +697,18 @@ public class PresentationObjectContainer extends PresentationObject
 					catch (RemoteException e) {
 						e.printStackTrace();
 					}
-					
-				}	
+
+				}
 			}
 		}
 	}
-	
+
 	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
 		//First clone the facet Map:
 		if(this.facetMap!=null){
 			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
 			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
-			
+
 			//Iterate over the children to clone each child:
 			for (Iterator<String> iter = getFacets().keySet().iterator(); iter.hasNext();) {
 				String key = iter.next();
@@ -721,8 +722,8 @@ public class PresentationObjectContainer extends PresentationObject
 			}
 		}
 	}
-	
-	
+
+
 	public boolean remove(PresentationObject obj)
 	{
 		return getChildren().remove(obj);
@@ -737,41 +738,41 @@ public class PresentationObjectContainer extends PresentationObject
 		return this.getChildren().set(index, o);
 	}
 	/**
-	 *  
+	 *
 	 */
 	public void lock()
 	{
 		this._locked = true;
 	}
 	/**
-	 *  
+	 *
 	 */
 	public void unlock()
 	{
 		this._locked = false;
 	}
 	/**
-	 *  
+	 *
 	 */
 	public boolean isLocked()
 	{
 		return (this._locked);
 	}
 	/**
-	 *  
+	 *
 	 */
 	public void setLabel(String label)
 	{
 		this._label = label;
 	}
 	/**
-	 *  
+	 *
 	 */
 	public String getLabel()
 	{
 		return (this._label);
 	}
-	
+
 	@Override
 	public void setLocation(IWLocation location, IWUserContext iwuc)
 	{
@@ -794,13 +795,13 @@ public class PresentationObjectContainer extends PresentationObject
 				}
 			}
 	}
-	
+
 	/*
 	 * Overrided methods from JSF's UIComponent:
 	 */
 
-	
-	
+
+
 
 	@Override
 	public void addChild(UIComponent child){
@@ -811,19 +812,19 @@ public class PresentationObjectContainer extends PresentationObject
 	public void addChild(int index,UIComponent child){
 		this.add(index,(PresentationObject)child);
 	}
-	
+
 	public void clearChildren(){
 		this.empty();
 	}
-	
+
 	public UIComponent getChild(int index){
 		return getChildren().get(index);
 	}
-	
+
 	public int getChildrenCount(){
 		return this.getChildren().size();
 	}
-	
+
 	public void removeChild(int index){
 		this.getChildren().remove(index);
 	}
@@ -831,7 +832,7 @@ public class PresentationObjectContainer extends PresentationObject
 	public void remove(UIComponent child){
 		this.remove((PresentationObject)child);
 	}
-	
+
 	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		callMain(context);
@@ -842,7 +843,7 @@ public class PresentationObjectContainer extends PresentationObject
 		//super.encodeChildren(context);
 		callPrint(context);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
@@ -878,5 +879,9 @@ public class PresentationObjectContainer extends PresentationObject
 		values[1] = Boolean.valueOf(this._locked);
 		values[2] = this._label;
 		return values;
+	}
+
+	public void setZIndex(int zIndex) {
+		setStyleAttribute("z-index", String.valueOf(zIndex));
 	}
 }

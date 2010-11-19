@@ -79,18 +79,14 @@ import com.idega.util.text.TextStyler;
  * This is the base class for all user interface components in old idegaWeb.<br>
  * PresentationObject now extends JavaServerFaces' UIComponent which is now the new standard base component.<br>
  * In all new applications it is recommended to either extend UIComponentBase or IWBaseComponent.
- * 
+ *
  * Last modified: $Date: 2009/04/22 12:50:27 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.183 $
  */
-public class PresentationObject 
-//implements Cloneable{
-extends UIComponentBase 
-implements Cloneable, PresentationObjectType{//,UIComponent{
-	//private final static String IW_BUNDLE_IDENTIFIER="com.idega.idegaweb";
-	
+public class PresentationObject extends UIComponentBase implements Cloneable, PresentationObjectType{
+
 	//Static variables
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 	public final static String CORE_IW_BUNDLE_IDENTIFIER = IW_BUNDLE_IDENTIFIER;
@@ -105,10 +101,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public static String COMPOUNDID_COMPONENT_DELIMITER = ":";
 	// constant for compoundId
 	public static String COMPOUNDID_CHILD_NUMBER_DELIMITER = "_";
-	
+
 	public static final String CLICK = "onclick";
 
-	
+
 	//temporary legacy variables will be removed in future versions.
 	//private transient HttpServletRequest _request;
 	//private transient HttpServletResponse _response;
@@ -119,7 +115,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	//private transient IWContext eventIWContext = null;
 	private transient PresentationObject _templateObject =null;
 	private transient boolean goneThroughRenderPhase=false;
-	
+
 	//state hold variables:
 	public Map<String, String> attributes;
 	private String name;
@@ -154,7 +150,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private String formerCompoundId = null;
 	private TextStyler _styler;
 	private String _objTemplateID = null;
-	
+
 	//JSF variables duplicated and overridden because of cloning:
 	protected Map<String, UIComponent> facetMap;
 	protected List<UIComponent> childrenList;
@@ -166,7 +162,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private boolean supportsMultipleMainCalls=false;
 	private boolean renderForLoggedOut = true;
 	private boolean renderForLoggedIn = true;
-	
+
 
 	/**
 	 * Default constructor.
@@ -203,16 +199,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		return setID(generateID());
 	}
-	
+
 	public String getID() {
 		String theReturn = getMarkupAttribute("id");
 		if (StringUtil.isEmpty(theReturn)) {
 			return setID();
 		}
-		
+
 		return theReturn;
 	}
-	
+
 	public PresentationObject getRootParent()
 	{
 		PresentationObject tempobj=null;
@@ -253,7 +249,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		{
 			this.markupLanguage = IWConstants.MARKUP_LANGUAGE_HTML;
 		}
-		
+
 	}
 	protected void cleanVariables(IWContext iwc){
 		/*this._request=null;
@@ -261,21 +257,21 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.markupLanguage=null;
 		this.out=null;*/
 	}
-	
+
 	protected void initInMain(IWContext iwc) throws Exception
 	{
 		initializeInMain(iwc);
 		this.initializedInMain = true;
 	}
 	/**
-	 *  
+	 *
 	 */
 	public void initializeInMain(IWContext iwc) throws Exception
 	{
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="doPrint"
 	 */
 	public void setDoPrint(boolean ifDoPrint) {
@@ -296,7 +292,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				if(parent instanceof PresentationObject){
 					return ((PresentationObject)parent).doPrint(iwc);
 				}
-				
+
 			}
 		}
 		else
@@ -330,20 +326,20 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 		setMarkupAttribute(attributeName, Integer.toString(attributeValue));
 	}
-	
+
 	/**
-	 * Sets the attribute with value attributeValue but, if there was previously a value 
-	 * there old value will be kept and the new value be added with the semicolon separator ; 
+	 * Sets the attribute with value attributeValue but, if there was previously a value
+	 * there old value will be kept and the new value be added with the semicolon separator ;
 	 * @param attributeName
 	 * @param attributeValue
 	 */
 	public void setMarkupAttributeMultivalued(String attributeName, String attributeValue) {
 		setMarkupAttributeMultivalued(attributeName, attributeValue, ";");
 	}
-	
+
 	/**
-	 * Sets the attribute with value attributeValue but, if there was previously a value 
-	 * there old value will be kept and the new value be added with the supplied seperator 
+	 * Sets the attribute with value attributeValue but, if there was previously a value
+	 * there old value will be kept and the new value be added with the supplied seperator
 	 * @param attributeName
 	 * @param attributeValue
 	 * @param seperator
@@ -369,7 +365,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			}
 		}
 	}
-	
+
 	public void setMarkupAttributeMultivalued(String attributeName, boolean attributeValue) {
 		setMarkupAttributeMultivalued(attributeName, attributeValue, ";");
 	}
@@ -377,15 +373,15 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setMarkupAttributeMultivalued(String attributeName, boolean attributeValue, String seperator) {
 		setMarkupAttributeMultivalued(attributeName, String.valueOf(attributeValue), seperator);
 	}
-	
+
 	public void setMarkupAttributeWithoutValue(String attributeName) {
 		setMarkupAttribute(attributeName, slash);
 	}
-	
+
 	public void setStyleClass(String styleName) {
 		setMarkupAttributeMultivalued("class", styleName, " ");
 	}
-	
+
 	public String getStyleClass(){
 		return getMarkupAttribute("class");
 	}
@@ -422,20 +418,20 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this._styler.parseStyleString(getStyleAttribute());
 		this._styler.removeStyleValue(styleAttribute);
 		setMarkupAttribute("style",this._styler.getStyleString());
-		
+
 	}
-	
+
 	public void setTitle(String title) {
 		setMarkupAttribute("title", title);
 	}
-	
+
 	public String getTitle() {
 		if (isMarkupAttributeSet("title")) {
 			return this.getMarkupAttribute("title");
 		}
 		return "";
 	}
-	
+
 	/* @deprecated
 	 * Use setTitle(String) instead
 	 */
@@ -443,7 +439,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setToolTip(String toolTip) {
 		setTitle(toolTip);
 	}
-	
+
 	/* @deprecated
 	 * Use setTitle(String) instead
 	 */
@@ -451,7 +447,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public String getToolTip() {
 		return getTitle();
 	}
-	
+
 	/**
 	 * Copies all of the attribute mappings from the specified map to
 	 * attributes. These mappings will replace attibutes that this map had for
@@ -462,7 +458,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		getMarkupAttributes().putAll(attributeMap);
 	}
 	/**
-	 *  
+	 *
 	 */
 	protected static Map<String, String> getAttributeMap(String attributeString)
 	{
@@ -546,7 +542,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		/*
 		 * StringBuffer returnString = new StringBuffer(); String Attribute
 		 * ="";
-		 * 
+		 *
 		 * if (this.attributes != null) { Enumeration e = attributes.keys();
 		 * while (e.hasMoreElements()) { Attribute = (String)e.nextElement();
 		 * returnString.append(" "); returnString.append(Attribute); String
@@ -554,7 +550,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		 * if(!attributeValue.equals(slash)){ returnString.append("=\"");
 		 * returnString.append(attributeValue); returnString.append("\""); }
 		 * returnString.append(""); } }
-		 * 
+		 *
 		 * return returnString.toString();
 		 */
 		//return getAttributesString(this.attributes);
@@ -563,7 +559,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	/**
 	 * Gets the name of this object
-	 * 
+	 *
 	 * @uml.property name="name"
 	 */
 	public String getName() {
@@ -572,7 +568,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	/**
 	 * Sets the name of this object
-	 * 
+	 *
 	 * @uml.property name="name"
 	 */
 	public void setName(String name) {
@@ -647,10 +643,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/**
 	 * The default implementation for the print function
-	 * 
+	 *
 	 * This function is invoked on each request by the user for each
 	 * PresentationObject instance (after main(iwc)).
-	 * 
+	 *
 	 * Override this function where it is needed to print out the specified
 	 * content. This function should only be overrided in idegaWeb Elements.
 	 */
@@ -695,10 +691,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public String getLanguage() {
 	    return getMarkupLanguage();
 	}
-	
+
 	/**
 	 * @return The "layout" language used and supplied by the IWContext
-	 * 
+	 *
 	 */
 	public String getMarkupLanguage() {
 		if (this.markupLanguage != null) {
@@ -706,12 +702,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return IWConstants.MARKUP_LANGUAGE_HTML;
 	}
-	
+
 	public String setID(String ID){
 		setId(ID);
 		return ID;
 	}
-	
+
 	/**
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
@@ -723,7 +719,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		setMarkupAttribute("id", id);
 		super.setId(id);
 	}
-	
+
 	public void setID(int ID){
 		setID(Integer.toString(ID));
 	}
@@ -746,7 +742,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		catch(Exception e){}
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns the id set in xml (by Builder).<br/>
@@ -758,7 +754,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public String getXmlId(){
 		return this.xmlId;
 	}
-	
+
 	/**
 	 * This method is deprecated and only used for old style (pre-JSF) style rendering.
 	 * Get the printWriter for the current render response.
@@ -905,7 +901,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/**
 	 * Override this function for needed funcionality.
-	 * 
+	 *
 	 * This funcion is invoked on each request by the user (before print(iwc) )
 	 * on a PresentationObject Instance.
 	 */
@@ -913,12 +909,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 	}
 
-	
+
 	protected void prepareClone(PresentationObject newObjToCreate)
 	{
 	}
-	
-	
+
+
 
 	/**
 	 * This clone method checks for permission for "this" instance if askForPermission is true
@@ -941,7 +937,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			{
 				//return this.clone(iwc,askForPermission);
 				object =  this.clone();
-				
+
 			}
 			else
 			{
@@ -998,11 +994,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 			}
 
-			
+
 			//TODO: Resolve this:
 			//Copying the attributes probably doesn't work like this:
 			obj.getAttributes().putAll(this.getAttributes());
-			
+
 			obj.setName(this.getName());
 			if(this.getParent()!=null){
 				obj.setParent(this.getParent());
@@ -1062,7 +1058,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="errorMessage"
 	 */
 	protected void setErrorMessage(String errorMessage) {
@@ -1070,7 +1066,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="errorMessage"
 	 */
 	protected String getErrorMessage() {
@@ -1083,7 +1079,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/*
 	 * public void setTreeID(String treeID) { this.treeID = treeID; }
-	 * 
+	 *
 	 * public String getTreeID() { return treeID;
 	 */
 	public String getTemplateId() {
@@ -1112,14 +1108,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setTemplateId(String id) {
 		this._objTemplateID=id;
 	}
-	
+
 	public void changeInstanceIdForInheritedObject(int id) {
 		setTemplateId(getICObjectInstanceID());
 		setICObjectInstanceID(id);
 	}
-	
+
 	public void setICObjectInstanceID(int id)
-	{	
+	{
 		this.ic_object_instance_id = id;
 		this.getLocation().setICObjectInstanceID(id);
 	}
@@ -1134,7 +1130,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	public void setICObject(ICObject obj)
 	{
-		int objectId = ((Integer)(obj.getPrimaryKey())).intValue();		
+		int objectId = ((Integer)(obj.getPrimaryKey())).intValue();
 		this.ic_object_id = objectId;
 	}
 	/**
@@ -1171,16 +1167,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return this.ic_object_id;
 		/*
 		 * ICObjectInstance inst = this.getICObjectInstance();
-		 * 
+		 *
 		 * System.out.println("Getting ICObjectInstance"); if(inst != null){
-		 * 
+		 *
 		 * ICObject ob = inst.getObject(); if(ob != null){ return ob.getID(); } }
 		 */
 	}
 	public int getICObjectID()
 	{
 		return this.ic_object_id;
-	}	
+	}
 	public ICObject getICObject() throws Exception {
 		return this.getICObject(this.getClass());
 	}
@@ -1392,11 +1388,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		return null;
 	}
 	public String getLocalizedString(String key, IWUserContext iwuc)
-	{	
+	{
 		//TODO use such method everywhere for getting localised messages
 //		IWContext iwc = (IWContext)iwuc;
 //		return iwc.getIWMainApplication().getLocalisedStringMessage(key, null, getBundleIdentifier(), iwc.getCurrentLocale());
-		
+
 		IWResourceBundle bundle = getResourceBundle(iwuc);
 		if (bundle != null)
 		{
@@ -1408,7 +1404,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	{
 //		IWContext iwc = (IWContext)iwuc;
 //		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, defaultValue, getBundleIdentifier(), iwc.getCurrentLocale());
-				
+
 		IWResourceBundle bundle = getResourceBundle(iwuc);
 		if (bundle != null)
 		{
@@ -1614,7 +1610,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/**
 	 * Returns the IWApplicationContext that this object is running in.
-	 * 
+	 *
 	 * @throws RuntimeException
 	 *             if the context is not set
 	 */
@@ -1633,7 +1629,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	//}
 	/**
 	 * Returns the IWUserContext that this object is running in.
-	 * 
+	 *
 	 * @throws RuntimeException
 	 *             if the context is not set
 	 */
@@ -1751,7 +1747,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * This method is similar to the method getEventListenerList but uses the
 	 * compoundId as key instead of the location object to fetch the listener
 	 * list
-	 * 
+	 *
 	 * @param iwuc
 	 * @return EventListenerList
 	 */
@@ -1807,7 +1803,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * This method is similar to the method addIWActionListener but uses the
 	 * method getEventListener() instead of getEventListenerList()
-	 * 
+	 *
 	 * @param l
 	 */
 	public void addActionListener(IWActionListener l)
@@ -1835,7 +1831,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * This method is similar to the method addIWActionListener but uses the
 	 * method getListener() instead of getEventListenerList()
-	 *  
+	 *
 	 */
 	public void removeActionListener(IWActionListener l)
 	{
@@ -1939,10 +1935,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/**
 	 * @see javax.faces.component.UIComponent#getComponentId()
-	 * 
+	 *
 	 * Create a path (e.g. "/1234/123/123") that corresponds to the path of the
 	 * parent - child relation using the encrypted class name.
-	 * 
+	 *
 	 * @return String
 	 */
 	private String calculateCompoundId()
@@ -1982,10 +1978,10 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * artificialCompoundId (if necessary) and then call the
 	 * getPresentationState method. The part of this method that calls the
 	 * state mashine is only for old code!
-	 * 
+	 *
 	 * @param artificialCompoundId
 	 * @param iwuc
-	 * 
+	 *
 	 * @uml.property name="artificialCompoundId"
 	 */
 	public void setArtificialCompoundId(
@@ -2030,7 +2026,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/**
 	 * Convenience method to return the instance of BuilderService
-	 * 
+	 *
 	 * @param iwc
 	 * @return @throws
 	 *         RemoteException
@@ -2041,7 +2037,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 	/**
 	 * Convenience method to return the instance of ICFileSystem
-	 * 
+	 *
 	 * @param iwc
 	 * @return @throws
 	 *         RemoteException
@@ -2053,12 +2049,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 
 	/*
 	 * Overrided methods from JSF's UIComponent:
-	 */	
-	
+	 */
+
 	public String getComponentType(){
 		return "iw.element";
 	}
-	
+
 	public void addChild(UIComponent child){
 		throw new UnsupportedOperationException("Method add(UIComponent) is not supported yet in PresentationObject");
 	}
@@ -2066,14 +2062,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void addChild(int index,UIComponent child){
 		throw new UnsupportedOperationException("Method add(int,UIComponent) is not supported yet in PresentationObject");
 	}
-	
+
 	@Override
 	public UIComponent getParent(){
 		//return parentObject;
 		return super.getParent();
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#setParent(javax.faces.component.UIComponent)
 	 */
@@ -2083,8 +2079,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		super.setParent(arg0);
 	}
 
-	
-	
+
+
 	/*
 	 * BEGIN JSF SPECIFIC IMPLEMENTAION METHODS
 	 */
@@ -2103,12 +2099,12 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
             throw e;
         }
 	}
-	
+
 	@Override
 	public void decode(FacesContext fc){
 		super.decode(fc);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
@@ -2123,7 +2119,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.hasBeenAdded=((Boolean)values[5]).booleanValue();
 		this.treeID=(String)values[6];
 		this.resetGoneThroughMainInRestore=((Boolean)values[28]).booleanValue();
-		
+
 		if(resetGoneThroughMainInRestore()){
 			this.goneThroughMain=false;
 		}
@@ -2230,7 +2226,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	}
 
 	/**
-	 * Bridging method to call the old idegaWeb _main(IWContext method) to work inside JavaServerFaces.			
+	 * Bridging method to call the old idegaWeb _main(IWContext method) to work inside JavaServerFaces.
 	 * This can be done in three ways, from the IWPhaseListener, from encodeBegin(FacesContext) or from encodeChildren(FacesContext)
 	 * @param fc
 	 * @throws IOException
@@ -2271,9 +2267,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			getChildren().add(new ExceptionWrapper(e));
 		}
 	}
-	
+
 	/**
-	 * Resets the component before main is called (again in a state restored instance). 
+	 * Resets the component before main is called (again in a state restored instance).
 	 * This is done to be compatible with the JSF store/restore-state mechanism.
 	 * @param context
 	 */
@@ -2281,8 +2277,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		empty();
 		restoreFromReflectionProperties();
 	}
-	
-	
+
+
 	/**
 	 * Bridging method to call the old idegaWeb print(IWContext method) to work inside JavaServerFaces.
 	 * This is usually done from encodeBegin(FacesContext) or encodeChildren(FacesContext)
@@ -2318,7 +2314,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		callMain(fc);
 		callPrint(fc);
 	}
-	
+
 	@Override
 	public boolean isRendered() {
 		IWContext iwc = castToIWContext(getFacesContext());
@@ -2341,13 +2337,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			}
 		}
 	}
-	
-	
+
+
 	/**
 	 * Renders a child component for the current component. This operation is handy when implementing
 	 * renderes that perform child rendering themselves (eg. a layout renderer/grid renderer/ etc..).
 	 * Passes on any IOExceptions thrown by the child/child renderer.
-	 * 
+	 *
 	 * @param context the current FacesContext
 	 * @param child which child to render
 	 */
@@ -2381,8 +2377,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				}
 			}
 		}
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
@@ -2392,17 +2388,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		this.setRenderedPhaseDone();
 		resetGoneThroughMain();
 	}
-	 
+
 	protected IWContext castToIWContext(FacesContext fc){
 		return IWContext.getIWContext(fc);
 	}
-	
+
 	@Override
 	public boolean getRendersChildren(){
 		//This is overrided because PresentationObjects have no extra Renderer by default
 		return true;
 	}
-	
+
 	@Override
 	public String getId(){
 		if(super.getId()==null){
@@ -2410,13 +2406,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return super.getId();
 	}
-	
+
 	@Override
 	public String getFamily(){
 		return "idegaweb";
 	}
-	
-	
+
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacet(java.lang.String)
 	 */
@@ -2442,9 +2438,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
 		return new FacetsAndChildrenIterator(getFacets(), getChildren());
 	}
-	
-	
-	
+
+
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildCount()
 	 */
@@ -2463,7 +2459,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return this.childrenList;
 	}
-	
+
 	/**
 	 * This method has a bug in the Builder, the attributes do not clone correctly.
 	 */
@@ -2473,27 +2469,27 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		//		There is a problem with that because of the Myfaces implementation of restoreSate() and saveState() in UIComponentBase
 		return super.getAttributes();
 	}
-	
-	
+
+
 	protected void setRenderedPhaseDone(){
 		this.goneThroughRenderPhase=true;
 	}
 
 	protected void setRenderedPhaseNotDone(){
 		this.goneThroughRenderPhase=false;
-	}	
-	
+	}
+
 	protected boolean goneThroughRenderPhase(){
 		return this.goneThroughRenderPhase;
 	}
-	
+
 	/*
 	 * END JSF SPECIFIC IMPLEMENTAION METHODS
-	 */	
-	
-	 
+	 */
+
+
 	 //STANDARD LOGGING METHODS:
-  	
+
 	 /**
 	  * Logs out to the default log level (which is by default INFO)
 	  * @param msg The message to log out
@@ -2510,7 +2506,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected void log(Exception e) {
 		 LoggingHelper.logException(e,this,getLogger(),getErrorLogLevel());
 	 }
-	
+
 	 /**
 	  * Logs out to the specified log level to the default Logger
 	  * @param level The log level
@@ -2520,7 +2516,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		 //System.out.println(msg);
 		 getLogger().log(level,msg);
 	 }
-	
+
 	 /**
 	  * Logs out to the error log level (which is by default WARNING) to the default Logger
 	  * @param msg The message to log out
@@ -2538,7 +2534,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		 //System.err.println(msg);
 		 getLogger().log(getDebugLogLevel(),msg);
 	 }
-	
+
 	 /**
 	  * Logs out to the SEVERE log level to the default Logger
 	  * @param msg The message to log out
@@ -2546,9 +2542,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected void logSevere(String msg) {
 		 //System.err.println(msg);
 		 getLogger().log(Level.SEVERE,msg);
-	 }	
-	
-	
+	 }
+
+
 	 /**
 	  * Logs out to the WARNING log level to the default Logger
 	  * @param msg The message to log out
@@ -2557,7 +2553,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		 //System.err.println(msg);
 		 getLogger().log(Level.WARNING,msg);
 	 }
-	
+
 	 /**
 	  * Logs out to the CONFIG log level to the default Logger
 	  * @param msg The message to log out
@@ -2565,16 +2561,16 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected void logConfig(String msg) {
 		 //System.err.println(msg);
 		 getLogger().log(Level.CONFIG,msg);
-	 }	
-	
+	 }
+
 	 /**
 	  * Logs out to the debug log level to the default Logger
 	  * @param msg The message to log out
 	  */
 	 protected void debug(String msg) {
 		 logDebug(msg);
-	 }	
-	
+	 }
+
 	 /**
 	  * Gets the default Logger. By default it uses the package and the class name to get the logger.<br>
 	  * This behaviour can be overridden in subclasses.
@@ -2583,7 +2579,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected Logger getLogger(){
 		 return Logger.getLogger(this.getClass().getName());
 	 }
-	
+
 	 /**
 	  * Gets the log level which messages are sent to when no log level is given.
 	  * @return the Level
@@ -2617,13 +2613,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	//		 System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getClassName());
 	//	 }
 	// }
-	 
+
 	 public boolean isContainer() {
 	 	return false;
 	 }
-	 
+
 	 private List getReflectionProperties(){
-		
+
 		 int icObjectInstanceId = getICObjectInstanceID();
 		 String cacheKey=null;
 		 if(icObjectInstanceId!=-1){
@@ -2632,18 +2628,18 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		 else{
 			 cacheKey = getId();
 		 }
-		 
+
 		 if(cacheKey!=null){
-			 List l = PropertyCache.getInstance().getPropertyList(cacheKey); 
+			 List l = PropertyCache.getInstance().getPropertyList(cacheKey);
 			 if (l != null && l.isEmpty()) {
-				 l = PropertyCache.getInstance().getPropertyList(getId()); 
+				 l = PropertyCache.getInstance().getPropertyList(getId());
 			 }
 			 return l;
 		 }
-		
+
 		 return null;
 	 }
-	 	 
+
 	 protected void restoreFromReflectionProperties(){
  		/*if(this.getClass().getName().indexOf("Navigation")!=-1){
  			boolean check=true;
@@ -2661,8 +2657,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			}
 	 	}
 	 }
-	 
-	 
+
+
 	 /**
 	  * Ancient way of setting property, handlers should now register properties with methodinvocation!
 	  * Also if you are calling this method in code just use getAttributes().put(key,values); where values is preferably a List.
@@ -2675,7 +2671,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setProperty(String key, String[] values){
 		getAttributes().put(key,ListUtil.convertStringArrayToList(values));
 	 }
-	 
+
 	 /**
 	  * Gets wether the object is recreated in JSFs restoreState phase. This is false if the object is just newly created
 	  * @return
@@ -2683,18 +2679,18 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected boolean isRestoredFromState(){
 	 	return this.isStateRestored;
 	 }
-	 
+
 	 /**
 	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
 	  */
 	 protected boolean resetGoneThroughMainInRestore(){
 	 	return this.resetGoneThroughMainInRestore;
 	 }
-	 
+
 	 protected void setResetGoneThroughMainInRestore(boolean ifReset){
 		 this.resetGoneThroughMainInRestore=ifReset;
 	 }
-	 
+
 	 /**
 	  * Gets if the class allows to call the main(iwcontext) method
 	  * @return
@@ -2714,7 +2710,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected boolean supportsMultipleMainCalls(){
 	 	return this.supportsMultipleMainCalls;
 	 }
-	 
+
 	 protected void setSupportsMultipleMainCalls(boolean ifSupports){
 		 this.supportsMultipleMainCalls=ifSupports;
 	 }
@@ -2725,11 +2721,11 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 protected void setGoneThroughMain(){
 	 	this.goneThroughMain=true;
 	 }
-	 
+
 	 protected void resetGoneThroughMain(){
 	 	this.goneThroughMain=false;
 	 }
-	 
+
 	/**
 	 * Removes the children of this component
 	 */
@@ -2738,7 +2734,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		getChildren().clear();
 		//theObjects.removeAll(theObjects);
 	}
-	
+
 /**
 	 * Gets the set Markup Language (HTML/XHTML/XHTML11) for the current IW Application.
 	 * @return
@@ -2748,7 +2744,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		//return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
 	    return IWMainApplication.getDefaultIWMainApplication().getSettings().getDefaultMarkupLanguage();
 	}
-	
+
 	/**
 	 * <p>
 	 * Checks if XHTML is set a the default markup language for the application. Returns true if that is the case.
@@ -2765,7 +2761,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		}
 		return false;
 	}
-	
+
 	/**
 	 * <p>
 	 * Encode a string to escape xhtml specific characters to an excaped xml format.<br/>
@@ -2776,14 +2772,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 */
 	protected String xhtmlEncode(String unEncoded){
 		boolean xhtmlSet=isXhtmlSet();
-		
+
 		if(xhtmlSet){
 			return TextSoap.convertSpecialCharacters(unEncoded);
 		}
 		return unEncoded;
 	}
-	
-	
+
+
 	/**
 	 * Method to use in subclasses if facets should be cloned.  DOES NOT CHECK PERMISSIONS.
 	 * @param obj The clone.
@@ -2793,7 +2789,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 		if(this.facetMap!=null){
 			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
 			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
-			
+
 			//Iterate over the children to clone each child:
 			for (Iterator<String> iter = getFacets().keySet().iterator(); iter.hasNext();) {
 				String key = iter.next();
@@ -2807,21 +2803,21 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			}
 		}
 	}
-	
+
 	protected Object getValueBindingByAttributeExp(FacesContext ctx, String attributeName) {
-	
+
 		ValueBinding vb = getValueBinding(attributeName);
-	
+
 		if(vb != null) {
-		
+
 			String exp = vb.getExpressionString();
-			
+
 			if(exp != null) {
-			
+
 				return ctx.getApplication().createValueBinding(exp).getValue(ctx);
 			}
 		}
-		
+
 		return null;
 	}
 
@@ -2832,11 +2828,14 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public void setToRenderForLoggedOut(boolean render) {
 		this.renderForLoggedOut = render;
 	}
-	
+
 	@SuppressWarnings("unchecked")
     protected <T>T getExpressionValue(FacesContext ctx, String expression) {
-    	
     	ValueExpression vexp = getValueExpression(expression);
-    	return vexp != null ? (T)vexp.getValue(ctx.getELContext()) : null;
+    	return vexp != null ? (T) vexp.getValue(ctx.getELContext()) : null;
     }
+
+	public void setOnClick(String onClick) {
+		setMarkupAttribute("onclick", onClick);
+	}
 }
