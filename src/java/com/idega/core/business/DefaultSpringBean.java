@@ -115,6 +115,10 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected com.idega.user.data.User getOldUser(User newUser) {
+		if (newUser == null) {
+			return null;
+		}
+
 		UserHome userHome = getHomeForEntity(com.idega.user.data.User.class);
 		try {
 			return userHome.findByPrimaryKey(newUser.getId());
