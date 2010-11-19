@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
@@ -99,7 +99,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = Group.COLUMN_GROUP_ID)
 	private Integer groupID;
-	
+
 	@Column(name = COLUMN_UNIQUE_ID, length = 36, nullable = false, unique = true)
 	private String uniqueID;
 
@@ -180,9 +180,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Group.class)
 	@JoinTable(name = GroupRelation.ENTITY_NAME, joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = GroupRelation.COLUMN_RELATED_GROUP, referencedColumnName = COLUMN_GROUP_ID) })
 	private List<Group> children;
-	
+
     @OneToMany(mappedBy = "pk.group")
-    private final List<TopNodeGroup> topNodeGroups = new ArrayList();
+    private final List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -231,18 +231,20 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.data.UniqueIDCapable#getUniqueId()
 	 */
+	@Override
 	public String getUniqueId() {
 		return uniqueID;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.data.UniqueIDCapable#setUniqueId(java.lang.String)
 	 */
+	@Override
 	public void setUniqueId(String uniqueID) {
 		this.uniqueID = uniqueID;
 	}
@@ -531,7 +533,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	public void setMetadata(Set<Metadata> metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	/**
 	 * @return Returns the topNodeGroups.
 	 */
@@ -547,10 +549,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 				return metaData;
 			}
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -558,10 +561,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 				return metaData.getValue();
 			}
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataAttributes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -569,10 +573,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		for (Metadata metaData : list) {
 			map.put(metaData.getKey(), metaData.getValue());
 		}
-		
+
 		return map;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataTypes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -580,19 +585,21 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		for (Metadata metaData : list) {
 			map.put(metaData.getKey(), metaData.getType());
 		}
-		
+
 		return map;
 	}
 
+	@Override
 	public boolean removeMetaData(String metaDataKey) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata != null) {
 			getMetadata().remove(metadata);
 		}
-		
+
 		return false;
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		Metadata metadata = getMetadata(oldKeyName);
 		if (metadata != null) {
@@ -603,10 +610,12 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		}
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName) {
 		renameMetaData(oldKeyName, newKeyName, null);
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value, String type) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata == null) {
@@ -617,90 +626,106 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		if (type != null) {
 			metadata.setType(type);
 		}
-		
+
 		getMetadata().add(metadata);
-		
+
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value) {
 		setMetaData(metaDataKey, value, null);
 	}
 
+	@Override
 	public void setMetaDataAttributes(Map<String, String> map) {
 		for (String key : map.keySet()) {
 			String value = map.get(key);
-			
+
 			Metadata metadata = getMetadata(key);
 			if (metadata == null) {
 				metadata = new Metadata();
 				metadata.setKey(key);
 			}
 			metadata.setValue(value);
-			
+
 			getMetadata().add(metadata);
 		}
 	}
 
+	@Override
 	public void updateMetaData() throws SQLException {
 		//Does nothing...
 	}
-	
+
 	/* ICTreeNode implementation */
+	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
 
+	@Override
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		return children.get(childIndex);
 	}
 
+	@Override
 	public int getChildCount() {
 		return children.size();
 	}
-	
-	public Collection getChildren() {
+
+	@Override
+	public Collection<Group> getChildren() {
 		return children;
 	}
-	
-	public Iterator getChildrenIterator() {
+
+	@Override
+	public Iterator<Group> getChildrenIterator() {
 		return children.iterator();
 	}
-	
+
+	@Override
 	public String getId() {
 		return getID().toString();
 	}
 
+	@Override
 	public int getIndex(ICTreeNode node) {
 		return Integer.parseInt(node.getId());
 	}
-	
+
+	@Override
 	public int getNodeID() {
 		return getID().intValue();
 	}
-	
+
+	@Override
 	public String getNodeName() {
 		return getName();
 	}
 
+	@Override
 	public String getNodeName(Locale locale) {
 		return getNodeName();
 	}
 
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return getNodeName(locale);
 	}
-	
+
+	@Override
 	public ICTreeNode getParentNode() {
 		if (parents != null && !parents.isEmpty()) {
 			return parents.iterator().next();
 		}
 		return null;
 	}
-	
+
 	public List<Group> getParentGroups() {
 		return parents;
 	}
-	
+
+	@Override
 	public int getSiblingCount() {
 		ICTreeNode parent = getParentNode();
 		if (parent != null) {
@@ -709,6 +734,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		return 0;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return children == null || children.isEmpty();
 	}

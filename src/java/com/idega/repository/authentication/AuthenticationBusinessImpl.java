@@ -24,7 +24,7 @@ import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.RepositoryService;
-import com.idega.user.data.User;
+import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 
@@ -64,13 +64,9 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 			String user = null;
 			String password = null;
 			if (admin != null) {
-				LoginContext loginContext = LoginBusinessBean.getLoginContext(admin);
+				LoginContext loginContext = LoginBusinessBean.getDefaultLoginBusinessBean().getLoginContext(admin);
 				user = loginContext.getUserName();
 				password = loginContext.getPassword();
-//				LoginInfo info = LoginDBHandler.getLoginInfo(LoginDBHandler.getUserLogin(admin));
-//				if (info != null) {
-//					info.get
-//				}
 			}
 			if (user == null || password == null) {
 				return null;

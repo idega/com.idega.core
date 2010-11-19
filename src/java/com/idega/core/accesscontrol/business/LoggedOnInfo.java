@@ -19,10 +19,6 @@ import javax.servlet.http.HttpSessionBindingListener;
 
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
-<<<<<<< HEAD
-
-=======
->>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
 import com.idega.core.accesscontrol.jaas.IWCredential;
 import com.idega.core.accesscontrol.jaas.PersonalIdCredential;
 import com.idega.user.data.bean.User;
@@ -35,9 +31,9 @@ import com.idega.util.IWTimestamp;
  * This class implements HttpSessionBindingListener so that the login
  * information is cleaned up when the users session times out.
  * </p>
- * 
+ *
  * Last modified: $Date: 2007/01/22 08:16:38 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.21 $
@@ -45,26 +41,21 @@ import com.idega.util.IWTimestamp;
 public class LoggedOnInfo implements HttpSessionBindingListener  {
 
   private static final String TICKET_CREDENTIAL = "ticket";
- 
+
   private User _user = null;
-//  private HttpSession _session = null; 
   private IWTimestamp _timeOfLogon = null;
   private UserLogin _userLogin;
   private String _login = null;
   private LoginRecord _loginRecord;
   private String _encryptionType = null;
   private String _loginType = null;
-  private Set _userRoles = null;
-  private Map _loggedOnInfoAttribute = new HashMap();
-  private Map credentials = new HashMap(0);
+  private Set<String> _userRoles = null;
+  private Map<Object, Object> _loggedOnInfoAttribute = new HashMap<Object, Object>();
+  private Map<String, IWCredential> credentials = new HashMap<String, IWCredential>();
 
-  
+  	public LoggedOnInfo() {}
 
-public LoggedOnInfo() {
-	// empty
-  }
-  //setters
-	public void setUser(User user) {
+  	public void setUser(User user) {
 		this._user = user;
 		if (user != null) {
 			initializePersonalIdCredential(user);
@@ -75,7 +66,7 @@ public LoggedOnInfo() {
 	 * <p>
 	 * Initializes the PersonalIdCredential object set in the Credentials map
 	 * </p>
-	 * 
+	 *
 	 * @param user
 	 */
 	private void initializePersonalIdCredential(User user) {
@@ -136,40 +127,17 @@ public LoggedOnInfo() {
 		return this.getUser().equals(obj.getUser());
 	}
 
-<<<<<<< HEAD
+	@Override
 	public void valueBound(HttpSessionBindingEvent event) {
 	}
 
+	@Override
 	public void valueUnbound(HttpSessionBindingEvent event) {
 		String name = this._user == null ? "Unknown" : this._user.getDisplayName();
 		HttpSession session = event.getSession();
-		LoginBusinessBean loginBean = LoginBusinessBean
-				.getLoginBusinessBean(session);
-		boolean success = loginBean.logOutUserOnSessionTimeout(session, this);
-		System.out
-				.println("LoggedOnInfo: Session has expired logging off user: "
-						+ name + ". Success = " + success);
-=======
-  @Override
-public void valueBound(HttpSessionBindingEvent event) {
-  }
-		
-	}
-	/* (non-Javadoc)
-	 * @see javax.servlet.http.HttpSessionBindingListener#valueUnbound(javax.servlet.http.HttpSessionBindingEvent)
-	 */
-	public void valueUnbound(HttpSessionBindingEvent event) {
-		//log out!
-		String name = "Unknown";
-		if(this._user != null){
-			name = this._user.getDisplayName();
-		}
-		HttpSession session = event.getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
-		boolean success = loginBean.logOutUserOnSessionTimeout(session,this);
-		System.out.println("LoggedOnInfo: Session has expired logging off user: "+name+". Success = "+ success);
-		
->>>>>>> a03e2312435be07570440c4afa0abdae209a0ce3
+		boolean success = loginBean.logOutUserOnSessionTimeout(session, this);
+		System.out.println("LoggedOnInfo: Session has expired logging off user: " + name + ". Success = " + success);
 	}
 
 	public String getLoginType() {
@@ -211,7 +179,7 @@ public void valueBound(HttpSessionBindingEvent event) {
 	}
 
 	public IWCredential putCredential(String originator, IWCredential credential) {
-		return (IWCredential) this.credentials.put(originator, credential);
+		return this.credentials.put(originator, credential);
 	}
 
 	public Map<String, IWCredential> getCredentials() {
@@ -223,7 +191,7 @@ public void valueBound(HttpSessionBindingEvent event) {
 	 * Gets a Ticket that is used with Single-Sign-On solutions, and if that is
 	 * in use. If no single sign-on is set up this method returns null.
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public String getTicket() {

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
@@ -43,6 +43,8 @@ import com.idega.core.location.data.bean.Address;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 
 @Entity
 @Table(name = User.ENTITY_NAME)
@@ -59,7 +61,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String ENTITY_NAME = "ic_user";
 	public static final String COLUMN_USER_ID = "ic_user_id";
-	
+
 	private static final String COLUMN_UNIQUE_ID = "unique_id";
 	private static final String COLUMN_FIRST_NAME = "first_name";
 	private static final String COLUMN_MIDDLE_NAME = "middle_name";
@@ -85,7 +87,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	public static final String SQL_RELATION_ADDRESS = "ic_user_address";
 	public static final String SQL_RELATION_PHONE = "ic_user_phone";
 	public static final String SQL_RELATION_METADATA = "ic_metadata_ic_user";
-	
+
 	public static final String ADMINISTRATOR_DEFAULT_NAME = "Administrator";
 
 	@Id
@@ -185,9 +187,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@OneToOne(fetch = FetchType.LAZY, targetEntity = Group.class)
 	@JoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private Group userRepresentative;
-	
+
     @OneToMany(mappedBy = "pk.user")
-    private List<TopNodeGroup> topNodeGroups = new ArrayList();
+    private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -240,10 +242,12 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		this.userID = group.getID();
 	}
 
+	@Override
 	public String getUniqueId() {
 		return uniqueId;
 	}
 
+	@Override
 	public void setUniqueId(String uniqueID) {
 		this.uniqueId = uniqueID;
 	}
@@ -437,15 +441,15 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	public void setMetadata(Set<Metadata> metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	public Group getUserRepresentative() {
 		return this.userRepresentative;
 	}
-	
+
 	public List<TopNodeGroup> getTopNodeGroups() {
 		return this.topNodeGroups;
 	}
-	
+
 	/* MetaDataCapable implementation */
 	private Metadata getMetadata(String key) {
 		Set<Metadata> list = getMetadata();
@@ -458,6 +462,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return null;
 	}
 
+	@Override
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -469,6 +474,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataAttributes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -480,6 +486,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return map;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataTypes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -491,6 +498,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return map;
 	}
 
+	@Override
 	public boolean removeMetaData(String metaDataKey) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata != null) {
@@ -500,6 +508,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return false;
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		Metadata metadata = getMetadata(oldKeyName);
 		if (metadata != null) {
@@ -510,10 +519,12 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		}
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName) {
 		renameMetaData(oldKeyName, newKeyName, null);
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value, String type) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata == null) {
@@ -529,10 +540,12 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value) {
 		setMetaData(metaDataKey, value, null);
 	}
 
+	@Override
 	public void setMetaDataAttributes(Map<String, String> map) {
 		for (String key : map.keySet()) {
 			String value = map.get(key);
@@ -548,7 +561,31 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		}
 	}
 
+	@Override
 	public void updateMetaData() throws SQLException {
 		// Does nothing...
+	}
+
+	public String getName() {
+		String firstName = getFirstName();
+		String middleName = getMiddleName();
+		String lastName = getLastName();
+
+		if (firstName == null) {
+			firstName = CoreConstants.EMPTY;
+		}
+
+		if (middleName == null) {
+			middleName = CoreConstants.EMPTY;
+		} else if (!StringUtil.isEmpty(middleName)) {
+			middleName = CoreConstants.SPACE.concat(middleName);
+		}
+
+		if (lastName == null) {
+			lastName = CoreConstants.EMPTY;
+		} else if (!StringUtil.isEmpty(lastName)){
+			lastName = CoreConstants.SPACE.concat(lastName);
+		}
+		return firstName.concat(middleName).concat(lastName);
 	}
 }
