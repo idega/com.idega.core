@@ -40,6 +40,7 @@ import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.AuthenticationBusiness;
 import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.accesscontrol.business.ServletFilterChainInterruptException;
 import com.idega.core.accesscontrol.jaas.IWCallbackHandler;
 import com.idega.core.accesscontrol.jaas.IWJAASAuthenticationRequestWrapper;
@@ -89,6 +90,10 @@ public class IWAuthenticator extends BaseFilter {
 	 * (and it is succesful)
 	 */
 	public static final String PARAMETER_REDIRECT_URI_ONLOGOFF = "logoff_redirect_uri";
+	/**
+	 * This parameter can be set to forward to a certain page when logging in fails
+	 */
+	public static final String PARAMETER_REDIRECT_URI_ONLOGON_FAILED = "logon_failed_redirect_uri";
 	public static final String COOKIE_NAME = "iwrbusid";
 	//public String IW_BUNDLE_IDENTIFIER = "com.idega.block.login";
 	public static final String PARAMETER_ALLOWS_COOKIE_LOGIN = "icusallows";
@@ -261,7 +266,8 @@ public class IWAuthenticator extends BaseFilter {
 			return redirectToUserHomepage(request, response, loginBusiness);
 		}
 		if (RequestUtil.isParameterSet(request, PARAMETER_REDIRECT_URI_ONLOGON) && isLoggedOn) {
-			String uri = getLoginRedirectUriOnLogonParsedWithVariables(request);
+			String uriToParse = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
+			String uri = getLoginRedirectUriOnLogonParsedWithVariables(request,uriToParse);
 			if (uri != null) {
 				response.sendRedirect(uri);
 				return true;
@@ -274,6 +280,16 @@ public class IWAuthenticator extends BaseFilter {
 				return true;
 			}
 		}
+		
+		if (RequestUtil.isParameterSet(request, PARAMETER_REDIRECT_URI_ONLOGON_FAILED) && !isLoggedOn) {
+			String uriToParse = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON_FAILED);
+			String uri = getLoginRedirectUriOnLogonParsedWithVariables(request,uriToParse);
+			if (uri != null) {
+				response.sendRedirect(uri);
+				return true;
+			}
+		}
+		
 		return false;
 	}
 	
@@ -315,14 +331,13 @@ public class IWAuthenticator extends BaseFilter {
 	 * @param request
 	 * @return
 	 */
-	public static String getLoginRedirectUriOnLogonParsedWithVariables(HttpServletRequest request) {
-		String uri = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON);
-
+	public static String getLoginRedirectUriOnLogonParsedWithVariables(HttpServletRequest request, String uri) {
 		if (uri != null) {
 			try {
 				uri = URLDecoder.decode(uri, CoreConstants.ENCODING_UTF8);
 				List<String> ignoreParams = new ArrayList<String>();
 				ignoreParams.add(PARAMETER_REDIRECT_URI_ONLOGON);
+				ignoreParams.add(PARAMETER_REDIRECT_URI_ONLOGON_FAILED);
 				ignoreParams.add(LoginBusinessBean.PARAMETER_USERNAME);
 				ignoreParams.add(LoginBusinessBean.PARAMETER_PASSWORD);
 				ignoreParams.add(LoginBusinessBean.PARAMETER_PASSWORD2);//whatever that is...
@@ -357,15 +372,23 @@ public class IWAuthenticator extends BaseFilter {
 
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(request);
 		LoggedOnInfo info = loginBean.getLoggedOnInfo(request.getSession());
-
-		User user = loginBean.getCurrentUser(request.getSession());
-		if (user != null) {
-			String personalId = user.getPersonalID();
-			uri = uri.replaceAll(PERSONAL_ID_PATTERN, personalId);
+		
+		User user = null;
+		try{
+			user = loginBean.getCurrentUser(request.getSession());
+			if (user != null) {
+				String personalId = user.getPersonalID();
+				uri = uri.replaceAll(PERSONAL_ID_PATTERN, personalId);
+			}
+		} catch (NotLoggedOnException e){
+			//Do nothing
 		}
-		String ticket = info.getTicket();
-		if (ticket != null) {
-			uri = uri.replaceAll(TICKET_PATTERN, ticket);
+		
+		if(info != null){
+			String ticket = info.getTicket();
+			if (ticket != null) {
+				uri = uri.replaceAll(TICKET_PATTERN, ticket);
+			}
 		}
 		return uri;
 	}
