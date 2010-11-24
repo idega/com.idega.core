@@ -339,25 +339,11 @@ public class GroupBMPBean extends com.idega.data.GenericEntity implements com.id
 
 
 
-		if (vector != null){
+		vector.trimToSize();
 
-			vector.trimToSize();
+		return (Group[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
 
-			return (Group[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-
-		}
-
-		else{
-
-			return null;
-
-		}
-
-
-
-
-
-          //return (Group[])this.findReverseRelated(this);
+      //return (Group[])this.findReverseRelated(this);
 
         }
 

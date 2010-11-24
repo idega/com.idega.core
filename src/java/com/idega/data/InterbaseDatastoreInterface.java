@@ -322,7 +322,6 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 	public boolean isConnectionOK(Connection conn)
 	{
 		Statement testStmt = null;
-		ResultSet RS = null;
 		try
 		{
 			if (!conn.isClosed())
@@ -340,16 +339,6 @@ public class InterbaseDatastoreInterface extends DatastoreInterface
 		{
 			if (testStmt != null)
 			{
-				if (RS != null)
-				{
-					try
-					{
-						RS.close();
-					}
-					catch (SQLException se)
-					{
-					}
-				}
 				try
 				{
 					testStmt.close();

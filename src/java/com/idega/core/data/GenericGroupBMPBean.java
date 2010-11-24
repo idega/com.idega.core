@@ -239,16 +239,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		    }
 	    }
 
-		if (vector != null)
-		{
-			vector.trimToSize();
-			return vector;
-			//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-		}
-		else
-		{
-			return null;
-		}
+		vector.trimToSize();
+		return vector;
+		//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
 	}
 	//??
 	public GenericGroup[] getAllGroupsContained() throws SQLException
@@ -357,17 +350,9 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		     	statementCloseEx.printStackTrace(System.err);
 		    }
 	    }
-		if (vector != null)
-		{
-			vector.trimToSize();
-			return vector;
-			//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-		}
-		else
-		{
-			return null;
-		}
-		//return (Group[])this.findReverseRelated(this);
+		vector.trimToSize();
+		return vector;
+		//return (GenericGroup[]) vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
 	}
 	/**
 	

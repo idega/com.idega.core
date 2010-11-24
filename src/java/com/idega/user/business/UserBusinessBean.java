@@ -1832,9 +1832,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if (loginTable == null) {
 			return null;
 		}
-		if (loginTable == null) {
-			return null;
-		}
 
 		return loginTable.getUserPasswordInClearText();
 	}
