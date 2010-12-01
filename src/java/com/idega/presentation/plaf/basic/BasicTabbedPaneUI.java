@@ -98,7 +98,7 @@ public class BasicTabbedPaneUI extends GenericTabbedPaneUI {
 				this.add(tempObj, column, row);
 				this.setWidth(column, 120);
 				column++;
-				if (i == 3) {
+				if (((i + 1) % 5) == 0) {
 					row++;
 					column = 1;
 				}
