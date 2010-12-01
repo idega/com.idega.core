@@ -97,6 +97,7 @@ import com.idega.user.data.User;
 import com.idega.user.data.UserComment;
 import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
+import com.idega.user.data.UserInfoColumns;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -2772,6 +2773,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				targetGroup.addGroup(userId);
 			}
 
+			//Move/copy local comments with user
+			UserInfoColumns info = getUserInfoColumnsBusiness().getUserInfo(userId, parentGroupId);
+			if (info != null) {
+				if (leaveCopyOfUserInCurrentGroup) {
+					getUserInfoColumnsBusiness().setUserInfo(userId, targetGroupId, info.getUserInfo1(), info.getUserInfo2(), info.getUserInfo3());
+				} else {
+					info.setGroupId(targetGroupId);
+					info.store();
+				}
+			}			
+			
 			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user, targetGroup);
 
 			transactionManager.commit();
@@ -3165,7 +3177,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return;
 		}
 
-		UserInfoColumnsBusiness userInfoBusiness = getUserInfoColumnsBusiness(iwc);
+		UserInfoColumnsBusiness userInfoBusiness = getUserInfoColumnsBusiness();
 
 		Collection users = getUsersInGroup(group);
 		if (users == null) {
@@ -3395,10 +3407,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return statusBusiness;
 	}
 
-	private UserInfoColumnsBusiness getUserInfoColumnsBusiness(IWContext iwc) {
+	private UserInfoColumnsBusiness getUserInfoColumnsBusiness() {
 		if (userInfoBusiness == null) {
 			try {
-				userInfoBusiness = (UserInfoColumnsBusiness) IBOLookup.getServiceInstance(iwc, UserInfoColumnsBusiness.class);
+				userInfoBusiness = (UserInfoColumnsBusiness) this.getServiceInstance(UserInfoColumnsBusiness.class);
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
