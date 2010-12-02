@@ -2520,7 +2520,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// if there aren't any problems the message is null
 			if (message == null) {
-				message = moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, iwuc.getCurrentUser());
+				message = moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, iwuc.getCurrentUser(), leaveCopyOfUserInCurrentGroup);
 			}
 			// if the user was sucessfully moved the message is null
 			result.put(userId, message);
@@ -2774,6 +2774,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 
 			//Move/copy local comments with user
+			/*
 			UserInfoColumns info = getUserInfoColumnsBusiness().getUserInfo(userId, parentGroupId);
 			if (info != null) {
 				if (leaveCopyOfUserInCurrentGroup) {
@@ -2783,7 +2784,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					info.store();
 				}
 			}			
-			
+			*/
 			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user, targetGroup);
 
 			transactionManager.commit();
