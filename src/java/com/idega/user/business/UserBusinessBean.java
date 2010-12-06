@@ -2453,10 +2453,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId) {
-		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, false);
+		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, false, false);
 	}
 
-	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) {
+	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup, boolean copyOrMoveUserInfo) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
 		Locale locale = iwuc.getCurrentLocale();
@@ -2520,7 +2520,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// if there aren't any problems the message is null
 			if (message == null) {
-				message = moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, iwuc.getCurrentUser(), leaveCopyOfUserInCurrentGroup);
+				message = moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, iwuc.getCurrentUser(), leaveCopyOfUserInCurrentGroup, copyOrMoveUserInfo);
 			}
 			// if the user was sucessfully moved the message is null
 			result.put(userId, message);
@@ -2713,10 +2713,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	private String moveUserWithoutTest(IWResourceBundle iwrb, User user, Group parentGroup, Group targetGroup, User currentUser) {
-		return moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, currentUser, false);
+		return moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, currentUser, false, false);
 	}
 
-	private String moveUserWithoutTest(IWResourceBundle iwrb, User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup) {
+	private String moveUserWithoutTest(IWResourceBundle iwrb, User user, Group parentGroup, Group targetGroup, User currentUser, boolean leaveCopyOfUserInCurrentGroup, boolean copyOrMoveUserInfo) {
 
 		int userId = ((Integer) user.getPrimaryKey()).intValue();
 		int targetGroupId = ((Integer) targetGroup.getPrimaryKey()).intValue();
@@ -2774,17 +2774,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 
 			//Move/copy local comments with user
-			/*
-			UserInfoColumns info = getUserInfoColumnsBusiness().getUserInfo(userId, parentGroupId);
-			if (info != null) {
-				if (leaveCopyOfUserInCurrentGroup) {
-					getUserInfoColumnsBusiness().setUserInfo(userId, targetGroupId, info.getUserInfo1(), info.getUserInfo2(), info.getUserInfo3());
-				} else {
-					info.setGroupId(targetGroupId);
-					info.store();
-				}
-			}			
-			*/
+			if (copyOrMoveUserInfo) {
+				UserInfoColumns info = getUserInfoColumnsBusiness().getUserInfo(userId, parentGroupId);
+				if (info != null) {
+					if (leaveCopyOfUserInCurrentGroup) {
+						getUserInfoColumnsBusiness().setUserInfo(userId, targetGroupId, info.getUserInfo1(), info.getUserInfo2(), info.getUserInfo3());
+					} else {
+						info.setGroupId(targetGroupId);
+						info.store();
+					}
+				}			
+			}
 			callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user, targetGroup);
 
 			transactionManager.commit();
