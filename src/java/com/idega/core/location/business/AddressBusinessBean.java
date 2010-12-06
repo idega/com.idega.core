@@ -321,7 +321,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 
 		// deserialize the string
 		
-		System.out.println("fullAddressString = " + fullAddressString);
+		//System.out.println("fullAddressString = " + fullAddressString);
 		
 		StringTokenizer nizer = new StringTokenizer(fullAddressString, ";");
 		String streetNameAndNumber = NOT_AVAILABLE;
