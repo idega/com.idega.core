@@ -357,7 +357,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
 		}
 		
-		System.out.println("postalCodeAndPostalAddress = " + postalCodeAndPostalAddress);
+		//System.out.println("postalCodeAndPostalAddress = " + postalCodeAndPostalAddress);
 		
 		if (!postalCodeAndPostalAddress.trim().equals("") && -1 != postalCodeAndPostalAddress.indexOf(" ") && !NOT_AVAILABLE.equals(postalCodeAndPostalAddress) && country != null) {
 			postalCode = postalCodeAndPostalAddress.substring(0, postalCodeAndPostalAddress.indexOf(" "));
