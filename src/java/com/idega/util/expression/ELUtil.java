@@ -213,22 +213,29 @@ public class ELUtil implements ApplicationContextAware {
 	private String getMethodName(String exp){
 		String beanName = getBeanName(exp);
 		String methodName = cleanupExp(exp);
-		
-		methodName = methodName.substring(beanName.length()+1, methodName.indexOf("("));
+		int index = methodName.indexOf("(");
+		if(index >= 0){
+			methodName = methodName.substring(beanName.length()+1, index);
+		} else {
+			methodName = methodName.substring(beanName.length()+1);
+			methodName = "get"+Character.toUpperCase(methodName.charAt(0))+methodName.substring(1);
+		}
 		return methodName;
 	}
 	
 	private List<String> getArgs(String exp){
-		String argsList = exp.substring(exp.indexOf("(") +1, exp.lastIndexOf(")"));
-		String removedApo = argsList.replaceAll("'", "");
 		List<String> returnArray = new ArrayList<String>();
-		
-		StringTokenizer tokenizer = new  StringTokenizer(removedApo,",");
-		while(tokenizer.hasMoreTokens()){
-			String token = tokenizer.nextToken();
-			returnArray.add(token.trim());
+		int pre = exp.indexOf("(");
+		if(pre >= 0){
+			String argsList = exp.substring( pre+1, exp.lastIndexOf(")"));
+			String removedApo = argsList.replaceAll("'", "");
+			
+			StringTokenizer tokenizer = new  StringTokenizer(removedApo,",");
+			while(tokenizer.hasMoreTokens()){
+				String token = tokenizer.nextToken();
+				returnArray.add(token.trim());
+			}
 		}
-		
 		return returnArray;
 	}
 	
