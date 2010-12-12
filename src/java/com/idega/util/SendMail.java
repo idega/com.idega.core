@@ -72,6 +72,9 @@ public class SendMail {
 		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, CoreConstants.EMPTY);
 		if (StringUtil.isEmpty(host)) {
 			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER);
+			if(StringUtil.isEmpty(host)){
+				throw new MessagingException("Mail server is not configured.");
+			}
 		}
 		
 		if (StringUtil.isEmpty(username)) {
@@ -98,6 +101,9 @@ public class SendMail {
 		session.setDebug(settings.isDebugActive());
 
 		// Construct a message
+		if(StringUtil.isEmpty(from)){
+			throw new MessagingException("From address is null.");
+		}
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 		
