@@ -28,6 +28,11 @@ import com.idega.presentation.text.Lists;
  */
 public class LanguageList extends Widget {
 
+	public LanguageList() {
+		super();
+		setStyleClass("languageList");
+	}
+	
 	/* (non-Javadoc)
 	 * @see com.idega.idegaweb.widget.Widget#getWidget(com.idega.presentation.IWContext)
 	 */

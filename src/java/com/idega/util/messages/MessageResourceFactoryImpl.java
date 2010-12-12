@@ -39,7 +39,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	private final Logger logger = Logger.getLogger(getClass().getName());
 //	private List<String> initializedStorageTypes = new ArrayList<String>();
 	
-	private static final String CASHED_RESOURCES = "cashed_resources";
+	private static final String CACHED_RESOURCES = "cached_resources";
 	
 	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
 		if(bundleIdentifier == null)
@@ -272,6 +272,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	
 	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
 		//TODO leave cache object noneternal but make changes to the code where cache is used
-		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);
+		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CACHED_RESOURCES, 1000, true, true, 50, 10);
 	}
 }

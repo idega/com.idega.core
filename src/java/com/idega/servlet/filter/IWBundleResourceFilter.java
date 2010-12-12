@@ -158,6 +158,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
 		
 		if (index == -1) {
+			if (requestUriWithoutContextPath.startsWith("http://")) {
+				return null;
+			}
 			requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, BUNDLES_STANDARD_DIR, CoreConstants.EMPTY);
 			int firstSlashIndex = requestUriWithoutContextPath.indexOf(CoreConstants.SLASH);
 			if (firstSlashIndex == -1) {

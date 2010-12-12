@@ -256,21 +256,20 @@ public static String getFileSeparator(){
   }
 
   private static void streamToOutputStream(InputStream input, OutputStream out, boolean closeInputStream) throws IOException {
+	  BufferedInputStream buffered = null;
 	  try {
 	      if (input == null) {
 	    	  LOGGER.warning("Provided InputStream is undefined!");
 	    	  return;
 	      }
 	      
-	      input.available();
-	      byte buffer[] = new byte[1024];
-	      int noRead = 0;
-	      noRead = input.read(buffer, 0, 1024);
-	
-	      //	Write out the stream to the output stream
-	      while (noRead != -1) {
-	    	  out.write(buffer, 0, noRead);
-	          noRead = input.read(buffer, 0, 1024);
+	      buffered = new BufferedInputStream(input);
+	      buffered.available();
+	      
+	      int bytesRead;
+	      byte[] buf = new byte[4 * 1024];
+	      while ((bytesRead = buffered.read(buf)) != -1) {
+	    	  out.write(buf, 0, bytesRead);
 	      }
 	
 	      out.flush();
@@ -278,6 +277,7 @@ public static String getFileSeparator(){
       } finally {
     	  if (closeInputStream) {
     		  IOUtil.close(input);
+    		  IOUtil.close(buffered);
     	  }
       }
   }

@@ -10,11 +10,14 @@ import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import sun.net.www.MimeTable;
+
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringUtil;
 
 /**
  * Title: MimeTypeUtil Description: Creates and loads a properties file under
@@ -32,10 +35,10 @@ import com.idega.util.SortedProperties;
  * <li>vector</li> - for vector graphics and other vector based multimedia
  * files types
  * <li>video</li> - for video files
- * 
- * 
+ *
+ *
  * Copyright: Copyright (c) 2004 Company: Idega Software
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @version 1.0
  *
@@ -230,7 +233,7 @@ public class MimeTypeUtil implements Singleton {
 
 	/**
 	 * Fills the properties with "mime-type=category" pairs
-	 * 
+	 *
 	 * @param properties
 	 */
 	protected void fillPropertiesWithMimeTypes(Properties properties) {
@@ -248,7 +251,7 @@ public class MimeTypeUtil implements Singleton {
 	/**
 	 * Iterates through the array and adds the mimetype and the category to the
 	 * properties
-	 * 
+	 *
 	 * @param mimeTypes
 	 * @param categoryName
 	 * @param properties
@@ -368,9 +371,11 @@ public class MimeTypeUtil implements Singleton {
 		}
 		return null;
 	}
-	
+
 	public static String resolveMimeTypeFromFileName(String fileName) {
-		return new MimetypesFileTypeMap().getContentType(fileName);
+		MimeTable mt = MimeTable.getDefaultTable();
+		String mimeType = mt.getContentTypeFor(fileName);
+		return StringUtil.isEmpty(mimeType) ? new MimetypesFileTypeMap().getContentType(fileName) : mimeType;
 	}
 
 }

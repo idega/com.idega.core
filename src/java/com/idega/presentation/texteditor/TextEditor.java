@@ -90,10 +90,10 @@ public class TextEditor extends PresentationObject {
       if( iwc.isIE() && (!iwc.isMacOS()) && (!iwc.isOpera()) ){//IE5.5,windows and not Opera (faking as IE)
 
         Layer source = new Layer();
-        source.setZIndex(1);
-        source.setVisibility("hidden");
-        source.setLeftPosition(-500);
-        source.setTopPosition(-500);
+        source.setStyleAttribute("z-index", "1");
+        source.setStyleAttribute("visibility", "hidden");
+        source.setStyleAttribute("left", "-500px");
+        source.setStyleAttribute("top", "-500px");
 
         TextArea sourceView = new TextArea(this.inputName,TextSoap.findAndReplace(this.text, "<br/>","\r\n"),65,18);
         source.add(sourceView);
