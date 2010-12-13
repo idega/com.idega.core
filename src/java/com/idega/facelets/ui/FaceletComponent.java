@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
@@ -11,6 +12,7 @@ import javax.faces.context.FacesContext;
 import com.idega.presentation.IWBaseComponent;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 import com.sun.facelets.Facelet;
 import com.sun.facelets.FaceletFactory;
 
@@ -99,7 +101,38 @@ public class FaceletComponent extends IWBaseComponent {
 	}
 
 	public String getFaceletURI() {
-		return faceletURI;
+		if (faceletURI == null)
+	    {
+			ValueExpression vb = getValueExpression("faceletURI");
+			if (vb != null)
+			{
+			    return  (String) vb.getValue(getFacesContext().getELContext());
+			}
+			return null;
+	    }
+		
+		String uri;
+		ELUtil util = ELUtil.getInstance();
+		int expPrefixIndex = faceletURI.indexOf(ELUtil.EXPRESSION_BEGIN);
+		int expPostfixIndex = faceletURI.indexOf(ELUtil.EXPRESSION_END);
+		if(expPrefixIndex >=0 && expPostfixIndex >= 0){
+			try {
+				if(expPostfixIndex-expPrefixIndex == faceletURI.length()){
+						uri = (String)util.evaluateExpression(faceletURI);
+				} else {
+					String exp = faceletURI.substring(expPrefixIndex,expPostfixIndex+1);
+					String prefix = faceletURI.substring(0,expPrefixIndex);
+					String postfix = faceletURI.substring(expPostfixIndex+1,faceletURI.length());
+					uri = prefix+util.evaluateExpression(exp)+postfix;
+				}
+			} catch (Exception e) {
+				uri = faceletURI;
+				e.printStackTrace();
+			}
+		} else {
+			uri = faceletURI;
+		}
+		return uri;
 	}
 
 	public void setFaceletURI(String faceletURI) {
