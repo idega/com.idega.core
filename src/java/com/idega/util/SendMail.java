@@ -68,8 +68,10 @@ public class SendMail {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
 		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.FALSE);
+		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.FALSE);
 		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, CoreConstants.EMPTY);
 		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, CoreConstants.EMPTY);
+		String port = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
 		if (StringUtil.isEmpty(host)) {
 			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER);
 			if(StringUtil.isEmpty(host)){
@@ -84,6 +86,11 @@ public class SendMail {
 		// Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
+		
+		// Set the smtp server port
+		if(!StringUtil.isEmpty(port)){
+			props.put("mail.smtp.port", port);
+		}
 
 		// Start a session
 		Session session;
@@ -91,6 +98,11 @@ public class SendMail {
 		if (useSmtpAuthentication) {
 			props.put("mail.smtp.auth", Boolean.TRUE.toString());
 			Authenticator auth = new SMTPAuthenticator(username, password);
+			
+			if(useSSL){
+				props.put("mail.smtp.ssl.enable", Boolean.TRUE.toString());
+			}
+			
 			session = Session.getInstance(props, auth);
 		}
 		else {
