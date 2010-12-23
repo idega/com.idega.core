@@ -53,7 +53,7 @@ public class IWCacheManager2 {
 	public static final int DEFAULT_CACHE_TTL_SECONDS = 10000;
 	
 	private CacheManager internalCacheManager;
-	private Map<String, CacheMap> cacheMapsMap;
+	private Map<String, CacheMap<? extends Serializable, ? extends Object>> cacheMapsMap = new HashMap<String, CacheMap<? extends Serializable, ? extends Object>>();
 
 	private IWCacheManager2() {}
 
@@ -104,10 +104,7 @@ public class IWCacheManager2 {
 	/**
 	 * @return Returns the cacheMapsMap.
 	 */
-	private Map<String, CacheMap> getCacheMapsMap() {
-		if (this.cacheMapsMap == null) {
-			this.cacheMapsMap = new HashMap<String, CacheMap>();
-		}
+	private Map<String, CacheMap<? extends Serializable, ? extends Object>> getCacheMapsMap() {
 		return this.cacheMapsMap;
 	}
 
@@ -147,38 +144,38 @@ public class IWCacheManager2 {
 				resetable, cacheListener, cacheGuardian);
 	}
 	
-	private synchronized <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, MemoryStoreEvictionPolicy memoryPolicy,
+	private synchronized <K extends Serializable, V extends Object> Map<K, V> getCache(String cacheName, int cacheSize, MemoryStoreEvictionPolicy memoryPolicy,
 			boolean overFlowToDisk, boolean isEternal, long cacheTTLIdleSeconds, long cacheTTLSeconds, RegisteredEventListeners registeredEventListeners,
             BootstrapCacheLoader bootstrapCacheLoader, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
 		
-		CacheMap<K, V> cm = getCacheMapsMap().get(cacheName);
+		Map<String, CacheMap<? extends Serializable, ? extends Object>> caches = getCacheMapsMap();
+		@SuppressWarnings("unchecked")
+		CacheMap<K, V> cm = (CacheMap<K, V>) caches.get(cacheName);
 		if (cm == null) {
 			try {
 				Cache cache = getInternalCache(cacheName);
 				if (cache == null) {
+					isEternal = cacheTTLSeconds > 0 || cacheTTLIdleSeconds > 0 ? false : isEternal;
 					cache = new Cache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, null, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds, overFlowToDisk,
 							cacheTTLIdleSeconds, registeredEventListeners, bootstrapCacheLoader);
 					getInternalCacheManager().addCache(cache);
 				}
 				cm = new CacheMap<K, V>(cache, resetable, cacheListener, cacheGuardian);
 				getCacheMapsMap().put(cacheName, cm);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				LOGGER.log(Level.SEVERE, "Error creating cache: " + cacheName, e);
 			}
-		}
-		else{
-			CacheMap<K, V> ccm = cm;
+		} else {
 			//the status must be alive
-			if (ccm.getCache().getStatus()==Status.STATUS_ALIVE) {
+			if (cm.getCache().getStatus()==Status.STATUS_ALIVE) {
 				return cm;
-			}
-			else{
-				//if status is not alive try to re-create tha cache
+			} else {
+				//if status is not alive try to re-create the cache
 				synchronized (this) {
 					getCacheMapsMap().remove(cacheName);
 					getInternalCacheManager().removeCache(cacheName);
-					return getCache(cacheName);
+					return getCache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, registeredEventListeners,
+							bootstrapCacheLoader, resetable, cacheListener, cacheGuardian);
 				}
 			}
 		}
@@ -187,7 +184,7 @@ public class IWCacheManager2 {
 	
 	public void reset(){
 		synchronized(this){
-			Map<String, CacheMap> internalCaches = getCacheMapsMap();
+			Map<String, CacheMap<?, ?>> internalCaches = getCacheMapsMap();
 			Set<String> cacheKeys = internalCaches.keySet();
 			for (Iterator<String> iter = cacheKeys.iterator(); iter.hasNext();) {
 				String key = iter.next();
