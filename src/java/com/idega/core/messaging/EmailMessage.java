@@ -38,7 +38,8 @@ public class EmailMessage extends SimpleMessage {
 	
 	private Collection<File> attachedFiles;
 	
-	private boolean autoDeletedAttachments = true;
+	private boolean autoDeletedAttachments = true,
+					parsed;
 	
 	private String mailType = MimeTypeUtil.MIME_TYPE_TEXT_PLAIN;
 	
@@ -237,5 +238,12 @@ public class EmailMessage extends SimpleMessage {
 	public void setMailType(String mailType) {
 		this.mailType = mailType;
 	}
-	
+
+	public boolean isParsed() {
+		return parsed;
+	}
+
+	public void setParsed(boolean parsed) {
+		this.parsed = parsed;
+	}
 }
