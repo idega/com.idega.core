@@ -2924,13 +2924,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return groups;	
 	}
 	
-	public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user) {
-		Collection<Group> groupsForRoleKey = getAllGroupsForRoleKey(roleKey, iwac);
+	public Collection getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user) {
 		Collection<Group> userGroups = user.getParentGroups();
 		Collection<Group> groups = new ArrayList<Group>();
 		
-		for(Group group : groupsForRoleKey) {
-			if(userGroups.contains(group)) {
+		for(Group group : userGroups) {
+			if(hasRole(roleKey, group, iwuc)) {
 				groups.add(group);
 			}
 		}
