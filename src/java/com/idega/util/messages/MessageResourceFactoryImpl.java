@@ -228,12 +228,16 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	public List<MessageResource> getAvailableUninitializedMessageResources() {
 		List<MessageResource> allUninitializedResources = getUninitializedMessageResources();
 		
-		for(MessageResource resource : allUninitializedResources) {
+		List<MessageResource> resourcesToRemove = new ArrayList<MessageResource>();
+		for (MessageResource resource : allUninitializedResources) {
 			List<MessageResource> availableResourcesOfType = getResourceListByStorageIdentifier(resource.getIdentifier());
 			
-			if(availableResourcesOfType.isEmpty()) {
-				allUninitializedResources.remove(resource);
+			if (availableResourcesOfType.isEmpty()) {
+				resourcesToRemove.add(resource);
 			}
+		}
+		for (MessageResource resource: resourcesToRemove) {
+			allUninitializedResources.remove(resource);
 		}
 		
 		return allUninitializedResources;
