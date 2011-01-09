@@ -13,6 +13,7 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 	
 	private boolean sortById = false;
 	private Locale locale = null;
+	private Collator collator;
 	
 	public AdvancedPropertyComparator() {
 		Locale locale = null;
@@ -66,8 +67,14 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 			return result;
 		}
 		
-		Collator collator = Collator.getInstance(locale);
-		return collator.compare(value1, value2);
+		return getCollator().compare(value1, value2);
+	}
+	
+	private Collator getCollator() {
+		if (collator == null) {
+			collator = Collator.getInstance(locale);
+		}
+		return collator;
 	}
 
 }

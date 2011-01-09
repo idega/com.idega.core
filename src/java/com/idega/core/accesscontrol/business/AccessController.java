@@ -162,7 +162,7 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public String getRoleIdentifier();
   public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
   public Set<String> getAllRolesForUser(User user);
-  public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user);
+  public Collection getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user);
   public Collection<String> getAllRolesKeysForGroup(Group group);
   
 /*

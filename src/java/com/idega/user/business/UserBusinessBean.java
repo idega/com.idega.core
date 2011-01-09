@@ -3922,7 +3922,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return users;
 	}
 
-	public String setPreferredRoleAndGetHomePageUri(String roleKey) {
+	public String setPreferredRoleAndGetHomePageUri(String roleKey, IWUserContext iwuc) {
 		if (StringUtil.isEmpty(roleKey)) {
 			return null;
 		}
@@ -3951,18 +3951,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 		setUsersPreferredRole(currentUser, preferredRole, true);
-		return getPageUriByUserPreferredRole(currentUser);
+		return getPageUriByUserPreferredRole(currentUser, iwuc);
 	}
 
-	public String getPageUriByUserPreferredRole(User user) {
+	public String getPageUriByUserPreferredRole(User user, IWUserContext iwuc) {
 		//FIXME change to use the same logic as the page choosing in IWAuthenticator
 		ICRole userPrefferedRole = user.getPreferredRole();
 		if (userPrefferedRole == null) {
 			return null;
 		}
 
-		IWApplicationContext iwac = getIWApplicationContext();
-		Collection<Group> userGroups = getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwac, user);
+		Collection<Group> userGroups = getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwuc, user);
 		if (ListUtil.isEmpty(userGroups)) {
 			return null;
 		}

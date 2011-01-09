@@ -874,9 +874,9 @@ public interface UserBusiness extends IBOService {
 	
 	public Collection<User> getUsersByPhoneNumber(String phoneNumber);
 	
-	public String setPreferredRoleAndGetHomePageUri(String roleKey);
+	public String setPreferredRoleAndGetHomePageUri(String roleKey, IWUserContext iwuc);
 	
-	public String getPageUriByUserPreferredRole(User user);
+	public String getPageUriByUserPreferredRole(User user, IWUserContext iwuc);
 	
 	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user);
 	
