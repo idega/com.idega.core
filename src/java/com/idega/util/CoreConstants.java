@@ -142,4 +142,7 @@ public class CoreConstants {
 	public static final String SYSTEM_RESTART_IN_PROPERTY = "system_restart_in";
 	
 	public static final String PARAMETER_SESSION_ID = "JSESSIONID";
+	
+	public static final String EMAIL_DEFAULT_FROM = "staff@idega.is",
+								EMAIL_DEFAULT_HOST = "smtp.emailsrvr.com";
 }
