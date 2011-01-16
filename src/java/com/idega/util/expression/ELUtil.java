@@ -21,7 +21,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import sun.org.mozilla.javascript.internal.Interpreter;
+import bsh.Interpreter;
 
 import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
