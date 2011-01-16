@@ -7,7 +7,10 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 
 import org.springframework.beans.BeansException;
@@ -18,7 +21,7 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import bsh.Interpreter;
+import sun.org.mozilla.javascript.internal.Interpreter;
 
 import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
@@ -244,5 +247,28 @@ public class ELUtil implements ApplicationContextAware {
 			interpreter = new Interpreter();
 		}
 		return interpreter;
+	}
+	
+
+	public static boolean isExpression(String expression) {
+		if(expression == null){
+			return false;
+		}
+		int open = expression.indexOf("#{");
+		if(open >= 0){
+			int close = expression.indexOf("}",open);
+			return (close >= 0);
+		}
+		return false;
+	}
+	
+	public static ValueExpression createValueExpression(FacesContext fContext, String expression, Class<?> type){
+		// get application from faces context  
+		Application app = fContext.getApplication();  
+		ExpressionFactory exprFactory = app.getExpressionFactory(); 
+		// getting the ELContext from faces context  
+		ELContext elContext = fContext.getELContext();  
+		// creating value expression with the help of the expression factory and the ELContext  
+		return exprFactory.createValueExpression(elContext, expression, type);
 	}
 }
