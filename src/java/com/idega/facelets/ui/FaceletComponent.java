@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.el.ELContext;
+import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
+import javax.faces.application.Application;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
 import javax.faces.context.FacesContext;
@@ -101,42 +104,22 @@ public class FaceletComponent extends IWBaseComponent {
 	}
 
 	public String getFaceletURI() {
-		if (faceletURI == null)
-	    {
+		if (faceletURI == null)	    {
 			ValueExpression vb = getValueExpression("faceletURI");
-			if (vb != null)
-			{
+			if (vb != null)			{
 			    return  (String) vb.getValue(getFacesContext().getELContext());
 			}
 			return null;
+	    } else if(ELUtil.isExpression(faceletURI)){
+			FacesContext fContext = FacesContext.getCurrentInstance();
+	    	ValueExpression valExpr = ELUtil.createValueExpression(fContext, faceletURI, String.class);
+			return (String) valExpr.getValue(fContext.getELContext());
+	    } else {
+	    	return faceletURI;
 	    }
-		
-		String uri;
-		ELUtil util = ELUtil.getInstance();
-		int expPrefixIndex = faceletURI.indexOf(ELUtil.EXPRESSION_BEGIN);
-		int expPostfixIndex = faceletURI.indexOf(ELUtil.EXPRESSION_END);
-		if(expPrefixIndex >=0 && expPostfixIndex >= 0){
-			try {
-				if(expPostfixIndex-expPrefixIndex == faceletURI.length()){
-						uri = (String)util.evaluateExpression(faceletURI);
-				} else {
-					String exp = faceletURI.substring(expPrefixIndex,expPostfixIndex+1);
-					String prefix = faceletURI.substring(0,expPrefixIndex);
-					String postfix = faceletURI.substring(expPostfixIndex+1,faceletURI.length());
-					uri = prefix+util.evaluateExpression(exp)+postfix;
-				}
-			} catch (Exception e) {
-				uri = faceletURI;
-				e.printStackTrace();
-			}
-		} else {
-			uri = faceletURI;
-		}
-		return uri;
 	}
 
 	public void setFaceletURI(String faceletURI) {
-		
 		if(this.faceletURI != null)
 			throw new UnsupportedOperationException("Facelet URI already set. Create new component. URI: "+this.faceletURI);
 		
