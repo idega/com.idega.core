@@ -63,7 +63,7 @@ class FacetsAndChildrenIterator implements Iterator {
 				// nse.printStackTrace();
 				return null;
 			} catch (ConcurrentModificationException cme) {
-				cme.printStackTrace();
+				//cme.printStackTrace();
 				return null;
 			}
 		} else if (childrenHasNext) {
@@ -73,7 +73,7 @@ class FacetsAndChildrenIterator implements Iterator {
 				// nse.printStackTrace();
 				return null;
 			} catch (ConcurrentModificationException cme) {
-				cme.printStackTrace();
+				//cme.printStackTrace();
 				return null;
 			}
 		} else {
@@ -85,5 +85,4 @@ class FacetsAndChildrenIterator implements Iterator {
 		throw new UnsupportedOperationException(this.getClass().getName()
 				+ " UnsupportedOperationException");
 	}
-
 }
