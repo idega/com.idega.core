@@ -807,6 +807,10 @@ public class PresentationObjectContainer extends PresentationObject
 			while (iter.hasNext())
 			{
 				Object item = iter.next();
+				//handling concurrent exception 
+				if (item == null) {
+					break;
+				}
 				if (item instanceof PresentationObject)
 				{
 					((PresentationObject) item).setLocation(location, iwuc);
