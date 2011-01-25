@@ -2304,14 +2304,14 @@ public class PresentationObject
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacet(java.lang.String)
 	 */
-	public synchronized UIComponent getFacet(String name) {
+	public UIComponent getFacet(String name) {
 		return this.facetMap == null ? null : (UIComponent) this.facetMap.get(name);
 	}
 
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacets()
 	 */
-	public synchronized Map getFacets() {
+	public Map getFacets() {
 		if (this.facetMap == null) {
 			this.facetMap = new PresentationObjectComponentFacetMap(this);
 		}
@@ -2321,7 +2321,7 @@ public class PresentationObject
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
 	 */
-	public synchronized Iterator getFacetsAndChildren() {
+	public Iterator getFacetsAndChildren() {
 		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
 		return new FacetsAndChildrenIterator(getFacets(), getChildren());
 	}
