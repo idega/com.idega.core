@@ -205,8 +205,8 @@ public class ELUtil implements ApplicationContextAware {
 	private String getBeanName(String exp){
 		String beanName = cleanupExp(exp);
 		while(true){
-			beanName = beanName.substring(0, beanName.lastIndexOf("."));
-			if (beanName.matches("[a-zA-Z0-9.]+")){
+			beanName = beanName.substring(0, beanName.lastIndexOf(CoreConstants.DOT));
+			if (beanName.matches("[a-zA-Z0-9.]+") || beanName.indexOf(CoreConstants.DOT) == -1) {
 				break;
 			}
 		}
