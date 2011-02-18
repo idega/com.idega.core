@@ -5,7 +5,9 @@ package com.idega.core.location.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
+
 import com.idega.core.user.data.User;
 import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
@@ -40,6 +42,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		super(id);
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addManyToOneRelationship(getColumnNameAddressTypeId(), "Address type", AddressType.class);
@@ -79,6 +82,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		return COLUMN_IC_COMMUNE_ID;
 	}
 
+	@Override
 	public String getEntityName() {
 		return ENTITY_NAME;
 	}
@@ -86,6 +90,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public void setDefaulValues() {
 	}
 
+	@Override
 	public String getName() {
 		return getStreetAddress();
 	}
@@ -353,6 +358,13 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		.append("ic_user_address iua ").appendWhereEquals("a.ic_address_id", "iua.ic_address_id")
 		.appendAnd().append("iua.ic_user_id = ").append(userID).appendAnd().append("a.ic_address_type_id = ").append(((Integer) type.getPrimaryKey()).intValue());
 
+		return (Integer) super.idoFindOnePKBySQL(query.toString());
+	}
+	
+	public Integer ejbFindByStreetAddress(String address) throws FinderException {
+		IDOQuery query = idoQuery();
+		query.appendSelect().append("a.").append(getIDColumnName()).appendFrom().append(getEntityName()).append(" a ").appendWhereEquals("a." + STREET_ADDRESS_NOMINATIVE, "'" + address + "'");
+		query.appendOrEquals("a." + ORIGINAL_STREET_NAME, "'" + address + "'");
 		return (Integer) super.idoFindOnePKBySQL(query.toString());
 	}
 
