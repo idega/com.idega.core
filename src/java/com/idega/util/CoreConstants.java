@@ -145,4 +145,6 @@ public class CoreConstants {
 	
 	public static final String EMAIL_DEFAULT_FROM = "staff@idega.is",
 								EMAIL_DEFAULT_HOST = "smtp.emailsrvr.com";
+
+	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration";
 }
