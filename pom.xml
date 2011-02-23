@@ -94,8 +94,6 @@
     <dependency>
       <groupId>javax.mail</groupId>
       <artifactId>mail</artifactId>
-      <version>${javax.mail-mail-version}</version>
-      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>javax.activation</groupId>
@@ -139,8 +137,6 @@
     <dependency>
       <groupId>org.apache.poi</groupId>
       <artifactId>poi</artifactId>
-      <version>${org.apache.poi-poi-version}</version>
-      <type>jar</type>
     </dependency>
     <dependency>
       <groupId>jug</groupId>
