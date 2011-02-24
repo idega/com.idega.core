@@ -494,9 +494,16 @@ public static String getFileSeparator(){
   	public static final File getFileFromWorkspace(String pathToFile) throws IOException {
   		File file = new File(pathToFile);
 	    if (!file.exists()) {
-	    	int virtualPathStart = pathToFile.indexOf("/idegaweb/bundles/");
+	    	String virtualPath;
+	    	if(pathToFile.indexOf(WINDOWS_FILE_SEPARATOR) > -1){
+	    		virtualPath = pathToFile.replace(WINDOWS_FILE_SEPARATOR, UNIX_FILE_SEPARATOR);
+    		} else {
+    			virtualPath = pathToFile;
+    		}
+	    	int virtualPathStart = virtualPath.indexOf("/idegaweb/bundles/");
 	    	if (virtualPathStart != -1) {
-	    		file = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), pathToFile.substring(virtualPathStart));
+	    		virtualPath = virtualPath.substring(virtualPathStart);
+	    		file = IWBundleResourceFilter.copyResourceFromJarToWebapp(IWMainApplication.getDefaultIWMainApplication(), virtualPath);
 	    	}
 	    }
 	    if (file != null && file.exists()) {
