@@ -79,7 +79,12 @@ public class LoginDBHandler {
 		return createUserLogin(update, userID, userLogin, password);
 	}
 
+
 	protected static LoginTable createUserLogin(boolean update, int userID, String userLogin, String password) throws LoginCreateException {
+		return createUserLogin(update, userID, userLogin, password, null);
+	}
+	
+	protected static LoginTable createUserLogin(boolean update, int userID, String userLogin, String password, String loginType) throws LoginCreateException {
 		LoginTable loginTable = null;
 		try {
 			loginTable = getLoginTableHome().findLoginForUser(userID);
@@ -156,6 +161,11 @@ public class LoginDBHandler {
 				throw new LoginCreateException("Login not valid: null or emptyString");
 			}
 		}
+		
+		if(loginType != null && !update){  //loginType cannot be changed
+			loginTable.setLoginType(loginType);
+		}
+		
 		loginTable.setLastChanged(IWTimestamp.getTimestampRightNow());
 			try {
 				//save the last changed by stuff if not the same user or super admin
@@ -265,11 +275,12 @@ public class LoginDBHandler {
 	}
 
 	public static LoginTable createLogin(com.idega.user.data.User user, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String loginType) throws Exception {
-		return createLogin(user, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType, null);
+		int userId = ((Integer) user.getPrimaryKey()).intValue();
+		return createLogin(userId, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType, loginType);
 	}
 
 	public static LoginTable createLogin(int userID, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String loginType) throws LoginCreateException, RemoteException {
-		LoginTable login = createUserLogin(false, userID, userLogin, password);
+		LoginTable login = createUserLogin(false, userID, userLogin, password, loginType);
 		try {
 			createLoginInfo(false, login, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 		}
