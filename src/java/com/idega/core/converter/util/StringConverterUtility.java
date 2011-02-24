@@ -4,6 +4,9 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
+import java.util.logging.Logger;
+
+import com.idega.util.StringUtil;
 
 /**
  * Command line utility to convert resource string files with native characters into escape-based UTF strings
@@ -113,7 +116,11 @@ public class StringConverterUtility {
      * and changes special saved chars to their original forms
      */
     public static String loadConvert(String theString){
-
+    	if (StringUtil.isEmpty(theString)) {
+    		Logger.getLogger(StringConverterUtility.class.getName()).warning("Provided string: '" + theString + "' is empty!");
+    		return theString;
+    	}
+    	
         char aChar;
         int len = theString.length();
         StringBuffer outBuffer = new StringBuffer(len);

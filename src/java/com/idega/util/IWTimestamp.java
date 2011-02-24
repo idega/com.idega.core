@@ -1193,6 +1193,10 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 		this.calendar.set(Calendar.YEAR, year);
 	}
 
+	
+	public void setMinimalDaysInFirstWeek(int days) {
+		this.calendar.setMinimalDaysInFirstWeek(days);
+	}
 ///////////////////////////////////////////////////
 //      static methods      
 ///////////////////////////////////////////////////

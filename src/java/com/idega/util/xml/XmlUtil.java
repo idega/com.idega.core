@@ -274,6 +274,7 @@ public class XmlUtil {
     	XMLOutputter outputter = new XMLOutputter();
     	Format format = Format.getPrettyFormat();
     	format.setExpandEmptyElements(true);
+    	format.setOmitDeclaration(IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getBoolean(CoreConstants.APPLICATION_PROPERTY_OMIT_DECLARATION, false));
     	outputter.setFormat(format);
     	return outputter.outputString(document);
     }
