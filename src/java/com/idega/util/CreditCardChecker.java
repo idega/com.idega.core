@@ -1,5 +1,7 @@
 package com.idega.util;
 
+import java.util.List;
+
 /**
  * Creditcardnumber checker <br>
  * Visa <br>
@@ -26,6 +28,22 @@ public class CreditCardChecker {
 		if (getCardType(number) != CreditCardType.INVALID)
 			return validCCNumber(number);
 		return false;
+	}
+	
+	/**
+	 * Validate a credit card number with allowed card types.
+	 * 
+	 * @param number
+	 * @param allowedTypes
+	 * @return
+	 */
+	public static boolean isValid(String number, List<CreditCardType> allowedTypes) {
+		CreditCardType type = getCardType(number);
+		if (!allowedTypes.contains(type)) {
+			return false;
+		}
+		
+		return validCCNumber(number);
 	}
 	
 	public static boolean isNumber(String n) {

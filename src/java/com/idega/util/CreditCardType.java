@@ -1,5 +1,7 @@
 package com.idega.util;
 
+import java.util.EnumSet;
+
 public enum CreditCardType {
 	INVALID {
 		@Override
@@ -70,4 +72,15 @@ public enum CreditCardType {
 	
 	public abstract String getName();
 	public abstract String getCode();
+	
+	public static CreditCardType getByCode(String code) {
+		CreditCardType returnValue = null;
+		
+        for (final CreditCardType element : EnumSet.allOf(CreditCardType.class)) {
+            if (element.getCode().equals(code)) {
+                returnValue = element;
+            }
+        }
+        return returnValue;
+	}
 }
