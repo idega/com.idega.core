@@ -35,6 +35,7 @@ import javax.faces.component.html.HtmlOutputText;
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
 
+import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.component.business.BundleRegistrationListener;
 import com.idega.core.component.business.ComponentRegistry;
 import com.idega.core.component.business.ICObjectComponentInfo;
@@ -1162,35 +1163,27 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			return className + IWPropertyList.DEFAULT_FILE_ENDING;
 		}
 	}
-	private void addComponentToDatabase(String className, String componentType, String componentName, boolean block, boolean widget, String description, String iconURI)
-	{
+	
+	private void addComponentToDatabase(String className, String componentType, String componentName, boolean block, boolean widget, String description, String iconURI) {
 		RefactorClassRegistry rfregistry = RefactorClassRegistry.getInstance();
 		boolean classIsRefactored = rfregistry.isClassRefactored(className);
 		String newRefactoredClassName = rfregistry.getRefactoredClassName(className);
 		ICObjectHome icoHome;
-		try
-		{
+		try {
 			icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
-			try
-			{
+			try {
 				ICObject ico = icoHome.findByClassName(className);
 				ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
-				if (classIsRefactored)
-				{
-					if(registry.getComponentByClassName(className)==null){
-					    //ICObject ico = icoHome.findByClassName(className);
-						try
-						{
+				if (classIsRefactored) {
+					if (registry.getComponentByClassName(className) == null) {
+						try {
 							ico.setObjectClass(Class.forName(newRefactoredClassName));
 							ico.store();
-						}
-						catch (Exception e)
-						{
-							LOGGER.log(Level.WARNING, null, e);
+						} catch (Exception e) {
+							LOGGER.log(Level.WARNING, "Error registering component: " + newRefactoredClassName, e);
 						}
 						changeComponentInBundleRegistry(className, newRefactoredClassName);
-						if (!ico.getBundleIdentifier().equals(this.getBundleIdentifier()))
-						{
+						if (!ico.getBundleIdentifier().equals(this.getBundleIdentifier())) {
 							LOGGER.info("Updating bundle registry for component: "
 							+ ico.getClassName()
 							+ " from "
@@ -1207,22 +1200,16 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 				ico.setDescripton(description);
 				ico.setIconURI(iconURI);
 				ico.store();
-			}
-			//The object is not found by its class name in the database
-			catch (FinderException fe)
-			{
-				if (classIsRefactored)
-				{
+			} catch (FinderException fe) {
+				//	The object is not found by its class name in the database
+				if (classIsRefactored) {
 					changeComponentInBundleRegistry(className, newRefactoredClassName);
 					getComponentPropertyList(newRefactoredClassName);
-				}
-				else
-				{
-					try
-					{
+				} else {
+					try {
 						ICObject ico;
 						ico = icoHome.create();
-						Class c = RefactorClassRegistry.forName(className);
+						Class<?> c = RefactorClassRegistry.forName(className);
 						ico.setObjectClass(c);
 						ico.setName(componentName);
 						ico.setObjectType(componentType);
@@ -1232,39 +1219,32 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 						ico.setDescripton(description);
 						ico.setIconURI(iconURI);
 						ico.store();
+						
 						//Update the ComponentRegistry with the new component
 						ComponentRegistry registry = ComponentRegistry.getInstance(this.getApplication());
 						registry.registerComponent(new ICObjectComponentInfo(ico));
 
-						if (componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_ELEMENT)
-							|| componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_BLOCK))
-						{
-							com.idega.core.accesscontrol.business.AccessControl.initICObjectPermissions(ico);
-							if (componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_BLOCK))
-							{
+						if (componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_ELEMENT) || componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_BLOCK)) {
+							AccessControl.initICObjectPermissions(ico);
+							if (componentType.equals(ICObjectBMPBean.COMPONENT_TYPE_BLOCK))	{
 								registerBlockPermissionKeys(c);
 							}
 						}
+						
 						// new register part
-						Class[] implementedInterfaces = c.getInterfaces();
+						Class<?>[] implementedInterfaces = c.getInterfaces();
 						boolean isRegisterable = false;
 						for (int j = 0; j < implementedInterfaces.length; j++) {
-							if (BundleRegistrationListener.class.getName().equals(implementedInterfaces[j].getName())){
+							if (BundleRegistrationListener.class.getName().equals(implementedInterfaces[j].getName())) {
 								isRegisterable = true;
 							}
 						}
-						if(isRegisterable){
+						if (isRegisterable) {
 							BundleRegistrationListener regObj =(BundleRegistrationListener)c.newInstance();
 							regObj.registerInBundle(this, ico);
 						}
-					}
-					catch (ClassNotFoundException e)
-					{
-						LOGGER.warning("Loading bundle: "
-														+ this.getBundleIdentifier()
-														+ " : Class "
-														+ e.getMessage()
-														+ " not found. Could be deprecated");
+					} catch (ClassNotFoundException e) {
+						LOGGER.warning("Loading bundle: " + this.getBundleIdentifier() + " : Class " + e.getMessage() + " not found. Could be deprecated");
 					}
 					catch (InstantiationException e)
 					{
@@ -1548,6 +1528,7 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 		return (ICObjectHome) IDOLookup.getHome(ICObject.class);
 	}
 
+	@Override
 	public String toString(){
 		return this.getBundleIdentifier();
 	}
