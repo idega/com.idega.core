@@ -31,9 +31,8 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 	
 	public UserProperties(IWMainApplication application,int userID) {
 		super((File) null);
-//		super(application.getPropertiesRealPath() + FileUtil.getFileSeparator() + "users", "user_"+String.valueOf(userID)+"_properties.pxml", true);
 		this.userID = userID;
-		String path = application.getPropertiesRealPath() + FileUtil.getFileSeparator() + "users";
+		String path = application.getPropertiesRealPath() + File.separator + "users";
 		String fileNameWithoutFullPath = "user_"+String.valueOf(userID)+"_properties.pxml";
 		File file = createFile(path, fileNameWithoutFullPath);
 		load(file);
@@ -47,12 +46,10 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 			User user = uHome.findByPrimaryKey(new Integer(userID));
 			ICFile icFile = user.getUserProperties();
 			if (icFile != null) {
-				file = FileUtil.streamToFile(icFile.getFileValue(), path+FileUtil.getFileSeparator(), "tmp_"+fileNameWithoutFullPath);
+				file = FileUtil.streamToFile(icFile.getFileValue(), path+File.separator, "tmp_"+fileNameWithoutFullPath);
 				return file;
 			} else {
 				file = new File(path, fileNameWithoutFullPath);
-				// added 08.02.2002 by aron: was before
-				// if(!file.exists() )
 				if (!file.exists() || file.length() == 0) {
 					Logger.getLogger(this.getClass().getName()).info("Creating new " + fileNameWithoutFullPath);
 					file = FileUtil.getFileAndCreateIfNotExists(path, fileNameWithoutFullPath);
@@ -65,22 +62,27 @@ public class UserProperties extends IWPropertyList implements HttpSessionBinding
 					stream.close();
 				}
 
-				FileInputStream is = new FileInputStream(file);
 				ICFileHome fHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
-				icFile = fHome.create();
-				icFile.setFileValue(is);
-				icFile.setName(fileNameWithoutFullPath);
-				icFile.store();
+				try {
+					icFile = fHome.findByFileName(fileNameWithoutFullPath);
+				} catch (FinderException e) {}
+				if (icFile == null) {
+					FileInputStream is = new FileInputStream(file);
+					icFile = fHome.create();
+					icFile.setFileValue(is);
+					icFile.setName(fileNameWithoutFullPath);
+					icFile.store();
+				}
+				if (icFile.getId() == null)
+					throw new RuntimeException("Properties file was not created!");
+					
 				user.setUserProperties(icFile);
 				user.store();
 				return file;
 			}
-
-		}
-		catch (IOException ex) {
+		} catch (IOException ex) {
 			ex.printStackTrace();
-		}
-		catch (FinderException fe) {
+		} catch (FinderException fe) {
 			fe.printStackTrace();
 		} catch (CreateException e) {
 			e.printStackTrace();
