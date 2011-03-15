@@ -41,7 +41,7 @@ public class SimpleQuerier {
     /**
      * Gets the default database connection
      */
-    private static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         return ConnectionBroker.getConnection(getDatasource());
     }
     /**
@@ -53,7 +53,7 @@ public class SimpleQuerier {
     /**
      * Frees the default connection used, must be done after using a databaseconnection
      */
-    private static void freeConnection(Connection connection) {
+    public static void freeConnection(Connection connection) {
         ConnectionBroker.freeConnection(getDatasource(), connection);
     }
     /**
