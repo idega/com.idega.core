@@ -41,8 +41,12 @@ public abstract class DefaultSpringBean {
 	private static Logger LOGGER_;
 	
 	protected Logger getLogger() {
+		return getLogger(getClass());
+	}
+		
+	protected static Logger getLogger(Class<?> theClass) {
 		if (LOGGER_ == null) {
-			LOGGER_ = Logger.getLogger(getClass().getName());
+			LOGGER_ = Logger.getLogger(theClass.getName());
 		}
 		return LOGGER_;
 	}
