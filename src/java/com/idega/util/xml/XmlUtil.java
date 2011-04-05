@@ -150,7 +150,7 @@ public class XmlUtil {
 		try {
 			stream = StringHandler.getStreamFromString(source);
 		} catch (Exception e) {
-			logger.log(Level.SEVERE, "Error getting InputStream from source:\n" + (source.length() > 30 ? source.substring(0, 30) : ""), e);
+			logger.log(Level.SEVERE, "Error getting InputStream from source: " + (source.length() > 30 ? source.substring(0, 30) : ""));
 			return null;
 		}
 		
@@ -161,7 +161,7 @@ public class XmlUtil {
 			if (reTry) {
 				logger.warning("Error generating XML document from source:\n" + source + "\nWill try to clean given source and to re-generate XML");
 			} else {
-				logger.log(Level.SEVERE, "Error generating XML document from source:\n" + (source.length() > 30 ? source.substring(0, 30) : ""), e);
+				logger.log(Level.SEVERE, "Error generating XML document from source:\n" + (source.length() > 30 ? source.substring(0, 30) : ""));
 			}
 		}
 		if (doc == null && reTry) {
