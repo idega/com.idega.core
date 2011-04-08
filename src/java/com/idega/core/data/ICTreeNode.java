@@ -19,12 +19,12 @@ public interface ICTreeNode {
 	/**
 	 * Returns the children of the receiver as an Collection.
 	 */
-	public Collection getChildren();
-    
+	public Collection<ICTreeNode> getChildren();
+
 	/**
 	 * Returns the children of the receiver as an Enumeration.
 	 */
-	public Iterator getChildrenIterator();
+	public Iterator<? extends ICTreeNode> getChildrenIterator();
 	/**
 	 *  Returns true if the receiver allows children.
 	 */
@@ -59,17 +59,17 @@ public interface ICTreeNode {
 	 *  Returns the name of the Node
 	 */
 	public String getNodeName();
-	
+
 	/**
 	 *  @return Returns the name of the Node localized, if localization possible, else it returns getNodeName()
 	 */
 	public String getNodeName(Locale locale);
-	
+
 	/**
 	 *  @return Returns the name of the Node localized from the bundle, if localization possible, else it returns getNodeName(Locale locale)
 	 */
 	public String getNodeName(Locale locale, IWApplicationContext iwac);
-	
+
 
 	/**
 	 * @deprecated Replaced with getId()
@@ -81,7 +81,7 @@ public interface ICTreeNode {
 	 * @return the number of siblings this node has
 	 */
 	public int getSiblingCount();
-	
+
 	/**
 	 * Returns the unique ID of the Node in the tree
 	 * @return the id as a string

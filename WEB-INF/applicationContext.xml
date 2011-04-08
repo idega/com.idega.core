@@ -50,4 +50,5 @@
   
   <bean id="genericDao" class="com.idega.core.persistence.impl.GenericDaoImpl" />
   
+  <bean id="repositoryService" class="com.idega.jackrabbit.repository.JackrabbitRepository" />
 </beans>

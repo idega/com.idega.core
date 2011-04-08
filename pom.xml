@@ -154,7 +154,7 @@
       <version>${commons-fileupload-commons-fileupload-version}</version>
       <type>jar</type>
     </dependency>
-    <!-- This Commons-Collections Dependecy is requred by ehcache, and is also used in org.apache.myfaces and org.apache.slide -->
+    <!-- This Commons-Collections Dependency is required by ehcache, and is also used in org.apache.myfaces -->
     <dependency>
       <groupId>commons-collections</groupId>
       <artifactId>commons-collections</artifactId>

@@ -89,7 +89,7 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 
 	@Override
 	public String getUserURI(String userName) throws RemoteException {
-		return repository.getWebdavServerURI() + getUserPath(userName);
+		return repository.getWebdavServerURL() + getUserPath(userName);
 	}
 
 	@Override
@@ -99,7 +99,7 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 
 	@Override
 	public String getGroupURI(String groupName) throws RemoteException {
-		return repository.getWebdavServerURI() + getGroupPath(groupName);
+		return repository.getWebdavServerURL() + getGroupPath(groupName);
 	}
 
 	@Override
@@ -109,7 +109,7 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 
 	@Override
 	public String getRoleURI(String roleName) throws RemoteException {
-		return repository.getWebdavServerURI() + getRolePath(roleName);
+		return repository.getWebdavServerURL() + getRolePath(roleName);
 	}
 
 	@Override

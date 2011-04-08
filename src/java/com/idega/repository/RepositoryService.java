@@ -2,8 +2,11 @@ package com.idega.repository;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collection;
 import java.util.List;
+import java.util.zip.ZipInputStream;
 
+import javax.jcr.Binary;
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -11,8 +14,13 @@ import javax.jcr.RepositoryException;
 import javax.jcr.security.AccessControlPolicy;
 
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.business.SpringBeanName;
+import com.idega.repository.bean.RepositoryItem;
 import com.idega.repository.bean.RepositoryItemVersionInfo;
+import com.idega.repository.event.RepositoryEventListener;
+import com.idega.user.data.bean.User;
 
+@SpringBeanName("repositoryService")
 public interface RepositoryService extends Repository {
 
 	public void initializeRepository(InputStream configSource, String repositoryName) throws Exception;
@@ -22,15 +30,20 @@ public interface RepositoryService extends Repository {
 	public boolean uploadXMLFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString) throws RepositoryException;
 	public boolean uploadFile(String uploadPath, String fileName, String contentType, InputStream stream) throws RepositoryException;
 
+	public boolean uploadZipFileContents(ZipInputStream zipStream, String uploadPath) throws RepositoryException;
+
 	public Node updateFileContents(String absolutePath, InputStream fileContents, AdvancedProperty... properties) throws RepositoryException;
 	public Node updateFileContents(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties) throws RepositoryException;
 
+	public Binary getBinary(Node file) throws RepositoryException;
 	public InputStream getInputStream(String path) throws IOException, RepositoryException;
 	public InputStream getInputStreamAsRoot(String path) throws IOException, RepositoryException;
 	public InputStream getFileContents(Node fileNode) throws IOException, RepositoryException;
+	public InputStream getFileContents(User user, Node fileNode) throws IOException, RepositoryException;
 
 	public boolean deleteAsRootUser(String path) throws RepositoryException;
 	public boolean delete(String path) throws RepositoryException;
+	public boolean delete(String path, User user) throws RepositoryException;
 
 	public boolean createFolder(String path) throws RepositoryException;
 	public boolean createFolderAsRoot(String path) throws RepositoryException;
@@ -43,7 +56,8 @@ public interface RepositoryService extends Repository {
 
 	public String getRepositoryConstantFolderType();
 
-	public String getWebdavServerURI();
+	public String getWebdavServerURL();
+	public String getURI(String path);
 
 	public Credentials getCredentials(String user, String password);
 
@@ -52,4 +66,26 @@ public interface RepositoryService extends Repository {
 	public boolean getExistence(String absolutePath) throws RepositoryException;
 
 	public List<RepositoryItemVersionInfo> getVersions(String parentPath, String fileName) throws RepositoryException;
+
+	public RepositoryItem getRepositoryItem(String path) throws RepositoryException;
+	public RepositoryItem getRepositoryItem(User user, String path) throws RepositoryException;
+	public RepositoryItem getRepositoryItemAsRootUser(String path) throws RepositoryException;
+
+	public Collection<Node> getChildNodes(User user, Node node) throws RepositoryException;
+	public Collection<Node> getChildNodesAsRootUser(Node node) throws RepositoryException;
+
+	public boolean isCollection(Node node) throws RepositoryException;
+	public boolean isFolder(String path) throws RepositoryException;
+	public boolean isHiddenFile(String name) throws RepositoryException;
+
+	public void registerRepositoryEventListener(RepositoryEventListener listener);
+
+	public int getChildCountExcludingFoldersAndHiddenFiles(String path) throws RepositoryException;
+	public List<String> getChildPathsExcludingFoldersAndHiddenFiles(String path) throws RepositoryException;
+	public List<String> getChildFolderPaths(String path) throws RepositoryException;
+	public String getParentPath(String path) throws RepositoryException;
+
+	public String createUniqueFileName(String scope);
+
+	public String getUserHomeFolder();
 }

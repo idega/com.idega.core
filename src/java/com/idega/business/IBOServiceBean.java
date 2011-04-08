@@ -18,6 +18,8 @@ import javax.ejb.Handle;
 import javax.ejb.SessionBean;
 import javax.ejb.SessionContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.data.IDOHome;
@@ -27,6 +29,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.repository.RepositoryService;
 import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
@@ -43,6 +46,9 @@ import com.idega.util.logging.LoggingHelper;
 public class IBOServiceBean implements IBOService, SessionBean {
 
 	private static final long serialVersionUID = 2234823785602301801L;
+
+	@Autowired
+	private RepositoryService repositoryService;
 
   private SessionContext ejbSessionContext;
   private IWApplicationContext iwac;
@@ -361,5 +367,13 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	@Override
+	public RepositoryService getRepositoryService() {
+		if (repositoryService == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return repositoryService;
 	}
 }

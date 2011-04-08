@@ -9,6 +9,8 @@ import java.util.logging.Logger;
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
@@ -23,6 +25,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
@@ -41,6 +44,9 @@ public abstract class DefaultSpringBean {
 
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
 	private static Logger LOGGER_;
+
+	@Autowired
+	private RepositoryService repositoryService;
 
 	public Logger getLogger() {
 		if (LOGGER_ == null) {
@@ -194,5 +200,12 @@ public abstract class DefaultSpringBean {
 		} catch (Exception e) {}
 
 		return provider == null ? null : provider.getRequest().getSession(Boolean.TRUE);
+	}
+
+	protected RepositoryService getRepositoryService() {
+		if (repositoryService == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return repositoryService;
 	}
 }

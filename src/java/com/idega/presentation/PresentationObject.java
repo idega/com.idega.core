@@ -31,6 +31,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
@@ -65,11 +67,13 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
+import com.idega.repository.RepositoryService;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.reflect.Property;
 import com.idega.util.reflect.PropertyCache;
@@ -163,13 +167,16 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	private boolean renderForLoggedOut = true;
 	private boolean renderForLoggedIn = true;
 
+	@Autowired
+	private RepositoryService repositoryService;
 
 	/**
 	 * Default constructor.
 	 * Should only be called by sublasses.
 	 */
-	protected PresentationObject()
-	{
+	protected PresentationObject() {
+		ELUtil.getInstance().autowire(this);
+
 		//TODO: Change this as components get state aware:
 		setTransient(true);
 	}
@@ -2837,5 +2844,12 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 
 	public void setOnClick(String onClick) {
 		setMarkupAttribute("onclick", onClick);
+	}
+
+	protected RepositoryService getRepositoryService() {
+		if (repositoryService == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return repositoryService;
 	}
 }
