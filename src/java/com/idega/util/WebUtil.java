@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
@@ -64,7 +65,7 @@ public class WebUtil extends DefaultSpringBean {
 	
     public boolean sendEmail(String from, String to, String subject, String message) {
     	if (StringUtil.isEmpty(subject) || StringUtil.isEmpty(message)) {
-    		getLogger().warning("Subject or/and message not provided");
+    		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
     		return false;
     	}
     	
@@ -72,11 +73,13 @@ public class WebUtil extends DefaultSpringBean {
     	
     	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "programmers@idega.com") : to;
     	if (StringUtil.isEmpty(to)) {
+    		getLogger().warning("Receiver is unknown! Unable to send a message:\n" + message);
     		return false;
     	}
     	
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
     	if (StringUtil.isEmpty(host)) {
+    		getLogger().warning("Mail server host is unknown, unable to send a message:\n" + message);
     		return false;
     	}
     	
