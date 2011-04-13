@@ -21,7 +21,6 @@ import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.html.HtmlGraphicImage;
 import javax.faces.component.html.HtmlOutputText;
-import javax.faces.el.ValueBinding;
 
 import com.idega.core.component.data.ICObject;
 import com.idega.data.IDOLookupException;
@@ -125,10 +124,10 @@ public interface IWBundle extends IWModule{
 	public abstract IWResourceBundle getResourceBundle(Locale locale);
 
 	/**
-	 * Returns a Map of all loaded resourcebundles
+	 * Returns a Map of all loaded resource bundles
 	 * @return
 	 */
-	public abstract Map getResourceBundles();
+	public abstract Map<Locale, IWResourceBundle> getResourceBundles();
 
 	public abstract String getVersion();
 
@@ -198,8 +197,7 @@ public interface IWBundle extends IWModule{
 	 * Returns the ICObjects associated with this bundle
 	 * Returns an empty list if nothing found
 	 */
-	public abstract Collection getICObjectsList() throws FinderException,
-			IDOLookupException;
+	public abstract Collection<ICObject> getICObjectsList() throws FinderException, IDOLookupException;
 
 	/**
 	 * Returns the ICObjects associated with this bundle
@@ -213,8 +211,7 @@ public interface IWBundle extends IWModule{
 	 * Returns the ICObjects associated with this bundle and of the specified componentType
 	 * Returns null if there is an exception
 	 */
-	public abstract Collection getICObjectsList(String componentType)
-			throws FinderException, IDOLookupException;
+	public abstract Collection<ICObject> getICObjectsList(String componentType) throws FinderException, IDOLookupException;
 
 	/**
 	 * Returns the ICObjects associated with this bundle and of the specified componentType
@@ -237,39 +234,35 @@ public interface IWBundle extends IWModule{
 	public abstract String getComponentProperty(String className,
 			String propertyName);
 
-	public abstract String getComponentName(Class componentClass);
+	public abstract String getComponentName(Class<?> componentClass);
 
 	public abstract String getComponentName(String className);
 
-	public abstract String getComponentType(Class componentClass);
+	public abstract String getComponentType(Class<? extends UIComponent> componentClass);
 
 	public abstract String getComponentType(String className);
 
 	/**
 	 * Returns getComponentName(componentClass) if localized name not found
 	 */
-	public abstract String getComponentName(Class componentClass, Locale locale);
+	public abstract String getComponentName(Class<? extends UIComponent> componentClass, Locale locale);
 
 	/**
 	 * Returns getComponentName(className) if localized name not found
 	 */
 	public abstract String getComponentName(String className, Locale locale);
 
-	public abstract void setComponentName(Class componentClass, Locale locale,
-			String sName);
+	public abstract void setComponentName(Class<? extends UIComponent> componentClass, Locale locale, String sName);
 
-	public abstract String getComponentName(Class componentClass,
-			Locale locale, String returnIfNameNotLocalized);
+	public abstract String getComponentName(Class<? extends UIComponent> componentClass, Locale locale, String returnIfNameNotLocalized);
 
-	public abstract String getComponentName(String className, Locale locale,
-			String returnIfNameNotLocalized);
+	public abstract String getComponentName(String className, Locale locale, String returnIfNameNotLocalized);
 
-	public abstract void setComponentName(String className, Locale locale,
-			String sName);
+	public abstract void setComponentName(String className, Locale locale, String sName);
 
 	public abstract void removeComponent(String className);
 
-	public abstract List getComponentKeys();
+	public abstract List<String> getComponentKeys();
 
 	public abstract void addLocalizableString(String key, String value);
 
@@ -303,7 +296,7 @@ public interface IWBundle extends IWModule{
 	 * @param localizationKey LocalizationKey
 	 * @return
 	 */
-	public ValueBinding getValueBinding(String expression);
+//	public ValueBinding getValueBinding(String expression);
 
 	public ValueExpression getValueExpression(String localizationKey);
 
@@ -313,7 +306,7 @@ public interface IWBundle extends IWModule{
 	 * @param defaultValue The default value
 	 * @return
 	 */
-	public ValueBinding getValueBinding(String localizationKey, String defaultValue);
+//	public ValueBinding getValueBinding(String localizationKey, String defaultValue);
 
 	/**
 	 * Returns a localized HtmlOutputText object.
@@ -327,7 +320,7 @@ public interface IWBundle extends IWModule{
 	 * @param localizationKey LocalizationKey
 	 * @return
 	 */
-	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component);
+	public <T extends UIComponent> T getLocalizedUIComponent(String localizationKey, T component);
 
 	/**
 	 * Returns a localized UIComponent object. Value is bound to the <code>value</code> attribute.
@@ -335,8 +328,7 @@ public interface IWBundle extends IWModule{
 	 * @param defaultValue The default value
 	 * @return
 	 */
-	public UIComponent getLocalizedUIComponent(String localizationKey, UIComponent component, String defaultValue);
-
+	public <T extends UIComponent> T getLocalizedUIComponent(String localizationKey, T component, String defaultValue);
 
 	/**
 	 * Returns a localized string.
@@ -361,7 +353,7 @@ public interface IWBundle extends IWModule{
 	 * @throws IDOLookupException
 	 * @throws FinderException
 	 */
-	public Collection getDataObjects() throws IDOLookupException, FinderException;
+	public Collection<ICObject> getDataObjects() throws IDOLookupException, FinderException;
 
 
 	/**
