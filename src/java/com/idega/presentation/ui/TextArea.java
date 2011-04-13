@@ -9,6 +9,8 @@
  */
 package com.idega.presentation.ui;
 import java.io.IOException;
+
+import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
@@ -33,6 +35,8 @@ public class TextArea extends InterfaceObject {
 	private static String UNTITLED_STRING = "untitled";
 	private static String EMPTY_STRING = "";
 
+	public static final String MAX_CHARACTERS_PROPERTY = "maxCharacters";
+
 	//Instance variables:
 	private boolean isSetAsNotEmpty;
 	private String notEmptyErrorMessage;
@@ -40,7 +44,17 @@ public class TextArea extends InterfaceObject {
 	private int maximum = -1;
 	private boolean asMaximum = false;
 	
-	
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException { 
+    	ValueExpression ve = getValueExpression(MAX_CHARACTERS_PROPERTY);
+    	if (ve != null) {
+	    	int index = Integer.parseInt(ve.getValue(context.getELContext()).toString());
+    		setMaximumCharacters(index);
+    	}    
+    	
+    	super.encodeBegin(context);
+    }
+    
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(ctx);
@@ -51,6 +65,7 @@ public class TextArea extends InterfaceObject {
 		values[5] = Boolean.valueOf(this.asMaximum);
 		return values;
 	}
+
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
