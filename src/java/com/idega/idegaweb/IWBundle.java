@@ -290,23 +290,7 @@ public interface IWBundle extends IWModule{
 	public HtmlGraphicImage getLocalizedImage(String pathAndName);
 	public HtmlGraphicImage getLocalizedImage(String pathAndName, IWContext context);
 
-
-	/**
-	 * Returns a valueBinding for a localizationKey
-	 * @param localizationKey LocalizationKey
-	 * @return
-	 */
-//	public ValueBinding getValueBinding(String expression);
-
 	public ValueExpression getValueExpression(String localizationKey);
-
-	/**
-	 * Returns a valueBinding for a localizationKey
-	 * @param localizationKey LocalizationKey
-	 * @param defaultValue The default value
-	 * @return
-	 */
-//	public ValueBinding getValueBinding(String localizationKey, String defaultValue);
 
 	/**
 	 * Returns a localized HtmlOutputText object.
