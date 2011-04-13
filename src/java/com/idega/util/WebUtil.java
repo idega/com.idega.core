@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -107,5 +108,28 @@ public class WebUtil extends DefaultSpringBean {
     	sender.start();
     	
     	return true;
+    }
+    
+    public boolean logOut() {
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null) {
+    		getLogger().warning("IWContext is not available!");
+    		return false;
+    	}
+    	if (!iwc.isLoggedOn()) {
+    		getLogger().warning("User is not logged in!");
+    		return false;
+    	}
+    	
+    	LoginBusinessBean loginBusiness = null;
+    	try {
+    		loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwc.getRequest().getSession(false));
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error getting LoginBusiness", e);
+    	}
+    	if (loginBusiness == null)
+    		return false;
+    	
+    	return loginBusiness.logOutUser(iwc);
     }
 }
