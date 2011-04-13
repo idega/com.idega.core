@@ -11,11 +11,13 @@ import java.util.Iterator;
  * Copyright (C) idega software 2003
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
+ * @param <T>
  */
-public class EnumerationIteratorWrapper implements Enumeration {
-	private Iterator iterator;
+public class EnumerationIteratorWrapper<T> implements Enumeration<T> {
+	
+	private Iterator<T> iterator;
 
-	public EnumerationIteratorWrapper(Iterator iter) {
+	public EnumerationIteratorWrapper(Iterator<T> iter) {
 		this.iterator = iter;
 	}
 
@@ -23,7 +25,7 @@ public class EnumerationIteratorWrapper implements Enumeration {
 		return this.iterator.hasNext();
 	}
 
-	public Object nextElement() {
+	public T nextElement() {
 		return this.iterator.next();
 	}
 }
