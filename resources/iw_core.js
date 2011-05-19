@@ -404,12 +404,14 @@ var timerF;
 
 function activeSessionPolling() {
 	try {
-		PageSessionPoller.pollSession('ping', {
-			callback: function(result) {
-				timer = timer + 1;
-				timerF = setTimeout("activeSessionPolling()",240000);
-			}
-		});
+		if (typeof PageSessionPoller != 'undefined') {
+			PageSessionPoller.pollSession('ping', {
+				callback: function(result) {
+					timer = timer + 1;
+					timerF = setTimeout("activeSessionPolling()",240000);
+				}
+			});
+		}
 	} catch(err) {}
 }
 
