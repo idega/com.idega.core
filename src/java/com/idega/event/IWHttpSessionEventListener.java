@@ -12,14 +12,28 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 
 	@Autowired
 	private IWHttpSessionsManager sessionsManager;
-	
+
+	@Autowired
+	private ScriptCallerInterface scriptCaller;
+
+	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
 		HttpSession newSession = sessionEvent.getSession();
 		getSessionsManager().addSession(newSession);
 	}
 
+	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
+		//if session is time out redirect user to /pages
+		if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
+			//redirect
+			this.scriptCaller.setScript("window.location = \"/pages\"");
+			this.scriptCaller.setSessionId(destroyedSession.getId());
+			this.scriptCaller.run();
+
+		}
+
 		getSessionsManager().removeSession(destroyedSession.getId());
 	}
 
