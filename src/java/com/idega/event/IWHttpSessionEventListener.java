@@ -6,6 +6,8 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.expression.ELUtil;
 
 public class IWHttpSessionEventListener implements HttpSessionListener {
@@ -25,12 +27,20 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
-		//if session is time out redirect user to /pages
-		if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
-			//redirect
-			this.scriptCaller.setScript("window.location = \"/pages\"");
-			this.scriptCaller.setSessionId(destroyedSession.getId());
-			this.scriptCaller.run();
+
+		LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
+
+		//redirecting only if property set, and user is logged on
+		if(IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("redirect_when_session_timeout", Boolean.FALSE) &&
+				(loginSession != null) && (loginSession.getUser() != null)){
+
+			//if session is time out redirect user to /pages
+			if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
+				//redirect
+				this.scriptCaller.setScript("window.location.pathname = \"/pages\"");
+				this.scriptCaller.setSessionId(destroyedSession.getId());
+				this.scriptCaller.run();
+			}
 
 		}
 
