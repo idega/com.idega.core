@@ -10,6 +10,7 @@
 package com.idega.data;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.Serializable;
 
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryInputStream;
@@ -18,7 +19,10 @@ import com.idega.io.MemoryOutputStream;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
  */
-public class BlobWrapper {
+public class BlobWrapper implements Serializable {
+
+	private static final long serialVersionUID = -1907663111712992625L;
+
 	private int status;
 	private InputStream writeInputStream;
 // unused private InputStream readInputStream;

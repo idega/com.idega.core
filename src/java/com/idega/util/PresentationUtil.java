@@ -15,6 +15,7 @@ import com.idega.util.resources.ResourcesAdder;
 public class PresentationUtil {
 	
 	public static final String ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_HEADER = "javaScriptSourceLineForHeaderAttribute";
+	public static final String ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_BODY = "javaScriptSourceLineForBodyAttribute";
 	public static final String ATTRIBUTE_JAVA_SCRIPT_ACTION_FOR_BODY = "javaScriptActionForBodyAttribute";
 	public static final String ATTRIBUTE_CSS_SOURCE_LINE_FOR_HEADER = "cssSourceLineForHeaderAttribute";
 	public static final String ATTRIBUTE_ADD_CSS_DIRECTLY = "addCSSFilesDirectlyToPage";
@@ -48,6 +49,38 @@ public class PresentationUtil {
 		}
 		
 		adder.addJavaScriptAtPosition(iwc, AddResource.HEADER_BEGIN, scriptUri);
+		return true;
+	}
+	
+	public static boolean addJavaScriptSourcesLinesToBody(IWContext iwc, List<String> scriptsUris) {
+		if (iwc == null || scriptsUris == null) {
+			return false;
+		}
+		
+		for (int i = 0; i < scriptsUris.size(); i++) {
+			addJavaScriptSourceLineToBody(iwc, scriptsUris.get(i));
+		}
+		
+		return true;
+	}
+	
+	public static boolean addJavaScriptSourceLineToBody(IWContext iwc, String scriptUri) {
+		if (iwc == null || StringUtil.isEmpty(scriptUri)) {
+			return false;
+		}
+		
+		if (CoreUtil.isSingleComponentRenderingProcess(iwc)) {
+			manageCientResource(iwc, ATTRIBUTE_JAVA_SCRIPT_SOURCE_FOR_BODY, scriptUri);
+		
+			return true;
+		}
+		
+		AddResource adder = getResourceAdder(iwc);
+		if (adder == null) {
+			return false;
+		}
+		
+		adder.addJavaScriptAtPosition(iwc, AddResource.BODY_END, scriptUri);
 		return true;
 	}
 	

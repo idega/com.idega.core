@@ -23,4 +23,5 @@ public interface PDFGenerator {
 	
 	public InputStream getStreamToGeneratedPDF(IWContext iwc, UIComponent component, boolean replaceInputs, boolean checkCustomTags);
 
+	public byte[] getBytesOfGeneratedPDF(IWContext iwc, UIComponent component, boolean replaceInputs, boolean checkCustomTags);
 }

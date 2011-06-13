@@ -20,6 +20,8 @@
 
 	<bean id="loginSession" class="com.idega.core.accesscontrol.business.LoginSessionBean" scope="session" />
 	
+	<bean id="scriptCallerInterface" class="com.idega.dwr.reverse.ScriptCalerWithoutDWRThread" scope="session" />
+	
 	<bean id="customIdegaFacesContextInitializer" class="com.idega.webface.initializer.FacesContextInitializerImpl" scope="singleton" />
 	
 	<bean id="iwCoreServletRequestProvider" class="com.idega.servlet.filter.impl.RequestResponseProviderImpl" scope="request" />

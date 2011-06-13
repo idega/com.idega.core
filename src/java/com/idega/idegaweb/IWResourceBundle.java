@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
@@ -158,7 +159,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 			// System.err.println("IWResourceBundle: File Not
 			// Found:"+file.getAbsolutePath());
 		}
-		this.lookup = new TreeMap(this.properties);
+		
+		this.lookup = new TreeMap<String, String>();
+		for (Entry<Object, Object> entry: this.properties.entrySet()) {
+			lookup.put(entry.getKey().toString(), entry.getValue().toString());
+		}
+		
 		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
 	}
 	
@@ -216,7 +222,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		Enumeration<String> result = null;
 		if (this.parent != null) {
 			Iterator<String> iter = this.lookup.keySet().iterator();
-			final Enumeration<String> myKeys = new EnumerationIteratorWrapper(iter);
+			final Enumeration<String> myKeys = new EnumerationIteratorWrapper<String>(iter);
 			final Enumeration<String> parentKeys = this.parent.getKeys();
 
 			result = new Enumeration<String>() {
@@ -250,7 +256,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource 
 		}
 		else {
 			Iterator<String> iter = this.lookup.keySet().iterator();
-			result = new EnumerationIteratorWrapper(iter);
+			result = new EnumerationIteratorWrapper<String>(iter);
 		}
 
 		return result;

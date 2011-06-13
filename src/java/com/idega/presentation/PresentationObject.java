@@ -197,7 +197,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	protected String generateID()
 	{
 		String UUID = UUIDGenerator.getInstance().generateId();
-		return "id" + UUID.substring(UUID.lastIndexOf("-") + 1);
+		return "iwid" + UUID.substring(UUID.lastIndexOf("-") + 1);
 	}
 	protected String setID()
 	{
@@ -1020,6 +1020,9 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 			obj.supportsMultipleMainCalls=this.supportsMultipleMainCalls;
 			//obj.defaultState = this.defaultState; //same object, unnecessary
 			// to clone
+			if (obj.getID().startsWith("iwid")) {
+				obj.setID();
+			}
 		}
 		catch (Exception ex)
 		{

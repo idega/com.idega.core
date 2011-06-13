@@ -41,8 +41,12 @@ public abstract class DefaultSpringBean {
 	private static Logger LOGGER_;
 	
 	protected Logger getLogger() {
+		return getLogger(getClass());
+	}
+		
+	protected static Logger getLogger(Class<?> theClass) {
 		if (LOGGER_ == null) {
-			LOGGER_ = Logger.getLogger(getClass().getName());
+			LOGGER_ = Logger.getLogger(theClass.getName());
 		}
 		return LOGGER_;
 	}
@@ -144,8 +148,13 @@ public abstract class DefaultSpringBean {
 	}
 	
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive, int size) {
+		return getCache(cacheName, IWCacheManager2.DEFAULT_CACHE_TTL_IDLE_SECONDS, timeToLive, size, true);
+	}
+	
+	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToIdle, long timeToLive, int size, boolean resetable) {
 		try {
-			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, size, IWCacheManager2.DEFAULT_OVERFLOW_TO_DISK, IWCacheManager2.DEFAULT_ETERNAL, timeToLive);
+			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, size, IWCacheManager2.DEFAULT_OVERFLOW_TO_DISK, IWCacheManager2.DEFAULT_ETERNAL,
+					timeToIdle, timeToLive,	resetable);
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting cache!", e);
 		}

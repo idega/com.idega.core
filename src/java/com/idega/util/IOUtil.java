@@ -17,6 +17,8 @@ import java.util.jar.JarInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import javax.servlet.http.HttpServletRequest;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWModuleLoader;
 import com.idega.io.ZipInstaller;
@@ -135,5 +137,24 @@ public class IOUtil {
 		}
 		
 		return null;
+	}
+	
+	public static final long getRequestSize(HttpServletRequest request) {
+		if (request == null)
+			return 0;
+		
+		Long requestSize = null;
+		try {
+			requestSize = Long.valueOf(request.getHeader("Content-Length"));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return requestSize == null ? 0 : requestSize;
+	}
+	
+	public static final boolean isUploadExceedingLimits(HttpServletRequest request, long maxUploadSize) {
+		Long requestSize = getRequestSize(request);
+		return requestSize == null ? false : requestSize > maxUploadSize;
 	}
 }
