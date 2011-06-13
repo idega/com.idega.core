@@ -2,12 +2,7 @@
 <!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN 2.0//EN" "http://www.springframework.org/dtd/spring-beans-2.0.dtd">
 
 <beans>
-	<bean id="faceletCompiler" class="com.sun.facelets.compiler.SAXCompiler" scope="prototype" />
-    <bean id="faceletResourceResolver" class="com.sun.facelets.impl.DefaultResourceResolver" scope="prototype" />
-    <bean id="faceletFactoryFactory" class="com.idega.facelets.ui.FaceletFactoryFactory" scope="singleton">
-        <property name="compiler" ref="faceletCompiler" />
-        <property name="resourceResolver" ref="faceletResourceResolver" />
-    </bean>
+    <bean id="faceletFactoryFactory" class="com.idega.facelets.ui.FaceletFactoryFactory" scope="singleton" />
     
     <bean id="IWURIResource" class="com.idega.facelets.ui.util.IWUIResource" scope="singleton" />
 </beans>

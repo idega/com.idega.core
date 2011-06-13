@@ -13,24 +13,25 @@ import javax.el.VariableMapper;
 import javax.faces.FacesException;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIParameter;
+import javax.faces.context.FacesContext;
+import javax.faces.view.Location;
+import javax.faces.view.facelets.CompositeFaceletHandler;
+import javax.faces.view.facelets.FaceletContext;
+import javax.faces.view.facelets.FaceletException;
+import javax.faces.view.facelets.FaceletHandler;
+import javax.faces.view.facelets.Tag;
+import javax.faces.view.facelets.TagAttribute;
+import javax.faces.view.facelets.TagConfig;
+import javax.faces.view.facelets.TagHandler;
 
-import com.sun.facelets.FaceletContext;
-import com.sun.facelets.FaceletException;
-import com.sun.facelets.FaceletFactory;
-import com.sun.facelets.FaceletHandler;
-import com.sun.facelets.FaceletViewHandler;
-import com.sun.facelets.compiler.Compiler;
-import com.sun.facelets.el.VariableMapperWrapper;
-import com.sun.facelets.impl.DefaultFaceletFactory;
-import com.sun.facelets.impl.ResourceResolver;
-import com.sun.facelets.tag.CompositeFaceletHandler;
-import com.sun.facelets.tag.Location;
-import com.sun.facelets.tag.Tag;
-import com.sun.facelets.tag.TagAttribute;
-import com.sun.facelets.tag.TagAttributes;
-import com.sun.facelets.tag.TagConfig;
-import com.sun.facelets.tag.TagHandler;
-import com.sun.facelets.tag.ui.ParamHandler;
+import org.apache.myfaces.view.facelets.FaceletFactory;
+import org.apache.myfaces.view.facelets.FaceletViewDeclarationLanguageStrategy;
+import org.apache.myfaces.view.facelets.compiler.Compiler;
+import org.apache.myfaces.view.facelets.el.VariableMapperWrapper;
+import org.apache.myfaces.view.facelets.tag.TagAttributeImpl;
+import org.apache.myfaces.view.facelets.tag.TagAttributesImpl;
+import org.apache.myfaces.view.facelets.tag.ui.ParamHandler;
+
 
 /**
  * 
@@ -42,23 +43,12 @@ import com.sun.facelets.tag.ui.ParamHandler;
  */
 public class FaceletFactoryFactory {
 	
-	private Compiler compiler;
-	private ResourceResolver resourceResolver;
-	private FaceletFactory faceletFactory;
-	
 	/**
 	 * Method should be called only, when current FacesContext is available
 	 * @return FaceletFactory
 	 */
 	public synchronized FaceletFactory createFaceletFactory() {
-		
-		if(faceletFactory == null) {
-			
-	        long refreshPeriod = FaceletViewHandler.DEFAULT_REFRESH_PERIOD;
-	        faceletFactory = new DefaultFaceletFactory(getCompiler(), getResourceResolver(), refreshPeriod);
-		}
-		
-		return faceletFactory;
+		return createFaceletFactory(null);
 	}
 	
 	/**
@@ -66,36 +56,20 @@ public class FaceletFactoryFactory {
 	 * @return FaceletFactory, new each time, contrary to when not passing any parameters
 	 */
 	public synchronized FaceletFactory createFaceletFactory(List<UIParameter> params) {
+		FacesContext facesContext = FacesContext.getCurrentInstance(); 
+		IWFaceletViewDeclarationLanguage language = new IWFaceletViewDeclarationLanguage(facesContext, new FaceletViewDeclarationLanguageStrategy());
+        Compiler compiler = language.getNewCompiler(facesContext);
+		if(params != null && params.size()>0){
+			compiler = new IWCompiler(compiler, params);
+		} 
 		
-		if(params == null || params.size()<1){
-			return createFaceletFactory();
-		} else {
-	        long refreshPeriod = FaceletViewHandler.DEFAULT_REFRESH_PERIOD;
-	        faceletFactory = new DefaultFaceletFactory(new IWCompiler(getCompiler(), params), getResourceResolver(), refreshPeriod);
-			return faceletFactory;
-		}
+		return language.getNewFaceletFactory(facesContext, compiler);
     }
 
-	public Compiler getCompiler() {
-		return compiler;
-	}
-
-	public void setCompiler(Compiler compiler) {
-		this.compiler = compiler;
-	}
-
-	public ResourceResolver getResourceResolver() {
-		return resourceResolver;
-	}
-
-	public void setResourceResolver(ResourceResolver resourceResolver) {
-		this.resourceResolver = resourceResolver;
-	}
-	
 	public class IWCompiler extends Compiler {
 		
-		Compiler compiler;
-		List<UIParameter> params;
+		private Compiler compiler;
+		private List<UIParameter> params;
 		
 		public IWCompiler(Compiler compiler, List<UIParameter> params){
 			this.compiler = compiler;
@@ -142,8 +116,22 @@ public class FaceletFactoryFactory {
 			}
 			
 			final CompositeFaceletHandler paramHandlers = new CompositeFaceletHandler((FaceletHandler[])paramHandlersList.toArray(new FaceletHandler[paramHandlersList.size()]));
-			final FaceletHandler wrapper = new IWIncludeHandler(src, alias, paramHandlers);
+			final FaceletHandler wrapper = new IWIncludeHandler(compiler, src, alias, paramHandlers);
 			return wrapper;
+		}
+
+		@Override
+		protected FaceletHandler doCompileViewMetadata(URL src, String alias)
+				throws IOException, FaceletException, ELException,
+				FacesException {
+			return compiler.compileViewMetadata(src, alias);
+		}
+
+		@Override
+		protected FaceletHandler doCompileCompositeComponentMetadata(URL src,
+				String alias) throws IOException, FaceletException,
+				ELException, FacesException {
+			return compiler.compileCompositeComponentMetadata(src, alias);
 		}
 		
 	}
@@ -158,22 +146,19 @@ public class FaceletFactoryFactory {
 		public ParamConfig(FaceletHandler nextHandler,String name, String value) {
 			this.nextHandler = nextHandler;
 			TagAttribute attributes[] = new TagAttribute[2];
-			attributes[0] = new TagAttribute(location,ns,"name","name",name);
-			attributes[1] = new TagAttribute(location,ns,"value","value",value);
-			theTag = new Tag(location, ns, "param", "ui:param", new TagAttributes(attributes));
+			attributes[0] = new TagAttributeImpl(location,ns,"name","name",name);
+			attributes[1] = new TagAttributeImpl(location,ns,"value","value",value);
+			theTag = new Tag(location, ns, "param", "ui:param", new TagAttributesImpl(attributes));
 		}
 		
-		@Override
 		public FaceletHandler getNextHandler() {
 			return this.nextHandler;
 		}
 
-		@Override
 		public Tag getTag() {
 			return theTag;
 		}
 
-		@Override
 		public String getTagId() {
 			return tagId;
 		}
@@ -185,23 +170,20 @@ public class FaceletFactoryFactory {
 
 		private final String tagId = "_" + UUID.randomUUID().toString();
 		private FaceletHandler nextHandler;
-		private Tag theTag = new Tag(new Location("iwInclude", -1, -1), "", "include", "iw:include", new TagAttributes(new TagAttribute[0]));
+		private Tag theTag = new Tag(new Location("iwInclude", -1, -1), "", "include", "iw:include", new TagAttributesImpl(new TagAttribute[0]));
 		
 		public FakeTagConfig(FaceletHandler nextHandler) {
 			this.nextHandler = nextHandler;
 		}
 
-		@Override
 		public FaceletHandler getNextHandler() {
 			return this.nextHandler;
 		}
 
-		@Override
 		public Tag getTag() {
 			return theTag;
 		}
 
-		@Override
 		public String getTagId() {
 			return tagId;
 		}
@@ -209,11 +191,13 @@ public class FaceletFactoryFactory {
 	
 	public class IWIncludeHandler extends TagHandler {
 		
+		private Compiler compiler;
 		private String alias;
 		private URL src;
 		
-		public IWIncludeHandler(URL src, String alias, FaceletHandler paramHandlers ){
+		public IWIncludeHandler(Compiler compiler, URL src, String alias, FaceletHandler paramHandlers ){
 			super(new FakeTagConfig(paramHandlers));
+			this.compiler = compiler;
 			this.alias=alias;
 			this.src = src;
 		}
@@ -226,7 +210,7 @@ public class FaceletFactoryFactory {
 	        	//apply ui:param
 	            this.nextHandler.apply(ctx, null);
 	            //include facelet
-	            FaceletHandler root = getCompiler().compile(src, alias);
+	            FaceletHandler root = compiler.compile(src, alias);
 	            root.apply(ctx, parent);
 //	            ctx.includeFacelet(parent, alias);
 	        } finally {

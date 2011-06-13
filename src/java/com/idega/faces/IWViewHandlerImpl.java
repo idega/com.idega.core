@@ -12,7 +12,9 @@ package com.idega.faces;
 
 import java.io.IOException;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Logger;
 
 import javax.faces.FacesException;
@@ -21,6 +23,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+import javax.faces.view.ViewDeclarationLanguage;
 import javax.servlet.http.HttpServletResponse;
 
 //import com.icesoft.faces.context.BridgeFacesContext;
@@ -417,6 +420,84 @@ public class IWViewHandlerImpl extends ViewHandler{
 		return this.viewManager;
 	}
 	
+	//----------------------------------------------  JSF 2.0 methods below
+	
+	
+	/**
+     * @param context
+     * @param input
+     * @return
+     * 
+     * @since 2.0
+     */
+	@Override
+    public String deriveViewId(FacesContext context, String input)
+    {
+    	return getViewHandlerForContext(context).deriveViewId(context, input);
+    }
+    
+    /**
+     * 
+     * @param context
+     * @param rawViewId
+     * @return
+     * @since 2.1
+     */
+	@Override
+    public String deriveLogicalViewId(FacesContext context, String rawViewId)
+    {
+    	return getViewHandlerForContext(context).deriveLogicalViewId(context, rawViewId);
+    }
+
+    /**
+     * Return a JSF action URL derived from the viewId argument that is suitable to be used as the target of a link in a JSF response. Compiliant implementations must implement this method as specified in section JSF.7.5.2. The default implementation simply calls through to getActionURL(javax.faces.context.FacesContext, java.lang.String), passing the arguments context and viewId.
+     * 
+     * @param context
+     * @param viewId
+     * @param parameters
+     * @param includeViewParams
+     * @return
+     * 
+     * @since 2.0
+     */
+	@Override
+    public String getBookmarkableURL(FacesContext context, String viewId, Map<String, List<String>> parameters,
+                                     boolean includeViewParams)
+    {
+		return getViewHandlerForContext(context).getBookmarkableURL(context, viewId, parameters, includeViewParams);
+    }
+
+    /**
+     * Return the ViewDeclarationLanguage instance used for this ViewHandler  instance.
+     * 
+     * @param context
+     * @param viewId
+     * @return
+     * 
+     * @since 2.0
+     */
+	@Override
+    public ViewDeclarationLanguage getViewDeclarationLanguage(FacesContext context, String viewId)
+    {
+        return getViewHandlerForContext(context).getViewDeclarationLanguage(context, viewId);
+    }
+
+    /**
+     * Return a JSF action URL derived from the viewId argument that is suitable to be used by the NavigationHandler to issue a redirect request to the URL using a NonFaces request. Compiliant implementations must implement this method as specified in section JSF.7.5.2. The default implementation simply calls through to getActionURL(javax.faces.context.FacesContext, java.lang.String), passing the arguments context and viewId.
+     * 
+     * @param context
+     * @param viewId
+     * @param parameters
+     * @param includeViewParams
+     * @return
+     * 
+     * @since 2.0
+     */
+    public String getRedirectURL(FacesContext context, String viewId, Map<String, List<String>> parameters,
+                                 boolean includeViewParams)
+    {
+    	return getViewHandlerForContext(context).getRedirectURL(context, viewId, parameters, includeViewParams);
+    }
 	
 
 }

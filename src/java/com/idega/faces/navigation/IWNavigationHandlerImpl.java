@@ -1,11 +1,20 @@
 /*
- * $Id: IWNavigationHandlerImpl.java,v 1.5 2006/05/11 17:06:38 eiki Exp $
- * Created on Nov 8, 2005
- * 
- * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- * 
- * This software is the proprietary information of Idega hf. Use is subject to
- * license terms.
+ * Licensed to the Apache Software Foundation (ASF) under one
+ * or more contributor license agreements.  See the NOTICE file
+ * distributed with this work for additional information
+ * regarding copyright ownership.  The ASF licenses this file
+ * to you under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance
+ * with the License.  You may obtain a copy of the License at
+ *
+ *   http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing,
+ * software distributed under the License is distributed on an
+ * "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+ * KIND, either express or implied.  See the License for the
+ * specific language governing permissions and limitations
+ * under the License.
  */
 package com.idega.faces.navigation;
 
@@ -15,50 +24,283 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
-import java.util.Iterator;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.faces.FacesException;
-import javax.faces.application.NavigationHandler;
+import javax.faces.application.ConfigurableNavigationHandler;
+import javax.faces.application.FacesMessage;
+import javax.faces.application.NavigationCase;
+import javax.faces.application.ProjectStage;
 import javax.faces.application.ViewHandler;
+import javax.faces.component.UIComponent;
+import javax.faces.component.UIViewParameter;
 import javax.faces.component.UIViewRoot;
+import javax.faces.component.visit.VisitCallback;
+import javax.faces.component.visit.VisitContext;
+import javax.faces.component.visit.VisitResult;
 import javax.faces.context.ExternalContext;
 import javax.faces.context.FacesContext;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-import org.apache.myfaces.application.NavigationHandlerImpl;
+import javax.faces.context.PartialViewContext;
+import javax.faces.view.ViewDeclarationLanguage;
+import javax.faces.view.ViewMetadata;
+
 import org.apache.myfaces.config.RuntimeConfig;
-import org.apache.myfaces.config.element.NavigationCase;
 import org.apache.myfaces.config.element.NavigationRule;
-import org.apache.myfaces.portlet.PortletUtil;
 import org.apache.myfaces.shared_impl.util.HashMapUtils;
+import org.apache.myfaces.shared_impl.util.StringUtils;
+import org.apache.myfaces.view.facelets.tag.jsf.PreDisposeViewEvent;
+
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
 
-public class IWNavigationHandlerImpl extends NavigationHandler {
+/**
+ * @author Thomas Spiegl (latest modification by $Author: lu4242 $)
+ * @author Anton Koinov
+ * @version $Revision: 1100261 $ $Date: 2011-05-06 11:10:50 -0500 (Fri, 06 May 2011) $
+ */
+public class IWNavigationHandlerImpl
+    extends ConfigurableNavigationHandler
+{
+    //private static final Log log = LogFactory.getLog(NavigationHandlerImpl.class);
+	private static final Logger log = Logger.getLogger(IWNavigationHandlerImpl.class.getName());
 
-	private static final Log log = LogFactory.getLog(NavigationHandlerImpl.class);
+    private static final String SKIP_ITERATION_HINT = "javax.faces.visit.SKIP_ITERATION";
+    
+    private static final String ASTERISK = "*";
 
-	private static final String ASTERISK = "*";
+    private Map<String, Set<NavigationCase>> _navigationCases = null;
+    private List<String> _wildcardKeys = new ArrayList<String>();
 
-	private Map _navigationCases = null;
-	private List _wildcardKeys = new ArrayList();
+    public IWNavigationHandlerImpl()
+    {
+        if (log.isLoggable(Level.FINEST)) log.finest("New NavigationHandler instance created");
+    }
 
-	public IWNavigationHandlerImpl() {
-		if (log.isTraceEnabled()) {
-			log.trace("New NavigationHandler instance created");
-		}
-	}
+    @Override
+    public void handleNavigation(FacesContext facesContext, String fromAction, String outcome)
+    {
+        NavigationCase navigationCase = getNavigationCase(facesContext, fromAction, outcome);
 
-	public void handleNavigation(FacesContext facesContext, String fromAction, String outcome) {
-		if (outcome == null) {
-			// stay on current ViewRoot
-			return;
-		}
+        if (navigationCase != null)
+        {
+            if (log.isLoggable(Level.FINEST))
+            {
+                log.finest("handleNavigation fromAction=" + fromAction + " outcome=" + outcome +
+                          " toViewId =" + navigationCase.getToViewId(facesContext) +
+                          " redirect=" + navigationCase.isRedirect());
+            }
+            if (navigationCase.isRedirect())
+            { 
+                //&& (!PortletUtil.isPortletRequest(facesContext)))
+                // Spec section 7.4.2 says "redirects not possible" in this case for portlets
+                //But since the introduction of portlet bridge and the 
+                //removal of portlet code in myfaces core 2.0, this condition
+                //no longer applies
+                
+                ExternalContext externalContext = facesContext.getExternalContext();
+                ViewHandler viewHandler = facesContext.getApplication().getViewHandler();
+                String toViewId = navigationCase.getToViewId(facesContext);
+                String redirectPath = viewHandler.getRedirectURL(facesContext, toViewId, navigationCase.getParameters(), navigationCase.isIncludeViewParams());
+                
+                //Clear ViewMap if we are redirecting to other resource
+                UIViewRoot viewRoot = facesContext.getViewRoot(); 
+                if (viewRoot != null && !viewRoot.getViewId().equals(toViewId))
+                {
+                    //call getViewMap(false) to prevent unnecessary map creation
+                    Map<String, Object> viewMap = viewRoot.getViewMap(false);
+                    if (viewMap != null)
+                    {
+                        viewMap.clear();
+                    }
+                }
+                
+                // JSF 2.0 the javadoc of handleNavigation() says something like this 
+                // "...If the view has changed after an application action, call
+                // PartialViewContext.setRenderAll(true)...". The effect is that ajax requests
+                // are included on navigation.
+                PartialViewContext partialViewContext = facesContext.getPartialViewContext();
+                String viewId = facesContext.getViewRoot() != null ? facesContext.getViewRoot().getViewId() : null;
+                if ( partialViewContext.isPartialRequest() && 
+                     !partialViewContext.isRenderAll() && 
+                     !toViewId.equals(viewId))
+                {
+                    partialViewContext.setRenderAll(true);
+                }
+                
+                // JSF 2.0 Spec call Flash.setRedirect(true) to notify Flash scope and take proper actions
+                externalContext.getFlash().setRedirect(true);
+                try
+                {
+                    externalContext.redirect(redirectPath);
+                    facesContext.responseComplete();
+                }
+                catch (IOException e)
+                {
+                    throw new FacesException(e.getMessage(), e);
+                }
+            }
+            else
+            {
+                ViewHandler viewHandler = facesContext.getApplication().getViewHandler();
+                //create new view
+                String newViewId = navigationCase.getToViewId(facesContext);
+                // JSF 2.0 the javadoc of handleNavigation() says something like this 
+                // "...If the view has changed after an application action, call
+                // PartialViewContext.setRenderAll(true)...". The effect is that ajax requests
+                // are included on navigation.
+                PartialViewContext partialViewContext = facesContext.getPartialViewContext();
+                String viewId = facesContext.getViewRoot() != null ? facesContext.getViewRoot().getViewId() : null;
+                if ( partialViewContext.isPartialRequest() && 
+                     !partialViewContext.isRenderAll() && 
+                     !newViewId.equals(viewId))
+                {
+                    partialViewContext.setRenderAll(true);
+                }
 
+                if (facesContext.getViewRoot() != null)
+                {
+                    if (facesContext.getViewRoot().getAttributes().containsKey("oam.CALL_PRE_DISPOSE_VIEW"))
+                    {
+                        facesContext.getAttributes().put(SKIP_ITERATION_HINT, Boolean.TRUE);
+                        facesContext.getViewRoot().visitTree(VisitContext.createVisitContext(facesContext), new PreDisposeViewCallback());
+                        facesContext.getAttributes().remove(SKIP_ITERATION_HINT);
+                    }
+                }
+
+                // create UIViewRoot for new view
+                UIViewRoot viewRoot = null;
+                
+                String derivedViewId = viewHandler.deriveViewId(facesContext, newViewId);
+
+                if (derivedViewId != null)
+                {
+                    ViewDeclarationLanguage vdl = viewHandler.getViewDeclarationLanguage(facesContext, derivedViewId);
+                    
+                    if (vdl != null)
+                    {
+                        ViewMetadata metadata = vdl.getViewMetadata(facesContext, newViewId);
+                        
+                        if (metadata != null)
+                        {
+                            viewRoot = metadata.createMetadataView(facesContext);
+                        }
+                    }
+                }
+                
+                // viewRoot can be null here, if ...
+                //   - we don't have a ViewDeclarationLanguage (e.g. when using facelets-1.x)
+                //   - there is no view metadata or metadata.createMetadataView() returned null
+                //   - viewHandler.deriveViewId() returned null
+                if (viewRoot == null)
+                {
+                    viewRoot = viewHandler.createView(facesContext, newViewId);
+                }
+                
+                facesContext.setViewRoot(viewRoot);
+                facesContext.renderResponse();
+            }
+        }
+        else
+        {
+            // no navigationcase found, stay on current ViewRoot
+            if (log.isLoggable(Level.FINEST))
+            {
+                log.finest("handleNavigation fromAction=" + fromAction + " outcome=" + outcome +
+                          " no matching navigation-case found, staying on current ViewRoot");
+            }
+        }
+    }
+
+    private static class PreDisposeViewCallback implements VisitCallback
+    {
+
+        public VisitResult visit(VisitContext context, UIComponent target)
+        {
+            context.getFacesContext().getApplication().publishEvent(context.getFacesContext(), PreDisposeViewEvent.class, target);
+            
+            return VisitResult.ACCEPT;
+        }
+    }
+
+    /**
+     * Returns the navigation case that applies for the given action and outcome
+     */
+    public NavigationCase getNavigationCase(FacesContext facesContext, String fromAction, String outcome)
+    {
+        String viewId = facesContext.getViewRoot() != null ? facesContext.getViewRoot().getViewId() : null;
+        
+        //Idega modification
+    	viewId = getIWViewId(facesContext, viewId);
+        
+        Map<String, Set<NavigationCase>> casesMap = getNavigationCases();
+        NavigationCase navigationCase = null;
+        
+        Set<? extends NavigationCase> casesSet;
+        if (viewId != null)
+        {
+            casesSet = casesMap.get(viewId);
+            if (casesSet != null)
+            {
+                // Exact match?
+                navigationCase = calcMatchingNavigationCase(facesContext, casesSet, fromAction, outcome);
+            }
+        }
+
+        if (navigationCase == null)
+        {
+            // Wildcard match?
+            for (String fromViewId : getSortedWildcardKeys())
+            {
+                if (fromViewId.length() > 2)
+                {
+                    String prefix = fromViewId.substring(0, fromViewId.length() - 1);
+                    if (viewId != null && viewId.startsWith(prefix))
+                    {
+                        casesSet = casesMap.get(fromViewId);
+                        if (casesSet != null)
+                        {
+                            navigationCase = calcMatchingNavigationCase(facesContext, casesSet, fromAction, outcome);
+                            if (navigationCase != null) break;
+                        }
+                    }
+                }
+                else
+                {
+                    casesSet = casesMap.get(fromViewId);
+                    if (casesSet != null)
+                    {
+                        navigationCase = calcMatchingNavigationCase(facesContext, casesSet, fromAction, outcome);
+                        if (navigationCase != null) break;
+                    }
+                }
+            }
+        }
+        
+        if (outcome != null && navigationCase == null)
+        {
+            //if outcome is null, we don't check outcome based nav cases
+            //otherwise, if navgiationCase is still null, check outcome-based nav cases
+            navigationCase = getOutcomeNavigationCase (facesContext, fromAction, outcome);
+        }
+        
+        if (outcome != null && navigationCase == null && !facesContext.isProjectStage(ProjectStage.Production)) {
+            final FacesMessage facesMessage = new FacesMessage("No navigation case match for viewId " + viewId + 
+                    ",  action " + fromAction + " and outcome " + outcome);
+            facesMessage.setSeverity(FacesMessage.SEVERITY_WARN);
+            facesContext.addMessage(null, facesMessage);
+        }
+
+        return navigationCase;  //if navigationCase == null, will stay on current view
+
+    }
+
+	public String getIWViewId(FacesContext facesContext, String viewId) {
 		// switch to page uri if the view id represents a builder page stored as jsp
-		String viewId = facesContext.getViewRoot().getViewId();
-
 		ViewManager viewManager = ViewManager.getInstance(facesContext);
 		ViewNode viewNode = viewManager.getViewNodeForContext(facesContext);
 		if (viewNode != null) {
@@ -67,170 +309,429 @@ public class IWNavigationHandlerImpl extends NavigationHandler {
 			String pageUri = viewManager.getRequestUriWithoutContext(facesContext);
 			if (pageUri != null) {
 				// something like "/pages/test/hello/" or "/workspace/builder/"
-				viewId = pageUri;
-			}
-
-		}
-
-		Map casesMap = getNavigationCases(facesContext);
-		NavigationCase navigationCase = null;
-
-		List casesList = (List) casesMap.get(viewId);
-		if (casesList != null) {
-			// Exact match?
-			navigationCase = calcMatchingNavigationCase(casesList, fromAction, outcome);
-		}
-
-		if (navigationCase == null) {
-			// Wildcard match?
-			List keys = getSortedWildcardKeys();
-			for (int i = 0, size = keys.size(); i < size; i++) {
-				String fromViewId = (String) keys.get(i);
-				if (fromViewId.length() > 2) {
-					String prefix = fromViewId.substring(0, fromViewId.length() - 1);
-					if (viewId != null && viewId.startsWith(prefix)) {
-						casesList = (List) casesMap.get(fromViewId);
-						if (casesList != null) {
-							navigationCase = calcMatchingNavigationCase(casesList, fromAction, outcome);
-							if (navigationCase != null) {
-								break;
-							}
-						}
-					}
-				}
-				else {
-					casesList = (List) casesMap.get(fromViewId);
-					if (casesList != null) {
-						navigationCase = calcMatchingNavigationCase(casesList, fromAction, outcome);
-						if (navigationCase != null) {
-							break;
-						}
-					}
-				}
+				return pageUri;
 			}
 		}
-
-		if (navigationCase != null) {
-			if (log.isTraceEnabled()) {
-				log.trace("handleNavigation fromAction=" + fromAction + " outcome=" + outcome + " toViewId =" + navigationCase.getToViewId() + " redirect=" + navigationCase.isRedirect());
-			}
-			if (navigationCase.isRedirect() && (!PortletUtil.isPortletRequest(facesContext))) { // Spec
-																																													// section
-																																													// 7.4.2
-																																													// says
-																																													// "redirects
-																																													// not
-																																													// possible"
-																																													// in
-																																													// this
-																																													// case
-																																													// for
-																																													// portlets
-				ExternalContext externalContext = facesContext.getExternalContext();
-				ViewHandler viewHandler = facesContext.getApplication().getViewHandler();
-				String redirectPath = viewHandler.getActionURL(facesContext, navigationCase.getToViewId());
-
-				try {
-					externalContext.redirect(externalContext.encodeActionURL(redirectPath));
-				}
-				catch (IOException e) {
-					throw new FacesException(e.getMessage(), e);
-				}
-				facesContext.responseComplete();
-			}
-			else {
-				ViewHandler viewHandler = facesContext.getApplication().getViewHandler();
-				// create new view
-				String newViewId = navigationCase.getToViewId();
-				UIViewRoot viewRoot = viewHandler.createView(facesContext, newViewId);
-				viewRoot.setViewId(newViewId);
-				facesContext.setViewRoot(viewRoot);
-				facesContext.renderResponse();
-			}
-		}
-		else {
-			// no navigationcase found, stay on current ViewRoot
-			if (log.isTraceEnabled()) {
-				log.trace("handleNavigation fromAction=" + fromAction + " outcome=" + outcome + " no matching navigation-case found, staying on current ViewRoot");
-			}
-		}
+		//return the viewId unchanged
+		return viewId;
 	}
+    
+    /**
+     * Performs the algorithm specified in 7.4.2 for situations where no navigation cases are defined and instead
+     * the navigation case is to be determined from the outcome.
+     * 
+     * TODO: cache results?
+     */
+    private NavigationCase getOutcomeNavigationCase (FacesContext facesContext, String fromAction, String outcome)
+    {
+        String implicitViewId = null;
+        boolean includeViewParams = false;
+        int index;
+        boolean isRedirect = false;
+        String queryString = null;
+        NavigationCase result = null;
+        String viewId = facesContext.getViewRoot() != null ? facesContext.getViewRoot().getViewId() : null;
+        String viewIdToTest = outcome;
+        
+        // If viewIdToTest contains a query string, remove it and set queryString with that value.
+        index = viewIdToTest.indexOf ("?");
+        if (index != -1)
+        {
+            queryString = viewIdToTest.substring (index + 1);
+            viewIdToTest = viewIdToTest.substring (0, index);
+            
+            // If queryString contains "faces-redirect=true", set isRedirect to true.
+            if (queryString.indexOf ("faces-redirect=true") != -1)
+            {
+                isRedirect = true;
+            }
+            
+            // If queryString contains "includeViewParams=true" or 
+            // "faces-include-view-params=true", set includeViewParams to true.
+            if (queryString.indexOf("includeViewParams=true") != -1 
+                    || queryString.indexOf("faces-include-view-params=true") != -1)
+            {
+                includeViewParams = true;
+            }
+        }
+        
+        // If viewIdToTest does not have a "file extension", use the one from the current viewId.
+        index = viewIdToTest.indexOf (".");
+        if (index == -1 && viewId != null)
+        {
+            index = viewId.lastIndexOf(".");
+            
+            if (index != -1)
+            {
+                viewIdToTest += viewId.substring (index);
+            }
+        }
+        
+        // If viewIdToTest does not start with "/", look for the last "/" in viewId.  If not found, simply prepend "/".
+        // Otherwise, prepend everything before and including the last "/" in viewId.
+        
+        if (!viewIdToTest.startsWith ("/") && viewId != null)
+        {
+            index = viewId.lastIndexOf ("/");
+            
+            if (index == -1)
+            {
+                viewIdToTest = "/" + viewIdToTest;
+            }
+            
+            else
+            {
+                viewIdToTest = viewId.substring (0, index + 1) + viewIdToTest;
+            }
+        }
+        
+        // Call ViewHandler.deriveViewId() and set the result as implicitViewId.
+        
+        try
+        {
+            implicitViewId = facesContext.getApplication().getViewHandler().deriveViewId (facesContext, viewIdToTest);
+        }
+        
+        catch (UnsupportedOperationException e)
+        {
+            // This is the case when a pre-JSF 2.0 ViewHandler is used.  In this case, the default algorithm must be used.
+            // FIXME: I think we're always calling the "default" ViewHandler.deriveViewId() algorithm and we don't
+            // distinguish between pre-JSF 2.0 and JSF 2.0 ViewHandlers.  This probably needs to be addressed.
+        }
+        
+        if (implicitViewId != null)
+        {
+            // Append all params from the queryString
+            // (excluding faces-redirect, includeViewParams and faces-include-view-params)
+            Map<String, List<String>> params = null;
+            if (queryString != null && !"".equals(queryString))
+            {
+                String[] splitQueryParams = queryString.split("&(amp;)?"); // "&" or "&amp;"
+                params = new HashMap<String, List<String>>();
+                for (String queryParam : splitQueryParams)
+                {
+                    String[] splitParam = StringUtils.splitShortString(queryParam, '=');
+                    if (splitParam.length == 2)
+                    {
+                        // valid parameter - add it to params
+                        if ("includeViewParams".equals(splitParam[0])
+                                || "faces-include-view-params".equals(splitParam[0])
+                                || "faces-redirect".equals(splitParam[0]))
+                        {
+                            // ignore includeViewParams, faces-include-view-params and faces-redirect
+                            continue;
+                        }
+                        List<String> paramValues = params.get(splitParam[0]);
+                        if (paramValues == null)
+                        {
+                            // no value for the given parameter yet
+                            paramValues = new ArrayList<String>();
+                            params.put(splitParam[0], paramValues);
+                        }
+                        paramValues.add(splitParam[1]);
+                    }
+                    else
+                    {
+                        // invalid parameter
+                        throw new FacesException("Invalid parameter \"" + 
+                                queryParam + "\" in outcome " + outcome);
+                    }
+                }
+            }
+            
+            // Finally, create the NavigationCase.
+            result = new NavigationCase (viewId, fromAction, outcome, null, 
+                    implicitViewId, params, isRedirect, includeViewParams);
+        }
+        
+        return result;
+    }
+    
+    /**
+     * Returns the view ID that would be created for the given action and outcome
+     */
+    public String getViewId(FacesContext context, String fromAction, String outcome)
+    {
+        return this.getNavigationCase(context, fromAction, outcome).getToViewId(context);
+    }
 
-	private NavigationCase calcMatchingNavigationCase(List casesList, String actionRef, String outcome) {
-		for (int i = 0, size = casesList.size(); i < size; i++) {
-			NavigationCase caze = (NavigationCase) casesList.get(i);
-			String cazeOutcome = caze.getFromOutcome();
-			String cazeActionRef = caze.getFromAction();
-			if ((cazeOutcome == null || cazeOutcome.equals(outcome)) && (cazeActionRef == null || cazeActionRef.equals(actionRef))) {
-				return caze;
-			}
-		}
-		return null;
-	}
+    /**
+     * TODO
+     * Invoked by the navigation handler before the new view component is created.
+     * @param viewId The view ID to be created
+     * @return The view ID that should be used instead. If null, the view ID passed
+     * in will be used without modification.
+     */
+    public String beforeNavigation(String viewId)
+    {
+        return null;
+    }
 
-	private List getSortedWildcardKeys() {
-		return this._wildcardKeys;
-	}
+    private NavigationCase calcMatchingNavigationCase(FacesContext context, Set<? extends NavigationCase> casesList, String actionRef, 
+                                                      String outcome)
+    {
+        NavigationCase noConditionCase = null;
+        NavigationCase firstCase = null;
+        NavigationCase secondCase = null;
+        NavigationCase thirdCase = null;
+        NavigationCase fourthCase = null;
+                        
+        for (NavigationCase caze : casesList)
+        {
+            String cazeOutcome = caze.getFromOutcome();
+            String cazeActionRef = caze.getFromAction();
+            Boolean cazeIf = caze.getCondition(context);
+            boolean ifMatches = (cazeIf == null ? false : cazeIf.booleanValue());
+            // JSF 2.0: support conditional navigation via <if>.
+            // Use for later cases.
+            
+            if(outcome == null && (cazeOutcome != null || cazeIf == null) && actionRef == null)
+            {
+                continue;   //To match an outcome value of null, the <from-outcome> must be absent and the <if> element present.
+            }
+            
+            //If there are no conditions on navigation case save it and return as last resort
+            if (cazeOutcome == null && cazeActionRef == null && cazeIf == null && noConditionCase == null && outcome != null)
+            {
+                noConditionCase = caze;
+            }
+            
+            if (cazeActionRef != null)
+            {
+                if (cazeOutcome != null)
+                {
+                    if ((actionRef != null) && (outcome != null) && cazeActionRef.equals (actionRef) &&
+                            cazeOutcome.equals (outcome))
+                    {
+                        // First case: match if <from-action> matches action and <from-outcome> matches outcome.
+                        // Caveat: evaluate <if> if available.
 
-	private Map getNavigationCases(FacesContext facesContext) {
-		ExternalContext externalContext = facesContext.getExternalContext();
-		RuntimeConfig runtimeConfig = RuntimeConfig.getCurrentInstance(externalContext);
+                        if (cazeIf != null)
+                        {
+                            if (ifMatches)
+                            {
+                                firstCase = caze;
+                                //return caze;
+                            }
 
-		if (this._navigationCases == null || runtimeConfig.isNavigationRulesChanged()) {
-			synchronized (this) {
-				if (this._navigationCases == null || runtimeConfig.isNavigationRulesChanged()) {
-					Collection rules = runtimeConfig.getNavigationRules();
-					int rulesSize = rules.size();
-					Map cases = new HashMap(HashMapUtils.calcCapacity(rulesSize));
-					List wildcardKeys = new ArrayList();
+                            continue;
+                        }
+                        else
+                        {
+                            firstCase = caze;
+                            //return caze;
+                        }
+                    }
+                }
+                else
+                {
+                    if ((actionRef != null) && cazeActionRef.equals (actionRef))
+                    {
+                        // Third case: if only <from-action> specified, match against action.
+                        // Caveat: if <if> is available, evaluate.  If not, only match if outcome is not null.
 
-					for (Iterator iterator = rules.iterator(); iterator.hasNext();) {
-						NavigationRule rule = (NavigationRule) iterator.next();
-						String fromViewId = rule.getFromViewId();
+                        if (cazeIf != null)
+                        {
+                            if (ifMatches)
+                            {
+                                thirdCase = caze;
+                                //return caze;
+                            }
+                            
+                            continue;
+                        }
+                        else
+                        {
+                            if (outcome != null)
+                            {
+                                thirdCase = caze;
+                                //return caze;
+                            }
+                            
+                            continue;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                if (cazeOutcome != null)
+                {
+                    if ((outcome != null) && cazeOutcome.equals (outcome))
+                    {
+                        // Second case: if only <from-outcome> specified, match against outcome.
+                        // Caveat: if <if> is available, evaluate.
 
-						// specification 7.4.2 footnote 4 - missing fromViewId is allowed:
-						if (fromViewId == null) {
-							fromViewId = ASTERISK;
-						}
-						else {
-							fromViewId = fromViewId.trim();
-						}
+                        if (cazeIf != null)
+                        {
+                            if (ifMatches)
+                            {
+                                secondCase = caze;
+                                //return caze;
+                            }
+                            
+                            continue;
+                        }
+                        else
+                        {
+                            secondCase = caze;
+                            //return caze;
+                        }
+                    }
+                }
+            }
 
-						List list = (List) cases.get(fromViewId);
-						if (list == null) {
-							list = new ArrayList(rule.getNavigationCases());
-							cases.put(fromViewId, list);
-							if (fromViewId.endsWith(ASTERISK)) {
-								wildcardKeys.add(fromViewId);
-							}
-						}
-						else {
-							list.addAll(rule.getNavigationCases());
-						}
+            // Fourth case: anything else matches if outcome is not null or <if> is specified.
 
-					}
-					Collections.sort(wildcardKeys, new KeyComparator());
+            if (outcome != null)
+            {
+                // Again, if <if> present, evaluate.
+                if (cazeIf != null)
+                {
+                    if (ifMatches)
+                    {
+                        fourthCase = caze;
+                        //return caze;
+                    }
+                    
+                    continue;
+                }
+            }
 
-					synchronized (cases) {
-						// We do not really need this sychronization at all, but this
-						// gives us the peace of mind that some good optimizing compiler
-						// will not rearrange the execution of the assignment to an
-						// earlier time, before all init code completes
-						this._navigationCases = cases;
-						this._wildcardKeys = wildcardKeys;
+            if ((cazeIf != null) && ifMatches)
+            {
+                fourthCase = caze;
+                //return caze;
+            }
+        }
+        
+        if (firstCase != null)
+        {
+            return firstCase;
+        }
+        else if (secondCase != null)
+        {
+            return secondCase;
+        }
+        else if (thirdCase != null)
+        {
+            return thirdCase;
+        }
+        else if (fourthCase != null)
+        {
+            return fourthCase;
+        }
+        
+        return noConditionCase;
+    }
 
-						runtimeConfig.setNavigationRulesChanged(false);
-					}
-				}
-			}
-		}
-		return this._navigationCases;
-	}
+    private List<String> getSortedWildcardKeys()
+    {
+        return _wildcardKeys;
+    }
 
-	protected static final class KeyComparator implements Comparator {
+    @Override
+    public Map<String, Set<NavigationCase>> getNavigationCases()
+    {
+        FacesContext facesContext = FacesContext.getCurrentInstance();
+        ExternalContext externalContext = facesContext.getExternalContext();
+        RuntimeConfig runtimeConfig = RuntimeConfig.getCurrentInstance(externalContext);
 
-		public int compare(Object o1, Object o2) {
-			return -(((String) o1).compareTo((String) o2));
-		}
-	}
+        if (_navigationCases == null || runtimeConfig.isNavigationRulesChanged())
+        {
+            synchronized (this)
+            {
+                if (_navigationCases == null || runtimeConfig.isNavigationRulesChanged())
+                {
+                    Collection<? extends NavigationRule> rules = runtimeConfig.getNavigationRules();
+                    int rulesSize = rules.size();
+
+                    Map<String, Set<NavigationCase>> cases = new HashMap<String, Set<NavigationCase>>(
+                            HashMapUtils.calcCapacity(rulesSize));
+
+                    List<String> wildcardKeys = new ArrayList<String>();
+
+                    for (NavigationRule rule : rules)
+                    {
+                        String fromViewId = rule.getFromViewId();
+
+                        //specification 7.4.2 footnote 4 - missing fromViewId is allowed:
+                        if (fromViewId == null)
+                        {
+                            fromViewId = ASTERISK;
+                        }
+                        else
+                        {
+                            fromViewId = fromViewId.trim();
+                        }
+
+                        Set<NavigationCase> set = cases.get(fromViewId);
+                        if (set == null)
+                        {
+                            set = new HashSet<NavigationCase>(convertNavigationCasesToAPI(rule));
+                            cases.put(fromViewId, set);
+                            if (fromViewId.endsWith(ASTERISK))
+                            {
+                                wildcardKeys.add(fromViewId);
+                            }
+                        }
+                        else
+                        {
+                            set.addAll(convertNavigationCasesToAPI(rule));
+                        }
+                    }
+
+                    Collections.sort(wildcardKeys, new KeyComparator());
+
+                    synchronized (cases)
+                    {
+                        // We do not really need this sychronization at all, but this
+                        // gives us the peace of mind that some good optimizing compiler
+                        // will not rearrange the execution of the assignment to an
+                        // earlier time, before all init code completes
+                        _navigationCases = cases;
+                        _wildcardKeys = wildcardKeys;
+
+                        runtimeConfig.setNavigationRulesChanged(false);
+                    }
+                }
+            }
+        }
+        return _navigationCases;
+    }
+
+    private static final class KeyComparator implements Comparator<String>
+    {
+        public int compare(String s1, String s2)
+        {
+            return -s1.compareTo(s2);
+        }
+    }
+    
+    private Set<NavigationCase> convertNavigationCasesToAPI(NavigationRule rule)
+    {
+        Collection<? extends org.apache.myfaces.config.element.NavigationCase> configCases = rule.getNavigationCases();
+        Set<NavigationCase> apiCases = new HashSet<NavigationCase>(configCases.size());
+        
+        for(org.apache.myfaces.config.element.NavigationCase configCase : configCases)
+        {   
+            if(configCase.getRedirect() != null)
+            {
+                String includeViewParamsAttribute = configCase.getRedirect().getIncludeViewParams();
+                boolean includeViewParams = false; // default value is false
+                if (includeViewParamsAttribute != null)
+                {
+                    includeViewParams = new Boolean(includeViewParamsAttribute);
+                }
+                apiCases.add(new NavigationCase(rule.getFromViewId(),configCase.getFromAction(),configCase.getFromOutcome(),configCase.getIf(),configCase.getToViewId(),configCase.getRedirect().getViewParams(),true,includeViewParams));
+            }
+            else
+            {
+                apiCases.add(new NavigationCase(rule.getFromViewId(),configCase.getFromAction(),configCase.getFromOutcome(),configCase.getIf(),configCase.getToViewId(),null,false,false));
+            }
+        }
+        
+        return apiCases;
+    }
+
 }

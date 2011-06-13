@@ -10,6 +10,7 @@
 package com.idega.faces;
 
 import java.io.IOException;
+import java.util.logging.Logger;
 
 import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
@@ -36,6 +37,8 @@ import com.idega.util.FacesUtil;
  */
 public class IWJspViewHandler extends ViewHandlerWrapper {
 	
+	protected static final Logger logger = Logger.getLogger(IWJspViewHandler.class.getName());
+	
 	public IWJspViewHandler(ViewHandler wrappedHandler){
 		super(wrappedHandler);
 	}
@@ -45,6 +48,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 * @see javax.faces.application.ViewHandler#renderView(javax.faces.context.FacesContext, javax.faces.component.UIViewRoot)
 	 */
 	public void renderView(FacesContext context, UIViewRoot viewToRender) throws IOException, FacesException {
+		logger.warning("Trying to render a jsp page with id: " +  ((viewToRender==null)?null:viewToRender.getViewId()));
        /*
 		ViewNode node = getNode(facesContext);
 		
@@ -113,6 +117,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 * @see javax.faces.application.ViewHandler#restoreView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot restoreView(FacesContext context, String viewId) {
+		logger.warning("Trying to restore a jsp page with id: " +  viewId);
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
 		if(node.getViewNodeBase() == ViewNodeBase.JSP){
@@ -127,6 +132,7 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 	 * @see javax.faces.application.ViewHandler#createView(javax.faces.context.FacesContext, java.lang.String)
 	 */
 	public UIViewRoot createView(FacesContext context, String viewId) {
+		logger.warning("Trying to create a jsp page with id: " +  viewId);
 		ViewNode node = getNode(context);
 		String newViewId=viewId;
 		if(node.getViewNodeBase() == ViewNodeBase.JSP && nodeCorrespondsToViewId(node, viewId, context)){
@@ -148,6 +154,8 @@ public class IWJspViewHandler extends ViewHandlerWrapper {
 		
 		//HttpServletRequest request = (HttpServletRequest)context.getExternalContext().getRequest();
 		//return request.getRequestURI();
+
+		logger.warning("Trying to get action url for a jsp page with id: " +  viewId);
 		String requestUri = FacesUtil.getRequestUri(context);
 		return requestUri;
 	}

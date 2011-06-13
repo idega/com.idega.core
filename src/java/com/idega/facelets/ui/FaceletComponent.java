@@ -16,8 +16,8 @@ import com.idega.presentation.IWBaseComponent;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.CoreConstants;
 import com.idega.util.expression.ELUtil;
-import com.sun.facelets.Facelet;
-import com.sun.facelets.FaceletFactory;
+import org.apache.myfaces.view.facelets.Facelet;
+import org.apache.myfaces.view.facelets.FaceletFactory;
 
 /**
  * 

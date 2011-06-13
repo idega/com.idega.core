@@ -6,6 +6,7 @@ import javax.faces.FacesException;
 import javax.faces.application.ViewHandler;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
+import javax.faces.view.ViewDeclarationLanguage;
 
 import com.idega.core.view.ViewManager;
 import com.idega.core.view.ViewNode;
@@ -13,7 +14,7 @@ import com.idega.core.view.ViewNodeBase;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 import com.idega.util.FacesUtil;
-import com.sun.facelets.FaceletViewHandler;
+import javax.faces.application.ViewHandlerWrapper;
 
 /**
  * <p>
@@ -24,11 +25,22 @@ import com.sun.facelets.FaceletViewHandler;
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
  * @version $Revision: 1.2 $
  */
-public class IWFaceletsViewHandler extends FaceletViewHandler {
+public class IWFaceletsViewHandler extends ViewHandlerWrapper {
 	
-	public IWFaceletsViewHandler(ViewHandler wrapped_vh){
-		super(wrapped_vh);
+	private final ViewHandler parent;
+	
+	public IWFaceletsViewHandler(ViewHandler parent){
+		this.parent = parent;
 	}
+	
+	/*
+     * (non-Javadoc)
+     *
+     * @see javax.faces.application.ViewHandlerWrapper#getWrapped()
+     */
+    public ViewHandler getWrapped() {
+        return this.parent;
+    }
 	
 	public void renderView(FacesContext context, UIViewRoot viewToRender) throws IOException, FacesException {
 		
@@ -124,4 +136,19 @@ public class IWFaceletsViewHandler extends FaceletViewHandler {
 		if(node.getViewNodeBase() == ViewNodeBase.FACELET)
 			IWBundleResourceFilter.checkCopyOfResourceToWebapp(context, node.getResourceURI());
 	}
+	
+    /**
+     * Return the ViewDeclarationLanguage instance used for this ViewHandler  instance.
+     * 
+     * @param context
+     * @param viewId
+     * @return
+     * 
+     * @since 2.0
+     */
+	@Override
+    public ViewDeclarationLanguage getViewDeclarationLanguage(FacesContext context, String viewId)
+    {
+        return getWrapped().getViewDeclarationLanguage(context, viewId);
+    }
 }
