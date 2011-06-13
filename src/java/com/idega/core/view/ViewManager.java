@@ -79,7 +79,7 @@ public class ViewManager implements Singleton {
 			DefaultViewNode myPageNode = new ApplicationViewNode("mypage",getWorkspaceRoot());
 			myPageNode.setName("My Page");
 			//TODO: Change this
-			myPageNode.setJspUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.block.article").getJSPURI("cmspage.jsp"));
+			myPageNode.setJspUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.block.article").getFaceletURI("cmspage.xhtml"));
 			myPageNode.setKeyboardShortcut(new KeyboardShortcut("5"));
 		}
 
@@ -108,7 +108,7 @@ public class ViewManager implements Singleton {
 			node.setViewId(CoreConstants.WORKSPACE_VIEW_MANAGER_ID);
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
-			node.setJspUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.workspace").getJSPURI("welcome.jsp"));
+			node.setFaceletUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.workspace").getFaceletURI("welcome.xhtml"));
 			this.workspaceNode = node;
 		}
 		return this.workspaceNode;

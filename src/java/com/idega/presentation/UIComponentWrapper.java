@@ -1007,5 +1007,13 @@ this.tmpComponentFacetMap = new HashMap();
 		System.err.println("[Warning]["+getClass().getName()+"][getRenderer]: This abstract method in UIComponent this wrapper has not implemented and cannot easily do since it is protected");
 		return null;
 	}
+
+	@Override
+	public void resetValue() {
+		UIComponent c = getUIComponent();
+		if(c instanceof EditableValueHolder){
+			((EditableValueHolder)c).resetValue();
+		}
+	}
 	
 }
