@@ -436,4 +436,9 @@ public interface Web2Business extends IBOService {
 	//	JCaptcha
 	public boolean validateJCaptcha(String sessionId, String userCaptchaResponse);
 	public String getJCaptchaImageURL();
+	
+	//	SWF Upload
+	public String getSWFUploadObjectScript();
+	public String getSWFUploadScript();
+	public String getSWFUploadPlugin();
 }
