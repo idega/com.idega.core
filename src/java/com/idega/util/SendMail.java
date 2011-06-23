@@ -1,8 +1,9 @@
 package com.idega.util;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 import java.util.Properties;
-import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -10,16 +11,17 @@ import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.messaging.SMTPAuthenticator;
@@ -37,7 +39,8 @@ import com.idega.idegaweb.IWMainApplicationSettings;
  */
 public class SendMail {
 
-	private static final Logger LOGGER = Logger.getLogger(SendMail.class.getName());
+	public static final String HEADER_AUTO_SUBMITTED = "Auto-Submitted",
+								HEADER_PRECEDENCE = "Precedence";
 	
 	public SendMail() {
 	}
@@ -63,7 +66,12 @@ public class SendMail {
 	 */	
 	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
 			File... attachedFiles) throws MessagingException {
-
+		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, null, attachedFiles);
+	}
+	
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+			List<AdvancedProperty> headers, File... attachedFiles) throws MessagingException {
+		
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
@@ -79,33 +87,28 @@ public class SendMail {
 			}
 		}
 		
-		if (StringUtil.isEmpty(username)) {
+		if (StringUtil.isEmpty(username))
 			useSmtpAuthentication = false;
-		}
 		
 		// Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
 		
 		// Set the smtp server port
-		if(!StringUtil.isEmpty(port)){
+		if (!StringUtil.isEmpty(port))
 			props.put("mail.smtp.port", port);
-		}
 
 		// Start a session
 		Session session;
-
 		if (useSmtpAuthentication) {
 			props.put("mail.smtp.auth", Boolean.TRUE.toString());
 			Authenticator auth = new SMTPAuthenticator(username, password);
 			
-			if(useSSL){
+			if (useSSL)
 				props.put("mail.smtp.ssl.enable", Boolean.TRUE.toString());
-			}
 			
 			session = Session.getInstance(props, auth);
-		}
-		else {
+		} else {
 			session = Session.getInstance(props, null);
 		}
 
@@ -113,9 +116,9 @@ public class SendMail {
 		session.setDebug(settings.isDebugActive());
 
 		// Construct a message
-		if(StringUtil.isEmpty(from)){
+		if (StringUtil.isEmpty(from))
 			throw new MessagingException("From address is null.");
-		}
+			
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 		
@@ -132,8 +135,7 @@ public class SendMail {
 
 		if (ArrayUtil.isEmpty(attachedFiles)) {
 			setMessageContent(message, text, mailType, charset);
-		}
-		else {
+		} else {
 			MimeBodyPart body = new MimeBodyPart();
 			setMessageContent(body, text, mailType, charset);
 			
@@ -151,11 +153,17 @@ public class SendMail {
 				attachment.setDataHandler(attachmentHandler);
 				attachment.setFileName(attachedFile.getName());
 				attachment.setDescription("Attached file: " + attachment.getFileName());
-				LOGGER.info("Adding attachment " + attachment);
 				multipart.addBodyPart(attachment);
 			}
 			
 			message.setContent(multipart);
+		}
+		
+		//	Headers
+		if (!ListUtil.isEmpty(headers)) {
+			for (AdvancedProperty header: headers) {
+				message.addHeader(header.getId(), header.getValue());
+			}
 		}
 
 		// Send the message and close the connection
@@ -186,7 +194,7 @@ public class SendMail {
 	
 	public static void send(SendMailMessageValue mv) throws MessagingException {
 		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(),
-				mv.getAttachedFile() == null ? null : mv.getAttachedFile());
+				mv.getHeaders(), mv.getAttachedFile() == null ? null : mv.getAttachedFile());
 	}
 
 	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
@@ -199,6 +207,12 @@ public class SendMail {
 
 	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File... attachedFiles)
 		throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, attachedFiles);
+		List<AdvancedProperty> headers = Collections.emptyList();
+		send(from, to, cc, bcc, replyTo, host, subject, text, headers, attachedFiles);
+	}
+	
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, List<AdvancedProperty> headers,
+			File... attachedFiles) throws MessagingException {
+		send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, attachedFiles);
 	}
 }
