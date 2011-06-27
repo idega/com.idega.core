@@ -1,7 +1,6 @@
 package com.idega.util;
 
 import java.io.File;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -181,7 +180,6 @@ public class SendMail {
 		}
 		
 		//	Headers
-		headers = Arrays.asList(new AdvancedProperty(SendMail.HEADER_AUTO_SUBMITTED, "auto-generated"), new AdvancedProperty(SendMail.HEADER_PRECEDENCE, "bulk"));
 		if (!ListUtil.isEmpty(headers)) {
 			for (AdvancedProperty header: headers) {
 				message.addHeader(header.getId(), header.getValue());
