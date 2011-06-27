@@ -39,7 +39,7 @@ public class EmailMessage extends SimpleMessage {
 	private Collection<File> attachedFiles;
 	
 	private boolean autoDeletedAttachments = true,
-					parsed;
+					parsed = false;
 	
 	private String mailType = MimeTypeUtil.MIME_TYPE_TEXT_PLAIN;
 	

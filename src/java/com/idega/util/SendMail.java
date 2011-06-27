@@ -1,6 +1,7 @@
 package com.idega.util;
 
 import java.io.File;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -69,7 +70,27 @@ public class SendMail {
 		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, null, attachedFiles);
 	}
 	
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+	/**
+	 * <p>
+	 * Method that uses the Java Mail API to send an email message.<br/> It is
+	 * recommended to use the <type>com.idega.core.messaging.EmailMessage</type>
+	 * class rather than calling this method directly.
+	 * </p>
+	 * 
+	 * @param from
+	 * @param to
+	 * @param cc
+	 * @param bcc
+	 * @param replyTo
+	 * @param host
+	 * @param subject
+	 * @param text
+	 * @param mailType
+	 * @param headers
+	 * @param attachedFiles
+	 * @throws MessagingException
+	 */
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
 			List<AdvancedProperty> headers, File... attachedFiles) throws MessagingException {
 		
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
@@ -160,6 +181,7 @@ public class SendMail {
 		}
 		
 		//	Headers
+		headers = Arrays.asList(new AdvancedProperty(SendMail.HEADER_AUTO_SUBMITTED, "auto-generated"), new AdvancedProperty(SendMail.HEADER_PRECEDENCE, "bulk"));
 		if (!ListUtil.isEmpty(headers)) {
 			for (AdvancedProperty header: headers) {
 				message.addHeader(header.getId(), header.getValue());
@@ -168,6 +190,8 @@ public class SendMail {
 
 		// Send the message and close the connection
 		Transport.send(message);
+		
+		return message;
 	}
 		
 	private static void setMessageContent(MimePart message, String content, String mailType, String charset) throws MessagingException {
@@ -205,14 +229,14 @@ public class SendMail {
 		send(from, to, cc, bcc, replyTo, host, subject, text, new File[] {});
 	}
 
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File... attachedFiles)
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, File... attachedFiles)
 		throws MessagingException {
 		List<AdvancedProperty> headers = Collections.emptyList();
-		send(from, to, cc, bcc, replyTo, host, subject, text, headers, attachedFiles);
+		return send(from, to, cc, bcc, replyTo, host, subject, text, headers, attachedFiles);
 	}
 	
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, List<AdvancedProperty> headers,
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, List<AdvancedProperty> headers,
 			File... attachedFiles) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, attachedFiles);
+		return send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, attachedFiles);
 	}
 }
