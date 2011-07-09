@@ -49,6 +49,7 @@ import javax.faces.FacesException;
 import javax.faces.FactoryFinder;
 import javax.faces.application.Application;
 import javax.faces.application.ApplicationFactory;
+import javax.faces.application.ApplicationWrapper;
 import javax.faces.application.NavigationHandler;
 import javax.faces.application.StateManager;
 import javax.faces.application.ViewHandler;
@@ -118,7 +119,7 @@ import com.idega.util.text.TextSoap;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.207 $
  */
-public class IWMainApplication	extends Application  implements MutableClass {
+public class IWMainApplication	extends ApplicationWrapper  implements MutableClass {
 
 	private static final Logger log = Logger.getLogger(IWMainApplication.class.getName());
 
@@ -288,6 +289,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
         cacheManager = IWCacheManager.getInstance(this);
         load();
     }
+    
+    @Override
+	public Application getWrapped() {
+    	return getFacesApplication();
+	}
 
     /**
      * <p>
@@ -1945,22 +1951,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
 
 	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getActionListener()
-	 */
-	@Override
-	public ActionListener getActionListener() {
-		return getFacesApplication().getActionListener();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setActionListener(javax.faces.event.ActionListener)
-	 */
-	@Override
-	public void setActionListener(ActionListener listener) {
-		getFacesApplication().setActionListener(listener);
-	}
-
-	/* (non-Javadoc)
 	 * @see javax.faces.application.Application#getDefaultLocale()
 	 */
 	@Override
@@ -1974,133 +1964,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return locale;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setDefaultLocale(java.util.Locale)
-	 */
-	@Override
-	public void setDefaultLocale(Locale locale) {
-		getFacesApplication().setDefaultLocale(locale);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getDefaultRenderKitId()
-	 */
-	@Override
-	public String getDefaultRenderKitId() {
-		return getFacesApplication().getDefaultRenderKitId();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setDefaultRenderKitId(java.lang.String)
-	 */
-	@Override
-	public void setDefaultRenderKitId(String renderKitId) {
-		getFacesApplication().setDefaultRenderKitId(renderKitId);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getMessageBundle()
-	 */
-	@Override
-	public String getMessageBundle() {
-		return getFacesApplication().getMessageBundle();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setMessageBundle(java.lang.String)
-	 */
-	@Override
-	public void setMessageBundle(String bundle) {
-		getFacesApplication().setMessageBundle(bundle);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getNavigationHandler()
-	 */
-	@Override
-	public NavigationHandler getNavigationHandler() {
-		return getFacesApplication().getNavigationHandler();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setNavigationHandler(javax.faces.application.NavigationHandler)
-	 */
-	@Override
-	public void setNavigationHandler(NavigationHandler handler) {
-		getFacesApplication().setNavigationHandler(handler);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getPropertyResolver()
-	 */
-	@Override
-	public PropertyResolver getPropertyResolver() {
-		return getFacesApplication().getPropertyResolver();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setPropertyResolver(javax.faces.el.PropertyResolver)
-	 */
-	@Override
-	public void setPropertyResolver(PropertyResolver resolver) {
-		getFacesApplication().setPropertyResolver(resolver);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getVariableResolver()
-	 */
-	@Override
-	public VariableResolver getVariableResolver() {
-		return getFacesApplication().getVariableResolver();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setVariableResolver(javax.faces.el.VariableResolver)
-	 */
-	@Override
-	public void setVariableResolver(VariableResolver resolver) {
-		getFacesApplication().setVariableResolver(resolver);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getViewHandler()
-	 */
-	@Override
-	public ViewHandler getViewHandler() {
-		return getFacesApplication().getViewHandler();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setViewHandler(javax.faces.application.ViewHandler)
-	 */
-	@Override
-	public void setViewHandler(ViewHandler handler) {
-		getFacesApplication().setViewHandler(handler);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getStateManager()
-	 */
-	@Override
-	public StateManager getStateManager() {
-		return getFacesApplication().getStateManager();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setStateManager(javax.faces.application.StateManager)
-	 */
-	@Override
-	public void setStateManager(StateManager manager) {
-		getFacesApplication().setStateManager(manager);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#addComponent(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void addComponent(String componentType, String componentClass) {
-		getFacesApplication().addComponent(componentType,componentClass);
-	}
 
 	//TODO: Move this logic to the builder package.
 	public static String BUILDER_PAGE_PREFIX="BuilderPage";
@@ -2174,125 +2037,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		}
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#createComponent(javax.faces.el.ValueBinding, javax.faces.context.FacesContext, java.lang.String)
-	 */
-	@Override
-	public UIComponent createComponent(ValueBinding componentBinding, FacesContext context, String componentType) throws FacesException {
-		return getFacesApplication().createComponent(componentBinding,context,componentType);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getComponentTypes()
-	 */
-	@Override
-	public Iterator getComponentTypes() {
-		return getFacesApplication().getComponentTypes();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#addConverter(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void addConverter(String converterId, String converterClass) {
-		getFacesApplication().addConverter(converterId,converterClass);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#addConverter(java.lang.Class, java.lang.String)
-	 */
-	@Override
-	public void addConverter(Class targetClass, String converterClass) {
-		getFacesApplication().addConverter(targetClass,converterClass);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#createConverter(java.lang.String)
-	 */
-	@Override
-	public Converter createConverter(String converterId) {
-		return getFacesApplication().createConverter(converterId);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#createConverter(java.lang.Class)
-	 */
-	@Override
-	public Converter createConverter(Class targetClass) {
-		return getFacesApplication().createConverter(targetClass);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getConverterIds()
-	 */
-	@Override
-	public Iterator getConverterIds() {
-		return getFacesApplication().getConverterIds();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getConverterTypes()
-	 */
-	@Override
-	public Iterator getConverterTypes() {
-		return getFacesApplication().getConverterTypes();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#createMethodBinding(java.lang.String, java.lang.Class[])
-	 */
-	@Override
-	public MethodBinding createMethodBinding(String ref, Class[] params) throws ReferenceSyntaxException {
-		return getFacesApplication().createMethodBinding(ref,params);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getSupportedLocales()
-	 */
-	@Override
-	public Iterator getSupportedLocales() {
-		return getFacesApplication().getSupportedLocales();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#setSupportedLocales(java.util.Collection)
-	 */
-	@Override
-	public void setSupportedLocales(Collection locales) {
-		getFacesApplication().setSupportedLocales(locales);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#addValidator(java.lang.String, java.lang.String)
-	 */
-	@Override
-	public void addValidator(String validatorId, String validatorClass) {
-		getFacesApplication().addValidator(validatorId,validatorClass);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#createValidator(java.lang.String)
-	 */
-	@Override
-	public Validator createValidator(String validatorId) throws FacesException {
-		return getFacesApplication().createValidator(validatorId);
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#getValidatorIds()
-	 */
-	@Override
-	public Iterator getValidatorIds() {
-		return getFacesApplication().getValidatorIds();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.faces.application.Application#createValueBinding(java.lang.String)
-	 */
-	@Override
-	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
-		return getFacesApplication().createValueBinding(ref);
-	}
 	
 	public ValueExpression createValueExpression(String ref, Class<?> expectedReturnType) {
 		return createValueExpression(FacesContext.getCurrentInstance().getELContext(), ref, expectedReturnType);
@@ -2482,53 +2226,5 @@ public class IWMainApplication	extends Application  implements MutableClass {
 			return messageFactory;
 		}
 	}
-
-	@Override
-	public void addELResolver(ELResolver resolver) {
-		getFacesApplication().addELResolver(resolver);
-	}
-
-	@Override
-	public void addELContextListener(ELContextListener listener) {
-		getFacesApplication().addELContextListener(listener);
-	}
-
-	@Override
-	public UIComponent createComponent(ValueExpression componentExpression,
-			FacesContext facesContext, String componentType)
-			throws FacesException, NullPointerException {
-		return getFacesApplication().createComponent(componentExpression,
-				facesContext, componentType);
-	}
-
-	@Override
-	public Object evaluateExpressionGet(FacesContext context, String expression, Class expectedType) throws ELException {
-		return getFacesApplication().evaluateExpressionGet(context, expression,	expectedType);
-	}
-
-	@Override
-	public ELContextListener[] getELContextListeners() {
-		return getFacesApplication().getELContextListeners();
-	}
-
-	@Override
-	public ELResolver getELResolver() {
-		return getFacesApplication().getELResolver();
-	}
-
-	@Override
-	public ExpressionFactory getExpressionFactory() {
-		return getFacesApplication().getExpressionFactory();
-	}
-
-	@Override
-	public ResourceBundle getResourceBundle(FacesContext ctx, String name)
-			throws FacesException, NullPointerException {
-		return getFacesApplication().getResourceBundle(ctx, name);
-	}
-
-	@Override
-	public void removeELContextListener(ELContextListener listener) {
-		getFacesApplication().removeELContextListener(listener);
-	}
+	
 }
