@@ -275,8 +275,7 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 	 * @param msg The message to log out
 	 */
 	protected void logWarning(String msg) {
-		//System.err.println(msg);
-		getLogger().log(Level.WARNING,msg);
+		getLogger().warning(msg);
 	}
 
 	/**

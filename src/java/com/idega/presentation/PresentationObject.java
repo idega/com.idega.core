@@ -68,7 +68,9 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
 import com.idega.repository.RepositoryService;
+import com.idega.repository.RepositorySession;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
@@ -169,6 +171,8 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 
 	@Autowired
 	private RepositoryService repositoryService;
+	@Autowired
+	private RepositorySession repositorySession;
 
 	/**
 	 * Default constructor.
@@ -2851,5 +2855,19 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 			ELUtil.getInstance().autowire(this);
 		}
 		return repositoryService;
+	}
+
+	protected RepositorySession getRepositorySession() {
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null)
+			return null;
+
+		if (!iwc.isLoggedOn())
+			return null;
+
+		if (repositorySession == null)
+			ELUtil.getInstance().autowire(this);
+
+		return repositorySession;
 	}
 }

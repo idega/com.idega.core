@@ -19,12 +19,12 @@ public interface ICTreeNode {
 	/**
 	 * Returns the children of the receiver as an Collection.
 	 */
-	public Collection<ICTreeNode> getChildren();
+	public <T extends ICTreeNode> Collection<T> getChildren();
 
 	/**
 	 * Returns the children of the receiver as an Enumeration.
 	 */
-	public Iterator<? extends ICTreeNode> getChildrenIterator();
+	public <T extends ICTreeNode> Iterator<T> getChildrenIterator();
 	/**
 	 *  Returns true if the receiver allows children.
 	 */

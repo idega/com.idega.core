@@ -4,11 +4,16 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
+import java.util.Collections;
+
+import javax.jcr.RepositoryException;
 
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.StringHandler;
 
-public class EmptyItem implements RepositoryItem {
+public class EmptyItem extends RepositoryItem {
+
+	private static final long serialVersionUID = 913585203882550527L;
 
 	private String explanation = "This directory has no files";
 
@@ -65,5 +70,35 @@ public class EmptyItem implements RepositoryItem {
 	@Override
 	public String getMimeType() {
 		return null;
+	}
+
+	@Override
+	public long getCreationDate() {
+		return 0;
+	}
+
+	@Override
+	public long getLastModified() {
+		return 0;
+	}
+
+	@Override
+	public String getParentPath() {
+		return null;
+	}
+
+	@Override
+	public RepositoryItem getParenItem() {
+		return null;
+	}
+
+	@Override
+	public Collection<RepositoryItem> getSiblingResources() {
+		return Collections.emptyList();
+	}
+
+	@Override
+	public boolean createNewFile() throws IOException, RepositoryException {
+		return false;
 	}
 }

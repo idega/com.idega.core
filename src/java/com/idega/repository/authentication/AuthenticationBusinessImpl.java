@@ -1,13 +1,13 @@
 package com.idega.repository.authentication;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.logging.Level;
 
 import javax.jcr.Credentials;
+import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;
 import javax.servlet.http.HttpServletRequest;
@@ -77,18 +77,18 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 		return rootCredentials;
 	}
 
-//	public WebdavResources getAllRoles() throws HttpException, RemoteException, IOException {
+//	public WebdavResources getAllRoles() throws HttpException, RepositoryException, IOException {
 //		return getAllRoles(null);
 //	}
 
-//	public WebdavResources getAllRoles(UsernamePasswordCredentials credentials) throws HttpException, RemoteException, IOException {
+//	public WebdavResources getAllRoles(UsernamePasswordCredentials credentials) throws HttpException, RepositoryException, IOException {
 //		IWSlideService service = getSlideServiceInstance();
 //		WebdavResource rolesFolder = new WebdavResource(service.getWebdavServerURL(credentials, PATH_ROLES));
 //		return rolesFolder.getChildResources();
 //	}
 
 	@Override
-	public String getUserURI(String userName) throws RemoteException {
+	public String getUserURI(String userName) throws RepositoryException {
 		return repository.getWebdavServerURL() + getUserPath(userName);
 	}
 
@@ -98,22 +98,22 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	}
 
 	@Override
-	public String getGroupURI(String groupName) throws RemoteException {
+	public String getGroupURI(String groupName) throws RepositoryException {
 		return repository.getWebdavServerURL() + getGroupPath(groupName);
 	}
 
 	@Override
-	public String getGroupPath(String groupName) throws RemoteException {
+	public String getGroupPath(String groupName) throws RepositoryException {
 		return PATH_GROUPS + CoreConstants.SLASH + groupName;
 	}
 
 	@Override
-	public String getRoleURI(String roleName) throws RemoteException {
+	public String getRoleURI(String roleName) throws RepositoryException {
 		return repository.getWebdavServerURL() + getRolePath(roleName);
 	}
 
 	@Override
-	public String getRolePath(String roleName) throws RemoteException {
+	public String getRolePath(String roleName) throws RepositoryException {
 		return PATH_ROLES + CoreConstants.SLASH + roleName;
 	}
 
@@ -124,12 +124,12 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	 *            Set of all users that are logged on, other users are removed from roles. If the
 	 *            set is null no users are removed from roles.
 	 * @throws IOException
-	 * @throws RemoteException
+	 * @throws RepositoryException
 	 * @throws HttpException
 	 */
 	@Override
 	public void updateRoleMembershipForUser(String userLoginName, Set<String> roleNamesForUser, Set<String> loginNamesOfAllLoggedOnUsers)
-		throws RemoteException, IOException {
+		throws RepositoryException, IOException {
 
 		if (userLoginName != null && userLoginName.length() > 0 && !userLoginName.equals(SLIDE_DEFAULT_ROOT_USER)) {
 //			Set<String> newRoles = new HashSet<String>(roleNamesForUser);
@@ -156,7 +156,7 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	}
 
 //	private void updateRoleMembershipForUser(WebdavResource role, String userURI, Set roleNamesForUser, Set userpathsOfAllLoggedOnUsers)
-//		throws RemoteException, IOException {
+//		throws RepositoryException, IOException {
 //
 //		// System.out.println("[AuthenticationBusiness]: resouce "+role.getDisplayName()+" begins");
 //		boolean someChanges = false;
@@ -228,9 +228,9 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	/**
 	 * @param element
 	 * @return
-	 * @throws RemoteException
+	 * @throws RepositoryException
 	 */
-	private Set<String> parseGroupMemberSetPropertyString(String propertyString) throws RemoteException {
+	private Set<String> parseGroupMemberSetPropertyString(String propertyString) throws RepositoryException {
 		Set<String> prop = new HashSet<String>();
 		prop.add(propertyString);
 		return prop;//PropertyParser.parsePropertyString(null, propertyString);

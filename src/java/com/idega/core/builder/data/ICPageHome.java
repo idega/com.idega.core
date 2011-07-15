@@ -6,7 +6,7 @@ import java.util.List;
 import javax.ejb.FinderException;
 
 public interface ICPageHome extends com.idega.data.IDOHome {
-	
+
 	public ICPage create() throws javax.ejb.CreateException;
 
 	public ICPage createLegacy();
@@ -29,23 +29,23 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 
 	public ICPage findExistingByUri(String pageUri, int domainId)
 			throws FinderException;
-	
+
 	public ICPage findByWebDavUri(String webDavUri) throws FinderException;
 
 	/**
 	 * @return
 	 */
-	public Collection findAllPagesWithoutUri() throws FinderException;
+	public Collection<ICPage> findAllPagesWithoutUri() throws FinderException;
 
 	public Collection findAllSimpleTemplates() throws FinderException;
 
 	public Collection findBySubType(String subType, boolean deleted)
 			throws FinderException;
-	
+
 	public Collection findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException;
-	
+
 	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException;
-	
+
 	public Collection<ICPage> findAllByName(String name, boolean findOnlyNotDeleted) throws FinderException;
 
 	public Collection<ICPage> findAllPagesAndTemplates()throws FinderException;

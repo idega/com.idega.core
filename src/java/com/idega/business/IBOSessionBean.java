@@ -4,12 +4,15 @@ import javax.ejb.SessionBean;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
+import com.idega.repository.RepositorySession;
 import com.idega.user.data.bean.User;
 import com.idega.util.expression.ELUtil;
 
@@ -27,6 +30,18 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
 	private IWUserContext iwuc;
 	private final String sessionKey="IBO."+this.getClass().getName();
 
+	@Autowired
+	private RepositorySession repositorySession;
+
+	public RepositorySession getRepositorySession(IWUserContext iwuc) {
+		if (iwuc == null || !iwuc.isLoggedOn())
+			return null;
+
+		if (repositorySession == null)
+			ELUtil.getInstance().autowire(this);
+		return repositorySession;
+	}
+
   public IBOSessionBean() {}
 
   public void ejbCreate(IWUserContext iwuc){
@@ -36,7 +51,8 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
   public void ejbPostCreate(IWUserContext iwuc){
   }
 
-  public void setUserContext(IWUserContext _iwuc) {
+  @Override
+public void setUserContext(IWUserContext _iwuc) {
   	IWUserContext iwucToSet = _iwuc;
   	if(_iwuc instanceof IWContext){
 		IWContext iwc = (IWContext)_iwuc;
@@ -46,8 +62,9 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
   	}
     this.iwuc=iwucToSet;
   }
-  
-  public IWUserContext getUserContext() {
+
+  @Override
+public IWUserContext getUserContext() {
     return this.iwuc;
   }
 
@@ -84,7 +101,7 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
     		return null;
     	}
     }
-    
+
     return getUserContext().getLoggedInUser();
   }
 }

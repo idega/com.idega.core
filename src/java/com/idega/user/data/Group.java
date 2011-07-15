@@ -15,10 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
@@ -38,9 +40,9 @@ import com.idega.idegaweb.IWApplicationContext;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2008/09/10 11:59:07 $ by $Author: juozas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.51 $
  */
@@ -254,37 +256,37 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
 	 */
-	public List getParentGroups() throws EJBException;
+	public List<Group> getParentGroups() throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
 	 */
-	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException;
+	public List<Group> getParentGroups(Map<String, Collection<Group>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
 	 */
-	public List getChildGroups() throws EJBException;
+	public List<Group> getChildGroups() throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
 	 */
-	public List getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
+	public List<Group> getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroupsIDs
 	 */
-	public List getChildGroupsIDs(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
+	public List<Integer> getChildGroupsIDs(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
 	 */
-	public Collection getChildGroups(Group groupTypeProxy) throws EJBException;
+	public Collection<Group> getChildGroups(Group groupTypeProxy) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAllGroupsContainingUser
 	 */
-	public Collection getAllGroupsContainingUser(User user) throws EJBException;
+	public Collection<Group> getAllGroupsContainingUser(User user) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
@@ -369,17 +371,17 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getRelatedBy
 	 */
-	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException;
+	public Collection<Group> getRelatedBy(GroupRelationType relationType) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getRelatedBy
 	 */
-	public Collection getRelatedBy(String relationType) throws FinderException;
+	public Collection<Group> getRelatedBy(String relationType) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getReverseRelatedBy
 	 */
-	public Collection getReverseRelatedBy(String relationType) throws FinderException;
+	public Collection<Group> getReverseRelatedBy(String relationType) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#removeUser
@@ -409,66 +411,79 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildrenIterator
 	 */
-	public Iterator getChildrenIterator();
+	@Override
+	public Iterator<Group> getChildrenIterator();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildren
 	 */
-	public Collection getChildren();
+	@Override
+	public Collection<Group> getChildren();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAllowsChildren
 	 */
+	@Override
 	public boolean getAllowsChildren();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildAtIndex
 	 */
+	@Override
 	public ICTreeNode getChildAtIndex(int childIndex);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildCount
 	 */
+	@Override
 	public int getChildCount();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getIndex
 	 */
+	@Override
 	public int getIndex(ICTreeNode node);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentNode
 	 */
+	@Override
 	public ICTreeNode getParentNode();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#isLeaf
 	 */
+	@Override
 	public boolean isLeaf();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getNodeName
 	 */
+	@Override
 	public String getNodeName();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getNodeName
 	 */
+	@Override
 	public String getNodeName(Locale locale);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getNodeName
 	 */
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getNodeID
 	 */
+	@Override
 	public int getNodeID();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getSiblingCount
 	 */
+	@Override
 	public int getSiblingCount();
 
 	/**
@@ -479,6 +494,7 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#store
 	 */
+	@Override
 	public void store();
 
 	/**
@@ -494,23 +510,23 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAddresses
 	 */
-	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException,
+	public Collection<Address> getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException,
 			IDORelationshipException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getPhones
 	 */
-	public Collection getPhones();
+	public Collection<Phone> getPhones();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getPhones
 	 */
-	public Collection getPhones(String phoneTypeID);
+	public Collection<Phone> getPhones(String phoneTypeID);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getEmails
 	 */
-	public Collection getEmails();
+	public Collection<Email> getEmails();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addEmail
@@ -548,9 +564,9 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 */
 	public SelectQuery getSelectQueryConstraints();
 
-	
+
 	public User getModerator();
-	
+
 	public void setModerator(User moderator);
 
 }

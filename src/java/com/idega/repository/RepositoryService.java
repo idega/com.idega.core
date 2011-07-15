@@ -2,6 +2,7 @@ package com.idega.repository;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipInputStream;
@@ -11,7 +12,9 @@ import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
+import javax.jcr.Session;
 import javax.jcr.security.AccessControlPolicy;
+import javax.jcr.version.VersionManager;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
@@ -25,7 +28,8 @@ public interface RepositoryService extends Repository {
 
 	public void initializeRepository(InputStream configSource, String repositoryName) throws Exception;
 
-	public boolean uploadFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString,	String contentType) throws RepositoryException;
+	public boolean uploadFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString,	String contentType)
+		throws RepositoryException;
 	public boolean uploadFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, InputStream stream, String contentType) throws RepositoryException;
 	public boolean uploadXMLFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString) throws RepositoryException;
 	public boolean uploadFile(String uploadPath, String fileName, String contentType, InputStream stream) throws RepositoryException;
@@ -51,6 +55,7 @@ public interface RepositoryService extends Repository {
 	public AccessControlPolicy[] applyAccessControl(String path, AccessControlPolicy[] acp) throws RepositoryException;
 
 	public Node getNode(String absolutePath) throws RepositoryException;
+	public Node getNodeAsRootUser(String absolutePath) throws RepositoryException;
 
 	public boolean setProperties(Node node, AdvancedProperty... properties) throws RepositoryException;
 
@@ -67,7 +72,7 @@ public interface RepositoryService extends Repository {
 
 	public List<RepositoryItemVersionInfo> getVersions(String parentPath, String fileName) throws RepositoryException;
 
-	public RepositoryItem getRepositoryItem(String path) throws RepositoryException;
+	public <T extends RepositoryItem> T getRepositoryItem(String path) throws RepositoryException;
 	public RepositoryItem getRepositoryItem(User user, String path) throws RepositoryException;
 	public RepositoryItem getRepositoryItemAsRootUser(String path) throws RepositoryException;
 
@@ -87,5 +92,17 @@ public interface RepositoryService extends Repository {
 
 	public String createUniqueFileName(String scope);
 
-	public String getUserHomeFolder();
+	public String getUserHomeFolder(User user);
+
+	public VersionManager getVersionManager() throws RepositoryException;
+
+	public void removeProperty(String path, String name) throws RepositoryException;
+
+	public String getPath(String path);
+
+	public Session getSession(User user) throws RepositoryException;
+
+	public void addRepositoryChangeListeners(RepositoryEventListener listener);
+
+	public OutputStream getOutputStream(String path) throws IOException, RepositoryException;
 }

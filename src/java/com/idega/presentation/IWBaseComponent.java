@@ -30,6 +30,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.RepositoryService;
+import com.idega.repository.RepositorySession;
 import com.idega.util.RenderUtils;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextStyler;
@@ -63,6 +64,8 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
 	@Autowired
 	private RepositoryService repositoryService;
+	@Autowired
+	private RepositorySession repositorySession;
 
 	/**
 	 * This is an old idegaWeb style add method.
@@ -470,4 +473,18 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
     	}
     	return repositoryService;
     }
+
+    protected RepositorySession getRepositorySession() {
+		IWContext iwc = IWContext.getIWContext(getFacesContext());
+		if (iwc == null)
+			return null;
+
+		if (!iwc.isLoggedOn())
+			return null;
+
+		if (repositorySession == null)
+			ELUtil.getInstance().autowire(this);
+
+		return repositorySession;
+	}
 }

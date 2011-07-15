@@ -10,34 +10,34 @@
 package com.idega.repository.authentication;
 
 import java.io.IOException;
-import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Set;
 
 import javax.jcr.Credentials;
+import javax.jcr.RepositoryException;
 import javax.jcr.security.AccessControlList;
 import javax.servlet.http.HttpServletRequest;
 
 public interface AuthenticationBusiness {
 
-//	public WebdavResources getAllRoles() throws HttpException, RemoteException, IOException;
+//	public WebdavResources getAllRoles() throws HttpException, RepositoryException, IOException;
 
-//	public WebdavResources getAllRoles(UsernamePasswordCredentials credentials) throws HttpException, RemoteException, IOException;
+//	public WebdavResources getAllRoles(UsernamePasswordCredentials credentials) throws HttpException, RepositoryException, IOException;
 
-	public String getUserURI(String userName) throws RemoteException;
+	public String getUserURI(String userName) throws RepositoryException;
 
 	public String getUserPath(String userName);
 
-	public String getGroupURI(String groupName) throws RemoteException;
+	public String getGroupURI(String groupName) throws RepositoryException;
 
-	public String getGroupPath(String groupName) throws RemoteException;
+	public String getGroupPath(String groupName) throws RepositoryException;
 
-	public String getRoleURI(String roleName) throws RemoteException;
+	public String getRoleURI(String roleName) throws RepositoryException;
 
-	public String getRolePath(String roleName) throws RemoteException;
+	public String getRolePath(String roleName) throws RepositoryException;
 
 	public void updateRoleMembershipForUser(String userLoginName, Set<String> roleNamesForUser, Set<String> loginNamesOfAllLoggedOnUsers)
-		throws RemoteException, IOException;
+		throws RepositoryException, IOException;
 
 	public Credentials getRootUserCredentials();
 
