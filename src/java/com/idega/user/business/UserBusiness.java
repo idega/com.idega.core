@@ -55,9 +55,9 @@ import com.idega.util.IWTimestamp;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2009/02/07 14:34:57 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.113 $
  */
@@ -812,90 +812,92 @@ public interface UserBusiness extends IBOService {
 	 */
 	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup)
 			throws java.rmi.RemoteException;
-	
+
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#cleanUserEmails
 	 */
 	public void cleanUserEmails();
-	
+
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setUsersPreferredLocale
 	 */
 	public void setUsersPreferredLocale(User user,String preferredLocale, boolean storeUser);
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setUsersPreferredRole
 	 */
 	public void setUsersPreferredRole(User user, ICRole preferredRole, boolean storeUser);
-	
+
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersPreferredLocale
 	 */
 	public Locale getUsersPreferredLocale(User user);
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersPreferredRole
 	 */
 	public ICRole getUsersPreferredRole(User user);
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getGroupsMembersData
 	 */
 	public List<GroupMemberDataBean> getGroupsMembersData(List<String> uniqueIds);
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserStatus
 	 */
 	public Status getUserStatus(IWContext iwc, User user, Group group);
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserStatus
 	 */
 	public Status getUserStatus(IWContext iwc, int userId, int groupId);
-	
+
 	public String getUserPassword(User user);
-	
+
 	public String getUserLogin(User user);
-	
+
 	public List<String> getAllUserGroupsIds(User user, IWUserContext iwuc) throws RemoteException;
-	
+
 	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException;
-	
+
 	public Date getUserDateOfBirthFromPersonalId(String personalId);
-	
+
 	public Collection<User> getUsersByName(String name);
-	
+
 	public Collection<User> getUsersByNameOrEmailOrPhone(String nameEmailOrPhone);
-	
+
+	public Collection<User> getUsersByNameAndEmailAndPhone(String nameEmailOrPhone);
+
 	public Collection<User> getUsersByEmail(String email);
-	
+
 	public Collection<User> getUsersByPhoneNumber(String phoneNumber);
-	
+
 	public String setPreferredRoleAndGetHomePageUri(String roleKey, IWUserContext iwuc);
-	
+
 	public String getPageUriByUserPreferredRole(User user, IWUserContext iwuc);
-	
+
 	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user);
-	
+
 	/**
 	 * returns  moderator(company and admin) of the user
-	 * 
+	 *
 	 * @param user
 	 * @param iwc
 	 * @return
 	 * @throws RemoteException
 	 */
 	public User getModeratorForUser(User user);
-	
+
 	public void setPreferedCompany(String companyId, User user);
-	
+
 	public Group getPreferedCompany(User user) throws RemoteException;
-	
+
 	public String changeUserPassword(String newPassword);
-	
+
 	/**
 	 * creates login for user account provided
 	 * @param newUser mandatory
@@ -911,9 +913,9 @@ public interface UserBusiness extends IBOService {
 	 */
 	public abstract void createUserLogin(User newUser, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity,
 			Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType);
-	
+
 	public Image getUserImage(User user);
-	
+
 	public boolean validatePersonalId(User user);
 	public boolean validatePersonalId(User user, Locale locale);
 	public boolean validatePersonalId(String personalId);

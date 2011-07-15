@@ -5,10 +5,12 @@ import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -76,25 +78,25 @@ import com.idega.util.text.TextSoap;
 public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, com.idega.core.user.data.User {
 
 	private static final long serialVersionUID = 8515735782511731375L;
-	
+
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final int PREFETCH_SIZE = 100;
 	private static final int SUBLIST_SIZE = 1000;
-	
+
 	public final static String SQL_TABLE_NAME= "IC_USER";
 	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
 	public final static String SQL_RELATION_ADDRESS = "IC_USER_ADDRESS";
 	public final static String SQL_RELATION_PHONE = "IC_USER_PHONE";
 	public final static String TABLE_NAME = SQL_TABLE_NAME;
- 	public static final String COLUMN_NAME_USER_PROPERTIES_FILE_ID = "USER_PROPERTIES_FILE_ID"; 
-  
+ 	public static final String COLUMN_NAME_USER_PROPERTIES_FILE_ID = "USER_PROPERTIES_FILE_ID";
+
 	static final String META_DATA_HOME_PAGE = "homepage";
-  
+
 	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
 	private static final String COLUMN_LAST_READ_FROM_IMPORT = "last_imported";
-	
+
 	@Override
 	public String getEntityName() {
 		return TABLE_NAME;
@@ -117,15 +119,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
     	addAttribute(User.FIELD_JURIDICAL_PERSON, "Juridical person", true, true, Boolean.class);
-    	
+
     	addAttribute(COLUMN_LAST_READ_FROM_IMPORT, "Last read from national import", Timestamp.class);
-    	
+
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
 
 	//adds a unique id string column to this entity that is set when the entity is first stored.
 	addUniqueIDColumn();
-	
+
 		addManyToOneRelationship(getColumnNameGender(), "Gender", com.idega.user.data.Gender.class);
 		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.file.data.ICFile.class);
 		addOneToOneRelationship(getColumnNamePreferredRole(), "Preferred role", com.idega.core.accesscontrol.data.ICRole.class);
@@ -141,7 +143,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addMetaDataRelationship();
 		//      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
 		// this.setUnique(getColumnNamePersonalID(),true);
-    
+
     //Added by Laddi 17.10.2003
     addManyToOneRelationship(getColumnNameNativeLanguage(), ICLanguage.class);
 
@@ -151,7 +153,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     addIndex("IDX_IC_USER_4", getColumnNamePersonalID());
     addIndex("IDX_IC_USER_5", _COLUMNNAME_USER_GROUP_ID);
     addIndex("IDX_IC_USER_6", getUniqueIdColumnName());
-    
+
     	getEntityDefinition().setBeanCachingActiveByDefault(true);
 
 	}
@@ -188,7 +190,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public String getGroupTypeKey() {
 		return USER_GROUP_TYPE;
 	}
-	
+
 	@Override
 	public String ejbHomeGetGroupType(){
 		return super.ejbHomeGetGroupType();
@@ -238,31 +240,31 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public static String getColumnNameHomePageID() {
 		return "HOME_PAGE_ID";
 	}
-  
+
   public static String getColumnNameDeleted() {
     return "DELETED";
   }
-  
+
   public static String getColumnNameDeletedBy() {
     return "DELETED_BY";
   }
-  
+
   public static String getColumnNameDeletedWhen() {
     return "DELETED_WHEN";
   }
-  
+
 	public static String getColumnNameNativeLanguage() {
 		return "IC_LANGUAGE_ID";
 	}
-	
+
 	public static String getColumnNameFamilyID() {
 		return "FAMILY_ID";
 	}
-	
+
 	public static String getColumnNamePreferredLocale(){
 		return "PREFERRED_LOCALE";
 	}
-	
+
 	public static String getColumnNamePreferredRole(){
 		return "PREFERRED_ROLE";
 	}
@@ -277,22 +279,27 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	/*  Getters begin   */
 
+	@Override
 	public String getPersonalID() {
 		return getStringColumnValue(getColumnNamePersonalID());
 	}
 
+	@Override
 	public String getFirstName() {
 		return (String) getColumnValue(getColumnNameFirstName());
 	}
 
+	@Override
 	public String getMiddleName() {
 		return (String) getColumnValue(getColumnNameMiddleName());
 	}
 
+	@Override
 	public String getLastName() {
 		return (String) getColumnValue(getColumnNameLastName());
 	}
 
+	@Override
 	public String getDisplayName() {
 		return (String) getColumnValue(getColumnNameDisplayName());
 	}
@@ -302,62 +309,77 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return (String) getColumnValue(getColumnNameDescription());
 	}
 
+	@Override
 	public Date getDateOfBirth() {
 		return (Date) getColumnValue(getColumnNameDateOfBirth());
 	}
 
+	@Override
 	public int getGenderID() {
 		return getIntColumnValue(getColumnNameGender());
 	}
 
+	@Override
 	public Gender getGender() {
 		return (Gender) getColumnValue(getColumnNameGender());
 	}
 
+	@Override
 	public int getSystemImageID() {
 		return getIntColumnValue(getColumnNameSystemImage());
 	}
 
+	@Override
 	public int getPrimaryGroupID() {
 		return getIntColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
 	}
 
+	@Override
 	public Group getPrimaryGroup() {
 		return (Group) getColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
 	}
 
+	@Override
 	public ICLanguage getNativeLanguage() {
 		return (ICLanguage) getColumnValue(getColumnNameNativeLanguage());
 	}
 
+	@Override
 	public void setNativeLanguage(int ICLanguageID) {
 		setColumn(getColumnNameNativeLanguage(), ICLanguageID);
 	}
 
+	@Override
 	public void setNativeLanguage(ICLanguage language) {
 		setColumn(getColumnNameNativeLanguage(), language);
 	}
 
+	@Override
 	public void setFamilyID(String familyID) {
 		setColumn(getColumnNameFamilyID(), familyID);
 	}
-	
+
+	@Override
 	public String getFamilyID() {
 		return getStringColumnValue(getColumnNameFamilyID());
 	}
-	
+
+	@Override
 	public void setPreferredLocale(String preferredLocale) {
 		setColumn(getColumnNamePreferredLocale(), preferredLocale);
 	}
-	
+
+	@Override
 	public String getPreferredLocale() {
 		return getStringColumnValue(getColumnNamePreferredLocale());
 	}
-	
+
+	@Override
 	public void setPreferredRole(ICRole preferredRole) {
 		setColumn(getColumnNamePreferredRole(), preferredRole);
 	}
-	
+
+	@Override
 	public ICRole getPreferredRole() {
 		return (ICRole)getColumnValue(getColumnNamePreferredRole());
 	}
@@ -422,111 +444,126 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return lastName + firstName + middleName;
 	}*/
 
+	@Override
 	public int getHomePageID() {
 			return getGeneralGroup().getHomePageID();
 	}
 
+	@Override
 	public ICPage getHomePage() {
 		return getGeneralGroup().getHomePage();
 	}
-	
+
+	@Override
 	public int getHomeFolderID() {
 		return getGeneralGroup().getHomeFolderID();
 	}
 
+	@Override
 	public ICFile getHomeFolder() {
 		return getGeneralGroup().getHomeFolder();
 	}
-	
+
 	@Override
 	public Timestamp getCreated() {
 		return getGeneralGroup().getCreated();
 	}
-  
-  public boolean getDeleted() {
+
+  @Override
+public boolean getDeleted() {
     return getBooleanColumnValue(getColumnNameDeleted());
   }
-  
-  public int getDeletedBy() {
+
+  @Override
+public int getDeletedBy() {
     return getIntColumnValue(getColumnNameDeletedBy());
   }
-  
-  public Timestamp getDeletedWhen() {
+
+  @Override
+public Timestamp getDeletedWhen() {
     return ((Timestamp) getColumnValue(getColumnNameDeletedWhen()));
   }
-  
-  public String getHomePageURL()  {
+
+  @Override
+public String getHomePageURL()  {
     return getMetaData(META_DATA_HOME_PAGE);
   }
 
-  public Address getUsersMainAddress() throws EJBException, RemoteException {
+  @Override
+public Address getUsersMainAddress() throws EJBException, RemoteException {
 	try {
-	    AddressHome addressHome = (AddressHome) IDOLookup.getHome(Address.class);  
+	    AddressHome addressHome = (AddressHome) IDOLookup.getHome(Address.class);
 	    int id =  Integer.parseInt(getId());
 		return addressHome.findPrimaryUserAddress(id);
 	}
 	catch (FinderException fe) {
 		return null;
 	}
-	
+
   }
-  
-  public Phone getUsersHomePhone() throws EJBException, RemoteException {
+
+  @Override
+public Phone getUsersHomePhone() throws EJBException, RemoteException {
 	try {
-	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
-	 
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
+
 	    return phoneHome.findUsersHomePhone(this);
 	}
 	catch (FinderException fe) {
 		return null;
 	}
   }
-  
-  public Phone getUsersWorkPhone() throws EJBException, RemoteException {
+
+  @Override
+public Phone getUsersWorkPhone() throws EJBException, RemoteException {
 	try {
-	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
-	 
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
+
 	    return phoneHome.findUsersWorkPhone(this);
 	}
 	catch (FinderException fe) {
 		return null;
 	}
   }
-  
-  public Phone getUsersMobilePhone() throws EJBException, RemoteException {
+
+  @Override
+public Phone getUsersMobilePhone() throws EJBException, RemoteException {
 	try {
-	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
-	 
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
+
 	    return phoneHome.findUsersMobilePhone(this);
 	}
 	catch (FinderException fe) {
 		return null;
 	}
   }
-  
-  public Phone getUsersFaxPhone() throws EJBException, RemoteException {
+
+  @Override
+public Phone getUsersFaxPhone() throws EJBException, RemoteException {
 	try {
-	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);  
-	 
+	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
+
 	    return phoneHome.findUsersFaxPhone(this);
 	}
 	catch (FinderException fe) {
 		return null;
 	}
   }
-  
-  public Email getUsersEmail() throws EJBException, RemoteException {
+
+  @Override
+public Email getUsersEmail() throws EJBException, RemoteException {
 	try {
-	    EmailHome emailHome = (EmailHome) IDOLookup.getHome(Email.class);  
-	  
+	    EmailHome emailHome = (EmailHome) IDOLookup.getHome(Email.class);
+
 	    return emailHome.findMainEmailForUser(this);
 	}
 	catch (FinderException fe) {
 		return null;
 	}
-	
+
 }
-  
+
+	@Override
 	public boolean getDisplayNameSetManually() {
   		return getBooleanColumnValue(COLUMN_DISPLAY_NAME_SET_MANUALLY, false);
   	}
@@ -535,15 +572,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	/*  Setters begin   */
 
+	@Override
 	public void setDisplayNameSetManually(boolean diplayNameSetManually) {
 		setColumn(COLUMN_DISPLAY_NAME_SET_MANUALLY, diplayNameSetManually);
 	}
 
-	
+
+	@Override
 	public void setPersonalID(String personalId) {
 		setColumn(getColumnNamePersonalID(), personalId);
 	}
 
+	@Override
 	public void setFirstName(String fName) {
 		//      if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
 		//	fName = "Invalid firstname";
@@ -560,10 +600,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			else {
 				setColumn(getColumnNameFirstName(), fName);
 			}
-		}	
+		}
 		//      }
 	}
 
+	@Override
 	public void setMiddleName(String mName) {
 		if( mName == null ){
 			this.removeFromColumn(getColumnNameMiddleName());
@@ -576,9 +617,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			else {
 				setColumn(getColumnNameMiddleName(), mName);
 			}
-		}	
+		}
 	}
 
+	@Override
 	public void setLastName(String lName) {
 		if( lName == null ){
 			this.removeFromColumn(getColumnNameLastName());
@@ -591,13 +633,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			else {
 				setColumn(getColumnNameLastName(), lName);
 			}
-		}	
+		}
 	}
-	
+
 	/**
 	 * Divides the name string into first(1),middle(1-*) and lastname(1). <br>
 	 * and uses setFirstName(),setMiddleName() and setLastName().
 	 */
+	@Override
 	public void setFullName(String fullName) {
 		if ((fullName != null) && (fullName.length() > 0)) {
 		    Name name = new Name(fullName).capitalize();
@@ -611,7 +654,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			if (countWithoutFirstAndLast > -2) {
 				setFirstName(((String) token.nextElement()));
 			}
-			
+
 			if (countWithoutFirstAndLast >= 1) {
 				StringBuffer middleName = new StringBuffer();
 
@@ -639,6 +682,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 
+	@Override
 	public void setDisplayName(String dName) {
 		setColumn(getColumnNameDisplayName(), dName);
 	}
@@ -648,34 +692,41 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		setColumn(getColumnNameDescription(), description);
 	}
 
+	@Override
 	public void setDateOfBirth(Date dateOfBirth) {
 		setColumn(getColumnNameDateOfBirth(), dateOfBirth);
 	}
 
+	@Override
 	public void setGender(Integer gender) {
 		setColumn(getColumnNameGender(), gender);
 	}
 
+	@Override
 	public void setGender(int gender) {
 		setColumn(getColumnNameGender(), gender);
 	}
 
+	@Override
 	public void setSystemImageID(Integer fileID) {
 		setColumn(getColumnNameSystemImage(), fileID);
 	}
 
+	@Override
 	public void setSystemImageID(int fileID) {
 		setColumn(getColumnNameSystemImage(), fileID);
 	}
 
+	@Override
 	public void setPrimaryGroupID(int icGroupId) {
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
-	
+
 //	public void setFamilyID(String familyId) {
 //		setColumn(getColumnNameFamilyID(), familyId);
 //	}
 
+	@Override
 	public void setPrimaryGroup(Group group)
 	{
 		try{
@@ -683,13 +734,15 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			setPrimaryGroupID(groupID);
 		}
 		catch(Exception e){
-			e.printStackTrace();	
+			e.printStackTrace();
 		}
 	}
+	@Override
 	public void setPrimaryGroupID(Integer icGroupId) {
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
 
+	@Override
 	public void setHomePageID(int pageID)  {
 		try{
 			Group group = getGeneralGroup();
@@ -697,10 +750,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
 
+	@Override
 	public void setHomePageID(Integer pageID) {
 		try{
 			Group group = getGeneralGroup();
@@ -708,10 +762,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
 
+	@Override
 	public void setHomePage(ICPage page)  {
 		try{
 			Group group = getGeneralGroup();
@@ -719,11 +774,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
-	
+
+
+	@Override
 	public void setHomeFolderID(int fileID)  {
 		try{
 			Group group = getGeneralGroup();
@@ -731,10 +787,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
 
+	@Override
 	public void setHomeFolderID(Integer fileID) {
 		try{
 			Group group = getGeneralGroup();
@@ -742,10 +799,11 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
 
+	@Override
 	public void setHomeFolder(ICFile file)  {
 		try{
 			Group group = getGeneralGroup();
@@ -753,10 +811,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
+
 	@Override
 	public void setCreated(Timestamp stamp) {
 		try{
@@ -765,11 +823,12 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 			group.store();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-  
-  public void setDeleted(boolean isDeleted) {
+
+  @Override
+public void setDeleted(boolean isDeleted) {
   	if(!isDeleted){
   		removeFromColumn(getColumnNameDeletedBy());
   		removeFromColumn(getColumnNameDeletedWhen());
@@ -778,77 +837,91 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
   	}
     setColumn(getColumnNameDeleted(), isDeleted);
   }
-  
-  public void setDeletedBy(int userId)  {
+
+  @Override
+public void setDeletedBy(int userId)  {
     setColumn(getColumnNameDeletedBy(), userId);
   }
-  
-  public void setDeletedWhen(Timestamp timestamp) {
+
+  @Override
+public void setDeletedWhen(Timestamp timestamp) {
     setColumn(getColumnNameDeletedWhen(), timestamp);
   }
-  
+
   /**
    * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
    */
-  public void setAliasID(int id) {
+  @Override
+public void setAliasID(int id) {
   }
-  
+
 	/**
 	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
 	 */
-  public void setAlias(Group alias) {
+  @Override
+public void setAlias(Group alias) {
   }
-  
+
 	/**
 	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
 	 */
-  public int getAliasID() {
+  @Override
+public int getAliasID() {
   	return -1;
   }
-  
+
 	/**
 	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
 	 */
+	@Override
 	public Group getAlias() {
 		return null;
 	}
-  
-  public void setHomePageURL(String homePageURL)  {
+
+  @Override
+public void setHomePageURL(String homePageURL)  {
     setMetaData(META_DATA_HOME_PAGE, homePageURL);
   }
-  
+
 	/*  Setters end   */
 
 	/*  Business methods begin   */
 
+	@Override
 	public void removeAllAddresses() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Address.class);
 	}
 
+	@Override
 	public void removeAddress(Address address) throws IDORemoveRelationshipException {
-		super.idoRemoveFrom(address);	
+		super.idoRemoveFrom(address);
 	}
 
+	@Override
 	public void removeAllEmails() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Email.class);
 	}
-	
+
+	@Override
 	public void removeEmail(Email email) throws IDORemoveRelationshipException {
-		super.idoRemoveFrom(email);	
+		super.idoRemoveFrom(email);
 	}
 
+	@Override
 	public void removeAllPhones() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Phone.class);
 	}
 
+	@Override
 	public void removePhone(Phone phone) throws IDORemoveRelationshipException {
-		super.idoRemoveFrom(phone);	
+		super.idoRemoveFrom(phone);
 	}
 
+	@Override
 	public Collection getAddresses() {
 		try {
 		    Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
-		    
+
 		   return addresses;
 		}
 		catch (Exception e) {
@@ -857,6 +930,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 
+	@Override
 	public Collection getEmails() {
 		try {
 			return super.idoGetRelatedEntities(Email.class);
@@ -867,6 +941,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 
+	@Override
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
@@ -877,6 +952,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 
+	@Override
 	public Collection getPhones(String phoneTypeID) {
 		try {
 			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
@@ -887,18 +963,21 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 	}
 
+	@Override
 	public void addAddress(Address address) throws IDOAddRelationshipException {
 		this.idoAddTo(address);
 	}
 
+	@Override
 	public void addEmail(Email email) throws IDOAddRelationshipException {
 		this.idoAddTo(email);
 	}
 
+	@Override
 	public void addPhone(Phone phone) throws IDOAddRelationshipException {
 		this.idoAddTo(phone);
 	}
-  
+
   /**
    *
    */
@@ -910,18 +989,19 @@ public void delete() throws SQLException {
   /**
    * Delete this instance, store timestamp and theid of the user that causes the
    * the erasure
-   * 
+   *
    * @param userId id of the user that is responsible for the deletion
    */
-  public void delete(int userId) throws SQLException {
+  @Override
+public void delete(int userId) throws SQLException {
     setDeleted(true);
-    
+
     setDeletedWhen(IWTimestamp.getTimestampRightNow());
     setDeletedBy(userId);
 
     super.update();
-  }  
-  
+  }
+
 
 	/*  Business methods end   */
 
@@ -945,7 +1025,7 @@ public void delete() throws SQLException {
 
 		if(groupList!=null && !groupList.isEmpty()){
 			InCriteria inCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),sGroupList);
-    	
+
 			query.addCriteria(new AND(inCriteria,getNotDeletedCriteria()));
 			addOrderByName(query,false,true);
 
@@ -958,11 +1038,11 @@ public void delete() throws SQLException {
 		}
 		//      return this.idoFindIDsBySQL("select * from "+getEntityName()+" where "+this.getIDColumnName()+" in ("+sGroupList+")");
 	}
-	
+
 	@Override
 	public SelectQuery getSelectQueryConstraints(){
 		SelectQuery query = idoSelectQuery();
-    	
+
 		query.addCriteria(getNotDeletedCriteria());
 		addOrderByName(query,false,true);
 		return query;
@@ -973,7 +1053,7 @@ public void delete() throws SQLException {
 		query.addOrder(idoQueryTable(),((!lastnameFirst)?getColumnNameLastName():getColumnNameFirstName()),ascending);
 		query.addOrder(idoQueryTable(),getColumnNameMiddleName(),ascending);
 	}
-	
+
 	/**
 	 * Returns the User that is the instance of the User representing the group userRepGroup	 * @param userRepGroup a Group of type "UserRepresentative"	 * @return Integer the primary key of the User representing the UserGroup	 * @throws FinderException If an error occurs	 */
 	public Integer ejbFindUserForUserRepresentativeGroup(Group userRepGroup) throws FinderException {
@@ -991,8 +1071,8 @@ public void delete() throws SQLException {
 		//}
 	}
 
-  /** Gets all users that are not marked as deleted 
-   * 
+  /** Gets all users that are not marked as deleted
+   *
    * @return Collection
    * @throws FinderException
    */
@@ -1003,12 +1083,12 @@ public void delete() throws SQLException {
 		MatchCriteria c1 = new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.EQUALS,GenericEntity.COLUMN_VALUE_FALSE,true);
 		MatchCriteria c2 = new MatchCriteria(new Column(idoQueryTable(),getColumnNameDeleted()), false);
 		query.addCriteria(new OR(c1, c2));
-		
+
 		return idoFindPKsByQueryUsingLoadBalance(query,10000);
 	}
-	
+
   /** Gets newest users that are not marked as deleted
-   * 
+   *
    * @return Collection
    * @throws FinderException
    */
@@ -1020,17 +1100,17 @@ public void delete() throws SQLException {
 	    appendIsNotDeleted(query);
 	    query.appendOrderByDescending(getIDColumnName());
 	    return idoFindPKsBySQL(query.toString(), returningNumberOfRecords, startingRecord);
-   
+
 	}
-	
-	
+
+
 	public Collection ejbFindUsersByMetaData(String key, String value) throws FinderException {
 		return super.idoFindPKsByMetaData(key,value);
 	}
 
   /** Gets all users that are not marked as deleted and
    *  that are members of the specified group
-   * 
+   *
    * @param group
    * @return Collection
    * @throws FinderException
@@ -1044,10 +1124,10 @@ public void delete() throws SQLException {
     appendIsNotDeleted(query);
     return idoFindIDsBySQL(query.toString());
   }
-  
+
   /** Gets all users that are not marked as deleted ordered by first name.
    * This query uses a LoadTracker if necessary.
-   * 
+   *
    * @return Collection
    * @throws FinderException
    */
@@ -1056,12 +1136,12 @@ public void delete() throws SQLException {
 		SelectQuery query = idoSelectQuery();
 		query.addCriteria(getNotDeletedCriteria());
 		addOrderByName(query,false,true);
-		
+
 		int loadBalancePrefetchSize = 1000;
 		return super.idoFindPKsByQueryUsingLoadBalance(query,loadBalancePrefetchSize);
 
 	}
-	
+
 	public Object ejbFindByDateOfBirthAndName(Date dateOfBirth, String fullName) throws FinderException {
     Name name = new Name(fullName).capitalize();
 
@@ -1076,14 +1156,16 @@ public void delete() throws SQLException {
 		if (name.getLastName() != null && name.getLastName().length() > 0) {
 			query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_LAST_NAME, MatchCriteria.EQUALS, name.getLastName()));
 		}
-		
+
 		return idoFindOnePKByQuery(query);
 	}
 
+	@Override
 	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
+	@Override
 	public void removeUser(User p0) {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeUser() not supported.");
@@ -1104,6 +1186,7 @@ public void delete() throws SQLException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
 	}
+	@Override
 	public void removeGroup() throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
@@ -1112,6 +1195,7 @@ public void delete() throws SQLException {
 	   //return equals((Object)this);
 	   return this.getGeneralGroup().equals(p0);
 	 }*/
+	@Override
 	public void addGroup(Group p0,java.sql.Timestamp p1) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
@@ -1119,19 +1203,21 @@ public void delete() throws SQLException {
 	public void addGroup(Group p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
-	
+
 	@Override
 	public void addGroup(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
-	
+
 	@Override
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
+	@Override
 	public List getChildGroupsIDs(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
+	@Override
 	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
 	}
@@ -1147,6 +1233,7 @@ public void delete() throws SQLException {
 	public Collection getAllGroupsContainingUser(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not supported.");
 	}
+	@Override
 	public void removeGroup(Group p0) throws EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
@@ -1161,11 +1248,12 @@ public void delete() throws SQLException {
 	public List getParentGroups() throws EJBException {
 		return getParentGroups(null, null);
 	}
-	
+
 	/**
 	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004
 	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
 	 */
+	@Override
 	public List getParentGroups(Map cachedParents, Map cachedGroups)  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
@@ -1179,7 +1267,7 @@ public void delete() throws SQLException {
 			return l;
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
 	@Override
@@ -1190,9 +1278,10 @@ public void delete() throws SQLException {
 			return this.getGeneralGroup().getExtraInfo();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
+	@Override
 	public void addUser(User p0){
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
@@ -1202,11 +1291,12 @@ public void delete() throws SQLException {
 	public boolean isUser(){
 		return true;
 	}
-	
+
+	@Override
 	public boolean isAlias() {
 	    return false;
 	}
-	
+
 	@Override
 	public Iterator getChildrenIterator() {
 		return ListUtil.getEmptyList().iterator();
@@ -1250,23 +1340,25 @@ public void delete() throws SQLException {
 		return this.getID();
 	}
 
+	@Override
 	public void setLastReadFromImport(Timestamp timestamp) {
 		setColumn(COLUMN_LAST_READ_FROM_IMPORT, timestamp);
 	}
-	
+
+	@Override
 	public Timestamp getLastReadFromImport() {
 		return getTimestampColumnValue(COLUMN_LAST_READ_FROM_IMPORT);
 	}
-	
+
 	public Integer ejbFindUserByUniqueId(String uniqueIdString) throws FinderException {
 		return (Integer) idoFindOnePKByUniqueId(uniqueIdString);
 	}
-	
+
 	public Integer ejbFindUserFromEmail(String emailAddress) throws FinderException {
  		String sql = getUsersByEmailSqlQuery(emailAddress, false, false);
  		return (Integer) super.idoFindOnePKBySQL(sql);
 	}
-	
+
 	private String getUsersByEmailSqlQuery(String emailAddress, boolean useLoweredValue, boolean useLikeExpression) {
 		StringBuffer sql = new StringBuffer("select iu.* ");
 		sql.append(" from ").append(this.getTableName()).append(" iu ,");
@@ -1276,7 +1368,7 @@ public void delete() throws SQLException {
 		sql.append("iue.").append(EmailBMPBean.SQL_TABLE_NAME).append("_ID  and ");
 		sql.append("iue.").append(getIDColumnName()).append(" = iu.").append(getIDColumnName());
 		sql.append(" and ");
-		
+
 		if (useLoweredValue) {
 			sql.append("lower(");
 		}
@@ -1284,7 +1376,7 @@ public void delete() throws SQLException {
 		if (useLoweredValue) {
 			sql.append(")");
 		}
-		
+
 		if (useLikeExpression) {
 			sql.append(" like '%");
 		}
@@ -1298,18 +1390,18 @@ public void delete() throws SQLException {
 		else {
 			sql.append("'");
 		}
-		
+
 	    // append is not deleted
 	    sql.append(" and ");
 	    appendIsNotDeleted(sql);
-	    
+
 	    return sql.toString();
 	}
-	
+
 	public Collection ejbFindByPhoneNumber(String phoneNumber) throws FinderException {
 		Table users = new Table(this);
 		Table phones = new Table(Phone.class);
-		
+
 		SelectQuery query = new SelectQuery(users);
 		query.addColumn(users.getColumn(getIDColumnName()));
 		try {
@@ -1319,34 +1411,34 @@ public void delete() throws SQLException {
 			e.printStackTrace();
 			throw new FinderException(e.getMessage());
 		}
-		
+
 		query.addCriteria(new MatchCriteria(getColumn(phones, PhoneBMPBean.getColumnNamePhoneNumber(), true), MatchCriteria.LIKE, true, phoneNumber));
-		
+
 		Criteria equalsFalse = new MatchCriteria(users.getColumn(getColumnNameDeleted()), MatchCriteria.EQUALS, GenericEntity.COLUMN_VALUE_FALSE);
 		Criteria isNull = new MatchCriteria(users.getColumn(getColumnNameDeleted()), MatchCriteria.IS, MatchCriteria.NULL);
 		query.addCriteria(new OR(equalsFalse, isNull));
-		
+
 		query.addGroupByColumn(users.getColumn(getIDColumnName()));
-		
+
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public Collection ejbFindAllByPersonalId(String personalId) throws FinderException {
 		Table users = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(users);
 		query.addColumn(users.getColumn(getIDColumnName()));
-		
+
 		query.addCriteria(new MatchCriteria(users.getColumn(getColumnNamePersonalID()), MatchCriteria.EQUALS, personalId));
-		
+
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public Collection ejbFindUsersByEmail(String emailAddress, boolean useLoweredValue, boolean useLikeExpression) throws FinderException {
 		String sql = getUsersByEmailSqlQuery(emailAddress, useLoweredValue, useLikeExpression);
  		return idoFindPKsBySQL(sql);
 	}
-	
+
 	private Column getColumn(Table table, String columnName, boolean useLoweredValues) {
 		Column column = table.getColumn(columnName);
 		if (useLoweredValues) {
@@ -1369,18 +1461,271 @@ public void delete() throws SQLException {
 			if (!StringUtil.isEmpty(last)) {
 				query.addCriteria(new MatchCriteria(getColumn(users, getColumnNameLastName(), useLoweredValues), MatchCriteria.LIKE, true, last));
 			}
-			// append is deleted filter 
+			// append is deleted filter
 			query.addCriteria(getNotDeletedCriteria());
 			return super.idoFindPKsByQuery(query);
 		}
 		throw new FinderException("No legal names provided");
 	}
-	
+
+	public Collection <Integer> ejbFindBySearchRequest(String request, int groupId, int maxAmount, int startingEntry){
+		if(StringUtil.isEmpty(request)){
+			return Collections.emptyList();
+		}
+		SelectQuery query = idoSelectQuery();
+		request = request.toLowerCase();
+	    Table users = new Table(this);
+	    Table emails = new Table(EmailBMPBean.class);
+	    Table mm = new Table("ic_user_email");
+	    Table relations = new Table(GroupRelationBMPBean.class);
+
+	    Column usersId = users.getColumn(UserBMPBean.getColumnNameUserID());
+	    Column mmUserId = mm.getColumn(UserBMPBean.getColumnNameUserID());
+	    Column relatedGroupId = relations.getColumn(GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+
+	    JoinCriteria joinCr = new JoinCriteria(usersId,mmUserId);
+	    query.addCriteria(joinCr);
+	    String requestWords[] = request.split(CoreConstants.SPACE);
+	    MatchCriteria emailJoinCriteria = new MatchCriteria(getColumn(emails,EmailBMPBean.getColumnNameEmailId(), true),
+	    		MatchCriteria.EQUALS,getColumn(mm,EmailBMPBean.getColumnNameEmailId(), true));
+	    query.addCriteria(emailJoinCriteria);
+	    for(int i = 0; i < requestWords.length;i++){
+	    	MatchCriteria nameCriteria = new MatchCriteria(getColumn(users,
+	    			getColumnNameDisplayName(), true), MatchCriteria.LIKE, true, requestWords[i]);
+	    	MatchCriteria emailCriteria = new MatchCriteria(getColumn(emails,
+	    			EmailBMPBean.getColumnNameAddress(), true), MatchCriteria.LIKE, true, requestWords[i]);
+	    	OR orCriteria = new OR(nameCriteria,emailCriteria);
+	    	query.addCriteria(orCriteria);
+	    }
+	    SelectQuery except = new SelectQuery(relations);
+	    except.removeAllColumns();
+	    except.addColumn(relatedGroupId);
+
+	    MatchCriteria relatedWith = new MatchCriteria(relations.getColumn(GroupRelationBMPBean.GROUP_ID_COLUMN), MatchCriteria.EQUALS, groupId);
+	    except.addCriteria(relatedWith);
+	    MatchCriteria activeRealationCriteria = new MatchCriteria(relations.getColumn(GroupRelationBMPBean.STATUS_COLUMN),
+	    		MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE);
+	    except.addCriteria(activeRealationCriteria);
+	    InCriteria groupCriteria = new InCriteria(getColumn(users,
+	    		UserBMPBean.getColumnNameUserID(), true), except,true);
+	    query.addCriteria(groupCriteria);
+		// append is deleted filter
+		query.addCriteria(getNotDeletedCriteria());
+		query.setAsDistinct(true);
+		Collection <Integer> pKs = null;
+		try{
+			if(maxAmount > 0){
+				if(startingEntry != -1){
+					pKs = super.idoFindPKsByQuery(query, maxAmount, startingEntry);
+				}else{
+					pKs = super.idoFindPKsByQuery(query, maxAmount);
+				}
+			}else{
+				pKs = super.idoFindPKsByQuery(query);
+			}
+		}catch(Exception e){
+			this.getLogger().log(Level.WARNING, "Failed to find users by search request", e);
+			return Collections.emptyList();
+		}
+		return pKs;
+	}
+
+	public Collection <Integer> ejbFindBySearchRequest(Collection <String> requests, int groupId, int maxAmount, int startingEntry){
+		if(ListUtil.isEmpty(requests)){
+			return Collections.emptyList();
+		}
+		if(requests.size() < 2){
+	    	return this.ejbFindBySearchRequest(requests.iterator().next(), groupId, maxAmount, startingEntry);
+	    }
+
+	    SelectQuery query = idoSelectQuery();
+
+	    Table users = new Table(this);
+	    Table emails = new Table(EmailBMPBean.class);
+	    Table mm = new Table("ic_user_email");
+	    Table relations = new Table(GroupRelationBMPBean.class);
+
+
+	    Column usersId = users.getColumn(UserBMPBean.getColumnNameUserID());
+	    Column mmUserId = mm.getColumn(UserBMPBean.getColumnNameUserID());
+	    Column relatedGroupId = relations.getColumn(GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+	    JoinCriteria joinCr = new JoinCriteria(usersId,mmUserId);
+	    query.addCriteria(joinCr);
+
+	    MatchCriteria emailJoinCriteria = new MatchCriteria(getColumn(emails,EmailBMPBean.getColumnNameEmailId(), true),
+	    		MatchCriteria.EQUALS,getColumn(mm,EmailBMPBean.getColumnNameEmailId(), true));
+	    query.addCriteria(emailJoinCriteria);
+
+	    Criteria firstAndCriteria = null;
+	    OR joinRequestsCriteria = null;
+	    OR firstOrCriteria = null;
+	    for(String request : requests){
+	    	firstOrCriteria = null;
+	    	AND andcriteria = null;
+	    	request = request.toLowerCase();
+	    	String requestWords[] = request.split(CoreConstants.SPACE);
+		    for(int i = 0; i < requestWords.length;i++){
+		    	MatchCriteria nameCriteria = new MatchCriteria(getColumn(users,
+		    			getColumnNameDisplayName(), true), MatchCriteria.LIKE, true, requestWords[i]);
+		    	MatchCriteria emailCriteria = new MatchCriteria(getColumn(emails,
+		    			EmailBMPBean.getColumnNameAddress(), true), MatchCriteria.LIKE, true, requestWords[i]);
+		    	OR orCriteria = new OR(nameCriteria,emailCriteria);
+		    	if(andcriteria == null){
+		    		if(firstOrCriteria == null){
+		    			firstOrCriteria = orCriteria;
+		    		}else{
+		    			andcriteria = new AND(firstOrCriteria,orCriteria);
+		    		}
+		    	}else{
+		    		andcriteria = new AND(andcriteria,orCriteria);
+		    	}
+		    }
+		    if(requestWords.length > 0){
+			    if(joinRequestsCriteria == null){
+			    	if(firstAndCriteria == null){
+			    		if(andcriteria == null){
+			    			firstAndCriteria = firstOrCriteria;
+			    		}else{
+			    			firstAndCriteria = andcriteria;
+			    		}
+			    	}else{
+			    		if(andcriteria != null){
+			    			joinRequestsCriteria = new OR(firstAndCriteria,andcriteria);
+			    		}else{
+			    			joinRequestsCriteria = new OR(firstAndCriteria,firstOrCriteria);
+			    		}
+			    	}
+		    	}else{
+		    		if(andcriteria == null){
+		    			joinRequestsCriteria = new OR(joinRequestsCriteria,firstOrCriteria);
+		    		}else{
+		    			joinRequestsCriteria = new OR(joinRequestsCriteria,andcriteria);
+		    		}
+		    	}
+		    }
+	    }
+	    if(joinRequestsCriteria != null){
+	    	query.addCriteria(joinRequestsCriteria);
+	    }else if(firstAndCriteria != null){
+	    	query.addCriteria(firstAndCriteria);
+	    }else if(firstOrCriteria != null){
+	    	query.addCriteria(firstOrCriteria);
+	    }
+	    SelectQuery except = new SelectQuery(relations);
+	    except.removeAllColumns();
+	    except.addColumn(relatedGroupId);
+
+	    MatchCriteria relatedWith = new MatchCriteria(relations.getColumn(GroupRelationBMPBean.GROUP_ID_COLUMN), MatchCriteria.EQUALS, groupId);
+	    except.addCriteria(relatedWith);
+	    MatchCriteria activeRealationCriteria = new MatchCriteria(relations.getColumn(GroupRelationBMPBean.STATUS_COLUMN),
+	    		MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE);
+	    except.addCriteria(activeRealationCriteria);
+	    InCriteria groupCriteria = new InCriteria(getColumn(users,
+	    		UserBMPBean.getColumnNameUserID(), true), except,true);
+	    query.addCriteria(groupCriteria);
+		// append is deleted filter
+		query.addCriteria(getNotDeletedCriteria());
+		query.setAsDistinct(true);
+		Collection <Integer> pKs = null;
+		try{
+			if(maxAmount > 0){
+				if(startingEntry != -1){
+					pKs = super.idoFindPKsByQuery(query, maxAmount, startingEntry);
+				}else{
+					pKs = super.idoFindPKsByQuery(query, maxAmount);
+				}
+			}else{
+				pKs = super.idoFindPKsByQuery(query);
+			}
+		}catch(Exception e){
+			this.getLogger().log(Level.WARNING, "Failed to find users by search request", e);
+			return Collections.emptyList();
+		}
+		return pKs;
+	}
+
+	public Collection <Integer> ejbAutocompleteRequest(String request, int groupId, int maxAmount, int startingEntry){
+		if(StringUtil.isEmpty(request)){
+			return Collections.emptyList();
+		}
+
+	    SelectQuery query = idoSelectQuery();
+
+	    Table users = new Table(this);
+	    Table emails = new Table(EmailBMPBean.class);
+	    Table mm = new Table("ic_user_email");
+	    Table relations = new Table(GroupRelationBMPBean.class);
+
+	    Column usersId = users.getColumn(UserBMPBean.getColumnNameUserID());
+	    Column mmUserId = mm.getColumn(UserBMPBean.getColumnNameUserID());
+	    Column relatedGroupId = relations.getColumn(GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+	    JoinCriteria joinCr = new JoinCriteria(usersId,mmUserId);
+	    query.addCriteria(joinCr);
+	    String requestWords[] = request.split(CoreConstants.SPACE);
+	    MatchCriteria emailJoinCriteria = new MatchCriteria(getColumn(emails,EmailBMPBean.getColumnNameEmailId(), true),
+	    		MatchCriteria.EQUALS,getColumn(mm,EmailBMPBean.getColumnNameEmailId(), true));
+	    query.addCriteria(emailJoinCriteria);
+	    int last = requestWords.length - 1;
+	    for(int i = 0; i < last;i++){
+	    	MatchCriteria firstNameCriteria = new MatchCriteria(getColumn(users,
+	    			getColumnNameFirstName(), true), MatchCriteria.EQUALS, false, requestWords[i]);
+	    	MatchCriteria middleNameCriteria = new MatchCriteria(getColumn(users,
+	    			getColumnNameMiddleName(), true), MatchCriteria.EQUALS, false, requestWords[i]);
+	    	OR orCriteria = new OR(firstNameCriteria,middleNameCriteria);
+	    	MatchCriteria lastNameCriteria = new MatchCriteria(getColumn(users,
+	    			getColumnNameLastName(), true), MatchCriteria.EQUALS, false, requestWords[i]);
+	    	orCriteria = new OR(orCriteria,lastNameCriteria);
+	    	MatchCriteria emailCriteria = new MatchCriteria(getColumn(emails,
+	    			EmailBMPBean.getColumnNameAddress(), true), MatchCriteria.EQUALS, false, requestWords[i]);
+	    	orCriteria = new OR(orCriteria,emailCriteria);
+	    	query.addCriteria(orCriteria);
+	    }
+	    //last word dont have to be the same
+	    MatchCriteria nameCriteria = new MatchCriteria(getColumn(users,
+    			getColumnNameDisplayName(), true), MatchCriteria.LIKE, true, requestWords[last]);
+    	MatchCriteria emailCriteria = new MatchCriteria(getColumn(emails,
+    			EmailBMPBean.getColumnNameAddress(), true), MatchCriteria.LIKE, true, requestWords[last]);
+    	OR orCriteria = new OR(nameCriteria,emailCriteria);
+    	query.addCriteria(orCriteria);
+
+	    SelectQuery except = new SelectQuery(relations);
+	    except.removeAllColumns();
+	    except.addColumn(relatedGroupId);
+
+	    MatchCriteria relatedWith = new MatchCriteria(relations.getColumn(GroupRelationBMPBean.GROUP_ID_COLUMN), MatchCriteria.EQUALS, groupId);
+	    except.addCriteria(relatedWith);
+	    MatchCriteria activeRealationCriteria = new MatchCriteria(relations.getColumn(GroupRelationBMPBean.STATUS_COLUMN),
+	    		MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE);
+	    except.addCriteria(activeRealationCriteria);
+	    InCriteria groupCriteria = new InCriteria(getColumn(users,
+	    		UserBMPBean.getColumnNameUserID(), true), except,true);
+	    query.addCriteria(groupCriteria);
+		// append is deleted filter
+		query.addCriteria(getNotDeletedCriteria());
+		query.setAsDistinct(true);
+		Collection <Integer> pKs = null;
+		try{
+			if(maxAmount > 0){
+				if(startingEntry != -1){
+					pKs = this.idoFindPKsByQuery(query, maxAmount, startingEntry);
+				}else{
+					pKs = super.idoFindPKsByQuery(query, maxAmount);
+				}
+			}else{
+				pKs = super.idoFindPKsByQuery(query);
+			}
+		}catch(Exception e){
+			this.getLogger().log(Level.WARNING, "Failed to find users by search request", e);
+			return Collections.emptyList();
+		}
+		return pKs;
+	}
+
 	public Collection ejbFindByDisplayName(String displayName, boolean useLoweredValue) throws FinderException {
 		if (StringUtil.isEmpty(displayName)) {
 			throw new FinderException("Invalid name provided: " + displayName);
 		}
-		
+
 		SelectQuery query = idoSelectQuery();
 		query.addCriteria(new MatchCriteria(getColumn(new Table(this), getColumnNameDisplayName(), useLoweredValue), MatchCriteria.LIKE, true, displayName));
 		query.addCriteria(getNotDeletedCriteria());
@@ -1397,7 +1742,7 @@ public void delete() throws SQLException {
 	}
 
 	public Integer ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalId, String first_name, String last_name) throws FinderException {
-    
+
     if (personalId.length() < 6) {
 			throw new FinderException("PersonalID shorter than 6 letters");
 		}
@@ -1414,7 +1759,7 @@ public void delete() throws SQLException {
 		.appendWithinSingleQuotes(last_name)
 		.appendAnd();
 		appendIsNotDeleted(query);
-    
+
 		 Collection users = idoFindPKsByQuery(query);
 
 
@@ -1429,7 +1774,7 @@ public void delete() throws SQLException {
 		}
 	}
 
-	
+
 	/**
 	 * Returns the User that is the instance of the User representing the group userRepGroup
 	 * @param userRepGroupID a primary key of a Group of type "UserRepresentative"
@@ -1445,9 +1790,9 @@ public void delete() throws SQLException {
         .appendWhereEquals(_COLUMNNAME_USER_GROUP_ID,userRepGroupID)
         .appendAnd();
       appendIsNotDeleted(query);
-     
+
 			pk = (Integer)this.idoFindOnePKByQuery(query);
-		
+
 			//pk = (Integer) super.idoFindOnePKBySQL("select * from " + getEntityName() + " where " + _COLUMNNAME_USER_GROUP_ID + "='" + userRepGroupID + "'");
 		//}
 		//catch (FinderException ex) {
@@ -1458,7 +1803,7 @@ public void delete() throws SQLException {
 		//}
 		return pk;
 	}
-	
+
 	/**
 	 * Returns the User that is the instance of the User representing the group userRepGroup
 	 * @param userRepGroup a Group of type "UserRepresentative"
@@ -1492,6 +1837,7 @@ public void delete() throws SQLException {
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public Group getGroup() {
 		return this;
@@ -1500,6 +1846,7 @@ public void delete() throws SQLException {
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public int getGroupID() {
 		return this.getID();
@@ -1508,6 +1855,7 @@ public void delete() throws SQLException {
 	/**
 	 * @deprecated
 	 */
+	@Override
 	@Deprecated
 	public Group getUserGroup() {
 		return getGeneralGroup();
@@ -1535,6 +1883,7 @@ public void delete() throws SQLException {
 		return this._group;
 	}
 
+	@Override
 	public void setGroupID(int icGroupId) {
 		this.setID(icGroupId);
 	}
@@ -1542,26 +1891,26 @@ public void delete() throws SQLException {
 	public Collection ejbFindUsersBySearchCondition(String condition, boolean orderLastFirst) throws FinderException {
 		return ejbFindUsersBySearchCondition(condition, null, orderLastFirst);
 	}
-	
+
 	public Collection ejbFindUsersBySearchCondition(String condition, boolean orderLastFirst, int endAge) throws FinderException {
 			return ejbFindUsersBySearchCondition(condition, null, orderLastFirst, 0, endAge);
 	}
-	
+
 	public Collection ejbFindUsersBySearchCondition(String condition, boolean orderLastFirst, int startAge, int endAge) throws FinderException {
 			return ejbFindUsersBySearchCondition(condition, null, orderLastFirst, startAge, endAge);
 		}
-	
+
 	/**
-	 * 
+	 *
 	 * @param condition
-	 * @param validUserPks if NULL, the function ignores it, else uses it. 
+	 * @param validUserPks if NULL, the function ignores it, else uses it.
 	 * @return Collection
 	 * @throws FinderException
 	 */
 	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst) throws FinderException {
 		return ejbFindUsersBySearchCondition(condition, userIds, orderLastFirst, -1, -1);
 	}
-		
+
 	public Collection ejbFindUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst, int startAge, int endAge) throws FinderException {
 		//strange stuff...examine
 		if (userIds != null && userIds.length == 0) {
@@ -1576,9 +1925,9 @@ public void delete() throws SQLException {
 			return ejbFindUsersByConditions(condition,condition,null,null,-1,-1,startAge,endAge,null,userIds,false, orderLastFirst);
 		}
 	}
-	
+
 	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
-		
+
 		if(userName!=null && userName.indexOf(" ")>-1){
 			Name name = new Name(userName);
 			useAnd = true;
@@ -1588,22 +1937,22 @@ public void delete() throws SQLException {
 			return ejbFindUsersByConditions(name.getFirstName(), name.getMiddleName(), name.getLastName(), personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 		}
 		else {
-			return ejbFindUsersByConditions(userName, userName, userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);	
+			return ejbFindUsersByConditions(userName, userName, userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
 		}
-	
+
 	}
-	
+
 	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
-		
+
 		SelectQuery query = idoSelectQuery();
-		
+
 		Criteria theCriteria = null;
-		
-		//name	
+
+		//name
 		if( (firstName!=null && !"".equals(firstName)) || (middleName!=null && !"".equals(middleName)) || (lastName!=null && !"".equals(lastName)) ){
 			theCriteria = getUserNameSearchCriteria(firstName,middleName,lastName,useAnd);
 		}
-				
+
 		if( (startAge >= 0) && (endAge >=startAge) ){
 			Criteria ageCriteria = getUserDateOfBirthCriteria(startAge, endAge);
 			if(theCriteria==null) {
@@ -1612,8 +1961,8 @@ public void delete() throws SQLException {
 			else {
 				theCriteria = new AND(theCriteria,ageCriteria);
 			}
-		}		
-		
+		}
+
 		//personalId
 		if(personalId!=null && !personalId.equals("") ){
 			Criteria personalIdCriteria = new MatchCriteria(idoQueryTable(),getColumnNamePersonalID(),MatchCriteria.LIKE,"%"+personalId+"%");
@@ -1626,9 +1975,9 @@ public void delete() throws SQLException {
 				else {
 					theCriteria = new OR(theCriteria,personalIdCriteria);
 				}
-			}	
+			}
 		}
-			
+
 		//address
 		if(streetName!=null && !streetName.equals("")  ){
 			try {
@@ -1648,7 +1997,7 @@ public void delete() throws SQLException {
 				re.printStackTrace();
 			}
 		}
-				
+
 		//gender
 		if(gender>0){
 			Criteria genderCriteria = new MatchCriteria(idoQueryTable(),getColumnNameGender(),MatchCriteria.EQUALS,gender);
@@ -1663,7 +2012,7 @@ public void delete() throws SQLException {
 				}
 			}
 		}
-			
+
 		//status
 		//TODO Eiki add sql for only allowed groups and create and use method getUserStatusCriteria
 		if( statusId>0 ){
@@ -1679,7 +2028,7 @@ public void delete() throws SQLException {
 				}
 			}
 		}
-		
+
 		//group search
 		//TODO Eiki filter out only allowed and create and use method getUserInAllowedGroupsCriteria
 		if(groupName!=null || (allowedGroups!=null && allowedGroups.length>0 )){
@@ -1694,8 +2043,8 @@ public void delete() throws SQLException {
 					theCriteria = new OR(theCriteria,groupNameCriteria);
 				}
 			}
-		}	
-			
+		}
+
 		//filter by users
 		if ( allowedUsers != null && allowedUsers.length>0 ) {
 			Criteria allowedUsersCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));
@@ -1705,20 +2054,20 @@ public void delete() throws SQLException {
 				theCriteria = new AND(theCriteria,allowedUsersCriteria);
 			}
 		}
-		
+
 		if(theCriteria==null) {
 			theCriteria = getNotDeletedCriteria();
 		}
 		else {
 			theCriteria = new AND(theCriteria,getNotDeletedCriteria());
 		}
-		
+
 		query.addCriteria(theCriteria);
 		addOrderByName(query,orderLastFirst,true);
 
 		//return this.idoFindIDsBySQL(query.toString());
 		//to benefit from the IDOEntityList features
-		
+
 		int loadBalancePrefetchSize = 100;
 		if(this.isDebugActive()){
 			System.out.println("[ejbFindUsersByConditions-sql]: "+query.toString());
@@ -1727,42 +2076,42 @@ public void delete() throws SQLException {
 
 	}
 
-	
+
 //	public Collection ejbFindUsersByConditions(String firstName, String middleName, String lastName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
 //		IDOQuery query = idoQuery();
 //		boolean firstOperatorAdded = false;
-//		
+//
 //		final String operator = useAnd ? " AND " : " OR ";
-//		
+//
 //		query.appendSelectAllFrom(this).appendWhere();
-//		
+//
 //		query.append(" ( ");
-//		//name	
+//		//name
 //		if( (firstName!=null && !"".equals(firstName)) || (middleName!=null && !"".equals(middleName)) || (lastName!=null && !"".equals(lastName)) ){
 //			query.append(" ( ")
 //			.append(getUserNameSearchString(firstName,middleName,lastName,operator))
 //			.append(" ) ");
-//			
+//
 //			firstOperatorAdded = true;
 //		}
-//				
+//
 //		if( (startAge >= 0) && (endAge >=startAge) ){
 //			if(firstOperatorAdded ) query.appendAnd();
-//			
+//
 //			query.append(" ( ")
 //			.append(getUserDateOfBirthSearchString(startAge, endAge))
 //			.append(" ) ");
-//			
+//
 //			firstOperatorAdded = true;
 //		}
-//		
+//
 //		//not deleted
 //		if(firstOperatorAdded) query.appendAnd();
 //		appendIsNotDeleted(query);
-//		
-//		
+//
+//
 //		query.append(" ) ");
-//		
+//
 //		//personalId
 //		if(personalId!=null && !personalId.equals("") ){
 //			query.append(operator)
@@ -1770,13 +2119,13 @@ public void delete() throws SQLException {
 //			.append(getColumnNamePersonalID()).append(" like '%").append(personalId).append("%' ")
 //			.append(" ) ");
 //		}
-//			
+//
 //		//address
 //		if(streetName!=null && !streetName.equals("")  ){
 //			query.append(operator)
 //			.append(getIDColumnName()).appendIn(getUserAddressSearchString(streetName));
 //		}
-//				
+//
 //		//gender
 //		if(gender>0){
 //			query.appendAnd()
@@ -1784,35 +2133,35 @@ public void delete() throws SQLException {
 //			.append(getColumnNameGender()).appendEqualSign().append(gender)
 //			.append(" ) ");
 //		}
-//			
+//
 //		//status
 //		//TODO Eiki add sql for only allowed groups
 //		if( statusId>0 ){
 //			query.append(operator)
 //			.append(getIDColumnName()).appendIn(getUserStatusSearchString(statusId,IWTimestamp.RightNow()));
 //		}
-//		
+//
 //		//group search
 //		//TODO Eiki filter out only allowed
 //		if(groupName!=null || (allowedGroups!=null && allowedGroups.length>0 )){
 //			query.append(operator)
 //			.append(getIDColumnName()).appendIn(getUserInAllowedGroupsSearchString(groupName,allowedGroups));
-//		}	
-//			
+//		}
+//
 //		//filter by users
 //		if ( allowedUsers != null && allowedUsers.length>0 ) {
-//			query.appendAnd().append(getIDColumnName()).appendIn(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));	
+//			query.appendAnd().append(getIDColumnName()).appendIn(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedUsers));
 //		}
-//      
+//
 //		if (orderLastFirst)
 //			query.appendOrderBy(this.getColumnNameLastName()+","+this.getColumnNameFirstName()+","+this.getColumnNameMiddleName());
 //		else
 //			query.appendOrderBy(this.getColumnNameFirstName()+","+this.getColumnNameLastName()+","+this.getColumnNameMiddleName());
-//		
-//		
+//
+//
 //		//return this.idoFindIDsBySQL(query.toString());
 //		//to benefit from the IDOEntityList features
-//		
+//
 //		int loadBalancePrefetchSize = 100;
 //		if(this.isDebugActive()){
 //			System.out.println("[ejbFindUsersByConditions-sql]: "+query);
@@ -1821,25 +2170,25 @@ public void delete() throws SQLException {
 //
 //	}
 
-	private Criteria getUserDateOfBirthCriteria(int startAge, int endAge) {				
+	private Criteria getUserDateOfBirthCriteria(int startAge, int endAge) {
 		IWTimestamp youngerAgeStamp = IWTimestamp.RightNow();
 		IWTimestamp olderAgeStamp = IWTimestamp.RightNow();
-		
+
 		youngerAgeStamp.addYears(-startAge);
 		youngerAgeStamp.setMonth(12);
 		youngerAgeStamp.setDay(31);
-		
+
 		olderAgeStamp.addYears(-endAge);
 		olderAgeStamp.setMonth(1);
 		olderAgeStamp.setDay(1);
-		
+
 		Criteria c1 = new MatchCriteria(idoQueryTable(),getColumnNameDateOfBirth(),MatchCriteria.GREATEREQUAL,olderAgeStamp.getTimestamp());
 		Criteria c2 = new MatchCriteria(idoQueryTable(),getColumnNameDateOfBirth(),MatchCriteria.LESSEQUAL,youngerAgeStamp.getTimestamp());
-		
+
 		return new AND(c1,c2);
 	}
 
-	
+
 	private Criteria getUserNameSearchCriteria(String firstName, String middleName, String lastName, boolean andCriteria) {
 		int count = 0;
 		Criteria firstNameCriteria = null;
@@ -1848,21 +2197,21 @@ public void delete() throws SQLException {
 			firstNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameFirstName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
-		
+
 		Criteria middleNameCriteria = null;
 		if(middleName!=null && !middleName.equals("") ){
 			String conditionString = StringHandler.firstCharacterToUpperCase(middleName);
 			middleNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameMiddleName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
-		
+
 		Criteria lastNameCriteria = null;
 		if(lastName!=null  && !lastName.equals("") ){
 			String conditionString = StringHandler.firstCharacterToUpperCase(lastName);
 			lastNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameLastName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
-		
+
 		switch (count) {
 		case 1:
 			if(firstNameCriteria!=null) {
@@ -1919,8 +2268,8 @@ public void delete() throws SQLException {
 			return null;
 		}
 	}
-	
-	
+
+
 //	/**
 //	 * @param condition
 //	 * @return
@@ -1934,24 +2283,24 @@ public void delete() throws SQLException {
 //			sql.append(getColumnNameFirstName()).append(" like '").append(firstName).append("%' ");
 //			firstNameAdded = true;
 //		}
-//		
+//
 //		if(middleName!=null && !middleName.equals("") ){
 //			if(firstNameAdded){
 //				sql.append(ANDOrOR).append(" ");
 //			}
-//			
+//
 //			sql.append(getColumnNameMiddleName()).append(" like '").append(middleName).append("%' ");
 //			middleNameAdded = true;
 //		}
-//		
+//
 //		if(lastName!=null  && !lastName.equals("") ){
 //			if(middleNameAdded || firstNameAdded){
 //				sql.append(ANDOrOR).append(" ");
 //			}
 //			sql.append(getColumnNameLastName()).append(" like '").append(lastName).append("%'");
 //		}
-//		
-//		
+//
+//
 //		return sql.toString();
 //	}
 
@@ -1960,12 +2309,12 @@ public void delete() throws SQLException {
 	 */
 	private String getUserStatusSearchString(int statusId, IWTimestamp currentTime) {
 		IDOQuery sql = idoQuery();
-		
+
 		sql.append("select distinct(ic_user_id) from ic_usergroup_status where status_id = ")
 		.append(statusId);
 		sql.appendAnd().append("date_from").appendLessThanOrEqualsSign().append(currentTime)
 		.appendAnd().appendLeftParenthesis().append("date_to").appendIsNull().appendOr().append("date_to").appendLessThanSign().append(currentTime).appendRightParenthesis();
-		
+
 		return sql.toString();
 	}
 
@@ -1977,32 +2326,32 @@ public void delete() throws SQLException {
 			.append(condition)
 			.append("%' ");
 		}
-		
+
 		if(allowedGroups!=null && allowedGroups.length>0){
 			sql.append(" and gr.ic_group_id in ( ")
 			.append(IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedGroups))
 			.append(" ) ");
 		}
-		
+
 		//TODO use only allowed groups and g.ic_group_id in (view permission groups)
-			
+
 		return sql.toString();
 	}
 
 	/**
-	 * 
-	 * 
+	 *
+	 *
 	 * @param streetName
 	 * @return returns SelectQuery that returns the userIDs matching this streetName
 	 */
 	private SelectQuery getUserAddressSelectQuery(String streetName) throws IDOLookupException {
 		Table addressTable = new Table(Address.class);
 		Table userAddressTable = new Table(SQL_RELATION_ADDRESS);
-		SelectQuery query = new SelectQuery(userAddressTable);	
-		
+		SelectQuery query = new SelectQuery(userAddressTable);
+
 
 		query.addColumn(userAddressTable,getIDColumnName(),true);
-		
+
 		IDOEntityDefinition addressDef = IDOLookup.getEntityDefinitionForClass(Address.class);
 		IDOEntityField pkAddressField = null;
 		try {
@@ -2010,7 +2359,7 @@ public void delete() throws SQLException {
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 		}
-		
+
 		Criteria join = new JoinCriteria(new Column(addressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())),new Column(userAddressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())));
 		if (streetName.indexOf(" ") == -1) {
 		IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
@@ -2020,22 +2369,22 @@ public void delete() throws SQLException {
 		} else {
 			String streetNumber = streetName.substring(streetName.lastIndexOf(" ") + 1);
 			streetName = streetName.substring(0, streetName.lastIndexOf(" "));
-		
+
 			IDOEntityField streetNameField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
 			Criteria matchStreetName = new MatchCriteria(addressTable,streetNameField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
 			query.addCriteria(new AND(join,matchStreetName));
-			
+
 			IDOEntityField streetNumberField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NUMBER);
 			Criteria matchStreetNumber = new MatchCriteria(addressTable,streetNumberField.getSQLFieldName(),MatchCriteria.LIKE,streetNumber.toUpperCase()+"%");
 			query.addCriteria(new AND(join,matchStreetNumber));
 		}
-		
+
 //		sql.append("select ua.ic_user_id from ic_address a,ic_user_address ua where a.ic_address_id=ua.ic_address_id").append(" and a.street_name like '%").append(condition.toUpperCase()).append("%' ");
-	
+
 		return query;
-		
+
 	}
-	
+
 
 
 	public int ejbHomeGetUserCount() throws IDOException {
@@ -2069,10 +2418,10 @@ public void delete() throws SQLException {
       .appendInArray(userIDs)
       .appendAnd();
     appendIsNotDeleted(query);
-  	
+
   	return super.idoFindPKsBySQL(query.toString());
   }
-  
+
   public Collection ejbFindUsersInQuery(IDOQuery query) throws FinderException {
   	IDOQuery sqlQuery = idoQuery();
 		sqlQuery
@@ -2083,11 +2432,11 @@ public void delete() throws SQLException {
     appendIsNotDeleted(sqlQuery);
 		return super.idoFindPKsByQuery(sqlQuery);
   }
-  
+
   /**
 	 * Returns users within a given birth year range
-	 *	 * @param minYear , the year on the format 'yyyy' 
-	 * @param maxYear , the year on the format 'yyyy'  
+	 *	 * @param minYear , the year on the format 'yyyy'
+	 * @param maxYear , the year on the format 'yyyy'
 	 * @return Collection
 	 * @throws FinderException
 	 */
@@ -2107,7 +2456,7 @@ public void delete() throws SQLException {
     appendIsNotDeleted(sql);
         return idoFindIDsBySQL (sql.toString ());
     }
-  
+
   public int ejbHomeGetCountByBirthYearAndCommune(int fromYear, int toYear, Commune commune) throws IDOException {
 		IWTimestamp minStamp = new IWTimestamp(1, 1, fromYear);
 		IWTimestamp maxStamp = new IWTimestamp(31, 12, toYear);
@@ -2132,17 +2481,17 @@ public void delete() throws SQLException {
 
 		return idoGetNumberOfRecords(query);
 	}
-  
+
   public Collection ejbFindUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException{
 		try {
-			IDOQuery query = idoQueryJointGroupQuery();					
+			IDOQuery query = idoQueryJointGroupQuery();
 			query.appendAnd();
 			query.append(SQL_JOINT_VARIABLE_GROUP);
 			query.append(".");
 			query.append(GENERAL_GROUP_COLUMN_CREATED);
 			query.appendGreaterThanOrEqualsSign();
 			query.appendWithinSingleQuotes(firstCreationTime.toSQLString());
-			
+
 			query.appendAnd();
 			query.append(SQL_JOINT_VARIABLE_GROUP);
 			query.append(".");
@@ -2153,22 +2502,22 @@ public void delete() throws SQLException {
 			System.out.println("SQL -> "+this.getClass()+":"+query);
 			// AND created > '18.11.2002 16:31:06'
 			//select gr.created,usr.* from IC_USER usr, IC_GROUP gr WHERE usr.IC_USER_ID=gr.IC_GROUP_ID AND created > '18.11.2002 16:31:06' ORDER BY gr.CREATED  desc
-					return idoFindPKsByQuery(query); 
+					return idoFindPKsByQuery(query);
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			return ListUtil.getEmptyList();
 		}
   }
-  
-  
+
+
   public Collection ejbFindByDateOfBirthAndGroupRelationInitiationTimeAndStatus(Date firstBirthDateInPeriode, Date lastBirthDateInPeriode, Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException{
   	//select usr.* from ic_user usr, ic_group_relation gr_rel where usr.date_of_birth >= '23.12.1898' and usr.date_of_birth <= '23.12.1920' and gr_rel.ic_group_id = 3 and gr_rel.related_ic_group_id=usr.ic_user_id and gr_rel.initiation_date >= '11.7.2002 15:17:39' and gr_rel.initiation_date <= '11.7.2002 15:17:40' and gr_rel.group_relation_status in ('ST_ACTIVE')
 	try {
 	  	//preparing
-	  	
+
 	  	IDOEntityDefinition grRelDef = IDOLookup.getEntityDefinitionForClass(GroupRelation.class);
 		IDOEntityDefinition thisDef = this.getEntityDefinition();
-	  	
+
 	  	String[] tables = new String[2];
 	  	String[] variables = new String[2];
 	  	//table name
@@ -2179,7 +2528,7 @@ public void delete() throws SQLException {
 	  	tables[1] = grRelDef.getSQLTableName();
 		//	as variable
 		variables[1] = "gr_rel";
-	  	
+
 	  	//constructing query
 		IDOQuery query = idoQuery();
 		//select
@@ -2233,7 +2582,7 @@ public void delete() throws SQLException {
 		query.append(groupRelationColumnInitiationDate);
 		query.appendLessThanOrEqualsSign();
 		query.append(lastInitiationDateInPeriode);
-		
+
 		//and if relationstatus
 		if(relationStatus!= null){
 			//and
@@ -2241,39 +2590,39 @@ public void delete() throws SQLException {
 			query.append(variables[1]);
 			query.append(".");
 			query.append(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_STATUS).getSQLFieldName());
-			query.appendInArrayWithSingleQuotes(relationStatus);		
+			query.appendInArrayWithSingleQuotes(relationStatus);
 		}
 
-/*		
+/*
 		//order by usr.last_name, usr.first_name, usr.middle_name
 		String[] order = new String[3];
 		order[0] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_LAST_NAME).getSQLFieldName();
 		order[1] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_MIDDLE_NAME).getSQLFieldName();
 		order[2] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_MIDDLE_NAME).getSQLFieldName();
-		query.appendOrderBy(order); 
-*/	  	
-		//orderby personal_id	
-		query.appendOrderBy(variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_PERSONAL_ID).getSQLFieldName()); 
+		query.appendOrderBy(order);
+*/
+		//orderby personal_id
+		query.appendOrderBy(variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_PERSONAL_ID).getSQLFieldName());
 
 		System.out.println("SQL -> "+this.getClass()+":"+query);
-		return idoFindPKsByQuery(query); 
-  	
+		return idoFindPKsByQuery(query);
+
 	} catch (IDOCompositePrimaryKeyException e) {
 		e.printStackTrace();
 		return ListUtil.getEmptyList();
 	}
   }
-  
-  
-  
+
+
+
 	public Collection ejbFindByGroupRelationInitiationTimeAndStatus(Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException{
 		//select usr.* from ic_user usr, ic_group_relation gr_rel where gr_rel.ic_group_id = 3 and gr_rel.related_ic_group_id=usr.ic_user_id and gr_rel.initiation_date >= '11.7.2002 15:17:39' and gr_rel.initiation_date <= '11.7.2002 15:17:40' and gr_rel.group_relation_status in ('ST_ACTIVE')
 		try {
 				//preparing
-		  	
+
 				IDOEntityDefinition grRelDef = IDOLookup.getEntityDefinitionForClass(GroupRelation.class);
 			IDOEntityDefinition thisDef = this.getEntityDefinition();
-		  	
+
 				String[] tables = new String[2];
 				String[] variables = new String[2];
 				//table name
@@ -2284,7 +2633,7 @@ public void delete() throws SQLException {
 				tables[1] = grRelDef.getSQLTableName();
 			//	as variable
 			variables[1] = "gr_rel";
-		  	
+
 				//constructing query
 			IDOQuery query = idoQuery();
 			//select
@@ -2324,7 +2673,7 @@ public void delete() throws SQLException {
 			query.append(groupRelationColumnInitiationDate);
 			query.appendLessThanOrEqualsSign();
 			query.append(lastInitiationDateInPeriode);
-			
+
 			//and if relationstatus
 			if(relationStatus!= null){
 				//and
@@ -2332,30 +2681,30 @@ public void delete() throws SQLException {
 				query.append(variables[1]);
 				query.append(".");
 				query.append(grRelDef.findFieldByUniqueName(GroupRelation.FIELD_STATUS).getSQLFieldName());
-				query.appendInArrayWithSingleQuotes(relationStatus);		
+				query.appendInArrayWithSingleQuotes(relationStatus);
 			}
-			
+
 			//order by usr.last_name, usr.first_name, usr.middle_name
 			String[] order = new String[3];
 			order[0] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_LAST_NAME).getSQLFieldName();
 			order[1] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_MIDDLE_NAME).getSQLFieldName();
 			order[2] = variables[0]+"."+thisDef.findFieldByUniqueName(User.FIELD_MIDDLE_NAME).getSQLFieldName();
-			query.appendOrderBy(order); 
-		  	
+			query.appendOrderBy(order);
+
 			System.out.println("SQL -> "+this.getClass()+":"+query);
-			return idoFindPKsByQuery(query); 
-	  	
+			return idoFindPKsByQuery(query);
+
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace();
 			return ListUtil.getEmptyList();
 		}
 	}
-  
+
   public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException {
       Table userTable = new Table(TABLE_NAME, "u");
 	  Table userStatusTable = new Table(UserStatusBMPBean.ENTITY_NAME, "us");
 	  Table statusTable = new Table(StatusBMPBean.ENTITY_NAME, "s");
-	  
+
 	  Table groupRelationSubTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
 	  SelectQuery subQuery = new SelectQuery(groupRelationSubTable);
 	  subQuery.addColumn(new Column(groupRelationSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN));
@@ -2383,7 +2732,7 @@ public void delete() throws SQLException {
 		  orCriteria = new OR(orCriteria,lastInCriteria);
 		  subQuery.addCriteria(orCriteria);
 	  }
-	  
+
 	  SelectQuery query = new SelectQuery(userTable);
 	  query.addColumn(new WildCardColumn(userTable));
 	  query.addCriteria(new InCriteria(userTable, getColumnNameUserID(), subQuery));
@@ -2408,7 +2757,7 @@ public void delete() throws SQLException {
 			  statusSubQuery.addCriteria(new MatchCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, userStatuses.iterator().next().toString()));
 	      } else {
 	    	  statusSubQuery.addCriteria(new InCriteria(statusTable,StatusBMPBean.STATUS_LOC_KEY, userStatuses));
-	      }  
+	      }
 	  }
 	  if (statusSubQueryDeceased != null) {
 		  InCriteria statusIn = new InCriteria(userTable, getColumnNameUserID(), statusSubQuery);
@@ -2439,15 +2788,15 @@ public void delete() throws SQLException {
 	  return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 //	  return idoFindPKsBySQL(query.toString());
   }
-  
-  
+
+
   /**
    * add condition if column deleted equals 'N' or is null
-   * 
+   *
    * @param query
-   */  
+   */
   private void appendIsNotDeleted(IDOQuery query) {
-    query      
+    query
 //			.append(getColumnNameDeleted()).appendNOTEqual().appendQuoted(GenericEntity.COLUMN_VALUE_TRUE);
       .appendLeftParenthesis()
       .appendEqualsQuoted(getColumnNameDeleted(), GenericEntity.COLUMN_VALUE_FALSE)
@@ -2456,25 +2805,25 @@ public void delete() throws SQLException {
       .append(" IS NULL ")
       .appendRightParenthesis();
   }
-  
-  
+
+
   /**
    * add condition if column deleted equals 'N' or is null
-   * 
+   *
    * @param query
-   */  
+   */
   private Criteria getNotDeletedCriteria() {
   	MatchCriteria c1 = new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.EQUALS,false);
   	MatchCriteria c2 = new MatchCriteria(idoQueryTable(),getColumnNameDeleted(),MatchCriteria.IS,MatchCriteria.NULL);
     return new OR(c1,c2);
   }
-  
-  
+
+
   /**
    * add condition if column deleted equals 'N' or is null
-   * 
+   *
    * @param query
-  */    
+  */
   private void appendIsNotDeleted(StringBuffer buffer)  {
     buffer
       .append('(')
@@ -2485,81 +2834,88 @@ public void delete() throws SQLException {
       .append(getColumnNameDeleted())
       .append(" IS NULL )");
   }
-      
+
   /**
    * Unsupported.
-   * 
-   */    
-  public void removeGroup(Group group, User currentUser)  {
+   *
+   */
+  @Override
+public void removeGroup(Group group, User currentUser)  {
     throw new UnsupportedOperationException();
   }
 
   /**
    * Unsupported.
-   * 
-   */      
-  public void removeGroup(int userId, User currentUser, boolean allEntries) {
-    throw new UnsupportedOperationException();
-  }
-  
-  /**
-   * Unsupported.
-   * 
-   */      
-  public void removeGroup(User currentUser)  {
-    throw new UnsupportedOperationException();
-  }
-  
-  /**
-   * Unsupported.
-   * 
-   */      
-  public void removeUser(User user, User currentUser) {
+   *
+   */
+  @Override
+public void removeGroup(int userId, User currentUser, boolean allEntries) {
     throw new UnsupportedOperationException();
   }
 
   /**
    * Unsupported.
-   * 
-   */ 
-  public void removeUser(User user, User currentUse, Timestamp time) {
+   *
+   */
+  @Override
+public void removeGroup(User currentUser)  {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Unsupported.
+   *
+   */
+  @Override
+public void removeUser(User user, User currentUser) {
+    throw new UnsupportedOperationException();
+  }
+
+  /**
+   * Unsupported.
+   *
+   */
+  @Override
+public void removeUser(User user, User currentUse, Timestamp time) {
 	throw new UnsupportedOperationException();
   }
 
   /**
    * Unsupported.
-   * 
-   */ 
-    public Collection getChildren() {
+   *
+   */
+    @Override
+	public Collection getChildren() {
         throw new UnsupportedOperationException("Method getChildren() not implemented");
     }
 
+	@Override
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
-		
+
 		IDOEntityDefinition addressDefinition = IDOLookup.getEntityDefinitionForClass(Address.class);
 		String addressTableName = addressDefinition.getSQLTableName();
 		String addressPrimaryKeyColumn = addressDefinition.getPrimaryKeyDefinition().getField().getSQLFieldName();
 		String userAddressMiddleTableName = addressDefinition.getMiddleTableNameForRelation(getEntityName());
-		
-		IDOQuery query = idoQuery(); 
+
+		IDOQuery query = idoQuery();
 		query.appendSelect().append("a.").append(addressPrimaryKeyColumn).appendFrom().append(addressTableName).append(" a, ");
 		query.append(userAddressMiddleTableName).append(" iua ").appendWhere();
-		
+
 		query.append("a.").append(addressPrimaryKeyColumn).appendEqualSign();
 		query.append("iua.").append(addressPrimaryKeyColumn);
-		
+
 		query.appendAnd().append("a.");
 		query.append(addressTypePrimaryKeyColumn).appendEqualSign();
 		query.append(addressType.getPrimaryKey());
-		
+
 		query.appendAnd().append("iua.");
 		query.append(getColumnNameUserID()).appendEqualSign().append(getPrimaryKey());
 
 		return idoGetRelatedEntitiesBySQL(Address.class, query.toString());
 	}
 
-	
+
 	/**
 	 * Do not use this method, it is just here because User implements Group
 	 */
@@ -2582,14 +2938,14 @@ public void delete() throws SQLException {
 	 */
 	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
-	    throw new UnsupportedOperationException();	
+	    throw new UnsupportedOperationException();
 	}
 
 	/**
   	* Finds all users that have duplicated emails
 	*/
 	public Collection ejbFindAllUsersWithDuplicatedEmails()throws FinderException{
-// TODO Implement "HAVING" machanism in the SelectQuery structure 
+// TODO Implement "HAVING" machanism in the SelectQuery structure
 //	    Table table = new Table(SQL_RELATION_EMAIL, "e") ;
 //	    SelectQuery query = new SelectQuery(table);
 //	    query.addColumn(new Column(getIDColumnName()));
@@ -2604,12 +2960,13 @@ public void delete() throws SQLException {
 	public Collection ejbFindAllUsersWithDuplicatedPhones(String phoneType)throws FinderException{
     	return this.idoFindPKsBySQL("select up.ic_user_id from ic_user_phone up, ic_phone p where up.ic_phone_id = p.ic_phone_id and p.ic_phone_type_id = " + phoneType + " group by ic_user_id having count(up.ic_user_id)>1");
 	}
-	
+
+	@Override
 	public String getId(){
 		return getPrimaryKey().toString();
 	}
-	
-	
+
+
 //	public boolean isDeceased() {
 //		boolean isDeceased = false;
 //		try {
@@ -2621,6 +2978,7 @@ public void delete() throws SQLException {
 //   	 	return isDeceased;
 //	}
 
+	@Override
 	public boolean isDeceased()  {
 		Status deceasedStatus = null;
 		try {
@@ -2639,24 +2997,26 @@ public void delete() throws SQLException {
 		Collection coll = null;
 		try {
 			coll = getUserStatusHome().findAllByUserIDAndStatusID((Integer)getPrimaryKey(),(Integer) deceasedStatus.getPrimaryKey());
-		} 
+		}
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
 		if (coll != null && !coll.isEmpty()) {
-			System.out.println("User with SSN = " + getPersonalID() + " is deceased"); 
-		} 
+			System.out.println("User with SSN = " + getPersonalID() + " is deceased");
+		}
 		return coll != null && !coll.isEmpty();
 	}
-	
+
+		@Override
 		public void setUserProperties(ICFile file) {
 		setColumn(COLUMN_NAME_USER_PROPERTIES_FILE_ID, file);
 	}
-	
+
+	@Override
 	public ICFile getUserProperties() {
 		return (ICFile) getColumnValue(COLUMN_NAME_USER_PROPERTIES_FILE_ID);
 	}
-	
+
 
 	protected UserStatusHome getUserStatusHome(){
 		UserStatusHome home = null;
@@ -2681,20 +3041,24 @@ public void delete() throws SQLException {
 	}
 
 
+	@Override
 	public User getModerator() {
 		//	TODO:	maybe should return primary group's moderator?
 		throw new UnsupportedOperationException("Method getModerator() is not implemented yet");
 	}
 
+	@Override
 	public void setModerator(User moderator) {
 		//	TODO:	maybe should set moderator for user's primary groupr?
 		throw new UnsupportedOperationException("Method setModerator() is not implemented yet");
 	}
 
+	@Override
 	public boolean isJuridicalPerson() {
 		return getBooleanColumnValue(User.FIELD_JURIDICAL_PERSON);
 	}
 
+	@Override
 	public void setJuridicalPerson(boolean juridicalPerson) {
 		setColumn(User.FIELD_JURIDICAL_PERSON, Boolean.valueOf(juridicalPerson));
 	}

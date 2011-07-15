@@ -14,19 +14,22 @@ import java.util.Locale;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOException;
 import com.idega.data.IDOHome;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2008/08/12 13:52:56 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.31 $
  */
 public interface GroupHome extends IDOHome {
+
+	public Collection <Integer> getParentGroups(int groupId);
 
 	public Group create() throws javax.ejb.CreateException;
 
@@ -188,6 +191,6 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByMetaData
 	 */
 	public Group findBoardGroupByClubIDAndLeagueID(Integer clubID, Integer leagueID) throws FinderException;
-	
+
 	public Collection<Group> findAllByNamePhrase(String phrase, Locale locale) throws FinderException;
 }
