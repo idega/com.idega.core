@@ -2142,7 +2142,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				//String icObjectId=parameters[2];
 				String componentClass;
 
-				/*if(componentType.indexOf("uuid_")!=-1){
+				/*if(componentType.indexOf(ICObjectBusiness.UUID_PREFIX)!=-1){
 					componentClass = parameters[4];
 				}
 				else{

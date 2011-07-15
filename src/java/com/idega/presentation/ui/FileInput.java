@@ -27,6 +27,8 @@ public class FileInput extends InterfaceObject {
 
 	public static final String FILE_INPUT_DEFAULT_PARAMETER_NAME = "fileupload";
 	
+	private boolean multiple;
+	
 	public FileInput() {
 		this(FILE_INPUT_DEFAULT_PARAMETER_NAME);
 	}
@@ -37,11 +39,13 @@ public class FileInput extends InterfaceObject {
 	 * @param name
 	 * @deprecated
 	 */
+	@Deprecated
 	public FileInput(String name) {
 		this.setName(name);
 		setTransient(false);
 	}
 
+	@Override
 	public void print(IWContext iwc) throws IOException {
 		if (getMarkupLanguage().equals("HTML")) {
 			println("<input type=\"file\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " ></input>");
@@ -51,11 +55,11 @@ public class FileInput extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
-	/* (non-Javadoc)
-	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
-	 */
+	
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 		Form parentForm = getParentForm();
@@ -63,11 +67,23 @@ public class FileInput extends InterfaceObject {
 			parentForm.setMultiPart();
 		}
 	}
-
-	/* (non-Javadoc)
-	 * @see com.idega.presentation.PresentationObject#isContainer()
-	 */
+	
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
+
+	public boolean isMultiple() {
+		return multiple;
+	}
+
+	public void setMultiple(boolean multiple) {
+		this.multiple = multiple;
+		
+		if (multiple)
+			setMarkupAttribute("multiple", "multiple");
+		else
+			removeMarkupAttribute("multiple");
+	}
+	
 }

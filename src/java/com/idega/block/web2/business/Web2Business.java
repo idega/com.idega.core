@@ -439,4 +439,9 @@ public interface Web2Business extends IBOService {
 
 	public List<String> getBundleURIsToTageditLib();
 	public List<String> getBundleURIsToTageditStyleFiles();
+
+	//	SWF Upload
+	public String getSWFUploadObjectScript();
+	public String getSWFUploadScript();
+	public String getSWFUploadPlugin();
 }
