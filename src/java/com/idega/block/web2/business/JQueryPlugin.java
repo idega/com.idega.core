@@ -109,6 +109,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".mousewheel.js";
 		}
+	},
+	TEXT_AREA_AUTO_GROW {
+		@Override
+		public String getFileName() {
+			return ".autogrowtextarea.js";
+		}
 	};
 
 	public abstract String getFileName();
