@@ -17,36 +17,28 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 
 	public ICPage findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
 
-	/**
-	 * @param integer
-	 * @return
-	 */
-	public Collection findByTemplate(Integer integer)
-			throws javax.ejb.FinderException;
+	public Collection<ICPage> findByTemplate(Integer integer) throws javax.ejb.FinderException;
 
-	public ICPage findByUri(String pageUri, int domainId)
-			throws javax.ejb.FinderException;
+	public ICPage findByUri(String pageUri, int domainId) throws javax.ejb.FinderException;
 
-	public ICPage findExistingByUri(String pageUri, int domainId)
-			throws FinderException;
+	public ICPage findExistingByUri(String pageUri, int domainId) throws FinderException;
 	
 	public ICPage findByWebDavUri(String webDavUri) throws FinderException;
 
-	/**
-	 * @return
-	 */
-	public Collection findAllPagesWithoutUri() throws FinderException;
+	public Collection<ICPage> findAllPagesWithoutUri() throws FinderException;
 
-	public Collection findAllSimpleTemplates() throws FinderException;
+	public Collection<ICPage> findAllSimpleTemplates() throws FinderException;
 
-	public Collection findBySubType(String subType, boolean deleted)
-			throws FinderException;
+	public Collection<ICPage> findBySubType(String subType, boolean deleted) throws FinderException;
 	
-	public Collection findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException;
+	public Collection<ICPage> findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException;
 	
-	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException;
+	public Collection<ICPage> findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException;
 	
 	public Collection<ICPage> findAllByName(String name, boolean findOnlyNotDeleted) throws FinderException;
 
-	public Collection<ICPage> findAllPagesAndTemplates()throws FinderException;
+	public Collection<ICPage> findAllPagesAndTemplates() throws FinderException;
+
+	public Collection<ICPage> findAllTemplatesWithWebDavUri() throws FinderException;
+	
 }
