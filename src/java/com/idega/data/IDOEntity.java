@@ -11,6 +11,8 @@ package com.idega.data;
 
 import java.util.Collection;
 
+import javax.ejb.EJBLocalObject;
+
 /**
  * <p>
  * This is the main super-interface for Entities for the IDO (Idega Data
@@ -26,7 +28,7 @@ import java.util.Collection;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.17 $
  */
-public interface IDOEntity extends javax.ejb.EJBLocalObject, Comparable {
+public interface IDOEntity extends EJBLocalObject, Comparable<IDOEntity> {
 
 	/**
 	 * <p>
@@ -39,9 +41,9 @@ public interface IDOEntity extends javax.ejb.EJBLocalObject, Comparable {
 
 	public IDOEntityDefinition getEntityDefinition();
 
-	public Object decode(String pkString);
+	public Integer decode(String pkString);
 
-	public Collection decode(String[] pkString);
+	public Collection<Integer> decode(String[] pkString);
 
 	public String getDatasource();
 

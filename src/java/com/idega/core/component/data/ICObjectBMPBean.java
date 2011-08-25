@@ -20,6 +20,8 @@ import java.util.Vector;
 import javax.ejb.FinderException;
 
 import com.idega.core.file.data.ICFile;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -49,11 +51,10 @@ import com.idega.repository.data.RefactorClassRegistry;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.25 $
  */
-public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICObject {
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+public class ICObjectBMPBean extends GenericEntity implements ICObject {
+	
 	private static final long serialVersionUID = -7531187796468485951L;
+	
 	public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
 	public static final String COMPONENT_TYPE_BLOCK = "iw.block";
 	public static final String COMPONENT_TYPE_APPLICATION = "iw.application";
@@ -554,11 +555,9 @@ public class ICObjectBMPBean extends com.idega.data.GenericEntity implements ICO
 	{
 		return ejbFindAllByObjectType(COMPONENT_TYPE_ELEMENT);
 	}
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
+	
 	@Override
-	public int compareTo(Object obj) {
+	public int compareTo(IDOEntity obj) {
 		if (obj instanceof ICObject) {
 			return Collator.getInstance().compare(this.getName(), ((ICObject)obj).getName());
 		}

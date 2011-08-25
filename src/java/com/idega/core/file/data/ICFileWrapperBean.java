@@ -14,7 +14,9 @@ import java.sql.Timestamp;
 import java.text.Collator;
 import java.util.Collection;
 import java.util.Locale;
+
 import javax.ejb.FinderException;
+
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.data.BlobWrapper;
 import com.idega.data.IDOAddRelationshipException;
@@ -36,6 +38,8 @@ import com.idega.user.data.User;
  * @version		1.0
  */
 public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
+
+	private static final long serialVersionUID = -6927389169887750294L;
 
 	/**
 	 * @param locale
@@ -371,9 +375,8 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 		return ((ICFile)this.getMainEntity()).isFolder();
 	}
 
-	public int compareTo(Object obj) {
+	public int compareTo(IDOEntity entity) {
 		try {
-			IDOEntity entity = (IDOEntity) obj;
 			Collator coll = null;
 			if (getLocale() != null) {
 				coll = Collator.getInstance(getLocale());

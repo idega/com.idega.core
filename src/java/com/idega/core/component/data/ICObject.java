@@ -1,11 +1,13 @@
 package com.idega.core.component.data;
 
 
-import com.idega.idegaweb.IWBundle;
+import javax.faces.component.UIComponent;
+
+import com.idega.data.IDOEntity;
 import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.PresentationObject;
-import com.idega.data.IDOEntity;
 
 public interface ICObject extends IDOEntity {
 
@@ -72,12 +74,12 @@ public interface ICObject extends IDOEntity {
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getObjectClass
 	 */
-	public Class getObjectClass() throws ClassNotFoundException;
+	public Class<? extends UIComponent> getObjectClass() throws ClassNotFoundException;
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#setObjectClass
 	 */
-	public void setObjectClass(Class c);
+	public void setObjectClass(Class<? extends UIComponent> c);
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getNewInstance
@@ -113,11 +115,6 @@ public interface ICObject extends IDOEntity {
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getBundle
 	 */
 	public IWBundle getBundle(IWMainApplication iwma) throws IWBundleDoesNotExist;
-
-	/**
-	 * @see com.idega.core.component.data.ICObjectBMPBean#compareTo
-	 */
-	public int compareTo(Object obj);
 
 	/**
 	 * @see com.idega.core.component.data.ICObjectBMPBean#getID

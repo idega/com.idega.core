@@ -316,7 +316,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @see com.idega.data.GenericEntity#toString()
 	 */
-	public Object decode(String pkString) {
+	public Integer decode(String pkString) {
 		return Integer.decode(pkString);
 	}
 
@@ -326,8 +326,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @see com.idega.data.GenericEntity#toString()
 	 */
-	public Collection decode(String[] primaryKeys) {
-		Collection c = new ArrayList();
+	public Collection<Integer> decode(String[] primaryKeys) {
+		Collection<Integer> c = new ArrayList<Integer>();
 		for (int i = 0; i < primaryKeys.length; i++) {
 			c.add(decode(primaryKeys[i]));
 		}
@@ -3183,19 +3183,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
-	public int compareTo(Object obj) {
-		try {
-			return compareTo((IDOEntity) obj);
-		}
-		catch (ClassCastException e) {
-			// the user is comparing apples to oranges of course they are not equal
-			// and this is an error too!
-			e.printStackTrace();
-			return 0;
-		}
-	}
-
-	protected int compareTo(IDOEntity entity) {
+	public int compareTo(IDOEntity entity) {
 		Collator coll = Collator.getInstance();
 		return coll.compare(this.getPrimaryKey().toString(), entity.getPrimaryKey().toString());
 	}
