@@ -136,7 +136,7 @@ public class WebUtil extends DefaultSpringBean {
     private Boolean latestNavigationUsed = Boolean.TRUE;
     
     public Boolean isLatestNavigationUsed() {
-    	latestNavigationUsed = getApplication().getSettings().getBoolean("html5_navigation", latestNavigationUsed);
+    	latestNavigationUsed = getApplication().getSettings().getBoolean("html5_navigation", Boolean.FALSE);
     	return latestNavigationUsed;
     }
 }
