@@ -11,12 +11,19 @@ package com.idega.presentation.text;
 
 import java.util.Iterator;
 import java.util.List;
+
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
+import com.idega.util.WebUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
@@ -42,6 +49,7 @@ public class Lists extends PresentationObjectContainer {
 	private boolean compact = false;
 	private boolean ordered = false;
 	
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
@@ -49,6 +57,7 @@ public class Lists extends PresentationObjectContainer {
 		values[2] = Boolean.valueOf(this.ordered);
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -65,6 +74,7 @@ public class Lists extends PresentationObjectContainer {
 	 * @deprecated replaced with setStyleClass
 	 * @param sClass the Styleclass
 	 */
+	@Deprecated
 	public void setClass(String sClass) {
 		//setMarkupAttribute("class", s);
 		super.setStyleClass(sClass);
@@ -73,6 +83,7 @@ public class Lists extends PresentationObjectContainer {
 	 * @deprecated replaced with setStyleAttribute
 	 * @param sClass the Styleclass
 	 */
+	@Deprecated
 	public void setStyle(String styleAttribute) {
 		//setMarkupAttribute("style", s);
 		super.setStyleAttribute(styleAttribute);
@@ -134,28 +145,47 @@ public class Lists extends PresentationObjectContainer {
 		}
 	}
 
+	private Boolean modernNavigation;
+	
+	public Boolean getModernNavigation() {
+		return modernNavigation;
+	}
+	public void setModernNavigation(Boolean modernNavigation) {
+		this.modernNavigation = modernNavigation;
+	}
+
+	@Autowired
+	private WebUtil webUtil;
+	
+	private WebUtil getWebUtil() {
+		if (webUtil == null)
+			ELUtil.getInstance().autowire(this);
+		return webUtil;
+	}
+	
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		initializeBulletImage();
 
+		if (modernNavigation == null)
+			modernNavigation = getWebUtil().isLatestNavigationUsed();
+		if (modernNavigation)
+			println("<nav>");
+			
 		if (getMarkupLanguage().equals("HTML")) {
 			if (!this.compact) {
 				println("<" + getListType() + " " + getMarkupAttributesString() + ">");
 			}
 
-			List theObjects = this.getChildren();
+			List<UIComponent> theObjects = this.getChildren();
 			if (theObjects != null) {
-				Iterator iter = theObjects.iterator();
-				while (iter.hasNext()) {
+				for (Iterator<UIComponent> iter = theObjects.iterator(); iter.hasNext();) {
 					PresentationObject item = (PresentationObject) iter.next();
 					if (item instanceof Lists) {
-						//item._print(iwc);
 						renderChild(iwc,item);
-					}
-					else if (item instanceof ListItem) {
-						//item._print(iwc);
+					} else if (item instanceof ListItem) {
 						renderChild(iwc,item);
-					}
-					else {
+					} else {
 						if (this.compact) {
 							StringBuffer buffer = new StringBuffer();
 							buffer.append("<li");
@@ -173,7 +203,6 @@ public class Lists extends PresentationObjectContainer {
 						else {
 							print("<li>");
 						}
-						//item._print(iwc);
 						renderChild(iwc,item);
 						println("</li>");
 					}
@@ -182,12 +211,14 @@ public class Lists extends PresentationObjectContainer {
 			if (!this.compact) {
 				println("</" + getListType() + ">");
 			}
-		}
-		else if (getMarkupLanguage().equals("WML")) {
+		} else if (getMarkupLanguage().equals("WML")) {
 			println("<ul>");
 			super.print(iwc);
 			println("</ul>");
 		}
+		
+		if (modernNavigation)
+			println("</nav>");
 	}
 	
 	/**
