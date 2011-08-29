@@ -2,6 +2,7 @@ package com.idega.core.persistence.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.logging.Level;
@@ -25,44 +26,45 @@ import com.idega.util.ListUtil;
 @Service
 @Scope("singleton")
 public class DaoFunctionsImpl implements DaoFunctions {
-	
+
 	private static final Logger logger = Logger
 	        .getLogger(DaoFunctionsImpl.class.getName());
-	
+
 	private static final List<Class<?>> IMPLEMENTED_CONVERTERS = Collections
 	        .unmodifiableList(Arrays.asList(new Class<?>[] { Long.class,
 	                Integer.class, Float.class, Byte.class, Double.class,
 	                Short.class }));
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	public <Expected> List<Expected> getResultListByQuery(Query q,
 	        Class<Expected> expectedReturnType, Param... params) {
-		
+
 		if (params != null)
 			for (Param param : params) {
-				
+
 				q.setParameter(param.getParamName(), param.getParamValue());
 			}
-		
+
 		final List<Expected> fresult;
-		
+
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
 			fresult = getRealResults(q.getResultList(), expectedReturnType);
 		} else {
 			fresult = q.getResultList();
 		}
-		
+
 		return fresult;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private <Exptected> List<Exptected> getRealResults(List<Object> results,
 	        Class<Exptected> expectedReturnType) {
 		if (ListUtil.isEmpty(results)) {
 			return null;
 		}
-		
+
 		List<Exptected> realResults = new ArrayList<Exptected>();
 		for (Object result : results) {
 			if (expectedReturnType.isInstance(result)) {
@@ -100,22 +102,46 @@ public class DaoFunctionsImpl implements DaoFunctions {
 				        + ": such converter is not implemented yet!");
 			}
 		}
-		
+
 		return ListUtil.isEmpty(realResults) ? null : realResults;
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
 	public <Expected> Expected getSingleResultByQuery(Query q,
 	        Class<Expected> expectedReturnType, Param... params) {
-		
+
 		for (Param param : params) {
-			
+
 			q.setParameter(param.getParamName(), param.getParamValue());
 		}
-		
+
 		@SuppressWarnings("unchecked")
 		Expected result = (Expected) q.getSingleResult();
-		
+
 		return result;
+	}
+
+	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
+	@Override
+	public <Expected> List<Expected> getResultListByQuery(Query q,
+			Class<Expected> expectedReturnType, Collection<Param> params) {
+
+		if (params != null)
+			for (Param param : params) {
+
+				q.setParameter(param.getParamName(), param.getParamValue());
+			}
+
+		final List<Expected> fresult;
+
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
+			fresult = getRealResults(q.getResultList(), expectedReturnType);
+		} else {
+			fresult = q.getResultList();
+		}
+
+		return fresult;
 	}
 }
