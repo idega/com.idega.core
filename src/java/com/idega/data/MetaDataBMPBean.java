@@ -33,10 +33,8 @@ import com.idega.data.query.Table;
  */
 public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com.idega.data.MetaData {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = 6936023370927884237L;
+
 	public static final String COLUMN_META_KEY ="METADATA_NAME";
 	public static final String COLUMN_META_VALUE = "METADATA_VALUE";
 	public static final String COLUMN_META_TYPE = "META_DATA_TYPE";
@@ -124,7 +122,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 	}
 	
 	@SuppressWarnings("unchecked")
-	public Collection<Integer> ejbFindAllByMetaDataNameAndType(String name, String type) throws FinderException {
+	public Collection<Object> ejbFindAllByMetaDataNameAndType(String name, String type) throws FinderException {
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(new Column(table, getIDColumnName()));
@@ -135,7 +133,6 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		return this.idoFindPKsByQuery(query);
 	}
 	
-	@SuppressWarnings("unchecked")
 	public Object ejbFindByMetaDataNameAndValueAndType(String name, String value, String type) throws FinderException {
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);

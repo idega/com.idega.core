@@ -8,6 +8,8 @@ import java.util.List;
 
 import javax.ejb.FinderException;
 
+import com.idega.data.IDOEntity;
+
 
 /**
  * <p>
@@ -21,13 +23,15 @@ import javax.ejb.FinderException;
 
 public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome {
 	
- @Override
-protected Class<ICPage> getEntityInterfaceClass(){
+	private static final long serialVersionUID = -8153685941087501095L;
+
+	@Override
+ protected Class<ICPage> getEntityInterfaceClass(){
   return ICPage.class;
  }
 
  public ICPage create() throws javax.ejb.CreateException{
-  return (ICPage) super.idoCreate();
+  return (ICPage) super.createIDO();
  }
 
  public ICPage createLegacy(){
@@ -145,6 +149,14 @@ protected Class<ICPage> getEntityInterfaceClass(){
         Integer pk  = ((ICPageBMPBean)entity).ejbFindByWebDavUri(webDavUri);
     	this.idoCheckInPooledEntity(entity);
     	return this.findByPrimaryKey(pk);
+	}
+
+	@Override
+	public Collection<ICPage> findAllTemplatesWithWebDavUri() throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+        Collection<?> ids = ((ICPageBMPBean)entity).ejbFindAllTemplatesWithWebDavUri();
+    	this.idoCheckInPooledEntity(entity);
+    	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 	
 }

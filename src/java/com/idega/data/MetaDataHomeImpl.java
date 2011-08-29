@@ -48,10 +48,9 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
 
  }
 
-	@SuppressWarnings("unchecked")
-	public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException {
+ 	public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
-		Collection<?> ids = ((MetaDataBMPBean) entity).ejbFindAllByMetaDataNameAndType(name, type);
+		Collection<Object> ids = ((MetaDataBMPBean) entity).ejbFindAllByMetaDataNameAndType(name, type);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}

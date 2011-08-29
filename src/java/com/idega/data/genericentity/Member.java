@@ -1,9 +1,9 @@
 package com.idega.data.genericentity;
 
+import com.idega.data.IDOLegacyEntity;
 
-public interface Member extends com.idega.data.IDOLegacyEntity,java.lang.Comparable
-{
- public int compareTo(java.lang.Object p0);
+
+public interface Member extends IDOLegacyEntity {
  public int getAge();
  public java.util.List getAllGroups()throws java.sql.SQLException;
  public java.sql.Date getDateOfBirth();

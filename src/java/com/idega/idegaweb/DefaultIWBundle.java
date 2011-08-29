@@ -230,7 +230,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			for (Iterator<ICObject> iter = entities.iterator(); iter.hasNext();) {
 				ICObject ico = iter.next();
 				try {
-					@SuppressWarnings("unchecked")
 					Class<? extends UIComponent> c = ico.getObjectClass();
 					IDOLookup.instanciateEntity(c);
 				} catch (ClassNotFoundException e) {
@@ -267,7 +266,6 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 			for (Iterator<ICObject> iter = objects.iterator(); iter.hasNext();) {
 				ICObject ico = iter.next();
 				try {
-					@SuppressWarnings("unchecked")
 					Class<? extends UIComponent> c = ico.getObjectClass();
 					registerBlockPermissionKeys(c);
 				} catch (ClassNotFoundException e) {
@@ -1094,7 +1092,9 @@ public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
 				if (classIsRefactored) {
 					if (registry.getComponentByClassName(className) == null) {
 						try {
-							ico.setObjectClass(Class.forName(newRefactoredClassName));
+							@SuppressWarnings("unchecked")
+							Class<UIComponent> objectClass = (Class<UIComponent>) Class.forName(newRefactoredClassName);
+							ico.setObjectClass(objectClass);
 							ico.store();
 						} catch (Exception e) {
 							LOGGER.log(Level.WARNING, "Error registering component: " + newRefactoredClassName, e);
