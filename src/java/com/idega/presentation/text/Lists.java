@@ -69,6 +69,12 @@ public class Lists extends PresentationObjectContainer {
 		super();
 		setTransient(false);
 	}
+	
+	public Lists(Boolean modernNavigation) {
+		this();
+		
+		setModernNavigation(modernNavigation);
+	}
 
 	/**
 	 * @deprecated replaced with setStyleClass
