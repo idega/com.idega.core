@@ -13,7 +13,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -121,7 +120,7 @@ private Element _element = null;
   public List getChildren() {
     if (this._element != null) {
       List li = this._element.getChildren();
-      Vector res = new Vector();
+      ArrayList res = new ArrayList();
       Iterator it = li.iterator();
 
       while (it.hasNext()) {
@@ -141,7 +140,7 @@ private Element _element = null;
   public List getAttributes() {
     if (this._element != null) {
       List li = this._element.getAttributes();
-      Vector res = new Vector();
+      ArrayList res = new ArrayList();
       Iterator it = li.iterator();
 
       while (it.hasNext()) {
@@ -240,7 +239,7 @@ private Element _element = null;
   public List getChildren(String name) {
     if (this._element != null) {
       List li = this._element.getChildren(name);
-      Vector res = new Vector();
+      ArrayList res = new ArrayList();
       Iterator it = li.iterator();
 
       while (it.hasNext()) {
@@ -258,7 +257,7 @@ private Element _element = null;
   public List <XMLElement> getChildren(String name, XMLNamespace namespace ) {
 	    if (this._element != null) {
 	      List li = this._element.getChildren(name, (Namespace)namespace.getNamespace());
-	      Vector res = new Vector();
+	      ArrayList res = new ArrayList();
 	      Iterator it = li.iterator();
 
 	      while (it.hasNext()) {
@@ -359,7 +358,7 @@ private Element _element = null;
 			return null;
 		}
 
-		List ret = new Vector();
+		List ret = new ArrayList();
 		List li = this._element.getContent();
 		Iterator it = li.iterator();
 		while (it.hasNext()) {
@@ -430,7 +429,7 @@ private Element _element = null;
     if (this._element != null) {
       if (children != null) {
         Iterator it = children.iterator();
-        Vector res = new Vector();
+        ArrayList res = new ArrayList();
         while (it.hasNext()) {
           XMLElement xmlel = (XMLElement)it.next();
           Element el = (Element)xmlel.getElement();
