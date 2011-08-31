@@ -84,7 +84,7 @@ public abstract class DefaultSpringBean {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 			locale = loginSession.getCurrentLocale();
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting current locale", e);
+			LOGGER.log(Level.WARNING, "Error getting current locale");
 		}
 		
 		if (locale == null) {
@@ -105,7 +105,7 @@ public abstract class DefaultSpringBean {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 			user = loginSession.getUser();
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting current user", e);
+			LOGGER.log(Level.WARNING, "Error getting current user");
 		}
 		
 		if (user == null) {
