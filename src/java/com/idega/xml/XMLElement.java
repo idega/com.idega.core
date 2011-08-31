@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.jdom.Attribute;
 import org.jdom.CDATA;
 import org.jdom.Element;
@@ -154,7 +155,7 @@ private Element _element = null;
 
     return(null);
   }
-  
+
   public String getAttributeValue(String name) {
   	XMLAttribute attribute = getAttribute(name);
   	if (attribute == null) {
@@ -189,15 +190,15 @@ private Element _element = null;
     if (this._element != null) {
 			return(this._element.getTextTrim());
 		}
-      
+
     return(null);
   }
-  
+
   public String getTextTrim(String name) {
   	XMLElement element  = this.getChild(name);
   	return (element == null) ? null : element.getTextTrim();
   }
-  
+
   public String getText(String name) {
   	XMLElement element = this.getChild(name);
   	return (element == null) ? null : element.getText();
@@ -214,6 +215,7 @@ private Element _element = null;
   public List getChildrenRecursive(final String name) {
   	if (this._element != null) {
   		Filter filter = new Filter() {
+			@Override
 			public boolean matches(Object object) {
 				if (object instanceof Element) {
 					String elementName = ((Element) object).getName();
@@ -233,8 +235,8 @@ private Element _element = null;
   	}
   	return null;
   }
-  
-  
+
+
   public List getChildren(String name) {
     if (this._element != null) {
       List li = this._element.getChildren(name);
@@ -251,6 +253,24 @@ private Element _element = null;
     }
 
     return(null);
+  }
+
+  public List <XMLElement> getChildren(String name, XMLNamespace namespace ) {
+	    if (this._element != null) {
+	      List li = this._element.getChildren(name, (Namespace)namespace.getNamespace());
+	      Vector res = new Vector();
+	      Iterator it = li.iterator();
+
+	      while (it.hasNext()) {
+	        Element el = (Element)it.next();
+	        XMLElement xmlel = new XMLElement(el);
+	        res.add(xmlel);
+	      }
+
+	      return(res);
+	    }
+
+	    return(null);
   }
 
   public boolean removeContent(XMLElement element) {
@@ -279,15 +299,15 @@ private Element _element = null;
 
     return this;
   }
-  
+
   public XMLElement addContent(XMLCDATA data) {
   	if (this._element != null) {
 			this._element.addContent(data.getContentData());
 		}
-  		
+
   	return this;
   }
-  
+
   /** sets the content of the first child or creates a child if no child exists
    * @author thomas
    */
@@ -300,8 +320,8 @@ private Element _element = null;
   	child.setText(value);
   	return this;
   }
-  		
-  /** adds a child with the specified value 
+
+  /** adds a child with the specified value
    * @author Thomas
    */
   public XMLElement addContent(String name, String value) {
@@ -309,13 +329,13 @@ private Element _element = null;
   	element.addContent(value);
   	return addContent(element);
   }
-  
+
   /**
    * A method that returns the first instance of CDATA that exists in this Element.
    * Return null if none is found. Should rather use getContent and check for
-   * all CDATA content. 
-   * 
-   * @return The first CDATA instance in the content for this Element, null otherwise. 
+   * all CDATA content.
+   *
+   * @return The first CDATA instance in the content for this Element, null otherwise.
    */
   public XMLCDATA getXMLCDATAContent() {
   	if (this._element == null) {
@@ -327,18 +347,18 @@ private Element _element = null;
 		while (it.hasNext()) {
 			Object obj = it.next();
 			if (obj instanceof CDATA) {
-				return new XMLCDATA((CDATA)obj);	
+				return new XMLCDATA((CDATA)obj);
 			}
-		}  	
-		
+		}
+
 		return null;
   }
-  
+
   public List getContent() {
   	if (this._element == null) {
 			return null;
 		}
-  		
+
 		List ret = new Vector();
 		List li = this._element.getContent();
 		Iterator it = li.iterator();
@@ -354,10 +374,10 @@ private Element _element = null;
 			}
 			else if (obj instanceof Text) {
 				String text = ((Text)obj).getText();
-				ret.add(text);				
+				ret.add(text);
 			}
 		}
-		
+
 		return ret;
   }
 
@@ -394,7 +414,7 @@ private Element _element = null;
     }
     return(false);
   }
-  
+
   public boolean removeParent() {
 	if (this._element != null) {
 		Element parent = this._element.getParentElement();
@@ -405,7 +425,7 @@ private Element _element = null;
 	}
 	return(false);
   }
-  
+
   public XMLElement setChildren(List children) {
     if (this._element != null) {
       if (children != null) {
@@ -426,7 +446,8 @@ private Element _element = null;
     return this;
   }
 
-  public synchronized Object clone() {
+  @Override
+public synchronized Object clone() {
     if (this._element == null) {
 			return(null);
 		}
@@ -435,7 +456,7 @@ private Element _element = null;
     XMLElement element = new XMLElement(el);
     return element;
   }
-  
+
   /**
    * Returns parent, or null if this element is currently not attached to another element.
    * @author Thomas
@@ -447,31 +468,34 @@ private Element _element = null;
   	Element parent = this._element.getParentElement();
   	return (parent == null) ? null : new XMLElement(parent);
   }
-  
+
   /** Returns an iterator of all children (recursive) of this element.
    * 	 The order of the returned elements corresponds to the result of a breadth first search.
    * @author Thomas
    */
   public Iterator allChildrenBreadthFirstIterator() {
   	return new Iterator() {
-  		
+
   		private Iterator iterator = null;
-  		
-  		public Object next() {
+
+  		@Override
+		public Object next() {
   			checkInitialization();
   			return this.iterator.next();
   		}
-  		
-  		public boolean hasNext() {
+
+  		@Override
+		public boolean hasNext() {
   			checkInitialization();
   			return this.iterator.hasNext();
   		}
-  		
-  		public void remove() {
+
+  		@Override
+		public void remove() {
   			checkInitialization();
   			this.iterator.remove();
   		}
- 
+
 			private void checkInitialization() {
   			 if (this.iterator == null) {
   			 	List allChildren = new ArrayList();
@@ -479,8 +503,8 @@ private Element _element = null;
   			 	this.iterator = allChildren.iterator();
   			 }
   		}
-  			 	
-				
+
+
 			private void collectChildrenBreadthFirstMethod(XMLElement element, List allChildren) {
 					// breadth first search
   				allChildren.add(element);
@@ -493,7 +517,7 @@ private Element _element = null;
   			}
   	};
   }
-  
+
   /**do not remove that method even if it is not used at the moment - it's so hard to find that method.
    * Use this method to get really rid of the parent of an element.
    * @author Thomas
@@ -504,15 +528,15 @@ private Element _element = null;
   	}
   	return null;
   }
-  
+
   public void setName(String newName) {
   	this._element.setName(newName);
   }
-  
+
   public void addNamespaceDeclaration(XMLNamespace namespace){
   	this._element.addNamespaceDeclaration((Namespace)namespace.getNamespace());
   }
-		
+
   /**
    * <p>
    * Gets the textual contents of this element without xml tags.
@@ -523,7 +547,7 @@ private Element _element = null;
   public String getValue(){
 	  return this._element.getValue();
   }
-  
+
   /**
    * <p>
    * Gets the contents (child elements and text) of this element as a String
@@ -553,7 +577,7 @@ private Element _element = null;
 	  matcher.appendTail(ret);
 	  xmlString = ret.toString();
 	  ret = new StringBuffer();
-	  
+
 
 	  matcher = endPattern.matcher(xmlString);
 	  if(matcher.find()){
