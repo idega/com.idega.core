@@ -147,5 +147,9 @@ public class CoreConstants {
 	public static final String EMAIL_DEFAULT_FROM = "staff@idega.is",
 								EMAIL_DEFAULT_HOST = "smtp.emailsrvr.com";
 
-	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration";
+	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration",
+	
+								PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
+								PAGE_VIEW_TYPE_REGULAR = "regular",
+								PAGE_VIEW_TYPE_MOBILE = "mobile";
 }
