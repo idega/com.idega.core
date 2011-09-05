@@ -139,4 +139,18 @@ public class WebUtil extends DefaultSpringBean {
     	latestNavigationUsed = getApplication().getSettings().getBoolean("html5_navigation", Boolean.FALSE);
     	return latestNavigationUsed;
     }
+    
+    public Boolean isLoggedIn() {
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null)
+    		return Boolean.FALSE;
+    	
+    	try {
+    		return iwc.isLoggedOn();
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error while checking if user is logged in", e);
+    	}
+    	
+    	return Boolean.FALSE;
+    }
 }
