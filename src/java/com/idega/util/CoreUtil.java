@@ -268,4 +268,8 @@ public class CoreUtil {
 	public static final boolean isSQLMeasurementOn() {
 		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_sql_queries", Boolean.FALSE);
 	}
+	
+	public static final boolean isMobileClient(IWContext iwc) {
+		return CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(iwc.getSessionAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE));
+	}
 }
