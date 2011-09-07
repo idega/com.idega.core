@@ -43,4 +43,9 @@ public class Item implements Serializable {
 	public void setItemValue(String itemValue) {
 		this.itemValue = itemValue;
 	}
+	
+	@Override
+	public String toString() {
+		return getItemValue() + " " + getItemLabel();
+	}
 }
