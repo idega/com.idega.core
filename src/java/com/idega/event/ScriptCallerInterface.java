@@ -10,8 +10,13 @@ import com.idega.business.SpringBeanName;
  * @author aleksandras10
  *
  */
-@SpringBeanName("scriptCallerInterface")
+@SpringBeanName(ScriptCallerInterface.BEAN_NAME)
 public interface ScriptCallerInterface {
+	
+	public static final String BEAN_NAME = "scriptCallerInterface";
+	
+	public void executeScript(String httpSessionId, String script);
+	
 	/**Script should be set if calling this method.
 	 * It sends script to execute in browser.
 	 */
