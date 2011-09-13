@@ -38,7 +38,7 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 					//	Redirect
 					ScriptCallerInterface scriptCaller = getScriptCaller();
 					if (scriptCaller != null) {
-						scriptCaller.setScript("window.location.pathname = \"/pages\"");
+						scriptCaller.setScript("window.location.pathname = '/pages/';");
 						scriptCaller.setSessionId(destroyedSession.getId());
 						scriptCaller.run();
 					}
