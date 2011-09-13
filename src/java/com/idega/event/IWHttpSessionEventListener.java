@@ -28,23 +28,31 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
 
-		LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
-
-		//redirecting only if property set, and user is logged on
-		if(IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("redirect_when_session_timeout", Boolean.FALSE) &&
-				(loginSession != null) && (loginSession.getUser() != null)){
-
-			//if session is time out redirect user to /pages
-			if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
-				//redirect
-				this.scriptCaller.setScript("window.location.pathname = \"/pages\"");
-				this.scriptCaller.setSessionId(destroyedSession.getId());
-				this.scriptCaller.run();
+		//	Redirecting only if property set
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("redirect_when_session_timeout", Boolean.FALSE)) {
+			LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
+			//	Checking if user were logged in
+			if (loginSession != null && loginSession.getUser() != null) {
+				//	If session is time out redirect user to /pages
+				if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
+					//	Redirect
+					ScriptCallerInterface scriptCaller = getScriptCaller();
+					if (scriptCaller != null) {
+						scriptCaller.setScript("window.location.pathname = \"/pages\"");
+						scriptCaller.setSessionId(destroyedSession.getId());
+						scriptCaller.run();
+					}
+				}
 			}
-
 		}
-
+		
 		getSessionsManager().removeSession(destroyedSession.getId());
+	}
+	
+	private ScriptCallerInterface getScriptCaller() {
+		if (scriptCaller == null)
+			ELUtil.getInstance().autowire(this);
+		return scriptCaller;
 	}
 
 	public IWHttpSessionsManager getSessionsManager() {
