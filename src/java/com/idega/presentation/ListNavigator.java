@@ -159,6 +159,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		menu.addMenuElement(10, "10 " + this.dropdownEntryName);
 		menu.addMenuElement(20, "20 " + this.dropdownEntryName);
 		menu.addMenuElement(50, "50 " + this.dropdownEntryName);
+		menu.addMenuElement(100, "100 " + this.dropdownEntryName);
 		menu.setSelectedElement(getNumberOfEntriesPerPage(iwc));
 		if (dropdownFunction != null) {
 			menu.getId();
