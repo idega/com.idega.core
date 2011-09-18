@@ -1930,6 +1930,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		this.idoAddTo(address);
 	}
 
+	@Override
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 
@@ -1955,6 +1956,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoGetRelatedEntitiesBySQL(Address.class, query.toString());
 	}
 
+	@Override
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
@@ -1965,6 +1967,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
+	@Override
 	public Collection getPhones(String phoneTypeID) {
 		try {
 			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
@@ -1975,6 +1978,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
+	@Override
 	public Collection getEmails() {
 		try {
 			return super.idoGetRelatedEntities(Email.class);
@@ -1985,14 +1989,17 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
+	@Override
 	public void addEmail(Email email) throws IDOAddRelationshipException {
 		this.idoAddTo(email);
 	}
 
+	@Override
 	public void addPhone(Phone phone) throws IDOAddRelationshipException {
 		this.idoAddTo(phone);
 	}
 
+	@Override
 	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException {
 		int groupId = this.getGroupIDFromGroup(entityToRemoveFrom);
 		if ((groupId == -1) || (groupId == 0)) {
@@ -2014,10 +2021,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
+	@Override
 	public void removeGroup(User currentUser) throws EJBException {
 		this.removeGroup(-1, currentUser, true);
 	}
 
+	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
 		try {
 			Collection rels = null;
@@ -2038,6 +2047,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
+	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException {
 		removeGroup(relatedGroupId, currentUser, AllEntries, IWTimestamp.getTimestampRightNow());
 	}
@@ -2065,10 +2075,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Integer) this.idoFindOnePKBySQL(sql);
 	}
 
+	@Override
 	public SelectQuery getSelectQueryConstraints() {
 		return null;
 	}
 
+	@Override
 	public String getId(){
 		return getPrimaryKey().toString();
 	}
@@ -2080,12 +2092,60 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoFindPKsByQuery(query);
 	}
 
+	@Override
 	public void setModerator(User moderator){
 		setColumn(COLUMN_GROUP_MODERATOR_ID, moderator);
 	}
 
+	@Override
 	public User getModerator(){
 		return (User) getColumnValue(COLUMN_GROUP_MODERATOR_ID);
+	}
+
+
+	/**
+	 * Gets groups by criterias mentioned above and orders by them descending
+	 * <br/>Criterias: 			<br/>
+	 * <ul>
+	 * 		<li>Groups amount in group.</li>
+	 * 		<li>Users amount in group.</li>
+	 * </ul>
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Integer> getMostPopularGroups(Collection<String> types,int amount) throws FinderException{
+//		something like this:
+//			SELECT r.IC_GROUP_ID, count(*) num FROM IC_GROUP_RELATION r WHERE (r.RELATIONSHIP_TYPE = 'GROUP_PARENT')
+//			AND (r.RELATED_GROUP_TYPE IN ('social', 'ic_user_representative'))
+//			GROUP BY r.IC_GROUP_ID ORDER BY num DESC
+
+		IDOQuery query = idoQuery("SELECT r.IC_GROUP_ID, count(*) num FROM ").append(GroupRelationBMPBean.TABLE_NAME)
+				.append(" r WHERE (r.").append(GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN).append(" = 'GROUP_PARENT')");
+
+		if(!ListUtil.isEmpty(types)){
+			StringBuilder typeStrings = new StringBuilder("'");
+			Iterator <String> iter = types.iterator();
+			for(;true;){
+				String type = iter.next();
+				typeStrings.append(type);
+				if(iter.hasNext()){
+					typeStrings.append(CoreConstants.JS_STR_PARAM_SEPARATOR);
+				}else{
+					typeStrings.append("', 'ic_user_representative'");
+					break;
+				}
+			}
+			query.append(" AND (r.").append(GroupRelationBMPBean.RELATED_GROUP_TYPE_COLUMN).append(" IN (").append(typeStrings).append("))");
+		}
+
+		query.append(" GROUP BY r.").append(GroupRelationBMPBean.GROUP_ID_COLUMN).append(" ORDER BY num DESC");
+
+		if(amount > 0){
+			return this.idoFindPKsByQuery(query, amount);
+		}
+
+		return this.idoFindPKsByQuery(query);
 	}
 
 } // Class Group

@@ -193,4 +193,18 @@ public interface GroupHome extends IDOHome {
 	public Group findBoardGroupByClubIDAndLeagueID(Integer clubID, Integer leagueID) throws FinderException;
 
 	public Collection<Group> findAllByNamePhrase(String phrase, Locale locale) throws FinderException;
+
+	/**
+	 * Gets groups by criterias mentioned above and orders by them descending
+	 * <br/>Criterias: 			<br/>
+	 * <ul>
+	 * 		<li>Groups amount in group.</li>
+	 * 		<li>Users amount in group.</li>
+	 * </ul>
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getMostPopularGroups(Collection<String> types,int amount) throws FinderException;
+
 }
