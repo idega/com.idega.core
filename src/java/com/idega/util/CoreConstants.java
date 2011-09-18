@@ -56,6 +56,7 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_SMTP_PASSWORD = MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD;
 	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION;
 	public static final String PROP_SYSTEM_ACCOUNT = "mail_user_account";
+	public static final String PROP_SYSTEM_MAIL_HOST = "mail_host";
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
