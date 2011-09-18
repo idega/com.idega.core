@@ -333,4 +333,13 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+
+	@Override
+	public Collection<Group> getMostPopularGroups(Collection<String> types,
+			int amount) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids  = ((GroupBMPBean) entity).getMostPopularGroups(types,amount);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }

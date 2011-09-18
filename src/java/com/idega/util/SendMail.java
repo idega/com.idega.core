@@ -95,10 +95,10 @@ public class SendMail {
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
-		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.FALSE);
+		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.TRUE);
 		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.FALSE);
-		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, CoreConstants.EMPTY);
-		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, CoreConstants.EMPTY);
+		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "idegatest@idega.com");
+		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "pl4tf0rm");
 		String port = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
 		if (StringUtil.isEmpty(host)) {
 			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER);
