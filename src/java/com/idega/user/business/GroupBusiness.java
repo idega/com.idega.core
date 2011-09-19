@@ -692,4 +692,23 @@ public interface GroupBusiness extends IBOService {
 	 */
 	public Collection<Group> getMostPopularGroups(Collection <String> types,int amount);
 
+	/**
+	 * Gets groups and returns them ordered by modification date descendant
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroups(Collection <String> types,int amount);
+
+	/**Searches by:
+	 * 		name,
+	 * 		description
+	 * @param request the request by which result will be searched
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount);
+
+
 }

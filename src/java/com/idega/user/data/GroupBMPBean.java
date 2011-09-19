@@ -2116,12 +2116,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 */
 	public Collection<Integer> getMostPopularGroups(Collection<String> types,int amount) throws FinderException{
 //		something like this:
-//			SELECT r.IC_GROUP_ID, count(*) num FROM IC_GROUP_RELATION r WHERE (r.RELATIONSHIP_TYPE = 'GROUP_PARENT')
-//			AND (r.RELATED_GROUP_TYPE IN ('social', 'ic_user_representative'))
-//			GROUP BY r.IC_GROUP_ID ORDER BY num DESC
+//			SELECT r.IC_GROUP_ID, count(*) num FROM ic_group g, IC_GROUP_RELATION r WHERE (g.IC_GROUP_ID = r.IC_GROUP_ID)
+//			AND (r.RELATIONSHIP_TYPE = 'GROUP_PARENT') AND (g.GROUP_TYPE IN ('social', 'ic_user_representative')) GROUP BY
+//			r.IC_GROUP_ID ORDER BY num DESC
 
-		IDOQuery query = idoQuery("SELECT r.IC_GROUP_ID, count(*) num FROM ").append(GroupRelationBMPBean.TABLE_NAME)
-				.append(" r WHERE (r.").append(GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN).append(" = 'GROUP_PARENT')");
+		IDOQuery query = idoQuery("SELECT r.").append(GroupRelationBMPBean.GROUP_ID_COLUMN).append(", count(*) num FROM ")
+				.append(ENTITY_NAME).append(" g, ").append(GroupRelationBMPBean.TABLE_NAME).append(" r WHERE (g.")
+				.append(COLUMN_GROUP_ID).append(" = ").append("r.").append(GroupRelationBMPBean.GROUP_ID_COLUMN)
+				.append(") AND (r.").append(GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN).append(" = 'GROUP_PARENT')");
 
 		if(!ListUtil.isEmpty(types)){
 			StringBuilder typeStrings = new StringBuilder("'");
@@ -2136,7 +2138,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 					break;
 				}
 			}
-			query.append(" AND (r.").append(GroupRelationBMPBean.RELATED_GROUP_TYPE_COLUMN).append(" IN (").append(typeStrings).append("))");
+			query.append(" AND (g.").append(COLUMN_GROUP_TYPE).append(" IN (").append(typeStrings).append("))");
 		}
 
 		query.append(" GROUP BY r.").append(GroupRelationBMPBean.GROUP_ID_COLUMN).append(" ORDER BY num DESC");
@@ -2146,6 +2148,89 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 
 		return this.idoFindPKsByQuery(query);
+	}
+
+	/**
+	 * Gets groups and returns them ordered by modification date descendant
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Integer> getGroups(Collection<String> types,int amount) throws FinderException{
+
+		IDOQuery query = idoQuery("SELECT g.").append(COLUMN_GROUP_ID).append(" FROM ").append(GroupBMPBean.ENTITY_NAME).append(" g ");
+
+		if(!ListUtil.isEmpty(types)){
+			StringBuilder typeStrings = new StringBuilder("'");
+			Iterator <String> iter = types.iterator();
+			for(;true;){
+				String type = iter.next();
+				typeStrings.append(type);
+				if(iter.hasNext()){
+					typeStrings.append(CoreConstants.JS_STR_PARAM_SEPARATOR);
+				}else{
+					typeStrings.append(CoreConstants.QOUTE_SINGLE_MARK);
+					break;
+				}
+			}
+			query.append(" WHERE (g.").append(COLUMN_GROUP_TYPE).append(" IN (").append(typeStrings).append("))");
+		}
+
+		query.append(" ORDER BY g.").append(COLUMN_CREATED).append("  DESC");
+
+		if(amount > 0){
+			return this.idoFindPKsByQuery(query, amount);
+		}
+
+		return this.idoFindPKsByQuery(query);
+	}
+
+	/**Searches by:
+	 * 		name,
+	 * 		description
+	 * @param request the request by which result will be searched
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroupsBySearchRequest(String request,
+			Collection<String> types, int amount) throws FinderException {
+
+		if(!request.startsWith(CoreConstants.PERCENT)){
+			request = CoreConstants.PERCENT + request;
+		}
+		if(!request.endsWith(CoreConstants.PERCENT)){
+			request = request + CoreConstants.PERCENT;
+		}
+
+		IDOQuery query = idoQuery("SELECT g.").append(COLUMN_GROUP_ID).append(" FROM ").append(GroupBMPBean.ENTITY_NAME);
+
+		query.append(" g WHERE ").append("((g.").append(COLUMN_NAME).append(" LIKE '").append(request).append("') OR (g.").append(COLUMN_DESCRIPTION)
+				.append(" LIKE '").append(request).append("'))");
+		if(!ListUtil.isEmpty(types)){
+			StringBuilder typeStrings = new StringBuilder("'");
+			Iterator <String> iter = types.iterator();
+			for(;true;){
+				String type = iter.next();
+				typeStrings.append(type);
+				if(iter.hasNext()){
+					typeStrings.append(CoreConstants.JS_STR_PARAM_SEPARATOR);
+				}else{
+					typeStrings.append(CoreConstants.QOUTE_SINGLE_MARK);
+					break;
+				}
+			}
+			query.append(" AND (g.").append(COLUMN_GROUP_TYPE).append(" IN (").append(typeStrings).append("))");
+		}
+
+		query.append(" ORDER BY g.").append(COLUMN_CREATED).append("  DESC");
+
+		if(amount > 0){
+			return this.idoFindPKsByQuery(query, amount);
+		}
+
+		return this.idoFindPKsByQuery(query);
+
 	}
 
 } // Class Group
