@@ -1207,10 +1207,9 @@ IWCORE.insertRenderedComponent = function(component, options) {
 		}
 		
 		var parentContainer = null;
-		if (typeof(options.container) == 'string') {
+		if (typeof(options.container) == 'string' && options.container != '') {
 			parentContainer = jQuery('#' + options.container)
-		}
-		else {
+		} else {
 			parentContainer = jQuery(options.container);
 		}
 		if (parentContainer == null || parentContainer.length == 0) {
