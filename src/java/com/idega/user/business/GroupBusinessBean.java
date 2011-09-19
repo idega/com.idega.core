@@ -2833,6 +2833,29 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 	}
 
+	@Override
+	public Collection<Group> getGroups(Collection<String> types, int amount) {
+		try {
+			return this.getGroupHome().getGroups(types, amount);
+		}
+		catch (FinderException e) {
+			this.getLogger().log(Level.WARNING, "Failed getting most popular groups because of failed getting group home", e);
+			return ListUtil.getEmptyList();
+		}
+	}
+
+	@Override
+	public Collection<Group> getGroupsBySearchRequest(String request,
+			Collection<String> types, int amount) {
+		try {
+			return this.getGroupHome().getGroupsBySearchRequest(request,types, amount);
+		}
+		catch (FinderException e) {
+			this.getLogger().log(Level.WARNING, "Failed getting most popular groups because of failed getting group home", e);
+			return ListUtil.getEmptyList();
+		}
+	}
+
 
 } // Class
 

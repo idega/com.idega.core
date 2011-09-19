@@ -342,4 +342,22 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+
+	@Override
+	public Collection<Group> getGroups(Collection<String> types, int amount)
+			throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids  = ((GroupBMPBean) entity).getGroups(types,amount);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	@Override
+	public Collection<Group> getGroupsBySearchRequest(String request,
+			Collection<String> types, int amount) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids  = ((GroupBMPBean) entity).getGroupsBySearchRequest(request,types,amount);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
 }
