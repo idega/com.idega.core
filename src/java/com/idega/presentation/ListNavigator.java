@@ -193,14 +193,11 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	}
 	
 	public int getNumberOfEntriesPerPage(IWContext iwc) {
-		if (pageSize > 0) {
-			return pageSize;
-		}
 		Integer numberOfEntries = (Integer) iwc.getSessionAttribute(getNumberOfEntriesParameter());
 		if (numberOfEntries != null) {
 			return numberOfEntries.intValue();
 		}
-		return this.iNumberOfEntriesPerPage;
+		return pageSize > 0 ? pageSize : this.iNumberOfEntriesPerPage;
 	}
 	
 	private String getCurrentPageParameter() {
