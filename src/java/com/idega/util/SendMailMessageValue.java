@@ -128,4 +128,9 @@ public class SendMailMessageValue {
 		
 		headers.add(new AdvancedProperty(name, value));
 	}
+	
+	@Override
+	public String toString() {
+		return "From: " + getFrom() + ", to: " + getTo() + ", subject: " + getSubject() + ", message: " + getText() + ", attachment(s): " + getAttachedFile();
+	}
 }
