@@ -4,6 +4,8 @@ import java.io.File;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.activation.DataHandler;
 import javax.activation.DataSource;
@@ -187,7 +189,18 @@ public class SendMail {
 		}
 
 		// Send the message and close the connection
-		Transport.send(message);
+		final Message mail = message;
+		Thread transporter = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				try {
+					Transport.send(mail);
+				} catch (Exception e) {
+					Logger.getLogger(SendMail.class.getName()).log(Level.WARNING, "Error sending mail " + mail, e);
+				}
+			}
+		});
+		transporter.start();
 		
 		return message;
 	}
