@@ -1,10 +1,10 @@
 /*
  * $Id: AccessController.java,v 1.38 2009/06/24 08:58:18 valdas Exp $
- * 
+ *
  * Created in 2001 by gummi
- * 
+ *
  * Copyright (C) 2001-2005 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  *
@@ -14,6 +14,7 @@ package com.idega.core.accesscontrol.business;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,11 +24,11 @@ import com.idega.core.accesscontrol.data.bean.PermissionGroup;
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.component.data.bean.ICObject;
 import com.idega.core.file.data.bean.ICFile;
-import com.idega.user.data.bean.User;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.User;
 
 /**
  * <p>
@@ -35,7 +36,7 @@ import com.idega.user.data.bean.Group;
  * in idegaWeb based around the ICPermission entity (IC_PERMISSION table).
  * </p>
  * Last modified: $Date: 2009/06/24 08:58:18 $ by $Author: valdas $
- * 
+ *
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version $Revision: 1.38 $
  */
@@ -75,18 +76,18 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
 	public Integer getUsersGroupID();
 	public Integer getEveryoneGroupID();
-	
+
 	public PermissionGroup getPermissionGroupEveryOne() throws Exception;
 	public PermissionGroup getPermissionGroupUsers() throws Exception;
 	public PermissionGroup getPermissionGroupAdministrator() throws Exception;
-	
+
 	public boolean isAdmin(IWUserContext iwc)throws Exception;
 	public boolean isOwner(Object obj , IWUserContext iwc) throws Exception;
 	public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception;
 	public boolean isOwner(Group group, IWUserContext iwc)throws Exception;
 	public boolean isOwner(ICPage page, IWUserContext iwc)throws Exception;
 	public boolean isOwner(ICObject obj, int entityRecordId, IWUserContext iwc)throws Exception;
-	
+
 	public void setAsOwner(PresentationObject obj, int groupId, IWApplicationContext iwac) throws Exception ;
 	public void setAsOwner(ICFile file, int groupId, IWApplicationContext iwac)throws Exception;
 
@@ -96,30 +97,30 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 
 	public void setAsOwner(ICPage page, int groupId, IWApplicationContext iwac)throws Exception;
 	public void setAsOwner(ICObject obj, int entityRecordId, int groupId, IWApplicationContext iwac)throws Exception;
-	
+
 	@Deprecated
 	public void setCurrentUserAsOwner(com.idega.core.builder.data.ICPage page, IWUserContext iwc) throws Exception;
 	public void setCurrentUserAsOwner(ICPage page,IWUserContext iwc)throws Exception;
-	
+
 	public boolean hasPermission(String permissionKey, Object obj,IWUserContext iwc) throws Exception;
 	public boolean hasPermissionForGroup(String permissionKey, Group obj,IWUserContext iwc) throws Exception;
-	
+
 	public boolean hasFilePermission(String permissionKey, int id, IWUserContext iwc)throws Exception;
-	
+
 	@Deprecated
 	public boolean hasDataPermission(String permissionKey, com.idega.core.component.data.ICObject obj, int entityRecordId, IWUserContext iwc) throws Exception;
 	public boolean hasDataPermission(String permissionKey, ICObject obj, int entityRecordId, IWUserContext iwc) throws Exception;
-	
+
 	public boolean hasPermission(List<Integer> groupIds,String permissionType, Object obj,IWUserContext iwc) throws Exception;
 
 	@Deprecated
 	public boolean hasCreatePermissionFor(com.idega.user.data.Group group,IWUserContext iwuc);
 	public boolean hasCreatePermissionFor(Group group,IWUserContext iwuc);
-	
+
 	@Deprecated
 	public boolean hasDeletePermissionFor(com.idega.user.data.Group group,IWUserContext iwuc);
 	public boolean hasDeletePermissionFor(Group group,IWUserContext iwuc);
-	
+
 	public boolean hasViewPermission(PresentationObject obj,IWUserContext iwc);
 	public void setJSPPagePermission(IWUserContext iwc, Group group, String PageContextValue, String permissionType, Boolean permissionValue)throws Exception;
 	public void setObjectPermission(IWUserContext iwc, Group group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
@@ -134,99 +135,82 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 	@Deprecated
 	public com.idega.user.data.User getAdministratorUserLegacy() throws Exception;
 	public User getAdministratorUser() throws Exception;
-	
+
 	public List<Group> getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception;
-	
-	public String[] getICObjectPermissionKeys(Class ICObject);
-	public String[] getBundlePermissionKeys(Class ICObject);
+
+	public String[] getICObjectPermissionKeys(Class<?> ICObject);
+	public String[] getBundlePermissionKeys(Class<?> ICObject);
 	public String[] getBundlePermissionKeys(String BundleIdentifier);
 	public String[] getPagePermissionKeys();
-	
+
 	@Deprecated
 	public boolean hasEditPermissionFor(com.idega.user.data.Group group,IWUserContext iwuc);
 	public boolean hasEditPermissionFor(Group group,IWUserContext iwuc);
-	
+
 	@Deprecated
 	public boolean hasViewPermissionFor(com.idega.user.data.Group group,IWUserContext iwuc);
 	public boolean hasViewPermissionFor(Group group,IWUserContext iwuc);
 
-	@Deprecated
-	public boolean hasPermitPermissionFor(com.idega.user.data.Group group, IWUserContext iwuc);
-	public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc);
+//  public boolean hasEditPermission(PresentationObject obj,IWUserContext iwc)throws Exception;
+//  public boolean hasViewPermission(List groupIds, PresentationObject obj,IWUserContext iwc);
 
-	public boolean hasRole(String roleKey, IWUserContext iwuc);
+  public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc);
+  public boolean hasRole(String roleKey, IWUserContext iwuc);
+  public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
+  public boolean hasRole(User user, String roleKey);
+  public boolean isRoleMaster(IWUserContext iwuc);
+  public void addGroupAsRoleMaster(Group group, IWApplicationContext iwac);
+  public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );
+  public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
+  public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac                  );
+  public Collection<ICPermission> getAllRolesForGroup(Group group);
+  public Collection getAllRolesWithRolePermissionsForGroup(Group group);
+  public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection<Group> groups);
+  public Collection<ICRole> getAllRoles();
+  public Collection<Group> getAllGroupsThatAreRoleMasters(IWApplicationContext iwac                  );
+  public Collection<Group> getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac                  );
+  public void removeGroupFromRoleMastersList(Group group, IWApplicationContext iwac                  );
+  public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
+  public boolean removeRoleFromGroup(String roleKey,String permissionKey, Integer groupId, IWApplicationContext iwac                  );
+  public boolean removeRoleFromGroup(String roleKey, Group group, IWApplicationContext iwac                  );
+  public ICRole createRoleWithRoleKey(String roleKey);
+  public ICRole getRoleByRoleKey(String roleKey);
+  public String getRoleIdentifier();
+  public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
+  public Set<String> getAllRolesForUser(User user);
+  public Collection<Group> getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user);
+  public Collection<String> getAllRolesKeysForGroup(Group group);
 
-	@Deprecated
-	public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
-	public boolean hasRole(String roleKey, com.idega.user.data.Group group, IWUserContext iwuc);
+/*
+  public static List getPermissionGroups(User user) throws Exception;
+  public static List getPermissionGroups(GenericGroup group) throws Exception;
+  public static List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception;
+  public static void addUserToPermissionGroup(PermissionGroup group, int userIDtoAdd) throws Exception;
+  public static void addGroupToPermissionGroup(PermissionGroup group, int groupIDtoAdd)throws Exception;
+  public static boolean hasAdminPermission(PresentationObject obj,IWUserContext iwc)throws Exception;
+  public static boolean hasIdegaAdminPermission(PresentationObject obj,IWUserContext iwc)throws Exception;
+  public static boolean hasOwnerPermission(PresentationObject obj,IWUserContext iwc)throws Exception;
+  public static boolean removePermissionRecords(int permissionCategory, IWUserContext iwc, String ObjectInstanceId, String permissionKey, String[] groupsToRemove);
+*/
 
-	@Deprecated
-	public boolean hasRole(com.idega.user.data.User user, String roleKey);
-	public boolean hasRole(User user, String roleKey);
-	
-	public boolean isRoleMaster(IWUserContext iwuc);
+//  private String[] getPermissionGroupFilter();  //?
 
-	@Deprecated
-	public void addGroupAsRoleMaster(com.idega.user.data.Group group, IWApplicationContext iwma);
-	public void addGroupAsRoleMaster(Group group, IWApplicationContext iwac);
+  public boolean hasRole(String roleKey, com.idega.user.data.Group group, IWUserContext iwuc);
+  public Collection<com.idega.core.accesscontrol.data.ICRole> getAllRolesLegacy();
+  public Collection<com.idega.user.data.Group> getAllGroupsForRoleKeyLegacy(String roleKey, IWApplicationContext iwac);
+  public Collection<com.idega.core.accesscontrol.data.ICPermission> getAllRolesWithRolePermissionsForGroup(com.idega.user.data.Group group);
+  public boolean hasRole(com.idega.user.data.User user, String roleKey);
+  public Set<String> getAllRolesForUser(com.idega.user.data.User user);
+  public Collection<String> getAllRolesKeysForGroup(com.idega.user.data.Group group);
+  public Collection<com.idega.core.accesscontrol.data.ICPermission> getAllRolesForGroup(com.idega.user.data.Group group);
+  public boolean hasPermitPermissionFor(com.idega.user.data.Group group, IWUserContext iwuc);
+  public com.idega.core.accesscontrol.data.ICRole getRoleByRoleKeyOld(String roleKey) throws FinderException;
 
-	@Deprecated
-	public void addRoleToGroup(String roleKey, com.idega.user.data.Group group, IWApplicationContext iwac                  );
-	public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );
+  /**
+   * Check for "view" or read access for a page by URI
+   */
+  public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request);
+  public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc);
 
-	public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
-	public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac                  );
-	
-	@Deprecated
-	public Collection<com.idega.core.accesscontrol.data.ICPermission> getAllRolesForGroup(com.idega.user.data.Group group);
-	public Collection<ICPermission> getAllRolesForGroup(Group group);
-	
-	@Deprecated
-	public Collection getAllRolesWithRolePermissionsForGroup(com.idega.user.data.Group group);
-	public Collection<ICPermission> getAllRolesWithRolePermissionsForGroup(Group group);
-	
-	public Collection<ICPermission> getAllRolesWithRolePermissionsForGroupCollection(Collection<Group> groups);
-
-	@Deprecated
-	public Collection<com.idega.core.accesscontrol.data.ICRole> getAllRolesLegacy();
-	public Collection<ICRole> getAllRoles();
-	
-	public Collection<Group> getAllGroupsThatAreRoleMasters(IWApplicationContext iwac                  );
-
-	@Deprecated
-	public Collection<com.idega.user.data.Group> getAllGroupsForRoleKeyLegacy(String roleKey, IWApplicationContext iwac                  );
-	public Collection<Group> getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac                  );
-
-	@Deprecated
-	public void removeGroupFromRoleMastersList(com.idega.user.data.Group group, IWApplicationContext iwac                  );
-	public void removeGroupFromRoleMastersList(Group group, IWApplicationContext iwac                  );
-
-	public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
-	public boolean removeRoleFromGroup(String roleKey,String permissionKey, Integer groupId, IWApplicationContext iwac                  );
-	public boolean removeRoleFromGroup(String roleKey, Group group, IWApplicationContext iwac                  );
-	public ICRole createRoleWithRoleKey(String roleKey);
-	
-	@Deprecated
-	public com.idega.core.accesscontrol.data.ICRole getRoleByRoleKeyOld(String roleKey) throws FinderException;
-	public ICRole getRoleByRoleKey(String roleKey);
-	
-	public String getRoleIdentifier();
-	public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
-
-	@Deprecated
-	public Set<String> getAllRolesForUser(com.idega.user.data.User user);
-	public Set<String> getAllRolesForUser(User user);
-	
-	@Deprecated
-	public Collection<com.idega.user.data.Group> getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, com.idega.user.data.User user);
-	public Collection<Group> getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user);
-	
-	@Deprecated
-	public Collection<String> getAllRolesKeysForGroup(com.idega.user.data.Group group);
-	public Collection<String> getAllRolesKeysForGroup(Group group);
-	
-	public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request);
-	public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc);
-	
-	public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey);
+  public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey);
 }

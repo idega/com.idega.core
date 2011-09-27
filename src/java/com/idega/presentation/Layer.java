@@ -22,6 +22,7 @@ public class Layer extends PresentationObjectContainer {
 
 	public static final String DIV = "div";
 	public static final String SPAN = "span";
+	public static final String ZINDEX = "z-index";
 
 	String layerType = DIV;
 
@@ -89,12 +90,19 @@ public class Layer extends PresentationObjectContainer {
 		setWidthStyle(width);
 	}
 
+	/* Readded for backwards compatability */
+	@Deprecated
+	public void setZIndex(String index) {
+		setStyleAttribute(ZINDEX, index);
+	}
+
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
 		this.layerType = (String)values[1];
 	}
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
@@ -105,6 +113,4 @@ public class Layer extends PresentationObjectContainer {
 		values[1] = this.layerType;
 		return values;
 	}
-
-
 }

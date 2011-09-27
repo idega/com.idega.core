@@ -3,6 +3,7 @@ package com.idega.user.data;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.ejb.FinderException;
 
@@ -12,7 +13,7 @@ import com.idega.util.IWTimestamp;
 
 
 public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome {
- 
+
 	private static final long serialVersionUID = 7639370524500772726L;
 
  @Override
@@ -20,11 +21,13 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
   return User.class;
  }
 
- public User create() throws javax.ejb.CreateException{
+ @Override
+public User create() throws javax.ejb.CreateException{
   return (User) super.createIDO();
  }
 
 
+@Override
 public User findByPersonalID(java.lang.String p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindByPersonalID(p0);
@@ -32,6 +35,7 @@ public User findByPersonalID(java.lang.String p0)throws javax.ejb.FinderExceptio
 	return this.findByPrimaryKey(pk);
 }
 
+@Override
 public User findByDateOfBirthAndName(java.sql.Date p0, java.lang.String p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindByDateOfBirthAndName(p0, p1);
@@ -39,14 +43,16 @@ public User findByDateOfBirthAndName(java.sql.Date p0, java.lang.String p1)throw
 	return this.findByPrimaryKey(pk);
 }
 
+@Override
 public User findUserByUniqueId(String uniqueIdString) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserByUniqueId(uniqueIdString);
 	this.idoCheckInPooledEntity(entity);
-	return this.findByPrimaryKey(pk);	
+	return this.findByPrimaryKey(pk);
 }
 
 
+	@Override
 	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(java.lang.String p0,java.lang.String p1, java.lang.String p2)throws javax.ejb.FinderException{
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((UserBMPBean)entity).ejbFindByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(p0,p1,p2);
@@ -55,6 +61,7 @@ public User findUserByUniqueId(String uniqueIdString) throws FinderException {
 	}
 
 
+@Override
 public User findUserForUserGroup(int p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserForUserGroup(p0);
@@ -62,6 +69,7 @@ public User findUserForUserGroup(int p0)throws javax.ejb.FinderException{
 	return this.findByPrimaryKey(pk);
 }
 
+@Override
 public Collection findUsersByMetaData(String key, String value) throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersByMetaData(key,value);
@@ -69,6 +77,7 @@ public Collection findUsersByMetaData(String key, String value) throws javax.ejb
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersInQuery(query);
@@ -77,6 +86,7 @@ public Collection findUsersInQuery(com.idega.data.IDOQuery query)throws javax.ej
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findAllUsers()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindAllUsers();
@@ -85,6 +95,7 @@ public Collection findAllUsers()throws javax.ejb.FinderException{
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindNewestUsers(returningNumberOfRecords, startingRecord);
@@ -92,6 +103,7 @@ public Collection findNewestUsers(int returningNumberOfRecords, int startingReco
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2, boolean useLoweredValues) throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindByNames(p0,p1,p2, useLoweredValues);
@@ -99,19 +111,61 @@ public Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
+public Collection <User> ejbFindBySearchRequest(String request, int groupId, int maxAmount, int startingEntry){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Collection <Integer> ids = ((UserBMPBean)entity).ejbFindBySearchRequest(request,groupId, maxAmount, startingEntry);
+	this.idoCheckInPooledEntity(entity);
+	try{
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}catch(Exception e){
+		e.printStackTrace();
+		return Collections.emptyList();
+	}
+}
+
+@Override
+public Collection <User> ejbFindBySearchRequest(Collection <String> requests, int groupId, int maxAmount, int startingEntry){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Collection <Integer> ids = ((UserBMPBean)entity).ejbFindBySearchRequest(requests, groupId, maxAmount,  startingEntry);
+	this.idoCheckInPooledEntity(entity);
+	try{
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}catch(Exception e){
+		e.printStackTrace();
+		return Collections.emptyList();
+	}
+}
+
+@Override
+public Collection <User> ejbAutocompleteRequest(String request, int groupId, int maxAmount, int startingEntry){
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	Collection <Integer> ids = ((UserBMPBean)entity).ejbAutocompleteRequest(request,groupId, maxAmount, startingEntry);
+	this.idoCheckInPooledEntity(entity);
+	try{
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}catch(Exception e){
+		e.printStackTrace();
+		return Collections.emptyList();
+	}
+}
+
+@Override
 public Collection<User> findByNames(java.lang.String p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException{
 	return findByNames(p0, p1, p2, false);
 }
 
+@Override
 public Collection findUsersForUserRepresentativeGroups(Collection p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersForUserRepresentativeGroups(p0);
 	this.idoCheckInPooledEntity(entity);
 //return this.getEntityCollectionForPrimaryKeys(ids);
 			return this.getEntityCollectionForPrimaryKeys(ids);
-	
+
 }
 
+@Override
 public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserForUserRepresentativeGroup(p0);
@@ -119,6 +173,7 @@ public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)thro
 	return this.findByPrimaryKey(pk);
 }
 
+@Override
 public Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersInPrimaryGroup(p0);
@@ -127,6 +182,7 @@ public Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)throws ja
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findUsersBySearchCondition(java.lang.String p0, boolean p1)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1);
@@ -135,7 +191,8 @@ public Collection findUsersBySearchCondition(java.lang.String p0, boolean p1)thr
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-public Collection findUsersBySearchConditionAndAge(java.lang.String p0, boolean p1, int endAge)throws javax.ejb.FinderException{	
+@Override
+public Collection findUsersBySearchConditionAndAge(java.lang.String p0, boolean p1, int endAge)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(p0, p1, endAge);
 	this.idoCheckInPooledEntity(entity);
@@ -143,6 +200,7 @@ public Collection findUsersBySearchConditionAndAge(java.lang.String p0, boolean 
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findUsersByYearOfBirth (int minYear, int maxYear)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersByYearOfBirth(minYear,maxYear);
@@ -151,6 +209,7 @@ public Collection findUsersByYearOfBirth (int minYear, int maxYear)throws javax.
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findUsersBySearchCondition(String condition, String[] userIds, boolean p2) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersBySearchCondition(condition, userIds, p2);
@@ -159,6 +218,7 @@ public Collection findUsersBySearchCondition(String condition, String[] userIds,
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(userName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
@@ -167,6 +227,7 @@ public Collection findUsersByConditions(String userName, String personalId, Stri
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findUsersByConditions(String firstName, String middleName, String lastName,  String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersByConditions(firstName, middleName, lastName, personalId, streetName, groupName, gender, statusId, startAge, endAge, allowedGroups, allowedUsers, useAnd, orderLastFirst);
@@ -175,6 +236,7 @@ public Collection findUsersByConditions(String firstName, String middleName, Str
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserForUserGroup(p0);
@@ -182,6 +244,7 @@ public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.F
 	return this.findByPrimaryKey(pk);
 }
 
+@Override
 public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Object pk = ((UserBMPBean)entity).ejbFindUserFromEmail(p0);
@@ -189,10 +252,12 @@ public User findUserFromEmail(java.lang.String p0)throws javax.ejb.FinderExcepti
 	return this.findByPrimaryKey(pk);
 }
 
+@Override
 public Collection<User> findUsersByEmail(java.lang.String email)throws javax.ejb.FinderException{
 	return findUsersByEmail(email, false, false);
 }
 
+@Override
 public Collection<User> findUsersByEmail(String email, boolean useLoweredValue, boolean useLikeExpression) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	@SuppressWarnings("unchecked")
@@ -203,6 +268,7 @@ public Collection<User> findUsersByEmail(String email, boolean useLoweredValue, 
 	return usrs;
 }
 
+@Override
 public Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsers(userIDs);
@@ -211,6 +277,7 @@ public Collection findUsers(java.lang.String[] userIDs)throws javax.ejb.FinderEx
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindAllUsersOrderedByFirstName();
@@ -219,11 +286,13 @@ public Collection findAllUsersOrderedByFirstName()throws javax.ejb.FinderExcepti
 			return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
- public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
+ @Override
+public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (User) super.findByPrimaryKeyIDO(pk);
  }
 
 
+@Override
 public int getUserCount()throws com.idega.data.IDOException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	int theReturn = ((UserBMPBean)entity).ejbHomeGetUserCount();
@@ -231,6 +300,7 @@ public int getUserCount()throws com.idega.data.IDOException{
 	return theReturn;
 }
 
+@Override
 public int getCountByBirthYearAndCommune(int fromYear, int toYear, Commune commune) throws com.idega.data.IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		int theReturn = ((UserBMPBean) entity).ejbHomeGetCountByBirthYearAndCommune(fromYear, toYear, commune);
@@ -238,6 +308,7 @@ public int getCountByBirthYearAndCommune(int fromYear, int toYear, Commune commu
 		return theReturn;
 	}
 
+@Override
 public java.lang.String getGroupType(){
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.lang.String theReturn = ((UserBMPBean)entity).ejbHomeGetGroupType();
@@ -246,6 +317,7 @@ public java.lang.String getGroupType(){
 }
 
 
+@Override
 public Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimestamp lastCreationTime) throws FinderException, IDOLookupException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersByCreationTime(firstCreationTime,lastCreationTime);
@@ -258,6 +330,7 @@ public Collection findUsersByCreationTime(IWTimestamp firstCreationTime, IWTimes
 /* (non-Javadoc)
  * @see com.idega.user.data.UserHome#findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(java.sql.Date, java.sql.Date, com.idega.user.data.Group, java.sql.Timestamp, java.sql.Timestamp, java.lang.String[])
  */
+@Override
 public Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(Date firstBirthDateInPeriode, Date lastBirthDateInPeriode, Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindByDateOfBirthAndGroupRelationInitiationTimeAndStatus(firstBirthDateInPeriode,lastBirthDateInPeriode,relatedGroup,firstInitiationDateInPeriode,lastInitiationDateInPeriode,relationStatus);
@@ -267,6 +340,7 @@ public Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(Date 
 }
 
 
+@Override
 public Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup, Timestamp firstInitiationDateInPeriode, Timestamp lastInitiationDateInPeriode, String[] relationStatus) throws IDOLookupException, FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindByGroupRelationInitiationTimeAndStatus(relatedGroup,firstInitiationDateInPeriode,lastInitiationDateInPeriode,relationStatus);
@@ -275,6 +349,7 @@ public Collection findByGroupRelationInitiationTimeAndStatus(Group relatedGroup,
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
+@Override
 public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection ids = ((UserBMPBean)entity).ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(groups, userStatuses, yearOfBirthFrom, yearOfBirthTo, gender);
@@ -283,20 +358,23 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
 
-    public Collection findAllUsersWithDuplicatedEmails() throws FinderException {
+    @Override
+	public Collection findAllUsersWithDuplicatedEmails() throws FinderException {
        	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
        	Collection ids = ((UserBMPBean)entity).ejbFindAllUsersWithDuplicatedEmails();
        	this.idoCheckInPooledEntity(entity);
        	return this.getEntityCollectionForPrimaryKeys(ids);
     }
 
-    public Collection findAllUsersWithDuplicatedPhones(String phoneType) throws FinderException {
+    @Override
+	public Collection findAllUsersWithDuplicatedPhones(String phoneType) throws FinderException {
        	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
        	Collection ids = ((UserBMPBean)entity).ejbFindAllUsersWithDuplicatedPhones(phoneType);
        	this.idoCheckInPooledEntity(entity);
        	return this.getEntityCollectionForPrimaryKeys(ids);
     }
 
+	@Override
 	public Collection<User> findByDisplayName(String displayName, boolean useLoweredValue) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids = ((UserBMPBean) entity).ejbFindByDisplayName(displayName, useLoweredValue);
@@ -304,6 +382,7 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<User> findByPhoneNumber(String phoneNumber) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids = ((UserBMPBean) entity).ejbFindByPhoneNumber(phoneNumber);
@@ -312,6 +391,7 @@ public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Col
 	}
 
 
+	@Override
 	public Collection<User> findAllByPersonalID(String personalId) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids = ((UserBMPBean) entity).ejbFindAllByPersonalId(personalId);

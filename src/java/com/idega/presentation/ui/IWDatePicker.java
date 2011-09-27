@@ -49,6 +49,8 @@ public class IWDatePicker extends TextInput {
 	private boolean showYearChange = false;
 	private boolean showMonthChange = false;
 	
+	private boolean showTime;
+	
 	private static final String INITIAL_DATE_PROPERTY = "initialDate";
 	private static final String INITIAL_DATE_TO_PROPERTY = "initialDateTo";
 	private static final String MAX_DATE_PROPERTY = "maxDate";
@@ -219,6 +221,10 @@ public class IWDatePicker extends TextInput {
 			initAction.append(", showOn: 'button', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif")).append("', buttonImageOnly: true");
 		}
 
+		if (isShowTime()) {
+			initAction.append(", showTime: true");
+		}
+		
 		// onSelect action
 		if (onSelectAction != null) {
 			initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
@@ -230,7 +236,7 @@ public class IWDatePicker extends TextInput {
 		if (canUseLocalizedText) {
 			initAction.append(", regional: ['").append(language).append("']");
 		}
-
+		
 		initAction.append("});");
 
 		// Initialization action
@@ -366,5 +372,13 @@ public class IWDatePicker extends TextInput {
 			ELUtil.getInstance().autowire(this);
 		}
 		return jQuery;
+	}
+
+	public boolean isShowTime() {
+		return showTime;
+	}
+
+	public void setShowTime(boolean showTime) {
+		this.showTime = showTime;
 	}
 }

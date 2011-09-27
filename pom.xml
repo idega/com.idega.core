@@ -92,11 +92,11 @@
       <type>jar</type>
     </dependency>
     <dependency>
-      <groupId>javax.mail</groupId>
-      <artifactId>mail</artifactId>
-      <version>${javax.mail-mail-version}</version>
-      <type>jar</type>
-    </dependency>
+		<groupId>javax.mail</groupId>
+	    <artifactId>mail</artifactId>
+	    <version>${javax.mail-version}</version>
+        <type>jar</type>
+	</dependency>
     <dependency>
       <groupId>javax.activation</groupId>
       <artifactId>activation</artifactId>
@@ -137,11 +137,11 @@
       <scope>compile</scope>
     </dependency>
     <dependency>
-      <groupId>org.apache.poi</groupId>
-      <artifactId>poi</artifactId>
-      <version>${org.apache.poi-poi-version}</version>
-      <type>jar</type>
-    </dependency>
+		<groupId>org.apache.poi</groupId>
+		<artifactId>poi</artifactId>
+		<version>${org.apache.poi-poi-version}</version>
+		<type>jar</type>
+	</dependency>
     <dependency>
       <groupId>jug</groupId>
       <artifactId>jug</artifactId>

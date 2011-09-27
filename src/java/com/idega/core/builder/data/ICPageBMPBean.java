@@ -30,7 +30,9 @@ import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.Column;
+import com.idega.data.query.Criteria;
 import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.idegaweb.IWUserContext;
@@ -872,6 +874,19 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	return idoFindPKsByQuery(query);
 	}
 	
+	public Collection<?> ejbFindAllTemplatesWithWebDavUri() throws FinderException {
+		Table table = new Table(this);
+    	SelectQuery query = new SelectQuery(table);
+    	query.addColumn(new Column(table, getIDColumnName()));
+    	query.addCriteria(new MatchCriteria(table, TYPE_COLUMN, MatchCriteria.EQUALS, TEMPLATE));
+    	
+    	query.addCriteria(new MatchCriteria(table, WEBDAV_URI, MatchCriteria.LIKE, "%/themes/%"));
+    	
+    	Criteria isNull = new MatchCriteria(new Column(table, DELETED_COLUMN), MatchCriteria.IS, MatchCriteria.NULL);
+		Criteria isFalse = new MatchCriteria(new Column(table, DELETED_COLUMN), MatchCriteria.EQUALS, false);
+    	query.addCriteria(new OR(isNull, isFalse));
+    	return idoFindPKsByQuery(query);
+	}
 	
 	/**
 	 * @return

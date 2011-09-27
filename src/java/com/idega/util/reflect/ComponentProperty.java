@@ -13,11 +13,14 @@ import java.beans.BeanInfo;
 import java.beans.IntrospectionException;
 import java.beans.Introspector;
 import java.beans.PropertyDescriptor;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.el.ExpressionFactory;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
 import org.apache.myfaces.shared_tomahawk.renderkit.JSFAttr;
 import org.apache.myfaces.shared_tomahawk.taglib.UIComponentELTagUtils;
 import org.apache.myfaces.shared_tomahawk.taglib.UIComponentTagUtils;
@@ -75,47 +78,51 @@ public class ComponentProperty extends Property {
 		String value = (String) values[0];
 
 		UIComponent component = (UIComponent) instance;
-		FacesContext facesContext = FacesContext.getCurrentInstance();
-		ExpressionFactory exprFactory = facesContext.getApplication().getExpressionFactory();
-		
 		Class<?> propertyType = getPropertyType();
-		if (JSFAttr.ACTION_ATTR.equals(this.name)) {
-//			UIComponentELTagUtils.setActionProperty(facesContext, component, exprFactory.createMethodExpression(facesContext.getELContext(), value, propertyType,
-//			null));
-			UIComponentTagUtils.setActionProperty(facesContext, component, value);
-		}
-		else if (JSFAttr.CONVERTER_ATTR.equals(this.name)) {
-			UIComponentTagUtils.setConverterProperty(facesContext, component, value);
-		}
-		else if (JSFAttr.VALIDATOR_ATTR.equals(this.name)) {
-			UIComponentTagUtils.setValidatorProperty(facesContext, component, value);
-		}
-		else if (JSFAttr.VALUE_ATTR.equals(this.name)) {
-			UIComponentTagUtils.setValueProperty(facesContext, component, value);
-		}
-		// where is actionListener attribute defined?
-		else if (ACTION_LISTENER_ATTR.equals(this.name)) {
-			UIComponentTagUtils.setActionListenerProperty(facesContext, component, value);
-		}
-		// where is valueChangedListener attribute defined?
-		else if (VALUE_CHANGED_LISTENER_ATTR.equals(this.name)) {
-			UIComponentTagUtils.setValueChangedListenerProperty(facesContext, component, value);
-		} else {
-			boolean booleanType = Boolean.class.equals(propertyType) || Boolean.TYPE.equals(propertyType);
-			value = booleanType ? String.valueOf(CoreUtil.getBooleanValueFromString(value)) : value;
-			ValueExpression ve = exprFactory.createValueExpression(facesContext.getELContext(), value, propertyType);
+		try {
+			FacesContext facesContext = FacesContext.getCurrentInstance();
+			ExpressionFactory exprFactory = facesContext.getApplication().getExpressionFactory();
 			
-			if (Integer.class.equals(propertyType) || Integer.TYPE.equals(propertyType)) {
-				UIComponentELTagUtils.setIntegerProperty(component, this.name, ve);
-			} else if (booleanType) {
-				UIComponentELTagUtils.setBooleanProperty(component, this.name, ve);
-			} else if (Long.class.equals(propertyType) || Long.TYPE.equals(propertyType)) {
-				UIComponentELTagUtils.setLongProperty(component, this.name, ve);
-			} else if (String.class.equals(propertyType)) {
-				UIComponentELTagUtils.setStringProperty(component, this.name, ve);
-			} else {
-				UIComponentELTagUtils.setValueBinding(facesContext, component, name, ve);
+			if (JSFAttr.ACTION_ATTR.equals(this.name)) {
+				UIComponentTagUtils.setActionProperty(facesContext, component, value);
 			}
+			else if (JSFAttr.CONVERTER_ATTR.equals(this.name)) {
+				UIComponentTagUtils.setConverterProperty(facesContext, component, value);
+			}
+			else if (JSFAttr.VALIDATOR_ATTR.equals(this.name)) {
+				UIComponentTagUtils.setValidatorProperty(facesContext, component, value);
+			}
+			else if (JSFAttr.VALUE_ATTR.equals(this.name)) {
+				UIComponentTagUtils.setValueProperty(facesContext, component, value);
+			}
+			// where is actionListener attribute defined?
+			else if (ACTION_LISTENER_ATTR.equals(this.name)) {
+				UIComponentTagUtils.setActionListenerProperty(facesContext, component, value);
+			}
+			// where is valueChangedListener attribute defined?
+			else if (VALUE_CHANGED_LISTENER_ATTR.equals(this.name)) {
+				UIComponentTagUtils.setValueChangedListenerProperty(facesContext, component, value);
+			} else {
+				boolean booleanType = Boolean.class.equals(propertyType) || Boolean.TYPE.equals(propertyType);
+				value = booleanType ? String.valueOf(CoreUtil.getBooleanValueFromString(value)) : value;
+				ValueExpression ve = exprFactory.createValueExpression(facesContext.getELContext(), value, propertyType);
+				
+				if (Integer.class.equals(propertyType) || Integer.TYPE.equals(propertyType)) {
+					UIComponentELTagUtils.setIntegerProperty(component, this.name, ve);
+				} else if (booleanType) {
+					UIComponentELTagUtils.setBooleanProperty(component, this.name, ve);
+				} else if (Long.class.equals(propertyType) || Long.TYPE.equals(propertyType)) {
+					UIComponentELTagUtils.setLongProperty(component, this.name, ve);
+				} else if (String.class.equals(propertyType)) {
+					UIComponentELTagUtils.setStringProperty(component, this.name, ve);
+				} else {
+					UIComponentELTagUtils.setValueBinding(facesContext, component, name, ve);
+				}
+			}
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.SEVERE, "Error setting property value for " + instance + ", value: " + value + ", property type: " +
+					propertyType, e);
+			throw new RuntimeException(e);
 		}
 	}
 	

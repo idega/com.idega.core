@@ -1,7 +1,7 @@
 /*
  * $Id: UserBusinessBean.java,v 1.246 2009/05/27 11:25:19 laddi Exp $
  * Created in 2002 by gummi
- * 
+ *
  * Copyright (C) 2002-2005 Idega. All Rights Reserved.
  *
  * This software is the proprietary information of Idega.
@@ -19,6 +19,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,8 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -89,6 +92,7 @@ import com.idega.presentation.Image;
 import com.idega.servlet.filter.IWAuthenticator;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMemberDataBeanComparator;
+import com.idega.user.dao.UserDAO;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
 import com.idega.user.data.Group;
@@ -114,6 +118,7 @@ import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.Timer;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.text.Name;
 
 /**
@@ -121,7 +126,7 @@ import com.idega.util.text.Name;
  * This is the the class that holds the main business logic for creating, removing, lookups and manipulating Users.
  * </p>
  * Copyright (C) idega software 2002-2005 <br/> Last modified: $Date: 2009/05/27 11:25:19 $ by $Author: laddi $
- * 
+ *
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>,<a href="eiki@idega.is">Eirikur S. Hrafnsson</a>, <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.246 $
  */
@@ -130,7 +135,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private static final long serialVersionUID = 5915206628531551728L;
 
 	private static final Logger LOGGER = Logger.getLogger(UserBusinessBean.class.getName());
-	
+
 	// remove use of "null" when metadata can be removed
 	private static final String NULL = "null";
 
@@ -166,9 +171,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	private SimpleDateFormat userDateOfBirthFormatter = new SimpleDateFormat("ddMMyy");
 
+	@Autowired
+	private UserDAO userDAO;
+
 	public UserBusinessBean() {
 	}
 
+	private UserDAO getUserDAO() {
+		if (userDAO == null)
+			ELUtil.getInstance().autowire(this);
+		return userDAO;
+	}
+
+	@Override
 	public UserHome getUserHome() {
 		if (this.userHome == null) {
 			try {
@@ -180,6 +195,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return this.userHome;
 	}
 
+	@Override
 	public GroupHome getGroupHome() {
 		if (this.groupHome == null) {
 			try {
@@ -191,6 +207,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return this.groupHome;
 	}
 
+	@Override
 	public EmailHome getEmailHome() {
 		if (this.emailHome == null) {
 			try {
@@ -213,6 +230,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return this.emailTypeHome;
 	}
 
+	@Override
 	public AddressHome getAddressHome() {
 		if (this.addressHome == null) {
 			try {
@@ -224,6 +242,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return this.addressHome;
 	}
 
+	@Override
 	public PhoneHome getPhoneHome() {
 		if (this.phoneHome == null) {
 			try {
@@ -235,6 +254,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return this.phoneHome;
 	}
 
+	@Override
 	public TopNodeGroupHome getTopNodeGroupHome() {
 		if (this.topNodeGroupHome == null) {
 			try {
@@ -249,6 +269,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @deprecated replaced with createUser
 	 */
+	@Override
 	@Deprecated
 	public User insertUser(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, displayname, null, description, gender, date_of_birth, primary_group);
@@ -256,7 +277,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Method createUserByPersonalIDIfDoesNotExist either created a new user or updates an old one.
-	 * 
+	 *
 	 * @param fullName
 	 * @param personalID
 	 * @param gender
@@ -265,6 +286,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	@Override
 	public User createUserByPersonalIDIfDoesNotExist(String fullName, String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException {
 		User user = null;
 		if (personalID != null && personalID.trim().length() > 0) {
@@ -301,7 +323,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Method createUserByPersonalIDIfDoesNotExist does what is says.
-	 * 
+	 *
 	 * @param firstName
 	 * @param middleName
 	 * @param lastName
@@ -312,6 +334,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	@Override
 	public User createUserByPersonalIDIfDoesNotExist(String firstName, String middleName, String lastName, String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException {
 		User user;
 		Name name = new Name(firstName, middleName, lastName);
@@ -321,9 +344,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	/**
-	 * 
+	 *
 	 * Creates or update a user with the supplied parameters and then calls callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user);
-	 * 
+	 *
 	 * @param pin
 	 *            PersonalId e.g. social security number MUST NOT BE NULL
 	 * @param UUID
@@ -336,6 +359,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	@Override
 	public void createUserByPersonalIdAndUUIDOrUpdate(String pin, String UUID, String fullName, String gender, String dateOfBirth) throws CreateException, RemoteException {
 
 		if (UUID != null && pin != null) {
@@ -368,12 +392,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Updates the user with fullName,gender (f/m) and date of birth (yyy-MM-dd)
-	 * 
+	 *
 	 * @param user
 	 * @param name
 	 * @param gender
 	 * @param dateOfBirth
 	 */
+	@Override
 	public void updateUser(User user, String name, String gender, String dateOfBirth) {
 		if (name != null) {
 			user.setFullName(name);
@@ -400,10 +425,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		user.store();
 	}
 
+	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group) throws CreateException, RemoteException {
 		return createUser(firstName, middleName, lastName, displayname, personalID, description, gender, date_of_birth, primary_group, null);
 	}
 
+	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName) throws CreateException, RemoteException {
 		try {
 			User userToAdd = getUserHome().create();
@@ -462,6 +489,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void setUserUnderDomain(ICDomain domain, User user, GroupDomainRelationType type) throws CreateException, RemoteException {
 		GroupDomainRelation relation = (GroupDomainRelation) IDOLookup.create(GroupDomainRelation.class);
 		relation.setDomain(domain);
@@ -474,12 +502,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
-	 * 
+	 *
 	 * @param userId
 	 *            the id for the user.
 	 * @throws LoginCreateException
 	 *             If an error occurs creating login for the user.
 	 */
+	@Override
 	public LoginTable generateUserLogin(int userID) throws LoginCreateException, RemoteException {
 		// return this.generateUserLogin(userID);
 		return LoginDBHandler.generateUserLogin(userID);
@@ -488,6 +517,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Generates a login for a user with a random password and a login derived from the users name (or random login if all possible logins are taken)
 	 */
+	@Override
 	public LoginTable generateUserLogin(User user) throws LoginCreateException, RemoteException {
 		// return LoginDBHandler.generateUserLogin(user);
 		int userID = ((Integer) user.getPrimaryKey()).intValue();
@@ -497,6 +527,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Creates a user with a firstname,middlename, lastname, where middlename can be null
 	 */
+	@Override
 	public User createUser(String firstname, String middlename, String lastname) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, (String) null);
 	}
@@ -504,6 +535,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Creates a new user with a firstname,middlename, lastname and personalID where middlename and personalID can be null
 	 */
+	@Override
 	public User createUser(String firstname, String middlename, String lastname, String personalID) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, null, personalID, null, null, null, null);
 	}
@@ -511,6 +543,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null
 	 */
+	@Override
 	public User createUser(String firstName, String middleName, String lastName, int primary_groupID) throws CreateException, RemoteException {
 		return createUser(firstName, middleName, lastName, null, null, null, null, null, new Integer(primary_groupID));
 	}
@@ -518,6 +551,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Creates a new user with a firstname,middlename, lastname and primaryGroupID where middlename can be null but primary_group can not be noull
 	 */
+	@Override
 	public User createUser(String firstName, String middleName, String lastName, Group primary_group) throws CreateException, RemoteException {
 		return createUser(firstName, middleName, lastName, null, null, null, null, null, (Integer) primary_group.getPrimaryKey());
 	}
@@ -525,16 +559,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Creates a new user with a firstname,middlename, lastname ,personalID and gender where middlename and personalID can be null
 	 */
+	@Override
 	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, null, personalID, null, (Integer) gender.getPrimaryKey(), null, null);
 	}
 
 	/**
 	 * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
-	 * 
+	 *
 	 * @throws NullPointerException
 	 *             if primaryGroup is null
 	 */
+	@Override
 	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender, IWTimestamp dateOfBirth, Group primaryGroup) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, null, personalID, null, (Integer) gender.getPrimaryKey(), dateOfBirth, (Integer) primaryGroup.getPrimaryKey());
 	}
@@ -542,6 +578,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Creates a new user with a firstname,middlename, lastname ,personalID, gender and date of birth where middlename,personalID,gender,dateofbirth can be null
 	 */
+	@Override
 	public User createUser(String firstname, String middlename, String lastname, String personalID, Gender gender, IWTimestamp dateOfBirth) throws CreateException, RemoteException {
 		return createUser(firstname, middlename, lastname, null, personalID, null, gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
 	}
@@ -553,10 +590,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return createUser(firstname, middlename, lastname, displayname, personalID, null, gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
 	}
 
+	@Override
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws CreateException {
 		return createUserWithLogin(firstname, middlename, lastname, SSN, displayname, description, gender, date_of_birth, primary_group, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType, null);
 	}
 
+	@Override
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String fullName) throws CreateException {
 		UserTransaction transaction = this.getSessionContext().getUserTransaction();
 		AccessController controller = getIWMainApplication().getAccessController();
@@ -584,14 +623,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			throw new CreateException(e.getMessage());
 		}
 	}
-	
+
+	@Override
 	public void createUserLogin(User newUser, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) {
-		
+
 		if (newUser != null && !StringUtil.isEmpty(userLogin) && !StringUtil.isEmpty(password)) {
-		
+
 			try {
 				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
-				
+
 			} catch (Exception e) {
 				getLogger().log(Level.SEVERE, "Exception while creating user login for userLogin="+userLogin+", user="+newUser.getPrimaryKey(), e);
 			}
@@ -599,18 +639,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			throw new IllegalArgumentException("Tried to create login for user="+(newUser != null ? newUser.getPrimaryKey().toString() : null)+", but insufficient parameters provided: userLogin="+userLogin+", password="+password);
 	}
 
+	@Override
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws CreateException {
 		return createUserWithLogin(firstname, middlename, lastname, null, displayname, description, gender, date_of_birth, primary_group, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 	}
 
 	/*
 	 * public User getUser(int userGroupRepresentativeID) throws SQLException { List l = EntityFinder.findAllByColumn(com.idega.user.data.UserBMPBean.getStaticInstance(User.class),com.idega.user.data.UserBMPBean._COLUMNNAME_USER_GROUP_ID,userGroupRepresentativeID); if(l != null && l.size() > 0){ return ((User)l.get(0)); } return null; }
-	 * 
+	 *
 	 * public int getUserID(int userGroupRepresentativeID) throws SQLException { User user = getUser(userGroupRepresentativeID); if(user != null){ return user.getID(); } return -1; }
 	 */
 	/**
 	 * This methods removes this user from all groups and deletes his login.
 	 */
+	@Override
 	public void deleteUser(int userId, User currentUser) throws RemoveException {
 		User delUser = getUser(userId);
 		deleteUser(delUser, currentUser);
@@ -619,6 +661,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * This methods remoces this useer from all groups and deletes his login.
 	 */
+	@Override
 	public void deleteUser(User delUser, User currentUser) throws RemoveException {
 		try {
 			Collection groups = getGroupBusiness().getParentGroups(delUser);
@@ -644,11 +687,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void removeUserFromGroup(int userId, Group group, User currentUser) throws RemoveException {
 		User user = getUser(userId);
 		removeUserFromGroup(user, group, currentUser);
 	}
 
+	@Override
 	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException {
 		// call plugin methods first
 		callAllUserGroupPluginBeforeUserRemoveMethod(user, group);
@@ -681,6 +726,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void setPermissionGroup(User user, Integer primaryGroupId) throws IDOStoreException, RemoteException {
 		if (primaryGroupId != null) {
 			user.setPrimaryGroupID(primaryGroupId);
@@ -691,6 +737,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Male: M, male, 0 Female: F, female, 1
 	 */
+	@Override
 	public Integer getGenderId(String gender) throws Exception {
 		try {
 			GenderHome home = getGenderHome();
@@ -718,6 +765,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returnes true if that genderid refers to the male gender
 	 */
+	@Override
 	public boolean isMale(int genderId) throws RemoteException, FinderException {
 		GenderHome home = getGenderHome();
 		if (this.male == null) {
@@ -729,6 +777,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returnes true if that genderid refers to the female gender
 	 */
+	@Override
 	public boolean isFemale(int genderId) throws RemoteException, FinderException {
 		return !isMale(genderId);
 	}
@@ -738,6 +787,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return home;
 	}
 
+	@Override
 	public Phone[] getUserPhones(int userId) throws RemoteException {
 		try {
 			Collection phones = this.getUser(userId).getPhones();
@@ -752,6 +802,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Phone[] getUserPhones(User user) throws RemoteException {
 		try {
 			Collection phones = user.getPhones();
@@ -766,6 +817,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Phone getUserPhone(int userId, int phoneTypeId) throws RemoteException {
 		try {
 			Phone[] result = this.getUserPhones(userId);
@@ -787,26 +839,28 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/*
 	 * Deprecated
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.user.business.UserBusiness#getUserMail(int)
-	 * 
+	 *
 	 * @deprecated use getUserMainMail
 	 */
+	@Override
 	public Email getUserMail(int userId) {
 		return getUserMail(this.getUser(userId));
 	}
 
 	/*
 	 * Deprecated
-	 * 
+	 *
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.user.business.UserBusiness#getUserMail(com.idega.user.data.User)
-	 * 
+	 *
 	 * @deprecated use getUserMainMail
 	 */
+	@Override
 	public Email getUserMail(User user) {
 		try {
 			return getUsersMainEmail(user);
@@ -817,22 +871,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void updateUserHomePhone(User user, String phoneNumber) throws EJBException {
 		updateUserPhone(user, PhoneBMPBean.getHomeNumberID(), phoneNumber);
 	}
 
+	@Override
 	public void updateUserWorkPhone(User user, String phoneNumber) throws EJBException {
 		updateUserPhone(user, PhoneBMPBean.getWorkNumberID(), phoneNumber);
 	}
 
+	@Override
 	public void updateUserMobilePhone(User user, String phoneNumber) throws EJBException {
 		updateUserPhone(user, PhoneBMPBean.getMobileNumberID(), phoneNumber);
 	}
 
+	@Override
 	public void updateUserPhone(int userId, int phoneTypeId, String phoneNumber) throws EJBException {
 		updateUserPhone(getUser(userId), phoneTypeId, phoneNumber);
 	}
 
+	@Override
 	public void updateUserPhone(User user, int phoneTypeId, String phoneNumber) throws EJBException {
 		try {
 			Phone phone = getUserPhone(((Integer) user.getPrimaryKey()).intValue(), phoneTypeId);
@@ -856,6 +915,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Email updateUserMail(int userId, String email) throws CreateException, RemoteException {
 		return updateUserMail(getUser(userId), email);
 	}
@@ -863,6 +923,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Updates or creates the main email address (that is the email with type "main"l) if the specifield email is empty (that is null or empty) nothing happens.
 	 */
+	@Override
 	public Email updateUserMail(User user, String email) throws CreateException, RemoteException {
 		if (StringHandler.isEmpty(email)) {
 			return null;
@@ -901,6 +962,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void updateUserJob(int userId, String job) {
 		if (job == null || job.length() == 0) {
 			job = NULL;
@@ -910,6 +972,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		user.store();
 	}
 
+	@Override
 	public String getUserJob(User user) {
 		String job = user.getMetaData(JOB_META_DATA_KEY);
 		if (job == null || NULL.equals(job)) {
@@ -919,6 +982,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void updateUserWorkPlace(int userId, String workPlace) {
 		if (workPlace == null || workPlace.length() == 0) {
 			workPlace = NULL;
@@ -928,6 +992,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		user.store();
 	}
 
+	@Override
 	public String getUserWorkPlace(User user) {
 		String workPlace = user.getMetaData(WORKPLACE_META_DATA_KEY);
 		if (workPlace == null || NULL.equals(workPlace)) {
@@ -941,6 +1006,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @deprecated user getUsersMainAddress instead. Gets the users main address and returns it.
 	 * @returns the address if found or null if not.
 	 */
+	@Override
 	@Deprecated
 	public Address getUserAddress1(int userID) throws EJBException, RemoteException {
 		return getUsersMainAddress(userID);
@@ -948,9 +1014,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets the user's main address by addresstype and returns it.
-	 * 
+	 *
 	 * @returns the address if found or null if not.
 	 */
+	@Override
 	public Address getUserAddressByAddressType(int userID, AddressType type) throws EJBException, RemoteException {
 		try {
 			return getAddressHome().findUserAddressByAddressType(userID, type);
@@ -961,9 +1028,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets the user's main address and returns it.
-	 * 
+	 *
 	 * @returns the address if found or null if not.
 	 */
+	@Override
 	public Address getUsersMainAddress(int userID) throws EJBException, RemoteException {
 		try {
 			return getAddressHome().findPrimaryUserAddress(userID);
@@ -974,9 +1042,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets the users main addresses and returns them.
-	 * 
+	 *
 	 * @returns a collection of addresses if found or null if not.
 	 */
+	@Override
 	public Collection getUsersMainAddresses(String[] userIDs) throws EJBException, RemoteException {
 		try {
 			return getAddressHome().findPrimaryUserAddresses(userIDs);
@@ -985,6 +1054,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Collection getUsersMainAddresses(IDOQuery query) throws EJBException, RemoteException {
 		try {
 			return getAddressHome().findPrimaryUserAddresses(query);
@@ -995,27 +1065,30 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets the users main address and returns it.
-	 * 
+	 *
 	 * @returns the address if found or null if not.
 	 */
+	@Override
 	public Address getUsersMainAddress(User user) throws RemoteException {
 		return getUsersMainAddress(((Integer) user.getPrimaryKey()).intValue());
 	}
 
 	/**
 	 * Gets the users co address and returns it.
-	 * 
+	 *
 	 * @returns the address if found or null if not.
 	 */
+	@Override
 	public Address getUsersCoAddress(User user) throws RemoteException {
 		return getUsersCoAddress(((Integer) user.getPrimaryKey()).intValue());
 	}
 
 	/**
 	 * Gets the users co address and returns it.
-	 * 
+	 *
 	 * @returns the address if found or null if not.
 	 */
+	@Override
 	public Address getUsersCoAddress(int userId) throws RemoteException {
 		AddressType coAddressType = getAddressHome().getAddressType2();
 		return getUserAddressByAddressType(userId, coAddressType);
@@ -1023,9 +1096,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets the users and returns them.
-	 * 
+	 *
 	 * @returns a collection of users if found or null if not.
 	 */
+	@Override
 	public Collection getUsers(String[] userIDs) throws EJBException, RemoteException {
 		try {
 			return getUserHome().findUsers(userIDs);
@@ -1034,6 +1108,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Collection getUsers(IDOQuery query) throws EJBException, RemoteException {
 		try {
 			return getUserHome().findUsersInQuery(query);
@@ -1045,7 +1120,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Method updateUsersMainAddressOrCreateIfDoesNotExist. This method can both be used to update the user main address or to create one <br>
 	 * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.
-	 * 
+	 *
 	 * @param userId
 	 * @param streetNameAndNumber
 	 * @param postalCodeId
@@ -1057,15 +1132,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	@Override
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException {
 		return updateUsersMainAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null);
 	}
 
+	@Override
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
 		AddressType mainAddressType = getAddressHome().getAddressType1();
 		return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, mainAddressType);
 	}
 
+	@Override
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
 		AddressType mainAddressType = getAddressHome().getAddressType1();
 		return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, mainAddressType);
@@ -1074,7 +1152,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Method updateUsersCoAddressOrCreateIfDoesNotExist. This method can both be used to update the user co address or to create one <br>
 	 * if one does not exist. Only userId and StreetName(AndNumber) are required to be not null others are optional.
-	 * 
+	 *
 	 * @param userId
 	 * @param streetNameAndNumber
 	 * @param postalCodeId
@@ -1086,15 +1164,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	@Override
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException {
 		return updateUsersCoAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null);
 	}
 
+	@Override
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
 		AddressType coAddressType = getAddressHome().getAddressType2();
 		return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, coAddressType);
 	}
 
+	@Override
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
 		AddressType coAddressType = getAddressHome().getAddressType2();
 		return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, coAddressType);
@@ -1171,20 +1252,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return address;
 	}
 
+	@Override
 	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group) throws EJBException, RemoteException {
 		User userToUpdate = this.getUser(userId);
 		updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group, null);
 	}
 
+	@Override
 	public void updateUser(int userId, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group, String fullname) throws EJBException, RemoteException {
 		User userToUpdate = this.getUser(userId);
 		updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group, fullname);
 	}
 
+	@Override
 	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group) throws EJBException, RemoteException {
 		updateUser(userToUpdate, firstname, middlename, lastname, displayname, description, gender, personalID, date_of_birth, primary_group, null);
 	}
 
+	@Override
 	public void updateUser(User userToUpdate, String firstname, String middlename, String lastname, String displayname, String description, Integer gender, String personalID, IWTimestamp date_of_birth, Integer primary_group, String fullname) throws EJBException, RemoteException {
 		if (firstname != null) {
 			userToUpdate.setFirstName(firstname);
@@ -1224,11 +1309,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets all the Emails registered to a User with id iUserId
-	 * 
+	 *
 	 * @param iUserId
 	 *            an ID of a User
 	 * @return Collection of Emails for the User or Null if no emails are found.
 	 */
+	@Override
 	public Collection listOfUserEmails(int iUserId) {
 		try {
 			return this.getEmailHome().findEmailsForUser(iUserId);
@@ -1239,9 +1325,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * DEPRECATED Adds email to the given user, and removes older emails if requested
-	 * 
+	 *
 	 * @deprecated use updateUserMail
 	 */
+	@Override
 	@Deprecated
 	public Email storeUserEmail(Integer userID, String emailAddress, boolean replaceExistentRecord) {
 		return storeUserEmail(getUser(userID), emailAddress, replaceExistentRecord);
@@ -1249,11 +1336,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * DEPRECATED Adds email to the given user, and removes older emails if requested if addres is null or empty the no email vill exist any more for the user
-	 * 
+	 *
 	 * @return null if no email was stored
-	 * 
+	 *
 	 * @deprecated use updateuserMail
 	 */
+	@Override
 	@Deprecated
 	public Email storeUserEmail(User user, String emailAddress, boolean replaceExistentRecord) {
 		try {
@@ -1269,7 +1357,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		// NOTE: the code below was causing corrupted databases and is left here only for documentation what happened.
 		// (the code below is sharing emails among users)
 		// Do not use this code.
-		// 
+		//
 		// try {
 		// if (replaceExistentRecord) {
 		// removeUserEmails(user);
@@ -1299,10 +1387,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Removes email relations to given user
-	 * 
+	 *
 	 * @param user
 	 * @return true if successfull, else false
 	 */
+	@Override
 	public boolean removeUserEmails(User user) {
 		try {
 			user.removeAllEmails();
@@ -1316,6 +1405,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @deprecated use updateUserMail
 	 */
+	@Override
 	@Deprecated
 	public void addNewUserEmail(int iUserId, String sNewEmailAddress) {
 		storeUserEmail(getUser(iUserId), sNewEmailAddress, false);
@@ -1324,11 +1414,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @deprecated use getUserGroupsDirectlyRelated(int iUserId)
 	 */
+	@Override
 	@Deprecated
 	public Collection listOfUserGroups(int iUserId) {
 		return getUserGroupsDirectlyRelated(iUserId);
 	}
 
+	@Override
 	public Collection getUserGroups(int iUserId) throws EJBException {
 		try {
 			return getUserGroups(this.getUser(iUserId));
@@ -1342,10 +1434,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets all users that are directly children of the group with id iGroupId
-	 * 
+	 *
 	 * @return Collection of User objects.
 	 * @see com.idega.user.business.UserBusiness#getUsersInGroup(Group)
 	 */
+	@Override
 	public Collection getUsersInGroup(int iGroupId) {
 		try {
 			// EntityFinder.findRelated(group,com.idega.user.data.UserBMPBean.getStaticInstance());
@@ -1358,10 +1451,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets all users that are directly children of the group aGroup
-	 * 
+	 *
 	 * @return Collection of User objects.
 	 * @see com.idega.user.business.UserBusiness#getUsersInGroup(Group)
 	 */
+	@Override
 	public Collection getUsersInGroup(Group aGroup) {
 		try {
 			int groupID = ((Integer) aGroup.getPrimaryKey()).intValue();
@@ -1374,10 +1468,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets a collection of all users in the system.
-	 * 
+	 *
 	 * @return Collection of User entities
 	 * @see com.idega.user.business.UserBusiness#getUsers()
 	 */
+	@Override
 	public Collection getUsers() throws FinderException, RemoteException {
 		// Collection l =
 		// EntityFinder.findAll(com.idega.user.data.UserBMPBean.getStaticInstance());
@@ -1387,10 +1482,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Returns User from userid, throws an unchecked EJBException if not found
-	 * 
+	 *
 	 * @throws EJBException
 	 *             if nothing found or an error occured
 	 */
+	@Override
 	public User getUser(int iUserId) {
 		return getUser(new Integer(iUserId));
 	}
@@ -1398,6 +1494,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns User from userid, throws EJBException if not found
 	 */
+	@Override
 	public User getUser(Integer iUserId) {
 		try {
 			return getUserHome().findByPrimaryKey(iUserId);
@@ -1410,6 +1507,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns User from personal id returns null if not found
 	 */
+	@Override
 	public User getUser(String personalID) throws FinderException {
 		return getUserHome().findByPersonalID(personalID);
 	}
@@ -1417,10 +1515,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns User from personal id returns null if not found
 	 */
+	@Override
 	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String personalID, String first_name, String last_name) throws FinderException {
 		return getUserHome().findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(personalID, first_name, last_name);
 	}
 
+	@Override
 	public Collection getUsersInNoGroup() throws SQLException {
 		// return
 		// EntityFinder.findNonRelated(com.idega.user.data.GroupBMPBean.getStaticInstance(),com.idega.user.data.UserBMPBean.getStaticInstance());
@@ -1431,6 +1531,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		throw new java.lang.UnsupportedOperationException("method getUsersInNoGroup() not implemented");
 	}
 
+	@Override
 	public Collection getUserGroupsDirectlyRelated(int iUserId) {
 		try {
 			return getUserGroupsDirectlyRelated(this.getUser(iUserId));
@@ -1440,6 +1541,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Collection getUsersInPrimaryGroup(Group group) {
 		try {
 			// return
@@ -1451,6 +1553,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Collection getUserGroupsDirectlyRelated(User user) {
 		try {
 			return getGroupBusiness().getParentGroups(user); // EntityFinder.findRelated(user,com.idega.user.data.GroupBMPBean.getStaticInstance());
@@ -1462,18 +1565,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets all the groups that are indirect parents (grand parents etc.) of the user with id iUserId
-	 * 
+	 *
 	 * @param iUserId
 	 *            the ID of the user to get indirect parents for
 	 * @return Collection of Group entities that are not direct parents of the specified user
 	 */
+	@Override
 	public Collection getParentGroupsInDirectForUser(int iUserId) {
 		// public Collection getUserGroupsNotDirectlyRelated(int iUserId){
 		try {
 			User user = this.getUser(iUserId);
 			/*
 			 * Collection isDirectlyRelated = getUserGroupsDirectlyRelated(user); Collection AllRelatedGroups = getUserGroups(user);
-			 * 
+			 *
 			 * if(AllRelatedGroups != null){ if(isDirectlyRelated != null){ Iterator iter = isDirectlyRelated.iterator(); while (iter.hasNext()) { Object item = iter.next(); AllRelatedGroups.remove(item); //while(AllRelatedGroups.remove(item)){} } } return AllRelatedGroups; }else { return null; }
 			 */
 			return this.getGroupBusiness().getParentGroupsInDirect(user.getGroupID());
@@ -1485,16 +1589,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Returns all the groups that are not a direct parent of the User with id iUserId. That is both groups that are indirect parents of the user or not at all parents of the user.
-	 * 
+	 *
 	 * @see com.idega.user.business.GroupBusiness#getAllGroupsNotDirectlyRelated(int)
 	 * @return Collection of non direct parent groups
 	 */
+	@Override
 	public Collection getNonParentGroups(int iUserId) {
 		try {
 			User user = getUser(iUserId);
 			/*
 			 * Collection isDirectlyRelated = getUserGroupsDirectlyRelated(user); Collection AllGroups = UserGroupBusiness.getAllGroups(); //EntityFinder.findAll(com.idega.user.data.GroupBMPBean.getStaticInstance());
-			 * 
+			 *
 			 * if(AllGroups != null){ if(isDirectlyRelated != null){ Iterator iter = isDirectlyRelated.iterator(); while (iter.hasNext()) { Object item = iter.next(); AllGroups.remove(item); //while(AllGroups.remove(item)){} } } return AllGroups; }else{ return null; }
 			 */
 			return getGroupBusiness().getNonParentGroups(user.getGroupID());
@@ -1506,13 +1611,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets all the groups that the user is in recursively up the group tree with all availble group types.
-	 * 
+	 *
 	 * @param aUser
 	 *            a User to find parent Groups for
 	 * @return Collection of Groups found recursively up the tree
 	 * @throws EJBException
 	 *             If an error occured
 	 */
+	@Override
 	public Collection getUserGroups(User aUser) throws EJBException {
 		// String[] groupTypesToReturn = new String[2];
 		// groupTypesToReturn[0] =
@@ -1524,7 +1630,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Gets all the groups that the user is in recursively up the group tree filtered with specified groupTypes
-	 * 
+	 *
 	 * @param aUser
 	 *            a User to find parent Groups for
 	 * @param groupTypes
@@ -1533,13 +1639,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws EJBException
 	 *             If an error occured
 	 */
+	@Override
 	public Collection getUserGroups(User aUser, String[] groupTypes) throws EJBException {
 		return getUserGroups(aUser, groupTypes, false);
 	}
 
 	/**
 	 * Returns recursively up the group tree parents of User aUser with filtered out with specified groupTypes
-	 * 
+	 *
 	 * @param aUser
 	 *            a User to find parent Groups for
 	 * @param groupTypes
@@ -1550,6 +1657,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws EJBException
 	 *             If an error occured
 	 */
+	@Override
 	public Collection getUserGroups(User aUser, String[] groupTypes, boolean returnSepcifiedGroupTypes) throws EJBException {
 		try {
 			return getGroupBusiness().getParentGroupsRecursive(aUser.getGroup(), groupTypes, returnSepcifiedGroupTypes);
@@ -1558,6 +1666,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public GroupBusiness getGroupBusiness() throws RemoteException {
 		return getGroupBusiness(this.getIWApplicationContext());
 	}
@@ -1566,10 +1675,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return (GroupBusiness) IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 	}
 
+	@Override
 	public Collection getAllUsersOrderedByFirstName() throws FinderException, RemoteException {
 		return this.getUserHome().findAllUsersOrderedByFirstName();
 	}
 
+	@Override
 	public Email getUsersMainEmail(User user) throws NoEmailFoundException {
 		EmailHome home = getEmailHome();
 		try {
@@ -1585,6 +1696,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Phone getUsersHomePhone(User user) throws NoPhoneFoundException {
 		String userString = null;
 		try {
@@ -1595,6 +1707,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		throw new NoPhoneFoundException(userString);
 	}
 
+	@Override
 	public Phone getUsersWorkPhone(User user) throws NoPhoneFoundException {
 		String userString = null;
 		try {
@@ -1605,6 +1718,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		throw new NoPhoneFoundException(userString);
 	}
 
+	@Override
 	public Phone getUsersMobilePhone(User user) throws NoPhoneFoundException {
 		String userString = null;
 		try {
@@ -1615,6 +1729,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		throw new NoPhoneFoundException(userString);
 	}
 
+	@Override
 	public Phone getUsersFaxPhone(User user) throws NoPhoneFoundException {
 		String userString = null;
 		try {
@@ -1628,6 +1743,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @return Correct name of the group or user or empty string if there was an error getting the name. Gets the name of the group and explicitly checks if the "groupOrUser" and if it is a user it returns the correct name of the user. Else it regularely returns the name of the group.
 	 */
+	@Override
 	public String getNameOfGroupOrUser(Group groupOrUser) {
 		try {
 			String userGroupType = getUserHome().getGroupType();
@@ -1642,53 +1758,56 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public UserProperties getUserProperties(User user) throws RemoteException {
 		return getUserProperties(((Integer) user.getPrimaryKey()).intValue());
 	}
 
+	@Override
 	public UserProperties getUserProperties(int userID) {
 		UserProperties properties = new UserProperties(getIWApplicationContext().getIWMainApplication(), userID);
 		return properties;
 	}
-	
-	
+
+
 	/**
 	 * 	Home page precedence is as follows:
 	 *	Users direct home page id
 	 *	The only home page found from a parent group
 	 *	A home page of the preferred role (if only one found).
 	 *	If more than one page is still available and the forward page (PROPERTY_FORWARD_PAGE_URI) is set, goto the forward page (if the group also has a role to choose from)
-	 *	else goto the first home page in the preferred group home pages list OR the primary group home page 
+	 *	else goto the first home page in the preferred group home pages list OR the primary group home page
 	 *	OR lastly to the first of the none preferred home pages list (pretty random but we can't decide anyway).
 	 *
 	 * @param user
 	 * @return the URI of the page
 	 */
+	@Override
 	public int getHomePageIDForUser(User user){
 		IWMainApplicationSettings settings = this.getIWApplicationContext().getIWMainApplication().getSettings();
-		
+
 		//Check if we need to use the role chooser / start page chooser page
 		String forwardPage = settings.getProperty(IWAuthenticator.PROPERTY_FORWARD_PAGE_URI);
-		
+
 		//Check if the user has specifically been set to go to a page, this is highly unlikely but should override everything else.
 		int homePageID = user.getHomePageID();
 		if (homePageID > 0) {
 			return homePageID;
 		}
-		
+
 		//Gather all the users groups and see if any of them have home pages.
 		ICRole preferredRole = user.getPreferredRole();
 		String preferredRoleKey = (preferredRole!=null)? preferredRole.getRoleKey() : null;
 		Collection<Integer> homepages = new ArrayList<Integer>();
 		Collection<Integer> homePagesOfPreferredRole = new ArrayList<Integer>();
 		Collection<Integer> homepagesWithRolesNotPreferred = new ArrayList<Integer>();
-		
+
 		Collection<Group> groups = user.getParentGroups();
-		
+
 		//collect home pages
 		for (Group group : groups) {
 			if (group.getHomePageID() > 0) {
-				Integer pageID = new Integer(group.getHomePageID());		
+				Integer pageID = new Integer(group.getHomePageID());
 
 				Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
 				if( !ListUtil.isEmpty(allRolesForGroup)){
@@ -1704,22 +1823,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 			}
 		}
-		
+
 		if(!ListUtil.isEmpty(homepages) && homepages.size()==1){
 			return ((homepages.iterator().next())).intValue();
 		}
-		
-		
+
+
 		//preferred role
 		if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
 			if(homePagesOfPreferredRole.size()==1){
 				return ((homePagesOfPreferredRole.iterator().next())).intValue();
 			}
 		}
-		
+
 		//if homePagesOfPreferredRole is none empty it also is bigger then 1 because of the check above.
 		boolean moreThanOneRoleWithPage = (!ListUtil.isEmpty(homePagesOfPreferredRole) || (!ListUtil.isEmpty(homepagesWithRolesNotPreferred) && homepagesWithRolesNotPreferred.size()>1));
-		
+
 		//Check if there was a forward page specified for when there may be more than one page / role to choose from
 		if(forwardPage!=null && moreThanOneRoleWithPage ){
 			try {
@@ -1735,7 +1854,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		else{
-			
+
 			//Last resort we use the first page of the preferred role home pages or home pages (if any)
 			if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
 				return ((homePagesOfPreferredRole.iterator().next())).intValue();
@@ -1748,21 +1867,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if(homePageId>0){
 					return homePageId;
 				}
-				
+
 			}
-			
+
 			if(!ListUtil.isEmpty(homepages)){
 				return ((homepages.iterator().next())).intValue();
 			}
 		}
-		
-		
+
+
 		return -1;
 	}
 
 	/**
 	 * @return the id of the homepage for the user if it is set, else it throws a javax.ejb.FinderException Finds the homepage set for the user, if none is set it checks on the homepage set for the users primary group, else it throws a javax.ejb.FinderException
 	 */
+	@Override
 	public com.idega.core.builder.data.ICPage getHomePageForUser(User user) throws javax.ejb.FinderException {
 		try {
 			int homeID = getHomePageIDForUser(user);
@@ -1780,13 +1900,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return (ICPageHome) com.idega.data.IDOLookup.getHome(ICPage.class);
 	}
 
+	@Override
 	public AddressBusiness getAddressBusiness() throws RemoteException {
 		return (AddressBusiness) getServiceInstance(AddressBusiness.class);
 	}
 
 	/**
 	 * Cast a Group that is a "UserReresentative" Group to a User instance.
-	 * 
+	 *
 	 * @param userGroups
 	 *            An instance of a Group that is really a "UserReresentative" group i.e. the Group representation of the User
 	 * @param userGroup
@@ -1795,6 +1916,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @throws EJBException
 	 *             If an error occurs casting
 	 */
+	@Override
 	public User castUserGroupToUser(Group userGroup) throws EJBException {
 		try {
 			if (userGroup instanceof User) {
@@ -1817,16 +1939,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		// "+userGroup.toString());
 	}
 
+	@Override
 	public boolean hasUserLogin(User user) throws RemoteException {
 		LoginTable lt = LoginDBHandler.getUserLogin(((Integer) user.getPrimaryKey()).intValue());
 		return lt != null;
 	}
 
+	@Override
 	public boolean hasUserLogin(int userID) throws RemoteException {
 		LoginTable lt = LoginDBHandler.getUserLogin(userID);
 		return lt != null;
 	}
 
+	@Override
 	public Group getUsersHighestTopGroupNode(User user, List groupTypes, IWUserContext iwuc) throws RemoteException {
 		Map groupTypeGroup = new HashMap();
 		Collection topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
@@ -1848,7 +1973,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Checks if a group is under a user's top group node. This can be used to check if the user is allowed to view the group.
-	 * 
+	 *
 	 * @param iwc
 	 *            IWUserContext
 	 * @param group
@@ -1857,6 +1982,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 *            The user to check the group for
 	 * @return returns true if any of <code>user</code> s top group nodes is an ancestor of <code>group</code>, false otherwise.
 	 */
+	@Override
 	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user) throws RemoteException {
 		Collection topGroupNodes = null;
 		try {
@@ -1876,9 +2002,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Helper method for {@link #isGroupUnderUsersTopGroupNode(IWUserContext, Group, User)}.
-	 * 
+	 *
 	 * @see #isGroupUnderUsersTopGroupNode(IWUserContext, Group, User)
 	 */
+	@Override
 	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes) {
 		boolean found = false; // whether ancestry with a top group node is
 		// found or not
@@ -2009,7 +2136,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}*/
 
 	/**
-	 * 
+	 *
 	 * @param childGroups
 	 * @param possibleGroups
 	 *            collection of prosessed groups to prevent endless recusion
@@ -2031,6 +2158,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}*/
 
+	@Override
 	public boolean hasTopNodes(User user, IWUserContext iwuc) {
 		try {
 			// super admin check is done first
@@ -2053,14 +2181,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * the other groups' parents. If another group has this group as a parent it is removed and its parent list <br>
 	 * and we move on to the next key. This way the map we iterate through will always get smaller until only the <br>
 	 * top node groups are left.
-	 * 
+	 *
 	 * Finally we check for the special case that the remaining top nodes have a shortcut that is not a top node <br>
 	 * and if so we need to remove that node unless there is only one node left or if the alias and the real group <br>
 	 * are both top nodes.
-	 * 
+	 *
 	 * @param user
 	 * @return @throws RemoteException
 	 */
+	@Override
 	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc) throws RemoteException {
 		Collection topNodes = new ArrayList();
 		// check for the super user case first
@@ -2382,6 +2511,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return topNodes;
 	}
 
+	@Override
 	public void addGroupPKsToCollectionFromICPermissionCollection(Collection ICPermissionSRC, Collection GroupDEST) {
 		GroupHome grHome = getGroupHome();
 		for (Iterator iter = ICPermissionSRC.iterator(); iter.hasNext();) {
@@ -2400,6 +2530,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Collection getStoredTopNodeGroups(User user) {
 		try {
 			return getTopNodeGroupHome().getTopNodeGroups(user);
@@ -2409,6 +2540,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public Collection getStoredTopGroupNodes(User user) {
 		try {
 			return getTopNodeGroupHome().findByUser(user);
@@ -2418,6 +2550,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public void removeStoredTopGroupNodes(User user) throws RemoveException {
 		Collection oldNodes = getStoredTopGroupNodes(user);
 		if (oldNodes != null && !oldNodes.isEmpty()) {
@@ -2430,11 +2563,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Stores the given group top nodes to the user, by first removing all previously stored top nodes from the user
-	 * 
+	 *
 	 * @param user
 	 * @param nodeGroupIds
 	 * @param comment
 	 */
+	@Override
 	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, int numberOfPermissions, String totalLoginTime, String comment) {
 		javax.transaction.TransactionManager transactionManager = com.idega.transaction.IdegaTransactionManager.getInstance();
 		try {
@@ -2469,10 +2603,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Returns a collection of Groups. The groups that he has edit permissions to <br>
-	 * 
+	 *
 	 * @param user
 	 * @return @throws RemoteException
 	 */
+	@Override
 	public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc) {
 		Collection resultGroups = new TreeSet(); // important to use Set so
 		// there will not be any
@@ -2525,10 +2660,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Returns a collection of Groups. The groups that he has view permissions to <br>
-	 * 
+	 *
 	 * @param user
 	 * @return @throws RemoteException
 	 */
+	@Override
 	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc) {
 		Collection resultGroups = new TreeSet(); // important to use Set so
 		// there will not be any
@@ -2591,10 +2727,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId) {
 		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, false);
 	}
 
+	@Override
 	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
@@ -2665,6 +2803,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return result;
 	}
 
+	@Override
 	public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
@@ -2818,6 +2957,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		groupIdUsersId.put(groupId, userIds);
 	}
 
+	@Override
 	public boolean isMemberOfGroup(int parentGroupToTest, User user) {
 		// first check the primary group
 		/*
@@ -2929,6 +3069,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns a localized error message (if the UserGroupPlugin localized it!) or null if there was no error.
 	 */
+	@Override
 	public String isUserSuitedForGroup(User user, Group targetGroup) {
 		try {
 			String grouptype = targetGroup.getGroupType();
@@ -2951,6 +3092,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public String getUserApplicationStyleSheetURL() {
 		IWMainApplication application = this.getIWMainApplication();
 		String styleSheetOverrideURI = application.getSettings().getProperty("USER_APP_STYLE_SHEET", "");
@@ -2964,6 +3106,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	}
 
+	@Override
 	public boolean isInDefaultCommune(User user) throws RemoteException, FinderException {
 		Address address = getUsersMainAddress(user);
 		Commune commune = null;
@@ -2984,13 +3127,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Updates or creates a users main address with a fully qualifying address string (see getFullAddressString(address) in AddressBusiness for the format of the string)
-	 * 
+	 *
 	 * @param user
 	 * @param fullAddressString
 	 *            e.g. : "Stafnasel 6;107 Reykjavik;Iceland:is_IS;Reykjavik:12345", See javadoc on getFullAddressString(Address address) in AddressBusiness
 	 * @throws RemoteException
 	 * @throws CreateException
 	 */
+	@Override
 	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException, CreateException {
 		if (fullAddressString != null && !"".equals(fullAddressString)) {
 			Address mainAddress = getUsersMainAddress(user);
@@ -3013,12 +3157,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public User getUserByUniqueId(String uniqueID) throws FinderException {
 		User user;
 		user = getUserHome().findUserByUniqueId(uniqueID);
 		return user;
 	}
 
+	@Override
 	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) {
 		try {
 			return getUserHome().ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(groups, userStatuses, yearOfBirthFrom, yearOfBirthTo, gender);
@@ -3035,6 +3181,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void storeUserComment(User user, String comment, User performer) {
 		try {
 			UserComment userComment = getUserCommentHome().create();
@@ -3048,6 +3195,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Collection getUserComments(User user) throws FinderException {
 		Collection comments = getUserCommentHome().findAllByUser(user);
 		if (comments == null || comments.isEmpty()) {
@@ -3058,10 +3206,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * This method will try to find the parent of the user (if only one) and then calls callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(group,parentGroup)
-	 * 
+	 *
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
+	@Override
 	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user) throws CreateException, RemoteException {
 		List list = user.getParentGroups();
 		Group parentGroup = null;
@@ -3072,6 +3221,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		callAllUserGroupPluginAfterUserCreateOrUpdateMethod(user, parentGroup);
 	}
 
+	@Override
 	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup) throws CreateException, RemoteException {
 		// get plugins and call the method
 		Collection allUserPlugins = getGroupBusiness().getUserGroupPlugins();
@@ -3082,6 +3232,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public void callAllUserGroupPluginBeforeUserRemoveMethod(User user, Group parentGroup) {
 		// get plugins and call the method
 		Collection allUserPlugins;
@@ -3102,6 +3253,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Use this method for getting rid of shared emails
 	 */
+	@Override
 	public void cleanUserEmails() {
 		IDOQuery query = IDOQuery.getStaticInstance();
 		// get all users that are sharing emails
@@ -3148,11 +3300,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Sets the preferredLocale for the user and STORES to the database.
-	 * 
+	 *
 	 * @param user
 	 * @param preferredLocale
 	 *            (the language)
 	 */
+	@Override
 	public void setUsersPreferredLocale(User user, String preferredLocale, boolean storeUser) {
 		user.setPreferredLocale(preferredLocale);
 
@@ -3163,10 +3316,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Sets the preferredRole for the user and STORES to the database.
-	 * 
+	 *
 	 * @param user
 	 * @param preferredRole
 	 */
+	@Override
 	public void setUsersPreferredRole(User user, ICRole preferredRole, boolean storeUser) {
 		user.setPreferredRole(preferredRole);
 
@@ -3179,6 +3333,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param user
 	 * @return a Locale object created with the users preferred locale (language)
 	 */
+	@Override
 	public Locale getUsersPreferredLocale(User user) {
 		Locale locale = null;
 		if (user != null) {
@@ -3194,6 +3349,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @param user
 	 * @return a ICRole object created with the users preferred role
 	 */
+	@Override
 	public ICRole getUsersPreferredRole(User user) {
 		ICRole role = null;
 		if (user != null) {
@@ -3201,19 +3357,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return role;
 	}
-	
+
+	@Override
 	public boolean validatePersonalId(User user, Locale locale) {
 		return user == null ? false : validatePersonalId(user.getPersonalID(), locale);
 	}
-	
+
+	@Override
 	public boolean validatePersonalId(User user) {
 		return validatePersonalId(user, CoreUtil.getCurrentLocale());
 	}
-	
+
+	@Override
 	public boolean validatePersonalId(String personalId) {
 		return validatePersonalId(personalId, CoreUtil.getCurrentLocale());
 	}
-	
+
+	@Override
 	public boolean validatePersonalId(String personalId, Locale locale) {
 		if (StringUtil.isEmpty(personalId)) {
 			LOGGER.warning("Personal ID is empty!");
@@ -3223,13 +3383,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			LOGGER.warning("Unkown locale!");
 			return false;
 		}
-		
+
 		if ("is_IS".equals(locale.toString())) {
 			return validateIcelandicSSN(personalId);
 		} else if ("en".equals(locale.toString())) {
 			return true;	//	Default locale, no validator needed
 		}
-		
+
 		LOGGER.warning("There is no validator for locale: " + locale + ", personal id: " + personalId);
 		return false;
 	}
@@ -3241,7 +3401,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if (StringUtil.isEmpty(ssn)) {
 			return false;
 		}
-		
+
 		int sum = 0;
 		boolean validSSN = false;
 		if (ssn.length() == 10) {
@@ -3270,10 +3430,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return validSSN;
 	}
 
+	@Override
 	public boolean hasValidPersonalId(User user) {
 		return validatePersonalId(user);
 	}
-	
+
+	@Override
 	public boolean hasValidPersonalId(User user, Locale locale) {
 		return validatePersonalId(user, locale);
 	}
@@ -3281,6 +3443,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Gets info about Groups members
 	 */
+	@Override
 	public List<GroupMemberDataBean> getGroupsMembersData(List<String> uniqueIds) {
 		if (uniqueIds == null) {
 			return null;
@@ -3314,7 +3477,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/**
 	 * Getting info about all users in selected Group
-	 * 
+	 *
 	 * @param bean
 	 * @param group
 	 */
@@ -3422,7 +3585,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (user.getDateOfBirth() != null) {
 					memberInfo.setYearOfBirth(String.valueOf(new IWTimestamp(user.getDateOfBirth()).getYear()));
 				}
-				
+
 				// Job
 				memberInfo.setJob(getUserJob(user));
 
@@ -3493,6 +3656,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns user's status in concrete group. Note: IWContext may be null, it will be checked
 	 */
+	@Override
 	public Status getUserStatus(IWContext iwc, User user, Group group) {
 		if (user == null || group == null) {
 			return null;
@@ -3514,6 +3678,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * Returns user's status in concrete group. Note: IWContext may be null, it will be checked
 	 */
+	@Override
 	public Status getUserStatus(IWContext iwc, int userId, int groupId) {
 		if (statusBusiness == null && iwc == null) { // Checking if we need instance of IWContext
 			iwc = CoreUtil.getIWContext();
@@ -3565,6 +3730,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return userInfoBusiness;
 	}
 
+	@Override
 	public Image getUserImage(User user) {
 		if (user == null) {
 			return null;
@@ -3609,7 +3775,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	/*
 	 * private void extractExtraInfo(GroupMemberDataBean bean, User user) { if (bean == null || user == null) { return; } EmploymentMemberInfo memberInfo = null; try { memberInfo = getMemberHome().findByPrimaryKey(Integer.valueOf(user.getId())); } catch (NumberFormatException e) { e.printStackTrace(); } catch (FinderException e) { e.printStackTrace(); } if (memberInfo == null) { return; }
-	 * 
+	 *
 	 * bean.setTitle(memberInfo.getTitle()); bean.setEducation(memberInfo.getEducation()); bean.setSchool(memberInfo.getSchool()); //bean.setArea(memberInfo); TODO bean.setBeganWork(memberInfo.getBeganWork()); }
 	 */
 
@@ -3629,21 +3795,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return Integer.toString((IWTimestamp.getDaysBetween(dateOfBirth, dateToday)) / 365);
 	}
 
+	@Override
 	public Date getUserDateOfBirthFromPersonalId(String personalId) {
 		Locale locale = CoreUtil.getCurrentLocale();
 		if (locale == null) {
 			LOGGER.warning("Current locale is unknown!");
 			return null;
 		}
-		
+
 		if (!validatePersonalId(personalId, locale)) {
 			return null;
 		}
-		
+
 		if ("is_IS".equals(locale.toString())) {
 			return getDateBirthFromIcelandicPersonalId(personalId);
 		}
-		
+
 		LOGGER.warning("There is no date parser from personal id: " + personalId + " and locale: " + locale);
 		return null;
 	}
@@ -3711,6 +3878,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return -1;
 	}
 
+	@Override
 	public String getUserPassword(User user) {
 		LoginTable loginTable = getLoginTableForUser(user);
 		if (loginTable == null) {
@@ -3728,6 +3896,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return LoginDBHandler.getUserLogin(((Integer) user.getPrimaryKey()).intValue());
 	}
 
+	@Override
 	public String getUserLogin(User user) {
 		LoginTable loginTable = getLoginTableForUser(user);
 		if (loginTable == null) {
@@ -3737,6 +3906,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return loginTable.getUserLogin();
 	}
 
+	@Override
 	public List<String> getAllUserGroupsIds(User user, IWUserContext iwuc) throws RemoteException {
 		if (user == null || iwuc == null) {
 			return null;
@@ -3768,6 +3938,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return groupsIds;
 	}
 
+	@Override
 	public List<Group> getAllUserGroups(User user, IWUserContext iwuc) throws RemoteException {
 		List<String> groupsIds = getAllUserGroupsIds(user, iwuc);
 		if (groupsIds == null) {
@@ -3838,6 +4009,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return value;
 	}
 
+	@Override
 	public Collection<User> getUsersByNameOrEmailOrPhone(String nameEmailOrPhone) {
 		if (StringUtil.isEmpty(nameEmailOrPhone)) {
 			return null;
@@ -3856,6 +4028,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return getUsersByPhoneNumber(nameEmailOrPhone);
 	}
 
+	@Override
 	public Collection<User> getUsersByPhoneNumber(String phoneNumber) {
 		if (StringUtil.isEmpty(phoneNumber)) {
 			return null;
@@ -3870,6 +4043,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public Collection<User> getUsersByEmail(String email) {
 		if (StringUtil.isEmpty(email)) {
 			return null;
@@ -3884,6 +4058,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public Collection<User> getUsersByName(String name) {
 		if (StringUtil.isEmpty(name)) {
 			return null;
@@ -3922,7 +4097,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return users;
 	}
 
-	public String setPreferredRoleAndGetHomePageUri(String roleKey) {
+
+	@Override
+	public String setPreferredRoleAndGetHomePageUri(String roleKey, IWUserContext iwuc) {
 		if (StringUtil.isEmpty(roleKey)) {
 			return null;
 		}
@@ -3951,25 +4128,32 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 		setUsersPreferredRole(currentUser, preferredRole, true);
-		return getPageUriByUserPreferredRole(currentUser);
+		return getPageUriByUserPreferredRole(currentUser, iwuc);
 	}
 
-	public String getPageUriByUserPreferredRole(User user) {
+	@Override
+	public String getPageUriByUserPreferredRole(User user, IWUserContext iwuc) {
 		//FIXME change to use the same logic as the page choosing in IWAuthenticator
 		ICRole userPrefferedRole = user.getPreferredRole();
 		if (userPrefferedRole == null) {
 			return null;
 		}
 
-		IWApplicationContext iwac = getIWApplicationContext();
-		Collection<Group> userGroups = getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwac, user);
+		UserDAO userDAO = getUserDAO();
+		com.idega.user.data.bean.User u = userDAO.getUser(Integer.valueOf(user.getId()));
+
+		Collection<com.idega.user.data.bean.Group> userGroups = getAccessController().getAllUserGroupsForRoleKey(user.getPreferredRole().getId(), iwuc, u);
 		if (ListUtil.isEmpty(userGroups)) {
 			return null;
 		}
 
 		int homePageId = -1;
-		for (Group userGroup : userGroups) {
-			homePageId = userGroup.getHomePageID();
+		for (com.idega.user.data.bean.Group userGroup : userGroups) {
+			com.idega.core.builder.data.bean.ICPage homePage = userGroup.getHomePage();
+			if (homePage == null)
+				continue;
+
+			homePageId = homePage.getID();
 			if (homePageId > 0) {
 				try {
 					return ((BuilderService) getServiceInstance(BuilderService.class)).getPageURI(homePageId);
@@ -3983,6 +4167,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user) {
 		List<ICRole> rolesForUser = new ArrayList<ICRole>();
 		AccessController accessController = getAccessController();
@@ -4011,6 +4196,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	/**
 	 * @see com.idega.user.business.UserBusiness#getModeratorsForUser(com.idega.user.data.User, com.idega.presentation.IWContext)
 	 */
+	@Override
 	public User getModeratorForUser(User user) {
 		try {
 			Group company = getPreferedCompany(user);
@@ -4024,7 +4210,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
+
 		Collection<User> moderators = new ArrayList<User>();
 		Collection<Group> userGroups = getUserGroups(user);
 		if (userGroups != null) {
@@ -4041,6 +4227,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
 	public void setPreferedCompany(String companyId, User user) {
 		// TODO: constant
 
@@ -4048,6 +4235,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		user.store();
 	}
 
+	@Override
 	public Group getPreferedCompany(User user) throws RemoteException {
 		String companyId = user.getMetaData(MetadataConstants.USER_PREFERED_COMPANY_METADATE_KEY);
 		try {
@@ -4062,19 +4250,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return null;
 	}
-	
+
+	@Override
 	public String changeUserPassword(String newPassword) {
 		try {
 			IWContext iwc = CoreUtil.getIWContext();
 			User currentUser = iwc.getCurrentUser();
-			
+
 			LoginTable loginTable = LoginDBHandler.getUserLogin(currentUser);
 			// encrypted new password
 			String encryptedPassword = Encrypter.encryptOneWay(newPassword);
 			// store new password
 			loginTable.setUserPassword(encryptedPassword, newPassword);
 			loginTable.store();
-			
+
 			Boolean accountEnabled = Boolean.TRUE;
 			Boolean passwordNeverExpires = Boolean.FALSE;
 			Boolean userAllowedToChangePassword = Boolean.TRUE;
@@ -4084,7 +4273,34 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		} catch(Exception ex) {
 			ex.printStackTrace();
 			return "failure";
-		}	
+		}
 	}
-	
-} // Class UserBusiness
+
+	@Override
+	public Collection<User> getUsersByNameAndEmailAndPhone(String nameEmailOrPhone) {
+		if (StringUtil.isEmpty(nameEmailOrPhone)) {
+			return null;
+		}
+
+		Set<User> usersBynameEmailAndPhone  = new HashSet<User>();
+
+		Collection<User> usersByNames = getUsersByName(nameEmailOrPhone);
+
+		if(!ListUtil.isEmpty(usersByNames)){
+			usersBynameEmailAndPhone.addAll(usersByNames);
+		}
+
+		Collection<User> usersByEmails = getUsersByEmail(nameEmailOrPhone);
+		if(!ListUtil.isEmpty(usersByEmails)){
+			usersBynameEmailAndPhone.addAll(usersByEmails);
+		}
+
+		Collection<User> usersByPhone = getUsersByPhoneNumber(nameEmailOrPhone);
+		if(!ListUtil.isEmpty(usersByPhone)){
+			usersBynameEmailAndPhone.addAll(usersByPhone);
+		}
+
+		return usersBynameEmailAndPhone;
+	}
+
+}

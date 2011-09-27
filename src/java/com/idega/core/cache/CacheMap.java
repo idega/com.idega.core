@@ -282,6 +282,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 		}
 	}
 
+	@SuppressWarnings("unchecked")
 	public Set<K> keySet() {
 		Set<K> set = new HashSet<K>();
 		List<K> keys;

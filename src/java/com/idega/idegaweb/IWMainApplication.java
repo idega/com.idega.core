@@ -39,6 +39,7 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ELContext;
 import javax.el.ELContextListener;
 import javax.el.ELException;
 import javax.el.ELResolver;
@@ -2141,7 +2142,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				//String icObjectId=parameters[2];
 				String componentClass;
 
-				/*if(componentType.indexOf("uuid_")!=-1){
+				/*if(componentType.indexOf(ICObjectBusiness.UUID_PREFIX)!=-1){
 					componentClass = parameters[4];
 				}
 				else{
@@ -2292,7 +2293,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
 		return getFacesApplication().createValueBinding(ref);
 	}
-
+	
+	public ValueExpression createValueExpression(String ref, Class<?> expectedReturnType) {
+		return createValueExpression(FacesContext.getCurrentInstance().getELContext(), ref, expectedReturnType);
+	}
+	public ValueExpression createValueExpression(ELContext elContext, String ref, Class<?> expectedReturnType) {
+		return getFacesApplication().getExpressionFactory().createValueExpression(elContext, ref, expectedReturnType);
+	}
+	
 	//End JSF Application implementation
 
 	/**

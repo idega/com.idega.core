@@ -284,6 +284,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return false;
 		}
 	}
+	
+	public boolean logOutUser(IWContext iwc) {
+		return logOutUser(iwc.getRequest());
+	}
+		
 
 	/**
 	 * Used for the LoggedOnInfo object to be able to log off users when their

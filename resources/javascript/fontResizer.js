@@ -1,6 +1,6 @@
 jQuery.noConflict();
 
-jQuery(function() {
+jQuery(document).ready(function() {
 	var originalFontSize = jQuery('body').css('font-size');
 	
 	// Normal Font Size

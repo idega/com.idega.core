@@ -50,9 +50,9 @@ import com.idega.util.datastructures.NestedSetsContainer;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2008/08/12 13:52:59 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.64 $
  */
@@ -508,7 +508,7 @@ public interface GroupBusiness extends IBOService {
 	public Email getGroupEmail(Group group) throws java.rmi.RemoteException;
 
 	public Email getGroupMainEmail(Group group) throws NoEmailFoundException;
-	
+
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateGroupMail
 	 */
@@ -536,7 +536,7 @@ public interface GroupBusiness extends IBOService {
 	public PhoneHome getPhoneHome() throws java.rmi.RemoteException;
 
 	/**
-	 * @throws RemoveException 
+	 * @throws RemoveException
 	 * @see com.idega.user.business.GroupBusinessBean#isGroupRemovable
 	 */
 	public boolean isGroupRemovable(Group group,Group parentGroup) throws java.rmi.RemoteException, RemoveException;
@@ -646,36 +646,69 @@ public interface GroupBusiness extends IBOService {
 	 * @see com.idega.user.business.GroupBusinessBean#userGroupTreeImageProcedureTopNodeSearch
 	 */
 	public boolean userGroupTreeImageProcedureTopNodeSearch() throws java.rmi.RemoteException;
-	
+
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginAfterGroupCreateOrUpdateMethod
 	 */
 	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group);
-	
+
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginAfterGroupCreateOrUpdateMethod
 	 */
 	public void callAllUserGroupPluginAfterGroupCreateOrUpdateMethod(Group group, Group parentGroup);
 
 	/**
-	 * @throws RemoteException 
+	 * @throws RemoteException
 	 * @see com.idega.user.business.GroupBusinessBean#callAllUserGroupPluginBeforeGroupRemoveMethod
 	 */
 	public void callAllUserGroupPluginBeforeGroupRemoveMethod(Group group, Group parentGroup) throws RemoteException,RemoveException;
-	
+
 	public Group createGroup(String name,String description,String type,int homePageID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException;
-		  
+
 	public Group createGroup(String name,String description,String type,int homePageID,int homeFolderID,int aliasID,boolean createUnderDomainRoot,Group parentGroup)throws CreateException,RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsData
 	 */
 	public List<GroupDataBean> getGroupsData(List<String> uniqueIds);
-	
+
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAddressParts
 	 */
 	public AddressData getAddressParts(Address address);
-	
+
 	public Collection<Group> getUserGroupsByPhrase(IWContext iwc, String phrase);
+
+	/**
+	 * Gets groups by criterias mentioned above and orders by them descending
+	 * <br/>Criterias: 			<br/>
+	 * <ul>
+	 * 		<li>Groups amount in group.</li>
+	 * 		<li>Users amount in group.</li>
+	 * </ul>
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getMostPopularGroups(Collection <String> types,int amount);
+
+	/**
+	 * Gets groups and returns them ordered by modification date descendant
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroups(Collection <String> types,int amount);
+
+	/**Searches by:
+	 * 		name,
+	 * 		description
+	 * @param request the request by which result will be searched
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount);
+
+
 }

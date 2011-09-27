@@ -41,7 +41,7 @@ public class SimpleQuerier {
     /**
      * Gets the default database connection
      */
-    private static Connection getConnection() throws SQLException {
+    public static Connection getConnection() throws SQLException {
         return ConnectionBroker.getConnection(getDatasource());
     }
     /**
@@ -53,7 +53,7 @@ public class SimpleQuerier {
     /**
      * Frees the default connection used, must be done after using a databaseconnection
      */
-    private static void freeConnection(Connection connection) {
+    public static void freeConnection(Connection connection) {
         ConnectionBroker.freeConnection(getDatasource(), connection);
     }
     /**
@@ -92,7 +92,7 @@ public class SimpleQuerier {
         try {
             Stmt= conn.createStatement();
             ResultSet RS= Stmt.executeQuery(sqlQuery);
-            Vector vector= new Vector();
+            Vector<String> vector= new Vector<String>();
             while (RS.next()) {
                 vector.add(RS.getString(1));
             }
@@ -224,6 +224,7 @@ public class SimpleQuerier {
             }
         }
     }
+    
     /**
      * @deprecated Replaced with idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity or executeUpdate()
      */
@@ -231,6 +232,7 @@ public class SimpleQuerier {
 	public static boolean execute(String sqlString) throws Exception {
         return execute(sqlString, true);
     }
+    
     /**
      * @deprecated Replaced with executeUpdate() or idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity
      */
@@ -257,6 +259,7 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
+    
     /**
      * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if there was an update
      *  @returns true if there was an update, false if there was no update
@@ -266,6 +269,11 @@ public class SimpleQuerier {
         return executeUpdate(sqlString, dataSource, true);
     }
     
+    /**
+     * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if there was an update
+     *  @returns true if there was an update, false if there was no update
+     *  @throws SQLException if there was an error
+     */
     public static boolean executeUpdate(String sqlString, boolean flushCache) throws SQLException {
     	return executeUpdate(sqlString, getDatasource(), flushCache);
     }

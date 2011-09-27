@@ -22,6 +22,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.servlet.filter.util.PagesRedirectHandler;
 import com.idega.util.IWTimestamp;
 import com.idega.util.RequestUtil;
 
@@ -106,8 +107,25 @@ public class IWWelcomeFilter extends BaseFilter {
 				response.sendRedirect(getNewWorkspaceUri(request));
 			}
 			else{
-				String pagesUri = getPagesUri(request);
-				response.sendRedirect(pagesUri);
+				boolean doRedirect = true;
+				String handlerClass = iwma.getSettings().getProperty(PagesRedirectHandler.ATTRIBUTE_PAGES_REDIRECT_HANDLER_CLASS);
+				if (handlerClass != null) {
+					try {
+						PagesRedirectHandler handler = (PagesRedirectHandler) Class.forName(handlerClass).newInstance();
+						doRedirect = handler.isForwardOnRootURIRequest(request, response);
+					}
+					catch (Exception e) {
+						//Class not found...
+					}
+				}
+				
+				if (doRedirect) {
+					String pagesUri = getPagesUri(request);
+					response.sendRedirect(pagesUri);
+				}
+				else {
+					chain.doFilter(srequest,sresponse);
+				}
 			}
 		}
 		else{

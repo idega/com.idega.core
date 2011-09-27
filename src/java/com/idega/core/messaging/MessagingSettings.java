@@ -13,16 +13,19 @@ import com.idega.idegaweb.IWMainApplication;
  */
 public class MessagingSettings {
 
-	public static final String DEFAULT_SMTP_MAILSERVER = "mail.idega.com";
+	public static final String DEFAULT_SMTP_MAILSERVER = "smtp.emailsrvr.com";
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = "messagebox_smtp_mailserver";
 	public static final String PROP_SYSTEM_SMTP_USER_NAME = "messagebox_smtp_username";
 	public static final String PROP_SYSTEM_SMTP_PASSWORD = "messagebox_smtp_password";
 	public static final String PROP_MESSAGEBOX_FROM_ADDRESS = "messagebox_from_mailaddress";
 	public static final String PROP_SYSTEM_FORCED_RECEIVER = "messagebox_forced_receiver_address";
 	public static final String PROP_SYSTEM_BCC_RECEIVER = "messagebox_bcc_receiver_address";
-	public static final String DEFAULT_MESSAGEBOX_FROM_ADDRESS = "messagebox@idega.com";
+	public static final String DEFAULT_MESSAGEBOX_FROM_ADDRESS = "info@idega.com";
 	public static final String PROPERTY_EMAIL_ENABLED = "can_send_email";
 	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = "messagebox_smtp_authenticate";
+	public static final String PROP_SYSTEM_SMTP_USE_SSL = "messagebox_smtp_ssl";
+	public static final String PROP_SYSTEM_SMTP_PORT = "messagebox_smtp_port";
+	
 	
 	public static String PROPERTY_VALUE_NOTSET="notset";
 	

@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -65,7 +66,7 @@ public class WebUtil extends DefaultSpringBean {
 	
     public boolean sendEmail(String from, String to, String subject, String message) {
     	if (StringUtil.isEmpty(subject) || StringUtil.isEmpty(message)) {
-    		getLogger().warning("Subject or/and message not provided");
+    		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
     		return false;
     	}
     	
@@ -73,11 +74,13 @@ public class WebUtil extends DefaultSpringBean {
     	
     	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "programmers@idega.com") : to;
     	if (StringUtil.isEmpty(to)) {
+    		getLogger().warning("Receiver is unknown! Unable to send a message:\n" + message);
     		return false;
     	}
     	
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
     	if (StringUtil.isEmpty(host)) {
+    		getLogger().warning("Mail server host is unknown, unable to send a message:\n" + message);
     		return false;
     	}
     	
@@ -105,5 +108,49 @@ public class WebUtil extends DefaultSpringBean {
     	sender.start();
     	
     	return true;
+    }
+    
+    public boolean logOut() {
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null) {
+    		getLogger().warning(IWContext.class.getName() + " is not available!");
+    		return false;
+    	}
+    	if (!iwc.isLoggedOn()) {
+    		getLogger().warning("User is not logged in!");
+    		return false;
+    	}
+    	
+    	LoginBusinessBean loginBusiness = null;
+    	try {
+    		loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwc.getRequest().getSession(false));
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error getting LoginBusiness", e);
+    	}
+    	if (loginBusiness == null)
+    		return false;
+    	
+    	return loginBusiness.logOutUser(iwc);
+    }
+    
+    private Boolean latestNavigationUsed = Boolean.TRUE;
+    
+    public Boolean isLatestNavigationUsed() {
+    	latestNavigationUsed = getApplication().getSettings().getBoolean("html5_navigation", Boolean.FALSE);
+    	return latestNavigationUsed;
+    }
+    
+    public Boolean isLoggedIn() {
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null)
+    		return Boolean.FALSE;
+    	
+    	try {
+    		return iwc.isLoggedOn();
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error while checking if user is logged in", e);
+    	}
+    	
+    	return Boolean.FALSE;
     }
 }

@@ -1,9 +1,9 @@
 package com.idega.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Set;
-import java.util.Vector;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBMetaData;
@@ -128,7 +128,7 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     return findByPrimaryKeyIDO(primaryKey);
   }
 
-  public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
     Object realPK = primaryKey;
     if(primaryKey instanceof IDOEntity){
     	try{
@@ -139,7 +139,7 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     	}
     	realPK = ((IDOEntity)primaryKey).getPrimaryKey();
     }
-    return idoFindByPrimaryKey(getEntityInterfaceClass(),realPK);
+    return (T) idoFindByPrimaryKey(getEntityInterfaceClass(),realPK);
   }
 
   public IDOEntity findByPrimaryKeyIDO(int primaryKey) throws FinderException{
@@ -185,7 +185,7 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     }
   }
 
-  protected abstract Class getEntityInterfaceClass();
+  protected abstract Class<? extends IDOEntity> getEntityInterfaceClass();
 
   protected Class getEntityBeanClass(){
     return IDOLookup.getBeanClassFor(getEntityInterfaceClass());
@@ -215,20 +215,18 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  public Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
-  	if(collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
+  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException {
+  	if (collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
   		return getIDOEntityListForPrimaryKeys(collectionOfPrimaryKeys);
   	} else {
-	  	Collection theReturn = new Vector();
+	  	Collection<T> theReturn = new ArrayList<T>();
 	    if (collectionOfPrimaryKeys != null){
-		    Iterator iter = collectionOfPrimaryKeys.iterator();
-		    while (iter.hasNext()) {
-		      Object pk = iter.next();
+		    for (Object pk: collectionOfPrimaryKeys) {
 		      if(pk instanceof IDOEntity){
-		      	theReturn.add(pk);
+		      	theReturn.add((T) pk);
 		      } else {
-			      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
-			      theReturn.add(entityObject);
+			      IDOEntity entityObject = this.findByPrimaryKeyIDO(pk);
+			      theReturn.add((T) entityObject);
 		      }
 		    }
 	    }

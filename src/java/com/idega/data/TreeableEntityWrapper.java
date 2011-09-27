@@ -7,6 +7,7 @@
 package com.idega.data;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
@@ -27,6 +28,8 @@ import com.idega.idegaweb.IWApplicationContext;
  */
 public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements TreeableEntity, ICTreeNode {
 
+	private static final long serialVersionUID = -1645039583184616618L;
+
 	/**
 	 * @param primaryKey
 	 * @throws IDOLookupException
@@ -36,6 +39,20 @@ public abstract class TreeableEntityWrapper extends IDOEntityWrapper implements 
 		super(primaryKey);
 	}
 
+	@Override
+	public Integer decode(String pk) {
+		return Integer.valueOf(pk);
+	}
+	
+	@Override
+	public Collection<Integer> decode(String[] pks) {
+		Collection<Integer> decoded = new ArrayList<Integer>();
+		for (String pk: pks) {
+			decoded.add(decode(pk));
+		}
+		return decoded;
+	}
+	
 	/**
 	 * @param primaryKey
 	 * @param locale

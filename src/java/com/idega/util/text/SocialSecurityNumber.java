@@ -3,7 +3,10 @@ package com.idega.util.text;
 import java.sql.Date;
 import java.util.Calendar;
 import java.util.Locale;
+import java.util.logging.Logger;
+
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 
 /**
  * Title: Description: Copyright: Copyright (c) 2001 Company:
@@ -93,12 +96,15 @@ public class SocialSecurityNumber {
 	}
 
 	public static boolean isValidSocialSecurityNumber(String ssn, Locale locale) {
+		if (StringUtil.isEmpty(ssn) || locale == null)
+			return false;
+			
 		if (ssn != null && locale.equals(new Locale("is", "IS"))) {
 			return isValidIcelandicSocialSecurityNumber(ssn);
-		}
-		// TODO handle other system locales
-		else {
-			return false;
+		} else {
+			Logger.getLogger(SocialSecurityNumber.class.getName()).warning("Social security number '" + ssn + "' can not be verified by locale " + locale +
+					". Please implemente verifier!");
+			return true;
 		}
 	}
 

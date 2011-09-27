@@ -159,6 +159,7 @@ public class ListNavigator extends Block implements IWPageEventListener {
 		menu.addMenuElement(10, "10 " + this.dropdownEntryName);
 		menu.addMenuElement(20, "20 " + this.dropdownEntryName);
 		menu.addMenuElement(50, "50 " + this.dropdownEntryName);
+		menu.addMenuElement(100, "100 " + this.dropdownEntryName);
 		menu.setSelectedElement(getNumberOfEntriesPerPage(iwc));
 		if (dropdownFunction != null) {
 			menu.getId();
@@ -192,14 +193,11 @@ public class ListNavigator extends Block implements IWPageEventListener {
 	}
 	
 	public int getNumberOfEntriesPerPage(IWContext iwc) {
-		if (pageSize > 0) {
-			return pageSize;
-		}
 		Integer numberOfEntries = (Integer) iwc.getSessionAttribute(getNumberOfEntriesParameter());
 		if (numberOfEntries != null) {
 			return numberOfEntries.intValue();
 		}
-		return this.iNumberOfEntriesPerPage;
+		return pageSize > 0 ? pageSize : this.iNumberOfEntriesPerPage;
 	}
 	
 	private String getCurrentPageParameter() {

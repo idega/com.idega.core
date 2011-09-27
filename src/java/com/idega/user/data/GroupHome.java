@@ -14,19 +14,22 @@ import java.util.Locale;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOException;
 import com.idega.data.IDOHome;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2008/08/12 13:52:56 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.31 $
  */
 public interface GroupHome extends IDOHome {
+
+	public Collection <Integer> getParentGroups(int groupId);
 
 	public Group create() throws javax.ejb.CreateException;
 
@@ -188,6 +191,38 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByMetaData
 	 */
 	public Group findBoardGroupByClubIDAndLeagueID(Integer clubID, Integer leagueID) throws FinderException;
-	
+
 	public Collection<Group> findAllByNamePhrase(String phrase, Locale locale) throws FinderException;
+
+	/**
+	 * Gets groups by criterias mentioned above and orders by them descending
+	 * <br/>Criterias: 			<br/>
+	 * <ul>
+	 * 		<li>Groups amount in group.</li>
+	 * 		<li>Users amount in group.</li>
+	 * </ul>
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getMostPopularGroups(Collection<String> types,int amount) throws FinderException;
+
+	/**
+	 * Gets groups and returns them ordered by modification date descendant
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroups(Collection<String> types,int amount) throws FinderException;
+
+	/**Searches by:
+	 * 		name,
+	 * 		description
+	 * @param request the request by which result will be searched
+	 * @param amount the maximum number of groups that will be returned if less than or equals 0 returns all maches.
+	 * @param types group types that will be returned if empty groups of all types will be returned.
+	 * @return
+	 */
+	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount) throws FinderException ;
+
 }

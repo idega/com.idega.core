@@ -1,12 +1,14 @@
 package com.idega.core.location.data;
 
 
-import com.idega.data.IDOQuery;
-import java.util.Collection;
-import javax.ejb.CreateException;
-import com.idega.data.IDOHome;
-import javax.ejb.FinderException;
 import java.rmi.RemoteException;
+import java.util.Collection;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+
+import com.idega.data.IDOHome;
+import com.idega.data.IDOQuery;
 
 public interface AddressHome extends IDOHome {
 	public Address create() throws CreateException;
@@ -34,5 +36,8 @@ public interface AddressHome extends IDOHome {
 	public Collection findByPostalCode(Integer postalCodeID)
 			throws FinderException;
 	public Address createLegacy();
-	 public Address findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
+	
+	public Address findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
+	 
+	public Address findByStreetAddress(String address) throws FinderException;
 }

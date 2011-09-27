@@ -11,7 +11,9 @@ package com.idega.presentation.text;
 
 import java.util.Iterator;
 import java.util.List;
+
 import javax.faces.component.UIComponent;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
 
@@ -35,14 +37,12 @@ public class ListItem extends PresentationObjectContainer {
 	
 	@Override
 	public void print(IWContext iwc) throws Exception {
-		
 		print("<li " + getMarkupAttributesString() + ">");
 
-		List theObjects = this.getChildren();
+		List<UIComponent> theObjects = this.getChildren();
 		if (theObjects != null) {
-			Iterator iter = theObjects.iterator();
-			while (iter.hasNext()) {
-				UIComponent item = (UIComponent) iter.next();
+			for (Iterator<UIComponent> iter = theObjects.iterator(); iter.hasNext();) {
+				UIComponent item = iter.next();
 				renderChild(iwc,item);
 			}
 		}

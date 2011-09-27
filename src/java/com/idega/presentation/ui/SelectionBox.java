@@ -7,6 +7,8 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.presentation.IWContext;
@@ -14,6 +16,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextSoap;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -143,18 +146,22 @@ public class SelectionBox extends InterfaceObject
 	 * getName() to get string to display.
 	
 	 */
-	//public void addMenuElements(List entityList)
-	public void addMenuElements(Collection entityList) {
-		if (entityList != null) {
-			IDOEntity entity = null;
-			Iterator iter = entityList.iterator();
-			while (iter.hasNext()) {
-				entity = (IDOEntity) iter.next();
-				
+	public void addMenuElements(Collection<?> entityList) {
+		if (entityList == null) {
+			return;
+		}
+		
+		for (Object obj: entityList) {
+			if (obj instanceof IDOEntity) {
+				IDOEntity entity = (IDOEntity) obj;
 				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
-			}
-			if (getName().equals(untitled) && entity != null) {
-				setName(entity.getEntityDefinition().getUniqueEntityName());
+				
+				if (getName().equals(untitled) && entity != null) {
+					setName(entity.getEntityDefinition().getUniqueEntityName());
+				}
+			} else if (obj instanceof AdvancedProperty) {
+				AdvancedProperty entity = (AdvancedProperty) obj;
+				addMenuElement(entity.getId(), entity.getValue());
 			}
 		}
 	}	
@@ -238,6 +245,7 @@ public class SelectionBox extends InterfaceObject
 	{
 		this.selectAllOnSubmitIfNoneSelected = true;
 	}
+	@Override
 	public void main(IWContext iwc)
 	{
 		if (this.headerTable)
@@ -355,6 +363,7 @@ public class SelectionBox extends InterfaceObject
 	/**
 	 * Maintains all the previously selected elements over a request submit
 	 **/
+	@Override
 	public void keepStatusOnAction()
 	{
 		this.keepStatus = true;
@@ -380,6 +389,7 @@ public class SelectionBox extends InterfaceObject
 	 * Sets the SelectionBox to submit automatically.
 	 * Must add to a form before this function is used!!!!
 	 */
+	@Override
 	public void setToSubmit()
 	{
 		this.setOnChange("this.form.submit()");
@@ -388,6 +398,7 @@ public class SelectionBox extends InterfaceObject
 	{
 		setHeight(Integer.toString(height));
 	}
+	@Override
 	public void setHeight(String height)
 	{
 		setMarkupAttribute("size", height);
@@ -395,6 +406,7 @@ public class SelectionBox extends InterfaceObject
 	/**
 	 * Sets the width in pixels or percents
 	 */
+	@Override
 	public void setWidth(String width)
 	{
 		setWidthStyle(width);
@@ -414,6 +426,7 @@ public class SelectionBox extends InterfaceObject
 		}
 		return theReturn;
 	}
+	@Override
 	public void print(IWContext iwc) throws Exception
 	{
 		this.theElements.trimToSize();
@@ -513,6 +526,7 @@ public class SelectionBox extends InterfaceObject
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 
@@ -529,6 +543,7 @@ public class SelectionBox extends InterfaceObject
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
@@ -550,5 +565,20 @@ public class SelectionBox extends InterfaceObject
 	
 	public void setSize(int size) {
 		this.size = size;
+	}
+	
+	@Override
+	public void setValue(String value) {
+		Collection<?> entities = null;
+		try {
+			entities = ELUtil.isExpression(value) ? (Collection<?>) ELUtil.getInstance().evaluateExpression(value) : null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (entities == null) {
+			super.setValue(value);
+		} else {
+			addMenuElements(entities);
+		}
 	}
 }

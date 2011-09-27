@@ -79,6 +79,11 @@ version="1.2">
 	      <property-name>autofocus</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
+	    <property>
+	      <display-name>Maximum characters</display-name>
+	      <property-name>maxCharacters</property-name>
+	      <property-class>java.lang.Integer</property-class>
+	    </property>
 	</component>
 	
 	<component>

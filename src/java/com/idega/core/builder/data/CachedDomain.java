@@ -19,6 +19,7 @@ import javax.ejb.RemoveException;
 import javax.servlet.http.HttpServletRequest;
 
 import com.idega.core.builder.business.ICDomainLookup;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDONoDatastoreError;
@@ -477,27 +478,15 @@ public class CachedDomain implements ICDomain {
 		throw new UnsupportedOperationException("method getEntityDefinition() not implemented in CacedDomain");
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see com.idega.data.IDOEntity#decode(java.lang.String)
-	 */
-	public Object decode(String pkString) {
+	public Integer decode(String pkString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see com.idega.data.IDOEntity#decode(java.lang.String[])
-	 */
-	public Collection decode(String[] pkString) {
+	public Collection<Integer> decode(String[] pkString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntity#getDatasource()
@@ -555,16 +544,11 @@ public class CachedDomain implements ICDomain {
 		return false;
 	}
 
-
-
-	/* (non-Javadoc)
-	 * @see java.lang.Comparable#compareTo(java.lang.Object)
-	 */
-	public int compareTo(Object arg0) {
-		// TODO Auto-generated method stub
+	public int compareTo(IDOEntity arg0) {
 		return 0;
 	}
 	
+	@Override
 	public boolean equals(Object o){
 		if(o instanceof ICDomain){
 			ICDomain domain = (ICDomain)o;

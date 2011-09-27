@@ -1,57 +1,92 @@
 package com.idega.util;
 
+import java.util.List;
+
 /**
- * Creditcardnumber checker Visa <br>
+ * Creditcardnumber checker <br>
+ * Visa <br>
  * MasterCard <br>
  * American Express <br>
  * Diner's Club <br>
- * Carte Blanche <br>
  * Discover <br>
  * en Route <br>
- * JCB <br>
- * 
  **/
 
 public class CreditCardChecker {
 
-	public static boolean isValid(String cardnumber)
-			throws NumberFormatException {
-		if ((cardnumber == null) || (cardnumber.length() != 16)) {
+	public static void main(String[] args) {
+		String number = "377846032140106";
+		
+		System.out.println(isValid(number));
+		System.out.println(getCardType(number).getCode() + ": " + getCardType(number).getName());
+	}
+	
+	/**
+	 * Valid a Credit Card number
+	 */
+	public static boolean isValid(String number) {
+		if (getCardType(number) != CreditCardType.INVALID)
+			return validCCNumber(number);
+		return false;
+	}
+	
+	/**
+	 * Validate a credit card number with allowed card types.
+	 * 
+	 * @param number
+	 * @param allowedTypes
+	 * @return
+	 */
+	public static boolean isValid(String number, List<CreditCardType> allowedTypes) {
+		CreditCardType type = getCardType(number);
+		if (!allowedTypes.contains(type)) {
 			return false;
 		}
-
-		int sum = 0;
-		int multiplier = 1;
-		int length = cardnumber.length();
-
-		String digit;
-		int numberProduct;
-
-		for (int i = 0; i < length; i++) {
-			digit = cardnumber.substring(length - i - 1, length - i);
-
-			try {
-				numberProduct = Integer.parseInt(digit, 10) * multiplier;
-			} catch (NumberFormatException nfe) {
-				return false;
-			}
-
-			if (numberProduct >= 10) {
-				sum += (numberProduct % 10) + 1;
-			} else {
-				sum += numberProduct;
-			}
-
-			if (multiplier == 1) {
-				multiplier++;
-			} else {
-				multiplier--;
-			}
-		}
-
-		if ((sum % 10) == 0) {
+		
+		return validCCNumber(number);
+	}
+	
+	public static boolean isNumber(String n) {
+		try {
+			Double.valueOf(n).doubleValue();
 			return true;
-		} else {
+		}
+		catch (NumberFormatException e) {
+			e.printStackTrace();
+			return false;
+		}
+	}
+
+	public static boolean validCCNumber(String n) {
+		try {
+			/*
+			 * * known as the LUHN Formula (mod10)
+			 */
+			int j = n.length();
+
+			String[] s1 = new String[j];
+			for (int i = 0; i < n.length(); i++)
+				s1[i] = "" + n.charAt(i);
+
+			int checksum = 0;
+
+			for (int i = s1.length - 1; i >= 0; i -= 2) {
+				int k = 0;
+
+				if (i > 0) {
+					k = Integer.valueOf(s1[i - 1]).intValue() * 2;
+					if (k > 9) {
+						String s = "" + k;
+						k = Integer.valueOf(s.substring(0, 1)).intValue()
+								+ Integer.valueOf(s.substring(1)).intValue();
+					}
+					checksum += Integer.valueOf(s1[i]).intValue() + k;
+				} else
+					checksum += Integer.valueOf(s1[0]).intValue();
+			}
+			return ((checksum % 10) == 0);
+		} catch (Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -104,17 +139,7 @@ public class CreditCardChecker {
 					valid = CreditCardType.DINERS_CLUB;
 			}
 		}
+
 		return valid;
 	}
-
-	public static boolean isNumber(String n) {
-		try {
-			Double.valueOf(n).doubleValue();
-			return true;
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			return false;
-		}
-	}
-
 }

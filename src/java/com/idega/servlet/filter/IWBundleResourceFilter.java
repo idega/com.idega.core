@@ -177,12 +177,14 @@ public class IWBundleResourceFilter extends BaseFilter {
 		int index = requestUriWithoutContextPath.indexOf(BUNDLE_SUFFIX);
 		if(index!=-1){
 			rest = requestUriWithoutContextPath.substring(index+BUNDLE_SUFFIX.length()+1);
-		}
-		else{
+		} else {
 			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1);
-			index = URIWithoutBundlesURI.indexOf("/");
+			index = URIWithoutBundlesURI.indexOf(CoreConstants.SLASH);
 			rest = URIWithoutBundlesURI.substring(index);
 		}
+		
+		if (rest.indexOf(";jsessionid") != -1)
+			rest = rest.substring(0, rest.indexOf(";jsessionid"));
 		
 		return rest;
 	}

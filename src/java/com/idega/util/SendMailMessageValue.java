@@ -1,6 +1,10 @@
 package com.idega.util;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.idega.builder.bean.AdvancedProperty;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -19,11 +23,11 @@ public class SendMailMessageValue {
 	private String text;
 	private String replyTo;
 	private File attachedFile;
+	private List<AdvancedProperty> headers;
 
-	public SendMailMessageValue(File attachedFile, String bcc, String cc,
-			String from, String host, String subject, String text, String to,
-			String replyTo) {
-		super();
+	public SendMailMessageValue(File attachedFile, String bcc, String cc, String from, String host, String subject, String text, String to,	String replyTo) {
+		this();
+		
 		this.attachedFile = attachedFile;
 		this.bcc = bcc;
 		this.cc = cc;
@@ -35,7 +39,7 @@ public class SendMailMessageValue {
 	}
 
 	public SendMailMessageValue() {
-
+		super();
 	}
 
 	public String getFrom() {
@@ -108,5 +112,25 @@ public class SendMailMessageValue {
 
 	public void setReplyTo(String replyTo) {
 		this.replyTo = replyTo;
+	}
+
+	public List<AdvancedProperty> getHeaders() {
+		return headers;
+	}
+
+	public void setHeaders(List<AdvancedProperty> headers) {
+		this.headers = headers;
+	}
+	
+	public void addHeader(String name, String value) {
+		if (headers == null)
+			headers = new ArrayList<AdvancedProperty>();
+		
+		headers.add(new AdvancedProperty(name, value));
+	}
+	
+	@Override
+	public String toString() {
+		return "From: " + getFrom() + ", to: " + getTo() + ", subject: " + getSubject() + ", message: " + getText() + ", attachment(s): " + getAttachedFile();
 	}
 }

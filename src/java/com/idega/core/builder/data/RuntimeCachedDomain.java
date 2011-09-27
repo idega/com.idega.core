@@ -17,6 +17,7 @@ import javax.ejb.EJBLocalHome;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.RemoveException;
 
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOStoreException;
 import com.idega.util.LocaleUtil;
@@ -184,11 +185,11 @@ public class RuntimeCachedDomain implements ICDomain{
 			setDefaultLocaleString(locale.toString());
 		}
 	}
-	public Object decode(String pkString) {
+	public Integer decode(String pkString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
-	public Collection decode(String[] pkString) {
+	public Collection<Integer> decode(String[] pkString) {
 		// TODO Auto-generated method stub
 		return null;
 	}
@@ -220,8 +221,7 @@ public class RuntimeCachedDomain implements ICDomain{
 		// TODO Auto-generated method stub
 		
 	}
-	public int compareTo(Object o) {
-		// TODO Auto-generated method stub
+	public int compareTo(IDOEntity o) {
 		return 0;
 	}
 	/**

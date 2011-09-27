@@ -78,15 +78,15 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private String _dataSource;
 	String[] _cachedColumnNameList;
 	// private EJBHome _ejbHome;
-	private HashMap _ejbHomes = new HashMap();
+	private Map _ejbHomes = new HashMap();
 	// private EJBLocalHome _ejbHome;
 	private Object _primaryKey;
-	private Hashtable _theMetaDataAttributes;
+	private Map<String, String> _theMetaDataAttributes;
 	private Vector _insertMetaDataVector;
 	private Vector _updateMetaDataVector;
 	private Vector _deleteMetaDataVector;
 	private Hashtable _theMetaDataIds;
-	private Hashtable _theMetaDataTypes;
+	private Map<String, String> _theMetaDataTypes;
 	// private Hashtable _theMetaDataOrdering;
 	private boolean _hasMetaDataRelationship = false;
 	private boolean _metaDataHasChanged = false;
@@ -316,7 +316,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @see com.idega.data.GenericEntity#toString()
 	 */
-	public Object decode(String pkString) {
+	public Integer decode(String pkString) {
 		return Integer.decode(pkString);
 	}
 
@@ -326,8 +326,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * 
 	 * @see com.idega.data.GenericEntity#toString()
 	 */
-	public Collection decode(String[] primaryKeys) {
-		Collection c = new ArrayList();
+	public Collection<Integer> decode(String[] primaryKeys) {
+		Collection<Integer> c = new ArrayList<Integer>();
 		for (int i = 0; i < primaryKeys.length; i++) {
 			c.add(decode(primaryKeys[i]));
 		}
@@ -3183,19 +3183,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
-	public int compareTo(Object obj) {
-		try {
-			return compareTo((IDOEntity) obj);
-		}
-		catch (ClassCastException e) {
-			// the user is comparing apples to oranges of course they are not equal
-			// and this is an error too!
-			e.printStackTrace();
-			return 0;
-		}
-	}
-
-	protected int compareTo(IDOEntity entity) {
+	public int compareTo(IDOEntity entity) {
 		Collator coll = Collator.getInstance();
 		return coll.compare(this.getPrimaryKey().toString(), entity.getPrimaryKey().toString());
 	}
@@ -3455,9 +3443,9 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	// fetches the metadata for this id and puts it in a HashTable
 	private void getMetaData() {
-		this._theMetaDataAttributes = new Hashtable();
+		this._theMetaDataAttributes = new Hashtable<String, String>();
 		this._theMetaDataIds = new Hashtable();
-		this._theMetaDataTypes = new Hashtable();
+		this._theMetaDataTypes = new Hashtable<String, String>();
 		// _theMetaDataOrdering = new Hashtable();
 
 		if (getEntityState() == IDOLegacyEntity.STATE_NEW || getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE) {
@@ -3548,15 +3536,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (this._theMetaDataAttributes == null) {
 			getMetaData(); // get all meta data first if null
 		}
-		return (String) this._theMetaDataAttributes.get(metaDataKey);
+		return this._theMetaDataAttributes.get(metaDataKey);
 	}
 
-	public void setMetaDataAttributes(java.util.Map metaDataAttribs) {
+	public void setMetaDataAttributes(Map<String, String> metaDataAttribs) {
 		String metaDataKey;
-		// for (Enumeration e = metaDataAttribs.keys(); e.hasMoreElements();) {
-		for (Iterator iterator = metaDataAttribs.keySet().iterator(); iterator.hasNext();) {
-			metaDataKey = (String) iterator.next();
-			addMetaData(metaDataKey, (String) metaDataAttribs.get(metaDataKey));
+		for (Iterator<String> iterator = metaDataAttribs.keySet().iterator(); iterator.hasNext();) {
+			metaDataKey = iterator.next();
+			addMetaData(metaDataKey, metaDataAttribs.get(metaDataKey));
 		}
 	}
 
@@ -3755,7 +3742,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		this._theMetaDataTypes = null;
 	}
 
-	public java.util.Map getMetaDataAttributes() {
+	public Map<String, String> getMetaDataAttributes() {
 		if (this._theMetaDataAttributes == null) {
 			getMetaData();
 		}
@@ -3766,19 +3753,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return this._theMetaDataIds;
 	}
 
-	public java.util.Map getMetaDataTypes() {
+	public Map<String, String> getMetaDataTypes() {
 		if (this._theMetaDataTypes == null) {
 			getMetaData();
 		}
 		return this._theMetaDataTypes;
 	}
 
-	// public Map getMetaDataOrdering() {
-	// if (_theMetaDataOrdering == null) {
-	// getMetaData();
-	// }
-	// return _theMetaDataOrdering;
-	// }
 	public Vector getMetaDataUpdateVector() {
 		return this._updateMetaDataVector;
 	}

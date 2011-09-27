@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -35,101 +36,96 @@ import com.idega.util.expression.ELUtil;
 @Service
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class MessageResourceFactoryImpl implements MessageResourceFactory {
-	@Autowired private List<MessageResource> uninitializedMessageResources;
-	private final Logger logger = Logger.getLogger(getClass().getName());
-//	private List<String> initializedStorageTypes = new ArrayList<String>();
 	
-	private static final String CASHED_RESOURCES = "cashed_resources";
+	@Autowired
+	private List<MessageResource> uninitializedMessageResources;
+	
+	private static final Logger LOGGER = Logger.getLogger(MessageResourceFactoryImpl.class.getName());
+	
+	private static final String CACHED_RESOURCES = "cached_resources";
 	
 	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
-		if(bundleIdentifier == null)
+		if (bundleIdentifier == null)
 			bundleIdentifier = MessageResource.NO_BUNDLE;
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
 		
-		Map<Locale, List<MessageResource>> bundleResources;
-		if(cashResources.containsKey(bundleIdentifier)) {
-			bundleResources = cashResources.get(bundleIdentifier);
-		} else {
+		Map<String, Map<Locale, List<MessageResource>>> cachedResources = getCache();
+		
+		Map<Locale, List<MessageResource>> bundleResources = cachedResources.get(bundleIdentifier);
+		if (bundleResources == null) {
 			bundleResources = new HashMap<Locale, List<MessageResource>>();
-			cashResources.put(bundleIdentifier, bundleResources);
+			cachedResources.put(bundleIdentifier, bundleResources);
 		}
 		
-		if(bundleResources.containsKey(locale)) {
+		if (bundleResources.containsKey(locale)) {
 			List<MessageResource> resources = bundleResources.get(locale);
 			sortResourcesByImportance(resources);
 			return resources;
-		} else {
-			//if there was no bundle with specified bundleIdentifier and locale
-			List<MessageResource> resources = getUninitializedMessageResources();
-			List<MessageResource> failedInitializationResources = new ArrayList<MessageResource>(resources.size());
-			for(MessageResource resource : resources) {
-				try {
-					resource.initialize(bundleIdentifier, locale);
-					
-				} catch (IOException e) {
-					e.printStackTrace();
-					failedInitializationResources.add(resource);
-					logger.log(Level.SEVERE,"Error initializing bundle : "+bundleIdentifier);
-				} catch (OperationNotSupportedException e) {
-					failedInitializationResources.add(resource);
-				}
-			}
-			
-			for(MessageResource resource : failedInitializationResources) {
-				resources.remove(resource);
-			}
-			
-			bundleResources.put(locale, resources);
-			sortResourcesByImportance(resources);
-			return resources;
 		}
+		
+		//	There is no bundle with specified bundleIdentifier and locale
+		List<MessageResource> resources = getUninitializedMessageResources();
+		List<MessageResource> failedInitializationResources = new ArrayList<MessageResource>();
+		for (MessageResource resource: resources) {
+			try {
+				resource.initialize(bundleIdentifier, locale);
+			} catch (IOException e) {
+				LOGGER.log(Level.SEVERE, "Error initializing bundle: " + bundleIdentifier, e);
+				failedInitializationResources.add(resource);
+			} catch (OperationNotSupportedException e) {
+				failedInitializationResources.add(resource);
+			}
+		}
+		
+		for (MessageResource resource: failedInitializationResources) {
+			resources.remove(resource);
+		}
+		
+		bundleResources.put(locale, resources);
+		sortResourcesByImportance(resources);
+		return resources;
 	}
 	
 	public void addInitializedMessageResource(MessageResource resource, String bundleIdentifier, Locale locale) {
-//		if(!initializedStorageTypes.contains(resource.getIdentifier())) {
-//			initializedStorageTypes.add(resource.getIdentifier());
-//		}
-//		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
-		List<MessageResource> cashedResources = getInitializedResourceList(locale, bundleIdentifier);
-		if(!cashedResources.contains(resource)) {
-			cashedResources.add(resource);
-//			sortResourcesByImportance();
+		List<MessageResource> cachedResources = getInitializedResourceList(locale, bundleIdentifier);
+		if (!cachedResources.contains(resource)) {
+			cachedResources.add(resource);
 		}
 	}
 	
 	/**
-	 * Gets localised message for current locale
+	 * Gets localized message for the current locale
 	 * @return object that was found in resource and/or set to it or valueIfNotFound object in case no messages were found 
-	 * 		   or autoinserted
+	 * 		   or auto inserted
 	 */
 	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 
-		for(MessageResource resource : resources) {
-			if(!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
+		for (MessageResource resource: resources) {
+			if (!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
 				Object message = resource.getMessage(key);
-				if(message != null && String.valueOf(message).length() > 0) {
+				if (message != null && String.valueOf(message).length() > 0) {
 					return message;
 				}
 			}
 		}
 
-		if(valueIfNotFound == null) {
+		if (valueIfNotFound == null) {
 			return null;
 		}
 		
-		//Autoinserting message in case none of resources has it
-		for(MessageResource resource : resources) {
-			if(resource.isAutoInsert()) {
+		//Auto inserting message in case none of resources has it
+		for(MessageResource resource: resources) {
+			if (resource.isAutoInsert()) {
 				resource.setMessage(key, valueIfNotFound);
 			}
 		}
+		
 		return valueIfNotFound;
 	}
 
 	public Object setLocalisedMessage(Object key, Object value, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
-		for(MessageResource resource : resources) {
+		for (MessageResource resource: resources) {
 			resource.setMessage(key, value);
 		}
 		return value;
@@ -137,7 +133,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	
 	public void setLocalisedMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
-		for(MessageResource resource : resources) {
+		for (MessageResource resource: resources) {
 			resource.setMessages(values);
 		}
 	}
@@ -160,27 +156,12 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	
 	public void removeLocalisedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
-		for(MessageResource resource : resources) {
-			if(resource.isAutoInsert()) {
+		for (MessageResource resource: resources) {
+			if (resource.isAutoInsert()) {
 				resource.removeMessage(key);
 			}
 		}
 	}
-	
-//	@SuppressWarnings("unchecked")
-//	private void sortResourcesByImportance() {
-//		ResourceComparatorByLevel resourceComparatorByLevel = new ResourceComparatorByLevel();
-//		
-//		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
-//		
-//		for(String bundleIdentifier : cashResources.keySet()) {
-//			Map<Locale, List<MessageResource>> bundleResources = cashResources.get(bundleIdentifier);
-//			for(Locale locale : bundleResources.keySet()) {
-//				List<MessageResource> resources = bundleResources.get(locale);
-//				Collections.sort(resources, resourceComparatorByLevel);
-//			}			
-//		}
-//	}
 	
 	private void sortResourcesByImportance(List<MessageResource> resources) {
 		ResourceComparatorByLevel resourceComparatorByLevel = new ResourceComparatorByLevel();
@@ -188,8 +169,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	}
 
 	public MessageResource getResource(String identifier, String bundleIdentifier, Locale locale) {
-		for(MessageResource resource : getInitializedResourceList(locale, bundleIdentifier)) {
-			if(resource.getIdentifier().equals(identifier)) {
+		for (MessageResource resource: getInitializedResourceList(locale, bundleIdentifier)) {
+			if (identifier.equals(resource.getIdentifier())) {
 				return resource;
 			}
 		}
@@ -197,20 +178,36 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	}
 	
 	public List<MessageResource> getResourceListByStorageIdentifier(String storageIdentifier) {
-		Map<String, Map<Locale, List<MessageResource>>> cashResources = getCache();
+		if (StringUtil.isEmpty(storageIdentifier)) {
+			LOGGER.warning("Storage identifier is not defined!");
+			return Collections.emptyList();
+		}
+		
+		Map<String, Map<Locale, List<MessageResource>>> cachedResources = getCache();
 		
 		List<MessageResource> storageResources = new ArrayList<MessageResource>();
-		for(String bundleIdentifier : cashResources.keySet()) {
+		for (String bundleIdentifier: cachedResources.keySet()) {
+			Map<Locale, List<MessageResource>> bundleResources = cachedResources.get(bundleIdentifier);
+			if (bundleResources == null) {
+				bundleResources = new HashMap<Locale, List<MessageResource>>();
+				cachedResources.put(bundleIdentifier, bundleResources);
+			}
 			
-			for(Locale locale : cashResources.get(bundleIdentifier).keySet()) {
+			for (Locale locale: bundleResources.keySet()) {
+				List<MessageResource> localizedMessages = bundleResources.get(locale);
+				if (localizedMessages == null) {
+					localizedMessages = new ArrayList<MessageResource>();
+					bundleResources.put(locale, localizedMessages);
+				}
 				
-				for(MessageResource resource : cashResources.get(bundleIdentifier).get(locale)) {
-					if(resource.getIdentifier().equals(storageIdentifier)) {
+				for (MessageResource resource: localizedMessages) {
+					if (storageIdentifier.equals(resource.getIdentifier())) {
 						storageResources.add(resource);
 					}
 				}
 			}			
 		}
+		
 		return storageResources;
 	}
 	
@@ -218,12 +215,6 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return getInitializedResourceList(locale, bundleIdentifier);
 	}
 
-//	public void onApplicationEvent(ApplicationEvent applicationEvent) {
-//		if(applicationEvent instanceof ResourceLevelChangeEvent) {
-//			sortResourcesByImportance();
-//		}
-//	}
-	
 	private IWMainApplication getIWMainApplication() {
 		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		return iwma;
@@ -231,25 +222,22 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 
 	private List<MessageResource> getUninitializedMessageResources() {
 		ELUtil.getInstance().autowire(this);
-		
-//		for(MessageResource resource : uninitializedMessageResources) {
-//			if(!initializedStorageTypes.contains(resource.getIdentifier())) {
-//				initializedStorageTypes.add(resource.getIdentifier());
-//			}
-//		}
-		
 		return uninitializedMessageResources;
 	}
 	
 	public List<MessageResource> getAvailableUninitializedMessageResources() {
 		List<MessageResource> allUninitializedResources = getUninitializedMessageResources();
 		
-		for(MessageResource resource : allUninitializedResources) {
+		List<MessageResource> resourcesToRemove = new ArrayList<MessageResource>();
+		for (MessageResource resource : allUninitializedResources) {
 			List<MessageResource> availableResourcesOfType = getResourceListByStorageIdentifier(resource.getIdentifier());
 			
-			if(availableResourcesOfType.isEmpty()) {
-				allUninitializedResources.remove(resource);
+			if (availableResourcesOfType.isEmpty()) {
+				resourcesToRemove.add(resource);
 			}
+		}
+		for (MessageResource resource: resourcesToRemove) {
+			allUninitializedResources.remove(resource);
 		}
 		
 		return allUninitializedResources;
@@ -260,18 +248,16 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		private static final int EQUAL = 0;
 		private static final int GREATER = 1;
 		
-		public int compare(MessageResource arg0, MessageResource arg1) {
-			
-			if(arg0.getLevel().intValue() > arg1.getLevel().intValue()) {
+		public int compare(MessageResource msg1, MessageResource msg2) {
+			if (msg1.getLevel().intValue() > msg2.getLevel().intValue()) {
 				return LESS;
-			} else if(arg0.getLevel().intValue() < arg1.getLevel().intValue()) {
+			} else if (msg1.getLevel().intValue() < msg2.getLevel().intValue()) {
 				return GREATER;
 			} else return EQUAL;
 		}
 	}
 	
 	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
-		//TODO leave cache object noneternal but make changes to the code where cache is used
-		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CASHED_RESOURCES, 1000, true, true, 50, 10);
+		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CACHED_RESOURCES, 1000, true, false, 50, 10);
 	}
 }

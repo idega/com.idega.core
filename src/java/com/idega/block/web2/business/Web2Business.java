@@ -10,19 +10,19 @@ import com.idega.presentation.IWContext;
 
 @SpringBeanName(Web2Business.SPRING_BEAN_IDENTIFIER)
 public interface Web2Business extends IBOService {
-	
+
 	public static final String SPRING_BEAN_IDENTIFIER = "web2bean";
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#addTablesorterScriptFilesToPage
 	 */
 	public void addTablesorterScriptFilesToPage(IWContext iwc, String className, String theme);
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#addWebAppFilesToPage
 	 */
 	public void addWebAppFilesToPage(IWContext iwc);
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToBehaviourLib
 	 */
@@ -95,7 +95,7 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleURIsToMooToolsLib(String version, boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
 	public List<String> getBundleURIsToMooToolsLib(boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
 	public List<String> getBundleURIsToMooToolsLib();
-	
+
 	/**
 	 * @deprecated use getJQuery().getBundleURIToJQueryLib
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToJQueryLib
@@ -159,27 +159,27 @@ public interface Web2Business extends IBOService {
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToJMakiLib
 	 */
 	public String getBundleURIToJMakiLib() throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleUriToInlineEditScript
 	 */
 	public String getBundleUriToInlineEditScript() throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleUriToSmoothboxScript
 	 */
 	public String getBundleUriToSmoothboxScript() throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleUriToSmoothboxStylesheet
 	 */
 	public String getBundleUriToSmoothboxStylesheet() throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleUriToInlineEditScript
 	 */
 	public String getBundleUriToInlineEditScript(String version) throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getInlineEditScriptPath
 	 */
@@ -299,57 +299,57 @@ public interface Web2Business extends IBOService {
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToMoodalboxLibRootFolder
 	 */
 	public String getBundleURIToMoodalboxLibRootFolder(String versionNumber) throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getTranscornersScriptFilePath
 	 */
 	public String getTranscornersScriptFilePath();
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getReflectionForMootoolsScriptFilePath
 	 */
 	public String getReflectionForMootoolsScriptFilePath();
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getCodePressScriptFilePath
 	 */
 	public String getCodePressScriptFilePath();
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToMootoolsLib
 	 */
 	public String getBundleURIToMootoolsLib(boolean needFullScript) throws RemoteException;
-	
+
 	/**
 	 * @see com.idega.block.web2.business.Web2BusinessBean#getBundleURIToMootoolsLib
 	 */
 	public String getBundleURIToMootoolsLib(String mootoolsLibraryVersion, boolean needFullScript) throws RemoteException;
-	
+
 	public String getBundleURIToYUIScript(String version, boolean needFullScript);
-	
+
 	public String getBundleURIToYUIScript(boolean needFullScript);
-	
+
 	public String getBundleURIToYUIScript();
-	
+
 	public String getBundleUriToMootabsScript(String version);
-	
+
 	public String getBundleUriToMootabsScript();
-	
+
 	public String getBundleUriToMootabsStyle(String version);
-	
+
 	public String getBundleUriToMootabsStyle();
-	
+
 	public String getBundleUriToMooRainbowScript(String version);
-	
+
 	public String getBundleUriToMooRainbowScript();
-	
+
 	public String getBundleUriToMooRainbowStyle(String version);
-	
+
 	public String getBundleUriToMooRainbowStyle();
-	
+
 	public String getSlimboxScriptFilePath();
 	public String getSlimboxStyleFilePath();
-	
+
 	/**
 	 * @deprecated use getJQuery().getBundleURIToJQueryUILib
 	 * @param type
@@ -357,7 +357,7 @@ public interface Web2Business extends IBOService {
 	 */
 	@Deprecated
 	public String getBundleURIToJQueryUILib(JQueryUIType type);
-	
+
 	/**
 	 * @deprecated use getJQuery().getBundleURIToJQueryUILib
 	 * @param type
@@ -365,20 +365,20 @@ public interface Web2Business extends IBOService {
 	 */
 	@Deprecated
 	public String getBundleURIToJQueryUILib(String jqueryUILibraryVersion, String fileName);
-	
+
 	public String getBundleURIToJQGrid();
-	
+
 	public String getBundleURIToJQGridStyles();
-	
+
 	//	ContextMenu
 	public String getBundleUriToContextMenuScript(String version, boolean compressedFile);
 	public String getBundleUriToContextMenuScript(boolean compressedFile);
 	public String getBundleUriToContextMenuScript();
-	
+
 	//	Humanized messages
 	public String getBundleUriToHumanizedMessagesScript();
 	public String getBundleUriToHumanizedMessagesStyleSheet();
-	
+
 	//	GreyBox
 	public String getBundleUtiToGreyBoxScript();
 	public String getBundleUtiToGreyBoxStyleSheet();
@@ -390,12 +390,12 @@ public interface Web2Business extends IBOService {
 	 */
 	@Deprecated
 	public String getBundleURIToJQueryPlugin(JQueryPlugin plugin);
-	
+
 	//	jsTree (based on jQuery)
 	public List<String> getBundleURIsToJSTreeScriptFiles();
 	public List<String> getBundleURIsToJSTreeScriptFiles(boolean usesXmlDataTypes, boolean usesMetadataRules, boolean usesCookies);
 	public String getBundleURIToJSTreeStyleFile();
-	
+
 	//	SexyLightBox (based on MooTools)
 	public List<String> getBundleURIsToSexyLightBoxScriptFiles();
 	public List<String> getBundleURIsToSexyLightBoxScriptFiles(boolean useCompressedScript);
@@ -403,10 +403,10 @@ public interface Web2Business extends IBOService {
 	public String getSexyLightBoxInitAction(IWContext iwc, String variableName);
 	public void insertSexyLightBoxIntoPage(IWContext iwc);
 	public String getSexyLightBoxVariableName();
-	
+
 	//	http://browserplus.yahoo.com/
 	public String getBrowserPlusScriptFile();
-	
+
 	//	FancyBox
 	public List<String> getBundleURIsToFancyBoxScriptFiles();
 	public String getBundleURIToFancyBoxStyleFile();
@@ -418,22 +418,30 @@ public interface Web2Business extends IBOService {
 	public String getBundleURIToCodeMirrorScriptFile(String scriptFile);
 	public String getBundleURIToCodeMirrorStyleFile(String styleFile);
 	public String getBundleURIToCodeMirrorFolder();
-	
+
 	public String getBundleUriToLinkLinksWithFilesScriptFile();
 	public String getActionToLinkLinksWithFiles(String containerId, boolean executeOnLoad, boolean addStyleForNonFileLinks);
 	public String getBundleUriToLinkLinksWithFilesStyleFile();
-	
+
 	public abstract JQuery getJQuery();
-	
+
 	//	Gritter
 	public String getBundleUriToGritterStyleSheet();
 	public String getBundleUriToGritterScriptFile();
-	
+
 	//	TinyMCE
 	public List<String> getScriptsForTinyMCE();
 	public List<String> getScriptsForTinyMCE(String version);
-	
+
 	//	JCaptcha
 	public boolean validateJCaptcha(String sessionId, String userCaptchaResponse);
 	public String getJCaptchaImageURL();
+
+	public List<String> getBundleURIsToTageditLib();
+	public List<String> getBundleURIsToTageditStyleFiles();
+
+	//	SWF Upload
+	public String getSWFUploadObjectScript();
+	public String getSWFUploadScript();
+	public String getSWFUploadPlugin();
 }

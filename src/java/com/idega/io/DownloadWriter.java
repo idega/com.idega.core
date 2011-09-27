@@ -21,6 +21,7 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -196,10 +197,16 @@ public class DownloadWriter implements MediaWritable {
 	}
 
 	private void sendResponse(IWContext iwc, String filename, int fileLength) {
-		iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
-		if (fileLength > 0) {
-			iwc.getResponse().setContentLength(fileLength);
-		}
+		HttpServletResponse response = iwc.getResponse();
+		response.setHeader("Expires", String.valueOf(0));
+		response.setHeader("Cache-Control", "must-revalidate, post-check=0, pre-check=0");
+		response.setHeader("Content-Type", "application/force-download");
+		response.setHeader("Content-Type", "application/octet-stream");
+		response.setHeader("Content-Type", "application/download");
+        response.setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
+        response.setHeader("Content-Transfer-Encoding", "binary");
+		if (fileLength > 0)
+			response.setContentLength(fileLength);
 	}
 
 	protected boolean markFileAsDownloaded(IWContext iwc, Integer hash) {

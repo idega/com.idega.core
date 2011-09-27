@@ -1,9 +1,9 @@
 /*
  * $Id: IWMainApplicationSettings.java,v 1.61 2009/03/18 14:36:51 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -20,8 +20,6 @@ import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.mail.internet.MimeUtility;
-
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.AccessController;
@@ -37,6 +35,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.expression.ELUtil;
+import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
 
 /**
  * <p>
@@ -47,7 +46,7 @@ import com.idega.util.expression.ELUtil;
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
  * Last modified: $Date: 2009/03/18 14:36:51 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.61 $
  */
@@ -89,8 +88,8 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	// the following three properties seem not to be set but
 	public static final String REVERSE_AJAX_KEY = "reverse_ajax";
-	
-	// the following three properties seem not to be set but  
+
+	// the following three properties seem not to be set but
 	// they are read BEFORE the database is initialized, that is
 	// these values should always be stored in the idegaweb.pxml file.
 	private static final String USE_CRYPTO_PROPERTIES = "use_crypto_properties";
@@ -157,7 +156,7 @@ public class IWMainApplicationSettings implements MutableClass {
 				/*
 				 * @SuppressWarnings("unchecked") Set<String> keys =
 				 * getApplicationBindingBusiness().keySet();
-				 * 
+				 *
 				 * for (String key : keys) { //cache if(key!=null){} }
 				 */
 
@@ -183,7 +182,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * Returns the corresponding value of the specified key. If there is no entry
 	 * the specified defaultReturnValue is stored and returned.
-	 * 
+	 *
 	 * @param key
 	 * @param defaultReturnValue
 	 * @return
@@ -201,6 +200,13 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	}
 
+	/**
+	 *
+	 * @param key the unique name of property
+	 * @param defaultValue the value that will be used by default
+	 * to create this attribute if it is not created
+	 * @return the value that is set
+	 */
 	public boolean getBoolean(String key, boolean defaultValue) {
 		String value = getProperty(key);
 		if (value != null) {
@@ -307,12 +313,12 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Special method that is called by IWMainApplicationStarter. The value is not
 	 * used at the moment, returns therefore null. Keep in mind that during the
 	 * call the database is not initialized yet. The value is always fetched from
 	 * idegaweb.pxml file.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getPoolManagerType() {
@@ -320,12 +326,12 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Special method that is called by IWMainApplication. The value is not used
 	 * at the moment, returns therefore null. Keep in mind that during the call
 	 * the database is not initialized yet. The value is always fetched from
 	 * idegaweb.pxml file.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getCryptoUsage() {
@@ -333,12 +339,12 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Special method that is called by IWMainApplicationStarter. The value is not
 	 * used at the moment, returns therefore null. Keep in mind that during the
 	 * call the database is not initialized yet. The value is always fetched from
 	 * idegaweb.pxml file.
-	 * 
+	 *
 	 * @return
 	 */
 	public String getJDBCDatasourceDefaultURL() {
@@ -369,7 +375,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * Gets the default locale which is assigned to all users if they have not
 	 * chosen a locale.
-	 * 
+	 *
 	 * @return The set application default locale. If not set it returns the
 	 *         english locale.
 	 **/
@@ -426,7 +432,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns false if the removing fails
 	 */
 	public boolean removeIWService(Class serviceClass) {
@@ -434,7 +440,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns false if the class is wrong or it fails
 	 */
 	public boolean addIWService(Class serviceClass) {
@@ -442,7 +448,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns a list of Class objects corresponding to the IWService Classes
 	 */
 	public List getServiceClasses() {
@@ -474,7 +480,7 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	/**
 	 * Returns true if the is no entry.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean getIfEntityAutoCreate() {
@@ -536,7 +542,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public boolean isReverseAjaxEnabled() {
 		return getBoolean(REVERSE_AJAX_KEY, Boolean.FALSE);
 	}
-	
+
 	public void setDebugMode(boolean debugFlag) {
 		DEBUG_FLAG = debugFlag;
 		com.idega.data.EntityFinder.debug = debugFlag;
@@ -578,7 +584,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * Gets if strings should be automatically created in bundle localization
 	 * files if they do not pre-exist. This defaults to true.
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean getIfAutoCreateStrings() {
@@ -624,7 +630,7 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	/**
 	 * Returns true if the is no entry.
-	 * 
+	 *
 	 * @return
 	 */
 	public boolean getIfAutoCreateProperties() {
@@ -646,7 +652,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * Gets the locale set for the current application for application scoped
 	 * tasks.
-	 * 
+	 *
 	 * @return The set application locale. If not set it returns the default
 	 *         locale of the application
 	 **/
@@ -698,7 +704,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Gets if the application should automatically write down bundle property
 	 * files (.pxml) fiiles on shutdown. This defaults to true;
 	 */
@@ -711,7 +717,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Sets if the application should automatically write down bundle property
 	 * files (.pxml) fiiles on shutdown. This defaults to true, but can be
 	 * specified on startup with setting the variable
@@ -726,7 +732,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	 * Gets the default markup language for the application.<br/>
 	 * In ePlatform version 3 this is xhtml.
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
 	public String getDefaultMarkupLanguage() {
@@ -738,7 +744,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setDefaultMarkupLanguage(String markupLanguage) {
 		putInApplicationBinding(DEFAULT_MARKUP_LANGUAGE_KEY, markupLanguage);
@@ -841,15 +847,15 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * @deprecated Use setProperty(String, String), getProperty(String),
 	 *             getBoolean(String), getProperty(String, String)
-	 * 
+	 *
 	 *             DO NOT USE this method. Will be removed pretty soon. It is a
 	 *             temporary method. Only used by IBColorChooserWindow that is
 	 *             storing a color list.
-	 * 
+	 *
 	 *             !!!!!!!!!!!!!! Note: caller should store the list immediately,
 	 *             store method is not called anywhere !!!!!!!!!!!!!!!!!!!!!!!! In
 	 *             the past store was called during shutdown of the application.
-	 * 
+	 *
 	 * @param key
 	 * @return
 	 */
@@ -861,7 +867,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	/**
 	 * Register the private methods to the event client as method wrappers. In
 	 * that way the event client is able to call them.
-	 * 
+	 *
 	 */
 	private void initializeEventClient() {
 		iwApplicationSettingsEventClient = new IWMainApplicationSettingsEventClient();

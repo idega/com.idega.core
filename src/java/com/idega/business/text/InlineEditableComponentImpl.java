@@ -12,6 +12,7 @@ import com.idega.block.web2.business.JQueryPlugin;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.business.BuilderLogicWrapper;
 import com.idega.core.accesscontrol.business.StandardRoles;
+import com.idega.core.component.business.ICObjectBusiness;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.util.CoreConstants;
@@ -40,7 +41,7 @@ public class InlineEditableComponentImpl implements InlineEditableComponent {
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, "Error getting unique ID for component: " + component, e);
 		}
-		if (StringUtil.isEmpty(instanceId) || !instanceId.startsWith("uuid_")) {
+		if (StringUtil.isEmpty(instanceId) || !instanceId.startsWith(ICObjectBusiness.UUID_PREFIX)) {
 			return;
 		}
 		

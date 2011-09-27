@@ -14,11 +14,13 @@ package com.idega.data.genericentity;
 
 //import java.util.*;
 
-import java.sql.*;
-
-import com.idega.data.*;
-
+import java.sql.Date;
+import java.sql.SQLException;
 import java.util.List;
+
+import com.idega.data.EntityFinder;
+import com.idega.data.GenericEntity;
+import com.idega.data.IDOEntity;
 
 
 
@@ -34,11 +36,16 @@ import java.util.List;
 
 
 
-public class MemberBMPBean extends com.idega.data.GenericEntity implements com.idega.data.genericentity.Member,java.lang.Comparable {
+@Deprecated
+public class MemberBMPBean extends GenericEntity implements Member {
 
 
 
-  private static String sClassName = "com.idega.data.genericentity.Member";
+  /**
+	 * 
+	 */
+	private static final long serialVersionUID = -5777057567023450041L;
+private static String sClassName = "com.idega.data.genericentity.Member";
 
 
 
@@ -60,6 +67,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
 
+	@Override
 	public String getEntityName(){
 
 		return "member";
@@ -68,6 +76,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
 
+	@Override
 	public void initializeAttributes(){
 
           addAttribute(getIDColumnName());
@@ -106,6 +115,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
 
+	@Override
 	public void setDefaultValues(){
 
 		setColumn("image_id",1);
@@ -220,6 +230,7 @@ public class MemberBMPBean extends com.idega.data.GenericEntity implements com.i
 
 
 
+	@Override
 	public String getName() {
 
 		String first = getFirstName();
@@ -402,21 +413,12 @@ public int getAge() {
 
 }
 
-    /** @todo  */
-
-    /** Implementing Comparable
-
-     *
-
-     */
-
-    public int compareTo(Object M){
-
-      return this.getName().compareTo(((Member) M).getName());
-
+    @Override
+	public int compareTo(IDOEntity m){
+    	if (m instanceof Member)
+    		return this.getName().compareTo(((Member) m).getName());
+    	return 0;
     }
-
-
 
     public static Member getMember(String socialSecurityNumber) {
 

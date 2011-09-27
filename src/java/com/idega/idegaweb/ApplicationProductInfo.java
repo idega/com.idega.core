@@ -19,19 +19,22 @@ import java.io.InputStreamReader;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
+
+import com.idega.util.IOUtil;
 import com.idega.util.IWTimestamp;
 
 
 /**
  *  This class holds information about the application product installed.<br>
- * 
+ *
  *  Last modified: $Date: 2007/04/18 08:09:22 $ by $Author: civilis $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.14 $
  */
 public class ApplicationProductInfo {
-	
+
 	//This will be swapped out by reading from /WEB-INF/idegaweb/properties/product.properties
 	private String inceptionYear="2000";
 	private String version="4.0-SNAPSHOT";
@@ -42,57 +45,68 @@ public class ApplicationProductInfo {
 	private String vendorLogoUrl="http://developer.idega.com/idega_onwhite_120.gif";
 	private String name="ePlatform";
 	private String family="";
-	
+
 	public ApplicationProductInfo(IWMainApplication iwma){
-		//String filePath = iwma.getPropertiesRealPath()+FileUtil.getFileSeparator()+"product.properties";
-		String manifestFilePath = File.separator+"META-INF"+File.separator+"MANIFEST.MF";
-		InputStream fileStream = iwma.getResourceAsStream(manifestFilePath);
+		String filePath = iwma.getApplicationRealPath() + "META-INF"+File.separator+"MANIFEST.MF";
+		InputStream fileStream = iwma.getResourceAsStream(filePath);
+		if (fileStream == null) {
+			filePath = iwma.getPropertiesRealPath()+File.separator+"product.properties";
+			fileStream = iwma.getResourceAsStream(filePath);
+		}
+		if (fileStream == null) {
+			filePath = iwma.getApplicationRealPath()+"WEB-INF"+File.separator+"classes"+File.separator+"WEB-INF"+File.separator+"idegaweb"+
+				File.separator+"properties"+File.separator+"product.properties";
+			try {
+				File props = new File(filePath);
+				if (props.exists())
+					fileStream = new FileInputStream(props);
+				else
+					Logger.getLogger(getClass().getName()).warning("Properties file does not exsits: " + filePath);
+			} catch (Exception e) {}
+		}
 		loadFromManifest(fileStream);
 	}
-	
-	public void loadFromManifest(InputStream fileStream){
-		if(fileStream != null){
-			Map properties = new HashMap();
-			try {
 
-				loadManifestIntoMap(fileStream,properties);
-				//properties.load(new FileInputStream(file));
-				
-				String inceptionYear = (String) properties.get("Implementation-InceptionYear");
-				if(inceptionYear!=null){
-					setInceptionYear(inceptionYear);
-				}
-				String productVersion = (String) properties.get("Implementation-Version");
-				if(productVersion!=null){
-					setVersion(productVersion);
-				}
-				String buildId = (String) properties.get("Implementation-Build");
-				if(buildId!=null){
-					setBuildId(buildId);
-				}
-				String vendorName = (String) properties.get("Implementation-Vendor");
-				if(vendorName!=null){
-					setVendor(vendorName);
-				}
-				String productName = (String) properties.get("Implementation-Title");
-				if(productName!=null){
-					setName(productName);
-				}
-				String productFamily = (String) properties.get("Implementation-Family");
-				if(productFamily!=null){
-					setFamily(productFamily);
-				}	
-				
+	public void loadFromManifest(InputStream fileStream){
+		if (fileStream == null)
+			return;
+
+		Map<String, String> properties = new HashMap<String, String>();
+		try {
+			loadManifestIntoMap(fileStream,properties);
+
+			String inceptionYear = properties.get("Implementation-InceptionYear");
+			if(inceptionYear!=null){
+				setInceptionYear(inceptionYear);
 			}
-			catch (IOException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
+			String productVersion = properties.get("Implementation-Version");
+			if(productVersion!=null){
+				setVersion(productVersion);
 			}
-			
+			String buildId = properties.get("Implementation-Build");
+			if(buildId!=null){
+				setBuildId(buildId);
+			}
+			String vendorName = properties.get("Implementation-Vendor");
+			if(vendorName!=null){
+				setVendor(vendorName);
+			}
+			String productName = properties.get("Implementation-Title");
+			if(productName!=null){
+				setName(productName);
+			}
+			String productFamily = properties.get("Implementation-Family");
+			if(productFamily!=null){
+				setFamily(productFamily);
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			IOUtil.close(fileStream);
 		}
 	}
-	
-	private void loadManifestIntoMap(InputStream fileStream, Map properties) throws IOException {
+
+	private void loadManifestIntoMap(InputStream fileStream, Map<String, String> properties) throws IOException {
 		BufferedReader br = new BufferedReader(new InputStreamReader(fileStream));
 		String line = br.readLine();
 
@@ -107,8 +121,8 @@ public class ApplicationProductInfo {
 			}
 			line = br.readLine();
 		}
-		
-		
+
+
 	}
 
 	public void loadFromProductPropertiesFile(File file){
@@ -117,7 +131,7 @@ public class ApplicationProductInfo {
 			try {
 				properties.load(new FileInputStream(file));
 				//iwma.sendStartupMessage("Loading product.properties from file: "+file.getPath());
-				
+
 				String inceptionYear = (String) properties.get("application.product.inceptionyear");
 				if(inceptionYear!=null){
 					setInceptionYear(inceptionYear);
@@ -141,23 +155,21 @@ public class ApplicationProductInfo {
 				String productFamily = (String) properties.get("application.product.family");
 				if(productFamily!=null){
 					setFamily(productFamily);
-				}	
-				
+				}
+
 			}
 			catch (FileNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 			catch (IOException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 		}
 
 	}
-	
-	
+
+
 	/**
 	 * @return Returns the buildId.
 	 */
@@ -206,7 +218,7 @@ public class ApplicationProductInfo {
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * Returns the productName with the productFamily
 	 * @return
@@ -217,7 +229,7 @@ public class ApplicationProductInfo {
 			return getName();
 		}
 		else{
-			return family+" "+getName();	
+			return family+" "+getName();
 		}
 	}
 	/**
@@ -244,7 +256,7 @@ public class ApplicationProductInfo {
 	public void setVersion(String version) {
 		this.version = version;
 	}
-	
+
 	public String getCopyrightText(){
 		return "Copyright (c) "+getInceptionYear()+"-"+IWTimestamp.RightNow().getYear()+" "+getVendor()+" All rights reserved";
 	}
@@ -259,13 +271,13 @@ public class ApplicationProductInfo {
 		String sMVersion = version.substring(0,dotIndex);
 		return Integer.parseInt(sMVersion);
 	}
-	
+
 	public boolean isMajorVersionEqualOrHigherThan(int version){
 		int majorVersion = getMajorVersion();
 		return (version<=majorVersion);
 	}
 
-	
+
 	/**
 	 * @return Returns the platformVersion.
 	 */
@@ -273,14 +285,14 @@ public class ApplicationProductInfo {
 		return this.platformVersion;
 	}
 
-	
+
 	/**
 	 * @param platformVersion The platformVersion to set.
 	 */
 	public void setPlatformVersion(String platformVersion) {
 		this.platformVersion = platformVersion;
 	}
-	
+
 	/**
 	 * Gets the major version (the first integer in the version number)
 	 * @return
@@ -291,31 +303,31 @@ public class ApplicationProductInfo {
 		String sMVersion = version.substring(0,dotIndex);
 		return Integer.parseInt(sMVersion);
 	}
-	
+
 	public boolean isMajorPlatformVersionEqualOrHigherThan(int version){
 		int majorVersion = getMajorPlatformVersion();
 		return (version<=majorVersion);
 	}
 
-	
+
 	public String getVendorUrl() {
 		return vendorUrl;
 	}
 
-	
+
 	public void setVendorUrl(String vendorUrl) {
 		this.vendorUrl = vendorUrl;
 	}
 
 
-	
+
 	public String getVendorLogoUrl() {
 		return vendorLogoUrl;
 	}
 
-	
+
 	public void setVendorLogoUrl(String vendorLogoUrl) {
 		this.vendorLogoUrl = vendorLogoUrl;
 	}
-	
+
 }

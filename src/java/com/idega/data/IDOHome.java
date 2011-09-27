@@ -23,24 +23,18 @@ import javax.ejb.FinderException;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.15 $
  */
-public interface IDOHome extends EJBLocalHome{//EJBHome {
+public interface IDOHome extends EJBLocalHome {
 
   public IDOEntity createIDO() throws CreateException;
-  //public IDOEntity createIDO() throws CreateException, RemoteException;
 
   public String getDatasource();
   public void setDatasource(String dataSource);
   public void setDatasource(String dataSource, boolean reloadEntity);
   
-  /*public IDOEntity idoFindByPrimaryKey(int primaryKey) throws RemoteException, FinderException;*/
-  public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
   public Collection findByPrimaryKeyCollection(Collection primaryKey) throws FinderException;
-  //public IDOEntity findByPrimaryKeyIDO(Object primaryKey) throws RemoteException, FinderException;
+  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys)throws FinderException;
 
-  public Collection getEntityCollectionForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException;
-
-  
-  /*public List findAll() throws RemoteException, FinderException;*/
   public Object decode(String pkString);
   public Collection decode(String[] primaryKeys);
 }

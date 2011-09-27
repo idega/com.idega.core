@@ -31,10 +31,10 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection<User> findUsersBySearchCondition(String condition, String[] userIds, boolean orderLastFirst) throws FinderException;
  public User findUserForUserGroup(com.idega.user.data.Group p0)throws javax.ejb.FinderException;
  public User findUserFromEmail(String p0)throws javax.ejb.FinderException;
- 
+
  public abstract Collection<User> findUsersByEmail(String email) throws javax.ejb.FinderException;
  public abstract Collection<User> findUsersByEmail(String email, boolean useLoweredValue, boolean useLikeExpression) throws javax.ejb.FinderException;
- 
+
  public Collection<User> findUsers(String[] userIDs)throws javax.ejb.FinderException;
  public Collection<User> findAllUsersOrderedByFirstName()throws javax.ejb.FinderException;
  public Collection<User> findUsersByYearOfBirth (int minYear, int maxYear)  throws  FinderException;
@@ -52,9 +52,13 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection<User> ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException;
 
  public Collection<User> findByNames(String p0,String p1,String p2, boolean useLoweredValues) throws FinderException;
- 
+
  public Collection<User> findByDisplayName(String displayName, boolean useLoweredValue) throws FinderException;
- 
+
  public Collection<User> findByPhoneNumber(String phoneNumber) throws FinderException;
- 
+
+ public Collection <User> ejbFindBySearchRequest(String request, int groupId, int maxAmount, int startingEntry);
+ public Collection <User> ejbFindBySearchRequest(Collection <String> requests, int groupId, int maxAmount, int startingEntry);
+ public Collection <User> ejbAutocompleteRequest(String request, int groupId, int maxAmount, int startingEntry);
+
 }

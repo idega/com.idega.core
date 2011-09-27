@@ -1,16 +1,22 @@
 package com.idega.core.location.data;
 
 
-import com.idega.data.IDOQuery;
+import java.rmi.RemoteException;
 import java.util.Collection;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
-import java.rmi.RemoteException;
+
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOFactory;
+import com.idega.data.IDOQuery;
 
 public class AddressHomeImpl extends IDOFactory implements AddressHome {
-	public Class getEntityInterfaceClass() {
+	
+	private static final long serialVersionUID = -3649183726541993776L;
+
+	@Override
+	public Class<Address> getEntityInterfaceClass() {
 		return Address.class;
 	}
 
@@ -108,5 +114,13 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 				.ejbFindByPostalCode(postalCodeID);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	@Override
+	public Address findByStreetAddress(String address) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Object pk = ((AddressBMPBean) entity).ejbFindByStreetAddress(address);
+		this.idoCheckInPooledEntity(entity);
+		return this.findByPrimaryKey(pk);
 	}
 }

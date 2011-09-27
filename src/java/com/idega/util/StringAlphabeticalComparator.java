@@ -11,20 +11,26 @@ import java.util.Locale;
  * @author Eiki
  *
  */
-public class StringAlphabeticalComparator implements Comparator {
+public class StringAlphabeticalComparator implements Comparator<String> {
 
-	private Locale _locale;
+	private boolean ascending = false;
+	private Collator collator;
 	
 	public StringAlphabeticalComparator(Locale locale) {
-		this._locale = locale;
+		this.collator = Collator.getInstance(locale);
+	}
+	
+	public StringAlphabeticalComparator(Locale locale, boolean ascending) {
+		this(locale);
+		this.ascending = ascending;
 	}
 
 	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
-	public int compare(Object o1, Object o2) {
-		Collator collator = Collator.getInstance(this._locale);		
-		return collator.compare((String)o1,(String)o2);
+	public int compare(String o1, String o2) {
+		int discriminator = ascending ? -1: 1;
+		return discriminator * collator.compare(o1, o2);
 	}
 
 }

@@ -26,6 +26,8 @@
       		<include method="getLocalizedString" />
       		<include method="getMultipleLocalizedStrings" />
       		<include method="sendEmail" />
+      		<include method="logOut" />
+      		<include method="isLoggedIn" />
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />

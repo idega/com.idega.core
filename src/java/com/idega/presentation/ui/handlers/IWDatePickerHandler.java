@@ -32,7 +32,8 @@ import com.idega.util.StringUtil;
  */
 public class IWDatePickerHandler implements ICPropertyHandler {
 	
-	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
+	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd"),
+									TIME_FORMATTER = new SimpleDateFormat("HH:mm");
 	
 	private String method = null;
 	private String instanceId = null;
@@ -77,6 +78,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		return getParsedDateByCurrentLocale(source, null);
 	}
 	
+	@SuppressWarnings("deprecation")
 	private static final Date getParsedDateByCurrentLocale(String source, Locale locale) {
 		if (StringUtil.isEmpty(source)) {
 			return null;
@@ -92,13 +94,29 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			}
 		}
 		
+		Date date = null;
 		try {
-			return DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
+			date = DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
 		} catch(Exception e) {
 			Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: " + source + " by locale: " +
 					locale.toString(), e);
+			return null;
 		}
-		return null;
+		
+		String[] dateAndTimeSource = source.split(CoreConstants.SPACE);
+		if (dateAndTimeSource.length == 2) {
+			try {
+				Date time = TIME_FORMATTER.parse(dateAndTimeSource[1]);
+				
+				date.setHours(time.getHours());
+				date.setMinutes(time.getMinutes());
+			} catch (ParseException e) {
+				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to time: " + dateAndTimeSource[1] +
+						" by locale: " + locale.toString(), e);
+			}
+		}
+		
+		return date;
 	}
 	
 	public static final Timestamp getParsedTimestampByCurrentLocale(String source) {

@@ -68,6 +68,7 @@ import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -1948,7 +1949,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 *            the type
 	 * @return
 	 */
-	public static Collection getAllGroupPermissionsReverseForGroupAndPermissionString(Group group, String permissionString) {
+	public static Collection<ICPermission> getAllGroupPermissionsReverseForGroupAndPermissionString(Group group, String permissionString) {
 		PermissionDAO dao = ELUtil.getInstance().getBean(PermissionDAO.class);
 		return dao.findPermissions(AccessController.CATEGORY_STRING_GROUP_ID, group.getID().toString(), permissionString);
 	}
@@ -2128,7 +2129,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	@Deprecated
-	public Collection getAllRolesWithRolePermissionsForGroup(com.idega.user.data.Group group) {
+	public Collection<com.idega.core.accesscontrol.data.ICPermission> getAllRolesWithRolePermissionsForGroup(com.idega.user.data.Group group) {
 		Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
 
 		Collection oldPermissions = new ArrayList();
@@ -2206,8 +2207,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	@Override
-	public Collection getAllGroupsForRoleKeyLegacy(String roleKey, IWApplicationContext iwac) {
-		Collection oldGroups = new ArrayList();
+	public Collection<com.idega.user.data.Group> getAllGroupsForRoleKeyLegacy(String roleKey, IWApplicationContext iwac) {
+		Collection<com.idega.user.data.Group> oldGroups = new ArrayList<com.idega.user.data.Group>();
 		Collection<Group> groups = getAllGroupsForRoleKey(roleKey, iwac);
 
 		try {
@@ -2242,11 +2243,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return groups;
 	}
 
-	@Override
 	@Deprecated
 	public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, com.idega.user.data.User user) {
 		User u = getUserDAO().getUser(new Integer(user.getPrimaryKey().toString()));
-		Collection<Group> groups = getAllUserGroupsForRoleKey(roleKey, iwac, u);
+		Collection<Group> groups = getAllUserGroupsForRoleKey(roleKey, CoreUtil.getIWContext(), u);
 
 		Collection oldGroups = new ArrayList();
 		try {
@@ -2268,8 +2268,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	@Override
-	public Collection getAllUserGroupsForRoleKey(String roleKey, IWApplicationContext iwac, User user) {
-		Collection<Group> groupsForRoleKey = getAllGroupsForRoleKey(roleKey, iwac);
+	public Collection getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user) {
+		Collection<Group> groupsForRoleKey = getAllGroupsForRoleKey(roleKey, IWMainApplication.getDefaultIWApplicationContext());
 		Collection<Group> userGroups = getGroupDAO().getParentGroups(user.getGroup());
 		Collection<Group> groups = new ArrayList<Group>();
 
@@ -2293,7 +2293,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	@Deprecated
-	public Collection getAllRolesLegacy() {
+	public Collection<com.idega.core.accesscontrol.data.ICRole> getAllRolesLegacy() {
 		try {
 			ICRoleHome home = (ICRoleHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICRole.class);
 			return home.findAllRoles();
@@ -2642,6 +2642,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @param iwuc
 	 * @return
 	 */
+	@Override
 	public boolean hasRole(String roleKey, Group group, IWUserContext iwuc){
 
 		List[] usersGroupsToCheckAgainstPermissions = new List[1];
@@ -2669,6 +2670,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * Checks with ICRole if this roleKey exists if not it creates it so we can get it in the roles window
 	 * @param roleKey
 	 */
+	@Override
 	public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey) {
 		if (this.rolesList == null){
 			this.rolesList = new ArrayList();
@@ -2698,6 +2700,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	}
 
+	@Override
 	@Deprecated
 	public com.idega.core.accesscontrol.data.ICRole getRoleByRoleKeyOld(String roleKey) throws FinderException {
 		try {
@@ -2710,14 +2713,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 
+	@Override
 	public ICRole getRoleByRoleKey(String roleKey) {
 		return getPermissionDAO().findRole(roleKey);
 	}
 
+	@Override
 	public ICRole createRoleWithRoleKey(String roleKey) {
 		return getPermissionDAO().createRole(roleKey, "ROLE."+roleKey+".description", "ROLE."+roleKey+".name");
 	}
 
+	@Override
 	public boolean isRoleMaster(IWUserContext iwuc) {
 		try {
 			return hasRole(AccessController.PERMISSION_KEY_ROLE_MASTER, iwuc);
@@ -2734,6 +2740,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		addGroupAsRoleMaster(g, iwma);
 	}
 
+	@Override
 	public void addGroupAsRoleMaster(Group group, IWApplicationContext iwma) {
 		//role master can give other groups roles and is a role itself
 		addRoleToGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwma);
@@ -2745,12 +2752,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		removeGroupFromRoleMastersList(g, iwma);
 	}
 
+	@Override
 	public void removeGroupFromRoleMastersList(Group group, IWApplicationContext iwma) {
 		removeRoleFromGroup(AccessController.PERMISSION_KEY_ROLE_MASTER, group, iwma);
 	}
 
 
 
+	@Override
 	public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWApplicationContext iwma) {
 		try {
 			setPermission(AccessController.CATEGORY_ROLE, iwma, groupId.toString(), RoleHelperObject.getStaticInstance().toString(),roleKey,Boolean.FALSE);
@@ -2762,10 +2771,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 
+	@Override
 	public boolean removeRoleFromGroup(String roleKey, Group group, IWApplicationContext iwac) {
 		return removeRoleFromGroup(roleKey, group.getID(), iwac);
 	}
 
+	@Override
 	public String getRoleIdentifier(){
 		return RoleHelperObject.getStaticInstance().toString();
 	}
@@ -2780,6 +2791,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @see com.idega.core.accesscontrol.business.AccessController#addRoleToGroup(java.lang.String, com.idega.user.data.Group,
 	 *      com.idega.idegaweb.IWApplicationContext)
 	 */
+	@Override
 	public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac) {
 		addRoleToGroup(roleKey, group.getID(), iwac);
 	}
@@ -2790,6 +2802,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @see com.idega.core.accesscontrol.business.AccessController#addRoleToGroup(java.lang.String, java.lang.String,
 	 *      com.idega.idegaweb.IWApplicationContext)
 	 */
+	@Override
 	public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac) {
 		try {
 			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), RoleHelperObject.getStaticInstance().toString() ,roleKey, Boolean.TRUE);
@@ -2804,6 +2817,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
 	 * Add a role with a permission key connection
 	 * */
+	@Override
 	public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac) {
 		try {
 			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), permissionKey ,roleKey, Boolean.TRUE);
@@ -2815,6 +2829,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 
+	@Override
 	public boolean removeRoleFromGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac) {
 		try {
 			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), permissionKey, roleKey,Boolean.FALSE);
@@ -2831,7 +2846,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		 * Gets if the user has 'view' permission for the page with the given pageUri.
 		 * @param pageUri the URI for a page request e.g. '/pages/1234'
 		 */
-	  public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request){
+	  @Override
+	public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request){
 
 	  	HttpSession session = request.getSession();
 	  	ServletContext sc = session.getServletContext();
@@ -2863,7 +2879,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	   * @param iwuc context for the current user
 	   * @return
 	   */
-	  public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc) {
+	  @Override
+	public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc) {
   		PagePermissionObject pageKeyObject = new PagePermissionObject(pageKey);
 		try {
 			boolean permission = hasPermission(PERMISSION_KEY_VIEW, pageKeyObject, iwuc);
@@ -2935,4 +2952,5 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		return this.objectDAO;
 	}
+
 } // Class AccessControl
