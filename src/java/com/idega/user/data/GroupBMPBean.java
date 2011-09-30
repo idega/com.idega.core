@@ -193,12 +193,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return getGroupTypeHome().getGeneralGroupTypeString();
 	}
 
-	@Override
 	public String getGroupTypeKey() {
 		return getGroupTypeValue();
 	}
 
-	@Override
 	public String getGroupTypeDescription() {
 		return "";
 	}
@@ -267,27 +265,22 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		setColumn(getGroupTypeColumnName(), groupType);
 	}
 
-	@Override
 	public void setGroupType(GroupType groupType) {
 		setColumn(getGroupTypeColumnName(), groupType);
 	}
 
-	@Override
 	public void setAliasID(int id) {
 		setColumn(COLUMN_ALIAS_TO_GROUP, id);
 	}
 
-	@Override
 	public void setAlias(Group alias) {
 		setColumn(COLUMN_ALIAS_TO_GROUP, alias);
 	}
 
-	@Override
 	public int getAliasID() {
 		return getIntColumnValue(COLUMN_ALIAS_TO_GROUP);
 	}
 
-	@Override
 	public Group getAlias() {
 		return (Group) getColumnValue(COLUMN_ALIAS_TO_GROUP);
 	}
@@ -296,37 +289,30 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * This only returns true if the group is of the type alias and the id is
 	 * bigger than 0
 	 */
-	@Override
 	public boolean isAlias() {
 		return ("alias".equals(getGroupType()) && (getAliasID() > 0));
 	}
 
-	@Override
 	public void setPermissionControllingGroupID(int id) {
 		setColumn(COLUMN_PERMISSION_CONTROLLING_GROUP, id);
 	}
 
-	@Override
 	public void setPermissionControllingGroup(Group controllingGroup) {
 		setColumn(COLUMN_PERMISSION_CONTROLLING_GROUP, controllingGroup);
 	}
 
-	@Override
 	public int getPermissionControllingGroupID() {
 		return getIntColumnValue(COLUMN_PERMISSION_CONTROLLING_GROUP);
 	}
 
-	@Override
 	public Group getPermissionControllingGroup() {
 		return (Group) getColumnValue(COLUMN_PERMISSION_CONTROLLING_GROUP);
 	}
 
-	@Override
 	public void setShortName(String shortName) {
 		setColumn(COLUMN_SHORT_NAME, shortName);
 	}
 
-	@Override
 	public void setAbbrevation(String abbr) {
 		setColumn(COLUMN_ABBREVATION, abbr);
 	}
@@ -346,97 +332,78 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (String) getColumnValue(getExtraInfoColumnName());
 	}
 
-	@Override
 	public void setExtraInfo(String extraInfo) {
 		setColumn(getExtraInfoColumnName(), extraInfo);
 	}
 
-	@Override
 	public Timestamp getCreated() {
 		return ((Timestamp) getColumnValue(COLUMN_CREATED));
 	}
 
-	@Override
 	public void setCreated(Timestamp created) {
 		setColumn(GroupBMPBean.COLUMN_CREATED, created);
 	}
 
-	@Override
 	public int getHomePageID() {
 		return getIntColumnValue(getColumnNameHomePageID());
 	}
 
-	@Override
 	public ICPage getHomePage() {
 		return (ICPage) getColumnValue(getColumnNameHomePageID());
 	}
 
-	@Override
 	public void setHomePageID(int pageID) {
 		setColumn(getColumnNameHomePageID(), pageID);
 	}
 
-	@Override
 	public void setHomePageID(Integer pageID) {
 		setColumn(getColumnNameHomePageID(), pageID);
 	}
 
-	@Override
 	public void setHomePage(ICPage page) {
 		setColumn(getColumnNameHomePageID(), page);
 	}
 
-	@Override
 	public int getHomeFolderID() {
 		return getIntColumnValue(COLUMN_HOME_FOLDER_ID);
 	}
 
-	@Override
 	public ICFile getHomeFolder() {
 		return (ICFile) getColumnValue(COLUMN_HOME_FOLDER_ID);
 	}
 
-	@Override
 	public void setHomeFolderID(int fileID) {
 		setColumn(COLUMN_HOME_FOLDER_ID, fileID);
 	}
 
-	@Override
 	public void setHomeFolderID(Integer fileID) {
 		setColumn(COLUMN_HOME_FOLDER_ID, fileID);
 	}
 
-	@Override
 	public void setHomeFolder(ICFile file) {
 		setHomeFolderID((Integer) file.getPrimaryKey());
 	}
 
-	@Override
 	public String getShortName() {
 		return getStringColumnValue(COLUMN_SHORT_NAME);
 	}
 
-	@Override
 	public String getAbbrevation() {
 		return getStringColumnValue(COLUMN_ABBREVATION);
 	}
 
-	@Override
 	public String getHomePageURL() {
 		return getMetaData(META_DATA_HOME_PAGE);
 	}
 
-	@Override
 	public void setHomePageURL(String homePage) {
 		setMetaData(META_DATA_HOME_PAGE, homePage);
 	}
 
-	@Override
 	public void setIsPermissionControllingGroup(boolean isControlling) {
 		setColumn(COLUMN_IS_PERMISSION_CONTROLLING_GROUP, isControlling);
 	}
 
-	@Override
 	public boolean isPermissionControllingGroup() {
 		return getBooleanColumnValue(COLUMN_IS_PERMISSION_CONTROLLING_GROUP, false);
 	}
@@ -456,7 +423,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * access is minimized by passing a Map of cached groupParents and Map of
 	 * cached groups to the method
 	 */
-	@Override
 	public List getParentGroups(Map cachedParents, Map cachedGroups) throws EJBException {
 		List theReturn = new ArrayList();
 		try {
@@ -1040,7 +1006,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public List getChildGroupsIDs(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
 		List theReturn = new ArrayList();
 
@@ -1065,7 +1030,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * collection will be of the same class as 'groupTypeProxy' i.e. if
 	 * groupTypeProxy implements User then it will be collection of User elements
 	 */
-	@Override
 	public Collection getChildGroups(Group groupTypeProxy) throws EJBException {
 
 		try {
@@ -1077,7 +1041,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public Collection getAllGroupsContainingUser(User user) throws EJBException {
 		return this.getListOfAllGroupsContaining(user.getGroupID());
 	}
@@ -1087,7 +1050,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *
 	 * @see com.idega.user.data.Group#addGroup(Group)
 	 */
-	@Override
 	public void addGroup(Group groupToAdd) throws EJBException {
 		this.addGroup(this.getGroupIDFromGroup(groupToAdd));
 	}
@@ -1098,7 +1060,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *
 	 * @see com.idega.user.data.Group#addGroup(User)
 	 */
-	@Override
 	public void addGroup(User userToAdd) throws EJBException {
 
 		this.addGroup(this.getGroupIDFromGroup(userToAdd));
@@ -1123,7 +1084,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *
 	 * @see com.idega.user.data.Group#addGroup(Group)
 	 */
-	@Override
 	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException {
 		this.addGroup(this.getGroupIDFromGroup(groupToAdd), time);
 	}
@@ -1133,7 +1093,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *
 	 * @see com.idega.core.data.GenericGroup#addGroup(int,time)
 	 */
-	@Override
 	public void addGroup(int groupId, Timestamp time) throws EJBException {
 		try {
 			// GroupRelation rel = this.getGroupRelationHome().create();
@@ -1162,22 +1121,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		addGroup(groupId, null);
 	}
 
-	@Override
 	public void addRelation(Group groupToAdd, String relationType) throws CreateException {
 		this.addRelation(this.getGroupIDFromGroup(groupToAdd), relationType);
 	}
 
-	@Override
 	public void addRelation(Group groupToAdd, GroupRelationType relationType) throws CreateException {
 		this.addRelation(this.getGroupIDFromGroup(groupToAdd), relationType);
 	}
 
-	@Override
 	public void addRelation(int relatedGroupId, GroupRelationType relationType) throws CreateException {
 		this.addRelation(relatedGroupId, relationType.getType());
 	}
 
-	@Override
 	public void addRelation(int relatedGroupId, String relationType) throws CreateException {
 		// try{
 		GroupRelation rel = this.getGroupRelationHome().create();
@@ -1200,7 +1155,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
-	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
 		// try{
 		if (!hasRelationTo(relatedGroupId, relationType)) {
@@ -1224,7 +1178,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		// }
 	}
 
-	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException {
 		addUniqueRelation(relatedGroupId, relationType, null);
 	}
@@ -1237,7 +1190,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws CreateException
 	 * @throws RemoteException
 	 */
-	@Override
 	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException {
 		addUniqueRelation(((Integer) (relatedGroup.getPrimaryKey())).intValue(), relationType);
 	}
@@ -1247,7 +1199,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *             User performer)
 	 */
 	@Deprecated
-	@Override
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
 		this.removeRelation(groupId, relationType);
@@ -1258,7 +1209,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *             User performer)
 	 */
 	@Deprecated
-	@Override
 	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException {
 		removeRelation(relatedGroupId, relationType, null);
 	}
@@ -1268,13 +1218,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 *             User performer)
 	 */
 	@Deprecated
-	@Override
 	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
 		this.removeRelation(groupId, relationType, performer);
 	}
 
-	@Override
 	public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException {
 		GroupRelation rel = null;
 		try {
@@ -1301,7 +1249,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * Returns a collection of Group objects that are related by the relation type
 	 * relationType with this Group
 	 */
-	@Override
 	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException {
 		return getRelatedBy(relationType.getType());
 	}
@@ -1310,7 +1257,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * Returns a collection of Group objects that are related by the relation type
 	 * relationType with this Group
 	 */
-	@Override
 	public Collection getRelatedBy(String relationType) throws FinderException {
 		GroupRelation rel = null;
 		Collection theReturn = new ArrayList();
@@ -1329,7 +1275,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * Returns a collection of Group objects that are reverse related by the
 	 * relation type relationType with this Group
 	 */
-	@Override
 	public Collection getReverseRelatedBy(String relationType) throws FinderException {
 		GroupRelation rel = null;
 		Collection theReturn = new ArrayList();
@@ -1413,7 +1358,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	// public void addUser(User user)throws RemoteException{
 	// this.addGroup(user.getGroupID());
 	// }
-	@Override
 	public void removeUser(User user, User currentUser) throws RemoveException {
 		// former: user.getGroupId() but this method is deprecated therefore:
 		// user.getId()
@@ -1425,7 +1369,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public void removeUser(User user, User currentUser, Timestamp time) throws RemoveException {
 		// former: user.getGroupId() but this method is deprecated therefore:
 		// user.getId()
@@ -1731,7 +1674,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @return boolean
 	 * @throws RemoteException
 	 */
-	@Override
 	public boolean hasRelationTo(Group group) {
 
 		return hasRelationTo(((Integer) group.getPrimaryKey()).intValue());
@@ -1741,7 +1683,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	/**
 	 * This is bidirectional
 	 */
-	@Override
 	public boolean hasRelationTo(int groupId) {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
 		Collection relations = new ArrayList();
@@ -1757,7 +1698,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	/**
 	 * This is bidirectional
 	 */
-	@Override
 	public boolean hasRelationTo(int groupId, String relationType) {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
 		Collection relations = new ArrayList();
@@ -1770,7 +1710,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return !relations.isEmpty();
 	}
 
-	@Override
 	public Iterator getChildrenIterator() {
 		Iterator it = null;
 		Collection children = getChildren();
@@ -1780,7 +1719,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return it;
 	}
 
-	@Override
 	public Collection getChildren() {
 		/**
 		 * @todo: Change implementation this first part may not be needed.
@@ -1803,12 +1741,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
 
-	@Override
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		try {
 			return ((GroupHome) this.getEJBLocalHome()).findByPrimaryKey(new Integer(childIndex));
@@ -1818,7 +1754,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public int getChildCount() {
 		if (this.getID() == GroupBMPBean.GROUP_ID_USERS) {
 			try {
@@ -1846,7 +1781,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public int getIndex(ICTreeNode node) {
 		return node.getNodeID();
 	}
@@ -1854,7 +1788,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	/**
 	 * @todo reimplement
 	 */
-	@Override
 	public ICTreeNode getParentNode() {
 		ICTreeNode parent = null;
 		try {
@@ -1865,7 +1798,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return parent;
 	}
 
-	@Override
 	public boolean isLeaf() {
 		/**
 		 * @todo reimplement
@@ -1873,27 +1805,22 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return getChildCount() > 0;
 	}
 
-	@Override
 	public String getNodeName() {
 		return this.getName();
 	}
 
-	@Override
 	public String getNodeName(Locale locale) {
 		return this.getNodeName();
 	}
 
-	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return getNodeName(locale);
 	}
 
-	@Override
 	public int getNodeID() {
 		return ((Integer) this.getPrimaryKey()).intValue();
 	}
 
-	@Override
 	public int getSiblingCount() {
 		ICTreeNode parent = getParentNode();
 		if (parent != null) {
@@ -1907,7 +1834,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	/**
 	 * @see com.idega.core.ICTreeNode#getNodeType()
 	 */
-	@Override
 	public int getNodeType() {
 		return -1;
 	}
@@ -1920,17 +1846,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	/**
 	 * Gets if the group is of type "UserGroupRepresentative"
 	 */
-	@Override
 	public boolean isUser() {
 		return UserBMPBean.USER_GROUP_TYPE.equals(this.getGroupType());
 	}
 
-	@Override
 	public void addAddress(Address address) throws IDOAddRelationshipException {
 		this.idoAddTo(address);
 	}
 
-	@Override
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 
@@ -1956,7 +1879,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoGetRelatedEntitiesBySQL(Address.class, query.toString());
 	}
 
-	@Override
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
@@ -1967,7 +1889,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public Collection getPhones(String phoneTypeID) {
 		try {
 			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
@@ -1978,7 +1899,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public Collection getEmails() {
 		try {
 			return super.idoGetRelatedEntities(Email.class);
@@ -1989,17 +1909,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public void addEmail(Email email) throws IDOAddRelationshipException {
 		this.idoAddTo(email);
 	}
 
-	@Override
 	public void addPhone(Phone phone) throws IDOAddRelationshipException {
 		this.idoAddTo(phone);
 	}
 
-	@Override
 	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException {
 		int groupId = this.getGroupIDFromGroup(entityToRemoveFrom);
 		if ((groupId == -1) || (groupId == 0)) {
@@ -2021,12 +1938,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public void removeGroup(User currentUser) throws EJBException {
 		this.removeGroup(-1, currentUser, true);
 	}
 
-	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
 		try {
 			Collection rels = null;
@@ -2047,7 +1962,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 	}
 
-	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException {
 		removeGroup(relatedGroupId, currentUser, AllEntries, IWTimestamp.getTimestampRightNow());
 	}
@@ -2075,12 +1989,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Integer) this.idoFindOnePKBySQL(sql);
 	}
 
-	@Override
 	public SelectQuery getSelectQueryConstraints() {
 		return null;
 	}
 
-	@Override
 	public String getId(){
 		return getPrimaryKey().toString();
 	}
@@ -2092,12 +2004,10 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return idoFindPKsByQuery(query);
 	}
 
-	@Override
 	public void setModerator(User moderator){
 		setColumn(COLUMN_GROUP_MODERATOR_ID, moderator);
 	}
 
-	@Override
 	public User getModerator(){
 		return (User) getColumnValue(COLUMN_GROUP_MODERATOR_ID);
 	}

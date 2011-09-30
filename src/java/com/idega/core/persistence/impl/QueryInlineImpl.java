@@ -40,7 +40,6 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 	@Autowired
 	private DaoFunctions daoFunctions;
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(
 	        Class<Expected> expectedReturnType, Param... params) {
@@ -50,7 +49,6 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 		    expectedReturnType, params);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(
 	        Class<Expected> expectedReturnType, String mappingName,
@@ -62,7 +60,6 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 		    expectedReturnType, params);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(
 	        Class<Expected> expectedReturnType, String mappingName,
@@ -80,7 +77,6 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 		}
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(
 	        Class<Expected> expectedReturnType, Param... params) {
@@ -146,7 +142,6 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 		return queryExpression;
 	}
 
-	@Override
 	public void setQueryExpression(String queryExpression) {
 		this.queryExpression = queryExpression;
 	}
@@ -163,17 +158,14 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 		return firstResult;
 	}
 
-	@Override
 	public void setMaxResults(Integer maxResults) {
 		this.maxResults = maxResults;
 	}
 
-	@Override
 	public void setFirstResult(Integer firstResult) {
 		this.firstResult = firstResult;
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(
 			Class<Expected> expectedReturnType, Collection<Param> params) {

@@ -18,13 +18,11 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 	@Autowired
 	private ScriptCallerInterface scriptCaller;
 
-	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
 		HttpSession newSession = sessionEvent.getSession();
 		getSessionsManager().addSession(newSession);
 	}
 
-	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
 

@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <classpath>
-	<classpathentry kind="src" path="src/java"/>
-	<classpathentry kind="src" path="WEB-INF/tld"/>
-	<classpathentry excluding="**/*.java" kind="src" path="resources"/>
-	<classpathentry excluding="**/*.java" kind="src" path="properties"/>
-	<classpathentry excluding="**/*.java|tld/" kind="src" path="WEB-INF"/>
-	<classpathentry excluding="**/*.java" including="**/*.xml" kind="src" path="src/test/java"/>
-	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER"/>
+	<classpathentry including="**/*.java" kind="src" output="target/classes" path="src/java"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="resources"/>
+	<classpathentry excluding="**" kind="src" output="target/classes" path="properties"/>
+	<classpathentry excluding="**" including="**/*.java" kind="src" output="target/classes" path="WEB-INF"/>
+	<classpathentry excluding="**" including="**/*.java" kind="src" output="target/classes" path="src/test/java"/>
+	<classpathentry kind="con" path="org.eclipse.m2e.MAVEN2_CLASSPATH_CONTAINER"/>
 	<classpathentry kind="con" path="org.maven.ide.eclipse.MAVEN2_CLASSPATH_CONTAINER"/>
+	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/J2SE-1.5"/>
 	<classpathentry kind="output" path="target/classes"/>
 </classpath>

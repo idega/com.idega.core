@@ -35,7 +35,6 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	                Integer.class, Float.class, Byte.class, Double.class,
 	                Short.class }));
 
-	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	public <Expected> List<Expected> getResultListByQuery(Query q,
@@ -106,7 +105,6 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		return ListUtil.isEmpty(realResults) ? null : realResults;
 	}
 
-	@Override
 	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
 	public <Expected> Expected getSingleResultByQuery(Query q,
 	        Class<Expected> expectedReturnType, Param... params) {
@@ -124,7 +122,6 @@ public class DaoFunctionsImpl implements DaoFunctions {
 
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	@Override
 	public <Expected> List<Expected> getResultListByQuery(Query q,
 			Class<Expected> expectedReturnType, Collection<Param> params) {
 
