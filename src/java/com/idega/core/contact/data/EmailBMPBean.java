@@ -70,24 +70,20 @@ public class EmailBMPBean
 	{
 		return SQL_COLUMN_TYPE;
 	}
-	@Override
 	public void setEmailAddress(String address)
 	{
 		setColumn(getColumnNameAddress(), address);
 	}
-	@Override
 	public String getEmailAddress()
 	{
 		return getStringColumnValue(getColumnNameAddress());
 	}
 
-	@Override
 	public String getEmailAddressMailtoFormatted()
 	{
 		return getEmailAddressMailtoFormattedWithSubject(null);
 	}
 
-	@Override
 	public String getEmailAddressMailtoFormattedWithSubject(String subject) {
 		String emailAddress = getStringColumnValue(getColumnNameAddress());
 		if (emailAddress != null && !emailAddress.equals("")) {
@@ -100,22 +96,18 @@ public class EmailBMPBean
 		return emailAddress;
 	}
 
-	@Override
 	public void setEmailType(EmailType emailType) {
 		setColumn(getColumnNameEmailTypeId(), emailType);
 	}
 
-	@Override
 	public EmailType getEmailType() {
 		return (EmailType) getColumnValue(getColumnNameEmailTypeId());
 	}
 
-	@Override
 	public void setEmailTypeId(int id)
 	{
 		setColumn(getColumnNameEmailTypeId(), id);
 	}
-	@Override
 	public int getEmailTypeId()
 	{
 		return getIntColumnValue(getColumnNameEmailTypeId());

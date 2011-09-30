@@ -151,7 +151,6 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
     	return this.findByPrimaryKey(pk);
 	}
 
-	@Override
 	public Collection<ICPage> findAllTemplatesWithWebDavUri() throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
         Collection<?> ids = ((ICPageBMPBean)entity).ejbFindAllTemplatesWithWebDavUri();

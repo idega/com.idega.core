@@ -388,9 +388,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// cleaning, maintaining, updating
 		if(!this.iwma.isInDatabaseLessMode()){
 			log.fine("Cleaning and updating database...");
-			updateClassReferencesInDatabase();
+			//updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
-			cleanEmailData();
+			//cleanEmailData();
 			log.fine("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();
