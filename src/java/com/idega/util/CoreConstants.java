@@ -49,6 +49,7 @@ public class CoreConstants {
 
 	public static final String JS_STR_PARAM_SEPARATOR = "','";
 	public static final String JS_STR_PARAM_END = "');";
+	public static final String JS_STR_INITIALIZATION_END = "';";
 
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER;
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS;
