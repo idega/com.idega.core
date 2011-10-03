@@ -27,6 +27,7 @@ import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
@@ -67,7 +68,11 @@ public class DownloadWriter implements MediaWritable {
 	 * @see com.idega.io.MediaWritable#getMimeType()
 	 */
 	public String getMimeType() {
-		return "application/octet-stream";
+		if (fileName == null)
+			return MimeTypeUtil.MIME_TYPE_APPLICATION;
+		
+		String mimeType = MimeTypeUtil.resolveMimeTypeFromFileName(fileName);
+		return StringUtil.isEmpty(mimeType) ? MimeTypeUtil.MIME_TYPE_APPLICATION : mimeType;
 	}
 
 	/*

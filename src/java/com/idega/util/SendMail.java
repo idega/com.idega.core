@@ -191,7 +191,6 @@ public class SendMail {
 		// Send the message and close the connection
 		final Message mail = message;
 		Thread transporter = new Thread(new Runnable() {
-			@Override
 			public void run() {
 				try {
 					Transport.send(mail);

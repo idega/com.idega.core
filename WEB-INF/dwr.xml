@@ -28,6 +28,7 @@
       		<include method="sendEmail" />
       		<include method="logOut" />
       		<include method="isLoggedIn" />
+      		<include method="getBooleanApplicationProperty" />
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />

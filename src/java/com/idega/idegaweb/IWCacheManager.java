@@ -19,13 +19,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Logger;
+
 import com.idega.data.CacheableEntity;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
-import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.data.IDOLookup;
+import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.util.FileUtil;
 import com.idega.util.StringHandler;
@@ -306,8 +307,8 @@ private boolean isBlobCached(Cache cache){
 
     }
     catch( Exception e ){
-     e.printStackTrace(System.err);
-     System.err.println("IWCacheManager : error getting stream from blob");
+     log.severe(e.getMessage());
+     log.severe("IWCacheManager : error getting stream from blob");
     }
     finally{
       try{
@@ -316,8 +317,8 @@ private boolean isBlobCached(Cache cache){
 			}
       }
       catch(IOException e){
-        e.printStackTrace(System.err);
-        System.err.println("IWCacheManager : error closing stream");
+        log.severe(e.getMessage());
+        log.severe("IWCacheManager : error closing stream");
       }
     }
 

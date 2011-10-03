@@ -214,7 +214,6 @@ private Element _element = null;
   public List getChildrenRecursive(final String name) {
   	if (this._element != null) {
   		Filter filter = new Filter() {
-			@Override
 			public boolean matches(Object object) {
 				if (object instanceof Element) {
 					String elementName = ((Element) object).getName();
@@ -477,20 +476,17 @@ public synchronized Object clone() {
 
   		private Iterator iterator = null;
 
-  		@Override
-		public Object next() {
+  		public Object next() {
   			checkInitialization();
   			return this.iterator.next();
   		}
 
-  		@Override
-		public boolean hasNext() {
+  		public boolean hasNext() {
   			checkInitialization();
   			return this.iterator.hasNext();
   		}
 
-  		@Override
-		public void remove() {
+  		public void remove() {
   			checkInitialization();
   			this.iterator.remove();
   		}

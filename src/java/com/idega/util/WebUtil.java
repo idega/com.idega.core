@@ -14,6 +14,7 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 
@@ -152,5 +153,13 @@ public class WebUtil extends DefaultSpringBean {
     	}
     	
     	return Boolean.FALSE;
+    }
+    
+    public Boolean getBooleanApplicationProperty(String name, boolean defaultValue) {
+    	if (StringUtil.isEmpty(name))
+    		return false;
+    	
+    	IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+    	return settings.getBoolean(name, defaultValue);
     }
 }

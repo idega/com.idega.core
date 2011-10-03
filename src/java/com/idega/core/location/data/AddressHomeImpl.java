@@ -116,7 +116,6 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	@Override
 	public Address findByStreetAddress(String address) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((AddressBMPBean) entity).ejbFindByStreetAddress(address);
