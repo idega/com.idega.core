@@ -12,6 +12,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.jcr.RepositoryException;
 
@@ -23,6 +24,14 @@ import com.idega.util.ListUtil;
 public abstract class RepositoryItem implements ICTreeNode, Serializable {
 
 	private static final long serialVersionUID = -5591183900265522785L;
+
+	private static Logger LOGGER = null;
+
+	protected Logger getLogger() {
+		if (LOGGER == null)
+			LOGGER = Logger.getLogger(getClass().getName());
+		return LOGGER;
+	}
 
 	private int id;
 
