@@ -164,9 +164,12 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public void addGroupAsRoleMaster(com.idega.user.data.Group group, IWApplicationContext iwma);
   public void addGroupAsRoleMaster(Group group, IWApplicationContext iwac);
 
+  @Deprecated
+  public void addRoleToGroup(String roleKey, com.idega.user.data.Group group, IWApplicationContext iwac                  );
   public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );
   public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
   public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac                  );
+
   public Collection<ICPermission> getAllRolesForGroup(Group group);
 
   public Collection<ICPermission> getAllRolesWithRolePermissionsForGroup(Group group);
