@@ -673,11 +673,13 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		return children.size();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Group> getChildren() {
 		return children;
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<Group> getChildrenIterator() {
 		return children.iterator();

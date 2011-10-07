@@ -159,17 +159,27 @@ public interface AccessController extends com.idega.idegaweb.IWService{
   public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
   public boolean hasRole(User user, String roleKey);
   public boolean isRoleMaster(IWUserContext iwuc);
+
+  @Deprecated
+  public void addGroupAsRoleMaster(com.idega.user.data.Group group, IWApplicationContext iwma);
   public void addGroupAsRoleMaster(Group group, IWApplicationContext iwac);
+
   public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );
   public boolean addRoleToGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
   public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac                  );
   public Collection<ICPermission> getAllRolesForGroup(Group group);
-  public Collection getAllRolesWithRolePermissionsForGroup(Group group);
-  public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection<Group> groups);
+
+  public Collection<ICPermission> getAllRolesWithRolePermissionsForGroup(Group group);
+  public Collection<ICPermission> getAllRolesWithRolePermissionsForGroupCollection(Collection<Group> groups);
+
   public Collection<ICRole> getAllRoles();
   public Collection<Group> getAllGroupsThatAreRoleMasters(IWApplicationContext iwac                  );
   public Collection<Group> getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac                  );
+
+  @Deprecated
+  public void removeGroupFromRoleMastersList(com.idega.user.data.Group group, IWApplicationContext iwac                  );
   public void removeGroupFromRoleMastersList(Group group, IWApplicationContext iwac                  );
+
   public boolean removeRoleFromGroup(String roleKey, Integer groupId, IWApplicationContext iwac                  );
   public boolean removeRoleFromGroup(String roleKey,String permissionKey, Integer groupId, IWApplicationContext iwac                  );
   public boolean removeRoleFromGroup(String roleKey, Group group, IWApplicationContext iwac                  );
