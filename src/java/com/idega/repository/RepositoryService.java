@@ -23,8 +23,10 @@ import com.idega.repository.bean.RepositoryItemVersionInfo;
 import com.idega.repository.event.RepositoryEventListener;
 import com.idega.user.data.bean.User;
 
-@SpringBeanName("repositoryService")
+@SpringBeanName(RepositoryService.BEAN_NAME)
 public interface RepositoryService extends Repository {
+
+	public static final String BEAN_NAME = "repositoryService";
 
 	public void initializeRepository(InputStream configSource, String repositoryName) throws Exception;
 
