@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.accesscontrol.data.bean;
 
@@ -28,6 +28,7 @@ import com.idega.user.data.bean.User;
 		@NamedQuery(name = "permission.findByCriteria", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group"),
 		@NamedQuery(name = "permission.findByValues", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionValue = :permissionValue"),
 		@NamedQuery(name = "permission.findByGroupAndContext", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue in (:contextValues) and i.permissionGroup = :group"),
+		@NamedQuery(name = "findByContextType", query = "select i from ICPermission i where i.contextType = :contextType"),
 		@NamedQuery(name = "permission.findByContext", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue"),
 		@NamedQuery(name = "permission.findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
 		@NamedQuery(name = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionValue = 'Y' and i.permissionGroup = :group and i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null"),
@@ -198,7 +199,7 @@ public class ICPermission implements Serializable {
 	public void setPassive(){
 		this.setStatus(STATUS_PASSIVE);
 	}
-	
+
 	public boolean isActive(){
 		String status = this.getStatus();
 		if (status != null && status.equals(STATUS_ACTIVE)){

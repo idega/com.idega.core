@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.accesscontrol.dao;
 
@@ -22,23 +22,24 @@ public interface PermissionDAO extends GenericDao {
 	public PermissionGroup createPermissionGroup(String name, String description);
 
 	public PermissionGroup findPermissionGroup(Object primaryKey);
-	
+
 	public PermissionGroup getPermissionGroup(String name);
 
 	@Transactional(readOnly = false)
 	public ICPermission createPermission(String contextType, String contextValue, Group group, String permissionString, boolean permissionValue);
-	
+
 	@Transactional(readOnly = false)
 	public void removePermissions(String contextType, String contextValue, String permissionString, Collection<Group> groups);
-	
-	public ICPermission findPermission(String contextType, String contextValue, String permissionString, Group group);	
-	
+
+	public ICPermission findPermission(String contextType, String contextValue, String permissionString, Group group);
+
+	public List<ICPermission> findPermissions(String contextType);
 	public List<ICPermission> findPermissions(String contextType, String contextValue);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString);
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues, Group group);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, String permissionValue);
 	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, String permissionString, String contextType);
-	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, Collection permissionStrings, String contextType);
+	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, Collection<String> permissionStrings, String contextType);
 	public List<ICPermission> findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup(String contextType, String contextValue, Collection<String> permissionStrings, Group group);
 	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Group group);
 	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Collection<Group> groups);
