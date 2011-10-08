@@ -11,4 +11,5 @@ public interface AccessControlList extends javax.jcr.security.AccessControlList 
 	public void add(AccessControlEntry ace);
 
 	public List<ICPermission> getPermissions();
+	public void addPermission(ICPermission permission);
 }

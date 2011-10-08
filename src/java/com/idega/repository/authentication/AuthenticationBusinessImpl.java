@@ -25,6 +25,7 @@ import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginContext;
 import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
+import com.idega.core.accesscontrol.data.bean.ICPermission;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.RepositoryService;
@@ -278,16 +279,16 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 			List<String> privileges = Arrays.asList(Privilege.JCR_READ, Privilege.JCR_WRITE);
 			for (String role : roles) {
 				String roleUri = getRoleURI(role);
-				getLogger().info("Set role " + roleUri + " for " + acl);
 				for (String privilege: privileges) {
 					if (hasPermission(entries, roleUri, privilege))
 						continue;
 
-					getPermissionDAO().createPermission(path, roleUri, null, privilege, Boolean.TRUE);
+					ICPermission permission = getPermissionDAO().createPermission(path, roleUri, null, privilege, Boolean.TRUE);
+					acl.addPermission(permission);
 				}
 			}
 		} catch (Exception e) {
-			getLogger().log(Level.SEVERE, "Exception while applying roles permissions to repo, roles=" + roles + ", repo path=" + acl, e);
+			getLogger().log(Level.SEVERE, "Exception while applying roles permissions to repository path: " + acl.getResourcePath() + ", roles=" + roles, e);
 			return null;
 		}
 
