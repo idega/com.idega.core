@@ -30,5 +30,7 @@ public static final String DAV_NAME_SPACE = "DAV:";
 			SUBJECT_URI_UNAUTHENTICATED
 	));
 
-	public static final String PROPERTYNAME_CATEGORY = "categories";
+	public static final String PROPERTYNAME_CATEGORY = "categories",
+
+								REPOSITORY = "repository";
 }
