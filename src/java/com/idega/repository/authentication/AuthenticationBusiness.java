@@ -15,8 +15,9 @@ import java.util.Set;
 
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
-import javax.jcr.security.AccessControlList;
 import javax.servlet.http.HttpServletRequest;
+
+import com.idega.repository.access.AccessControlList;
 
 public interface AuthenticationBusiness {
 

@@ -1,15 +1,18 @@
 package com.idega.repository.authentication;
 
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
 
 import javax.jcr.Credentials;
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
-import javax.jcr.security.AccessControlList;
+import javax.jcr.security.AccessControlEntry;
+import javax.jcr.security.Privilege;
 import javax.servlet.http.HttpServletRequest;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,18 +24,19 @@ import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginContext;
 import com.idega.core.accesscontrol.business.StandardRoles;
+import com.idega.core.accesscontrol.dao.PermissionDAO;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.RepositoryService;
+import com.idega.repository.access.AccessControlList;
 import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
+import com.idega.util.expression.ELUtil;
 
 @Service
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class AuthenticationBusinessImpl extends DefaultSpringBean implements AuthenticationBusiness {
-
-	private static final long serialVersionUID = 5768690543595785783L;
 
 	private static final String	PATH_USERS = "/users",
 								PATH_GROUPS = "/groups",
@@ -50,6 +54,9 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 
 	@Autowired
 	private RepositoryService repository;
+
+	@Autowired
+	private PermissionDAO permissionDAO;
 
 	@Override
 	public Credentials getRootUserCredentials() {
@@ -266,24 +273,49 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	@Override
 	public AccessControlList applyPermissionsToRepository(AccessControlList acl, Collection<String> roles) {
 		try {
+			String path = acl.getResourcePath();
+			AccessControlEntry[] entries = acl.getAccessControlEntries();
+			List<String> privileges = Arrays.asList(Privilege.JCR_READ, Privilege.JCR_WRITE);
 			for (String role : roles) {
 				String roleUri = getRoleURI(role);
 				getLogger().info("Set role " + roleUri + " for " + acl);
-				//	TODO!!!
+				for (String privilege: privileges) {
+					if (hasPermission(entries, roleUri, privilege))
+						continue;
 
-//				Ace newAce = new Ace(roleUri);
-//				newAce.addPrivilege(Privilege.READ);
-//				newAce.addPrivilege(Privilege.WRITE);
-
-//				AccessControlEntry editorEntry = new AccessControlEntry(newAce, AccessControlEntry.PRINCIPAL_TYPE_ROLE);
-//				acl.add(editorEntry);
+					getPermissionDAO().createPermission(path, roleUri, null, privilege, Boolean.TRUE);
+				}
 			}
-
 		} catch (Exception e) {
 			getLogger().log(Level.SEVERE, "Exception while applying roles permissions to repo, roles=" + roles + ", repo path=" + acl, e);
 			return null;
 		}
 
 		return acl;
+	}
+
+	private boolean hasPermission(AccessControlEntry[] entries, String principal, String privilege) {
+		if (ArrayUtil.isEmpty(entries))
+			return false;
+
+		for (AccessControlEntry ace: entries) {
+			if (principal.equals(ace.getPrincipal().getName())) {
+				Privilege[] privileges = ace.getPrivileges();
+				if (!ArrayUtil.isEmpty(privileges)) {
+					for (Privilege priv: privileges) {
+						if (privilege.equals(priv.getName()))
+							return true;
+					}
+				}
+			}
+		}
+
+		return false;
+	}
+
+	private PermissionDAO getPermissionDAO() {
+		if (permissionDAO == null)
+			ELUtil.getInstance().autowire(this);
+		return permissionDAO;
 	}
 }

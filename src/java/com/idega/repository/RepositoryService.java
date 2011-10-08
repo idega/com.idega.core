@@ -18,6 +18,7 @@ import javax.jcr.version.VersionManager;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
+import com.idega.repository.access.AccessControlList;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.repository.bean.RepositoryItemVersionInfo;
 import com.idega.repository.event.RepositoryEventListener;
@@ -107,4 +108,7 @@ public interface RepositoryService extends Repository {
 	public void addRepositoryChangeListeners(RepositoryEventListener listener);
 
 	public OutputStream getOutputStream(String path) throws IOException, RepositoryException;
+
+	public AccessControlList getAccessControlList(String path);
+	public void storeAccessControlList(AccessControlList acl);
 }
