@@ -8,9 +8,8 @@ package com.idega.util;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
@@ -34,19 +33,21 @@ public class FileUploadUtil {
 		super();
 	}
 	
-	/**Returns all files that has different parameter names.
+	/**Returns all files that has different parameter names. Suports only files with 
+	 * different parameter names (if sending files with same parameter names only one will
+	 * be returned)
 	 * 
 	 * @param iwc
 	 * @throws IOException
 	 * @throws IllegalAccessException
 	 * @throws NoSuchFieldException
 	 * @throws IllegalArgumentException
-	 * @return List<com.idega.io.UploadFile>
+	 * @return Map<String,com.idega.io.UploadFile>
 	 */
-	public static List getAllUploadedFiles(IWContext iwc){
+	public static Map getAllUploadedFiles(IWContext iwc){
 		
 		HttpServletRequest request = iwc.getRequest();
-		List fileList = new ArrayList();
+		Map fileList = new HashMap();
 		
 		if (request instanceof HttpServletRequestWrapper) {
 			
@@ -65,8 +66,11 @@ public class FileUploadUtil {
 					pathToFile.append("upload");
 					pathToFile.append(FileUtil.getFileSeparator());
 					FileUtil.createFolder(pathToFile.toString());
-
+					
+					
 					Map files = multiRequestWrapper.getFileItems();
+					
+					
 					Set keysSet = files.keySet();
 					Iterator keys = keysSet.iterator();
 					while(keys.hasNext()){
@@ -75,6 +79,9 @@ public class FileUploadUtil {
 						int lastBloodySlash = fileName.lastIndexOf("\\");
 						if(lastBloodySlash>-1){
 							fileName = fileName.substring(lastBloodySlash+1);
+						}
+						if(StringUtil.isEmpty(fileName)){
+							continue;
 						}
 						
 						String mimeType = file.getContentType();
@@ -109,13 +116,31 @@ public class FileUploadUtil {
 						UploadFile uploadFile = new UploadFile(fileName, filePath,
 								iwc.getIWMainApplication().getTranslatedURIWithContext(webPath.toString()), mimeType,
 								tempFile.length());
-						iwc.setUploadedFile(uploadFile);
-						fileList.add(uploadFile);
+						fileList.put(file.getFieldName(), uploadFile);
 					}
+//					ServletFileUpload fileUpload = new ServletFileUpload();
+//					boolean is = ServletFileUpload.isMultipartContent(request);
+//					String charset = request.getCharacterEncoding();
+//			        fileUpload.setHeaderEncoding(charset);
+//			        fileUpload.setFileItemFactory(
+//		                    new DiskFileItemFactory(100000000,
+//		                            new File(System.getProperty("java.io.tmpdir"))));
+//					List requestParameters = null;
+//					try{
+//						fileUpload.setSizeMax(100000000);
+//						fileUpload.setFileSizeMax(100000000);
+//						requestParameters = fileUpload.parseRequest(childRequest);
+//					}catch(FileUploadException e){
+//						Logger.getLogger("a").log(Level.WARNING, "msg", e);
+//					}
+					
 				}
+				
 				childRequest = (HttpServletRequest) ((HttpServletRequestWrapper)childRequest).getRequest();
 			}	
 		}
+		
+
 		return fileList;
 	}
 	
