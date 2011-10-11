@@ -10,6 +10,7 @@ public class PropertiesBean implements AbstractProperties {
 	private String login = null;
 	private String password = null;
 	private String instanceId = null;
+	private String callback;
 	
 	private List<String> uniqueIds = null;
 	
@@ -144,5 +145,13 @@ public class PropertiesBean implements AbstractProperties {
 	public void setInstanceId(String instanceId) {
 		this.instanceId = instanceId;
 	}
-	
+
+	public String getCallback() {
+		return callback;
+	}
+
+	public void setCallback(String callback) {
+		this.callback = callback;
+	}
+
 }
