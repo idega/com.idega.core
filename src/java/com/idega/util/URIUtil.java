@@ -22,12 +22,15 @@ public class URIUtil {
 	private String uri;
 	private Map<String, String> parameters;
 	
-	public URIUtil() { }
+	public URIUtil() {
+		this(CoreConstants.EMPTY);
+	}
 	
-	public URIUtil(String uriStr) { setUri(uriStr); }
+	public URIUtil(String uriStr) {
+		setUri(uriStr);
+	}
 	
 	public void setUri(String uri) {
-		
 		parameters = null;
 		this.uri = uri;
 	}
