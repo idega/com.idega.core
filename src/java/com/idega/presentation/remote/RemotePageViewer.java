@@ -6,6 +6,7 @@ import java.util.Arrays;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.web2.business.JQuery;
+import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
@@ -15,6 +16,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.URIUtil;
 import com.idega.util.expression.ELUtil;
 
 public class RemotePageViewer extends Block {
@@ -58,6 +60,10 @@ public class RemotePageViewer extends Block {
 					personalId = CoreConstants.EMPTY;
 			}
 		}
+		
+		URIUtil uri = new URIUtil(url);
+		uri.setParameter(LocaleSwitcher.languageParameterString, iwc.getCurrentLocale().toString());
+		url = uri.getUri();
 		
 		js = "/idegaweb/bundles/com.idega.core.bundle/resources/javascript/RemotePageViewer.js";
 		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
