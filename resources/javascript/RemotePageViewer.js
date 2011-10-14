@@ -39,10 +39,30 @@ RemotePageViewer.displayRegions = function(regionsToDisplay) {
 	if (regions == null || regions.length == 0)
 		return;
 
-	jQuery(document.body).css('display: none');	
+	jQuery('html').attr('style', 'background-image:none');
+	jQuery(document.body).children().addClass('hidePageContent');
 	for (var i = 0; i < regions.length; i++) {
 		var region = regions[i];
-		if (region != null && region != '')
-			jQuery('#' + region).css('display: block');
+		if (region != null && region != '') {
+			var regionElement = jQuery('#' + region);
+
+			RemotePageViewer.displayParent(regionElement.parent());
+			regionElement.parent().children().addClass('hidePageContent');
+			if (regionElement.hasClass('hidePageContent')) {
+				regionElement.removeClass('hidePageContent');
+			} else {
+				regionElement.addClass('showPageContent');
+			}
+		}
 	}
+}
+
+RemotePageViewer.displayParent = function(parentElement) {
+	if (parentElement == null || parentElement.length == 0)
+		return;
+		
+	if (parentElement.hasClass('hidePageContent'))
+		parentElement.removeClass('hidePageContent');
+		
+	RemotePageViewer.displayParent(parentElement.parent());
 }
