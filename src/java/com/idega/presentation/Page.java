@@ -22,6 +22,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
@@ -316,6 +317,13 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 	
 	protected void includeJavaScriptActions(IWContext iwc) {
+		if (iwc.getApplicationSettings().getBoolean("load_remote_script", Boolean.FALSE)) {
+			String remoteAction = iwc.getParameter("remote_js_action");
+			if (!StringUtil.isEmpty(remoteAction)) {
+				PresentationUtil.addJavaScriptActionToBody(iwc, remoteAction);
+			}
+		}
+		
 		if (this.javaScriptActions == null || this.javaScriptActions.isEmpty()) {
 			return;
 		}
@@ -345,6 +353,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				}
 			}
 		}
+		
+		if (iwc.getApplicationSettings().getBoolean("load_remote_script", Boolean.FALSE)) {
+			String remoteScript = iwc.getParameter("remote_script");
+			if (!StringUtil.isEmpty(remoteScript)) {
+				PresentationUtil.addJavaScriptSourceLineToHeader(iwc, remoteScript);
+			}
+		}
+		
 		return CoreConstants.EMPTY;
 	}
 
