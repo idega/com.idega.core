@@ -29,6 +29,7 @@
       		<include method="logOut" />
       		<include method="isLoggedIn" />
       		<include method="getBooleanApplicationProperty" />
+      		<include method="getAutoLoginUri" />
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
