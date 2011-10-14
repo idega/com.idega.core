@@ -40,14 +40,20 @@ RemotePageViewer.displayRegions = function(regionsToDisplay) {
 		return;
 
 	jQuery('html').attr('style', 'background-image:none');
-	jQuery(document.body).children().addClass('hidePageContent');
+	jQuery(document.body).children().addClass('hidePageContent');	//	Hiding everything
 	for (var i = 0; i < regions.length; i++) {
 		var region = regions[i];
 		if (region != null && region != '') {
 			var regionElement = jQuery('#' + region);
 
-			RemotePageViewer.displayParent(regionElement.parent());
-			regionElement.parent().children().addClass('hidePageContent');
+			var parentElements = [];
+			var parentElement = regionElement.parent();
+			while (parentElement != null && parentElement.length > 0 && parentElement[0].tagName != 'BODY') {
+				parentElements.push(parentElement);
+				parentElement = parentElement.parent();
+			}
+			RemotePageViewer.displayParents(parentElements);			
+			
 			if (regionElement.hasClass('hidePageContent')) {
 				regionElement.removeClass('hidePageContent');
 			} else {
@@ -57,12 +63,15 @@ RemotePageViewer.displayRegions = function(regionsToDisplay) {
 	}
 }
 
-RemotePageViewer.displayParent = function(parentElement) {
-	if (parentElement == null || parentElement.length == 0)
+RemotePageViewer.displayParents = function(parentElements) {
+	if (parentElements == null || parentElements.length == 0)
 		return;
+	
+	for (var i = 0; i < parentElements.length; i++) {
+		var parentElement = parentElements[parentElements.length - (i + 1)];
 		
-	if (parentElement.hasClass('hidePageContent'))
-		parentElement.removeClass('hidePageContent');
-		
-	RemotePageViewer.displayParent(parentElement.parent());
+		parentElement.children().addClass('hidePageContent');
+		if (parentElement.hasClass('hidePageContent'))
+			parentElement.removeClass('hidePageContent');
+	}	
 }
