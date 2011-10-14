@@ -22,6 +22,12 @@
             <simple>true</simple>
           </key>
           <key>
+            <name>:method:1:implied:void:setPersonalId:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Personal ID</value>
+            <simple>true</simple>
+          </key>
+          <key>
             <name>:method:1:implied:void:setRegionsToShow:java.lang.String:</name>
             <type>java.lang.String</type>
             <value>Which regions of a remote page to show</value>

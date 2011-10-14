@@ -22,7 +22,7 @@ public class RemotePageViewer extends Block {
 	@Autowired
 	private JQuery jQuery;
 	
-	private String url, regionsToShow;
+	private String url, regionsToShow, personalId;
 	
 	private boolean loadAutoLogin = Boolean.TRUE;
 	
@@ -43,17 +43,20 @@ public class RemotePageViewer extends Block {
 				js
 		));
 		
-		String personalId = CoreConstants.EMPTY;
+		String personalId = getPersonalId();
 		String server = CoreConstants.EMPTY;
 		if (loadAutoLogin) {
 			if (!StringUtil.isEmpty(url)) {
 				URL link = new URL(url);
 				server = link.getProtocol() + "://" + link.getHost();
 			}
-			if (iwc.isLoggedOn())
-				personalId = iwc.getCurrentUser().getPersonalID();
-			if (StringUtil.isEmpty(personalId))
-				personalId = CoreConstants.EMPTY;
+			
+			if (StringUtil.isEmpty(personalId)) {
+				if (iwc.isLoggedOn())
+					personalId = iwc.getCurrentUser().getPersonalID();
+				if (StringUtil.isEmpty(personalId))
+					personalId = CoreConstants.EMPTY;
+			}
 		}
 		
 		js = "/idegaweb/bundles/com.idega.core.bundle/resources/javascript/RemotePageViewer.js";
@@ -90,6 +93,14 @@ public class RemotePageViewer extends Block {
 
 	public void setRegionsToShow(String regionsToShow) {
 		this.regionsToShow = regionsToShow;
+	}
+
+	public String getPersonalId() {
+		return personalId;
+	}
+
+	public void setPersonalId(String personalId) {
+		this.personalId = personalId;
 	}
 
 	@Override
