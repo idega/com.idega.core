@@ -49,23 +49,32 @@ RemotePageViewer.displayRegions = function(regionsToDisplay) {
 
 	jQuery('html').attr('style', 'background-image:none');
 	jQuery(document.body).children().addClass('hidePageContent');	//	Hiding everything
+	var foundAnyRegion = false;
 	for (var i = 0; i < regions.length; i++) {
 		var region = regions[i];
 		if (region != null && region != '') {
-			var regionElement = jQuery('#' + region);
-
-			var parentElements = [];
-			var parentElement = regionElement.parent();
-			while (parentElement != null && parentElement.length > 0 && parentElement[0].tagName != 'BODY') {
-				parentElements.push(parentElement);
-				parentElement = parentElement.parent();
-			}
-			RemotePageViewer.displayParents(parentElements);			
-			
-			if (regionElement.hasClass('hidePageContent')) {
-				regionElement.removeClass('hidePageContent');
+			if (region == 'BODY' && !foundAnyRegion) {
+				jQuery('.hidePageContent', document.body).each(function() {
+					jQuery(this).removeClass('hidePageContent');
+				});
 			} else {
-				regionElement.addClass('showPageContent');
+				var regionElement = jQuery('#' + region);
+				if (regionElement != null && regionElement.length > 0) {
+					foundAnyRegion = true;
+					var parentElements = [];
+					var parentElement = regionElement.parent();
+					while (parentElement != null && parentElement.length > 0 && parentElement[0].tagName != 'BODY') {
+						parentElements.push(parentElement);
+						parentElement = parentElement.parent();
+					}
+					RemotePageViewer.displayParents(parentElements);
+					
+					if (regionElement.hasClass('hidePageContent')) {
+						regionElement.removeClass('hidePageContent');
+					} else {
+						regionElement.addClass('showPageContent');
+					}
+				}
 			}
 		}
 	}
