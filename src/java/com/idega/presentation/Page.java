@@ -376,9 +376,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				iwc.setSessionAttribute(REMOTE_JS_ACTION, remoteAction);
 		}
 		
-		Object action = iwc.getSessionAttribute(REMOTE_JS_ACTION);
-		if (action instanceof String)
-			PresentationUtil.addJavaScriptActionToBody(iwc, (String) action); 
+		if (StringUtil.isEmpty(remoteAction)) {
+			Object action = iwc.getSessionAttribute(REMOTE_JS_ACTION);
+			if (action instanceof String)
+				PresentationUtil.addJavaScriptActionToBody(iwc, (String) action);
+		}
 	}
 	
 	private void addRemoteScriptURLs(IWContext iwc) {
@@ -393,9 +395,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		if (!StringUtil.isEmpty(remoteScript) && iwc.isParameterSet(ADD_REMOTE_JS_TO_SESSION))
 			iwc.setSessionAttribute(REMOTE_SCRIPT, remoteScript);
 		
-		Object script = iwc.getSessionAttribute(REMOTE_SCRIPT);
-		if (script instanceof String)
-			addJavaScriptURLs(iwc, (String) script);
+		if (StringUtil.isEmpty(remoteScript)) {
+			Object script = iwc.getSessionAttribute(REMOTE_SCRIPT);
+			if (script instanceof String)
+				addJavaScriptURLs(iwc, (String) script);
+		}
 	}
 	
 	private void addJavaScriptURLs(IWContext iwc, String scripts) {
