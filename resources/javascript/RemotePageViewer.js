@@ -22,10 +22,18 @@ RemotePageViewer.loadPage = function(message, remotePage, server, personalId, co
 }
 
 RemotePageViewer.addPage = function(remotePage, containerId, scriptToAttach, scriptToExecute) {
+	if (remotePage == null || remotePage == '') {
+		alert('Remote page is not provided');
+		closeAllLoadingMessages();
+		return;
+	}
+	
 	if (scriptToAttach != null)
 		remotePage += '&remote_script=' + scriptToAttach;
 	if (scriptToExecute != null)
 		remotePage += '&remote_js_action=' + scriptToExecute;
+	if (scriptToAttach != null || scriptToExecute != null)
+		remotePage += '&add_remote_js_session=true';
 		
 	var frameName = 'remotePage' + containerId;
 	jQuery('#' + containerId).html('<iframe src="' + remotePage + '" width="100%" height="100%" name="'+frameName+'" onload="closeAllLoadingMessages();" />');
