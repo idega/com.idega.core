@@ -15,6 +15,7 @@ import org.springframework.stereotype.Service;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -196,7 +197,13 @@ public class WebUtil extends DefaultSpringBean {
     	}
     	
     	URIUtil uriUtil = new URIUtil(uri);
-    	uriUtil.setParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID, user.getUniqueId());
+    	String uniqueId = user.getUniqueId();
+    	if (StringUtil.isEmpty(uniqueId)) {
+    		uniqueId = IdGeneratorFactory.getUUIDGenerator().generateId();
+    		user.setUniqueId(uniqueId);
+    		user.store();
+    	}
+    	uriUtil.setParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID, uniqueId);
     	uriUtil.setParameter(LoginBusinessBean.LoginStateParameter, LoginBusinessBean.LOGIN_EVENT_LOGIN);
 		
 		return uriUtil.getUri();
