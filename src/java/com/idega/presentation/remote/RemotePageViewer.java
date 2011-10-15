@@ -61,6 +61,9 @@ public class RemotePageViewer extends Block {
 			}
 		}
 		
+		url = StringUtil.isEmpty(url) ? CoreConstants.PAGES_URI_PREFIX : url;
+		if (!url.endsWith(CoreConstants.SLASH))
+			url = url.concat(CoreConstants.SLASH);
 		URIUtil uri = new URIUtil(url);
 		uri.setParameter(LocaleSwitcher.languageParameterString, iwc.getCurrentLocale().toString());
 		url = uri.getUri();
