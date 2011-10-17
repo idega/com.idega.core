@@ -22,6 +22,7 @@ import javax.faces.component.UIComponent;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
+
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
@@ -316,6 +317,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 	
 	protected void includeJavaScriptActions(IWContext iwc) {
+		addRemoteJavaScriptActions(iwc);
+		
 		if (this.javaScriptActions == null || this.javaScriptActions.isEmpty()) {
 			return;
 		}
@@ -326,12 +329,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public void addJavascriptURL(String URL) {
-		if (this._javascripts == null) {
+		if (this._javascripts == null)
 			this._javascripts = new QueueMap<String, JavaScriptLink>();
-		}
-		if (!this._javascripts.containsKey(URL)) {
+		
+		if (!this._javascripts.containsKey(URL))
 			this._javascripts.put(URL, new JavaScriptLink(URL));
-		}
 	}
 
 	protected String getJavascriptURLs(IWContext iwc) {
@@ -345,7 +347,73 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				}
 			}
 		}
+		
+		addRemoteScriptURLs(iwc);
+		
 		return CoreConstants.EMPTY;
+	}
+	
+	private boolean isRemoteScriptEnabled(IWContext iwc) {
+		return iwc.getApplicationSettings().getBoolean("load_remote_script", Boolean.FALSE);
+	}
+	
+	private static final String REMOTE_SCRIPT = "remote_script",
+								ADD_REMOTE_JS_TO_SESSION = "add_remote_js_session",
+								REMOTE_JS_ACTION = "remote_js_action";
+	
+	private void addRemoteJavaScriptActions(IWContext iwc) {
+		if (!isRemoteScriptEnabled(iwc))
+			return;
+		
+		if (iwc.isParameterSet("remove_remote_js_actions"))
+			iwc.removeSessionAttribute(REMOTE_JS_ACTION);
+		
+		String remoteAction = iwc.getParameter(REMOTE_JS_ACTION);
+		if (!StringUtil.isEmpty(remoteAction)) {
+			PresentationUtil.addJavaScriptActionToBody(iwc, remoteAction);
+			
+			if (iwc.isParameterSet(ADD_REMOTE_JS_TO_SESSION))
+				iwc.setSessionAttribute(REMOTE_JS_ACTION, remoteAction);
+		}
+		
+		if (StringUtil.isEmpty(remoteAction)) {
+			Object action = iwc.getSessionAttribute(REMOTE_JS_ACTION);
+			if (action instanceof String)
+				PresentationUtil.addJavaScriptActionToBody(iwc, (String) action);
+		}
+	}
+	
+	private void addRemoteScriptURLs(IWContext iwc) {
+		if (!isRemoteScriptEnabled(iwc))
+			return;
+		
+		if (iwc.isParameterSet("remove_remote_js_urls"))
+			iwc.removeSessionAttribute(REMOTE_SCRIPT);
+		
+		String remoteScript = iwc.getParameter(REMOTE_SCRIPT);
+		addJavaScriptURLs(iwc, remoteScript);
+		if (!StringUtil.isEmpty(remoteScript) && iwc.isParameterSet(ADD_REMOTE_JS_TO_SESSION))
+			iwc.setSessionAttribute(REMOTE_SCRIPT, remoteScript);
+		
+		if (StringUtil.isEmpty(remoteScript)) {
+			Object script = iwc.getSessionAttribute(REMOTE_SCRIPT);
+			if (script instanceof String)
+				addJavaScriptURLs(iwc, (String) script);
+		}
+	}
+	
+	private void addJavaScriptURLs(IWContext iwc, String scripts) {
+		if (StringUtil.isEmpty(scripts))
+			return;
+		
+		String[] urls = scripts.split(CoreConstants.COMMA);
+		for (String script: urls) {
+			script = script.trim();
+			if (StringUtil.isEmpty(script))
+				continue;
+			
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, script);
+		}
 	}
 
 	/**

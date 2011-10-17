@@ -1676,6 +1676,22 @@ function getDefaultDwrPath() {
 	return DEFAULT_DWR_PATH;
 }
 
+
+function getDwrCallType(remote) {
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	if (!dwrCallType) {
+		dwrCallType = dwr.engine.transport.xhr;
+	}
+	if (remote) {
+		dwrCallType = dwr.engine.ScriptTag;
+		if (!dwrCallType) {
+			dwrCallType = dwr.engine.transport.scriptTag;
+		}
+	}
+	
+	return dwrCallType;
+}
+
 /**
  * This function 'prepares' DWR to make call to the very server that point path
  * @param interfaceClass - class where our method lives (like ThemesEngine)

@@ -318,3 +318,11 @@ div.outdatedBrowserInformationContentText {
 	border: none;
 	width: 75px;
 }
+
+.hidePageContent {
+	display: none;
+}
+
+.showPageContent {
+	display: block !important;
+}

@@ -1,9 +1,12 @@
 package com.idega.util;
 
+import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
+
+import javax.ejb.FinderException;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -12,11 +15,14 @@ import org.springframework.stereotype.Service;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.User;
 
 @Service("webUtil")
 @Scope(BeanDefinition.SCOPE_SINGLETON)
@@ -161,5 +167,45 @@ public class WebUtil extends DefaultSpringBean {
     	
     	IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
     	return settings.getBoolean(name, defaultValue);
+    }
+    
+    public String getAutoLoginUri(String personalId, String uri) {
+    	if (!getApplication().getSettings().getBoolean("provide_auto_login", Boolean.FALSE)) {
+    		getLogger().warning("Auto login URI can not be provided for a user by personal ID: " + personalId);
+    		return null;
+    	}
+    	
+    	if (StringUtil.isEmpty(personalId)) {
+    		getLogger().warning("Personal ID is not provided");
+    		return null;
+    	}
+    	if (StringUtil.isEmpty(uri)) {
+    		getLogger().warning("URI is not provided - can not construct auto login URI");
+    		return null;
+    	}
+    	
+    	User user = null;
+    	UserBusiness userBusiness = getServiceInstance(UserBusiness.class);
+    	try {
+			user = userBusiness.getUser(personalId);
+		} catch (RemoteException e) {
+			getLogger().log(Level.WARNING, "Error getting user by personal ID: " + personalId, e);
+		} catch (FinderException e) {}
+    	if (user == null) {
+    		getLogger().warning("User was not found by provided personal ID: " + personalId);
+    		return null;
+    	}
+    	
+    	URIUtil uriUtil = new URIUtil(uri);
+    	String uniqueId = user.getUniqueId();
+    	if (StringUtil.isEmpty(uniqueId)) {
+    		uniqueId = IdGeneratorFactory.getUUIDGenerator().generateId();
+    		user.setUniqueId(uniqueId);
+    		user.store();
+    	}
+    	uriUtil.setParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID, uniqueId);
+    	uriUtil.setParameter(LoginBusinessBean.LoginStateParameter, LoginBusinessBean.LOGIN_EVENT_LOGIN);
+		
+		return uriUtil.getUri();
     }
 }

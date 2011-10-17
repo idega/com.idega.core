@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<pxml>
+  <map>
+    <key>
+      <name>component_name</name>
+      <type>java.lang.String</type>
+      <value>RemotePageViewer</value>
+    </key>
+    <key>
+      <name>component_type</name>
+      <type>java.lang.String</type>
+      <value>iw.block</value>
+    </key>
+    <key>
+      <name>iw_component_methods</name>
+      <value>
+        <map>
+          <key>
+            <name>:method:1:implied:void:setUrl:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>URL</value>
+            <simple>true</simple>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setPersonalId:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Personal ID</value>
+            <simple>true</simple>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setRegionsToShow:java.lang.String:</name>
+            <type>java.lang.String</type>
+            <value>Which regions of a remote page to show</value>
+            <simple>true</simple>
+          </key>
+          <key>
+            <name>:method:1:implied:void:setLoadAutoLogin:boolean:</name>
+            <type>java.lang.String</type>
+            <value>Load auto login parameters</value>
+            <simple>true</simple>
+          </key>
+        </map>
+      </value>
+      <type>map</type>
+    </key>
+  </map>
+</pxml>
+
