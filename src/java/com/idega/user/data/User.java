@@ -220,6 +220,6 @@ public java.lang.String getIDColumnName();
  public Timestamp getLastReadFromImport();
  public void setResume(String resume);
  public String getResume();
- public Collection<ICLanguage> getLocales();
- public void addLocale(ICLanguage locale);
+ public Collection<ICLanguage> getLanguages();
+ public void addLanguage(ICLanguage language);
 }

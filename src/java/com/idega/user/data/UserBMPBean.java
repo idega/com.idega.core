@@ -3076,13 +3076,13 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	}
 
 	@Override
-	public Collection<ICLanguage> getLocales() {
+	public Collection<ICLanguage> getLanguages() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
 	@Override
-	public void addLocale(ICLanguage locale) {
+	public void addLanguage(ICLanguage language) {
 		// TODO Auto-generated method stub
 		
 	}
