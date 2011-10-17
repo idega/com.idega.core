@@ -2,6 +2,7 @@ package com.idega.user.data;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Collection;
 
 import javax.ejb.EJBException;
 
@@ -9,6 +10,7 @@ import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOReportableEntity;
 
@@ -218,4 +220,6 @@ public java.lang.String getIDColumnName();
  public Timestamp getLastReadFromImport();
  public void setResume(String resume);
  public String getResume();
+ public Collection<ICLanguage> getLocales();
+ public void addLocale(ICLanguage locale);
 }

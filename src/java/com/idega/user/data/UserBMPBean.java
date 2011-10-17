@@ -3075,4 +3075,16 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		return getStringColumnValue(COLUMN_RESUME);
 	}
 
+	@Override
+	public Collection<ICLanguage> getLocales() {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
+	@Override
+	public void addLocale(ICLanguage locale) {
+		// TODO Auto-generated method stub
+		
+	}
+
 }
