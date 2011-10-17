@@ -6,14 +6,21 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 import com.idega.presentation.IWContext;
+import com.idega.presentation.Layer;
+import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.util.PresentationUtil;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a><br>
@@ -41,7 +48,14 @@ public class SelectionDoubleBox extends InterfaceObject {
 	public static final String RIGHT_INPUT_NAME = "rightName";
 	public static final String RIGHT_INPUT_LABEL = "rightLabel";
 	public static final String RIGHT_INPUT_OPTIONS = "rightOptions";
-
+	
+	
+	private static final String FUNCTION_ADDOPT_NAME = "addOpt";
+	private static final String FUNCTION_ADDOPT = "function addOpt( list, val, text, idx, selected ) {  if( selected == null ) selected = false;  if( idx != null ) {          list.options[idx] = new Option( text, val, false, selected );  } else {          list.options[list.length] = new Option( text, val, false, selected );  }}";
+	
+	private static final String FUNCTION_MOVE_NAME = "move";
+	private static final String FUNCTION_MOVE = "function move( from, to ) {\n  var here =  from ;\n  var there =  to ;\n\n  if( here.selectedIndex != -1 && here.length > 0) {\n\n    for( h=0; h<here.length;h++) {\n      if( here.options[h].selected ) {\n        addOpt( there, here.options[h].value, here.options[h].text );\n      }\n    }\n    for( h1=here.length-1;h1>-1; h1-- ) {\n      if( here.options[h1].selected ) {\n        here.options[h1] = null;\n      }\n    }\n          \n  }\n}";
+	
 	public SelectionDoubleBox(){
 		this("untitled");
 	}
@@ -106,6 +120,7 @@ public class SelectionDoubleBox extends InterfaceObject {
     	super.encodeBegin(context);
     }
     
+	@Override
 	public void main(IWContext iwc) throws Exception {
 	    this.leftBox = getLeftBox();
 	    this.rightBox = getRightBox();
@@ -151,8 +166,25 @@ public class SelectionDoubleBox extends InterfaceObject {
 
 		table.add(this.rightBox, 3, 1);
 		//add the script
-		Script script = this.getParentPage().getAssociatedScript();
-		addToScripts(script);
+		Page page =  this.getParentPage();
+		if(page != null){
+			Script script = page.getAssociatedScript();
+			addToScripts(script);
+		}else{
+			//if page does not exists
+			Layer scriptLayer = new Layer();
+			this.add(scriptLayer);
+			Map functions = getfunctions();
+			Set keys = functions.keySet();
+			StringBuilder script = new StringBuilder();
+			for(Iterator iter = keys.iterator();iter.hasNext();){
+				String key = (String)iter.next();
+				script.append((String)functions.get(key));
+			}
+			String scriptString = PresentationUtil.getJavaScriptAction(script.toString());
+			scriptLayer.add(scriptString);
+		}
+		
 	}
 
 	public SelectionBox getLeftBox() {
@@ -184,8 +216,18 @@ public class SelectionDoubleBox extends InterfaceObject {
 	}
 
 	public void addToScripts(Script script) {
-		script.addFunction("addOpt", "function addOpt( list, val, text, idx, selected ) {  if( selected == null ) selected = false;  if( idx != null ) {          list.options[idx] = new Option( text, val, false, selected );  } else {          list.options[list.length] = new Option( text, val, false, selected );  }}");
-		script.addFunction("move", "function move( from, to ) {\n  var here =  from ;\n  var there =  to ;\n\n  if( here.selectedIndex != -1 && here.length > 0) {\n\n    for( h=0; h<here.length;h++) {\n      if( here.options[h].selected ) {\n        addOpt( there, here.options[h].value, here.options[h].text );\n      }\n    }\n    for( h1=here.length-1;h1>-1; h1-- ) {\n      if( here.options[h1].selected ) {\n        here.options[h1] = null;\n      }\n    }\n          \n  }\n}");
+		Map functions = getfunctions();
+		Set keys = functions.keySet();
+		for(Iterator iter = keys.iterator();iter.hasNext();){
+			String key = (String)iter.next();
+			script.addFunction(key, (String)functions.get(key));
+		}
+	}
+	private static Map getfunctions(){
+		Map functions = new HashMap();
+		functions.put(FUNCTION_ADDOPT_NAME, FUNCTION_ADDOPT);
+		functions.put(FUNCTION_MOVE_NAME, FUNCTION_MOVE);
+		return functions;
 	}
 	
 	public void addToSelectedBox(String value, String displayString) {
@@ -238,12 +280,14 @@ public class SelectionDoubleBox extends InterfaceObject {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
