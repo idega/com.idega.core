@@ -1682,11 +1682,15 @@ function getDwrCallType(remote) {
 	if (!dwrCallType) {
 		dwrCallType = dwr.engine.transport.xhr;
 	}
+	
 	if (remote) {
 		dwrCallType = dwr.engine.ScriptTag;
 		if (!dwrCallType) {
 			dwrCallType = dwr.engine.transport.scriptTag;
 		}
+		
+		if (dwr.engine._remoteHandleCallback == null)
+			dwr.engine._remoteHandleCallback = dwr.engine.remote.handleCallback;
 	}
 	
 	return dwrCallType;
