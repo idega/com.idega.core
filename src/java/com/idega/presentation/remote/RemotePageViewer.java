@@ -68,7 +68,9 @@ public class RemotePageViewer extends Block {
 		uri.setParameter(LocaleSwitcher.languageParameterString, iwc.getCurrentLocale().toString());
 		url = uri.getUri();
 		
-		js = "/idegaweb/bundles/com.idega.core.bundle/resources/javascript/RemotePageViewer.js";
+		//	TODO: this should be done in a unified way
+		js = "/idegaweb/bundles/com.idega.core.bundle/resources/javascript/RemotePageViewer.js,/idegaweb/bundles/com.idega.block.web2.0.bundle/resources/javascript/jquery/1.5.2/jquery-compressed.js";
+		
 		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 		String regions = StringUtil.isEmpty(regionsToShow) ? "null" : "\'" + regionsToShow + "\'";
 		String remoteAction = "registerEvent(window,\'load\',function(){RemotePageViewer.displayRegions(" + regions + ");});";
