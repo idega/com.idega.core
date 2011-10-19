@@ -184,6 +184,8 @@ public class WebUtil extends DefaultSpringBean {
     		return null;
     	}
     	
+    	logOut();
+    	
     	User user = null;
     	UserBusiness userBusiness = getServiceInstance(UserBusiness.class);
     	try {
