@@ -281,27 +281,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	/*  Getters begin   */
 
-	@Override
 	public String getPersonalID() {
 		return getStringColumnValue(getColumnNamePersonalID());
 	}
 
-	@Override
 	public String getFirstName() {
 		return (String) getColumnValue(getColumnNameFirstName());
 	}
 
-	@Override
 	public String getMiddleName() {
 		return (String) getColumnValue(getColumnNameMiddleName());
 	}
 
-	@Override
 	public String getLastName() {
 		return (String) getColumnValue(getColumnNameLastName());
 	}
 
-	@Override
 	public String getDisplayName() {
 		return (String) getColumnValue(getColumnNameDisplayName());
 	}
@@ -311,77 +306,62 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return (String) getColumnValue(getColumnNameDescription());
 	}
 
-	@Override
 	public Date getDateOfBirth() {
 		return (Date) getColumnValue(getColumnNameDateOfBirth());
 	}
 
-	@Override
 	public int getGenderID() {
 		return getIntColumnValue(getColumnNameGender());
 	}
 
-	@Override
 	public Gender getGender() {
 		return (Gender) getColumnValue(getColumnNameGender());
 	}
 
-	@Override
 	public int getSystemImageID() {
 		return getIntColumnValue(getColumnNameSystemImage());
 	}
 
-	@Override
 	public int getPrimaryGroupID() {
 		return getIntColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
 	}
 
-	@Override
 	public Group getPrimaryGroup() {
 		return (Group) getColumnValue(_COLUMNNAME_PRIMARY_GROUP_ID);
 	}
 
-	@Override
 	public ICLanguage getNativeLanguage() {
 		return (ICLanguage) getColumnValue(getColumnNameNativeLanguage());
 	}
 
-	@Override
 	public void setNativeLanguage(int ICLanguageID) {
 		setColumn(getColumnNameNativeLanguage(), ICLanguageID);
 	}
 
-	@Override
 	public void setNativeLanguage(ICLanguage language) {
 		setColumn(getColumnNameNativeLanguage(), language);
 	}
 
-	@Override
 	public void setFamilyID(String familyID) {
 		setColumn(getColumnNameFamilyID(), familyID);
 	}
 
-	@Override
 	public String getFamilyID() {
 		return getStringColumnValue(getColumnNameFamilyID());
 	}
 
-	@Override
 	public void setPreferredLocale(String preferredLocale) {
 		setColumn(getColumnNamePreferredLocale(), preferredLocale);
 	}
 
-	@Override
 	public String getPreferredLocale() {
 		return getStringColumnValue(getColumnNamePreferredLocale());
 	}
 
-	@Override
 	public void setPreferredRole(ICRole preferredRole) {
 		setColumn(getColumnNamePreferredRole(), preferredRole);
 	}
 
-	@Override
 	public ICRole getPreferredRole() {
 		return (ICRole)getColumnValue(getColumnNamePreferredRole());
 	}
@@ -446,22 +426,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return lastName + firstName + middleName;
 	}*/
 
-	@Override
 	public int getHomePageID() {
 			return getGeneralGroup().getHomePageID();
 	}
 
-	@Override
 	public ICPage getHomePage() {
 		return getGeneralGroup().getHomePage();
 	}
 
-	@Override
 	public int getHomeFolderID() {
 		return getGeneralGroup().getHomeFolderID();
 	}
 
-	@Override
 	public ICFile getHomeFolder() {
 		return getGeneralGroup().getHomeFolder();
 	}
@@ -471,28 +447,23 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return getGeneralGroup().getCreated();
 	}
 
-  @Override
-public boolean getDeleted() {
+  public boolean getDeleted() {
     return getBooleanColumnValue(getColumnNameDeleted());
   }
 
-  @Override
-public int getDeletedBy() {
+  public int getDeletedBy() {
     return getIntColumnValue(getColumnNameDeletedBy());
   }
 
-  @Override
-public Timestamp getDeletedWhen() {
+  public Timestamp getDeletedWhen() {
     return ((Timestamp) getColumnValue(getColumnNameDeletedWhen()));
   }
 
-  @Override
-public String getHomePageURL()  {
+  public String getHomePageURL()  {
     return getMetaData(META_DATA_HOME_PAGE);
   }
 
-  @Override
-public Address getUsersMainAddress() throws EJBException, RemoteException {
+  public Address getUsersMainAddress() throws EJBException, RemoteException {
 	try {
 	    AddressHome addressHome = (AddressHome) IDOLookup.getHome(Address.class);
 	    int id =  Integer.parseInt(getId());
@@ -504,8 +475,7 @@ public Address getUsersMainAddress() throws EJBException, RemoteException {
 
   }
 
-  @Override
-public Phone getUsersHomePhone() throws EJBException, RemoteException {
+  public Phone getUsersHomePhone() throws EJBException, RemoteException {
 	try {
 	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
 
@@ -516,8 +486,7 @@ public Phone getUsersHomePhone() throws EJBException, RemoteException {
 	}
   }
 
-  @Override
-public Phone getUsersWorkPhone() throws EJBException, RemoteException {
+  public Phone getUsersWorkPhone() throws EJBException, RemoteException {
 	try {
 	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
 
@@ -528,8 +497,7 @@ public Phone getUsersWorkPhone() throws EJBException, RemoteException {
 	}
   }
 
-  @Override
-public Phone getUsersMobilePhone() throws EJBException, RemoteException {
+  public Phone getUsersMobilePhone() throws EJBException, RemoteException {
 	try {
 	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
 
@@ -540,8 +508,7 @@ public Phone getUsersMobilePhone() throws EJBException, RemoteException {
 	}
   }
 
-  @Override
-public Phone getUsersFaxPhone() throws EJBException, RemoteException {
+  public Phone getUsersFaxPhone() throws EJBException, RemoteException {
 	try {
 	    PhoneHome phoneHome = (PhoneHome) IDOLookup.getHome(Phone.class);
 
@@ -552,8 +519,7 @@ public Phone getUsersFaxPhone() throws EJBException, RemoteException {
 	}
   }
 
-  @Override
-public Email getUsersEmail() throws EJBException, RemoteException {
+  public Email getUsersEmail() throws EJBException, RemoteException {
 	try {
 	    EmailHome emailHome = (EmailHome) IDOLookup.getHome(Email.class);
 
@@ -565,7 +531,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 
 }
 
-	@Override
 	public boolean getDisplayNameSetManually() {
   		return getBooleanColumnValue(COLUMN_DISPLAY_NAME_SET_MANUALLY, false);
   	}
@@ -574,18 +539,15 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 
 	/*  Setters begin   */
 
-	@Override
 	public void setDisplayNameSetManually(boolean diplayNameSetManually) {
 		setColumn(COLUMN_DISPLAY_NAME_SET_MANUALLY, diplayNameSetManually);
 	}
 
 
-	@Override
 	public void setPersonalID(String personalId) {
 		setColumn(getColumnNamePersonalID(), personalId);
 	}
 
-	@Override
 	public void setFirstName(String fName) {
 		//      if(!com.idega.core.accesscontrol.business.AccessControl.isValidUsersFirstName(fName)){
 		//	fName = "Invalid firstname";
@@ -606,7 +568,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		//      }
 	}
 
-	@Override
 	public void setMiddleName(String mName) {
 		if( mName == null ){
 			this.removeFromColumn(getColumnNameMiddleName());
@@ -622,7 +583,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-	@Override
 	public void setLastName(String lName) {
 		if( lName == null ){
 			this.removeFromColumn(getColumnNameLastName());
@@ -642,7 +602,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 	 * Divides the name string into first(1),middle(1-*) and lastname(1). <br>
 	 * and uses setFirstName(),setMiddleName() and setLastName().
 	 */
-	@Override
 	public void setFullName(String fullName) {
 		if ((fullName != null) && (fullName.length() > 0)) {
 		    Name name = new Name(fullName).capitalize();
@@ -684,7 +643,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-	@Override
 	public void setDisplayName(String dName) {
 		setColumn(getColumnNameDisplayName(), dName);
 	}
@@ -694,32 +652,26 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		setColumn(getColumnNameDescription(), description);
 	}
 
-	@Override
 	public void setDateOfBirth(Date dateOfBirth) {
 		setColumn(getColumnNameDateOfBirth(), dateOfBirth);
 	}
 
-	@Override
 	public void setGender(Integer gender) {
 		setColumn(getColumnNameGender(), gender);
 	}
 
-	@Override
 	public void setGender(int gender) {
 		setColumn(getColumnNameGender(), gender);
 	}
 
-	@Override
 	public void setSystemImageID(Integer fileID) {
 		setColumn(getColumnNameSystemImage(), fileID);
 	}
 
-	@Override
 	public void setSystemImageID(int fileID) {
 		setColumn(getColumnNameSystemImage(), fileID);
 	}
 
-	@Override
 	public void setPrimaryGroupID(int icGroupId) {
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
@@ -728,7 +680,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 //		setColumn(getColumnNameFamilyID(), familyId);
 //	}
 
-	@Override
 	public void setPrimaryGroup(Group group)
 	{
 		try{
@@ -739,12 +690,10 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 			e.printStackTrace();
 		}
 	}
-	@Override
 	public void setPrimaryGroupID(Integer icGroupId) {
 		setColumn(_COLUMNNAME_PRIMARY_GROUP_ID, icGroupId);
 	}
 
-	@Override
 	public void setHomePageID(int pageID)  {
 		try{
 			Group group = getGeneralGroup();
@@ -756,7 +705,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-	@Override
 	public void setHomePageID(Integer pageID) {
 		try{
 			Group group = getGeneralGroup();
@@ -768,7 +716,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-	@Override
 	public void setHomePage(ICPage page)  {
 		try{
 			Group group = getGeneralGroup();
@@ -781,7 +728,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 	}
 
 
-	@Override
 	public void setHomeFolderID(int fileID)  {
 		try{
 			Group group = getGeneralGroup();
@@ -793,7 +739,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-	@Override
 	public void setHomeFolderID(Integer fileID) {
 		try{
 			Group group = getGeneralGroup();
@@ -805,7 +750,6 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-	@Override
 	public void setHomeFolder(ICFile file)  {
 		try{
 			Group group = getGeneralGroup();
@@ -829,8 +773,7 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
-  @Override
-public void setDeleted(boolean isDeleted) {
+  public void setDeleted(boolean isDeleted) {
   	if(!isDeleted){
   		removeFromColumn(getColumnNameDeletedBy());
   		removeFromColumn(getColumnNameDeletedWhen());
@@ -840,48 +783,41 @@ public void setDeleted(boolean isDeleted) {
     setColumn(getColumnNameDeleted(), isDeleted);
   }
 
-  @Override
-public void setDeletedBy(int userId)  {
+  public void setDeletedBy(int userId)  {
     setColumn(getColumnNameDeletedBy(), userId);
   }
 
-  @Override
-public void setDeletedWhen(Timestamp timestamp) {
+  public void setDeletedWhen(Timestamp timestamp) {
     setColumn(getColumnNameDeletedWhen(), timestamp);
   }
 
   /**
    * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
    */
-  @Override
-public void setAliasID(int id) {
+  public void setAliasID(int id) {
   }
 
 	/**
 	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
 	 */
-  @Override
-public void setAlias(Group alias) {
+  public void setAlias(Group alias) {
   }
 
 	/**
 	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
 	 */
-  @Override
-public int getAliasID() {
+  public int getAliasID() {
   	return -1;
   }
 
 	/**
 	 * Do not use these with the UserBMPBean. Only here because UserBMPBean implements Group
 	 */
-	@Override
 	public Group getAlias() {
 		return null;
 	}
 
-  @Override
-public void setHomePageURL(String homePageURL)  {
+  public void setHomePageURL(String homePageURL)  {
     setMetaData(META_DATA_HOME_PAGE, homePageURL);
   }
 
@@ -889,37 +825,30 @@ public void setHomePageURL(String homePageURL)  {
 
 	/*  Business methods begin   */
 
-	@Override
 	public void removeAllAddresses() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Address.class);
 	}
 
-	@Override
 	public void removeAddress(Address address) throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(address);
 	}
 
-	@Override
 	public void removeAllEmails() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Email.class);
 	}
 
-	@Override
 	public void removeEmail(Email email) throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(email);
 	}
 
-	@Override
 	public void removeAllPhones() throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(Phone.class);
 	}
 
-	@Override
 	public void removePhone(Phone phone) throws IDORemoveRelationshipException {
 		super.idoRemoveFrom(phone);
 	}
 
-	@Override
 	public Collection getAddresses() {
 		try {
 		    Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
@@ -932,7 +861,6 @@ public void setHomePageURL(String homePageURL)  {
 		}
 	}
 
-	@Override
 	public Collection getEmails() {
 		try {
 			return super.idoGetRelatedEntities(Email.class);
@@ -943,7 +871,6 @@ public void setHomePageURL(String homePageURL)  {
 		}
 	}
 
-	@Override
 	public Collection getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
@@ -954,7 +881,6 @@ public void setHomePageURL(String homePageURL)  {
 		}
 	}
 
-	@Override
 	public Collection getPhones(String phoneTypeID) {
 		try {
 			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
@@ -965,17 +891,14 @@ public void setHomePageURL(String homePageURL)  {
 		}
 	}
 
-	@Override
 	public void addAddress(Address address) throws IDOAddRelationshipException {
 		this.idoAddTo(address);
 	}
 
-	@Override
 	public void addEmail(Email email) throws IDOAddRelationshipException {
 		this.idoAddTo(email);
 	}
 
-	@Override
 	public void addPhone(Phone phone) throws IDOAddRelationshipException {
 		this.idoAddTo(phone);
 	}
@@ -994,8 +917,7 @@ public void delete() throws SQLException {
    *
    * @param userId id of the user that is responsible for the deletion
    */
-  @Override
-public void delete(int userId) throws SQLException {
+  public void delete(int userId) throws SQLException {
     setDeleted(true);
 
     setDeletedWhen(IWTimestamp.getTimestampRightNow());
@@ -1162,12 +1084,10 @@ public void delete(int userId) throws SQLException {
 		return idoFindOnePKByQuery(query);
 	}
 
-	@Override
 	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
-	@Override
 	public void removeUser(User p0) {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method removeUser() not supported.");
@@ -1188,7 +1108,6 @@ public void delete(int userId) throws SQLException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
 	}
-	@Override
 	public void removeGroup() throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
 	}
@@ -1197,7 +1116,6 @@ public void delete(int userId) throws SQLException {
 	   //return equals((Object)this);
 	   return this.getGeneralGroup().equals(p0);
 	 }*/
-	@Override
 	public void addGroup(Group p0,java.sql.Timestamp p1) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
@@ -1215,11 +1133,9 @@ public void delete(int userId) throws SQLException {
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
-	@Override
 	public List getChildGroupsIDs(String[] p0, boolean p1) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getGroupsContained() not supported");
 	}
-	@Override
 	public List getListOfAllGroupsContaining(int p0) throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContaining() not yet implemented.");
 	}
@@ -1235,7 +1151,6 @@ public void delete(int userId) throws SQLException {
 	public Collection getAllGroupsContainingUser(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method getAllGroupsContainingUser() not supported.");
 	}
-	@Override
 	public void removeGroup(Group p0) throws EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not yet implemented.");
 	}
@@ -1255,7 +1170,6 @@ public void delete(int userId) throws SQLException {
 	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004
 	 * Database access is minimized by passing a Map of cached groupParents and Map of cached groups to the method
 	 */
-	@Override
 	public List getParentGroups(Map cachedParents, Map cachedGroups)  {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		//throw new java.lang.UnsupportedOperationException("Method getListOfAllGroupsContainingThis() not yet implemented.");
@@ -1283,7 +1197,6 @@ public void delete(int userId) throws SQLException {
 			throw new IDORuntimeException(e,this);
 		}
 	}
-	@Override
 	public void addUser(User p0){
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method addUser() not yet implemented.");
@@ -1294,7 +1207,6 @@ public void delete(int userId) throws SQLException {
 		return true;
 	}
 
-	@Override
 	public boolean isAlias() {
 	    return false;
 	}
@@ -1342,12 +1254,10 @@ public void delete(int userId) throws SQLException {
 		return this.getID();
 	}
 
-	@Override
 	public void setLastReadFromImport(Timestamp timestamp) {
 		setColumn(COLUMN_LAST_READ_FROM_IMPORT, timestamp);
 	}
 
-	@Override
 	public Timestamp getLastReadFromImport() {
 		return getTimestampColumnValue(COLUMN_LAST_READ_FROM_IMPORT);
 	}
@@ -1839,7 +1749,6 @@ public void delete(int userId) throws SQLException {
 	/**
 	 * @deprecated
 	 */
-	@Override
 	@Deprecated
 	public Group getGroup() {
 		return this;
@@ -1848,7 +1757,6 @@ public void delete(int userId) throws SQLException {
 	/**
 	 * @deprecated
 	 */
-	@Override
 	@Deprecated
 	public int getGroupID() {
 		return this.getID();
@@ -1857,7 +1765,6 @@ public void delete(int userId) throws SQLException {
 	/**
 	 * @deprecated
 	 */
-	@Override
 	@Deprecated
 	public Group getUserGroup() {
 		return getGeneralGroup();
@@ -1885,7 +1792,6 @@ public void delete(int userId) throws SQLException {
 		return this._group;
 	}
 
-	@Override
 	public void setGroupID(int icGroupId) {
 		this.setID(icGroupId);
 	}
@@ -2841,8 +2747,7 @@ public void delete(int userId) throws SQLException {
    * Unsupported.
    *
    */
-  @Override
-public void removeGroup(Group group, User currentUser)  {
+  public void removeGroup(Group group, User currentUser)  {
     throw new UnsupportedOperationException();
   }
 
@@ -2850,8 +2755,7 @@ public void removeGroup(Group group, User currentUser)  {
    * Unsupported.
    *
    */
-  @Override
-public void removeGroup(int userId, User currentUser, boolean allEntries) {
+  public void removeGroup(int userId, User currentUser, boolean allEntries) {
     throw new UnsupportedOperationException();
   }
 
@@ -2859,8 +2763,7 @@ public void removeGroup(int userId, User currentUser, boolean allEntries) {
    * Unsupported.
    *
    */
-  @Override
-public void removeGroup(User currentUser)  {
+  public void removeGroup(User currentUser)  {
     throw new UnsupportedOperationException();
   }
 
@@ -2868,8 +2771,7 @@ public void removeGroup(User currentUser)  {
    * Unsupported.
    *
    */
-  @Override
-public void removeUser(User user, User currentUser) {
+  public void removeUser(User user, User currentUser) {
     throw new UnsupportedOperationException();
   }
 
@@ -2877,8 +2779,7 @@ public void removeUser(User user, User currentUser) {
    * Unsupported.
    *
    */
-  @Override
-public void removeUser(User user, User currentUse, Timestamp time) {
+  public void removeUser(User user, User currentUse, Timestamp time) {
 	throw new UnsupportedOperationException();
   }
 
@@ -2886,12 +2787,10 @@ public void removeUser(User user, User currentUse, Timestamp time) {
    * Unsupported.
    *
    */
-    @Override
-	public Collection getChildren() {
+    public Collection getChildren() {
         throw new UnsupportedOperationException("Method getChildren() not implemented");
     }
 
-	@Override
 	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
 		String addressTypePrimaryKeyColumn = addressType.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 
@@ -2963,7 +2862,6 @@ public void removeUser(User user, User currentUse, Timestamp time) {
     	return this.idoFindPKsBySQL("select up.ic_user_id from ic_user_phone up, ic_phone p where up.ic_phone_id = p.ic_phone_id and p.ic_phone_type_id = " + phoneType + " group by ic_user_id having count(up.ic_user_id)>1");
 	}
 
-	@Override
 	public String getId(){
 		return getPrimaryKey().toString();
 	}
@@ -2980,7 +2878,6 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 //   	 	return isDeceased;
 //	}
 
-	@Override
 	public boolean isDeceased()  {
 		Status deceasedStatus = null;
 		try {
@@ -3009,12 +2906,10 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		return coll != null && !coll.isEmpty();
 	}
 
-		@Override
 		public void setUserProperties(ICFile file) {
 		setColumn(COLUMN_NAME_USER_PROPERTIES_FILE_ID, file);
 	}
 
-	@Override
 	public ICFile getUserProperties() {
 		return (ICFile) getColumnValue(COLUMN_NAME_USER_PROPERTIES_FILE_ID);
 	}
@@ -3043,45 +2938,37 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	}
 
 
-	@Override
 	public User getModerator() {
 		//	TODO:	maybe should return primary group's moderator?
 		throw new UnsupportedOperationException("Method getModerator() is not implemented yet");
 	}
 
-	@Override
 	public void setModerator(User moderator) {
 		//	TODO:	maybe should set moderator for user's primary groupr?
 		throw new UnsupportedOperationException("Method setModerator() is not implemented yet");
 	}
 
-	@Override
 	public boolean isJuridicalPerson() {
 		return getBooleanColumnValue(User.FIELD_JURIDICAL_PERSON);
 	}
 
-	@Override
 	public void setJuridicalPerson(boolean juridicalPerson) {
 		setColumn(User.FIELD_JURIDICAL_PERSON, Boolean.valueOf(juridicalPerson));
 	}
 
-	@Override
 	public void setResume(String resume) {
 		setColumn(COLUMN_RESUME, resume);
 	}
 
-	@Override
 	public String getResume() {
 		return getStringColumnValue(COLUMN_RESUME);
 	}
 
-	@Override
 	public Collection<ICLanguage> getLanguages() {
 		// TODO Auto-generated method stub
 		return null;
 	}
 
-	@Override
 	public void addLanguage(ICLanguage language) {
 		// TODO Auto-generated method stub
 		
