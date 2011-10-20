@@ -103,7 +103,7 @@ public class SendMail {
 		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "pl4tf0rm");
 		String port = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
 		if (StringUtil.isEmpty(host)) {
-			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER);
+			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.emailsrvr.com");
 			if(StringUtil.isEmpty(host)){
 				throw new MessagingException("Mail server is not configured.");
 			}
