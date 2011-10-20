@@ -153,7 +153,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	}
 	
 	private static boolean useOptimizer(String applicationPropertyName, Boolean defaultValue) {
-		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean(applicationPropertyName, defaultValue);
+		return false;//IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean(applicationPropertyName, defaultValue);
 	}
 	
 	public static boolean isOptimizationTurnedOn(String applicationPropertyName) {
