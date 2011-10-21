@@ -7,6 +7,11 @@
 	    	<param name="managedBeanName" value="pageSessionPoller"/>
 	    	<param name="class" value="com.idega.business.PageSessionPoller"/>
     	</create>
+    	<create creator="jsf" javascript="WebUtil" scope="application">
+    		<param name="managedBeanName" value="webUtil"/>
+	    	<param name="class" value="com.idega.util.WebUtil"/>
+    	</create>
+    	
 		<convert converter="bean" match="com.idega.builder.bean.AdvancedProperty" />
 	</allow>
 </dwr>

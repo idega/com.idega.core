@@ -1,0 +1,211 @@
+package com.idega.util;
+
+import java.rmi.RemoteException;
+
+import javax.ejb.FinderException;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.Priority;
+
+import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
+import com.idega.idegaweb.IWApplicationContext;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
+import com.idega.user.business.UserBusiness;
+import com.idega.user.data.User;
+
+public class WebUtil {
+	
+	private static final Logger LOGGER = Logger.getLogger(WebUtil.class.getName());
+
+//	public String getLocalizedString(String bundleIdentifier, String key, String returnValueIfNotFound) {
+//		return getMultipleLocalizedStrings(bundleIdentifier, Arrays.asList(
+//				new AdvancedProperty(key, returnValueIfNotFound)
+//		)).get(0);
+//	}
+//	
+//	public List<String> getMultipleLocalizedStrings(String bundleIdentifier, List<AdvancedProperty> multipleRequiredLocalizations) {
+//		List<String> defaultValues = getDefaultValues(multipleRequiredLocalizations);
+//		if (ListUtil.isEmpty(multipleRequiredLocalizations)) {
+//			return defaultValues;
+//		}
+//		
+//		IWBundle bundle = getBundle(bundleIdentifier);
+//		if (bundle == null) {
+//			getLogger().warning("Bundle was not found by identifier: ".concat(bundleIdentifier));
+//			return defaultValues;
+//		}
+//		
+//		IWResourceBundle iwrb = getResourceBundle(bundle);
+//		if (iwrb == null) {
+//			getLogger().warning("Unable to resolve resource bundle from bundle: " + bundle);
+//			return defaultValues;
+//		}
+//		
+//		List<String> localizations = new ArrayList<String>(multipleRequiredLocalizations.size());
+//		for (AdvancedProperty localizationRequest: multipleRequiredLocalizations) {
+//			localizations.add(iwrb.getLocalizedString(localizationRequest.getId(), localizationRequest.getValue()));
+//		}
+//		return localizations;
+//	}
+//	
+//	private List<String> getDefaultValues(List<AdvancedProperty> parameters) {
+//		if (ListUtil.isEmpty(parameters)) {
+//			return null;
+//		}
+//		
+//		List<String> defaultValues = new ArrayList<String>(parameters.size());
+//		for (AdvancedProperty parameter: parameters) {
+//			defaultValues.add(parameter.getValue());
+//		}
+//		return defaultValues;
+//	}
+//	
+//    public boolean sendEmail(String from, String to, String subject, String message) {
+//    	if (StringUtil.isEmpty(subject) || StringUtil.isEmpty(message)) {
+//    		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
+//    		return false;
+//    	}
+//    	
+//    	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
+//    	
+//    	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "programmers@idega.com") : to;
+//    	if (StringUtil.isEmpty(to)) {
+//    		getLogger().warning("Receiver is unknown! Unable to send a message:\n" + message);
+//    		return false;
+//    	}
+//    	
+//    	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+//    	if (StringUtil.isEmpty(host)) {
+//    		getLogger().warning("Mail server host is unknown, unable to send a message:\n" + message);
+//    		return false;
+//    	}
+//    	
+//    	String userName = "Not logged in";
+//    	IWContext iwc = CoreUtil.getIWContext();
+//    	if (iwc != null && iwc.isLoggedOn()) {
+//    		userName = iwc.getCurrentUser().getName();
+//    	}
+//    	message.concat("\nUser: ").concat(userName);
+//    	
+//    	final String fromAddress = from;
+//    	final String toAddress = to;
+//    	final String hostName = host;
+//    	final String sbjct = subject;
+//    	final String msg = message;
+//    	Thread sender = new Thread(new Runnable() {
+//			public void run() {
+//				try {
+//		    		SendMail.send(fromAddress, toAddress, null, null, hostName, sbjct, msg);
+//		    	} catch(Exception e) {
+//					getLogger().log(Level.WARNING, "Error while sending email (".concat(msg).concat(") to: ").concat(toAddress), e);
+//				}
+//			}
+//		});
+//    	sender.start();
+//    	
+//    	return true;
+//    }
+    
+    public boolean logOut() {
+    	IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null) {
+    		LOGGER.warn(IWContext.class.getName() + " is not available!");
+    		return false;
+    	}
+    	if (!iwc.isLoggedOn()) {
+    		LOGGER.warn("User is not logged in!");
+    		return false;
+    	}
+    	
+    	LoginBusinessBean loginBusiness = null;
+    	try {
+    		loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwc.getRequest().getSession(false));
+    	} catch (Exception e) {
+    		LOGGER.log(Priority.WARN, "Error getting LoginBusiness", e);
+    	}
+    	if (loginBusiness == null)
+    		return false;
+    	
+    	return loginBusiness.logOutUser(iwc.getRequest());
+    }
+    
+//    private Boolean latestNavigationUsed = Boolean.TRUE;
+//    
+//    public Boolean isLatestNavigationUsed() {
+//    	latestNavigationUsed = getApplication().getSettings().getBoolean("html5_navigation", Boolean.FALSE);
+//    	return latestNavigationUsed;
+//    }
+//    
+//    public Boolean isLoggedIn() {
+//    	IWContext iwc = CoreUtil.getIWContext();
+//    	if (iwc == null)
+//    		return Boolean.FALSE;
+//    	
+//    	try {
+//    		return iwc.isLoggedOn();
+//    	} catch (Exception e) {
+//    		getLogger().log(Level.WARNING, "Error while checking if user is logged in", e);
+//    	}
+//    	
+//    	return Boolean.FALSE;
+//    }
+//    
+//    public Boolean getBooleanApplicationProperty(String name, boolean defaultValue) {
+//    	if (StringUtil.isEmpty(name))
+//    		return false;
+//    	
+//    	IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+//    	return settings.getBoolean(name, defaultValue);
+//    }
+    
+    public String getAutoLoginUri(String personalId, String uri) {
+    	try {
+    		IWApplicationContext iwac = IWMainApplication.getDefaultIWApplicationContext();
+	    	if (!iwac.getIWMainApplication().getSettings().getBoolean("provide_auto_login", false)) {
+	    		LOGGER.warn("Auto login URI can not be provided for a user by personal ID: " + personalId);
+	    		return null;
+	    	}
+	    	
+	    	if (StringUtil.isEmpty(personalId)) {
+	    		LOGGER.warn("Personal ID is not provided");
+	    		return null;
+	    	}
+	    	if (StringUtil.isEmpty(uri)) {
+	    		LOGGER.warn("URI is not provided - can not construct auto login URI");
+	    		return null;
+	    	}
+	    	
+	    	logOut();
+	    	
+	    	User user = null;
+	    	UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+	    	try {
+				user = userBusiness.getUser(personalId);
+			} catch (RemoteException e) {
+				LOGGER.log(Priority.WARN, "Error getting user by personal ID: " + personalId, e);
+			} catch (FinderException e) {}
+	    	if (user == null) {
+	    		LOGGER.warn("User was not found by provided personal ID: " + personalId);
+	    		return null;
+	    	}
+	    	
+	    	URIUtil uriUtil = new URIUtil(uri);
+	    	String uniqueId = user.getUniqueId();
+	    	if (StringUtil.isEmpty(uniqueId)) {
+	    		uniqueId = IdGeneratorFactory.getUUIDGenerator().generateId();
+	    		user.setUniqueId(uniqueId);
+	    		user.store();
+	    	}
+	    	uriUtil.setParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID, uniqueId);
+	    	uriUtil.setParameter(LoginBusinessBean.LoginStateParameter, LoginBusinessBean.LOGIN_EVENT_LOGIN);
+			
+			return uriUtil.getUri();
+    	} catch (Exception e) {
+    		LOGGER.log(Priority.WARN, "Error getting auto login URI by user personal ID: " + personalId + " and uri: " + uri, e);
+    	}
+    	return null;
+    }
+}

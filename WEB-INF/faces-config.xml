@@ -45,5 +45,11 @@
 		<managed-bean-class>com.idega.business.PageSessionPoller</managed-bean-class>
 		<managed-bean-scope>application</managed-bean-scope>
 	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>webUtil</managed-bean-name>
+		<managed-bean-class>com.idega.util.WebUtil</managed-bean-class>
+		<managed-bean-scope>application</managed-bean-scope>
+	</managed-bean>
 
 </faces-config>

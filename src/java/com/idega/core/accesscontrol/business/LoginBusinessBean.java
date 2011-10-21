@@ -281,7 +281,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return True if logOut was succesful, false if it failed
 	 */
-	protected boolean logOutUser(HttpServletRequest request) {
+	public boolean logOutUser(HttpServletRequest request) {
 		try {
 			logOut(request);
 			// internalSetState(iwc, "loggedoff");

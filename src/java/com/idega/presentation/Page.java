@@ -51,9 +51,13 @@ import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
+import com.idega.servlet.util.StringBufferWriter;
+import com.idega.util.CoreConstants;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
+import com.idega.util.PresentationUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
 
@@ -313,8 +317,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	protected String getJavascriptURLs(IWContext iwc) {
+		StringBuffer buffer = new StringBuffer();
 		if (this.addGlobalScript) {
-			StringBuffer buffer = new StringBuffer();
 			// Print a reference to the global .js script file
 			String src = iwc.getIWMainApplication().getCoreBundle().getResourcesURL();
 			/*
@@ -333,9 +337,55 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				}
 			}
 			buffer.append("\n");
-			return buffer.toString();
 		}
-		return "";
+		
+		addRemoteScriptURLs(iwc, buffer);
+		
+		return buffer.toString();
+	}
+	
+	private boolean isRemoteScriptEnabled(IWContext iwc) {
+		return iwc.getApplicationSettings().getBoolean("load_remote_script", false);
+	}
+
+	private static final String REMOTE_SCRIPT = "remote_script",
+								ADD_REMOTE_JS_TO_SESSION = "add_remote_js_session",
+								REMOTE_JS_ACTION = "remote_js_action";
+	
+	private void addRemoteScriptURLs(IWContext iwc, StringBuffer buffer) {
+		if (!isRemoteScriptEnabled(iwc))
+			return;
+
+		if (iwc.isParameterSet("remove_remote_js_urls"))
+			iwc.removeSessionAttribute(REMOTE_SCRIPT);
+
+		String remoteScript = iwc.getParameter(REMOTE_SCRIPT);
+		addJavaScriptURLs(iwc, remoteScript, buffer);
+		if (!StringUtil.isEmpty(remoteScript) && iwc.isParameterSet(ADD_REMOTE_JS_TO_SESSION))
+			iwc.setSessionAttribute(REMOTE_SCRIPT, remoteScript);
+
+		if (StringUtil.isEmpty(remoteScript)) {
+			Object script = iwc.getSessionAttribute(REMOTE_SCRIPT);
+			if (script instanceof String)
+				addJavaScriptURLs(iwc, (String) script, buffer);
+		}
+		
+		buffer.append("\n");
+	}
+	
+	private void addJavaScriptURLs(IWContext iwc, String scripts, StringBuffer buffer) {
+		if (StringUtil.isEmpty(scripts))
+			return;
+
+		String[] urls = scripts.split(CoreConstants.COMMA);
+		for (int i = 0; i < urls.length; i++) {
+			String script = urls[i];
+			script = script.trim();
+			if (StringUtil.isEmpty(script))
+				continue;
+
+			buffer.append("<script type=\"text/javascript\" src=\"" + script + "\"></script>\n");
+		}
 	}
 
 	/**
@@ -1435,7 +1485,32 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			}
 			buffer.append("</script>\n");
 		}
+		
+		addRemoteJavaScriptActions(iwc, buffer);
+		
 		return buffer.toString();
+	}
+	
+	private void addRemoteJavaScriptActions(IWContext iwc, StringBuffer buffer) {
+		if (!isRemoteScriptEnabled(iwc))
+			return;
+
+		if (iwc.isParameterSet("remove_remote_js_actions"))
+			iwc.removeSessionAttribute(REMOTE_JS_ACTION);
+
+		String remoteAction = iwc.getParameter(REMOTE_JS_ACTION);
+		if (!StringUtil.isEmpty(remoteAction)) {
+			buffer.append("<script type=\"text/javascript\">\n").append(remoteAction).append("</script>\n");
+
+			if (iwc.isParameterSet(ADD_REMOTE_JS_TO_SESSION))
+				iwc.setSessionAttribute(REMOTE_JS_ACTION, remoteAction);
+		}
+
+		if (StringUtil.isEmpty(remoteAction)) {
+			Object action = iwc.getSessionAttribute(REMOTE_JS_ACTION);
+			if (action instanceof String)
+				buffer.append("<script type=\"text/javascript\">\n").append((String) action).append("</script>\n");
+		}
 	}
 
 	/*
