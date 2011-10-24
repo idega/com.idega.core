@@ -2966,21 +2966,16 @@ public void delete() throws SQLException {
 		return getStringColumnValue(COLUMN_RESUME);
 	}
 
-	
-	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<ICLanguage> getLanguages() throws IDORelationshipException {
 		return super.idoGetRelatedEntities(ICLanguage.class);
 	}
 
-	@Override
 	public void addLanguage(ICLanguage language) throws IDOAddRelationshipException {
 		this.idoAddTo(language);		
 	}
 
-	@Override
 	public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException {
 		this.idoRemoveFrom(language);
 	}
-
 }
