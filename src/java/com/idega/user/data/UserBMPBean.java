@@ -97,6 +97,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
 	private static final String COLUMN_LAST_READ_FROM_IMPORT = "last_imported";
 	private static final String COLUMN_RESUME = "RESUME";
+	private static final String COLUMN_LANGUAGES = TABLE_NAME + "_languages";
 
 	@Override
 	public String getEntityName() {
@@ -123,6 +124,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	addAttribute(COLUMN_RESUME, "Resume", true, true, java.lang.String.class, 2048);
 
     	addAttribute(COLUMN_LAST_READ_FROM_IMPORT, "Last read from national import", Timestamp.class);
+    	addManyToManyRelationShip(ICLanguage.class, COLUMN_LANGUAGES);
 
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
@@ -3075,16 +3077,21 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		return getStringColumnValue(COLUMN_RESUME);
 	}
 
+	
 	@Override
-	public Collection<ICLanguage> getLanguages() {
-		// TODO Auto-generated method stub
-		return null;
+	@SuppressWarnings("unchecked")
+	public Collection<ICLanguage> getLanguages() throws IDORelationshipException {
+		return super.idoGetRelatedEntities(ICLanguage.class);
 	}
 
 	@Override
-	public void addLanguage(ICLanguage language) {
-		// TODO Auto-generated method stub
-		
+	public void addLanguage(ICLanguage language) throws IDOAddRelationshipException {
+		this.idoAddTo(language);		
+	}
+
+	@Override
+	public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException {
+		this.idoRemoveFrom(language);
 	}
 
 }

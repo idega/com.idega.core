@@ -12,6 +12,9 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOReportableEntity;
 
 
@@ -220,6 +223,7 @@ public java.lang.String getIDColumnName();
  public Timestamp getLastReadFromImport();
  public void setResume(String resume);
  public String getResume();
- public Collection<ICLanguage> getLanguages();
- public void addLanguage(ICLanguage language);
+ public Collection<ICLanguage> getLanguages() throws IDORelationshipException;
+ public void addLanguage(ICLanguage language) throws IDOAddRelationshipException;
+ public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException ;
 }
