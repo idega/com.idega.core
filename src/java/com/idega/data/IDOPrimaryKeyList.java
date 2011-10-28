@@ -70,16 +70,25 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 	private int fetchSize = 1;
 	private int _prefetchSize = 100;
 	private boolean isSublist = false;
+	private boolean isDistinct = false;
 
 	// private void reloadResultSet(){
 	//
 	// }
 
 	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, int prefetchSize) throws IDOFinderException {
-		this(sqlQuery, entity, null, null, prefetchSize);
+		this(sqlQuery, entity, prefetchSize, false);
+	}
+	
+	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, int prefetchSize, boolean getDistinct) throws IDOFinderException {
+		this(sqlQuery, entity, null, null, prefetchSize, getDistinct);
 	}
 
 	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, GenericEntity returnProxy, SelectQuery proxyQueryConstraints, int prefetchSize) throws IDOFinderException {
+		this(sqlQuery, entity, returnProxy, proxyQueryConstraints, prefetchSize, false);
+	}
+	
+	public IDOPrimaryKeyList(SelectQuery sqlQuery, GenericEntity entity, GenericEntity returnProxy, SelectQuery proxyQueryConstraints, int prefetchSize, boolean getDistinct) throws IDOFinderException {
 		this._sqlQuery = sqlQuery;
 		// _Stmt = Stmt;
 		// _RS = RS;
@@ -90,6 +99,7 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 		this._prefetchSize = prefetchSize;
 		this._returnProxy = returnProxy;
 		this._returnProxyQueryConstraints = proxyQueryConstraints;
+		this.isDistinct = getDistinct;
 
 		initialize(null);
 	}
@@ -178,7 +188,8 @@ public class IDOPrimaryKeyList extends Vector implements List, Runnable {
 			SelectQuery initialQuery = (SelectQuery) this._sqlQuery.clone();
 			this._loadQueryBase = (SelectQuery) this._sqlQuery.clone();
 			initialQuery.removeAllColumns();
-			initialQuery.addColumn(this.sqlQueryTable, this.pkColumnName);
+			
+			initialQuery.addColumn(this.sqlQueryTable, this.pkColumnName, this.isDistinct);
 
 			if (this._returnProxy != null && this._returnProxyQueryConstraints != null) {
 				boolean join = false;

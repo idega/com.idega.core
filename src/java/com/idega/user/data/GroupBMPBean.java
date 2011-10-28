@@ -1,5 +1,6 @@
 package com.idega.user.data;
 
+import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -8,10 +9,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
@@ -584,86 +587,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return (Integer) this.ejbFindByPrimaryKey(primaryKey);
 	}
 
-	// private List getListOfAllGroupsContainingLegacy(int group_id)throws
-	// EJBException{
-	// String tableToSelectFrom = "IC_GROUP_TREE";
-	// StringBuffer buffer=new StringBuffer();
-	// buffer.append("select * from ");
-	// buffer.append(tableToSelectFrom);
-	// buffer.append(" where ");
-	// buffer.append("CHILD_IC_GROUP_ID");
-	// buffer.append("=");
-	// buffer.append(group_id);
-	// String SQLString=buffer.toString();
-	// Connection conn= null;
-	// Statement Stmt= null;
-	// Vector vector = new Vector();
-	// try
-	// {
-	// conn = getConnection(getDatasource());
-	// Stmt = conn.createStatement();
-	// ResultSet RS = Stmt.executeQuery(SQLString);
-	// while (RS.next()){
-	// IDOLegacyEntity tempobj=null;
-	// try{
-	// tempobj =
-	// (IDOLegacyEntity)Class.forName(this.getClass().getName()).newInstance();
-	// tempobj.findByPrimaryKey(RS.getInt(this.getIDColumnName()));
-	// }
-	// catch(Exception ex){
-	// System.err.println("There was an error in " + this.getClass().getName()
-	// +".getAllGroupsContainingThis(): "+ex.getMessage());
-	// }
-	// vector.addElement(tempobj);
-	// }
-	//
-	// RS.close();
-	//
-	// }
-	// catch(Exception e){
-	// throw new EJBException(e.getMessage());
-	// }
-	// finally{
-	// if(Stmt != null){
-	// try{
-	// Stmt.close();
-	// }
-	// catch(SQLException e){}
-	// }
-	// if (conn != null){
-	// freeConnection(getDatasource(),conn);
-	// }
-	// }
-	//
-	// if (vector != null){
-	// vector.trimToSize();
-	// return vector;
-	// //return (Group[])
-	// vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-	// }
-	// else{
-	// return null;
-	// }
-	// }
-	//
-	// ??
-	// public Group[] getAllGroupsContained()throws SQLException{
-	//
-	// List vector = this.getListOfAllGroupsContained();
-	//
-	// if(vector != null){
-	//
-	// return (Group[])
-	// vector.toArray((Object[])java.lang.reflect.Array.newInstance(this.getClass(),0));
-	//
-	// }else{
-	//
-	// return new Group[0];
-	//
-	// }
-	//
-	// }
-
 	/**
 	 * @return A list of groups (not users) under this group
 	 */
@@ -690,7 +613,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @return
 	 * @throws FinderException
 	 */
-	public Collection ejbFindGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
+	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
 		Table groupTable = new Table(ENTITY_NAME, "g");
 		Table groupRelTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
 		SelectQuery query = new SelectQuery(groupTable);
@@ -698,7 +621,11 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.addJoin(groupTable, COLUMN_GROUP_ID, groupRelTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			if (groupTypes.size() == 1) {
-				query.addCriteria(new MatchCriteria(groupTable, COLUMN_GROUP_TYPE, MatchCriteria.NOTEQUALS, groupTypes.iterator().next().toString()));
+				if (returnTypes) {
+					query.addCriteria(new MatchCriteria(groupTable, COLUMN_GROUP_TYPE, MatchCriteria.EQUALS, groupTypes.iterator().next().toString()));
+				} else {
+					query.addCriteria(new MatchCriteria(groupTable, COLUMN_GROUP_TYPE, MatchCriteria.NOTEQUALS, groupTypes.iterator().next().toString()));					
+				}
 			}
 			else {
 				query.addCriteria(new InCriteria(groupTable, COLUMN_GROUP_TYPE, groupTypes, !returnTypes));
@@ -706,14 +633,14 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.GROUP_ID_COLUMN, MatchCriteria.EQUALS, containingGroup.getPrimaryKey()));
 		query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
-		String[] statuses = { GroupRelationBMPBean.STATUS_ACTIVE, GroupRelationBMPBean.STATUS_PASSIVE_PENDING };
-		query.addCriteria(new InCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, statuses));
+		query.addCriteria(new OR(new MatchCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE), new MatchCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_PASSIVE_PENDING)));
 		query.addOrder(groupTable, COLUMN_NAME, true);
+				
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 		// return idoFindPKsBySQL(query.toString());
 	}
 
-	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
+	public Collection ejbFindGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
 
 		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
 
@@ -750,6 +677,25 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @throws FinderException
 	 */
 	public Collection ejbFindGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
+
+		Table groupTable = new Table(ENTITY_NAME, "g");
+		Table groupRelTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
+		SelectQuery query = new SelectQuery(groupTable);
+		query.addColumn(new WildCardColumn(groupTable));
+		query.addJoin(groupTable, COLUMN_GROUP_ID, groupRelTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+
+		query.addCriteria(new MatchCriteria(groupTable, COLUMN_GROUP_TYPE, MatchCriteria.EQUALS, groupTypeProxy.getGroupTypeKey()));
+		query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.GROUP_ID_COLUMN, MatchCriteria.EQUALS, containingGroup.getPrimaryKey()));
+		query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
+		query.addCriteria(new OR(new MatchCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE), new MatchCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_PASSIVE_PENDING)));
+
+		query.addOrder(groupTable, COLUMN_NAME, true);
+
+		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query, (GenericEntity) groupTypeProxy, groupTypeProxy.getSelectQueryConstraints(), PREFETCH_SIZE);
+		// return idoFindPKsBySQL(query.toString());
+	}
+
+	public Collection ejbFindGroupsContainedOld(Group containingGroup, Group groupTypeProxy) throws FinderException {
 
 		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
 

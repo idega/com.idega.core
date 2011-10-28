@@ -4059,6 +4059,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 */
 	protected Collection idoFindPKsByQueryUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize) throws FinderException {
+		return idoFindPKsByQueryUsingLoadBalance(sqlQuery, prefetchSize, false);
+	}
+	
+	protected Collection idoFindPKsByQueryUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize, boolean getDistinct) throws FinderException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -4066,7 +4070,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			pkColl = IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).getCachedFindQuery(sqlQuery.toString());
 		}
 		if (pkColl == null) {
-			pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize);
+			pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize, getDistinct);
 			if (queryCachingActive) {
 				IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
 			}
@@ -4094,7 +4098,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 */
 	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize) throws FinderException {
-		return new IDOPrimaryKeyList(sqlQuery, this, prefetchSize);
+		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize, false);
+	}
+	
+	protected Collection idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize, boolean getDistinct) throws FinderException {
+		return new IDOPrimaryKeyList(sqlQuery, this, prefetchSize, getDistinct);
 	}
 
 	/**

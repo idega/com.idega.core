@@ -371,7 +371,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sendStartMessage("Cleaning and updating database...");
 			updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
-			cleanEmailData();
+			//cleanEmailData();
 			sendStartMessage("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();

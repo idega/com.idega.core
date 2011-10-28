@@ -795,6 +795,12 @@ public interface UserBusiness extends IBOService {
 			IWUserContext iwuc) throws RemoteException, RemoteException;
 
 	/**
+	 * @see com.idega.user.business.UserBusinessBean#getUsersTopGroupNodesByViewAndOwnerPermissionsInThread
+	 */
+	public Collection getUsersTopGroupNodesByViewAndOwnerPermissionsInThread(User user,
+			Collection sessionTopNodes, boolean isSuperUser, User currentUser) throws RemoteException, RemoteException;
+
+	/**
 	 * @see com.idega.user.business.UserBusinessBean#addGroupPKsToCollectionFromICPermissionCollection
 	 */
 	public void addGroupPKsToCollectionFromICPermissionCollection(

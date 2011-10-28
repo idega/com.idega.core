@@ -50,6 +50,10 @@ public class Column implements Outputable, Cloneable {
 		this.count = true;
 	}
 
+	public boolean isDistinct() {
+		return this.distinct;
+	}
+	
 	public void setAsCount(String countName) {
 		setAsCount();
 		this.countName = countName;

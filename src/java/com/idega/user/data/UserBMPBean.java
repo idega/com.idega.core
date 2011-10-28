@@ -2108,6 +2108,104 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		Table userTable = new Table(TABLE_NAME, "u");
 		Table userStatusTable = new Table(UserStatusBMPBean.ENTITY_NAME, "us");
 		Table statusTable = new Table(StatusBMPBean.ENTITY_NAME, "s");
+		Table groupRelationSubTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
+
+		SelectQuery query = new SelectQuery(userTable);
+		query.addColumn(userTable, "*", true);
+
+		query.addJoin(userTable, UserBMPBean.getColumnNameUserID(), groupRelationSubTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
+		
+		query.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.STATUS_COLUMN, MatchCriteria.EQUALS, GroupRelationBMPBean.STATUS_ACTIVE));
+		query.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
+
+		if (groups.size() < SUBLIST_SIZE) {
+			if (groups.size() == 1) {
+				query.addCriteria(new MatchCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, MatchCriteria.EQUALS, ((Group)groups.iterator().next()).getPrimaryKey().toString()));				
+			} else {				
+				query.addCriteria(new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groups));
+			}
+		}
+		else {
+			int numberOfRounds = groups.size() / SUBLIST_SIZE;
+			List groupsList = (List) groups;
+			InCriteria firstInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(0, SUBLIST_SIZE));
+			InCriteria loopInCriteria = null;
+			OR orCriteria = null;
+			for (int i = 0; i < numberOfRounds; i++) {
+				if (i == 0) {
+					loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i * SUBLIST_SIZE, i * SUBLIST_SIZE + SUBLIST_SIZE));
+					orCriteria = new OR(firstInCriteria, loopInCriteria);
+				}
+				else if (i > 0) {
+					loopInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(i * SUBLIST_SIZE, i * SUBLIST_SIZE + SUBLIST_SIZE));
+					orCriteria = new OR(orCriteria, loopInCriteria);
+				}
+			}
+			InCriteria lastInCriteria = new InCriteria(groupRelationSubTable, GroupRelationBMPBean.GROUP_ID_COLUMN, groupsList.subList(groupsList.size() - groupsList.size() % SUBLIST_SIZE, groupsList.size()));
+			orCriteria = new OR(orCriteria, lastInCriteria);
+			query.addCriteria(orCriteria);
+		}
+
+		SelectQuery statusSubQueryDeceased = null;
+		SelectQuery statusSubQuery = null;
+		if (userStatuses != null && !userStatuses.isEmpty()) {
+			if (userStatuses.contains(UserStatusBusinessBean.STATUS_DECEASED)) {
+				Table userStatusTableDeceased = new Table(UserStatusBMPBean.ENTITY_NAME, "us1");
+				Table statusTableDeceased = new Table(StatusBMPBean.ENTITY_NAME, "s1");
+				statusSubQueryDeceased = new SelectQuery(userStatusTableDeceased);
+				statusSubQueryDeceased.addColumn(userStatusTableDeceased, UserStatusBMPBean.IC_USER);
+				statusSubQueryDeceased.addJoin(userStatusTableDeceased, UserStatusBMPBean.STATUS_ID, statusTableDeceased, StatusBMPBean.ENTITY_NAME + "_id");
+				statusSubQueryDeceased.addCriteria(new MatchCriteria(userStatusTableDeceased, UserStatusBMPBean.DATE_TO, MatchCriteria.IS, MatchCriteria.NULL));
+				statusSubQueryDeceased.addCriteria(new MatchCriteria(statusTableDeceased, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, UserStatusBusinessBean.STATUS_DECEASED));
+			}
+			statusSubQuery = new SelectQuery(userStatusTable);
+			statusSubQuery.addColumn(userStatusTable, UserStatusBMPBean.IC_USER);
+			statusSubQuery.addJoin(userStatusTable, UserStatusBMPBean.STATUS_ID, statusTable, StatusBMPBean.ENTITY_NAME + "_id");
+			statusSubQuery.addCriteria(new MatchCriteria(userStatusTable, UserStatusBMPBean.DATE_TO, MatchCriteria.IS, MatchCriteria.NULL));
+			statusSubQuery.addCriteria(new InCriteria(userStatusTable, UserStatusBMPBean.IC_GROUP, groups));
+			if (userStatuses.size() == 1) {
+				statusSubQuery.addCriteria(new MatchCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, MatchCriteria.EQUALS, userStatuses.iterator().next().toString()));
+			}
+			else {
+				statusSubQuery.addCriteria(new InCriteria(statusTable, StatusBMPBean.STATUS_LOC_KEY, userStatuses));
+			}
+		}
+		if (statusSubQueryDeceased != null) {
+			InCriteria statusIn = new InCriteria(userTable, getColumnNameUserID(), statusSubQuery);
+			InCriteria statusInDeceased = new InCriteria(userTable, getColumnNameUserID(), statusSubQueryDeceased);
+			OR statusOR = new OR(statusIn, statusInDeceased);
+			query.addCriteria(statusOR);
+		}
+		else if (statusSubQuery != null) {
+			query.addCriteria(new InCriteria(userTable, getColumnNameUserID(), statusSubQuery));
+		}
+		if (yearOfBirthFrom != null) {
+			IWTimestamp yearOfBirthFromStamp = new IWTimestamp(1, 1, yearOfBirthFrom.intValue());
+			query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(), MatchCriteria.GREATEREQUAL, yearOfBirthFromStamp.getTimestamp()));
+		}
+		if (yearOfBirthTo != null) {
+			IWTimestamp yearOfBirthToStamp = new IWTimestamp(31, 12, yearOfBirthTo.intValue());
+			query.addCriteria(new MatchCriteria(userTable, getColumnNameDateOfBirth(), MatchCriteria.LESSEQUAL, yearOfBirthToStamp.getTimestamp()));
+		}
+		if (gender != null) {
+			int genderNumber = -1;
+			if (gender.equals("m")) {
+				genderNumber = 1;
+			}
+			else if (gender.equals("f")) {
+				genderNumber = 2;
+			}
+			query.addCriteria(new MatchCriteria(userTable, getColumnNameGender(), MatchCriteria.EQUALS, genderNumber));
+		}
+		// query.addOrder(groupTable, getColumnNameUserID(), true);
+		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE, true);
+		// return idoFindPKsBySQL(query.toString());
+	}
+
+	public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGenderOld(Collection groups, Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender) throws FinderException {
+		Table userTable = new Table(TABLE_NAME, "u");
+		Table userStatusTable = new Table(UserStatusBMPBean.ENTITY_NAME, "us");
+		Table statusTable = new Table(StatusBMPBean.ENTITY_NAME, "s");
 
 		Table groupRelationSubTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
 		SelectQuery subQuery = new SelectQuery(groupRelationSubTable);
