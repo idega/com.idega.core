@@ -69,8 +69,12 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 	 * 
 	 */
 	public String put(String key, String value) throws IOException {
+		return put(key, value, null);
+	}
+	
+	public String put(String key, String value, String type) throws IOException {
 		try {
-			return putKeyValue(key, value);
+			return putKeyValue(key, value, type);
 		}
 		catch (IDOLookupException ex) {
 			throw new IOException(ex.getMessage());
@@ -135,7 +139,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 		}
 	}
 	
-	private String putKeyValue(String key, String value) throws CreateException, IDOLookupException, RemoveException {
+	private String putKeyValue(String key, String value, String type) throws CreateException, IDOLookupException, RemoveException {
 		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		ICApplicationBinding applicationBinding = null;
 		String oldValue = null;
@@ -147,7 +151,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 		catch (FinderException finderException) {
 			// not found?
 			// create a new entry (does not create an entry if the value is null)
-			createApplicationBindingCheckValue(key, value);
+			createApplicationBindingCheckValue(key, value, type);
 			return null;
 		}
 		// set the value of the existing entry
@@ -162,7 +166,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 		return oldValue;
 	}
 	
-	private ICApplicationBinding createApplicationBindingCheckValue(String key, String value) throws IDOLookupException, CreateException {
+	private ICApplicationBinding createApplicationBindingCheckValue(String key, String value, String type) throws IDOLookupException, CreateException {
 		// do not create an application binding without a value
 		if (value == null) {
 			return null;
@@ -170,6 +174,7 @@ public class ICApplicationBindingBusinessBean extends IBOServiceBean  implements
 		ICApplicationBinding applicationBinding = getICApplicationBindingHome().create();
 		applicationBinding.setKey(key);
 		applicationBinding.setValue(value);
+		applicationBinding.setBindingType(type);
 		applicationBinding.store();
 		return applicationBinding;
 	}

@@ -45,6 +45,14 @@ public interface ICApplicationBindingBusiness extends IBOService {
 	 * 
 	 * Do not use this method, use IWMainApplicationSettings.
 	 * 
+	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#put
+	 */
+	public String put(String key, String value, String type) throws IOException, java.rmi.RemoteException;
+	
+	/**
+	 * 
+	 * Do not use this method, use IWMainApplicationSettings.
+	 * 
 	 * @see com.idega.core.business.ICApplicationBindingBusinessBean#gremove
 	 */
 	public String remove(String key) throws IOException, java.rmi.RemoteException;

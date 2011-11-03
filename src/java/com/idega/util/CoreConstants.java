@@ -60,4 +60,7 @@ public class CoreConstants {
 	
 	public static final String ENCODING_UTF8 = "UTF-8";
 
+	public static final String JS_STR_PARAM_SEPARATOR = "','";
+	public static final String JS_STR_PARAM_END = "');";
+	public static final String JS_STR_INITIALIZATION_END = "';";
 }

@@ -275,4 +275,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 		return theReturn.decode(pkString);	
 	}
 
+	public IDOEntity createEntity() throws CreateException{
+	    return idoCreate(getEntityInterfaceClass());
+	  }
 }

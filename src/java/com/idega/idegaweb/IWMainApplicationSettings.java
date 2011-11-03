@@ -210,6 +210,11 @@ public class IWMainApplicationSettings implements MutableClass {
 		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
 		putInApplicationBinding(key, value);
 	}
+	
+	public void setProperty(String key, String value, String type) {
+		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
+		putInApplicationBinding(key, value, type);
+	}
 
 	public void removeProperty(String key) {
 		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
@@ -734,18 +739,22 @@ public class IWMainApplicationSettings implements MutableClass {
 			}
 		}
 	}
-
+	
 	private String putInApplicationBinding(String key, String value) {
+		return putInApplicationBinding(key, value, null);
+	}
+	
+	private String putInApplicationBinding(String key, String value, String type) {
 		try {
 			setApplicationBindingInMap(key, value);
-			return getApplicationBindingBusiness().put(key, value);
+			return getApplicationBindingBusiness().put(key, value, type);
 		}
 		catch (IOException e) {
 			getLogger().warning("[IWMainApplicationSettings] Could not set key: " + key + " with value: " + value);
 			throw new IBORuntimeException(e);
 		}
 	}
-
+	
 	private void removeFromApplicationBinding(String key) {
 		try {
 			getApplicationBindingBusiness().remove(key);
