@@ -82,48 +82,29 @@
  */
 package com.idega.util.datastructures.map;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Locale;
 import java.util.Map;
-
-import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 
 /**
  * Class description goes here.
- * <p>You can report about problems to: 
- * <a href="mailto:martynas@idega.com">Martynas Stakė</a></p>
+ * <p>You can report about problems to: <a href="mailto:martynas@idega.com">
+ * Martynas Stakė</a></p>
  * <p>You can expect to find some test cases notice in the end of the file.</p>
- *
+ * 
  * @version 1.0.0 2011.10.31
  * @author martynas
  */
 public class MapUtil {
-    
-    //Išsikelti
-    /**
-     * <p>Method for helping to get out from error - null pointer exception in 
-     * Xforms.</p>
-     * @return Map with current locale and two empty strings.
-     */
-    public static Map<Locale, Map<String, String>> getEmptyMapForXforms() {
-//        Map <String, String> innerMap = new HashMap<String, String>();
-//        
-//        Map <Locale, Map <String, String>> map = 
-//                new HashMap<Locale, Map <String, String>>();
-//        
-//        innerMap.put(CoreConstants.EMPTY, CoreConstants.EMPTY);
-//        map.put(CoreUtil.getCurrentLocale(), innerMap);
-//        return map;
-        return Collections.emptyMap();
-    }
-    
-    public static boolean isEmpty(Map<?,?> map) {
-        if ((map == null) || (map.isEmpty())) {
-            return Boolean.TRUE;
-        } else {
-            return Boolean.FALSE;
-        }
-    }
+	
+	/**
+	 * <p>Checks if {@link Map} is empty.</p>
+	 * @param map {@link Map} object.
+	 * @return True, if empty, false otherwise.
+	 */
+	public static boolean isEmpty(Map<?, ?> map) {
+		if ((map == null) || (map.isEmpty())) {
+			return Boolean.TRUE;
+		} else {
+			return Boolean.FALSE;
+		}
+	}
 }
