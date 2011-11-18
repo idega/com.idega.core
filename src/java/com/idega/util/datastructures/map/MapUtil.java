@@ -101,10 +101,6 @@ public class MapUtil {
 	 * @return True, if empty, false otherwise.
 	 */
 	public static boolean isEmpty(Map<?, ?> map) {
-		if ((map == null) || (map.isEmpty())) {
-			return Boolean.TRUE;
-		} else {
-			return Boolean.FALSE;
-		}
+		return map == null || map.isEmpty();
 	}
 }
