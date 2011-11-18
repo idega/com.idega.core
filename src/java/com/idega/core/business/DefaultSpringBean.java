@@ -131,7 +131,7 @@ public abstract class DefaultSpringBean {
 	}
 	
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
-		return getCache(cacheName, -1);
+		return getCache(cacheName, IWCacheManager2.DEFAULT_CACHE_TTL_SECONDS);
 	}
 	
 	/**

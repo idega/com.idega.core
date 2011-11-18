@@ -71,14 +71,11 @@ public class IWCacheManager2 {
 	 */
 	public CacheManager getInternalCacheManager() {
 		if (this.internalCacheManager == null) {
-			System.setProperty(Cache.NET_SF_EHCACHE_USE_CLASSIC_LRU, Boolean.TRUE.toString());
-			
 			InputStream streamToConfiguration = null;
 			try {
 				streamToConfiguration = IOUtil.getStreamFromJar(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER, "WEB-INF/ehcache.xml");
 				this.internalCacheManager = CacheManager.create(streamToConfiguration);
-			}
-			catch (CacheException e) {
+			} catch (CacheException e) {
 				e.printStackTrace();
 			} finally {
 				IOUtil.close(streamToConfiguration);
@@ -134,13 +131,13 @@ public class IWCacheManager2 {
 	
 	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
 			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable) {
-		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
+		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LFU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
 				resetable, null, null);
 	}
 	
 	public <K extends Serializable, V> Map<K, V> getCache(String cacheName, int cacheSize, boolean overFlowToDisk, boolean isEternal,
 			long cacheTTLIdleSeconds, long cacheTTLSeconds, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
-		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LRU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
+		return getCache(cacheName, cacheSize, MemoryStoreEvictionPolicy.LFU, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, null, null,
 				resetable, cacheListener, cacheGuardian);
 	}
 	

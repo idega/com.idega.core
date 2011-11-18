@@ -78,24 +78,20 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	}
 	
 	public int size() {
-		int size = getCache().getKeysWithExpiryCheck().size();
-		return size;
+		return cache.getSize();
 	}
 
 	public boolean isEmpty() {
-		int size = size();
-		return size == 0;
+		return cache.getSize() == 0;
 	}
 
 	public boolean containsKey(Object key) {
 		try {
 			Element element = getCache().get((Serializable) key);
 			return element != null && (element.getObjectValue() != null || element.getValue() != null);
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			e.printStackTrace();
-		}
-		catch (CacheException e) {
+		} catch (CacheException e) {
 			e.printStackTrace();
 		}
 		return false;
@@ -161,6 +157,10 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 			return value;
 		}
 		
+		if (!(value instanceof Serializable))
+			LOGGER.warning("Attempting to put into the cache (name: '" + cache.getName() + "') not serializable object (key: '" + key + "', value: '" + value +
+					"'): it may cause an error while trying to serialized the cache");
+		
 		try {
 			boolean canPut = true;
 			if (getCacheGuardians() != null) {
@@ -184,7 +184,15 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 			}
 			
 			Element element = new Element(key, value);
-			getCache().put(element);
+			boolean checkTheSizes = !keySet().contains(key);
+			int sizeBefore = cache.getSize();
+			cache.put(element);
+			int sizeAfter = cache.getSize();
+			if (checkTheSizes && (sizeAfter <= 0 || sizeBefore == sizeAfter)) {
+				LOGGER.warning("Value '" + value + "' with key '" + key + "' was not added to the cache " + cache.getName());
+				return null;
+			}
+			
 			if (getCacheListeners() != null) {
 				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
 					CacheMapListener<K, V> listener = iterator.next();
@@ -193,8 +201,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 			}
 			
 			return value;
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -276,8 +283,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 					listener.cleared();
 				}
 			}
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -290,11 +296,9 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 			keys = getCache().getKeys();
 			set.addAll(keys);
 			return set;
-		}
-		catch (IllegalStateException e) {
+		} catch (IllegalStateException e) {
 			throw new RuntimeException(e);
-		}
-		catch (CacheException e) {
+		} catch (CacheException e) {
 			throw new RuntimeException(e);
 		}
 	}
@@ -355,5 +359,10 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 			setCacheGuardians(guardians);
 		}
 		guardians.add(guardian);
+	}
+	
+	@Override
+	public String toString() {
+		return cache == null ? "Unknown cache" : "Cache: " + cache.getName() + ". Keys: " + keySet() + "; values: " + values();
 	}
 }
