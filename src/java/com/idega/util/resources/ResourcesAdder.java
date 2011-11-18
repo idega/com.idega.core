@@ -153,7 +153,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	}
 	
 	private static boolean useOptimizer(String applicationPropertyName, Boolean defaultValue) {
-		return false;//IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean(applicationPropertyName, defaultValue);
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean(applicationPropertyName, defaultValue);
 	}
 	
 	public static boolean isOptimizationTurnedOn(String applicationPropertyName) {
@@ -165,8 +165,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	}
 	
 	private void manageHeader(String serverName) {
-		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles())
-				&& ListUtil.isEmpty(getFeedResources())) {
+		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles()) && ListUtil.isEmpty(getFeedResources())) {
 			return;
 		}
 		
@@ -176,8 +175,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		//	CSS
 		if (useOptimizer && useOptimizer(OPTIMIZE_STYLE_SHEET, Boolean.TRUE)) {
 			addResources(facesContext, getCSSFiles(), FILE_TYPE_CSS, serverName);
-		}
-		else {
+		} else {
 			for (StyleSheetLink css: getCSSFiles()) {
 				super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, css.getUrl());
 			}
@@ -186,8 +184,7 @@ public class ResourcesAdder extends DefaultAddResource {
 		//	JavaScript
 		if (useOptimizer && useOptimizer(OPTIMIZE_JAVA_SCRIPT, Boolean.TRUE)) {
 			addResources(facesContext, getJavaScriptResources(), FILE_TYPE_JAVA_SCRIPT, serverName);
-		}
-		else {
+		} else {
 			for (JavaScriptLink script: getJavaScriptResources()) {
 				super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, script.getUrl());
 			}
@@ -198,15 +195,6 @@ public class ResourcesAdder extends DefaultAddResource {
 			for (String scriptAction: action.getActions()) {
 				super.addInlineScriptAtPosition(facesContext, AddResource.BODY_END, scriptAction);
 			}
-		}
-		
-		try {
-			getJavaScriptResources().clear();
-			getCSSFiles().clear();
-			getJavaScriptActions().clear();
-			getFeedResources().clear();
-		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error emptying lists", e);
 		}
 	}
 	
