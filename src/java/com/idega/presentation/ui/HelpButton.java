@@ -6,7 +6,9 @@ package com.idega.presentation.ui;
 
 import javax.faces.context.FacesContext;
 import javax.faces.el.ValueBinding;
+
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.idegaweb.help.presentation.Help;
 import com.idega.idegaweb.service.HelpWindow;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.text.Link;
@@ -75,12 +77,13 @@ protected IWResourceBundle iwrb;
 
 
 
-  public void main(IWContext iwc) {
+  @Override
+public void main(IWContext iwc) {
 
     this.iwrb = getResourceBundle(iwc);
 
 		if(this.iwrb != null) {
-			this.setPresentationObject(this.iwrb.getImage("/help/help.gif",this.text));
+			this.setPresentationObject(this.iwrb.getImage(Help.DEFAULT_HELP_IMAGE, this.text));
 		}
 
 		String hVal = getHeadline();
@@ -116,6 +119,7 @@ public String getHeadline() {
 public void setHeadline(String headline) {
 	this.headline = headline;
 }
+@Override
 public String getText() {
 	if(this.text != null){
 		return this.text;
@@ -123,6 +127,7 @@ public String getText() {
 	ValueBinding vb = getValueBinding("text");
 	return (String)((vb != null)?vb.getValue(getFacesContext()):null);
 }
+@Override
 public void setText(String text) {
 	this.text = text;
 }
@@ -137,6 +142,7 @@ public void setImageUrl(String url) {
 	this.url = url;
 }
 
+@Override
 public void restoreState(FacesContext context, Object state) {
 	Object values[] = (Object[])state;
 	super.restoreState(context, values[0]);
@@ -148,6 +154,7 @@ public void restoreState(FacesContext context, Object state) {
 /* (non-Javadoc)
  * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
  */
+@Override
 public Object saveState(FacesContext context) {
 	Object values[] = new Object[4];
 	values[0] = super.saveState(context);
