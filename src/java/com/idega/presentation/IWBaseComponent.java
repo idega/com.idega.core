@@ -64,8 +64,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
 	@Autowired
 	private RepositoryService repositoryService;
-	@Autowired
-	private RepositorySession repositorySession;
 
 	/**
 	 * This is an old idegaWeb style add method.
@@ -482,9 +480,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		if (!iwc.isLoggedOn())
 			return null;
 
-		if (repositorySession == null)
-			ELUtil.getInstance().autowire(this);
-
+		RepositorySession repositorySession = ELUtil.getInstance().getBean(RepositorySession.class);
 		return repositorySession;
 	}
 }

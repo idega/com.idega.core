@@ -9,13 +9,13 @@ import org.springframework.context.ApplicationEvent;
  * Last modified: $Date: 2008/04/02 18:31:12 $ by $Author: anton $
  *
  */
-public class IWMainSlideStartedEvent extends ApplicationEvent  {
+public class RepositoryStartedEvent extends ApplicationEvent  {
 
 	private static final long serialVersionUID = 4469069084637205599L;
 	
 	IWMainApplication iwma;
 
-	public IWMainSlideStartedEvent(Object source) {
+	public RepositoryStartedEvent(Object source) {
 		super(source);
 		
 		iwma = (IWMainApplication)source;

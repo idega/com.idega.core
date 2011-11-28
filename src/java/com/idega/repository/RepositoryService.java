@@ -16,6 +16,8 @@ import javax.jcr.Session;
 import javax.jcr.security.AccessControlPolicy;
 import javax.jcr.version.VersionManager;
 
+import org.springframework.context.ApplicationListener;
+
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
 import com.idega.repository.access.AccessControlList;
@@ -25,7 +27,7 @@ import com.idega.repository.event.RepositoryEventListener;
 import com.idega.user.data.bean.User;
 
 @SpringBeanName(RepositoryService.BEAN_NAME)
-public interface RepositoryService extends Repository {
+public interface RepositoryService extends Repository, ApplicationListener {
 
 	public static final String BEAN_NAME = "repositoryService";
 

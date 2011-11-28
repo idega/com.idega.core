@@ -4,8 +4,6 @@ import javax.ejb.SessionBean;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
@@ -30,15 +28,11 @@ public class IBOSessionBean extends IBOServiceBean implements IBOSession,Session
 	private IWUserContext iwuc;
 	private final String sessionKey="IBO."+this.getClass().getName();
 
-	@Autowired
-	private RepositorySession repositorySession;
-
 	public RepositorySession getRepositorySession(IWUserContext iwuc) {
 		if (iwuc == null || !iwuc.isLoggedOn())
 			return null;
 
-		if (repositorySession == null)
-			ELUtil.getInstance().autowire(this);
+		RepositorySession repositorySession = ELUtil.getInstance().getBean(RepositorySession.class);
 		return repositorySession;
 	}
 

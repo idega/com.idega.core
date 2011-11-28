@@ -52,5 +52,6 @@
   
   <bean id="genericDao" class="com.idega.core.persistence.impl.GenericDaoImpl" />
   
-  <bean id="repositoryService" class="com.idega.jackrabbit.repository.JackrabbitRepository" />
+  <bean id="repositoryService" class="com.idega.jackrabbit.repository.JackrabbitRepository" scope="singleton" />
+  <bean id="repositorySession" class="com.idega.jackrabbit.repository.JackrabbitRepositorySession" scope="session" />
 </beans>

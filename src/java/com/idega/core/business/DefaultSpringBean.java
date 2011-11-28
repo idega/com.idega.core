@@ -9,8 +9,6 @@ import java.util.logging.Logger;
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpSession;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
@@ -45,7 +43,6 @@ public abstract class DefaultSpringBean {
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
 	private static Logger LOGGER_;
 
-	@Autowired
 	private RepositoryService repositoryService;
 
 	protected Logger getLogger() {
@@ -212,9 +209,8 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected RepositoryService getRepositoryService() {
-		if (repositoryService == null) {
-			ELUtil.getInstance().autowire(this);
-		}
+		if (repositoryService == null)
+			repositoryService = ELUtil.getInstance().getBean(RepositoryService.class);
 		return repositoryService;
 	}
 }

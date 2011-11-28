@@ -829,9 +829,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	private ApplicationBindingDAO getApplicationBindingBusiness() {
-		if (this.applicationBindingDAO == null) {
+		if (this.applicationBindingDAO == null)
 			ELUtil.getInstance().autowire(this);
-		}
 
 		return this.applicationBindingDAO;
 	}

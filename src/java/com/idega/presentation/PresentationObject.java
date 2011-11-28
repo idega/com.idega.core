@@ -171,8 +171,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 
 	@Autowired
 	private RepositoryService repositoryService;
-	@Autowired
-	private RepositorySession repositorySession;
 
 	/**
 	 * Default constructor.
@@ -2868,9 +2866,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		if (!iwc.isLoggedOn())
 			return null;
 
-		if (repositorySession == null)
-			ELUtil.getInstance().autowire(this);
-
+		RepositorySession repositorySession = ELUtil.getInstance().getBean(RepositorySession.class);
 		return repositorySession;
 	}
 }
