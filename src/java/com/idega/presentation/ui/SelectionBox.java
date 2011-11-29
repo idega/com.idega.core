@@ -3,10 +3,12 @@
 *Copyright 2000 idega.is All Rights Reserved.
 */
 package com.idega.presentation.ui;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+
+import javax.faces.component.UIComponent;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.data.IDOEntity;
@@ -16,19 +18,20 @@ import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.presentation.text.Text;
+import com.idega.util.ListUtil;
+import com.idega.util.RenderUtils;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextSoap;
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.2
 */
-public class SelectionBox extends InterfaceObject
-{
+public class SelectionBox extends InterfaceObject {
+	
 	private final static String untitled = "untitled";
 	protected final static String PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX = "number_of_elements_in_selectionbox";
 
-
-	private Vector theElements;
+	private Collection<MenuElement> theElements;
 	private String multipleString;
 	private boolean movers = false;
 	private Table outerTable;
@@ -44,49 +47,43 @@ public class SelectionBox extends InterfaceObject
 	private boolean showOnlySelected = false;
 	private int size = -1;
 	
-	public SelectionBox()
-	{
+	public SelectionBox() {
 		this("untitled");
 	}
-	public SelectionBox(String name)
-	{
+	
+	public SelectionBox(String name) {
 		super();
 		setName(name);
-		this.theElements = new Vector(10);
+		this.theElements = new ArrayList<MenuElement>();
 		this.keepStatus = false;
 		this.multipleString = "multiple=\"true\"";
 	}
-	public SelectionBox(String name, String textHeading)
-	{
+	
+	public SelectionBox(String name, String textHeading) {
 		this(name);
 		setTextHeading(textHeading);
 	}
-	public SelectionBox(IDOLegacyEntity[] entity)
-	{
+	
+	public SelectionBox(IDOLegacyEntity[] entity) {
 		super();
 		setName("untitled");
-		this.theElements = new Vector(10);
+		this.theElements = new ArrayList<MenuElement>();
 		this.keepStatus = false;
 		setMarkupAttribute("CLASS", "select");
 		this.multipleString = "multiple=\"true\"";
-		if (entity != null)
-		{
-			if (entity.length > 0)
-			{
+		if (entity != null) {
+			if (entity.length > 0) {
 				setName(entity[0].getEntityName());
-				for (int i = 0; i < entity.length; i++)
-				{
-					//if(entity[i].getID() != -1 && entity[i].getName() != null){
+				for (int i = 0; i < entity.length; i++) {
 					addMenuElement(entity[i].getID(), entity[i].getName());
-					//}
 				}
 			}
 		}
 	}
-	public SelectionBox(Collection entityList)
-	{
+	
+	public SelectionBox(Collection<?> entityList) {
 		super();
-		this.theElements = new Vector(10);
+		this.theElements = new ArrayList<MenuElement>();
 		this.keepStatus = false;
 		setMarkupAttribute("CLASS", "select");
 		this.multipleString = "multiple=\"true\"";
@@ -94,22 +91,22 @@ public class SelectionBox extends InterfaceObject
 		setName(untitled);
 		addMenuElements(entityList);
 	}
-	public void setTextHeading(String textHeading)
-	{
+	
+	public void setTextHeading(String textHeading) {
 		setTextHeading(new Text(textHeading));
 	}
-	public void setTextHeading(Text textHeading)
-	{
+	
+	public void setTextHeading(Text textHeading) {
 		this.textHeading = textHeading;
 		this.headerTable = true;
 	}
+	
 	/**
 	
 	 * Returns null if no text in heading
 	
 	 */
-	public String getTextHeadingString()
-	{
+	public String getTextHeadingString() {
 		if (this.textHeading != null)
 		{
 			return this.textHeading.getText();
@@ -129,7 +126,7 @@ public class SelectionBox extends InterfaceObject
 	//Here is a possible bug, if there are many elements with the same value
 	public void addMenuElement(String Value, String DisplayString)
 	{
-		this.theElements.addElement(new MenuElement(DisplayString, Value));
+		this.theElements.add(new MenuElement(DisplayString, Value));
 	}
 	public void setMenuElement(String value, String displayString)
 	{
@@ -151,6 +148,7 @@ public class SelectionBox extends InterfaceObject
 			return;
 		}
 		
+		SelectOptionGroup group = null;
 		for (Object obj: entityList) {
 			if (obj instanceof IDOEntity) {
 				IDOEntity entity = (IDOEntity) obj;
@@ -161,7 +159,13 @@ public class SelectionBox extends InterfaceObject
 				}
 			} else if (obj instanceof AdvancedProperty) {
 				AdvancedProperty entity = (AdvancedProperty) obj;
-				addMenuElement(entity.getId(), entity.getValue());
+				if (entity.isSelected()) {
+					group = new SelectOptionGroup(entity.getValue());
+					add(group);
+				} else if (group == null)
+					addMenuElement(entity.getId(), entity.getValue());
+				else
+					group.add(new MenuElement(entity.getValue(), entity.getId()));
 			}
 		}
 	}	
@@ -226,7 +230,7 @@ public class SelectionBox extends InterfaceObject
 	}
 	public void addSeparator()
 	{
-		this.theElements.addElement(new MenuElement("----------------------------", ""));
+		this.theElements.add(new MenuElement("----------------------------", ""));
 	}
 	/**
 	
@@ -412,105 +416,94 @@ public class SelectionBox extends InterfaceObject
 		setWidthStyle(width);
 	}
 	//Returns the first menuelement in the menu if there is no match
-	public MenuElement getMenuElement(String ElementValue)
-	{
+	public MenuElement getMenuElement(String ElementValue) {
 		MenuElement theReturn = new MenuElement();
-		Iterator iter = this.theElements.iterator();
-		while (iter.hasNext())
-		{
-			MenuElement tempobj = (MenuElement) iter.next();
-			if (tempobj.getValueAsString().equals(ElementValue))
-				{
-					theReturn = tempobj;
-				}
+		for (Iterator<MenuElement> iter = this.theElements.iterator(); iter.hasNext();) {
+			MenuElement tempobj = iter.next();
+			if (tempobj.getValueAsString().equals(ElementValue)) {
+				theReturn = tempobj;
+			}
 		}
 		return theReturn;
 	}
+		
 	@Override
-	public void print(IWContext iwc) throws Exception
-	{
-		this.theElements.trimToSize();
-		if (this.movers)
-		{
-			if (!this.tableAlreadyPrinted)
-			{
+	public void print(IWContext iwc) throws Exception {
+		int childrenSize = 0;
+		if (this.movers) {
+			if (!this.tableAlreadyPrinted) {
 				this.tableAlreadyPrinted = true;
 				this.movers = false;
 				this.outerTable._print(iwc);
 				this.movers = false;
-			} else
-			{
+			} else {
 				this.tableAlreadyPrinted = false;
 			}
-		} else
-		{
+		} else {
 			Text theHeader = getTextHeading();
-			if (theHeader != null)
-			{
+			if (theHeader != null) {
 				theHeader.addBreak();
 				theHeader._print(iwc);
 			}
-			//if ( doPrint(iwc) ){
-			if (getMarkupLanguage().equals("HTML"))
-			{
-				if (this.keepStatus == true)
-				{
-					if (iwc.getParameter(getName()) != null)
-					{
+			
+			if (getMarkupLanguage().equals("HTML"))	{
+				if (this.keepStatus == true) {
+					if (iwc.getParameter(getName()) != null) {
 						String[] selectedValues = iwc.getParameterValues(getName());
 						setSelectedElements(selectedValues);
 					}
 				}
-					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + this.multipleString + " " + getSizeString() +" >");
-					Iterator iter = this.theElements.iterator();
-					while (iter.hasNext())
-					{
-						MenuElement tempobj = (MenuElement) iter.next();
-						if (this.allSelected){
-							tempobj.setSelected(true);
-						}
-						if(this.showOnlySelected){
-							if(tempobj.isSelected()){
-								tempobj._print(iwc);
-							}
-						}
-						else{
+				
+				println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " " + this.multipleString + " " + getSizeString() +" >");
+				for (Iterator<MenuElement> iter = this.theElements.iterator(); iter.hasNext();) {
+					MenuElement tempobj = iter.next();
+					if (this.allSelected) {
+						tempobj.setSelected(true);
+					}
+					if (this.showOnlySelected) {
+						if (tempobj.isSelected()) {
 							tempobj._print(iwc);
 						}
+					} else {
+						tempobj._print(iwc);
 					}
-					println("</select>");
-			} else if (getMarkupLanguage().equals("WML"))
-			{
-				if (this.keepStatus == true)
-				{
-					if (iwc.getParameter(getName()) != null)
-					{
+				}
+			} else if (getMarkupLanguage().equals("WML")) {
+				if (this.keepStatus == true) {
+					if (iwc.getParameter(getName()) != null) {
 						setSelectedElement(iwc.getParameter(getName()));
 					}
 				}
-					println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
-					Iterator iter = this.theElements.iterator();
-					while (iter.hasNext())
-					{
-						MenuElement tempobj = (MenuElement) iter.next();
-						if (this.allSelected){
-							tempobj.setSelected(true);
-						}
-						
-						if(this.showOnlySelected){
-							if(tempobj.isSelected()){
-								tempobj._print(iwc);
-							}
-						}
-						else{
+				
+				println("<select name=\"" + getName() + "\" " + getMarkupAttributesString() + " >");
+				for (Iterator<MenuElement> iter = this.theElements.iterator(); iter.hasNext();) {
+					MenuElement tempobj = iter.next();
+					if (this.allSelected){
+						tempobj.setSelected(true);
+					}
+					
+					if(this.showOnlySelected){
+						if(tempobj.isSelected()){
 							tempobj._print(iwc);
 						}
 					}
-					println("</select>");
+					else{
+						tempobj._print(iwc);
+					}
+				}
 			}
-			//}
+			
+			List<UIComponent> children = getChildren();
+			if (!ListUtil.isEmpty(children)) {
+				childrenSize = children.size();
+				for (UIComponent child: children) {
+					RenderUtils.renderChild(iwc, child);
+				}
+			}
+			println("</select>");
 		}
-		HiddenInput numberOfElements = new HiddenInput(PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX+"_"+this.getClassName(), String.valueOf(this.theElements.size()));
+		
+		HiddenInput numberOfElements = new HiddenInput(PARAM_NUMBER_OF_ELEMENTS_IN_SELECTIONBOX+"_"+this.getClassName(), String.valueOf(this.theElements.size() + childrenSize));
 		numberOfElements.print(iwc);
 	}
 	
