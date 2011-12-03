@@ -18,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,6 +31,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
@@ -46,6 +49,8 @@ import com.idega.util.StringUtil;
  */
 public class DownloadWriter implements MediaWritable {
 
+	private static final Logger LOGGER = Logger.getLogger(DownloadWriter.class.getName());
+	
 	public final static String PRM_ABSOLUTE_FILE_PATH = "abs_fpath";
 
 	public final static String PRM_RELATIVE_FILE_PATH = "rel_fpath";
@@ -62,6 +67,23 @@ public class DownloadWriter implements MediaWritable {
 	
 	private String fileName;
 
+	protected void setFile(File file) {
+		if (file == null) {
+			LOGGER.warning("File is undefined!");
+			return;
+		}
+		if (!file.exists()) {
+			LOGGER.warning("File " + file + " does not exist!");
+			return;
+		}
+		if (!file.canRead()) {
+			LOGGER.warning("There are no rights provided to read from file: " + file);
+			return;
+		}
+		
+		this.file = file;
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -93,37 +115,58 @@ public class DownloadWriter implements MediaWritable {
 				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
 				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				this.icFile = null;
 			}
-		}
-		else if (absPath != null) {
+		} else if (absPath != null) {
 			this.file = new File(absPath);
 			if (this.file != null && this.file.exists() && this.file.canRead()) {
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
-		}
-		else if (relPath != null && altFileName == null) {
+		} else if (relPath != null && altFileName == null) {
 			this.file = new File(iwc.getIWMainApplication().getRealPath(relPath));
 			if (this.file != null && this.file.exists() && this.file.canRead()) {
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
-		}
-		else if (relPath != null && altFileName != null) {
+		} else if (relPath != null && altFileName != null) {
 			try {
 				if(relPath.startsWith("/")){
 					relPath = relPath.substring(1);
 				}
 				this.url = new URL(iwc.getServerURL()+relPath);
 				setAsDownload(iwc, altFileName, -1);
-			}
-			catch (MalformedURLException e) {
-				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				LOGGER.log(Level.WARNING, "Error creating URL: " + relPath, e);
 			}
 		}
 	}
 
+	protected File getFileFromRepository(String pathInRepository) throws IOException {
+		if (StringUtil.isEmpty(pathInRepository))
+			throw new IOException("Path in repository is not defined: " + pathInRepository);
+		
+		String realPath = System.getProperty("catalina.base");
+		if (StringUtil.isEmpty(realPath)) {
+			realPath = IWMainApplication.getDefaultIWMainApplication().getApplicationRealPath();
+			if (StringUtil.isEmpty(realPath))
+				throw new IOException("Unknown real path of the application: " + realPath);
+	
+			String webappsFolder = File.separator.concat("webapps").concat(File.separator);
+			int webappsIndex = realPath.indexOf(webappsFolder);
+			if (webappsIndex <= 0)
+				throw new IOException("It is unknown how to navigate to repository folder given real path of the application: " + realPath);
+			
+			realPath = realPath.substring(0, webappsIndex);
+		}
+		
+		realPath = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
+		if (!pathInRepository.startsWith(CoreConstants.WEBDAV_SERVLET_URI))
+			realPath = realPath.concat(CoreConstants.WEBDAV_SERVLET_URI);
+		realPath = realPath.concat(pathInRepository);
+		
+		return new File(realPath);
+	}
+	
 	/*
 	 * (non-Javadoc)
 	 * 
@@ -132,12 +175,11 @@ public class DownloadWriter implements MediaWritable {
 	public void writeTo(OutputStream out) throws IOException {
 		InputStream downloadStream = null;
 		if (this.file != null && this.file.exists() && this.file.canRead() && this.file.length() > 0) {
+			LOGGER.info("Dowloading file: " + file);
 			downloadStream = new BufferedInputStream(new FileInputStream(this.file));
-		}
-		else if (this.icFile != null) {
+		} else if (this.icFile != null) {
 			downloadStream = new BufferedInputStream(this.icFile.getFileValue());
-		}
-		else if (this.url != null) {
+		} else if (this.url != null) {
 			//added for real relative path streaming
 			downloadStream = new BufferedInputStream(this.url.openStream());
 		}
@@ -149,7 +191,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			FileUtil.streamToOutputStream(downloadStream, out);
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error streaming from input to output streams", e);
 		} finally {
 			out.flush();
 			IOUtil.closeOutputStream(out);
@@ -232,7 +274,7 @@ public class DownloadWriter implements MediaWritable {
 			attachment.store();
 			return true;
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error while setting that user " + user + " has downloaded file " + attachment, e);
 		}
 		
 		return false;
@@ -247,7 +289,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting instance of " + ICFileHome.class, e);
 		}
 		if (fileHome == null) {
 			return null;
@@ -258,7 +300,7 @@ public class DownloadWriter implements MediaWritable {
 			file = fileHome.findByHash(hash);
 		} catch(FinderException e) {
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting file by hash: " + hash, e);
 		}
 		
 		if (file == null) {
@@ -280,7 +322,7 @@ public class DownloadWriter implements MediaWritable {
 			file.store();
 			return file;
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error while creating file using hash: " + hash, e);
 		}
 		return null;
 	}
