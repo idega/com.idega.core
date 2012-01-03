@@ -2107,3 +2107,19 @@ IWCORE.setSelectionRange = function(input, selectionStart, selectionEnd) {
 IWCORE.setCaretToPos = function(input, pos) {
 	IWCORE.setSelectionRange(input, pos, pos);
 }
+
+function moveOptionElementUp(element, id) {
+	var newPos = jQuery('#' + id + ' option').index(element) - 1;
+	if (newPos > -1) {
+		jQuery('#' + id + ' option').eq(newPos).before("<option value='"+element.val()+"' selected='selected'>"+element.text()+"</option>");
+		element.remove();
+	}
+}
+function moveOptionElementDown(element, id) {
+	var countOptions = jQuery('#' + id + ' option').size();
+	var newPos = jQuery('#' + id + ' option').index(element) + 1;
+	if (newPos < countOptions) {
+    	jQuery('#' + id + ' option').eq(newPos).after("<option value='"+element.val()+"' selected='selected'>"+element.text()+"</option>");
+        element.remove();
+    }
+}

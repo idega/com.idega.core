@@ -15,12 +15,17 @@ import java.util.Set;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+import com.idega.block.web2.business.JQuery;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Page;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.util.PresentationUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a><br>
@@ -30,6 +35,9 @@ import com.idega.util.PresentationUtil;
 
 public class SelectionDoubleBox extends InterfaceObject {
 
+	@Autowired
+	private JQuery jQuery;
+	
 	private SelectionBox leftBox = null;
 	private SelectionBox rightBox = null;
 	private GenericButton toTheRight = null;
@@ -91,7 +99,8 @@ public class SelectionDoubleBox extends InterfaceObject {
 
 		ve = getValueExpression(LEFT_INPUT_OPTIONS);
     	if (ve != null) {
-    		List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
+    		@SuppressWarnings("unchecked")
+			List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
     		for (SelectOption selectOption : options) {
 				addToLeftBox(selectOption.getValueAsString(), selectOption.getName());
 			}
@@ -111,7 +120,8 @@ public class SelectionDoubleBox extends InterfaceObject {
 
 		ve = getValueExpression(RIGHT_INPUT_OPTIONS);
     	if (ve != null) {
-    		List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
+    		@SuppressWarnings("unchecked")
+			List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
     		for (SelectOption selectOption : options) {
 				addToRightBox(selectOption.getValueAsString(), selectOption.getName());
 			}
@@ -122,12 +132,13 @@ public class SelectionDoubleBox extends InterfaceObject {
     
 	@Override
 	public void main(IWContext iwc) throws Exception {
+		ELUtil.getInstance().autowire(this);
+		
 	    this.leftBox = getLeftBox();
 	    this.rightBox = getRightBox();
 	    this.toTheRight = getRightButton();
 		this.toTheLeft = getLeftButton();
 		
-	    
 		if( this.leftLabel!=null){
 		  this.leftBox.setTextHeading(this.leftLabel);
 		}
@@ -151,7 +162,7 @@ public class SelectionDoubleBox extends InterfaceObject {
 			this.toTheRight.setStyleAttribute(getStyleAttribute());
 		}
 
-		Table table = new Table(3, 1);
+		Table table = new Table(3, 2);
 		add(table);
 
 		table.add(this.leftBox, 1, 1);
@@ -165,6 +176,19 @@ public class SelectionDoubleBox extends InterfaceObject {
 		table.add(this.toTheLeft, 2, 1);
 
 		table.add(this.rightBox, 3, 1);
+		if (enableOrdering) {
+			IWResourceBundle iwrb = getResourceBundle(iwc);
+			
+			Layer buttons = new Layer();
+			GenericButton up = new GenericButton(iwrb.getLocalizedString("up", "Up"));
+			up.setOnClick("jQuery('#"+getRightBox().getId()+" option:selected').each( function() { moveOptionElementUp(jQuery(this), '"+getRightBox().getId()+"'); });");
+			buttons.add(up);
+			GenericButton down = new GenericButton(iwrb.getLocalizedString("down", "Down"));
+			down.setOnClick("jQuery('#"+getRightBox().getId()+" option:selected').each( function() { moveOptionElementDown(jQuery(this), '"+getRightBox().getId()+"'); });");
+			buttons.add(down);
+			table.add(buttons, 3, 2);
+		}
+		
 		//add the script
 		Page page =  this.getParentPage();
 		if(page != null){
@@ -174,17 +198,18 @@ public class SelectionDoubleBox extends InterfaceObject {
 			//if page does not exists
 			Layer scriptLayer = new Layer();
 			this.add(scriptLayer);
-			Map functions = getfunctions();
-			Set keys = functions.keySet();
+			Map<String, String> functions = getFunctions();
+			Set<String> keys = functions.keySet();
 			StringBuilder script = new StringBuilder();
-			for(Iterator iter = keys.iterator();iter.hasNext();){
-				String key = (String)iter.next();
-				script.append((String)functions.get(key));
+			for(Iterator<String> iter = keys.iterator();iter.hasNext();){
+				String key = iter.next();
+				script.append(functions.get(key));
 			}
 			String scriptString = PresentationUtil.getJavaScriptAction(script.toString());
 			scriptLayer.add(scriptString);
 		}
-		
+		if (enableOrdering)
+			PresentationUtil.addJavaScriptSourceLineToHeader(iwc, jQuery.getBundleURIToJQueryLib());
 	}
 
 	public SelectionBox getLeftBox() {
@@ -216,20 +241,31 @@ public class SelectionDoubleBox extends InterfaceObject {
 	}
 
 	public void addToScripts(Script script) {
-		Map functions = getfunctions();
-		Set keys = functions.keySet();
-		for(Iterator iter = keys.iterator();iter.hasNext();){
-			String key = (String)iter.next();
-			script.addFunction(key, (String)functions.get(key));
+		Map<String, String> functions = getFunctions();
+		Set<String> keys = functions.keySet();
+		for(Iterator<String> iter = keys.iterator();iter.hasNext();){
+			String key = iter.next();
+			script.addFunction(key, functions.get(key));
 		}
 	}
-	private static Map getfunctions(){
-		Map functions = new HashMap();
+	
+	private boolean enableOrdering;
+	
+	private Map<String, String> getFunctions(){
+		Map<String, String> functions = new HashMap<String, String>();
 		functions.put(FUNCTION_ADDOPT_NAME, FUNCTION_ADDOPT);
 		functions.put(FUNCTION_MOVE_NAME, FUNCTION_MOVE);
 		return functions;
 	}
 	
+	public boolean isEnableOrdering() {
+		return enableOrdering;
+	}
+
+	public void setEnableOrdering(boolean enableOrdering) {
+		this.enableOrdering = enableOrdering;
+	}
+
 	public void addToSelectedBox(String value, String displayString) {
 		getRightBox().addElement(value, displayString);
 	}
