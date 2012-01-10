@@ -67,7 +67,7 @@ import com.idega.xml.XMLElement;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class DefaultIWBundle implements Comparable<IWBundle>, IWBundle {
+public class DefaultIWBundle implements IWBundle {
 
 	private static final Logger LOGGER = Logger.getLogger(DefaultIWBundle.class.getName());
 

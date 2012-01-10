@@ -40,7 +40,7 @@ import com.idega.presentation.Image;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.100 $
  */
-public interface IWBundle extends IWModule{
+public interface IWBundle extends IWModule, Comparable<IWBundle> {
 	/**
 	 * Discards all unsaved changes to this bundle and loads it up again
 	 */
