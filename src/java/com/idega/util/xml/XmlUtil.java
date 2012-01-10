@@ -127,8 +127,8 @@ public class XmlUtil {
 		
 		for (AdvancedProperty feature: FEATURES) {
 			try {
-				factory.setFeature(feature.getId(), Boolean.valueOf(feature.getValue()));
-			} catch (ParserConfigurationException e) {
+				factory.setAttribute(feature.getId(), Boolean.valueOf(feature.getValue()));
+			} catch (Exception e) {
 				logger.log(Level.WARNING, "Error setting features", e);
 			}
 		}
