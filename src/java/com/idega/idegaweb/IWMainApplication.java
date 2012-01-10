@@ -1150,14 +1150,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * Returns a List of IWBundle Objects
      */
-    public List getRegisteredBundles() {
-        List vector = new ArrayList();
-        Iterator iter = getBundlesFile().keySet().iterator();
-        while (iter.hasNext()) {
+    public List<IWBundle> getRegisteredBundles() {
+        List<IWBundle> bundles = new ArrayList<IWBundle>();
+        for (Iterator<?> iter = getBundlesFile().keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
-            vector.add(getBundle(key));
+            bundles.add(getBundle(key));
         }
-        return vector;
+        return bundles;
     }
 
     /**
