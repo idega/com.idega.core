@@ -21,6 +21,7 @@ import com.idega.idegaweb.include.ExternalLink;
 import com.idega.idegaweb.include.JavaScriptLink;
 import com.idega.idegaweb.include.RSSLink;
 import com.idega.idegaweb.include.StyleSheetLink;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
@@ -269,5 +270,30 @@ public class ResourcesAdder extends DefaultAddResource {
 			writer.writeAttribute(HTML.TITLE_ATTR, StringUtil.isEmpty(feed.getTitle()) ? "Feed" : feed.getTitle(), null);
 			writer.endElement(HTML.LINK_ELEM);
 		}
+	}
+	
+	@Override
+	public void parseResponse(HttpServletRequest request, String bufferedResponse, HttpServletResponse response) {
+		if (StringUtil.isEmpty(bufferedResponse)) {
+			super.parseResponse(request, bufferedResponse, response);
+			return;
+		}
+		
+		if (Boolean.TRUE.toString().equals(request.getParameter(CoreConstants.PARAMETER_CHECK_HTML_HEAD_AND_BODY))) {
+			StringBuffer addons = new StringBuffer();
+			boolean noHTML = bufferedResponse.indexOf("<html") == -1;
+			if (noHTML)
+				addons.append("<html>");
+			if (bufferedResponse.indexOf("<head") == -1)
+				addons.append("<head></head>");
+			if (bufferedResponse.indexOf("<body") == -1)
+				addons.append("<body>").append(bufferedResponse).append("</body>");
+			if (noHTML)
+				addons.append("</html>");
+			String htmlResponse = addons.toString();
+			bufferedResponse = StringUtil.isEmpty(htmlResponse) ? bufferedResponse : htmlResponse;
+		}
+		
+		super.parseResponse(request, bufferedResponse, response);
 	}
 }

@@ -30,6 +30,7 @@ public class CoreConstants {
 	public static final String COMMA = ",";
 	public static final String DOT = ".";
 	public static final String UNDER = "_";
+	public static final String AT = "@";
 	public static final String AMP = "&";
 	public static final String EQ = "=";
 	public static final String QMARK = "?";
@@ -153,5 +154,7 @@ public class CoreConstants {
 	
 								PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
 								PAGE_VIEW_TYPE_REGULAR = "regular",
-								PAGE_VIEW_TYPE_MOBILE = "mobile";
+								PAGE_VIEW_TYPE_MOBILE = "mobile",
+								
+								PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body";
 }
