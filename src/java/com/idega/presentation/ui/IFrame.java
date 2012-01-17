@@ -10,13 +10,22 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+import java.net.URLDecoder;
+import java.rmi.RemoteException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.localisation.business.LocaleSwitcher;
 import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
+import com.idega.util.URIUtil;
 
 
 /**
@@ -42,7 +51,9 @@ public class IFrame extends InterfaceObject {
 	public static final String SCROLLING_AUTO = "auto";
 	public static final int FRAMEBORDER_ON = 1;
 	public static final int FRAMEBORDER_OFF = 0;
-	public static final String CLASS_TO_INSTANCIATE_PARAMETER = "classToInstanciateParameter";
+	public static final String CLASS_TO_INSTANCIATE_PARAMETER = "classToInstanciateParameter",
+								PARAMETER_NOT_WORKSPACE_WINDOW = "not_workpace",
+								EXTERNAL_PARAMETERS = "externalParameters";
 	
 	//instance variables:
 	private boolean transparent = false;
@@ -87,18 +98,6 @@ public class IFrame extends InterfaceObject {
 		this(name);
 		setSrc(classToInstanciate);
 	}
-	/*
-	public IFrame(String name,String classToInstanciate,String template){
-		this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
-	}
-	
-	public IFrame(String name,Class classToInstanciate,Class template){
-		this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
-	}
-	
-	public IFrame(String name,Class classToInstanciate,String template){
-		this(name,IWMainApplication.getObjectInstanciatorURL(classToInstanciate,template));
-	}*/
 
 	public IFrame(String name, String URL) {
 		super();
@@ -158,13 +157,34 @@ public class IFrame extends InterfaceObject {
 		}
 		
 		if (this.classToInstanciate != null) {
-			this.setSrc(iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate));
+			String src = null;
+			try {
+				List<AdvancedProperty> params = null;
+				try {
+					String externalParams = iwc.getParameter(EXTERNAL_PARAMETERS);
+					externalParams = URLDecoder.decode(externalParams, CoreConstants.ENCODING_UTF8);
+					if (!StringUtil.isEmpty(externalParams)) {
+						String[] parameters = externalParams.split(CoreConstants.NUMBER_SIGN);
+						params = new ArrayList<AdvancedProperty>();
+						for (String parameter: parameters) {
+							String[] keyAndValue = parameter.split(CoreConstants.AT);
+							if (keyAndValue != null && keyAndValue.length == 2)
+								params.add(new AdvancedProperty(keyAndValue[0], keyAndValue[1]));
+						}
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				
+				src = Boolean.TRUE.toString().equals(iwc.getParameter(PARAMETER_NOT_WORKSPACE_WINDOW)) ?
+						getBuilderService(iwc).getUriToObject(classToInstanciate, params) :
+						iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate);
+			} catch (RemoteException e) {
+				e.printStackTrace();
+			}
+			this.setSrc(src);
 		}
 	}
-
-	/*public void setSrc(Class classToAdd, Class templateClass) {
-	  setSrc(IWMainApplication.getObjectInstanciatorURL(classToAdd,templateClass));
-	}*/
 
 	@Override
 	public void setWidth(String width) {
@@ -236,41 +256,42 @@ public class IFrame extends InterfaceObject {
 
 		String src = getMarkupAttribute("src");
 		if (src != null) {
-			String langAddition = "";
+			URIUtil uri = new URIUtil(src);
 			if (this.addLanguageParameter) {
-				if (src.indexOf("?") != -1) {
-					langAddition = "&" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString();
-				}
-				else {
-					langAddition = "?" + LocaleSwitcher.languageParameterString + "=" + iwc.getCurrentLocale().toString();
-				}
+				uri.setParameter(LocaleSwitcher.languageParameterString, iwc.getCurrentLocale().toString());
 			}
-			if(parameters != null){
-				for(String parameterKey : parameters.keySet()){
-					if(src.indexOf("?") != -1 || langAddition.indexOf("?") != -1){
-						langAddition += "&" + parameterKey + "=" + parameters.get(parameterKey);
-					}else{
-						langAddition += "?" + parameterKey + "=" + parameters.get(parameterKey);
-					}
+			if (parameters != null) {
+				for (String parameterKey : parameters.keySet()) {
+					uri.setParameter(parameterKey, parameters.get(parameterKey));
 				}
 			}
 			
-			setMarkupAttribute("src", src + langAddition);
+			if (Boolean.TRUE.toString().equals(iwc.getParameter(CoreConstants.PARAMETER_CHECK_HTML_HEAD_AND_BODY)))
+				uri.setParameter(CoreConstants.PARAMETER_CHECK_HTML_HEAD_AND_BODY, Boolean.TRUE.toString());
+			
+			setMarkupAttribute("src", uri.getUri());
 		}
+		
+		String height = iwc.getParameter("height");
+		if (!StringUtil.isEmpty(height))
+			setHeight(height);
 
+		String width = iwc.getParameter("width");
+		if (!StringUtil.isEmpty(width))
+			setWidth(width);
+		
 		if (this.transparent) {
 			setMarkupAttribute("ALLOWTRANSPARENCY", "true");
 		}
 		if (this.ibPageId > 0) {
 			BuilderService bservice = getBuilderService(iwc);
-			//setAttribute("src",iwc.getRequestURI()+"?"+com.idega.builder.business.BuilderLogic.IB_PAGE_PARAMETER+"="+ibPageId+"");
 			this.setSrc(bservice.getPageURI(this.ibPageId));
 		}
 
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<iframe name=\"" + getName() + "\"" + getMarkupAttributesString() + " >");
 			String content = super.getContent();
-			if (content != null) {
+			if (!StringUtil.isEmpty(content)) {
 				print(content);
 			}
 			println("</iframe>\n");
@@ -286,7 +307,6 @@ public class IFrame extends InterfaceObject {
 			
 		}
 	}
-
 
 	public void addLanguageParameter(boolean add) {
 		this.addLanguageParameter = add;
