@@ -17,6 +17,9 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -67,8 +70,10 @@ import com.idega.xml.XMLElement;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
-public class DefaultIWBundle implements IWBundle {
+public class DefaultIWBundle implements IWBundle, Serializable {
 
+	private static final long serialVersionUID = 9174455444844158160L;
+	
 	private static final Logger LOGGER = Logger.getLogger(DefaultIWBundle.class.getName());
 
 	//Static final constants:
@@ -1621,4 +1626,11 @@ public class DefaultIWBundle implements IWBundle {
 	public void setPostponedBundleStartersRun(boolean postponedBundleStartersRun) {
     	this.postponedBundleStartersRun = postponedBundleStartersRun;
     }
+	
+
+	private void writeObject(ObjectOutputStream out) throws IOException {
+	}
+
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	}
 }
