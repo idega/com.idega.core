@@ -61,6 +61,7 @@ public class IWDatePicker extends TextInput {
 	private static final String SHOW_CALENDAR_IMAGE_PROPERTY = "showCalendarImage";
 	private static final String SHOW_MONTH_PROPERTY = "showMonth";
 	private static final String SHOW_YEAR_PROPERTY = "showYear";
+	private static final String SHOW_TIME_PROPERTY = "showTime";
 	private static final String USE_CURRENT_PROPERTY = "useCurrent";
 
 	/**
@@ -132,6 +133,12 @@ public class IWDatePicker extends TextInput {
     	if (ve != null) {
 	    	boolean showYear = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowYearChange(showYear);
+    	}
+    	
+		ve = getValueExpression(SHOW_TIME_PROPERTY);
+    	if (ve != null) {
+	    	boolean showTime = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setShowTime(showTime);
     	}
     	
 		ve = getValueExpression(SHOW_CALENDAR_IMAGE_PROPERTY);

@@ -41,6 +41,7 @@ public class GenericSelect extends InterfaceObject {
 	public static final String ENTITIES_PROPERTY = "entities";
 	public static final String OBJECTS_PROPERTY = "objects";
 	public static final String SELECTED_PROPERTY = "selected";
+	public static final String MULTIPLE_PROPERTY = "multiple";
 	
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[10];
@@ -77,6 +78,12 @@ public class GenericSelect extends InterfaceObject {
 	    	boolean setToSubmit = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setToSubmit(setToSubmit);
     	}
+    	
+		ve = getValueExpression(MULTIPLE_PROPERTY);
+    	if (ve != null) {
+	    	boolean multiple = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+    		setMultiple(multiple);
+    	}    
     	
 		ve = getValueExpression(SELECTED_PROPERTY);
     	if (ve != null) {

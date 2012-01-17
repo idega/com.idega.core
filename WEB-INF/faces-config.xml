@@ -375,6 +375,11 @@ version="1.2">
 	      <property-class>boolean</property-class>
 	    </property>
 	    <property>
+	      <display-name>Show time</display-name>
+	      <property-name>showTime</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
 	      <display-name>Use current date if not set</display-name>
 	      <property-name>useCurrent</property-name>
 	      <property-class>boolean</property-class>
@@ -442,6 +447,11 @@ version="1.2">
 	    <property>
 	      <display-name>Required</display-name>
 	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Multiple</display-name>
+	      <property-name>multiple</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
 	</component>
