@@ -384,6 +384,11 @@ version="1.2">
 	      <property-name>useCurrent</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
+	    <property>
+	      <display-name>Year range</display-name>
+	      <property-name>yearRange</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
 	</component>
 	
 	<component>

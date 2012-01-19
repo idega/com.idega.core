@@ -39,6 +39,7 @@ public class IWDatePicker extends TextInput {
 	private Date minDate = null;
 	
 	private boolean dateRange = false;
+	private String yearRange = "c-10:c+10";
 	private boolean useCurrentDateIfNotSet = true;
 	private boolean showCalendarImage = true;
 
@@ -63,6 +64,7 @@ public class IWDatePicker extends TextInput {
 	private static final String SHOW_YEAR_PROPERTY = "showYear";
 	private static final String SHOW_TIME_PROPERTY = "showTime";
 	private static final String USE_CURRENT_PROPERTY = "useCurrent";
+	private static final String YEAR_RANGE_PROPERTY = "yearRange";
 
 	/**
 	 * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -109,6 +111,12 @@ public class IWDatePicker extends TextInput {
     	if (ve != null) {
 	    	String name = (String) ve.getValue(context.getELContext());
 	    	setInputName(name);
+    	}    
+    	
+		ve = getValueExpression(YEAR_RANGE_PROPERTY);
+    	if (ve != null) {
+	    	String yearRange = (String) ve.getValue(context.getELContext());
+	    	setYearRange(yearRange);
     	}    
     	
 		ve = getValueExpression(DATE_RANGE_SEPARATOR_PROPERTY);
@@ -207,7 +215,7 @@ public class IWDatePicker extends TextInput {
 				.append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay()).append(")").toString());
 
 		// Show month/year select
-		initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear());
+		initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear()).append(", yearRange: ").append("'" + getYearRange() + "'");
 
 		// Max date
 		if (getMaxDate() != null) {
@@ -231,7 +239,7 @@ public class IWDatePicker extends TextInput {
 		if (isShowTime()) {
 			initAction.append(", showTime: true");
 		}
-		
+				
 		// onSelect action
 		if (onSelectAction != null) {
 			initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
@@ -316,6 +324,14 @@ public class IWDatePicker extends TextInput {
 
 	public void setShowYearChange(boolean showYearChange) {
 		this.showYearChange = showYearChange;
+	}
+
+	public String getYearRange() {
+		return yearRange;
+	}
+
+	public void setYearRange(String yearRange) {
+		this.yearRange = yearRange;
 	}
 
 	private boolean isChangeMonth() {
