@@ -782,7 +782,7 @@ public class LoginDBHandler {
 					count1 = first.length();
 					// laststep = namelength-first.length();
 				}
-				else if (alfa.length >= 6 && number++ < 99) {
+				else if (alfabet.length() >= 6 && number++ < 99) {
 					array[row] = (alfabet.substring(0, 6) + number).toCharArray();
 				}
 				else if (startlettercount > 0) {
