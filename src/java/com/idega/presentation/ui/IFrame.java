@@ -272,13 +272,13 @@ public class IFrame extends InterfaceObject {
 			setMarkupAttribute("src", uri.getUri());
 		}
 		
-		String height = iwc.getParameter("height");
+		String height = iwc.getParameter("heightPercent");
 		if (!StringUtil.isEmpty(height))
-			setHeight(height);
+			setHeight(height.concat(CoreConstants.PERCENT));
 
-		String width = iwc.getParameter("width");
+		String width = iwc.getParameter("widthPercent");
 		if (!StringUtil.isEmpty(width))
-			setWidth(width);
+			setWidth(width.concat(CoreConstants.PERCENT));
 		
 		if (this.transparent) {
 			setMarkupAttribute("ALLOWTRANSPARENCY", "true");
@@ -296,7 +296,7 @@ public class IFrame extends InterfaceObject {
 			}
 			println("</iframe>\n");
 			
-			if(getFrameMarginTop()!=null && getFrameMarginBottom()!=null){
+			if (getFrameMarginTop() != null && getFrameMarginBottom() != null) {
 				println("<script type=\"text/javascript\">");
 				String frameId = this.getID();
 				//this is a reference to a method declared in iw_core.js:
