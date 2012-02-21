@@ -11,6 +11,7 @@ package com.idega.util;
 
  import java.io.BufferedInputStream;
 import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -27,12 +28,20 @@ import java.net.URL;
 import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.zip.CRC32;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
 
+import com.idega.core.file.data.ICFile;
+import com.idega.file.bean.EmptyItem;
+import com.idega.file.bean.FileItem;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.repository.bean.RepositoryItem;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 
 public class FileUtil {
@@ -1010,4 +1019,105 @@ public class FileUtil {
 	    
 	    throw new IOException("File '" + pathToFile + "' doesn't exist!");
   	}
+	public static final File getZippedFiles(Collection filesToZip) throws IOException {
+		  return getZippedFiles(filesToZip, "Archive.zip");
+	  }
+	  public static final File getZippedFiles(Collection filesToZip, String fileName) throws IOException {
+		  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
+			  return null;
+		  }
+		  
+		  Collection files = new ArrayList(filesToZip.size());
+		  for (Iterator iter = filesToZip.iterator();iter.hasNext();) {
+			  File file = (File)iter.next();
+			  files.add(new FileItem(file));
+		  }
+		  return getZippedFiles(files, fileName, true);
+	  }
+	  
+	  public static final File getZippedICFiles(Collection filesToZip, String fileName) throws IOException {
+		  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
+			  return null;
+		  }
+		  
+		  Collection files = new ArrayList(filesToZip.size());
+		  for (Iterator iter = filesToZip.iterator();iter.hasNext();) {
+			  ICFile file = (ICFile)iter.next();
+			  files.add(new FileItem(file));
+		  }
+		  return getZippedFiles(files, fileName, true);
+	  }
+	  
+	  public static final File getZippedItems(Collection itemsToZip, String fileName) throws IOException {
+		  return getZippedFiles(itemsToZip, fileName, true);
+	  }
+	  
+	  public static final File getZippedFiles(Collection filesToZip, String fileName, boolean deleteZippedFiles) throws IOException {
+		  return getZippedFiles(filesToZip, fileName, deleteZippedFiles, false);
+	  }
+	  
+	  public static final File getZippedFiles(Collection filesToZip, String fileName, boolean deleteZippedFiles, boolean handleEmptyDir) throws IOException {
+		  if (StringUtil.isEmpty(fileName)) {
+			  return null;
+		  }
+		  
+		  if (ListUtil.isEmpty(filesToZip) && !handleEmptyDir) {
+			  return null;
+		  }
+		  
+		  File zippedFile = new File(fileName);
+		  if (filesToZip == null) {
+			  filesToZip = new ArrayList(1);
+		  }
+		  
+		  if (filesToZip.size() == 0) {
+			  filesToZip.add(new EmptyItem());
+		  }
+		  
+		  ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zippedFile));
+
+		  int bytesRead;
+		  CRC32 crc = new CRC32();
+		  byte[] buffer = new byte[1024];
+		  for (Iterator iter = filesToZip.iterator();iter.hasNext();) {
+			  RepositoryItem item = (RepositoryItem) iter.next();
+			  //	Do not want to open stream from the same source twice - keeping contents of an item in memory
+			  byte[] contents = IOUtil.getBytesFromInputStream(item.getInputStream());
+			  if (contents == null) {
+				  continue;
+			  }
+			  
+			  //	Compressing
+			  InputStream bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+			  crc.reset();
+			  while ((bytesRead = bis.read(buffer)) != -1) {
+	              crc.update(buffer, 0, bytesRead);
+	          }
+	          bis.close();
+
+	          //	Adding new entry
+	          long itemSize = item.getLength();
+	          itemSize = itemSize < 0 ? 0 : itemSize > 0xFFFFFFFFL ? Long.MAX_VALUE : itemSize;
+	          bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+	          ZipEntry entry = new ZipEntry(item.getName());
+	          entry.setMethod(ZipEntry.STORED);
+	          entry.setCompressedSize(itemSize);
+	          entry.setSize(itemSize);
+	          entry.setCrc(crc.getValue());
+	          zos.putNextEntry(entry);
+	          while ((bytesRead = bis.read(buffer)) != -1) {
+	              zos.write(buffer, 0, bytesRead);
+	          }
+	          bis.close();
+	          
+	          if (deleteZippedFiles) {
+	        	  item.delete();
+	          }
+		  }
+		  
+		  zos.close();
+		  
+		  return zippedFile;
+	  }
+
 }

@@ -106,6 +106,22 @@ public class DownloadWriter implements MediaWritable {
 		}
 	}
 
+	protected File getFile() {
+		return file;
+	}
+
+	protected void setFile(File file) {
+		this.file = file;
+	}
+
+	protected ICFile getICFile() {
+		return icFile;
+	}
+
+	protected void setICFile(ICFile icFile) {
+		this.icFile = icFile;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * 
