@@ -23,22 +23,22 @@ import com.idega.util.expression.ELUtil;
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
  * @version $Revision: 1.14 $
- * 
+ *
  *          Date (range) picker
- * 
+ *
  *          Last modified: $Date: 2009/03/17 13:14:59 $ by $Author: laddi $
  */
 public class IWDatePicker extends TextInput {
 
 	@Autowired
 	private JQuery jQuery;
-	
+
 	private Date date = null;
 	private Date dateTo = null;
 
 	private Date maxDate = null;
 	private Date minDate = null;
-	
+
 	private boolean dateRange = false;
 	private String yearRange = "c-10:c+10";
 	private boolean useCurrentDateIfNotSet = true;
@@ -50,9 +50,9 @@ public class IWDatePicker extends TextInput {
 	private String dateRangeSeparator = " - ";
 	private boolean showYearChange = false;
 	private boolean showMonthChange = false;
-	
+
 	private boolean showTime;
-	
+
 	private static final String INITIAL_DATE_PROPERTY = "initialDate";
 	private static final String INITIAL_DATE_TO_PROPERTY = "initialDateTo";
 	private static final String MAX_DATE_PROPERTY = "maxDate";
@@ -83,7 +83,7 @@ public class IWDatePicker extends TextInput {
 	}
 
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(INITIAL_DATE_PROPERTY);
     	if (ve != null) {
 	    	Date date = (Date) ve.getValue(context.getELContext());
@@ -112,59 +112,59 @@ public class IWDatePicker extends TextInput {
     	if (ve != null) {
 	    	String name = (String) ve.getValue(context.getELContext());
 	    	setInputName(name);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(YEAR_RANGE_PROPERTY);
     	if (ve != null) {
 	    	String yearRange = (String) ve.getValue(context.getELContext());
 	    	setYearRange(yearRange);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(DATE_RANGE_SEPARATOR_PROPERTY);
     	if (ve != null) {
 	    	String dateRangeSeperator = (String) ve.getValue(context.getELContext());
 	    	setDateRangeSeparator(dateRangeSeperator);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(SHOW_DATE_RANGE_PROPERTY);
     	if (ve != null) {
 	    	boolean showDateRange = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setDateRange(showDateRange);
     	}
-    	
+
 		ve = getValueExpression(SHOW_MONTH_PROPERTY);
     	if (ve != null) {
 	    	boolean showMonth = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowMonthChange(showMonth);
     	}
-    	
+
 		ve = getValueExpression(SHOW_YEAR_PROPERTY);
     	if (ve != null) {
 	    	boolean showYear = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowYearChange(showYear);
     	}
-    	
+
 		ve = getValueExpression(SHOW_TIME_PROPERTY);
     	if (ve != null) {
 	    	boolean showTime = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowTime(showTime);
     	}
-    	
+
 		ve = getValueExpression(SHOW_CALENDAR_IMAGE_PROPERTY);
     	if (ve != null) {
 	    	boolean showCalendarImage = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowCalendarImage(showCalendarImage);
     	}
-    	
+
 		ve = getValueExpression(USE_CURRENT_PROPERTY);
     	if (ve != null) {
 	    	boolean useCurrent = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setUseCurrentDateIfNotSet(useCurrent);
     	}
-    	
+
     	super.encodeBegin(context);
     }
-    
+
 	@Override
 	public void main(IWContext iwc) {
 		if (inputName == null) {
@@ -224,14 +224,14 @@ public class IWDatePicker extends TextInput {
 			initAction.append(", maxDate: ").append(new StringBuilder("new Date(").append(maxDate.getYear()).append(", ").append(maxDate.getMonth() - 1).append(", ")
 					.append(maxDate.getDay()).append(")").toString());
 		}
-		
+
 		// Min date
 		if (getMinDate() != null) {
 			IWTimestamp maxDate = new IWTimestamp(getMinDate());
 			initAction.append(", minDate: ").append(new StringBuilder("new Date(").append(maxDate.getYear()).append(", ").append(maxDate.getMonth() - 1).append(", ")
 					.append(maxDate.getDay()).append(")").toString());
 		}
-		
+
 		// Calendar image
 		if (isShowCalendarImage()) {
 			initAction.append(", showOn: 'button', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif")).append("', buttonImageOnly: true");
@@ -240,7 +240,7 @@ public class IWDatePicker extends TextInput {
 		if (isShowTime()) {
 			initAction.append(", showTime: true");
 		}
-				
+
 		// onSelect action
 		if (onSelectAction != null) {
 			initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
@@ -252,7 +252,7 @@ public class IWDatePicker extends TextInput {
 		if (canUseLocalizedText) {
 			initAction.append(", regional: ['").append(language).append("']");
 		}
-		
+
 		initAction.append("});");
 
 		// Initialization action
@@ -391,7 +391,7 @@ public class IWDatePicker extends TextInput {
 	public void setMinDate(Date minDate) {
 		this.minDate = minDate;
 	}
-	
+
 	JQuery getJQuery() {
 		if (jQuery == null) {
 			ELUtil.getInstance().autowire(this);

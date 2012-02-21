@@ -49,18 +49,20 @@ import com.idega.util.StringUtil;
  */
 public class XmlUtil {
 
+	private static final Logger LOGGER = Logger.getLogger(XmlUtil.class.getName());
+
 	public static final String XMLNS_NAMESPACE_ID = "xmlns";
 	public static final String XHTML_NAMESPACE_ID = "xhtml";
-	
+
 	public static final String XHTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
 
 	private XmlUtil() { }
-	
+
 	private static final Logger logger = Logger.getLogger(XmlUtil.class.getName());
-	
+
 	private volatile static DocumentBuilderFactory factory;
 	private volatile static DocumentBuilderFactory factoryNoNamespace;
-	
+
 	private static final List<AdvancedProperty> ATTRIBUTES = Collections.unmodifiableList(Arrays.asList(
 			new AdvancedProperty("http://apache.org/xml/properties/dom/document-class-name", DocumentImpl.class.getName())
 	));
@@ -68,7 +70,7 @@ public class XmlUtil {
 			new AdvancedProperty("http://apache.org/xml/features/nonvalidating/load-dtd-grammar", Boolean.FALSE.toString()),
 			new AdvancedProperty("http://apache.org/xml/features/nonvalidating/load-external-dtd", Boolean.FALSE.toString())
 	));
-	
+
 	public static DocumentBuilder getXMLBuilder() {
 		try {
 			return getDocumentBuilder(true);
@@ -77,19 +79,19 @@ public class XmlUtil {
 		}
 		return null;
 	}
-		
+
 	public static DocumentBuilder getDocumentBuilder() throws ParserConfigurationException {
 		return getDocumentBuilder(true);
 	}
-	
+
 	public static DocumentBuilder getDocumentBuilder(boolean namespaceAware) throws ParserConfigurationException {
 		DocumentBuilderFactory factory = getDocumentBuilderFactory(namespaceAware);
-		
+
 		synchronized (factory) {
 			return factory.newDocumentBuilder();
 		}
 	}
-	
+
 	private static DocumentBuilderFactory getDocumentBuilderFactoryNSAware() {
 		if (factory == null) {
 			synchronized (XmlUtil.class) {
@@ -100,11 +102,11 @@ public class XmlUtil {
 		}
 		return factory;
 	}
-	
+
 	private static DocumentBuilderFactory getDocumentBuilderFactory(boolean namespaceAware) {
 		if (namespaceAware)
 			return getDocumentBuilderFactoryNSAware();
-		
+
 		if (factoryNoNamespace == null) {
 			synchronized (XmlUtil.class) {
 				if(factoryNoNamespace == null) {
@@ -114,17 +116,17 @@ public class XmlUtil {
 		}
 		return factoryNoNamespace;
 	}
-	
+
 	private static DocumentBuilderFactory getFactory(boolean namespaceAware) {
 		DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		
+
 		factory.setNamespaceAware(namespaceAware);
 		factory.setValidating(Boolean.FALSE);
-		
+
 		for (AdvancedProperty attribute: ATTRIBUTES) {
 	    	factory.setAttribute(attribute.getId(), attribute.getValue());
 	    }
-		
+
 		for (AdvancedProperty feature: FEATURES) {
 			try {
 				factory.setAttribute(feature.getId(), Boolean.valueOf(feature.getValue()));
@@ -132,20 +134,20 @@ public class XmlUtil {
 				logger.log(Level.WARNING, "Error setting features", e);
 			}
 		}
-		
+
 		return factory;
 	}
-	
+
 	public static Document getXMLDocument(String source, boolean namespaceAware) {
 		return getXMLDocument(source, namespaceAware, Boolean.TRUE);
 	}
-	
+
 	private static Document getXMLDocument(String source, boolean namespaceAware, boolean reTry) {
 		if (source == null) {
 			logger.warning("Source does not provided - unable to generate XML document");
 			return null;
 		}
-		
+
 		InputStream stream = null;
 		try {
 			stream = StringHandler.getStreamFromString(source);
@@ -153,7 +155,7 @@ public class XmlUtil {
 			logger.log(Level.SEVERE, "Error getting InputStream from source: " + (source.length() > 30 ? source.substring(0, 30) : ""));
 			return null;
 		}
-		
+
 		Document doc = null;
 		try {
 			doc = getXMLDocumentWithException(stream, namespaceAware);
@@ -169,7 +171,7 @@ public class XmlUtil {
 		}
 		return doc;
 	}
-	
+
 	private static String getCleanedSource(String source) {
 		BuilderService builderService = null;
 		try {
@@ -177,19 +179,19 @@ public class XmlUtil {
 		} catch (Exception e) {
 			logger.log(Level.SEVERE, "Error getting " + BuilderService.class, e);
 		}
-		
+
 		if (builderService == null) {
 			return null;
 		}
-		
+
 		String cleanedSource = builderService.getCleanedHtmlContent(source, Boolean.TRUE, Boolean.TRUE, Boolean.TRUE);
 		return cleanedSource;
 	}
-	
+
 	public static Document getXMLDocument(InputStream stream) {
 		return getXMLDocument(stream, true);
 	}
-		
+
 	public static Document getXMLDocument(InputStream stream, boolean namespaceAware) {
 		try {
 			return getXMLDocumentWithException(stream, namespaceAware);
@@ -198,12 +200,12 @@ public class XmlUtil {
 		}
 		return null;
 	}
-	
+
 	private static Document getXMLDocumentWithException(InputStream stream, boolean namespaceAware) throws Exception {
 		if (stream == null) {
 			return null;
 		}
-		
+
 		Reader reader = null;
 		try {
 			reader = new InputStreamReader(stream, CoreConstants.ENCODING_UTF8);
@@ -213,37 +215,37 @@ public class XmlUtil {
 			IOUtil.closeReader(reader);
 		}
 	}
-	
+
 	public static org.jdom.Document getJDOMXMLDocument(InputStream stream) {
 		return getJDOMXMLDocument(getXMLDocument(stream, true));
 	}
-	
+
 	public static org.jdom.Document getJDOMXMLDocument(InputStream stream, boolean namespaceAware) {
 		return getJDOMXMLDocument(getXMLDocument(stream, namespaceAware));
 	}
-	
+
 	public static org.jdom.Document getJDOMXMLDocument(String source) {
 		return getJDOMXMLDocument(source, true);
 	}
-	
+
 	public static org.jdom.Document getJDOMXMLDocument(String source, boolean namespaceAware) {
 		return getJDOMXMLDocument(getXMLDocument(source, namespaceAware));
 	}
-	
+
 	public static org.jdom.Document getJDOMXMLDocument(Document document) {
 		if (document == null) {
 			return null;
 		}
-		
+
 		DOMBuilder domBuilder = new DOMBuilder();
 		return domBuilder.build(document);
 	}
-	
+
 	/**
 	 * <p>taken from org.chiba.xml.dom.DOMUtil</p>
 	 * <p>prints out formatted node content to System.out stream</p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param node
 	 */
 	public static void prettyPrintDOM(Node node) {
@@ -254,7 +256,7 @@ public class XmlUtil {
         }
     }
 
-   
+
     /**
      * <p>taken from org.chiba.xml.dom.DOMUtil</p>
      * Serializes the specified node to the given stream. Serialization is achieved by an identity transform.
@@ -269,7 +271,7 @@ public class XmlUtil {
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.transform(new DOMSource(node), new StreamResult(stream));
     }
-    
+
     public static String getPrettyJDOMDocument(org.jdom.Document document) {
     	XMLOutputter outputter = new XMLOutputter();
     	Format format = Format.getPrettyFormat();
@@ -278,26 +280,26 @@ public class XmlUtil {
     	outputter.setFormat(format);
     	return outputter.outputString(document);
     }
-	
+
 	public static List<Element> getElementsByXPath(Object container, String expression) {
 		return getElementsByXPath(container, expression, CoreConstants.EMPTY);
 	}
-	
+
 	public static List<Element> getElementsByXPath(Object container, String expression, String nameSpaceId) {
 		if (container == null || expression == null) {
 			return null;
 		}
-		
+
 		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ? null : Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
 		List<Element> elements = getElementsByXPath(container, expression, namespace);
-		
+
 		return ListUtil.isEmpty(elements) ?
 				nameSpaceId == null ?
 						getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID) :
 						null :
 				elements;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static List<Element> getElementsByXPath(Object container, String expression, Namespace namespace) {
 		JDOMXPath xPath = null;
@@ -305,26 +307,41 @@ public class XmlUtil {
 		try {
 			boolean validNameSpace = false;
 			xPathExpression = expression;
-			
+
 			String prefix = XMLNS_NAMESPACE_ID;
 			if (namespace != null && namespace.getURI() != null) {
 				prefix = StringUtil.isEmpty(namespace.getPrefix()) ? prefix : namespace.getPrefix();
-				
+
 				xPathExpression = "//" + (prefix.equals(XHTML_NAMESPACE_ID) ? CoreConstants.EMPTY : (prefix + CoreConstants.COLON)) + expression;
 				validNameSpace = true;
 			}
-			
+
 			xPath = new JDOMXPath(xPathExpression);
-			
+
 			if (validNameSpace) {
 				xPath.addNamespace(prefix, namespace.getURI());
 			}
-			
+
 			return xPath.selectNodes(container);
 		} catch (Exception e) {
 			logger.log(Level.WARNING, "Error selecting elements by XPath expression: " + xPathExpression, e);
 		}
-		
+
 		return null;
+	}
+
+	public static String getCleanedXml(InputStream stream) {
+		String xmlString = null;
+		try {
+			xmlString = StringHandler.getContentFromInputStream(stream);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error cleaning XML document", e);
+		}
+		return getCleanedXml(xmlString);
+	}
+
+	public static String getCleanedXml(String xmlString) {
+		xmlString = StringHandler.replace(xmlString, "&#0;", CoreConstants.EMPTY);
+		return xmlString;
 	}
 }
