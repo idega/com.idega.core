@@ -38,11 +38,13 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.file.bean.EmptyItem;
 import com.idega.file.bean.FileItem;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.servlet.filter.IWBundleResourceFilter;
+import com.lowagie.text.pdf.hyphenation.TernaryTree.Iterator;
 
 public class FileUtil {
 
@@ -953,6 +955,18 @@ public static String getFileSeparator(){
 	  return zippedFile;
   }
 
+  public static final File getZippedICFiles(Collection<ICFile> filesToZip, String fileName) throws IOException {
+	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
+		  return null;
+	  }
+	  
+	  ArrayList<RepositoryItem> files = new ArrayList<RepositoryItem> (filesToZip.size());
+	  for (ICFile file : filesToZip) {
+		  files.add(new FileItem(file));
+	  }
+	  return getZippedFiles(files, fileName, true);
+  }
+  
   public static void copyDirectoryRecursivelyKeepTimestamps(File inputDirectory,File outputDirectory) throws IOException {
   	FileUtil.copyDirectoryRecursively(inputDirectory, outputDirectory, true);
   }

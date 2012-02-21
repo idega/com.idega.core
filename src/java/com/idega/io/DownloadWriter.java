@@ -347,4 +347,15 @@ public class DownloadWriter implements MediaWritable {
 	public void setFileName(String fileName) {
 		this.fileName = fileName;
 	}
+	protected File getFile() {
+		return file;
+	}
+
+	protected ICFile getICFile() {
+		return icFile;
+	}
+
+	protected void setICFile(ICFile icFile) {
+		this.icFile = icFile;
+	}
 }
