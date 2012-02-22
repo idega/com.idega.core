@@ -21,16 +21,16 @@ import org.w3c.dom.NodeList;
  */
 public class XPathUtil {
 
-	private static final String xformsNS = "http://www.w3.org/2002/xforms",
+	public static final String	xformsNS = "http://www.w3.org/2002/xforms",
 								xhtmlNS = "http://www.w3.org/1999/xhtml",
-								idegaNS = "http://idega.com/xforms";
+								IDEGA_XFORM_NS = "http://idega.com/xforms";
 
 	private XPathExpression xpathExpression;
 	private XPathVariableResolverImpl variableResolver;
 
 	public XPathUtil(String xpathExpressionStr) {
 		NamespaceContextImpl nmspcContext = new NamespaceContextImpl();
-		nmspcContext.addPrefix("idega", idegaNS);
+		nmspcContext.addPrefix("idega", IDEGA_XFORM_NS);
 		nmspcContext.addPrefix("xf", xformsNS);
 		nmspcContext.addPrefix("h", xhtmlNS);
 
@@ -50,8 +50,8 @@ public class XPathUtil {
 			nmspcContext.addPrefix("xf", xformsNS);
 		if (nmspcContext.getPrefix(xhtmlNS) == null)
 			nmspcContext.addPrefix("h", xhtmlNS);
-		if (nmspcContext.getPrefix(idegaNS) == null)
-			nmspcContext.addPrefix("idega", idegaNS);
+		if (nmspcContext.getPrefix(IDEGA_XFORM_NS) == null)
+			nmspcContext.addPrefix("idega", IDEGA_XFORM_NS);
 
 		compileXPathExpression(xpathExpressionStr, nmspcContext);
 	}
