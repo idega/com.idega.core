@@ -4,6 +4,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.Writer;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -266,10 +267,18 @@ public class XmlUtil {
      * @throws TransformerException if any error ccurred during the identity transform.
      */
     public static void prettyPrintDOM(Node node, OutputStream stream) throws TransformerException {
-        Transformer transformer = TransformerFactory.newInstance().newTransformer();
+        getTransformer().transform(new DOMSource(node), new StreamResult(stream));
+    }
+
+    private static Transformer getTransformer() throws TransformerException {
+    	Transformer transformer = TransformerFactory.newInstance().newTransformer();
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-        transformer.transform(new DOMSource(node), new StreamResult(stream));
+        return transformer;
+    }
+
+    public static void prettyPrintDOM(Node node, Writer writer) throws TransformerException {
+        getTransformer().transform(new DOMSource(node), new StreamResult(writer));
     }
 
     public static String getPrettyJDOMDocument(org.jdom.Document document) {
