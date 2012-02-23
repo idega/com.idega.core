@@ -44,7 +44,6 @@ import com.idega.file.bean.FileItem;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.servlet.filter.IWBundleResourceFilter;
-import com.lowagie.text.pdf.hyphenation.TernaryTree.Iterator;
 
 public class FileUtil {
 
@@ -445,7 +444,6 @@ public static String getFileSeparator(){
 	public static List<File> getFilesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
-				@Override
 				public boolean accept(File file) {
 					return file.isFile();
 				}
@@ -465,7 +463,6 @@ public static String getFileSeparator(){
 	public static List<File> getDirectoriesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
-				@Override
 				public boolean accept(File file) {
 					return file.isDirectory();
 				}
