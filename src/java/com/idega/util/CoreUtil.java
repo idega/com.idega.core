@@ -20,22 +20,23 @@ import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
 import com.idega.util.expression.ELUtil;
 
 public class CoreUtil {
-	
+
 	private static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
-	
+
 	private static final BASE64Encoder ENCODER_BASE64 = new BASE64Encoder();
 	private static final BASE64Decoder DECODER_BASE64 = new BASE64Decoder();
-	
+
 	public static IWBundle getCoreBundle() {
 		return IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER);
 	}
-	
+
 	/**
 	 * Almost identical method to {@link IWContext#getInstance()} just this one doesn't throw any exception - it's very important
 	 * using it with DWR
@@ -53,20 +54,20 @@ public class CoreUtil {
 			return null;
 		}
 	}
-	
+
 	public static final List<String> getResourcesForChooser(IWContext iwc) {
 		IWBundle iwb = getCoreBundle();
-		
+
 		List<String> resources = new ArrayList<String>();
-		
+
 		//	DWR
 		resources.add("/dwr/interface/ChooserService.js");
 		resources.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
 		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
-		
+
 		//	Chooser
 		resources.add(iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
-		
+
 		//	Groups and users choosers
 		IWBundle userBundle = iwc.getIWMainApplication().getBundle(CoreConstants.IW_USER_BUNDLE_IDENTIFIER);
 		if (userBundle != null) {
@@ -75,17 +76,17 @@ public class CoreUtil {
 			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/groupTree.js"));
 			resources.add(userBundle.getVirtualPathWithFileNameString("javascript/UserInfoViewerHelper.js"));
 		}
-		
+
 		return resources;
 	}
-	
+
 	public static String getEncodedValue(String originalValue) {
 		if (originalValue == null) {
 			return null;
 		}
 		return ENCODER_BASE64.encode(originalValue.getBytes());
 	}
-	
+
 	public static String getDecodedValue(String encodedValue) {
 		if (encodedValue == null) {
 			return null;
@@ -97,25 +98,25 @@ public class CoreUtil {
 		}
 		return null;
 	}
-	
+
 	public static boolean isIE(HttpServletRequest request) {
 		if (request == null) {
 			return false;
 		}
-		
+
 		String userAgent = RequestUtil.getUserAgent(request);
 		if (userAgent != null) {
 			return userAgent.indexOf("MSIE") != -1;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static boolean isSingleComponentRenderingProcess(FacesContext context) {
 		if (context == null) {
 			return false;
 		}
-		
+
 		return isSingleComponentRenderingProcess(IWContext.getIWContext(context));
 	}
 
@@ -123,20 +124,20 @@ public class CoreUtil {
 		if (iwc == null) {
 			return false;
 		}
-		
+
 		Object attribute = iwc.getSessionAttribute(CoreConstants.SINGLE_UICOMPONENT_RENDERING_PROCESS);
 		if (attribute instanceof Boolean) {
 			return (Boolean) attribute;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static Boolean getBooleanValueFromString(String value) {
 		if (value == null) {
 			return false;
 		}
-		
+
 		if (value.equalsIgnoreCase(CoreConstants.BUILDER_MODULE_PROPERTY_YES_VALUE)) {
 			return true;
 		}
@@ -149,14 +150,14 @@ public class CoreUtil {
 		if (value.equalsIgnoreCase("F")) {
 			return false;
 		}
-		
+
 		return Boolean.valueOf(value.toLowerCase());
 	}
-	
+
 	public static boolean sendExceptionNotification(Throwable exception) {
 		return sendExceptionNotification(null, exception);
 	}
-	
+
 	public static boolean sendExceptionNotification(final String message, final Throwable exception) {
 		RequestResponseProvider reqResProvider = null;
 		try {
@@ -175,16 +176,18 @@ public class CoreUtil {
 	    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
 	    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
 		}
-    	
+
 		final String server = serverName;
 		final String requestedUri = requestUri;
 		Thread sender = new Thread(new Runnable() {
+			@Override
 			public void run() {
-				String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+				String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
 		    	if (StringUtil.isEmpty(host)) {
 		    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
 		    	}
-		    	
+
 		    	String userFullName = null;
 		    	try {
 		    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
@@ -194,7 +197,7 @@ public class CoreUtil {
 		    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class);
 		    	}
 		    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
-		    	
+
 		    	Writer writer = null;
 		    	PrintWriter printWriter = null;
 		    	StringBuffer notification = null;
@@ -202,15 +205,15 @@ public class CoreUtil {
 		    		writer = new StringWriter();
 		    		printWriter = new PrintWriter(writer);
 		    		exception.printStackTrace(printWriter);
-		    		
+
 		    		notification = new StringBuffer("Requested uri: ").append(requestedUri).append("\n");
 		    		notification.append("User: ").append(userFullName).append("\n");
 		    		if (!StringUtil.isEmpty(message)) {
 		    			notification.append("Message: ").append(message).append("\n");
 		    		}
 		    		notification.append("Stack trace:\n").append(writer.toString());
-		    		
-		        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + server,
+
+		        	SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, host, "EXCEPTION: on ePlatform, server: " + server,
 		        			notification.toString());
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
@@ -221,14 +224,14 @@ public class CoreUtil {
 			}
 		});
 		sender.start();
-    	
+
     	return true;
 	}
-	
+
 	public static final Locale getCurrentLocale() {
 		try {
 			Locale locale = null;
-			
+
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
 			if (loginSession == null) {
 				LOGGER.warning("LoginSession was not found");
@@ -244,7 +247,7 @@ public class CoreUtil {
 					}
 				}
 			}
-			
+
 			if (locale == null) {
 				//	3. Trying to get from IWContext
 				IWContext iwc = getIWContext();
@@ -252,12 +255,12 @@ public class CoreUtil {
 					locale = iwc.getCurrentLocale();
 				}
 			}
-			
+
 			if (locale == null) {
 				//	4. Trying to get from application settings
 				locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
 			}
-			
+
 			return locale == null ? Locale.ENGLISH : locale;
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current locale", e);
@@ -268,7 +271,7 @@ public class CoreUtil {
 	public static final boolean isSQLMeasurementOn() {
 		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_sql_queries", Boolean.FALSE);
 	}
-	
+
 	public static final boolean isMobileClient(IWContext iwc) {
 		return CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(iwc.getSessionAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE));
 	}
