@@ -23,127 +23,165 @@ import com.idega.util.expression.ELUtil;
  */
 @Repository("genericDAO")
 public class GenericDaoImpl implements GenericDao {
-	
+
 	private EntityManager entityManager;
-	
+
 	@Autowired
 	private DaoFunctions daoFunctions;
-	
+
 	protected EntityManager getEntityManager() {
-		
+
 		return entityManager;
 	}
-	
+
 	@PersistenceContext
 	public void setEntityManager(EntityManager entityManager) {
 		this.entityManager = entityManager;
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void persist(Object product) {
 		entityManager.persist(product);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public <T> T merge(T product) {
-		
+
 		return entityManager.merge(product);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public void refresh(Object product) {
 		entityManager.refresh(product);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public <T> T getReference(Class<T> clazz, Object primaryKey) {
 		return entityManager.getReference(clazz, primaryKey);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public <T> T find(Class<T> clazz, Object primaryKey) {
-		
+
 		return entityManager.find(clazz, primaryKey);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public Query createNamedQuery(String queryName) {
 		return entityManager.createNamedQuery(queryName);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void remove(Object obj) {
-		
+
 		entityManager.remove(obj);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void mergeRemove(Object obj) {
-		
+
 		entityManager.remove(entityManager.merge(obj));
 	}
-	
+
+	@Override
 	public boolean contains(Object obj) {
-		
+
 		return getEntityManager().contains(obj);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = false)
 	public void flush() {
 		entityManager.flush();
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResultByInlineQuery(String query,
 	        Class<Expected> expectedReturnType, Param... params) {
-		
+
 		return getQueryInline(query)
 		        .getSingleResult(expectedReturnType, params);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName,
 	        Class<Expected> expectedReturnType, Param... params) {
-		
+
 		return getQueryNamed(namedQueryName).getSingleResult(
 		    expectedReturnType, params);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getResultListByInlineQuery(
+	 * 		java.lang.String,
+	 * 		java.lang.Class,
+	 * 		com.idega.core.persistence.Param[]
+	 * )
+	 */
+	@Override
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
+	public <Expected> List<Expected> getResultListByInlineQuery(
+			String query,
+			Class<Expected> expectedReturnType,
+			Param... params) {
+
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
-		
+
 		try {
-			return getQueryInline(query).getResultList(expectedReturnType, params);
+			return getQueryInline(query).getResultList(expectedReturnType,
+					params);
 		} finally {
 			if (measure) {
 				long end = System.currentTimeMillis();
-				Logger.getLogger(this.getClass().getName()).info("Query '" + query + "' executed in " + (end - start) + " ms");
+				Logger.getLogger(this.getClass().getName()).info(
+						"Query '" + query + "' executed in " + (end - start)
+						+ " ms");
 			}
 		}
 	}
-	
+
+	@Override
 	public com.idega.core.persistence.Query getQueryNativeInline(String query) {
-		
+
 		return createNewQueryNativeInline(query);
 	}
-	
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQueryInline(
+	 * 		java.lang.String
+	 * )
+	 */
+	@Override
 	public com.idega.core.persistence.Query getQueryInline(String query) {
-		
+
 		return createNewQueryInline(query);
 	}
-	
+
+	@Override
 	public com.idega.core.persistence.Query getQueryNamed(String queryName) {
-		
+
 		return createNewQueryNamed(queryName);
 	}
-	
+
+	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
-		
+
 		try {
 			return getQueryNamed(namedQueryName).getResultList(expectedReturnType, params);
 		} finally {
@@ -153,34 +191,41 @@ public class GenericDaoImpl implements GenericDao {
 			}
 		}
 	}
-	
+
 	protected com.idega.core.persistence.Query createNewQueryNativeInline(
 	        String queryExpression) {
-		
+
 		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(
 		    QueryNativeInlineImpl.beanIdentifier);
 		q.setQueryExpression(queryExpression);
 		return q;
 	}
-	
+
+	/**
+	 * <p>Gets {@link com.idega.core.persistence.Query} and sets
+	 * {@link com.idega.core.persistence.Query
+	 * #setQueryExpression(String)} to queryExpression.</p>
+	 * @param queryExpression Hibernate HQL type query.
+	 * @return com.idega.core.persistence.Query with queryExpression set.
+	 */
 	protected com.idega.core.persistence.Query createNewQueryInline(
 	        String queryExpression) {
-		
+
 		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(
 		    QueryInlineImpl.beanIdentifier);
 		q.setQueryExpression(queryExpression);
 		return q;
 	}
-	
+
 	protected com.idega.core.persistence.Query createNewQueryNamed(
 	        String queryExpression) {
-		
+
 		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(
 		    QueryNamedImpl.beanIdentifier);
 		q.setQueryExpression(queryExpression);
 		return q;
 	}
-	
+
 	protected DaoFunctions getDaoFunctions() {
 		return daoFunctions;
 	}

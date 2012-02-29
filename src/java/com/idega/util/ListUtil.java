@@ -21,6 +21,29 @@ public class ListUtil {
 
   private ListUtil() {
   }
+
+  /**
+   * <p>Copies first level of given {@link Collection}. It means, that every
+   * element in original {@link Collection} was inserted into new one.</p>
+   * @param <T> {@link Collection} type.
+   * @return Copied {@link Collection} by first level.
+   * <code>null</code> on failure.
+   * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+   */
+  public static <T> Collection<T> getDeepCopy(Collection<T> original) {
+	  if (ListUtil.isEmpty(original)) {
+		  return null;
+	  }
+
+	  Collection<T> copy = new ArrayList<T>();
+
+	  for (T instance : original) {
+		  copy.add(instance);
+	  }
+
+	  return copy;
+  }
+
 /**
  * Gets an instance of a list that is empty.
  * @return An immutable unsynchronized List with no values
@@ -61,7 +84,7 @@ private static <T> ArrayList<T> getEmptyVector(){
     }
     return theReturn;
   }
-  
+
   /**
    * Return a list of the strings or a null if the string array is empty
    * @param stringArray
@@ -70,17 +93,17 @@ private static <T> ArrayList<T> getEmptyVector(){
   public static List<String> convertStringArrayToList(String[] stringArray) {
   	if (stringArray != null && stringArray.length > 0) {
   		List<String> returnList = new ArrayList<String>();
-  		
+
   		for (int i = 0; i < stringArray.length; i++) {
 			returnList.add(stringArray[i]);
 		}
-  		
+
   		return returnList;
   	}
-	
-  	return null;		
+
+  	return null;
   }
-  
+
 	/**
 	 * @param list A list of Strings
 	 *
@@ -95,16 +118,16 @@ private static <T> ArrayList<T> getEmptyVector(){
 				if (g > 0) {
 					sList.append(CoreConstants.COMMA);
 				}
-				
+
 				if (item != null) {
 					sList.append(item);
 				}
-				
+
 			}
 		}
 		return sList.toString();
 	}
-	
+
 	/**
 	 * Converts a comma separated string to a list of strings
 	 * @param commaSeparatedString A comma separated string e.g. "value1,value2,value3,..."
@@ -113,7 +136,7 @@ private static <T> ArrayList<T> getEmptyVector(){
 	public static List<String> convertCommaSeparatedStringToList(String commaSeparatedString) {
 		return ListUtil.convertTokenSeparatedStringToList(commaSeparatedString, CoreConstants.COMMA);
 	}
-	
+
 	/**
 	 * Converts a [token] separated string to a list of strings
 	 * @param tokenSeparatedString A [token] separated string e.g. "value1[token]value2[token]value3[token]..." like "value1,value2,value3,..." for example
@@ -122,7 +145,7 @@ private static <T> ArrayList<T> getEmptyVector(){
 	 */
 	public static List<String> convertTokenSeparatedStringToList(String tokenSeparatedString, String tokenSeparator) {
 		List<String> list = new ArrayList<String>();
-		
+
 		if(tokenSeparatedString!=null && tokenSeparator!=null){
 			StringTokenizer tokens = new StringTokenizer(tokenSeparatedString,tokenSeparator);
 			while (tokens.hasMoreTokens()) {
@@ -132,18 +155,18 @@ private static <T> ArrayList<T> getEmptyVector(){
 		else{
 			System.err.println("[ListUtil] - convertTokenSeparatedStringToList: String or token is null!");
 		}
-		
+
 		return list;
 	}
-	
+
 	public static final boolean isEmpty(Collection<?> collection) {
 		if (collection == null || collection.isEmpty() || collection.size() <= 0) {
 			return true;
 		}
-		
+
 		return false;
 	}
-	
+
 	public static <E>List<E> getFilteredList(Collection<E> collection) {
 		List<E> filtered = new ArrayList<E>();
 		for (E object: collection) {
@@ -151,7 +174,7 @@ private static <T> ArrayList<T> getEmptyVector(){
 				filtered.add(object);
 			}
 		}
-		
+
 		return filtered;
 	}
 
