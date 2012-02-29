@@ -187,7 +187,9 @@ public class SendMail {
 			multipart.addBodyPart(body);
 
 			for (File attachedFile: attachedFiles) {
-				if (attachedFile == null || !attachedFile.exists()) {
+				if (attachedFile == null)
+					continue;
+				if (!attachedFile.exists()) {
 					LOGGER.warning("File '" + attachedFile + "' does not exist!");
 					continue;
 				}
@@ -214,6 +216,7 @@ public class SendMail {
 		// Send the message and close the connection
 		final Message mail = message;
 		Thread transporter = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Transport.send(mail);
