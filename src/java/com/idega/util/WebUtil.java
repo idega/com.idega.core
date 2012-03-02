@@ -18,7 +18,6 @@ import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.UserBusiness;
@@ -33,77 +32,78 @@ public class WebUtil extends DefaultSpringBean {
 				new AdvancedProperty(key, returnValueIfNotFound)
 		)).get(0);
 	}
-	
+
 	public List<String> getMultipleLocalizedStrings(String bundleIdentifier, List<AdvancedProperty> multipleRequiredLocalizations) {
 		List<String> defaultValues = getDefaultValues(multipleRequiredLocalizations);
 		if (ListUtil.isEmpty(multipleRequiredLocalizations)) {
 			return defaultValues;
 		}
-		
+
 		IWBundle bundle = getBundle(bundleIdentifier);
 		if (bundle == null) {
 			getLogger().warning("Bundle was not found by identifier: ".concat(bundleIdentifier));
 			return defaultValues;
 		}
-		
+
 		IWResourceBundle iwrb = getResourceBundle(bundle);
 		if (iwrb == null) {
 			getLogger().warning("Unable to resolve resource bundle from bundle: " + bundle);
 			return defaultValues;
 		}
-		
+
 		List<String> localizations = new ArrayList<String>(multipleRequiredLocalizations.size());
 		for (AdvancedProperty localizationRequest: multipleRequiredLocalizations) {
 			localizations.add(iwrb.getLocalizedString(localizationRequest.getId(), localizationRequest.getValue()));
 		}
 		return localizations;
 	}
-	
+
 	private List<String> getDefaultValues(List<AdvancedProperty> parameters) {
 		if (ListUtil.isEmpty(parameters)) {
 			return null;
 		}
-		
+
 		List<String> defaultValues = new ArrayList<String>(parameters.size());
 		for (AdvancedProperty parameter: parameters) {
 			defaultValues.add(parameter.getValue());
 		}
 		return defaultValues;
 	}
-	
+
     public boolean sendEmail(String from, String to, String subject, String message) {
     	if (StringUtil.isEmpty(subject) || StringUtil.isEmpty(message)) {
     		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
     		return false;
     	}
-    	
+
     	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
-    	
+
     	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "programmers@idega.com") : to;
     	if (StringUtil.isEmpty(to)) {
     		getLogger().warning("Receiver is unknown! Unable to send a message:\n" + message);
     		return false;
     	}
-    	
+
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
     	if (StringUtil.isEmpty(host)) {
     		getLogger().warning("Mail server host is unknown, unable to send a message:\n" + message);
     		return false;
     	}
-    	
+
     	String userName = "Not logged in";
     	IWContext iwc = CoreUtil.getIWContext();
     	if (iwc != null && iwc.isLoggedOn()) {
     		userName = iwc.getCurrentUser().getName();
     	}
     	message.concat("\nUser: ").concat(userName);
-    	
+
     	final String fromAddress = from;
     	final String toAddress = to;
     	final String hostName = host;
     	final String sbjct = subject;
     	final String msg = message;
     	Thread sender = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 		    		SendMail.send(fromAddress, toAddress, null, null, hostName, sbjct, msg);
@@ -113,10 +113,10 @@ public class WebUtil extends DefaultSpringBean {
 			}
 		});
     	sender.start();
-    	
+
     	return true;
     }
-    
+
     public boolean logOut() {
     	IWContext iwc = CoreUtil.getIWContext();
     	if (iwc == null) {
@@ -127,7 +127,7 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning("User is not logged in!");
     		return false;
     	}
-    	
+
     	LoginBusinessBean loginBusiness = null;
     	try {
     		loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwc.getRequest().getSession(false));
@@ -136,45 +136,51 @@ public class WebUtil extends DefaultSpringBean {
     	}
     	if (loginBusiness == null)
     		return false;
-    	
+
     	return loginBusiness.logOutUser(iwc);
     }
-    
+
     private Boolean latestNavigationUsed = Boolean.TRUE;
-    
+
     public Boolean isLatestNavigationUsed() {
     	latestNavigationUsed = getApplication().getSettings().getBoolean("html5_navigation", Boolean.FALSE);
     	return latestNavigationUsed;
     }
-    
+
     public Boolean isLoggedIn() {
     	IWContext iwc = CoreUtil.getIWContext();
     	if (iwc == null)
     		return Boolean.FALSE;
-    	
+
     	try {
     		return iwc.isLoggedOn();
     	} catch (Exception e) {
     		getLogger().log(Level.WARNING, "Error while checking if user is logged in", e);
     	}
-    	
+
     	return Boolean.FALSE;
     }
-    
+
+    public String getApplicationProperty(String name) {
+    	if (StringUtil.isEmpty(name))
+    		return null;
+
+    	return getApplication().getSettings().getProperty(name);
+    }
+
     public Boolean getBooleanApplicationProperty(String name, boolean defaultValue) {
     	if (StringUtil.isEmpty(name))
     		return false;
-    	
-    	IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
-    	return settings.getBoolean(name, defaultValue);
+
+    	return getApplication().getSettings().getBoolean(name, defaultValue);
     }
-    
+
     public String getAutoLoginUri(String personalId, String uri) {
     	if (!getApplication().getSettings().getBoolean("provide_auto_login", Boolean.FALSE)) {
     		getLogger().warning("Auto login URI can not be provided for a user by personal ID: " + personalId);
     		return null;
     	}
-    	
+
     	if (StringUtil.isEmpty(personalId)) {
     		getLogger().warning("Personal ID is not provided");
     		return null;
@@ -183,9 +189,9 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning("URI is not provided - can not construct auto login URI");
     		return null;
     	}
-    	
+
     	logOut();
-    	
+
     	User user = null;
     	UserBusiness userBusiness = getServiceInstance(UserBusiness.class);
     	try {
@@ -197,7 +203,7 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning("User was not found by provided personal ID: " + personalId);
     		return null;
     	}
-    	
+
     	URIUtil uriUtil = new URIUtil(uri);
     	String uniqueId = user.getUniqueId();
     	if (StringUtil.isEmpty(uniqueId)) {
@@ -207,7 +213,7 @@ public class WebUtil extends DefaultSpringBean {
     	}
     	uriUtil.setParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID, uniqueId);
     	uriUtil.setParameter(LoginBusinessBean.LoginStateParameter, LoginBusinessBean.LOGIN_EVENT_LOGIN);
-		
+
 		return uriUtil.getUri();
     }
 }
