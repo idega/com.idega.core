@@ -144,41 +144,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		return ENTITY_NAME;
 	}
 
-	// public String getNameOfMiddleTable(IDOLegacyEntity entity1,IDOLegacyEntity
-	// entity2){
-	// return "ic_group_user";
-	// }
 	public void setDefaultValues() {
 		// DO NOT USE setColumn
 		initializeColumnValue(COLUMN_GROUP_TYPE, getGroupTypeValue());
 		initializeColumnValue(COLUMN_CREATED, IWTimestamp.getTimestampRightNow());
 	}
 
-	// public void insertStartData(){
-	// try {
-	// GroupTypeHome tghome = (GroupTypeHome)IDOLookup.getHome(GroupType.class);
-	// try{
-	// GroupType type = tghome.findByPrimaryKey(getGroupTypeKey());
-	// } catch(FinderException e){
-	// e.printStackTrace();
-	// try {
-	// GroupType type = tghome.create();
-	// type.setType(getGroupTypeKey());
-	// type.setDescription(getGroupTypeDescription());
-	// type.store();
-	// }
-	// catch (Exception ex) {
-	// ex.printStackTrace();
-	// }
-	// }
-	// }
-	// catch (RemoteException rmi){
-	// throw new EJBException(rmi);
-	// }
-	// }
-	// protected boolean doInsertInCreate(){
-	// return true;
-	// }
 	/**
 	 * overwrite in extended classes
 	 */
@@ -241,13 +212,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		// try {
 		// was going to the database everytime!! I kill you tryggvi/gummi (eiki)
 
-		// return (String) ((GroupType)
-		// getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
 		return getStringColumnValue(getGroupTypeColumnName());
-
-		// } catch (RemoteException ex) {
-		// throw new EJBException(ex);
-		// }
 	}
 
 	public GroupType getGroupTypeEntity() {
@@ -546,7 +511,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public Collection ejbFindGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException {
-		// String groupTypeValue = null;
 		String notString = null;
 		IDOQuery query = idoQuery();
 		query.append("select * from " + this.getEntityName() + " where " + GroupBMPBean.getNameColumnName() + " = '" + name + "' and " + GroupBMPBean.getGroupTypeColumnName());
@@ -637,7 +601,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.addOrder(groupTable, COLUMN_NAME, true);
 				
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
-		// return idoFindPKsBySQL(query.toString());
 	}
 
 	public Collection ejbFindGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
@@ -663,7 +626,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.addOrder(idoQueryTable(), GroupBMPBean.COLUMN_NAME, true);
 
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
-		// return idoFindPKsBySQL(query.toString());
 	}
 
 	/**
@@ -692,7 +654,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.addOrder(groupTable, COLUMN_NAME, true);
 
 		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query, (GenericEntity) groupTypeProxy, groupTypeProxy.getSelectQueryConstraints(), PREFETCH_SIZE);
-		// return idoFindPKsBySQL(query.toString());
 	}
 
 	public Collection ejbFindGroupsContainedOld(Group containingGroup, Group groupTypeProxy) throws FinderException {
@@ -706,7 +667,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.addOrder(idoQueryTable(), COLUMN_NAME, true);
 
 		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query, (GenericEntity) groupTypeProxy, groupTypeProxy.getSelectQueryConstraints(), PREFETCH_SIZE);
-		// return idoFindPKsBySQL(query.toString());
 	}
 
 	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
@@ -736,17 +696,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	public int ejbHomeGetNumberOfVisibleGroupsContained(Group containingGroup) throws FinderException, IDOException {
-		//String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
-		//String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
-
-		/*IDOQuery query = idoQuery();
-		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
-		
-		query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
-		query.appendIn(visibleGroupTypes);
-		query.appendAnd();
-		query.append(GroupBMPBean.COLUMN_GROUP_ID);
-		query.appendIn(relatedSQL);*/
 		StringBuffer query = new StringBuffer("select count(g.");
 		query.append(this.getIDColumnName());
 		query.append(") from ");
@@ -754,8 +703,6 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		query.append(" g, ic_group_type t, ic_group_relation r where g.group_type = t.group_type and t.is_visible != 'N' and g.ic_group_id = r.related_ic_group_id and r.ic_group_id =");
 		query.append(((Integer) containingGroup.getPrimaryKey()).intValue());
 		query.append(" and r.relationship_type = 'GROUP_PARENT' and (r.group_relation_status = 'ST_ACTIVE' or r.group_relation_status = 'PASS_PENDING')");
-		
-		//System.out.println("sql = " + query.toString());
 		
 		return this.idoGetNumberOfRecords(query.toString());
 
@@ -780,8 +727,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.append(GroupBMPBean.COLUMN_GROUP_ID);
 			query.appendIn(relationsSQL);
 			query.appendOrderBy(GroupBMPBean.COLUMN_NAME);
-			// System.out.println("[GroupBMPBean](ejbFindGroupsContained):
-			// "+query.toString());
+
 			return this.idoFindPKsBySQL(query.toString());
 		}
 		else {
@@ -807,8 +753,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			query.appendAnd();
 			query.append(GroupBMPBean.COLUMN_GROUP_ID);
 			query.appendIn(relationsSQL);
-			// System.out.println("[GroupBMPBean](ejbHomeGetNumberOfGroupsContained):
-			// "+query.toString());
+
 			return this.idoGetNumberOfRecords(query.toString());
 		}
 		else {

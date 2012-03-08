@@ -254,10 +254,10 @@ public class Table extends PresentationObjectContainer implements TableType{
 				}
 				getCellAt(xpos,ypos).add(comp);
 				comp.setParent(this);
-				/*if(comp instanceof PresentationObject){
+				if(comp instanceof PresentationObject){
 					PresentationObject pObject = (PresentationObject)comp;
 					pObject.setLocation(this.getLocation());
-				}*/
+				}
 			}
 			catch (Exception ex) {
 				add(new ExceptionWrapper(ex, this));

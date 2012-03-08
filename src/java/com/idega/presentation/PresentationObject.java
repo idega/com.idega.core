@@ -12,6 +12,7 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -1562,23 +1563,18 @@ public class PresentationObject
 	 *           if the context is not set
 	 */
 	protected IWUserContext getIWUserContext() {
-		//if (_iwuc == null)
-		//{
-		//	setIWUserContext(IWContext.getInstance());
-		//}
-		//return _iwuc;
 		return IWContext.getInstance();
 	}
 
-	//protected void setIWUserContext(IWUserContext iwuc)
-	//{
-	//	_iwuc = iwuc;
-	//}
 	public void setLocation(IWLocation location) {
 		this.setLocation(location, this.getIWUserContext());
 	}
 
 	public void setLocation(IWLocation location, IWUserContext iwuc) {
+		this.setLocation(location, iwuc, null);
+	}
+
+	public void setLocation(IWLocation location, IWUserContext iwuc, List parents) {
 		this._location = location;
 		if (this instanceof StatefullPresentation) {
 			IWPresentationState state = ((StatefullPresentation) this).getPresentationState(iwuc);
