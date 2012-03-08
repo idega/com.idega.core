@@ -9,6 +9,7 @@
  */
 package com.idega.util;
 
+import java.io.InputStream;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -23,6 +24,8 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
+import java.io.ByteArrayInputStream;
+import java.io.BufferedInputStream;
 
 /**
  * This class has utility methods to work with strings. <br>
@@ -1168,5 +1171,18 @@ public class StringHandler {
 			}
 		}
 		return regularExpression.toString();
+	}
+	
+	/**
+	 * Returns UTF-8 encoded stream
+	 * @param content
+	 * @return
+	 * @throws Exception
+	 */
+	public static InputStream getStreamFromString(String content) throws Exception {
+		if (content == null) {
+			return null;
+		}
+		return new BufferedInputStream(new ByteArrayInputStream(content.getBytes(CoreConstants.ENCODING_UTF8)));
 	}
 }
