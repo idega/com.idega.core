@@ -41,7 +41,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 
 	private static final String stateMapKey = "iw_global_state_map";
 
-	private int _historyID = 0;
+	//private int _historyID = 0;
 
 	/**
 	 * 
@@ -54,7 +54,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	private Map _userStatesMap;
 
 	public void setHistoryID(int historyId) {
-		this._historyID = historyId;
+		//this._historyID = historyId;
 	}
 
 	public void newState() {
@@ -62,7 +62,7 @@ public class IWStateMachineBean extends IBOSessionBean implements IWStateMachine
 	}
 
 	public void increaseHistoryID() {
-		this._historyID++;
+		//this._historyID++;
 	}
 
 	//  public IWPresentationState getStateFor(ICObjectInstance instance){

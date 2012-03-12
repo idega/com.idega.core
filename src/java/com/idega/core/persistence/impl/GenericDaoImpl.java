@@ -39,71 +39,60 @@ public class GenericDaoImpl implements GenericDao {
 		this.entityManager = entityManager;
 	}
 
-	@Override
 	@Transactional(readOnly = false)
 	public void persist(Object product) {
 		entityManager.persist(product);
 	}
 
-	@Override
 	@Transactional(readOnly = false)
 	public <T> T merge(T product) {
 
 		return entityManager.merge(product);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public void refresh(Object product) {
 		entityManager.refresh(product);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <T> T getReference(Class<T> clazz, Object primaryKey) {
 		return entityManager.getReference(clazz, primaryKey);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <T> T find(Class<T> clazz, Object primaryKey) {
 
 		return entityManager.find(clazz, primaryKey);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public Query createNamedQuery(String queryName) {
 		return entityManager.createNamedQuery(queryName);
 	}
 
-	@Override
 	@Transactional(readOnly = false)
 	public void remove(Object obj) {
 
 		entityManager.remove(obj);
 	}
 
-	@Override
 	@Transactional(readOnly = false)
 	public void mergeRemove(Object obj) {
 
 		entityManager.remove(entityManager.merge(obj));
 	}
 
-	@Override
 	public boolean contains(Object obj) {
 
 		return getEntityManager().contains(obj);
 	}
 
-	@Override
 	@Transactional(readOnly = false)
 	public void flush() {
 		entityManager.flush();
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResultByInlineQuery(String query,
 	        Class<Expected> expectedReturnType, Param... params) {
@@ -112,7 +101,6 @@ public class GenericDaoImpl implements GenericDao {
 		        .getSingleResult(expectedReturnType, params);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName,
 	        Class<Expected> expectedReturnType, Param... params) {
@@ -129,7 +117,6 @@ public class GenericDaoImpl implements GenericDao {
 	 * 		com.idega.core.persistence.Param[]
 	 * )
 	 */
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineQuery(
 			String query,
@@ -152,9 +139,7 @@ public class GenericDaoImpl implements GenericDao {
 		}
 	}
 
-	@Override
 	public com.idega.core.persistence.Query getQueryNativeInline(String query) {
-
 		return createNewQueryNativeInline(query);
 	}
 
@@ -164,19 +149,16 @@ public class GenericDaoImpl implements GenericDao {
 	 * 		java.lang.String
 	 * )
 	 */
-	@Override
 	public com.idega.core.persistence.Query getQueryInline(String query) {
 
 		return createNewQueryInline(query);
 	}
 
-	@Override
 	public com.idega.core.persistence.Query getQueryNamed(String queryName) {
 
 		return createNewQueryNamed(queryName);
 	}
 
-	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
 		boolean measure = CoreUtil.isSQLMeasurementOn();

@@ -95,6 +95,9 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleURIsToMooToolsLib(String version, boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
 	public List<String> getBundleURIsToMooToolsLib(boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
 	public List<String> getBundleURIsToMooToolsLib();
+	
+	public String getBundleURIToKnockoutLib(String knockoutVersion) throws RemoteException;
+	public String getBundleURIToKnockoutLib() throws RemoteException;
 
 	/**
 	 * @deprecated use getJQuery().getBundleURIToJQueryLib

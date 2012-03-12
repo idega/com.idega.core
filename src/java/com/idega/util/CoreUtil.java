@@ -180,7 +180,6 @@ public class CoreUtil {
 		final String server = serverName;
 		final String requestedUri = requestUri;
 		Thread sender = new Thread(new Runnable() {
-			@Override
 			public void run() {
 				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 				String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
