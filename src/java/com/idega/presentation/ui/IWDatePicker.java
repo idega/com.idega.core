@@ -40,7 +40,7 @@ public class IWDatePicker extends TextInput {
 	private Date minDate = null;
 
 	private boolean dateRange = false;
-	private String yearRange = "c-10:c+10";
+	private String yearRange = null;
 	private boolean useCurrentDateIfNotSet = true;
 	private boolean showCalendarImage = true;
 
@@ -216,7 +216,11 @@ public class IWDatePicker extends TextInput {
 				.append(iwDate.getMonth() - 1).append(", ").append(iwDate.getDay()).append(")").toString());
 
 		// Show month/year select
-		initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear()).append(", yearRange: ").append("'" + getYearRange() + "'");
+		initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear());
+
+		if (getYearRange() != null) {
+			initAction.append(", yearRange: ").append("'" + getYearRange() + "'");
+		}
 
 		// Max date
 		if (getMaxDate() != null) {
