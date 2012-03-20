@@ -16,6 +16,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public User findByPersonalID(String p0)throws javax.ejb.FinderException;
  public Collection<User> findAllByPersonalID(String p0)throws javax.ejb.FinderException;
  public User findByDateOfBirthAndName(java.sql.Date p0, String p1)throws javax.ejb.FinderException;
+ public Collection<User> findByDateOfBirth(java.sql.Date p0)throws javax.ejb.FinderException;
  public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(String p0,String p1, String p2)throws javax.ejb.FinderException;
  public User findUserForUserGroup(int p0)throws javax.ejb.FinderException;
  public Collection<User> findAllUsersWithDuplicatedEmails()throws javax.ejb.FinderException;

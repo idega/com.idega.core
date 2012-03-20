@@ -40,6 +40,14 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	public Collection findByDateOfBirth(java.sql.Date p0)
+			throws javax.ejb.FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection ids = ((UserBMPBean) entity).ejbFindByDateOfBirth(p0);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
 	public User findUserByUniqueId(String uniqueIdString)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
