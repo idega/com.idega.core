@@ -35,6 +35,11 @@ version="1.2">
 	      <property-class>java.lang.String</property-class>
 	    </property>
 	    <property>
+	      <display-name>Title</display-name>
+	      <property-name>title</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
 	      <display-name>Style class</display-name>
 	      <property-name>styleClass</property-name>
 	      <property-class>java.lang.String</property-class>
