@@ -19,6 +19,7 @@ import com.idega.io.DownloadWriter;
 import com.idega.io.MediaWritable;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.presentation.Span;
 import com.idega.util.StringUtil;
 
 /**
@@ -31,6 +32,7 @@ public class DownloadLink extends Link {
 	
 	public static final String DOWNLOAD_WRITER_PROPERTY = "downloadWriter";
 	public static final String LINK_TEXT = "value";
+	public static final String STYLE_CLASS = "styleClass";
     
     private Class<? extends MediaWritable> writerClass = null;
     
@@ -95,12 +97,17 @@ public class DownloadLink extends Link {
 	public void encodeBegin(FacesContext context) throws IOException { 
     	Class<? extends MediaWritable> mediaWriterClass = getMediaWriter(context);
     	String text = getValue(context);
+    	String styleClass = getStyleClass(context);
 
     	if(mediaWriterClass != null)
     		setMediaWriterClass(mediaWriterClass);
     	
     	if (!StringUtil.isEmpty(text)) {
-    		setText(text);
+    		setPresentationObject(new Span(new Text(text)));
+    	}
+    	
+    	if (styleClass != null) {
+    		setStyleClass(styleClass);
     	}
     	
     	super.encodeBegin(context);
@@ -139,6 +146,15 @@ public class DownloadLink extends Link {
     	ValueExpression textExpression = getValueExpression(LINK_TEXT);
     	
     	String text = textExpression == null ? (String) context.getExternalContext().getRequestParameterMap().get(LINK_TEXT) :
+    		textExpression.getValue(context.getELContext()).toString();
+    	
+		return text;
+	}
+    
+    private String getStyleClass(FacesContext context) {
+    	ValueExpression textExpression = getValueExpression(STYLE_CLASS);
+    	
+    	String text = textExpression == null ? (String) context.getExternalContext().getRequestParameterMap().get(STYLE_CLASS) :
     		textExpression.getValue(context.getELContext()).toString();
     	
 		return text;
