@@ -61,6 +61,10 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf",
 	public static final String MIME_TYPE_CATEGORY_VECTOR = "vector";
 	public static final String MIME_TYPE_CATEGORY_VIDEO = "video";
 	public static final String MIME_TYPE_CATEGORY_FOLDER = "folder";
+	public static final String MIME_TYPE_ZIP = "application/zip";
+	public static final String MIME_TYPE_HTML = "text/html";
+	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
+	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
 	
 	//folders
 	private String[] folder = {"application/vnd.iw-folder"};

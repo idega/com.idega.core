@@ -644,9 +644,9 @@
       </properties>
     </dependency>
     <dependency>
-      <groupId>javamail</groupId>
-      <artifactId>javamail</artifactId>
-      <version>1.3.2</version>
+      <groupId>javax.mail</groupId>
+      <artifactId>mail</artifactId>
+      <version>1.4.1</version>
       <type>jar</type>
       <url>http://java.sun.com/products/javamail/</url>
       <properties>

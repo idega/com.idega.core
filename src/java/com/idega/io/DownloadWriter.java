@@ -21,7 +21,9 @@ import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
+import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
 
 /**
@@ -72,7 +74,7 @@ public class DownloadWriter implements MediaWritable {
 				ICFileSystem fsystem = ICFileSystemFactory.getFileSystem(iwc);
 				String fileURL = fsystem.getFileURI(Integer.valueOf(fileId).intValue());
 				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
-				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
+				this.icFile = getFileHome().findByPrimaryKey(Integer.valueOf(fileId));
 				//setAsDownload(iwc,icFile.getName(),icFile.getFileSize().intValue());
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
@@ -142,8 +144,10 @@ public class DownloadWriter implements MediaWritable {
 		else if (this.icFile != null) {
 			BufferedInputStream fis = new BufferedInputStream(this.icFile.getFileValue());
 			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			while (fis.available() > 0) {
-				baos.write(fis.read());
+			byte buffer[] = new byte[65535];
+			int bytesRead;
+			while ((bytesRead = fis.read(buffer)) >= 0) {
+				baos.write(buffer, 0, bytesRead);
 			}
 			baos.writeTo(out);
 			baos.flush();
@@ -172,5 +176,13 @@ public class DownloadWriter implements MediaWritable {
 		if (fileLength > 0) {
 			iwc.getResponse().setContentLength(fileLength);
 		}
+	}
+	
+	protected ICFileHome getFileHome() throws IDOLookupException{
+		return (ICFileHome) IDOLookup.getHome(getIcFileEntityClass());
+	}
+	
+	protected Class getIcFileEntityClass(){
+		return ICFile.class;
 	}
 }

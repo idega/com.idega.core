@@ -39,7 +39,7 @@ public class FileItem implements RepositoryItem {
 
 	public long getLength() {
 		if(icFile != null){
-			icFile.getFileSize();
+			return icFile.getFileSize().intValue();
 		}
 		return file.length();
 	}

@@ -35,6 +35,7 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
+import java.util.zip.ZipException;
 import java.util.zip.ZipOutputStream;
 
 import com.idega.core.file.data.ICFile;
@@ -1045,7 +1046,8 @@ public class FileUtil {
 			  ICFile file = (ICFile)iter.next();
 			  files.add(new FileItem(file));
 		  }
-		  return getZippedFiles(files, fileName, true);
+		  //ICFiles probably should not be deleted
+		  return getZippedFiles(files, fileName, false);
 	  }
 	  
 	  public static final File getZippedItems(Collection itemsToZip, String fileName) throws IOException {
