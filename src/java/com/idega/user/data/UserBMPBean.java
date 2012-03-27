@@ -1085,6 +1085,13 @@ public void delete() throws SQLException {
 
 		return idoFindOnePKByQuery(query);
 	}
+	
+	public Collection ejbFindByDateOfBirth(Date dateOfBirth) throws FinderException {
+	    SelectQuery query = idoSelectQuery();
+			query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_DATE_OF_BIRTH, MatchCriteria.EQUALS, dateOfBirth));
+			
+		return idoFindPKsByQuery(query);
+	}
 
 	public void removeGroup(int p0, boolean p1) throws javax.ejb.EJBException {
 		/**@todo: Implement this com.idega.user.data.Group method*/

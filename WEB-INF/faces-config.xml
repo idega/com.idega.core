@@ -29,6 +29,21 @@ version="1.2">
 	      <property-name>downloadWriter</property-name>
 	      <property-class>java.lang.Class</property-class>
 	    </property>
+	    <property>
+	      <display-name>Link text</display-name>
+	      <property-name>value</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Title</display-name>
+	      <property-name>title</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Style class</display-name>
+	      <property-name>styleClass</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
 	</component>
 	
 	<component>

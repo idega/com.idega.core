@@ -109,6 +109,11 @@
 			<rtexprvalue>false</rtexprvalue>
         </attribute>
         <attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+        <attribute>
 			<name>styleClass</name>
 			<required>false</required>
 			<rtexprvalue>false</rtexprvalue>

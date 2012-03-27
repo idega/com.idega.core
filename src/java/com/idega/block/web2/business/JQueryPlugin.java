@@ -56,6 +56,12 @@ public enum JQueryPlugin {
 			return ".tablesorter.pager.js";
 		}
 	},
+	TABLE_SORTER_WIDGETS {
+		@Override
+		public String getFileName() {
+			return ".tablesorter.widgets.js";
+		}
+	},
 	TEXT_AREA_RESIZER {
 		@Override
 		public String getFileName() {
