@@ -963,7 +963,7 @@ public static String getFileSeparator(){
 	  for (ICFile file : filesToZip) {
 		  files.add(new FileItem(file));
 	  }
-	  return getZippedFiles(files, fileName, true);
+	  return getZippedFiles(files, fileName, false);
   }
   
   public static void copyDirectoryRecursivelyKeepTimestamps(File inputDirectory,File outputDirectory) throws IOException {
