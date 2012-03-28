@@ -23,6 +23,7 @@ import com.idega.idegaweb.include.RSSLink;
 import com.idega.idegaweb.include.StyleSheetLink;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
+import com.idega.util.PresentationUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -43,9 +44,8 @@ public class ResourcesAdder extends DefaultAddResource {
 	public void addJavaScriptAtPosition(FacesContext context, ResourcePosition position, String uri) {
 		List<JavaScriptLink> javaScriptResources = getJavaScriptResources();
 
-		if (containsResource(javaScriptResources, uri)) {
+		if (containsResource(javaScriptResources, uri))
 			return;
-		}
 
 		javaScriptResources.add(new JavaScriptLink(uri));
 	}
@@ -54,9 +54,8 @@ public class ResourcesAdder extends DefaultAddResource {
 	public void addStyleSheet(FacesContext context, ResourcePosition position, String uri) {
 		List<StyleSheetLink> cssFiles = getCSSFiles();
 
-		if (containsResource(cssFiles, uri)) {
+		if (containsResource(cssFiles, uri))
 			return;
-		}
 
 		cssFiles.add(new StyleSheetLink(uri, getMediaMap().get(uri)));
 	}
@@ -65,9 +64,8 @@ public class ResourcesAdder extends DefaultAddResource {
 	public void addInlineScriptAtPosition(FacesContext context, ResourcePosition position, String inlineScript) {
 		List<JavaScriptLink> javaScriptActions = getJavaScriptActions();
 
-		if (containsResource(javaScriptActions, inlineScript)) {
+		if (containsResource(javaScriptActions, inlineScript))
 			return;
-		}
 
 		JavaScriptLink action = new JavaScriptLink();
 		action.addAction(inlineScript);
@@ -75,14 +73,12 @@ public class ResourcesAdder extends DefaultAddResource {
 	}
 
 	private boolean containsResource(List<? extends ExternalLink> resources, String uri) {
-		if (ListUtil.isEmpty(resources) || StringUtil.isEmpty(uri)) {
+		if (ListUtil.isEmpty(resources) || StringUtil.isEmpty(uri))
 			return false;
-		}
 
 		for (ExternalLink resource: resources) {
-			if (uri.equals(resource.getUrl())) {
+			if (uri.equals(resource.getUrl()))
 				return true;
-			}
 		}
 
 		return false;
@@ -166,9 +162,9 @@ public class ResourcesAdder extends DefaultAddResource {
 	}
 
 	private void manageHeader(String serverName) {
-		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles()) && ListUtil.isEmpty(getFeedResources())) {
+		if (ListUtil.isEmpty(getJavaScriptActions()) && ListUtil.isEmpty(getJavaScriptResources()) && ListUtil.isEmpty(getCSSFiles()) &&
+				ListUtil.isEmpty(getFeedResources()))
 			return;
-		}
 
 		boolean useOptimizer = useOptimizer(OPTIMIZE_RESOURCES, Boolean.TRUE);
 		FacesContext facesContext = FacesContext.getCurrentInstance();
@@ -178,7 +174,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			addResources(facesContext, getCSSFiles(), FILE_TYPE_CSS, serverName);
 		} else {
 			for (StyleSheetLink css: getCSSFiles()) {
-				super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, css.getUrl());
+				super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, PresentationUtil.getFixedUrl(css.getUrl()));
 			}
 		}
 
@@ -187,7 +183,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			addResources(facesContext, getJavaScriptResources(), FILE_TYPE_JAVA_SCRIPT, serverName);
 		} else {
 			for (JavaScriptLink script: getJavaScriptResources()) {
-				super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, script.getUrl());
+				super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, PresentationUtil.getFixedUrl(script.getUrl()));
 			}
 		}
 
@@ -201,23 +197,21 @@ public class ResourcesAdder extends DefaultAddResource {
 
 	@SuppressWarnings("unchecked")
 	private void addResources(FacesContext facesContext, List<? extends ExternalLink> resources, String fileType, String serverName) {
-		if (ListUtil.isEmpty(resources)) {
+		if (ListUtil.isEmpty(resources))
 			return;
-		}
 
 		ResourcesManager resourcesManager = getResourcesManager();
-		if (resources == null) {
+		if (resources == null)
 			return;
-		}
 
 		String concatenatedResourcesUri = resourcesManager.getConcatenatedResources(resources, fileType, serverName);
 		if (!ListUtil.isEmpty(resources)) {
 			//	Restoring original resources
 			for (final ExternalLink link: resources) {
 				if (link instanceof JavaScriptLink) {
-					super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, link.getUrl());
+					super.addJavaScriptAtPosition(facesContext, AddResource.BODY_END, PresentationUtil.getFixedUrl(link.getUrl()));
 				} else if (link instanceof StyleSheetLink) {
-					super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, link.getUrl());
+					super.addStyleSheet(facesContext, AddResource.HEADER_BEGIN, PresentationUtil.getFixedUrl(link.getUrl()));
 				}
 			}
 		}
@@ -260,6 +254,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			this.feed = feed;
 		}
 
+		@Override
 		public void writePositionedInfo(HttpServletResponse response, ResponseWriter writer) throws IOException {
 			writer.startElement(HTML.LINK_ELEM, null);
 			writer.writeAttribute(HTML.REL_ATTR, StringUtil.isEmpty(feed.getRelationship()) ? "alternate" : feed.getRelationship(), null);

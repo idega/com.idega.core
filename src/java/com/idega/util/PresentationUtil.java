@@ -32,11 +32,11 @@ public class PresentationUtil {
 		return true;
 	}
 
-	private static final String getFixedUrl(String url) {
+	public static final String getFixedUrl(String url) {
 		if (StringUtil.isEmpty(url))
 			return url;
 
-		if (url.contains(CoreConstants.SEMICOLON))
+		if (url.indexOf(CoreConstants.SEMICOLON) != -1)
 			url = url.split(CoreConstants.SEMICOLON)[0];
 
 		return url;
