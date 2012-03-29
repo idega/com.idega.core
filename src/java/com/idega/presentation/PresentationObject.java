@@ -1571,6 +1571,10 @@ public class PresentationObject
 	}
 
 	public void setLocation(IWLocation location, IWUserContext iwuc) {
+		this.setLocation(location, iwuc, null);
+	}
+	
+	public void setLocation(IWLocation location, IWUserContext iwuc, List parents) {
 		this._location = location;
 		if (this instanceof StatefullPresentation) {
 			IWPresentationState state = ((StatefullPresentation) this).getPresentationState(iwuc);

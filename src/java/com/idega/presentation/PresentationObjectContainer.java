@@ -758,6 +758,38 @@ public class PresentationObjectContainer extends PresentationObject {
 	}
 
 	
+	public void setLocation(IWLocation location, IWUserContext iwuc,
+			List parents) {
+		super.setLocation(location, iwuc, parents);
+
+		if (parents == null) {
+			parents = new ArrayList();
+		}
+		parents.add(this);
+
+		Iterator iter = this.getFacetsAndChildren();
+		while (iter.hasNext()) {
+			Object item = iter.next();
+			// handling concurrent exception
+			if (item == null) {
+				break;
+			}
+			if (parents.contains(item)) {
+				continue;
+			}
+			if (item instanceof PresentationObject) {
+				((PresentationObject) item).setLocation(location, iwuc, parents);
+			}
+			if (item instanceof StatefullPresentation) {
+				IWPresentationState state = ((StatefullPresentation) item)
+						.getPresentationState(iwuc);
+				if (state != null) {
+					state.setLocation(location);
+				}
+			}
+		}
+	}
+
 	/*
 	 * Overrided methods from JSF's UIComponent:
 	 */
