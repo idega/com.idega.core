@@ -2383,7 +2383,6 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		return values;
 	}
 
-	@Override
 	public List<PropertyDescription> getPropertyDescriptions() {
 		List<PropertyDescription> list = new ArrayList<PropertyDescription>();
 		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1", File.class.getName(), FileObjectReader.class.getName(),
