@@ -121,6 +121,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".autogrowtextarea.js";
 		}
+	},
+	HIGHCHARTS {
+		@Override
+		public String getFileName() {
+			return ".highcharts.js";
+		}
 	};
 
 	public abstract String getFileName();
