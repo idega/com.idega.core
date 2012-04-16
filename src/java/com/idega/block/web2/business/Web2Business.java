@@ -435,6 +435,7 @@ public interface Web2Business extends IBOService {
 	//	TinyMCE
 	public List<String> getScriptsForTinyMCE();
 	public List<String> getScriptsForTinyMCE(String version);
+	public List<String> getBundleUrisToTinyMceScriptFiles(String version, List<String> files);
 
 	//	JCaptcha
 	public boolean validateJCaptcha(String sessionId, String userCaptchaResponse);
