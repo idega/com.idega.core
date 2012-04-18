@@ -84,7 +84,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * 
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
-	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		if (directory != null) {
@@ -99,7 +98,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
-	@Override
 	public void doFilter(ServletRequest sreq, ServletResponse sres, FilterChain chain) throws IOException, ServletException {
 
 		HttpServletRequest request = (HttpServletRequest) sreq;
@@ -466,7 +464,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * 
 	 * @see javax.servlet.Filter#destroy()
 	 */
-	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 	}
