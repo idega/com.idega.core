@@ -690,6 +690,19 @@ function isEnterEvent(event) {
 	return false;
 }
 
+function isNumberEntered(event) {
+	if (event == null)
+		return false;
+		
+	var code = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	
+	//	Backspace or delete
+	if (code == 8 || code == 46)
+		return true;
+		
+	return code >= 96 && code <= 105
+}
+
 function isSafariBrowser() {
 	if (navigator == null) {
 		return false;
@@ -1957,9 +1970,8 @@ IWCORE.getSelectedFromAdvancedProperties = function(handlerUsers) {
 }
 
 IWCORE.isNumericValue = function(value) {
-	if (value == null || value.length == 0) {
+	if (value == null || value.length == 0)
 		return false;
-	}
 	
 	var validChars = '0123456789';
 	var isNumber = true;
