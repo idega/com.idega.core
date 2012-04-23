@@ -700,7 +700,11 @@ function isNumberEntered(event) {
 	if (code == 8 || code == 46)
 		return true;
 		
-	return code >= 96 && code <= 105
+	if (code >= 96 && code <= 105)
+		return true;
+	
+	var value = String.fromCharCode(code);
+	return IWCORE.isNumericValue(value);
 }
 
 function isSafariBrowser() {
