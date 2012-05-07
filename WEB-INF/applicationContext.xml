@@ -52,4 +52,6 @@
   
   <bean id="genericDao" class="com.idega.core.persistence.impl.GenericDaoImpl" />
   
+  <bean id="repositoryHelper" class="com.idega.core.content.RepositoryHelper" scope="singleton" />
+  
 </beans>

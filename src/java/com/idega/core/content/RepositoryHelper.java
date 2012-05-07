@@ -3,6 +3,7 @@ package com.idega.core.content;
 import java.io.IOException;
 import java.io.InputStream;
 import java.rmi.RemoteException;
+import java.sql.Date;
 import java.util.StringTokenizer;
 
 import javax.jcr.ItemExistsException;
@@ -12,53 +13,51 @@ import javax.jcr.RepositoryException;
 import javax.jcr.Session;
 import javax.jcr.ValueFormatException;
 
-import org.springframework.context.annotation.Scope;
-import org.springframework.stereotype.Service;
-
+import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
 
-@Scope("singleton")
-@Service(RepositoryHelper.SPRING_BEAN_IDENTIFIER)
+@SpringBeanName(RepositoryHelper.SPRING_BEAN_IDENTIFIER)
 public class RepositoryHelper {
 
-
-	public static final String SPRING_BEAN_IDENTIFIER="repositoryHelper";
-	
 	public static String NODE_TYPE_FOLDER="nt:folder";
 	public static String NODE_TYPE_FILE="nt:file";
 	public static String NODE_TYPE_UNSTRUCTURED="nt:unstructured";
-	
+
 	public static String NODE_CONTENT="jcr:content";
-	
+
 	public static String PROPERTY_BINARY_DATA="jcr:data";
-	
+
 	public static String PATH_FILES=CoreConstants.PATH_FILES_ROOT;
 	public static String PATH_CMS=CoreConstants.CONTENT_PATH;
-	
-	public static final String SLASH="/";
-	
-	public RepositoryHelper(){}
-	
+
+	public static final String SLASH = CoreConstants.SLASH;
+
+	public static final String SPRING_BEAN_IDENTIFIER = "repositoryHelper";
+
+	public RepositoryHelper() {
+		System.out.println("Initialized "+getClass().getName()+" @ " + new Date(System.currentTimeMillis()));
+	}
+
 	public Node createFolder(Session session,String absolutePath) throws RepositoryException{
 		return session.getRootNode().addNode(absolutePath,NODE_TYPE_FOLDER);
 	}
-	
+
 	public Node createFile(Session session,String absolutePath) throws RepositoryException{
 		return session.getRootNode().addNode(absolutePath,NODE_TYPE_FILE);
 	}
-	
+
 	public Node getFolder(Session session,String absolutePath) throws RepositoryException{
 		return session.getRootNode().getNode(absolutePath);
 	}
-	
+
 	public Node getFile(Session session,String absolutePath) throws RepositoryException{
 		return session.getRootNode().getNode(absolutePath);
 	}
-	
+
 	public Node updateFileContents(Session session,String absolutePath,InputStream fileContents) throws RepositoryException{
 		return updateFileContents(session,absolutePath,fileContents,true);
 	}
-	
+
 	public Node updateFileContents(Session session,String absolutePath,InputStream fileContents,boolean createFile) throws RepositoryException{
 		Node fileNode=null;
 		try{
@@ -78,7 +77,7 @@ public class RepositoryHelper {
 		contentNode.getProperty(PROPERTY_BINARY_DATA).setValue(fileContents);
 		return fileNode;
 	}
-	
+
 	public InputStream getFileContents(Session session,String absolutePath) throws RepositoryException{
 		Node fileNode = getFile(session, absolutePath);
 		return getFileContents(fileNode);
@@ -90,34 +89,34 @@ public class RepositoryHelper {
 		Node contentNode = fileNode.getNode(NODE_CONTENT);
 		return contentNode.getProperty(PROPERTY_BINARY_DATA).getStream();
 	}
-	
+
 	/**
 	 * <p>
 	 * This article returns the standard root or 'baseFolderPath' for files in the repository.<br/>
 	 * By default this is /files
 	 * </p>
 	 * @return
-	 * @throws RepositoryException 
+	 * @throws RepositoryException
 	 */
 	public Node getFilesFolder(Session session) throws RepositoryException{
 		return getFolder(session, CoreConstants.PATH_FILES_ROOT);
 	}
-	
+
 	/**
 	 * <p>
 	 * This article returns the standard root or 'baseFolderPath' for content in the cms system.<br/>
 	 * By default this is /files/cms
 	 * </p>
 	 * @return
-	 * @throws RepositoryException 
+	 * @throws RepositoryException
 	 */
 	public Node getContentBaseFolder(Session session) throws RepositoryException{
 		return getFolder(session, CoreConstants.CONTENT_PATH);
 	}
-	
+
 	/**
-	 * Creates all the folders in path 
-	 * @param path Path with all the folders to create. 
+	 * Creates all the folders in path
+	 * @param path Path with all the folders to create.
 	 * Should hold all the folders after Server URI (Typically /cms/content/)
 	 * @throws HttpException
 	 * @throws RemoteException
@@ -148,9 +147,9 @@ public class RepositoryHelper {
 			}
 		}
 		return hadToCreate;
-		
+
 	}
-	
+
 	public boolean getExistence(Session session,String path) throws RepositoryException, IOException{
 		if(path==null){
 			return false;
@@ -166,13 +165,5 @@ public class RepositoryHelper {
 		}
 		return false;
 	}
-	/*
-	public Node getRootNodeAuthenticatedAsRoot(){
-		
-	}
-	
-	public Session getRootUserSession(){
-		
-	}*/
-	
+
 }
