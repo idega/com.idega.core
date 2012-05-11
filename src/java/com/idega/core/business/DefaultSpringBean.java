@@ -12,6 +12,7 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -29,7 +30,7 @@ import com.idega.util.expression.ELUtil;
 
 /**
  * Common methods most often needed in Spring beans
- * 
+ *
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
  * @version $Revision: 1.0 $
  *
@@ -39,18 +40,18 @@ public abstract class DefaultSpringBean {
 
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
 	private static Logger LOGGER_;
-	
+
 	protected Logger getLogger() {
 		return getLogger(getClass());
 	}
-		
+
 	protected static Logger getLogger(Class<?> theClass) {
 		if (LOGGER_ == null) {
 			LOGGER_ = Logger.getLogger(theClass.getName());
 		}
 		return LOGGER_;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionBeanClass) {
 		try {
@@ -60,13 +61,13 @@ public abstract class DefaultSpringBean {
 		}
 		return null;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOService> T getServiceInstance(Class<? extends IBOService> serviceBeanClass) {
 		//	Casting is needed to avoid stupid compilation error in Maven 2
 		return (T) getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), serviceBeanClass);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T extends IBOService> T getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> serviceBeanClass) {
 		try {
@@ -77,7 +78,7 @@ public abstract class DefaultSpringBean {
 		}
 		return null;
 	}
-	
+
 	protected Locale getCurrentLocale() {
 		Locale locale = null;
 		try {
@@ -86,19 +87,19 @@ public abstract class DefaultSpringBean {
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current locale");
 		}
-		
+
 		if (locale == null) {
 			IWContext iwc = CoreUtil.getIWContext();
 			locale = iwc == null ? null : iwc.getCurrentLocale();
 		}
-		
+
 		if (locale == null) {
 			locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
 		}
-		
+
 		return locale == null ? Locale.ENGLISH : locale;
 	}
-	
+
 	protected User getCurrentUser() {
 		User user = null;
 		try {
@@ -107,15 +108,15 @@ public abstract class DefaultSpringBean {
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current user");
 		}
-		
+
 		if (user == null) {
 			IWContext iwc = CoreUtil.getIWContext();
 			user = iwc == null ? null : iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
 		}
-		
+
 		return user;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T extends IDOHome> T getHomeForEntity(Class<? extends IDOEntity> entityClass) {
 		try {
@@ -125,18 +126,18 @@ public abstract class DefaultSpringBean {
 		}
 		return null;
 	}
-	
+
 	protected IWMainApplication getApplication() {
 		return IWMainApplication.getDefaultIWMainApplication();
 	}
-	
+
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
 		return getCache(cacheName, IWCacheManager2.DEFAULT_CACHE_TTL_SECONDS);
 	}
-	
+
 	/**
 	 * Returns cache ({@link Map})
-	 * 
+	 *
 	 * @param <K>
 	 * @param <V>
 	 * @param cacheName
@@ -146,11 +147,11 @@ public abstract class DefaultSpringBean {
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive) {
 		return getCache(cacheName, timeToLive, IWCacheManager2.DEFAULT_CACHE_SIZE);
 	}
-	
+
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToLive, int size) {
 		return getCache(cacheName, IWCacheManager2.DEFAULT_CACHE_TTL_IDLE_SECONDS, timeToLive, size, true);
 	}
-	
+
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName, long timeToIdle, long timeToLive, int size, boolean resetable) {
 		try {
 			return IWCacheManager2.getInstance(getApplication()).getCache(cacheName, size, IWCacheManager2.DEFAULT_OVERFLOW_TO_DISK, IWCacheManager2.DEFAULT_ETERNAL,
@@ -160,7 +161,7 @@ public abstract class DefaultSpringBean {
 		}
 		return null;
 	}
-	
+
 	protected IWBundle getBundle(String bundleIdentifier) {
 		return getApplication().getBundle(bundleIdentifier);
 	}
@@ -171,21 +172,28 @@ public abstract class DefaultSpringBean {
 		if (locale == null) {
 			iwc = CoreUtil.getIWContext();
 		}
-	
+
 		if (locale == null && iwc == null) {
 			locale = Locale.ENGLISH;
 			LOGGER.warning("Will use default locale (" + locale + ") for resource bundle, because was unable to resolve both - IWContext and current locale");
 		}
-		
+
 		return locale == null ? bundle.getResourceBundle(iwc) : bundle.getResourceBundle(locale);
 	}
-	
+
 	protected HttpSession getSession() {
 		RequestResponseProvider provider = null;
 		try {
 			provider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 		} catch (Exception e) {}
-		
+
 		return provider == null ? null : provider.getRequest().getSession(Boolean.TRUE);
 	}
+
+	protected String getHost() {
+    	IWContext iwc = CoreUtil.getIWContext();
+		ICDomain domain = iwc.getDomain();
+		return domain.getServerProtocol().concat("://").concat(domain.getServerName()).concat(":").concat(String.valueOf(domain.getServerPort()));
+    }
+
 }
