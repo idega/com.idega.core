@@ -2,6 +2,7 @@ package com.idega.block.web2.business;
 
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 
 import com.idega.business.IBOService;
@@ -448,4 +449,7 @@ public interface Web2Business extends IBOService {
 	public String getSWFUploadObjectScript();
 	public String getSWFUploadScript();
 	public String getSWFUploadPlugin();
+	
+	public Collection<String> getBundleUrisToBxSliderScriptFiles(String version);
+	public Collection<String> getBundleUrisTojQueryMediaScriptFiles(String version);
 }
