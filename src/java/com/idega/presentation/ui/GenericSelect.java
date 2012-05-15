@@ -33,16 +33,17 @@ public class GenericSelect extends InterfaceObject {
 	private List selectedElements;
 	private boolean _allSelected = false;
 	private boolean _isMultiple = false;
-	
+
 	private boolean addSelectScript = false;
-	
+
 	public static final String SET_TO_SUBMIT_PROPERTY = "setToSubmit";
 	public static final String OPTIONS_PROPERTY = "options";
 	public static final String ENTITIES_PROPERTY = "entities";
 	public static final String OBJECTS_PROPERTY = "objects";
 	public static final String SELECTED_PROPERTY = "selected";
 	public static final String MULTIPLE_PROPERTY = "multiple";
-	
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[10];
 		values[0] = super.saveState(ctx);
@@ -57,6 +58,7 @@ public class GenericSelect extends InterfaceObject {
 		values[9] = new Boolean(this.addSelectScript);
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -70,39 +72,39 @@ public class GenericSelect extends InterfaceObject {
 		this._isMultiple = ((Boolean) values[8]).booleanValue();
 		this.addSelectScript = ((Boolean) values[9]).booleanValue();
 	}
-	
+
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(SET_TO_SUBMIT_PROPERTY);
     	if (ve != null) {
 	    	boolean setToSubmit = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setToSubmit(setToSubmit);
     	}
-    	
+
 		ve = getValueExpression(MULTIPLE_PROPERTY);
     	if (ve != null) {
 	    	boolean multiple = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
     		setMultiple(multiple);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(SELECTED_PROPERTY);
     	if (ve != null) {
 	    	String selected = (String) ve.getValue(context.getELContext());
     		setSelectedOption(selected);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(OPTIONS_PROPERTY);
     	if (ve != null) {
     		List<SelectOption> options = (List<SelectOption>) ve.getValue(context.getELContext());
     		setSelectOptions(options);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(ENTITIES_PROPERTY);
     	if (ve != null) {
     		List<IDOEntity> entities = (List<IDOEntity>) ve.getValue(context.getELContext());
     		setEntities(entities);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(OBJECTS_PROPERTY);
     	if (ve != null) {
     		List<Object> objects = (List<Object>) ve.getValue(context.getELContext());
@@ -111,11 +113,11 @@ public class GenericSelect extends InterfaceObject {
 					addOption(new SelectOption(object != null ? object.toString() : ""));
 				}
     		}
-    	}    
-    	
+    	}
+
     	super.encodeBegin(context);
     }
-    
+
 	private String setSelectedOption() {
 		String val = null;
 		Iterator iter = getChildren().iterator();
@@ -147,7 +149,7 @@ public class GenericSelect extends InterfaceObject {
 
 		return val;
 	}
-	
+
 	/**
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
 	 */
@@ -179,13 +181,15 @@ public class GenericSelect extends InterfaceObject {
 	 * Sets the select to submit automatically.
 	 * Must add to a form before this function is used!!!!
 	 */
+	@Override
 	public void setToSubmit() {
 		setToSubmit(true);
 	}
-	
+
 	/**
 	 * Returns whether this <code>GenericSelect<code> has any <code>SelectOption</code> objects added.
 	 */
+	@Override
 	public boolean isEmpty() {
 		return getChildren().isEmpty();
 	}
@@ -232,17 +236,16 @@ public class GenericSelect extends InterfaceObject {
 	public void setSelectOption(SelectOption option) {
 		addOption(option);
 	}
-	
+
 	public void setSelectOptions(List<SelectOption> options) {
 		for (SelectOption selectOption : options) {
 			addOption(selectOption);
 		}
 	}
-	
-	public void setEntities(List<IDOEntity> entities) {
-		for (IDOEntity entity : entities) {
+
+	public void setEntities(List<? extends IDOEntity> entities) {
+		for (IDOEntity entity : entities)
 			addOption(new SelectOption(entity.toString(), entity.getPrimaryKey().toString()));
-		}
 	}
 
 	/**
@@ -257,7 +260,7 @@ public class GenericSelect extends InterfaceObject {
 			setSelectedOption(option.getValueAsString());
 		}
 	}
-	
+
 	/**
 	 * Adds a <code>SelectOption</code> to the select object as the first option.
 	 * @param option	The <code>SelectOption</code> to add.
@@ -265,12 +268,13 @@ public class GenericSelect extends InterfaceObject {
 	public void setFirstSelectOption(SelectOption option) {
 		addFirstOption(option);
 	}
-	
+
 	/**
 	 * @deprecated Use getOptionCount() instead.
 	 * Returns the number of <code>SelectOption</code> objects added to this <code>GenericSelect</code>.
 	 * @return
 	 */
+	@Deprecated
 	public int getOptionCount() {
 		return getChildren().size();
 	}
@@ -388,6 +392,7 @@ public class GenericSelect extends InterfaceObject {
 		return false;
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		if (this._isSetAsNotEmpty) {
 			setOnSubmitFunction("warnIfDropdownEmpty", "function warnIfDropdownEmpty (inputbox,warnMsg,emptyValue) {\n\n		if ( inputbox.options[inputbox.selectedIndex].value == emptyValue ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}", this._notEmptyErrorMessage, this._emptyValue);
@@ -409,6 +414,7 @@ public class GenericSelect extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.PresentationObject#print(IWContext)
 	 */
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (this.addSelectScript) {
 			StringBuffer buffer = new StringBuffer();
@@ -432,7 +438,7 @@ public class GenericSelect extends InterfaceObject {
 			buffer.append("var option = input.options[0];").append("\n\t");
 			buffer.append("option.selected = true;").append("\n");
 			buffer.append("}");
-			
+
 			Script script = new Script();//getScript();
 			//if (script == null) {
 			//	script = new Script();
@@ -442,7 +448,7 @@ public class GenericSelect extends InterfaceObject {
 			renderChild(iwc, script);
 			setOnChange("navHandler(this)");
 		}
-		
+
 		String val = setSelectedOption();
 
 		if (getMarkupLanguage().equals("HTML")) {
@@ -464,6 +470,7 @@ public class GenericSelect extends InterfaceObject {
 	/**
 	 * @see java.lang.Object#clone()
 	 */
+	@Override
 	public Object clone() {
 		GenericSelect obj = null;
 		try {
@@ -481,6 +488,7 @@ public class GenericSelect extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 		if (this._isMultiple) {
 			if (iwc.isParameterSet(getName())) {
@@ -510,8 +518,9 @@ public class GenericSelect extends InterfaceObject {
 	 * Returns the number of <code>SelectOption</code> objects added to this <code>GenericSelect</code>.
 	 * @return
 	 */
+	@Deprecated
 	public int getNumberOfElemetent() {
-		return getChildren().size();	
+		return getChildren().size();
 	}
 
 	/**
@@ -535,7 +544,7 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	public void setToDisableWhenSelected(InterfaceObject objectToDisable, String selectedValue, boolean disable) {
 
-	}	
+	}
 	/**
 	 * Disables/Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
 	 * Uses Javascript.
@@ -558,7 +567,7 @@ public class GenericSelect extends InterfaceObject {
 	public void setToDisableWhenSelected(String objectToDisableName, String selectedValue, boolean disable) {
 		setToDisableWhenSelected(objectToDisableName, selectedValue, disable, false);
 	}
-	
+
 	/**
 	 * Disables/Enables an <code>InterfaceObject</code> when the selected value is selected in the <code>GenericSelect</code>.
 	 * Uses Javascript.
@@ -614,7 +623,7 @@ public class GenericSelect extends InterfaceObject {
 	}
 
 	/**
-	 * Sets the selection so that it can not be empty, displays an alert with the given 
+	 * Sets the selection so that it can not be empty, displays an alert with the given
 	 * error message if the "error" occurs.  Uses Javascript.
 	 * @param errorMessage	The error message to display.
 	 * @param emptyValue		The value representing the "empty" value.
@@ -626,7 +635,7 @@ public class GenericSelect extends InterfaceObject {
 	}
 
 	/**
-	 * Sets the selection so that it can not be empty, displays an alert with the given 
+	 * Sets the selection so that it can not be empty, displays an alert with the given
 	 * error message if the "error" occurs, uses -1 as the empty value.  Uses Javascript.
 	 * @param errorMessage	The error message to display.
 	 */
@@ -637,11 +646,12 @@ public class GenericSelect extends InterfaceObject {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
-	
+
 	protected void addSelectScript(boolean addScript) {
 		this.addSelectScript = addScript;
 	}
-} 
+}
