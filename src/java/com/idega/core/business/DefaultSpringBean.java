@@ -1,6 +1,8 @@
 package com.idega.core.business;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -8,6 +10,8 @@ import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
 
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.builder.business.AdvancedPropertyComparator;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
@@ -195,5 +199,12 @@ public abstract class DefaultSpringBean {
 		ICDomain domain = iwc.getDomain();
 		return domain.getServerProtocol().concat("://").concat(domain.getServerName()).concat(":").concat(String.valueOf(domain.getServerPort()));
     }
+
+	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {
+		Collections.sort(values, new AdvancedPropertyComparator(locale));
+
+		for (AdvancedProperty value: values)
+			container.put(value.getId(), value.getValue());
+	}
 
 }
