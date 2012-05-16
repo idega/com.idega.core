@@ -285,7 +285,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		}
 	}
 
-	@Override
 	public HttpSession getSession() {
 		return getRequest().getSession();
 	}
@@ -763,17 +762,14 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return this._response;
 	}
 
-	@Override
 	public Object getSessionAttribute(String attributeName) {
 		return getSession().getAttribute(attributeName);
 	}
 
-	@Override
 	public void setSessionAttribute(String attributeName, Object attribute) {
 		getSession().setAttribute(attributeName, attribute);
 	}
 
-	@Override
 	public String getSessionId() {
 		return getSession().getId();
 	}
@@ -786,7 +782,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		removeSessionAttribute(attributeName);
 	}
 
-	@Override
 	public void removeSessionAttribute(String attributeName) {
 		getSession().removeAttribute(attributeName);
 	}
@@ -905,27 +900,22 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		}
 	}
 
-	@Override
 	public void setApplicationAttribute(String attributeName, Object attributeValue) {
 		getIWMainApplication().setAttribute(attributeName, attributeValue);
 	}
 
-	@Override
 	public Object getApplicationAttribute(String attributeName) {
 		return getIWMainApplication().getAttribute(attributeName);
 	}
 
-	@Override
 	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
 		return getIWMainApplication().getAttribute(attributeName, defaultObjectToReturnIfValueIsNull);
 	}
 
-	@Override
 	public void removeApplicationAttribute(String attributeName) {
 		getIWMainApplication().removeAttribute(attributeName);
 	}
 
-	@Override
 	public IWMainApplication getIWMainApplication() {
 
 		HttpServletRequest request = getRequest();
@@ -938,22 +928,18 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		}
 	}
 
-	@Override
 	public IWMainApplicationSettings getApplicationSettings() {
 		return getIWMainApplication().getSettings();
 	}
 
-	@Override
 	public IWSystemProperties getSystemProperties() {
 		return getIWMainApplication().getSystemProperties();
 	}
 
-	@Override
 	public UserProperties getUserProperties() {
 		return LoginBusinessBean.getUserProperties(this);
 	}
 
-	@Override
 	public Locale getCurrentLocale() {
 		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
 		if (theReturn == null) {
@@ -967,7 +953,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return ICLocaleBusiness.getLocaleId(getCurrentLocale());
 	}
 
-	@Override
 	public void setCurrentLocale(Locale locale) {
 		this.setSessionAttribute(LOCALE_ATTRIBUTE, locale);
 	}
@@ -1054,7 +1039,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	/**
 	 * @deprecated Replaced with getCurrentUser()
 	 */
-	@Override
 	@Deprecated
 	public User getUser() {
 		return (LoginBusinessBean.getUser(this));
@@ -1152,7 +1136,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return this.hasPermission(groupIds, AccessController.PERMISSION_KEY_EDIT, obj);
 	}
 
-	@Override
 	public boolean isSuperAdmin() {
 		if(isLoggedOn()){
 			try {
@@ -1165,7 +1148,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return false;
 	}
 
-	@Override
 	public boolean isLoggedOn() {
 		return com.idega.core.accesscontrol.business.LoginBusinessBean.isLoggedOn(this);
 	}
@@ -1256,7 +1238,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return null;
 	}
 
-	@Override
 	public IWApplicationContext getApplicationContext() {
 		return this.getIWMainApplication().getIWApplicationContext();
 	}
@@ -1335,7 +1316,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return this._clientIsHandHeld;
 	}
 
-	@Override
 	public ICDomain getDomain() {
 		//ICDomain domain = getIWMainApplication().getIWApplicationContext().getDomain();
 		String serverName = getServerName();
@@ -1343,7 +1323,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return domain;
 	}
 
-	@Override
 	public ICDomain getDomainByServerName(String serverName) {
 		return getIWMainApplication().getIWApplicationContext().getDomainByServerName(serverName);
 	}
@@ -1471,7 +1450,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	 * @throws NotLoggedOnException
 	 *             if no user is logged on.
 	 */
-	@Override
 	public com.idega.user.data.User getCurrentUser() {
 		HttpSession session = getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
@@ -1771,7 +1749,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	 *
 	 * @see com.idega.idegaweb.IWUserContext#getUserPrincipal()
 	 */
-	@Override
 	public Principal getUserPrincipal() {
 		return getRequest().getUserPrincipal();
 	}
@@ -1781,7 +1758,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	 *
 	 * @see com.idega.idegaweb.IWUserContext#isUserInRole(java.lang.String)
 	 */
-	@Override
 	public boolean isUserInRole(String role) {
 		return getRequest().isUserInRole(role);
 	}
@@ -1791,7 +1767,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	 *
 	 * @see com.idega.idegaweb.IWUserContext#getRemoteUser()
 	 */
-	@Override
 	public String getRemoteUser() {
 		return getRequest().getRemoteUser();
 	}

@@ -63,7 +63,7 @@ public class URIUtil {
 				
 			} catch (Exception e) {
 				parameters = null;
-				throw new RuntimeException(e);
+				Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage());
 			}
 		} else {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "No uri while resolving uri parameters");
