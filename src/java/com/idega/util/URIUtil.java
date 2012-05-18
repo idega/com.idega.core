@@ -104,7 +104,8 @@ public class URIUtil {
 			query = new URI(uri).getRawQuery();
 			
 		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
+			return;
 		}
 		
 		if(query == null)

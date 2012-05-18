@@ -3454,7 +3454,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  			return hasViewPermissionForPageKey(pageKey,iwuc);
 	  		}
 	  		else{
-	  			getLogger().warning("No pageKey found for : "+pageUri);
+	  			//getLogger().warning("No pageKey found for : "+pageUri);
 	  			return false;
 	  		}
 		}
