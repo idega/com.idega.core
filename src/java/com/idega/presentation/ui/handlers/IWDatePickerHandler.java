@@ -99,7 +99,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			date = DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
 		} catch(Exception e) {
 			Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: " + source + " by locale: " +
-					locale.toString(), e);
+					locale.toString());
 			return null;
 		}
 		
@@ -112,7 +112,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 				date.setMinutes(time.getMinutes());
 			} catch (ParseException e) {
 				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to time: " + dateAndTimeSource[1] +
-						" by locale: " + locale.toString(), e);
+						" by locale: " + locale.toString());
 			}
 		}
 		
