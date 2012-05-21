@@ -201,7 +201,11 @@ public abstract class DefaultSpringBean {
     }
 
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {
-		Collections.sort(values, new AdvancedPropertyComparator(locale));
+		doSortValues(values, container, locale, Boolean.FALSE);
+	}
+
+	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale, boolean descending) {
+		Collections.sort(values, new AdvancedPropertyComparator(locale, descending));
 
 		for (AdvancedProperty value: values)
 			container.put(value.getId(), value.getValue());
