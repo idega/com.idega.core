@@ -2,7 +2,6 @@
 (function($) {
    $.fn.stringListEditor = function(options) {
 	   
-//	    var opts = $.extend({}, $.fn.mediaSlider.defaults, options);
 	    return this.each(function(){
 	    	var input = jQuery(this);
 	    	var initialization = input.data("initialize");
@@ -68,6 +67,8 @@
 	    	layer.hide();
 	    	valuesLayer.remove();
 	    	input.focus();
+	    	input[0].setProperty('valuechanged', true);
+	    	input.blur();
 	    }
 	    
 	    function displayInputs(input,editLayer){
@@ -93,5 +94,4 @@
     		return div;
 	    }
 	}
-//   $.fn.stringListEditor.defaults = {}
 })(jQuery);

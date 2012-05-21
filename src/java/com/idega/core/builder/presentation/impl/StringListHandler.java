@@ -14,10 +14,12 @@ import com.idega.util.PresentationUtil;
 
 public class StringListHandler implements ICPropertyHandler {
 	
+	@Override
 	public List<?> getDefaultHandlerTypes() {
 		return null;
 	}
 
+	@Override
 	public PresentationObject getHandlerObject(String name, String stringValue,
 			IWContext iwc, boolean oldGenerationHandler, String instanceId,
 			String method) {
@@ -36,9 +38,9 @@ public class StringListHandler implements ICPropertyHandler {
 		main.add(PresentationUtil.getJavaScriptAction(action));
 		
 		return main;
-//		return new TextInput(name,stringValue);
 	}
 
+	@Override
 	public void onUpdate(String[] values, IWContext iwc) {
 		
 	}
