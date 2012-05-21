@@ -69,6 +69,7 @@
 	    	input.focus();
 	    	input[0].setProperty('valuechanged', true);
 	    	input.blur();
+	    	input.focus();
 	    }
 	    
 	    function displayInputs(input,editLayer){
