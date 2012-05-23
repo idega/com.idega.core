@@ -197,7 +197,11 @@ public abstract class DefaultSpringBean {
 	protected String getHost() {
     	IWContext iwc = CoreUtil.getIWContext();
 		ICDomain domain = iwc.getDomain();
-		return domain.getServerProtocol().concat("://").concat(domain.getServerName()).concat(":").concat(String.valueOf(domain.getServerPort()));
+		int port = domain.getServerPort();
+		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
+		if (port > 0)
+			host = host.concat(":").concat(String.valueOf(port));
+		return host;
     }
 
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {
