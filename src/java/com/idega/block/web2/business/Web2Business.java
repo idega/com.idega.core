@@ -452,4 +452,8 @@ public interface Web2Business extends IBOService {
 	
 	public Collection<String> getBundleUrisToBxSliderScriptFiles(String version);
 	public Collection<String> getBundleUrisTojQueryMediaScriptFiles(String version);
+	
+	//	Google Maps
+	public String getScriptURLForGoogleMaps();
+	public String getScriptURLForGoogleMaps(boolean useSensor);
 }

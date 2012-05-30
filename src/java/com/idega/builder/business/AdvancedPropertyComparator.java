@@ -46,7 +46,6 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 		this.descending = descending;
 	}
 
-	@Override
 	public int compare(AdvancedProperty prop1, AdvancedProperty prop2) {
 		int result = 0;
 
