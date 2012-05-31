@@ -37,6 +37,7 @@ public class EmailBMPBean
 	public final static String SQL_COLUMN_EMAIL = "ADDRESS";
 	public final static String SQL_COLUMN_TYPE = "IC_EMAIL_TYPE_ID";
 	public final static String SQL_COLUMN_EMAIL_ID = "IC_EMAIL_ID";
+	public final static String COLUMN_CONTACT_PURPOSE = "CONTACT_PURPOSE";
 	public EmailBMPBean()
 	{
 		super();
@@ -52,6 +53,7 @@ public class EmailBMPBean
 		this.addAttribute(getColumnNameAddress(), "Email address", true, true, String.class, 255);
 		addManyToOneRelationship(getColumnNameEmailTypeId(), "Type", EmailType.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_email");
+		addOneToOneRelationship(COLUMN_CONTACT_PURPOSE, ContactPurpose.class);
 	}
 	@Override
 	public String getEntityName()
@@ -330,5 +332,13 @@ public class EmailBMPBean
 		query.addCriteria(new InCriteria(usersTable, com.idega.user.data.User.FIELD_USER_ID, users));
 
     	return idoFindPKsByQuery(query);
+	}
+	
+	public ContactPurpose getContactPurpose(){
+		return (ContactPurpose)getColumnValue(COLUMN_CONTACT_PURPOSE);
+	}
+	
+	public void setContactPurpose(ContactPurpose contactPurpose){
+		setColumn(COLUMN_CONTACT_PURPOSE, contactPurpose);
 	}
 }

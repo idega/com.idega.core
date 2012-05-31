@@ -12,6 +12,21 @@
 	</description>
 
 	<tag>
+		<name>contactPurposeSelector</name>
+		<tag-class>com.idega.presentation.ui.contacts.ContactPurposeSelector</tag-class>
+		<attribute>
+			<name>contactPurpose</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
 		<name>page</name>
 		<tag-class>com.idega.presentation.PageTag</tag-class>
 		<attribute>

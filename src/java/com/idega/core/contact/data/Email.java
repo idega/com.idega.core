@@ -47,4 +47,8 @@ public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView {
 	 * @see com.idega.core.contact.data.EmailBMPBean#getEmailTypeId
 	 */
 	public int getEmailTypeId();
+	
+	public ContactPurpose getContactPurpose();
+	
+	public void setContactPurpose(ContactPurpose contactPurpose);
 }

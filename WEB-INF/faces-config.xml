@@ -22,6 +22,20 @@ version="1.2">
 	</component>
 	
 	<component>
+		<component-type>contactPurposeSelector</component-type>
+		<component-class>com.idega.presentation.ui.contacts.ContactPurposeSelector</component-class>
+		<property>
+			<display-name>name</display-name>
+			<property-name>name</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>Contact purpose</display-name>
+			<property-name>contactPurpose</property-name>
+			<property-class>com.idega.core.contact.data.ContactPurpose</property-class>
+		</property>
+	</component>
+	<component>
 	    <component-type>DownloadLink</component-type>
 	    <component-class>com.idega.presentation.text.DownloadLink</component-class>
 	    <property>

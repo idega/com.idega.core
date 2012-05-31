@@ -17,6 +17,7 @@ import com.idega.data.IDOFinderException;
 public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.idega.core.contact.data.Phone
 {
 	private static String userRelationshipTableName=null;
+	public final static String COLUMN_CONTACT_PURPOSE = "CONTACT_PURPOSE";
 	
 	public PhoneBMPBean()
 	{
@@ -35,6 +36,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		addManyToOneRelationship(getColumnNamePhoneTypeId(), "Type", PhoneType.class);
 		//      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
 		this.addManyToManyRelationShip(User.class, "ic_user_phone");
+		addOneToOneRelationship(COLUMN_CONTACT_PURPOSE, ContactPurpose.class);
 	}
 	public String getEntityName()
 	{
@@ -237,6 +239,14 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 			userRelationshipTableName=EntityControl.getManyToManyRelationShipTableName(this.getClass(), User.class);
 		}
 		return userRelationshipTableName;
+	}
+	
+	public ContactPurpose getContactPurpose(){
+		return (ContactPurpose)getColumnValue(COLUMN_CONTACT_PURPOSE);
+	}
+	
+	public void setContactPurpose(ContactPurpose contactPurpose){
+		setColumn(COLUMN_CONTACT_PURPOSE, contactPurpose);
 	}
 
 
