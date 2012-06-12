@@ -127,6 +127,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".highcharts.js";
 		}
+	},
+	TYPEWATCH {
+		@Override
+		public String getFileName() {
+			return ".typewatch.js";
+		}
 	};
 
 	public abstract String getFileName();
