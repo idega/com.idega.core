@@ -165,7 +165,10 @@ public class SendMail {
 		message.setFrom(new InternetAddress(from));
 
 		// Process to, cc and bcc
-		addRecipients(message, Message.RecipientType.TO, to);
+		if (!addRecipients(message, Message.RecipientType.TO, to)) {
+			LOGGER.warning("Unable to send email to " + to);
+			return null;
+		}
 		addRecipients(message, Message.RecipientType.CC, cc);
 		addRecipients(message, Message.RecipientType.BCC, bcc);
 
@@ -216,6 +219,7 @@ public class SendMail {
 		// Send the message and close the connection
 		final Message mail = message;
 		Thread transporter = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Transport.send(mail);
@@ -257,13 +261,34 @@ public class SendMail {
 		}
 	}
 
-	private static void addRecipients(MimeMessage message, RecipientType recipientType, String addresses) throws MessagingException {
-		if (StringUtil.isEmpty(addresses)) {
-			return;
+	private static boolean doValidateAddresses(String addresses) {
+		if (StringUtil.isEmpty(addresses))
+			return false;
+
+		String[] emails = addresses.split(CoreConstants.COMMA);
+		if (ArrayUtil.isEmpty(emails))
+			return false;
+
+		for (String email: emails) {
+			if (!EmailValidator.getInstance().validateEmail(email))
+				return false;
 		}
 
-		addresses = addresses.replace(CoreConstants.SEMICOLON, CoreConstants.COMMA);
+		return true;
+	}
+
+	private static boolean addRecipients(MimeMessage message, RecipientType recipientType, String addresses) throws MessagingException {
+		if (StringUtil.isEmpty(addresses))
+			return false;
+
+		addresses = StringHandler.replace(addresses, CoreConstants.SEMICOLON, CoreConstants.COMMA);
+		if (!doValidateAddresses(addresses)) {
+			LOGGER.warning("Adrresses " + addresses + " are invalid!");
+			return false;
+		}
+
 		message.addRecipients(recipientType, InternetAddress.parse(addresses));
+		return true;
 	}
 
 	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile) throws MessagingException {
