@@ -197,27 +197,22 @@ public class MapUtil {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 * @param <T>
 	 */
-	public static <K extends Serializable, V, T> Map<K, V> deepCopy(
-			Map<K, V> original) {
-
-		if (MapUtil.isEmpty(original)) {
+	public static <K extends Serializable, V, T> Map<K, V> deepCopy(Map<K, V> original) {
+		if (MapUtil.isEmpty(original))
 			return new HashMap<K, V>();
-		}
 
 		Map<K, V> copy = new HashMap<K, V>();
 
-		for (Iterator<K> keyIterator = original.keySet().iterator();
-				keyIterator.hasNext();) {
-
+		for (Iterator<K> keyIterator = original.keySet().iterator(); keyIterator.hasNext();) {
 			K key = keyIterator.next();
 			V originalValue = original.get(key);
 
 			if (originalValue instanceof Collection) {
-				Collection tmpCollection = (Collection) originalValue;
+				Collection<?> tmpCollection = (Collection<?>) originalValue;
 				tmpCollection = ListUtil.getDeepCopy(tmpCollection);
 				copy.put(key, (V) tmpCollection);
 			} else if (originalValue instanceof Map){
-				original.put(key, (V) MapUtil.deepCopy((Map) originalValue));
+				original.put(key, (V) MapUtil.deepCopy((Map<K, V>) originalValue));
 			} else {
 				original.put(key, originalValue);
 			}
