@@ -101,6 +101,8 @@ import com.idega.util.ListUtil;
  */
 public class MapUtil {
 
+	private MapUtil() {}
+
 	/**
 	 * <p>Checks if {@link Map} is empty.</p>
 	 * @param map {@link Map} object.
@@ -125,38 +127,31 @@ public class MapUtil {
 	 * appending, other types are just overrided.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public static <K extends Serializable, L> boolean append(
-			Map<K, L> original,
-			Map<K, L> appending) {
-
-		if (MapUtil.isEmpty(original) && MapUtil.isEmpty(appending)) {
+	@SuppressWarnings({ "unchecked", "rawtypes" })
+	public static <K extends Serializable, L> boolean append(Map<K, L> original, Map<K, L> appending) {
+		if (MapUtil.isEmpty(original) && MapUtil.isEmpty(appending))
 			return Boolean.FALSE;
-		}
 
 		if (MapUtil.isEmpty(original)) {
-			if (original == null) {
+			if (original == null)
 				original = new HashMap<K, L>();
-			}
 
 			original.putAll(appending);
 			return Boolean.TRUE;
 		}
 
-		if (MapUtil.isEmpty(appending)) {
+		if (MapUtil.isEmpty(appending))
 			return Boolean.FALSE;
-		}
 
 		Map<K, L> appendingCopy = new HashMap<K, L>(appending);
 
-		for (Iterator<K> keyIterator = appendingCopy.keySet().iterator();
-				keyIterator.hasNext();) {
-
+		for (Iterator<K> keyIterator = appendingCopy.keySet().iterator(); keyIterator.hasNext();) {
 			K key = keyIterator.next();
 			L appendingValue = appendingCopy.get(key);
 			L originalValue = original.get(key);
 
 			if (originalValue instanceof Collection && appendingValue instanceof Collection) {
-				((Collection) originalValue).addAll((Collection) appendingValue);
+				((Collection<?>) originalValue).addAll((Collection) appendingValue);
 			} else if (originalValue instanceof Number && appendingValue instanceof Number){
 				Number originalNumber = (Number) originalValue;
 				Number appendingNumber = (Number) appendingValue;
@@ -178,7 +173,7 @@ public class MapUtil {
 
 				original.put(key, (L) result);
 			} else if (originalValue instanceof Map && appendingValue instanceof Map){
-				MapUtil.append((Map) originalValue, (Map) appendingValue);
+				MapUtil.append((Map<K, L>) originalValue, (Map<K, L>) appendingValue);
 			} else {
 				original.put(key, appendingValue);
 			}
@@ -197,6 +192,7 @@ public class MapUtil {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 * @param <T>
 	 */
+	@SuppressWarnings("unchecked")
 	public static <K extends Serializable, V, T> Map<K, V> deepCopy(Map<K, V> original) {
 		if (MapUtil.isEmpty(original))
 			return new HashMap<K, V>();
