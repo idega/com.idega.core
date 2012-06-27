@@ -208,9 +208,9 @@ public class MapUtil {
 				tmpCollection = ListUtil.getDeepCopy(tmpCollection);
 				copy.put(key, (V) tmpCollection);
 			} else if (originalValue instanceof Map){
-				original.put(key, (V) MapUtil.deepCopy((Map<K, V>) originalValue));
+				copy.put(key, (V) MapUtil.deepCopy((Map<K, V>) originalValue));
 			} else {
-				original.put(key, originalValue);
+				copy.put(key, originalValue);
 			}
 		}
 
