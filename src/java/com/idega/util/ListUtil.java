@@ -2,6 +2,7 @@ package com.idega.util;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -31,15 +32,12 @@ public class ListUtil {
    * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
    */
   public static <T> Collection<T> getDeepCopy(Collection<T> original) {
-	  if (ListUtil.isEmpty(original)) {
-		  return null;
-	  }
+	  if (ListUtil.isEmpty(original))
+		  return Collections.emptyList();
 
 	  Collection<T> copy = new ArrayList<T>();
-
-	  for (T instance : original) {
+	  for (T instance: original)
 		  copy.add(instance);
-	  }
 
 	  return copy;
   }
