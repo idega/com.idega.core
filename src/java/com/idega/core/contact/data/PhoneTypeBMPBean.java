@@ -1,6 +1,9 @@
 package com.idega.core.contact.data;
 
 import java.sql.SQLException;
+import java.util.Collection;
+
+import javax.ejb.FinderException;
 
 /**
  * Title:        IW Core
@@ -61,5 +64,15 @@ public class PhoneTypeBMPBean extends com.idega.core.data.GenericTypeBMPBean imp
       sql.printStackTrace(System.err);
     }
   }
+  
+   @SuppressWarnings("unchecked")
+	public Collection<Integer> ejbFindPhoneTypes(int maxAmount) throws FinderException {
+		String query = "SELECT * FROM "  + getEntityName();
+		if(maxAmount > 0){
+			return super.idoFindPKsBySQL(query, maxAmount);
+		}else{
+			return super.idoFindPKsBySQL(query);
+		}
+	}
 
 }

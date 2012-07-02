@@ -33,7 +33,7 @@ public class ContactPurposeHomeImpl extends IDOFactory implements ContactPurpose
 			this.idoCheckInPooledEntity(entity);
 			return findByPrimaryKeyCollection(ids);
 		} catch (FinderException e) {
-			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "failed finding any remote services");
+			Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "failed finding any contact purposes");
 			return Collections.emptyList();
 		}
 	}

@@ -89,6 +89,8 @@ public class CoreConstants {
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
+	
+	public static final String UNDEFINED_VALUE = "-1";
 
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;

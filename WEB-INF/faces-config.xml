@@ -30,9 +30,33 @@ version="1.2">
 			<property-class>java.lang.String</property-class>
 		</property>
 		<property>
-			<display-name>Contact purpose</display-name>
-			<property-name>contactPurpose</property-name>
-			<property-class>com.idega.core.contact.data.ContactPurpose</property-class>
+			<display-name>value</display-name>
+			<property-name>value</property-name>
+			<property-class>java.lang.Object</property-class>
+		</property>
+		<property>
+			<display-name>converter</display-name>
+			<property-name>converter</property-name>
+			<property-class>javax.faces.convert.Converter</property-class>
+		</property>
+	</component>
+	<component>
+		<component-type>phoneTypeSelector</component-type>
+		<component-class>com.idega.presentation.ui.contacts.PhoneTypeSelector</component-class>
+		<property>
+			<display-name>name</display-name>
+			<property-name>name</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>value</display-name>
+			<property-name>value</property-name>
+			<property-class>java.lang.Object</property-class>
+		</property>
+		<property>
+			<display-name>converter</display-name>
+			<property-name>converter</property-name>
+			<property-class>javax.faces.convert.Converter</property-class>
 		</property>
 	</component>
 	<component>

@@ -2,6 +2,7 @@ package com.idega.core.contact.data;
 import java.sql.SQLException;
 
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
@@ -14,10 +15,10 @@ import com.idega.data.IDOFinderException;
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
-public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.idega.core.contact.data.Phone
+public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.contact.data.Phone
 {
+	private static final long serialVersionUID = -4420896834850155007L;
 	private static String userRelationshipTableName=null;
-	public final static String COLUMN_CONTACT_PURPOSE = "CONTACT_PURPOSE";
 	
 	public PhoneBMPBean()
 	{
@@ -27,6 +28,7 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	{
 		super(id);
 	}
+	
 	public void initializeAttributes()
 	{
 		addAttribute(getIDColumnName());
@@ -36,7 +38,15 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		addManyToOneRelationship(getColumnNamePhoneTypeId(), "Type", PhoneType.class);
 		//      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
 		this.addManyToManyRelationShip(User.class, "ic_user_phone");
-		addOneToOneRelationship(COLUMN_CONTACT_PURPOSE, ContactPurpose.class);
+		super.initializeAttributes();
+	}
+	@Override
+	public void remove() throws RemoveException {
+		try {
+			idoRemoveFrom(User.class);
+		} catch (Exception e) {
+		}
+		super.remove();
 	}
 	public String getEntityName()
 	{
@@ -72,10 +82,17 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	{
 		return getIntColumnValue(getColumnNamePhoneTypeId());
 	}
+	
 	public void setPhoneTypeId(int phone_type_id)
 	{
 		setColumn(getColumnNamePhoneTypeId(), phone_type_id);
 	}
+	
+	@Override
+	public PhoneType getPhoneType() {
+		return (PhoneType)getColumnValue(getColumnNamePhoneTypeId());
+	}
+	
 	public static int getHomeNumberID()
 	{
 		/*int returner = -1;
@@ -241,13 +258,5 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		return userRelationshipTableName;
 	}
 	
-	public ContactPurpose getContactPurpose(){
-		return (ContactPurpose)getColumnValue(COLUMN_CONTACT_PURPOSE);
-	}
-	
-	public void setContactPurpose(ContactPurpose contactPurpose){
-		setColumn(COLUMN_CONTACT_PURPOSE, contactPurpose);
-	}
-
 
 }

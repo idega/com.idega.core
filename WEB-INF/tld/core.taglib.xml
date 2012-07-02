@@ -12,6 +12,13 @@
         </component>
 	</tag>
 	
+	<tag>
+		<tag-name>phoneTypeSelector</tag-name>
+		<component>
+            <component-type>phoneTypeSelector</component-type>
+        </component>
+	</tag>
+	
     <tag>
         <tag-name>DownloadLink</tag-name>
         <component>
