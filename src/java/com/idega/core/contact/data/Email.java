@@ -18,7 +18,7 @@ package com.idega.core.contact.data;
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.4 $
  */
-public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView {
+public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView, Contact {
 
 	/**
 	 * @see com.idega.core.contact.data.EmailBMPBean#setEmailAddress
@@ -48,7 +48,5 @@ public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView {
 	 */
 	public int getEmailTypeId();
 	
-	public ContactPurpose getContactPurpose();
 	
-	public void setContactPurpose(ContactPurpose contactPurpose);
 }

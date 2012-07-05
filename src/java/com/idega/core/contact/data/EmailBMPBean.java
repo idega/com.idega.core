@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import com.idega.business.IBORuntimeException;
 import com.idega.core.data.GenericTypeBMPBean;
@@ -31,13 +32,13 @@ import com.idega.user.data.UserBMPBean;
  * @version 1.0
  */
 public class EmailBMPBean
-	extends com.idega.data.GenericEntity
+	extends ContactBmpBean
 	implements com.idega.core.contact.data.Email, com.idega.core.contact.data.EmailDataView{
+	private static final long serialVersionUID = -6649005980606226999L;
 	public final static String SQL_TABLE_NAME = "IC_EMAIL";
 	public final static String SQL_COLUMN_EMAIL = "ADDRESS";
 	public final static String SQL_COLUMN_TYPE = "IC_EMAIL_TYPE_ID";
 	public final static String SQL_COLUMN_EMAIL_ID = "IC_EMAIL_ID";
-	public final static String COLUMN_CONTACT_PURPOSE = "CONTACT_PURPOSE";
 	public EmailBMPBean()
 	{
 		super();
@@ -53,8 +54,18 @@ public class EmailBMPBean
 		this.addAttribute(getColumnNameAddress(), "Email address", true, true, String.class, 255);
 		addManyToOneRelationship(getColumnNameEmailTypeId(), "Type", EmailType.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_email");
-		addOneToOneRelationship(COLUMN_CONTACT_PURPOSE, ContactPurpose.class);
+		super.initializeAttributes();
 	}
+	
+	@Override
+	public void remove() throws RemoveException {
+		try {
+			idoRemoveFrom(User.class);
+		} catch (Exception e) {
+		}
+		super.remove();
+	}
+	
 	@Override
 	public String getEntityName()
 	{
@@ -334,11 +345,4 @@ public class EmailBMPBean
     	return idoFindPKsByQuery(query);
 	}
 	
-	public ContactPurpose getContactPurpose(){
-		return (ContactPurpose)getColumnValue(COLUMN_CONTACT_PURPOSE);
-	}
-	
-	public void setContactPurpose(ContactPurpose contactPurpose){
-		setColumn(COLUMN_CONTACT_PURPOSE, contactPurpose);
-	}
 }

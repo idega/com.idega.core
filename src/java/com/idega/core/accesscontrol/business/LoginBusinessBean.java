@@ -1382,6 +1382,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return logInByPersonalID(request,personalId,null,null,null);
 	}
 	
+	public boolean hasUserLogin(HttpServletRequest request, String personalId) throws Exception {
+		try {
+			IWApplicationContext iwac = getIWApplicationContext(request.getSession());
+			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
+			Collection logins = getLoginTableHome().findLoginsForUser(user);
+		
+			if (logins == null || logins.isEmpty()) {
+				return false;
+			}
+			
+			return true;
+		} catch (EJBException e) {
+		}
+		
+		return false;
+	}
+	
 	/**
 	 * <p>
 	 * Logs the user in by given personalId and specified loginType.

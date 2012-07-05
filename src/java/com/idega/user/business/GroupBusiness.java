@@ -522,7 +522,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateGroupPhone
 	 */
-	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException,
+	public Phone updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException,
 			java.rmi.RemoteException;
 
 	/**

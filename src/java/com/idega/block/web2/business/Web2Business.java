@@ -456,4 +456,8 @@ public interface Web2Business extends IBOService {
 	//	Google Maps
 	public String getScriptURLForGoogleMaps();
 	public String getScriptURLForGoogleMaps(boolean useSensor);
+	
+	//labelify (labels in inputs)
+	
+	public String getScriptURLForLabelify(String version);
 }

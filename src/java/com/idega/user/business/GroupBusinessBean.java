@@ -1970,7 +1970,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return this.emailTypeHome;
 	}
 
-	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
+	public Phone updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
 		try {
 			Phone phone = getGroupPhone(group, phoneTypeId);
 			boolean insert = false;
@@ -1989,6 +1989,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(phone);
 				group.addPhone(phone);
 			}
+			return phone;
 
 		}
 		catch (Exception e) {
@@ -1997,7 +1998,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 
 	}
-
+	
 	public Phone getGroupPhone(Group group, int phoneTypeId) throws RemoteException {
 		try {
 			Phone[] result = this.getGroupPhones(group);

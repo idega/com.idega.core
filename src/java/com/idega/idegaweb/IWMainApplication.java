@@ -371,7 +371,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         for (IWBundle bundle : getLoadedBundles().values()) {
 
         	if(bundle.isPostponedBundleStartersRun()) {
-
         		bundle.setPostponedBundleStartersRun(false);
         		bundle.runBundleStarters();
         	}

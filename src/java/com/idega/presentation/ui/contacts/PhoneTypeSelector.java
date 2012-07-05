@@ -7,8 +7,8 @@ import javax.faces.component.ValueHolder;
 import javax.faces.context.FacesContext;
 import javax.faces.convert.Converter;
 
-import com.idega.core.contact.data.ContactPurpose;
-import com.idega.core.contact.data.ContactPurposeHome;
+import com.idega.core.contact.data.PhoneType;
+import com.idega.core.contact.data.PhoneTypeHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
@@ -20,12 +20,39 @@ import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
-public class ContactPurposeSelector   extends IWBaseComponent implements ValueHolder{
+
+public class PhoneTypeSelector extends IWBaseComponent implements ValueHolder/*javax.faces.component.UIOutput*/{
 	
-	private String name = "default-cps-name";
+
+	private String name = "default-pts-name";
 	private Object value;
     private Converter converter;
-    private DropdownMenu dropdownMenu = null;
+    
+    private DropdownMenu dropdownMenu;
+
+	
+	@Override
+	public Object saveState(FacesContext facesContext) {
+		Object[] values = new Object[4];
+        values[0] = super.saveState(facesContext);
+        values[1] = name;
+        values[2] = value;
+        values[3] = converter;
+        return values; 
+	}
+
+	@Override
+	public void restoreState(FacesContext facesContext, Object state) {
+		// TODO Auto-generated method stub
+		Object[] values = (Object[])state;
+        super.restoreState(facesContext,values[0]);
+        name = (java.lang.String) values[1];
+        value = (java.lang.String) values[2];
+        converter = (javax.faces.convert.Converter) values[3];
+	}
+	
+	public PhoneTypeSelector(){}
+	
 
 	@Override
 	protected void initializeComponent(FacesContext context) {
@@ -35,46 +62,61 @@ public class ContactPurposeSelector   extends IWBaseComponent implements ValueHo
 		IWBundle bundle = CoreUtil.getCoreBundle();
 		IWResourceBundle iwrb = bundle.getResourceBundle(iwc);
 		
-		
 		dropdownMenu = new DropdownMenu(name);
 		add(dropdownMenu);
 		
-		dropdownMenu.addMenuElement(CoreConstants.UNDEFINED_VALUE, iwrb.getLocalizedString("select_purpose", "Select_purpose"));
-		ContactPurposeHome contactPurposeHome;
-		Collection <ContactPurpose> contactPurposes = null;
+		dropdownMenu.addMenuElement("-1", iwrb.getLocalizedString("select_phone_type", "Select phone type"));
+		PhoneTypeHome phoneTypeHome;
+		Collection <PhoneType> phoneTypes = null;
 		try {
-			contactPurposeHome = (ContactPurposeHome) IDOLookup.getHome(ContactPurpose.class);
-			contactPurposes = contactPurposeHome.getContactPurposes(-1);
+			phoneTypeHome = (PhoneTypeHome) IDOLookup.getHome(PhoneType.class);
+			phoneTypes = phoneTypeHome.getPhoneTypes(-1);
 		} catch (Exception e) {
 			
 		}
-		if(!ListUtil.isEmpty(contactPurposes)){
-			for(ContactPurpose contactPurpose : contactPurposes){
-				String label = iwrb.getLocalizedString(contactPurpose.getName(),contactPurpose.getName());
-				String value = String.valueOf(contactPurpose.getPrimaryKey());
+		if(!ListUtil.isEmpty(phoneTypes)){
+			for(PhoneType phoneType : phoneTypes){
+				String label = iwrb.getLocalizedString(phoneType.getName(),phoneType.getName());
+				String value = String.valueOf(phoneType.getPrimaryKey());
 				dropdownMenu.addMenuElement(value, label);
 			}
 		}
-		dropdownMenu.setSelectedElement(getContactPurposeId());
+		dropdownMenu.setSelectedElement(getPhoneTypeId());
 	}
-
-
-
 
 	@Override
 	protected void updateComponent(FacesContext context) {
 		super.updateComponent(context);
-		dropdownMenu.setSelectedElement(getContactPurposeId());
+		dropdownMenu.setSelectedElement(getPhoneTypeId());
 	}
 	
+	private String getPhoneTypeId(){
+		Object value = getValue();
+		if(value == null){
+			return CoreConstants.UNDEFINED_VALUE;
+		}
+		if(value instanceof PhoneType){
+			Object primaryKey = ((PhoneType)value).getPrimaryKey();
+			String phoneTypeId = String.valueOf(primaryKey);
+			if(StringUtil.isEmpty(phoneTypeId)){
+				return CoreConstants.UNDEFINED_VALUE;
+			}
+			return phoneTypeId;
+		}
+		return String.valueOf(value);
+	}
+
+
 	public String getName() {
 		return name;
 	}
 
 
+
 	public void setName(String name) {
 		this.name = name;
 	}
+
 
 	@Override
 	public Object getLocalValue() {
@@ -91,22 +133,6 @@ public class ContactPurposeSelector   extends IWBaseComponent implements ValueHo
             return expression.getValue(getFacesContext().getELContext());
         }
         return null;
-	}
-	
-	private String getContactPurposeId(){
-		Object value = getValue();
-		if(value == null){
-			return CoreConstants.UNDEFINED_VALUE;
-		}
-		if(value instanceof ContactPurpose){
-			Object primaryKey = ((ContactPurpose)value).getPrimaryKey();
-			String contactPurpose = String.valueOf(primaryKey);
-			if(StringUtil.isEmpty(contactPurpose)){
-				return CoreConstants.UNDEFINED_VALUE;
-			}
-			return contactPurpose;
-		}
-		return String.valueOf(value);
 	}
 
 	@Override
@@ -130,6 +156,8 @@ public class ContactPurposeSelector   extends IWBaseComponent implements ValueHo
 	public void setConverter(Converter converter) {
 		this.converter = converter;
 	}
+
+
 	
 	
 }
