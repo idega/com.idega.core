@@ -809,7 +809,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	}
 
 	private void setServerURLToSystemProperties() {
-		this.getApplicationSettings().setProperty(IWConstants.SERVER_URL_PROPERTY_NAME, this.getServerURL());
+		//this.getApplicationSettings().setProperty(IWConstants.SERVER_URL_PROPERTY_NAME, this.getServerURL());
 	}
 
 	/**

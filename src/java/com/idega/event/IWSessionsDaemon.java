@@ -23,14 +23,12 @@ public class IWSessionsDaemon implements IWBundleStartable, ActionListener {
 
 	private EventTimer timer;
 
-	@Override
 	public void start(IWBundle starterBundle) {
 		timer = new EventTimer(EventTimer.THREAD_SLEEP_2_MINUTES, IW_SESSIONS_DAEMON);
 		timer.addActionListener(this);
 		timer.start(90000);
 	}
 
-	@Override
 	public void stop(IWBundle starterBundle) {
 		if (timer != null) {
 			timer.stop();
@@ -38,7 +36,6 @@ public class IWSessionsDaemon implements IWBundleStartable, ActionListener {
 		}
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent event) {
 		try {
 			if (event.getActionCommand().equals(IW_SESSIONS_DAEMON))
