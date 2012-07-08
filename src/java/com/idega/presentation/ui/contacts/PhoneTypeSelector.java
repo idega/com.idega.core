@@ -117,13 +117,10 @@ public class PhoneTypeSelector extends IWBaseComponent implements ValueHolder/*j
 		this.name = name;
 	}
 
-
-	@Override
 	public Object getLocalValue() {
 		return value;
 	}
 
-	@Override
 	public Object getValue() {
 		if (value != null){
             return value;
@@ -135,12 +132,10 @@ public class PhoneTypeSelector extends IWBaseComponent implements ValueHolder/*j
         return null;
 	}
 
-	@Override
 	public void setValue(Object value) {
 		this.value = value;
 	}
 
-	@Override
 	public Converter getConverter() {
 		if (converter != null) {
             return converter;
@@ -152,12 +147,7 @@ public class PhoneTypeSelector extends IWBaseComponent implements ValueHolder/*j
         return null;
 	}
 
-	@Override
 	public void setConverter(Converter converter) {
 		this.converter = converter;
 	}
-
-
-	
-	
 }

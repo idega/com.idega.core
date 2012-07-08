@@ -76,12 +76,10 @@ public class ContactPurposeSelector   extends IWBaseComponent implements ValueHo
 		this.name = name;
 	}
 
-	@Override
 	public Object getLocalValue() {
 		return value;
 	}
 
-	@Override
 	public Object getValue() {
 		if (value != null){
             return value;
@@ -109,12 +107,10 @@ public class ContactPurposeSelector   extends IWBaseComponent implements ValueHo
 		return String.valueOf(value);
 	}
 
-	@Override
 	public void setValue(Object value) {
 		this.value = value;
 	}
 
-	@Override
 	public Converter getConverter() {
 		if (converter != null) {
             return converter;
@@ -126,10 +122,7 @@ public class ContactPurposeSelector   extends IWBaseComponent implements ValueHo
         return null;
 	}
 
-	@Override
 	public void setConverter(Converter converter) {
 		this.converter = converter;
 	}
-	
-	
 }

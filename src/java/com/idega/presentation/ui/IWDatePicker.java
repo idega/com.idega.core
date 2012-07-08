@@ -46,6 +46,7 @@ public class IWDatePicker extends TextInput {
 
 	private String onSelectAction = null;
 	private String inputName = null;
+	private String imageURI = null;
 
 	private String dateRangeSeparator = " - ";
 	private boolean showYearChange = false;
@@ -61,6 +62,7 @@ public class IWDatePicker extends TextInput {
 	private static final String DATE_RANGE_SEPARATOR_PROPERTY = "dateRangeSeparator";
 	private static final String SHOW_DATE_RANGE_PROPERTY = "showDateRange";
 	private static final String SHOW_CALENDAR_IMAGE_PROPERTY = "showCalendarImage";
+	private static final String SHOW_IMAGE_URI_PROPERTY = "imageURI";
 	private static final String SHOW_MONTH_PROPERTY = "showMonth";
 	private static final String SHOW_YEAR_PROPERTY = "showYear";
 	private static final String SHOW_TIME_PROPERTY = "showTime";
@@ -156,6 +158,12 @@ public class IWDatePicker extends TextInput {
 	    	setShowCalendarImage(showCalendarImage);
     	}
 
+		ve = getValueExpression(SHOW_IMAGE_URI_PROPERTY);
+    	if (ve != null) {
+	    	String imageURI = (String) ve.getValue(context.getELContext());
+	    	setImageURI(imageURI);
+    	}
+
 		ve = getValueExpression(USE_CURRENT_PROPERTY);
     	if (ve != null) {
 	    	boolean useCurrent = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
@@ -238,7 +246,12 @@ public class IWDatePicker extends TextInput {
 
 		// Calendar image
 		if (isShowCalendarImage()) {
-			initAction.append(", showOn: 'button', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif")).append("', buttonImageOnly: true");
+			String imageURI = getImageURI();
+			if (imageURI == null) {
+				imageURI = getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif");
+			}
+			
+			initAction.append(", showOn: 'button', buttonImage: '").append(imageURI).append("', buttonImageOnly: true");
 		}
 
 		if (isShowTime()) {
@@ -409,5 +422,13 @@ public class IWDatePicker extends TextInput {
 
 	public void setShowTime(boolean showTime) {
 		this.showTime = showTime;
+	}
+
+	public String getImageURI() {
+		return imageURI;
+	}
+
+	public void setImageURI(String imageURI) {
+		this.imageURI = imageURI;
 	}
 }

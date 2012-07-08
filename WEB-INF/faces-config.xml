@@ -413,6 +413,11 @@ version="1.2">
 			<property-class>boolean</property-class>
 		</property>
 		<property>
+			<display-name>Calendar image URI</display-name>
+			<property-name>imageURI</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
 			<display-name>Show calendar image</display-name>
 			<property-name>showCalendarImage</property-name>
 			<property-class>boolean</property-class>

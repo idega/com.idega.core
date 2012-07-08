@@ -47,7 +47,6 @@ public class PhoneTypeHomeImpl extends com.idega.data.IDOFactory implements Phon
  }
 
 @SuppressWarnings("unchecked")
-@Override
 public Collection<PhoneType> getPhoneTypes(int maxAmount) {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	try {
