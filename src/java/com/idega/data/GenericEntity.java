@@ -5558,4 +5558,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected Collection getCachedEntities(){
 		return getBeanCache().getCachedEntities();
 	}
+	
+	protected void clearBeanCache(){
+		getBeanCache().flushAllBeanCache();
+	}
 }
