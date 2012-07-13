@@ -204,11 +204,17 @@ public class IWDatePicker extends TextInput {
 			}
 		}
 		if (iwDate != null) {
-			StringBuilder value = new StringBuilder(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
+			StringBuilder value = new StringBuilder(isShowTime() ?
+					iwDate.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT) :
+					iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
 
 			if (isDateRange()) {
 				iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
-				value.append(dateRangeSeparator).append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+				value.append(dateRangeSeparator);
+				if (isShowTime())
+					value.append(iwDateTo.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT));
+				else
+					value.append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
 			}
 
 			setValue(value.toString());
@@ -250,7 +256,7 @@ public class IWDatePicker extends TextInput {
 			if (imageURI == null) {
 				imageURI = getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif");
 			}
-			
+
 			initAction.append(", showOn: 'button', buttonImage: '").append(imageURI).append("', buttonImageOnly: true");
 		}
 
