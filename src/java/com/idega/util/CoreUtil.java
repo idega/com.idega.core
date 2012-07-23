@@ -167,16 +167,24 @@ public class CoreUtil {
     	String serverName = null;
     	String requestUri = null;
 		if (request != null) {
-	    	if (request != null) {
-	    		serverName = request.getServerName();
-	    		requestUri = request.getRequestURI();
-	    	}
+	    	serverName = request.getServerName();
+	    	requestUri = request.getRequestURI();
+
 	    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
 	    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
 		}
 
+		String user = null;
+    	try {
+    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+    		User loggedInUser = loginSession == null ? null : loginSession.getUser();
+    		user = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
+    	} catch (Exception e) {}
+    	user = StringUtil.isEmpty(user) ? "not logged in" : user;
+
 		final String server = serverName;
 		final String requestedUri = requestUri;
+		final String userFullName = user;
 		Thread sender = new Thread(new Runnable() {
 			@Override
 			public void run() {
@@ -186,33 +194,24 @@ public class CoreUtil {
 		    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
 		    	}
 
-		    	String userFullName = null;
-		    	try {
-		    		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-		    		User loggedInUser = loginSession.getUser();
-		    		userFullName = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
-		    	} catch (Exception e) {
-		    		LOGGER.log(Level.WARNING, "Error getting " + LoginSession.class);
-		    	}
-		    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
-
 		    	Writer writer = null;
 		    	PrintWriter printWriter = null;
 		    	StringBuffer notification = null;
 		    	try {
-		    		writer = new StringWriter();
-		    		printWriter = new PrintWriter(writer);
-		    		exception.printStackTrace(printWriter);
+		    		if (exception != null) {
+			    		writer = new StringWriter();
+			    		printWriter = new PrintWriter(writer);
+			    		exception.printStackTrace(printWriter);
+		    		}
 
 		    		notification = new StringBuffer("Requested uri: ").append(requestedUri).append("\n");
 		    		notification.append("User: ").append(userFullName).append("\n");
-		    		if (!StringUtil.isEmpty(message)) {
+		    		if (!StringUtil.isEmpty(message))
 		    			notification.append("Message: ").append(message).append("\n");
-		    		}
-		    		notification.append("Stack trace:\n").append(writer.toString());
+		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		        	SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, host, "EXCEPTION: on ePlatform, server: " + server,
-		        			notification.toString());
+		        	SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, host,
+		        			"EXCEPTION: on ePlatform, server: " + server, notification.toString());
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
 		        } finally {
