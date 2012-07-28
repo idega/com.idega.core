@@ -232,7 +232,7 @@ public class SendMail {
 							filesNames.append(attachment.getName()).append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 						}
 					}
-					LOGGER.log(Level.WARNING, "Error sending mail " + mail + ". Attachments: '" + filesNames.toString() + "'", e);
+					LOGGER.log(Level.WARNING, "Error sending mail " + mail + " - Attachments: '" + filesNames.toString() + "': " + e.getMessage());
 				} finally {
 					if (deleteFiles && !ArrayUtil.isEmpty(attachedFiles)) {
 						for (File attachment: attachedFiles) {
