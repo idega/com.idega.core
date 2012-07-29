@@ -3484,6 +3484,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			ICPageHome pageHome = (ICPageHome) IDOLookup.getHome(ICPage.class);
 			ICPage page = pageHome.findByPrimaryKey(pageKey);
 			
+			if (page.getDeleted()) {
+				return false;
+			}
 			if (!page.isPublished()) {
 				//only editors can view unpublished pages.
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
