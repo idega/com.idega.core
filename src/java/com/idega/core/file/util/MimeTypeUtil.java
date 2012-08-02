@@ -4,13 +4,21 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
+
+import javax.activation.MimetypesFileTypeMap;
+
+import sun.net.www.MimeTable;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringUtil;
 
 /**
  * Title: MimeTypeUtil
@@ -493,6 +501,42 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf",
 			return this.video;
 		}
 		return null;
+	}
+	
+	private static Map MIME_TYPES_MAPPING = new HashMap();
+	private static void initializeMimeTypesMap() {
+		if (!MIME_TYPES_MAPPING.isEmpty())
+			return;
+		
+		MIME_TYPES_MAPPING.put("doc", MIME_TYPE_WORD);
+		MIME_TYPES_MAPPING.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		MIME_TYPES_MAPPING.put("xls", MIME_TYPE_EXCEL);
+		MIME_TYPES_MAPPING.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		MIME_TYPES_MAPPING.put("ppt", MIME_TYPE_POWERPOINT);
+		MIME_TYPES_MAPPING.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+	}
+	
+	private static String getMimeType(String fileName) {
+		if (StringUtil.isEmpty(fileName))
+			return null;
+		
+		int lastDot = fileName.lastIndexOf(CoreConstants.DOT);
+		if (lastDot == -1)
+			return null;
+		
+		initializeMimeTypesMap();
+		String fileType = fileName.substring(lastDot + 1).toLowerCase();
+		return (String)MIME_TYPES_MAPPING.get(fileType);
+	}
+	
+	public static String resolveMimeTypeFromFileName(String fileName) {
+		String mimeType = getMimeType(fileName);
+		if (!StringUtil.isEmpty(mimeType))
+			return mimeType;
+		
+		MimeTable mt = MimeTable.getDefaultTable();
+		mimeType = mt.getContentTypeFor(fileName);
+		return StringUtil.isEmpty(mimeType) ? new MimetypesFileTypeMap().getContentType(fileName) : mimeType;
 	}
 	
 }

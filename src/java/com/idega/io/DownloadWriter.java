@@ -9,22 +9,29 @@
 package com.idega.io;
 
 import java.io.BufferedInputStream;
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpServletRequest;
+
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
-import com.idega.data.IDOHome;
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
+import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
+import com.idega.util.StringUtil;
 
 /**
  * @author aron
@@ -48,6 +55,8 @@ public class DownloadWriter implements MediaWritable {
 	private ICFile icFile = null;
 
 	private URL url = null;
+	
+	private String fileName = null;
 
 	/*
 	 * (non-Javadoc)
@@ -55,7 +64,11 @@ public class DownloadWriter implements MediaWritable {
 	 * @see com.idega.io.MediaWritable#getMimeType()
 	 */
 	public String getMimeType() {
-		return "application/octet-stream";
+		if (fileName == null)
+			return MimeTypeUtil.MIME_TYPE_APPLICATION;
+		
+		String mimeType = MimeTypeUtil.resolveMimeTypeFromFileName(fileName);
+		return StringUtil.isEmpty(mimeType) ? MimeTypeUtil.MIME_TYPE_APPLICATION : mimeType;
 	}
 
 	/*
@@ -130,48 +143,34 @@ public class DownloadWriter implements MediaWritable {
 	 * @see com.idega.io.MediaWritable#writeTo(java.io.OutputStream)
 	 */
 	public void writeTo(OutputStream out) throws IOException {
+		InputStream downloadStream = null;
 		if (this.file != null && this.file.exists() && this.file.canRead() && this.file.length() > 0) {
-			BufferedInputStream fis = new BufferedInputStream(new FileInputStream(this.file));
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			while (fis.available() > 0) {
-				baos.write(fis.read());
-			}
-			baos.writeTo(out);
-			baos.flush();
-			baos.close();
-			fis.close();
-		}
-		else if (this.icFile != null) {
-			BufferedInputStream fis = new BufferedInputStream(this.icFile.getFileValue());
-			ByteArrayOutputStream baos = new ByteArrayOutputStream();
-			byte buffer[] = new byte[65535];
-			int bytesRead;
-			while ((bytesRead = fis.read(buffer)) >= 0) {
-				baos.write(buffer, 0, bytesRead);
-			}
-			baos.writeTo(out);
-			baos.flush();
-			baos.close();
-			fis.close();
-		}
-		else if (this.url != null) {
+			Logger.getLogger(DownloadWriter.class.getName()).info("Dowloading file: " + file);
+			downloadStream = new BufferedInputStream(new FileInputStream(this.file));
+		} else if (this.icFile != null) {
+			downloadStream = new BufferedInputStream(this.icFile.getFileValue());
+		} else if (this.url != null) {
 			//added for real relative path streaming
-			BufferedInputStream input = new BufferedInputStream(this.url.openStream());
-			byte buffer[] = new byte[1024];
-			int noRead = 0;
-			noRead = input.read(buffer, 0, 1024);
-			//Write out the stream to the file
-			while (noRead != -1) {
-				out.write(buffer, 0, noRead);
-				noRead = input.read(buffer, 0, 1024);
-			}
+			downloadStream = new BufferedInputStream(this.url.openStream());
 		}
-		else {
-			throw new IOException("No file value");
+		
+		if (downloadStream == null) {
+			throw new IOException("No file to download!");
+		}
+		
+		try {
+			FileUtil.streamToOutputStream(downloadStream, out);
+		} catch(Exception e) {
+			Logger.getLogger(DownloadWriter.class.getName()).log(Level.WARNING, "Error streaming from input to output streams", e);
+		} finally {
+			out.flush();
+			IOUtil.closeOutputStream(out);
+			IOUtil.closeInputStream(downloadStream);
 		}
 	}
 
 	public void setAsDownload(IWContext iwc, String filename, int fileLength) {
+		this.fileName = filename;
 		iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
 		if (fileLength > 0) {
 			iwc.getResponse().setContentLength(fileLength);
