@@ -170,11 +170,11 @@ public class DownloadWriter implements MediaWritable {
 	}
 
 	public void setAsDownload(IWContext iwc, String filename, int fileLength) {
+		this.fileName = filename;
+		iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
 		if (fileLength > 0) {
 			iwc.getResponse().setContentLength(fileLength);
 		}
-		this.fileName = filename;
-		iwc.getResponse().setHeader("Content-Disposition", "attachment;filename=\"" + filename + "\"");
 	}
 	
 	protected ICFileHome getFileHome() throws IDOLookupException{
