@@ -551,7 +551,11 @@ public class Link extends Text {
 		else if (this.protocol != null) {
 			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
-			url.append(this.protocol).append("://").append(iwc.getServerName());
+			String host = getHostname();
+			if(StringUtil.isEmpty(host)){
+				host = iwc.getServerName();
+			}
+			url.append(this.protocol).append("://").append(host);
 			if (!StringUtil.isEmpty(attr)) {
 				if(!attr.startsWith(slash) && (url.lastIndexOf(slash) != (url.length() - 1))){
 					url.append(slash);
