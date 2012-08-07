@@ -11,17 +11,6 @@
   <version>5.0.0-SNAPSHOT</version>
   <name>idegaWeb Core</name>
   
-  <scm>
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
-    <tag>com_idega_block_platform-4_1_3</tag>
-  </scm>
-  <!--
-  <scm>
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
-  </scm>
-  -->
 	<developers>
 		<developer>
 		<name>Tryggvi Larusson</name>

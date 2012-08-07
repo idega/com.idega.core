@@ -9,6 +9,7 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -21,7 +22,7 @@ import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.Group;
 
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("permissionDAO")
 @Transactional(readOnly = true)
 public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {

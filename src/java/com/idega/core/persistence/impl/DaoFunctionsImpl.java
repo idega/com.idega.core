@@ -11,6 +11,7 @@ import java.util.logging.Logger;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -24,7 +25,7 @@ import com.idega.util.ListUtil;
  * @version $Revision: 1.3 $ Last modified: $Date: 2009/05/22 04:55:13 $ by $Author: laddi $
  */
 @Service
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class DaoFunctionsImpl implements DaoFunctions {
 
 	private static final Logger logger = Logger

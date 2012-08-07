@@ -9,6 +9,7 @@
  */
 package com.idega.core.component.dao.impl;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -18,18 +19,20 @@ import com.idega.core.component.data.bean.ICObject;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("icObjectDAO")
 @Transactional(readOnly = true)
 public class ICObjectDAOImpl extends GenericDaoImpl implements ICObjectDAO {
 
+	@Override
 	public ICObject findObject(Integer objectID) {
 		return find(ICObject.class, objectID);
 	}
-	
+
+	@Override
 	public ICObject findByClass(Class objectClass) {
 		Param param = new Param("className", objectClass.getName());
-		
+
 		return getSingleResult("object.findAllByClass", ICObject.class, param);
 	}
 }

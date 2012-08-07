@@ -149,8 +149,10 @@ public class CoreConstants {
 								EMAIL_DEFAULT_HOST = "smtp.emailsrvr.com";
 
 	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration",
-	
+
 								PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
 								PAGE_VIEW_TYPE_REGULAR = "regular",
-								PAGE_VIEW_TYPE_MOBILE = "mobile";
+								PAGE_VIEW_TYPE_MOBILE = "mobile",
+
+								REPOSITORY_DEFAULT_WORKSPACE = "default";
 }

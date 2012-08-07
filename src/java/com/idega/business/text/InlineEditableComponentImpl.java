@@ -5,6 +5,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -20,21 +21,22 @@ import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Service(InlineEditableComponent.SPRING_BEAN_IDENTIFIER)
 public class InlineEditableComponentImpl implements InlineEditableComponent {
 
 	private static final long serialVersionUID = -749409164128200690L;
 	private static final Logger LOGGER = Logger.getLogger(InlineEditableComponentImpl.class.getName());
-	
+
 	@Autowired
 	private BuilderLogicWrapper builderLogic;
-	
+
+	@Override
 	public void makeInlineEditable(IWContext iwc, PresentationObject component) {
 		if (!iwc.hasRole(StandardRoles.ROLE_KEY_EDITOR)) {
 			return;
 		}
-		
+
 		String instanceId = null;
 		try {
 			instanceId = getBuilderLogic().getBuilderService(iwc).getInstanceId(component);
@@ -44,14 +46,14 @@ public class InlineEditableComponentImpl implements InlineEditableComponent {
 		if (StringUtil.isEmpty(instanceId) || !instanceId.startsWith(ICObjectBusiness.UUID_PREFIX)) {
 			return;
 		}
-		
+
 		Web2Business web2 = ELUtil.getInstance().getBean(Web2Business.SPRING_BEAN_IDENTIFIER);
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(
 				web2.getBundleURIToJQueryLib(),
 				web2.getBundleURIToJQueryPlugin(JQueryPlugin.EDITABLE),
 				iwc.getIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER).getVirtualPathWithFileNameString("javascript/AdminCore.js")
 		));
-		
+
 		component.setStyleClass(InlineEditableComponent.class.getSimpleName());
 	}
 

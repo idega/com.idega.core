@@ -23,7 +23,7 @@ public abstract class JCRItem extends RepositoryItem {
 	public abstract void unlock();
 	public abstract void unCheckOut();
 
-	public abstract Property setProperty(String property, Serializable value);
+	public abstract boolean setProperty(String property, Serializable value);
 
 	public abstract Property getProperty(String property);
 

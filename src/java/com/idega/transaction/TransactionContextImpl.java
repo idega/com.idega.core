@@ -1,5 +1,6 @@
 package com.idega.transaction;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -9,21 +10,23 @@ import org.springframework.transaction.annotation.Transactional;
  * @version $Revision: 1.3 $ Last modified: $Date: 2009/03/23 14:14:37 $ by $Author: civilis $
  */
 @Service
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class TransactionContextImpl implements TransactionContext {
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional
 	public <T> T executeInTransaction(TransactionalCallback callback) {
-		
+
 		Object result = callback.execute();
 		return (T) result;
 	}
-	
+
+	@Override
 	@SuppressWarnings("unchecked")
 	@Transactional(readOnly = true)
 	public <T> T executeInReadonlyTransaction(TransactionalCallback callback) {
-		
+
 		Object result = callback.execute();
 		return (T) result;
 	}

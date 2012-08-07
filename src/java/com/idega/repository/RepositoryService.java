@@ -13,6 +13,7 @@ import javax.jcr.Node;
 import javax.jcr.Repository;
 import javax.jcr.RepositoryException;
 import javax.jcr.Session;
+import javax.jcr.lock.Lock;
 import javax.jcr.security.AccessControlPolicy;
 import javax.jcr.version.VersionManager;
 
@@ -21,6 +22,7 @@ import org.springframework.context.ApplicationListener;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
 import com.idega.repository.access.AccessControlList;
+import com.idega.repository.bean.Property;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.repository.bean.RepositoryItemVersionInfo;
 import com.idega.repository.event.RepositoryEventListener;
@@ -34,21 +36,24 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public void initializeRepository(InputStream configSource, String repositoryName) throws Exception;
 
 	public boolean uploadFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString,	String contentType)
-		throws RepositoryException;
-	public boolean uploadFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, InputStream stream, String contentType) throws RepositoryException;
-	public boolean uploadXMLFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString) throws RepositoryException;
+			throws RepositoryException;
+	public boolean uploadFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, InputStream stream, String contentType)
+			throws RepositoryException;
+	public boolean uploadXMLFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString)
+			throws RepositoryException;
 	public boolean uploadFile(String uploadPath, String fileName, String contentType, InputStream stream) throws RepositoryException;
 
 	public boolean uploadZipFileContents(ZipInputStream zipStream, String uploadPath) throws RepositoryException;
 
 	public Node updateFileContents(String absolutePath, InputStream fileContents, AdvancedProperty... properties) throws RepositoryException;
-	public Node updateFileContents(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties) throws RepositoryException;
+	public Node updateFileContents(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties)
+			throws RepositoryException;
 
-	public Binary getBinary(Node file) throws RepositoryException;
+	public Binary getBinary(String path) throws RepositoryException;
 	public InputStream getInputStream(String path) throws IOException, RepositoryException;
 	public InputStream getInputStreamAsRoot(String path) throws IOException, RepositoryException;
-	public InputStream getFileContents(Node fileNode) throws IOException, RepositoryException;
-	public InputStream getFileContents(User user, Node fileNode) throws IOException, RepositoryException;
+	public InputStream getFileContents(String path) throws IOException, RepositoryException;
+	public InputStream getFileContents(User user, String path) throws IOException, RepositoryException;
 
 	public boolean deleteAsRootUser(String path) throws RepositoryException;
 	public boolean delete(String path) throws RepositoryException;
@@ -62,7 +67,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public Node getNode(String absolutePath) throws RepositoryException;
 	public Node getNodeAsRootUser(String absolutePath) throws RepositoryException;
 
-	public boolean setProperties(Node node, AdvancedProperty... properties) throws RepositoryException;
+	public boolean setProperties(String path, Property... properties) throws RepositoryException;
 
 	public String getRepositoryConstantFolderType();
 
@@ -81,10 +86,10 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public RepositoryItem getRepositoryItem(User user, String path) throws RepositoryException;
 	public RepositoryItem getRepositoryItemAsRootUser(String path) throws RepositoryException;
 
-	public Collection<Node> getChildNodes(User user, Node node) throws RepositoryException;
-	public Collection<Node> getChildNodesAsRootUser(Node node) throws RepositoryException;
+	public Collection<RepositoryItem> getChildNodes(User user, String path) throws RepositoryException;
+	public Collection<RepositoryItem> getChildNodesAsRootUser(String path) throws RepositoryException;
+	public Collection<RepositoryItem> getChildResources(String path) throws RepositoryException;
 
-	public boolean isCollection(Node node) throws RepositoryException;
 	public boolean isFolder(String path) throws RepositoryException;
 	public boolean isHiddenFile(String name) throws RepositoryException;
 
@@ -95,7 +100,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public List<String> getChildFolderPaths(String path) throws RepositoryException;
 	public String getParentPath(String path) throws RepositoryException;
 
-	public String createUniqueFileName(String scope);
+	public String createUniqueFileName(String path, String scope);
 
 	public String getUserHomeFolder(User user);
 
@@ -113,4 +118,18 @@ public interface RepositoryService extends Repository, ApplicationListener {
 
 	public AccessControlList getAccessControlList(String path);
 	public void storeAccessControlList(AccessControlList acl);
+
+	public String getName(String path) throws RepositoryException;
+
+	public long getCreationDate(String path) throws RepositoryException;
+	public long getLastModified(String path) throws RepositoryException;
+
+	public long getLength(String path) throws RepositoryException;
+
+	public boolean isLocked(String path) throws RepositoryException;
+	public Lock lock(String path, boolean isDeep, boolean isSessionScoped) throws RepositoryException;
+	public void unLock(String path) throws RepositoryException;
+
+	public List<RepositoryItem> getSiblingResources(String path) throws RepositoryException;
+
 }

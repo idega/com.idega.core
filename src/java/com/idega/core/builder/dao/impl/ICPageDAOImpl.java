@@ -9,6 +9,7 @@
  */
 package com.idega.core.builder.dao.impl;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -17,13 +18,14 @@ import com.idega.core.builder.dao.ICPageDAO;
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("icPageDAO")
 @Transactional(readOnly = true)
 public class ICPageDAOImpl extends GenericDaoImpl implements ICPageDAO {
-	
+
+	@Override
 	public ICPage findPage(Integer pageID) {
 		return find(ICPage.class, pageID);
 	}
-	
+
 }

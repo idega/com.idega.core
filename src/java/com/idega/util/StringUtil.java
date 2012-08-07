@@ -12,12 +12,12 @@ import java.util.List;
 public class StringUtil {
 
 	public static List<String> getValuesFromString(String value, String separator) {
-		
+
 		if (value == null || separator == null)
 			return null;
 
 		String[] values = value.split(separator);
-		
+
 		if (values == null)
 			return null;
 
@@ -25,21 +25,21 @@ public class StringUtil {
 		Collections.addAll(extractedValues, values);
 		return extractedValues;
 	}
-	
+
 	/**
 	 * Handy method for null and empty check
 	 * @param string to check if is null or empty string
 	 * @return return str == null || str.length() == 0;
 	 */
 	public static boolean isEmpty(String str) {
-		
+
 		return str == null || str.length() == 0;
 	}
-	
+
 	 /**
 	   * Escape characters for text appearing in HTML markup.
-	   * 
-	   * <P>The following characters are replaced with corresponding HTML character entities : 
+	   *
+	   * <P>The following characters are replaced with corresponding HTML character entities :
 	   * <table border='1' cellpadding='3' cellspacing='0'>
 	   * <tr><th> Character </th><th>Replacement</th></tr>
 	   * <tr><td> < </td><td> "&lt;" </td></tr>
@@ -52,7 +52,7 @@ public class StringUtil {
 	   * <tr><td> $ </td><td> &#036;</td></tr>
 	   * <tr><td> % </td><td> &#037;</td></tr>
 	   * <tr><td> ' </td><td> &#039;</td></tr>
-	   * <tr><td> ( </td><td> &#040;</td></tr> 
+	   * <tr><td> ( </td><td> &#040;</td></tr>
 	   * <tr><td> ) </td><td> &#041;</td></tr>
 	   * <tr><td> * </td><td> &#042;</td></tr>
 	   * <tr><td> + </td><td> &#043; </td></tr>
@@ -190,7 +190,7 @@ public class StringUtil {
 	     }
 	     return result.toString();
 	  }
-	
+
 
 	private static void addCharEntity(Integer aIdx, StringBuilder aBuilder){
 	    String padding = "";
@@ -209,7 +209,7 @@ public class StringUtil {
 
 	/**
 	 * Escape characters not allowed in file names;
-	 * 
+	 *
 	 * @param pdfName
 	 * @return escaped file name;
 	 */
@@ -240,9 +240,11 @@ public class StringUtil {
 		}
 		return result.toString();
 	}
-	
+
 	public static List<String> getLinesFromString(String content) {
 		List<String> strings = new ArrayList<String>();
+		if (isEmpty(content))
+			return strings;
 
 		LineNumberReader lineReader = new LineNumberReader(new StringReader(content));
 

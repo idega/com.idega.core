@@ -161,4 +161,9 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 	public String getId() {
 		return String.valueOf(getNodeID());
 	}
+
+	@Override
+	public String toString() {
+		return getPath();
+	}
 }

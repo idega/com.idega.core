@@ -1,6 +1,7 @@
 package com.idega.repository;
 
 import javax.jcr.RepositoryException;
+import javax.jcr.security.Privilege;
 
 import com.idega.business.SpringBeanName;
 import com.idega.repository.access.AccessControlList;
@@ -16,4 +17,5 @@ public interface RepositorySession {
 
 	public String getUserHomeFolder() throws RepositoryException;
 
+	public boolean hasPermission(String path, Privilege privilege) throws RepositoryException;
 }

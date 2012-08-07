@@ -20,11 +20,12 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.Set;
 import java.util.Map.Entry;
+import java.util.Set;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -33,14 +34,14 @@ import com.idega.util.FileUtil;
 /**
  * Extracts zip files and keeps the original timestamps. E.g. used fo extracting
  * idegaweb archive bundles.
- * 
+ *
  * Last modified: $Date: 2009/02/20 14:26:59 $ by $Author: civilis $
- * 
+ *
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.3 $
  */
 @Service
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class ZipInstaller {
 
 	public boolean extract(File zipFile, File destinationFolder)
@@ -57,10 +58,10 @@ public class ZipInstaller {
 							+ zipFile.getPath());
 		}
 	}
-	
+
 	public boolean extract(ZipInputStream zipInputStream, File destinationFolder)
 	throws IOException {
-		
+
 		extractZIP(zipInputStream, destinationFolder);
 		return true;
 	}

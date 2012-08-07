@@ -4,6 +4,7 @@ import java.io.File;
 import java.net.URI;
 import java.util.Collection;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
@@ -15,10 +16,10 @@ import com.idega.util.FileUtil;
 /**
  * @author <a href="mailto:arunas@idega.com">Arūnas Vasmanas</a>
  * @version $Revision: 1.3 $
- * 
+ *
  *          Last modified: $Date: 2009/02/20 14:26:23 $ by $Author: civilis $
  */
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Service
 public class TmpFilesManager {
 
@@ -83,7 +84,7 @@ public class TmpFilesManager {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param identifier
 	 *            - might be some specific identifier, that you want to get
 	 *            files for, e.g., variable in xforms submission data. Highly

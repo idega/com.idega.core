@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
@@ -23,10 +24,10 @@ import com.idega.util.IWTimestamp;
 /**
  * @author <a href="mailto:civilis@idega.com">Arūnas Vasmanas</a>
  * @version $Revision: 1.2 $
- * 
+ *
  *          Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
  */
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 @Service
 public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListener, ActionListener {
 
@@ -45,6 +46,7 @@ public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListe
 		this.fileTimer.start(EventTimer.THREAD_SLEEP_5_MINUTES);
 	}
 
+	@Override
 	public void actionPerformed(ActionEvent event) {
 		try {
 			if (event.getActionCommand().equalsIgnoreCase(THREAD_NAME)) {
@@ -73,6 +75,7 @@ public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListe
 		this.resResolvers = resResolvers;
 	}
 
+	@Override
 	public void onApplicationEvent(ApplicationEvent applicationevent) {
 		if (applicationevent instanceof IWMainApplicationStartedEvent) {
 			getFManager().init(resResolvers);
@@ -87,6 +90,7 @@ public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListe
 		}
 	}
 
+	@Override
 	public void setApplicationContext(ApplicationContext applicationcontext) throws BeansException {
 		ctx = applicationcontext;
 	}

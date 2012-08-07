@@ -4,11 +4,12 @@ import java.net.URI;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 /**
- * 
+ *
  * @author <a href="civilis@idega.com">Vytautas Čivilis</a>
  * @version $Revision: 1.1 $
  *
@@ -16,25 +17,26 @@ import org.springframework.stereotype.Service;
  *
  */
 @Service
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class FileURIHandlerFactoryImpl implements FileURIHandlerFactory {
-	
+
 	@Autowired(required=false)
 	private List<FileURIHandler> handlers;
-	
+
+	@Override
 	public FileURIHandler getHandler(URI uri) {
-		
+
 		if(handlers != null) {
-			
+
 			String scheme = uri.getScheme();
-			
+
 			for (FileURIHandler handler : handlers) {
-				
+
 				if(scheme.equals(handler.getSupportedScheme()))
 					return handler;
 			}
 		}
-		
+
 		return null;
 	}
 
