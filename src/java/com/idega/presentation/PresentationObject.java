@@ -31,8 +31,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 
-import org.springframework.beans.factory.annotation.Autowired;
-
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
@@ -169,16 +167,11 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	private boolean renderForLoggedOut = true;
 	private boolean renderForLoggedIn = true;
 
-	@Autowired
-	private RepositoryService repositoryService;
-
 	/**
 	 * Default constructor.
 	 * Should only be called by sublasses.
 	 */
 	protected PresentationObject() {
-		ELUtil.getInstance().autowire(this);
-
 		//TODO: Change this as components get state aware:
 		setTransient(true);
 	}
@@ -2852,10 +2845,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	}
 
 	protected RepositoryService getRepositoryService() {
-		if (repositoryService == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-		return repositoryService;
+		return ELUtil.getInstance().getBean(RepositoryService.class);
 	}
 
 	protected RepositorySession getRepositorySession() {
