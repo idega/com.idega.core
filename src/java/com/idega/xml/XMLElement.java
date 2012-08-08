@@ -381,14 +381,13 @@ private Element _element = null;
   }
 
   public XMLElement setAttribute(XMLAttribute attribute) {
-    if (this._element != null) {
-      Attribute at = attribute.getAttribute();
-      if (at != null) {
-				this._element.setAttribute(at);
-			}
-    }
-
-    return this;
+	  if (this._element != null) {
+		  Attribute at = attribute.getAttribute();
+		  if (at != null) {
+			  this._element.setAttribute(at);
+		  }
+	  }
+	  return this;
   }
 
   public boolean removeAttribute(String name) {
