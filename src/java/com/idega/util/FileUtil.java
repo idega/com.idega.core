@@ -11,7 +11,6 @@ package com.idega.util;
 
  import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -444,6 +443,7 @@ public static String getFileSeparator(){
 	public static List<File> getFilesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
+				@Override
 				public boolean accept(File file) {
 					return file.isFile();
 				}
@@ -463,6 +463,7 @@ public static String getFileSeparator(){
 	public static List<File> getDirectoriesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
+				@Override
 				public boolean accept(File file) {
 					return file.isDirectory();
 				}
@@ -915,14 +916,7 @@ public static String getFileSeparator(){
 	  CRC32 crc = new CRC32();
 	  byte[] buffer = new byte[1024];
 	  for (RepositoryItem item: filesToZip) {
-		  //	Do not want to open stream from the same source twice - keeping contents of an item in memory
-		  byte[] contents = IOUtil.getBytesFromInputStream(item.getInputStream());
-		  if (contents == null) {
-			  continue;
-		  }
-
-		  //	Compressing
-		  InputStream bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+		  InputStream bis = new BufferedInputStream(item.getInputStream());
 		  crc.reset();
 		  while ((bytesRead = bis.read(buffer)) != -1) {
               crc.update(buffer, 0, bytesRead);
@@ -932,14 +926,14 @@ public static String getFileSeparator(){
           //	Adding new entry
           long itemSize = item.getLength();
           itemSize = itemSize < 0 ? 0 : itemSize > 0xFFFFFFFFL ? Long.MAX_VALUE : itemSize;
-          bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+          bis = new BufferedInputStream(item.getInputStream());
           ZipEntry entry = new ZipEntry(item.getName());
           entry.setMethod(ZipEntry.STORED);
           entry.setCompressedSize(itemSize);
           entry.setSize(itemSize);
           entry.setCrc(crc.getValue());
           zos.putNextEntry(entry);
-          while ((bytesRead = bis.read(buffer)) != -1) {
+          while ((bytesRead = bis.read(buffer)) > 0) {
               zos.write(buffer, 0, bytesRead);
           }
           bis.close();

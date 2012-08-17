@@ -460,4 +460,7 @@ public interface Web2Business extends IBOService {
 	//labelify (labels in inputs)
 	
 	public String getScriptURLForLabelify(String version);
+	
+	public Collection<String> getBundleUrisToBlueimpFileUploadScriptFiles(String version);
+	public Collection<String> getBundleUrisToBlueimpFileUploadStyleFiles(String version);
 }
