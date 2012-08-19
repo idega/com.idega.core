@@ -463,4 +463,7 @@ public interface Web2Business extends IBOService {
 	
 	public Collection<String> getBundleUrisToBlueimpFileUploadScriptFiles(String version);
 	public Collection<String> getBundleUrisToBlueimpFileUploadStyleFiles(String version);
+	
+	public String getBundleUriToBootstrapMainScriptFile(String version);
+	public String getBundleUriToBootstrapMainStyleFile(String version);
 }
