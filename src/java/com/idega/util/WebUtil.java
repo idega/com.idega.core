@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
@@ -103,6 +104,7 @@ public class WebUtil extends DefaultSpringBean {
     	final String sbjct = subject;
     	final String msg = message;
     	Thread sender = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 		    		SendMail.send(fromAddress, toAddress, null, null, hostName, sbjct, msg);
@@ -214,5 +216,42 @@ public class WebUtil extends DefaultSpringBean {
     	uriUtil.setParameter(LoginBusinessBean.LoginStateParameter, LoginBusinessBean.LOGIN_EVENT_LOGIN);
 
 		return uriUtil.getUri();
+    }
+
+    public String getFirstDayOfCurrentMonth(boolean showTime) {
+    	return getLocalizedDate(getFirstDay(showTime), getCurrentLocale(), showTime);
+    }
+
+    public static final String getLocalizedDate(IWTimestamp date, Locale locale, boolean showTime) {
+    	return showTime ?
+    			date.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT) :
+    			date.getLocaleDate(locale, IWTimestamp.SHORT);
+    }
+
+    public static final IWTimestamp getFirstDay(boolean showTime) {
+    	IWTimestamp currentTime = IWTimestamp.RightNow();
+    	currentTime.setDay(1);
+    	if (showTime) {
+    		currentTime.setHour(0);
+    		currentTime.setMinute(0);
+    		currentTime.setSecond(0);
+    	}
+    	return currentTime;
+    }
+
+    public static final IWTimestamp getLastDay(boolean showTime) {
+    	IWTimestamp date = getFirstDay(showTime);
+    	date.setMonth(date.getMonth() + 1);
+    	date.setDay(date.getDay() - 1);
+    	if (showTime) {
+    		date.setHour(23);
+    		date.setMinute(59);
+    		date.setSecond(59);
+    	}
+    	return date;
+    }
+
+    public String getLastDayOfCurrentMonth(boolean showTime) {
+    	return getLocalizedDate(getLastDay(showTime), getCurrentLocale(), showTime);
     }
 }

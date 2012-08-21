@@ -18,6 +18,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PresentationUtil;
+import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -204,9 +205,7 @@ public class IWDatePicker extends TextInput {
 			}
 		}
 		if (iwDate != null) {
-			StringBuilder value = new StringBuilder(isShowTime() ?
-					iwDate.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT) :
-					iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
+			StringBuilder value = new StringBuilder(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
 
 			if (isDateRange()) {
 				iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
