@@ -118,7 +118,7 @@ public class LinkContainer extends PresentationObjectContainer {
 					prmString = prmString.substring(1, prmString.length());
 				}
 				StringTokenizer token = new StringTokenizer(prmString, "&=", false);
-				int index = 0;
+				//int index = 0;
 				while (token.hasMoreTokens()) {
 					String st = token.nextToken();
 					if (token.hasMoreTokens()) {
@@ -132,7 +132,7 @@ public class LinkContainer extends PresentationObjectContainer {
 						//System.out.println("token "+index+" : "+st+" / false");
 						//System.err.println("token "+index+" : "+st+" / false");
 						//}
-						index++;
+						//index++;
 					}
 				}
 			}
@@ -260,7 +260,7 @@ public class LinkContainer extends PresentationObjectContainer {
 					prmString = prmString.substring(1, prmString.length());
 				}
 				StringTokenizer token = new StringTokenizer(prmString, "&=", false);
-				int index = 0;
+				//int index = 0;
 				while (token.hasMoreTokens()) {
 					String st = token.nextToken();
 					if (token.hasMoreTokens()) {
@@ -268,7 +268,7 @@ public class LinkContainer extends PresentationObjectContainer {
 						if (prmName.equals(st)) {
 							return value;
 						}
-						index++;
+						//index++;
 					}
 				}
 			}

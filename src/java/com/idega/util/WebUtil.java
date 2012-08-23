@@ -104,7 +104,6 @@ public class WebUtil extends DefaultSpringBean {
     	final String sbjct = subject;
     	final String msg = message;
     	Thread sender = new Thread(new Runnable() {
-			@Override
 			public void run() {
 				try {
 		    		SendMail.send(fromAddress, toAddress, null, null, hostName, sbjct, msg);

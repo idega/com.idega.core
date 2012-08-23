@@ -268,6 +268,7 @@ public class HtmlPage extends Page {
 		String template = getHtml();
 		if (template == null) {
 			out.write("Template file could not be found.");
+			out.close();
 			return;
 		}
 		
@@ -398,6 +399,8 @@ public class HtmlPage extends Page {
 				renderChild(ctx, child);
 			}
 		}
+		
+		out.close();
 	}
 
 	/**

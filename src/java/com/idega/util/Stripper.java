@@ -15,76 +15,77 @@ import java.io.FileWriter;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
 
+import org.apache.commons.io.IOUtils;
+
 /**
- *  A class to strip out \CVS\ lines from files to assist in compilation of the
- *  whole com tree.
+ * A class to strip out \CVS\ lines from files to assist in compilation of the
+ * whole com tree.
  */
 
 public class Stripper {
 
-  public Stripper() {
-  }
+	public Stripper() {
+	}
 
-  public static void main(String[] args) {
-    //Stripper stripper1 = new Stripper();
+	public static void main(String[] args) {
+		// Stripper stripper1 = new Stripper();
 
-    if (args.length != 2) {
-      System.err.println("Auli. Þú átt að hafa tvo parametra með þessu, innskrá og útskrá");
+		if (args.length != 2) {
+			System.err.println("Auli. ï¿½ï¿½ ï¿½tt aï¿½ hafa tvo parametra meï¿½ ï¿½essu, innskrï¿½ og ï¿½tskrï¿½");
 
-      return;
-    }
+			return;
+		}
 
-    BufferedReader in = null;
-    BufferedWriter out = null;
+		BufferedReader in = null;
+		BufferedWriter out = null;
 
-    try {
-      in = new BufferedReader(new FileReader(args[0]));
-    }
-    catch (java.io.FileNotFoundException e) {
-      System.err.println("Auli. Error : " + e.toString());
+		try {
+			in = new BufferedReader(new FileReader(args[0]));
+		}
+		catch (java.io.FileNotFoundException e) {
+			System.err.println("Auli. Error : " + e.toString());
 
-      return;
-    }
+			return;
+		}
 
-    try {
-      out = new BufferedWriter(new FileWriter(args[1]));
-    }
-    catch (java.io.IOException e) {
-      System.err.println("Auli. Error : " + e.toString());
+		try {
+			out = new BufferedWriter(new FileWriter(args[1]));
+		}
+		catch (java.io.IOException e) {
+			System.err.println("Auli. Error : " + e.toString());
+			IOUtils.closeQuietly(in);
+			return;
+		}
 
-      return;
-    }
+		try {
+			String input = in.readLine();
+			int count = 0;
+			while (input != null) {
+				int index = input.indexOf("\\CVS\\");
+				if (index > -1) {
+					System.out.println("Skipping : " + input);
+					count++;
+				}
+				else {
+					out.write(input);
+					out.newLine();
+				}
 
-    try {
-      String input = in.readLine();
-      int count = 0;
-      while (input != null) {
-        int index = input.indexOf("\\CVS\\");
-        if (index > -1){
-          System.out.println("Skipping : " + input);
-          count++;
-        }
-        else {
-          out.write(input);
-          out.newLine();
-        }
+				input = in.readLine();
+			}
+			System.out.println("Skipped : " + count);
+		}
+		catch (java.io.IOException e) {
+			System.err.println("Error reading or writing file : " + e.toString());
+		}
 
-        input = in.readLine();
-      }
-      System.out.println("Skipped : " + count);
-    }
-    catch (java.io.IOException e) {
-      System.err.println("Error reading or writing file : " + e.toString());
-    }
-
-    try {
-      in.close();
-      out.close();
-    }
-    catch (java.io.IOException e) {
-      System.err.println("Error closing files : " + e.toString());
-    }
-  }
-
+		try {
+			in.close();
+			out.close();
+		}
+		catch (java.io.IOException e) {
+			System.err.println("Error closing files : " + e.toString());
+		}
+	}
 
 }

@@ -38,12 +38,10 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 	private String method = null;
 	private String instanceId = null;
 
-	@Override
 	public List<?> getDefaultHandlerTypes() {
 		return null;
 	}
 
-	@Override
 	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler, String instanceId, String method) {
 		this.instanceId = instanceId;
 		this.method = method;
@@ -143,7 +141,6 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		return date == null ? getParsedDateByDefaultPattern(source) : date;
 	}
 
-	@Override
 	public void onUpdate(String[] values, IWContext iwc) {
 		if (values == null || values.length == 0) {
 			return;

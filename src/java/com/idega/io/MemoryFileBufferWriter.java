@@ -43,6 +43,9 @@ public class MemoryFileBufferWriter{
           ServletOutputStream out = response.getOutputStream();
           baos.writeTo(out);
           out.flush();
+          
+          mis.close();
+          baos.close();
         }
       }
     }

@@ -12,6 +12,8 @@ import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
+import org.apache.commons.io.IOUtils;
+
 import sun.net.www.MimeTable;
 
 import com.idega.idegaweb.IWApplicationContext;
@@ -218,8 +220,8 @@ public class MimeTypeUtil implements Singleton {
 		if (this.properties == null) {
 			String pathToFile = getRealPathToConfigFiles()
 					+ MIME_TYPE_PROPS_FILE_NAME;
+			InputStream in = null;
 			try {
-				InputStream in;
 				File file = new File(pathToFile);
 				if (file.exists()) {
 					in = new FileInputStream(file);
@@ -244,6 +246,9 @@ public class MimeTypeUtil implements Singleton {
 				fillPropertiesWithMimeTypes(this.properties);
 
 				storeProperties(this.properties, pathToFile);
+			}
+			finally {
+				IOUtils.closeQuietly(in);
 			}
 		}
 

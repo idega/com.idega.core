@@ -565,7 +565,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	private void setInitOpenLevel(Iterator iter, int level) {
 		if (iter != null) {
-			for (int i = 0; iter.hasNext(); i++) {
+			while (iter.hasNext()) {
 				ICTreeNode node = (ICTreeNode) iter.next();
 				Object item = node.getId();
 				if (!this.openNodes.contains(item)) {

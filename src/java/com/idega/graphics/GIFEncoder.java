@@ -223,7 +223,8 @@ public class GIFEncoder {
 	    }
     }
 
-    public void WriteBits(int bits, int numbits) throws IOException {
+    @SuppressWarnings("unused")
+	public void WriteBits(int bits, int numbits) throws IOException {
 	    int bitsWritten = 0;
 	    int numBytes = 255;
 	    do {
