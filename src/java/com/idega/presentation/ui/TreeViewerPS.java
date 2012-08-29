@@ -130,11 +130,11 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
       }
 //      System.out.println("TreeViewerPS: initLevel: " + _initLevel);
       Iterator iter = this._openNodes.iterator();
-      int counter = 1;
+      //int counter = 1;
       while (iter.hasNext()) {
         iter.next();
 //        System.out.println("TreeViewerPS: openItem"+counter+": "+item);
-        counter++;
+        //counter++;
       }
 
 

@@ -443,7 +443,7 @@ public static String getFileSeparator(){
 	public static List<File> getFilesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
-				@Override
+
 				public boolean accept(File file) {
 					return file.isFile();
 				}
@@ -463,7 +463,7 @@ public static String getFileSeparator(){
 	public static List<File> getDirectoriesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
-				@Override
+
 				public boolean accept(File file) {
 					return file.isDirectory();
 				}
@@ -489,6 +489,8 @@ public static String getFileSeparator(){
         strings.add(lineReader.readLine());
         lineReader.mark(1);
     }
+    
+    lineReader.close();
 
     return strings;
   }
@@ -848,7 +850,7 @@ public static String getFileSeparator(){
     }
     output.flush();
     output.close();
-
+    input.close();
 
   }
 
@@ -868,6 +870,9 @@ public static String getFileSeparator(){
       output.write(buf,0,read);
       read = input.read(buf,0,buffersize);
     }
+    
+    input.close();
+    output.close();
   }
 
   public static final File getZippedFiles(Collection<File> filesToZip) throws IOException {

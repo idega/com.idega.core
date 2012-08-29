@@ -214,7 +214,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	public abstract void initializeAttributes();
 
-	public java.util.Collection getAttributes() {
+	public java.util.Collection<EntityAttribute> getAttributes() {
 		// ties the attribute vector to the subclass of IDOLegacyEntity because
 		// the theAttributes variable is static.
 
@@ -1262,16 +1262,21 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 		if (theReturn == null) {
 			Vector vector = new Vector();
-			int i = 0;
+			// int i = 0;
 			// for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
 			// for (Enumeration e = getAttributes().elements(); e.hasMoreElements();
 			// i++)
-			for (Iterator iter = getAttributes().iterator(); iter.hasNext(); i++) {
+			/*for (Iterator iter = getAttributes().iterator(); iter.hasNext(); i++) {
 				EntityAttribute temp = (EntityAttribute) iter.next();
 				// EntityAttribute temp = (EntityAttribute) e.nextElement();
 				if (temp.getAttributeType().equals("column")) {
 					// vector.addElement(temp.getColumnName().toLowerCase());
 					vector.addElement(temp.getColumnName());
+				}
+			}*/
+			for (EntityAttribute object : getAttributes()) {
+				if (object.getAttributeType().equals("column")) {
+					vector.addElement(object.getColumnName());
 				}
 			}
 
@@ -3134,22 +3139,22 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			Stmt = conn.createStatement();
 			String idColumnName = this.getIDColumnName();
 			String id = getPrimaryKeyValueSQLString();
-			int count = 0;
+			//int count = 0;
 			for (int i = 0; i < entityToRemoveFrom.length; i++) {
 				String sql1 = "delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id;
 				logSQL(sql1);
-				count += Stmt.executeUpdate(sql1);
+				/*count += */Stmt.executeUpdate(sql1);
 				if (!isColumnValueNotEmpty(getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue()))) {
 					// removing all in middle table
 					String sql2 = "delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id;
 					logSQL(sql2);
-					count += Stmt.executeUpdate(sql2);
+					/*count += */Stmt.executeUpdate(sql2);
 				}
 				else {
 					// just removing this particular one
 					String sql2 = "delete from " + getNameOfMiddleTable(entityToRemoveFrom[i], this) + " where " + idColumnName + "= " + id + " AND " + entityToRemoveFrom[i].getIDColumnName() + "= " + getKeyValueSQLString(entityToRemoveFrom[i].getPrimaryKeyValue());
 					logSQL(sql2);
-					count += Stmt.executeUpdate(sql2);
+					/*count += */Stmt.executeUpdate(sql2);
 				}
 			}
 		}
