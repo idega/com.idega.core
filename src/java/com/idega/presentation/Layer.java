@@ -5,12 +5,12 @@
 package com.idega.presentation;
 
 import java.io.IOException;
-import java.util.Iterator;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
 import com.idega.idegaweb.IWConstants;
+import com.idega.util.StringUtil;
 
 /**
  * This component renders a layer or a 'div' tag in HTML around its children.
@@ -36,31 +36,33 @@ public class Layer extends PresentationObjectContainer {
 		setTransient(false);
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		encodeBegin(iwc);
 		encodeChildren(iwc);
 		encodeEnd(iwc);
 	}
 	
+	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
-		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML) && !StringUtil.isEmpty(layerType)){
 			print("<" + this.layerType + " ");
 			print(getMarkupAttributesString() + ">");
 		}
 	}
 	
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException{
 		if(!goneThroughRenderPhase()){
-			Iterator children = this.getChildren().iterator();
-			while (children.hasNext()) {
-				UIComponent element = (UIComponent) children.next();
+			for (UIComponent element : getChildren()) {
 				renderChild(context,element);
 			}
 		}
 	}
 	
+	@Override
 	public void encodeEnd(FacesContext context)throws IOException{
-		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
+		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML) && !StringUtil.isEmpty(layerType)) {
 			println("</" + this.layerType + ">");
 		}
 	}
@@ -73,6 +75,7 @@ public class Layer extends PresentationObjectContainer {
 		setHeightStyle(Integer.toString(height));
 	}
 	
+	@Override
 	public void setHeight(String height) {
 		setHeightStyle(height);
 	}
@@ -81,6 +84,7 @@ public class Layer extends PresentationObjectContainer {
 		setWidthStyle(Integer.toString(width));
 	}
 	
+	@Override
 	public void setWidth(String width) {
 		setWidthStyle(width);
 	}
@@ -97,6 +101,7 @@ public class Layer extends PresentationObjectContainer {
 		setStyleAttribute(ZINDEX, index);
 	}
 	
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
@@ -106,6 +111,7 @@ public class Layer extends PresentationObjectContainer {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(context);

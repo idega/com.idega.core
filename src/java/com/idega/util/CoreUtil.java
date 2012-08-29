@@ -5,6 +5,8 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -18,6 +20,7 @@ import sun.misc.BASE64Encoder;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.data.GenericEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -187,6 +190,7 @@ public class CoreUtil {
 		final String userFullName = user;
 		Thread sender = new Thread(new Runnable() {
 
+			@Override
 			public void run() {
 				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 				String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
@@ -271,5 +275,40 @@ public class CoreUtil {
 
 	public static final boolean isMobileClient(IWContext iwc) {
 		return CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(iwc.getSessionAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE));
+	}
+	
+	public static List<String> getIds(Collection<GenericEntity> entities) {
+		if(ListUtil.isEmpty(entities)){
+			return Collections.emptyList();
+		}
+		List<String> ids = new ArrayList<String>(entities.size());
+		for(GenericEntity entity : entities){
+			Object id = entity.getPrimaryKey();
+			if(id == null){
+				continue;
+			}
+			String strId = String.valueOf(id);
+			ids.add(strId);
+		}
+		return ids;
+	}
+	
+	public static List<Integer> getIdsAsIntegers(Collection<GenericEntity> entities) {
+		if(ListUtil.isEmpty(entities)){
+			return Collections.emptyList();
+		}
+		List<Integer> ids = new ArrayList<Integer>(entities.size());
+		for(GenericEntity entity : entities){
+			Object id = entity.getPrimaryKey();
+			if(id == null){
+				continue;
+			}
+			String strId = String.valueOf(id);
+			try{
+				ids.add(Integer.valueOf(strId));
+			}catch (Exception e) {
+			}
+		}
+		return ids;
 	}
 }
