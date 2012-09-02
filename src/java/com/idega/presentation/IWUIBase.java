@@ -1,6 +1,7 @@
 package com.idega.presentation;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -10,6 +11,7 @@ import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
 
 import com.idega.core.idgenerator.business.UUIDGenerator;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
@@ -23,6 +25,7 @@ public abstract class IWUIBase extends IWBaseComponent{
 	private StringBuilder scriptOnLoad = null;
 	private IWContext iwc = null;
 	private String tag = null;
+	private Map<String,String> markupAttributes = null;
 	
 	public IWUIBase(){
 		super();
@@ -43,25 +46,26 @@ public abstract class IWUIBase extends IWBaseComponent{
 	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		
+		super.encodeBegin(context);
 		if(!StringUtil.isEmpty(tag)){
 			writeTag(context);
 		}
-		super.encodeBegin(context);
 	}
 	
 	private void writeTag(FacesContext context) throws IOException{
 		ResponseWriter responseWriter = context.getResponseWriter();
 		responseWriter.startElement(tag, this);
-		Map<String,Object> attributes = getAttributes();
-		Set<String> names = getAttributes().keySet();
+		Map<String,String> attributes = getMarkupAttributes();
+		Set<String> names = attributes.keySet();
 		for(String name : names){
-			responseWriter.writeAttribute(name, String.valueOf(attributes.get(name)), null);
+			responseWriter.writeAttribute(name, attributes.get(name), null);
 		}
 		
 	}
 	
 	@Override
 	public void encodeEnd(FacesContext context)throws IOException{
+		addScriptOnLoad();
 		if(!StringUtil.isEmpty(tag)){
 			ResponseWriter responseWriter = context.getResponseWriter();
 			responseWriter.endElement(tag);
@@ -69,10 +73,8 @@ public abstract class IWUIBase extends IWBaseComponent{
 	}
 	
 	protected void addScriptOnLoad(){
-		Layer scriptLayer = new Layer();
-		add(scriptLayer);
 		scriptOnLoad.append("\n});");
-		scriptLayer.add(PresentationUtil.getJavaScriptAction(scriptOnLoad.toString()));
+		PresentationUtil.addJavaScriptActionToBody(getIwc(), scriptOnLoad.toString());
 	}
 	
 	protected StringBuilder getScriptOnLoad() {
@@ -85,7 +87,6 @@ public abstract class IWUIBase extends IWBaseComponent{
 	@Override
 	protected void initializeComponent(FacesContext context) {
 		super.initializeComponent(context);
-		addScriptOnLoad();
 		addFiles(getIwc(context));
 	}
 
@@ -136,26 +137,25 @@ public abstract class IWUIBase extends IWBaseComponent{
 	 * @param seperator
 	 */
 	public void setMarkupAttributeMultivalued(String attributeName, String attributeValue, String seperator) {
-		Object previousAttributeObject = getAttributes().get(attributeName);
-		if (previousAttributeObject == null){
-			getAttributes().put(attributeName, attributeValue);
+		String previousAttribute = getMarkupAttributes().get(attributeName);
+		if (StringUtil.isEmpty(previousAttribute)){
+			setMarkupAttribute(attributeName, attributeValue);
 			return;
 		}
-		String previousAttribute = String.valueOf(previousAttributeObject);
 		if (previousAttribute.indexOf(attributeValue) == -1){
-			String parameterValue = previousAttribute;
+			String parameterValue;
 			if (previousAttribute.endsWith(seperator)) {
-				parameterValue = parameterValue + attributeValue;
+				parameterValue = previousAttribute + attributeValue;
 			}
 			else {
-				parameterValue = parameterValue + seperator + attributeValue;
+				parameterValue = new StringBuilder(previousAttribute).append(seperator).append(attributeValue).toString();
 			}
-			getAttributes().put(attributeName, parameterValue);
+			setMarkupAttribute(attributeName, parameterValue);
 		}
 	}
 	
 	public void addStyleClass(String styleName) {
-		setMarkupAttributeMultivalued("class", styleName, " ");
+		setMarkupAttributeMultivalued("class", styleName, CoreConstants.SPACE);
 	}
 	
 	@Override
@@ -178,4 +178,20 @@ public abstract class IWUIBase extends IWBaseComponent{
 	public abstract List<String> getScripts();
 	
 	public abstract List<String> getStyleSheets();
+
+	public void setMarkupAttribute(String name, String value){
+		getMarkupAttributes().put(name,value);
+	}
+	private Map<String, String> getMarkupAttributes() {
+		if(markupAttributes == null){
+			markupAttributes = new HashMap<String, String>();
+		}
+		return markupAttributes;
+	}
+	
+	@Override
+	public void setId(String id){
+		setMarkupAttribute("id", id);
+		super.setId(id);
+	}
 }
