@@ -1919,7 +1919,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	public void store() {
 		String id = getId();
 		super.store();
-		if(StringUtil.isEmpty(id)){
+		if (StringUtil.isEmpty(id)) {
 			GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(this);
 			ELUtil.getInstance().publishEvent(groupCreatedEvent);
 		}
@@ -2089,8 +2089,9 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	@Override
-	public String getId(){
-		return getPrimaryKey().toString();
+	public String getId() {
+		Object primaryKey = getPrimaryKey();
+		return primaryKey == null ? null : primaryKey.toString();
 	}
 
 	public Collection ejbFindAllByNamePhrase(String phrase, Locale locale) throws FinderException {
