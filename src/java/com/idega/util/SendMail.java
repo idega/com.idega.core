@@ -119,12 +119,13 @@ public class SendMail {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
 		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.TRUE);
-		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.FALSE);
+		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.TRUE);
 		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "idegatest@idega.com");
 		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "pl4tf0rm");
 		String port = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
 		if (StringUtil.isEmpty(host)) {
-			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.emailsrvr.com");
+			host = useSSL ? "secure.emailsrvr.com" :
+				settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.emailsrvr.com");
 			if (StringUtil.isEmpty(host))
 				throw new MessagingException("Mail server is not configured.");
 		}
@@ -219,6 +220,7 @@ public class SendMail {
 		// Send the message and close the connection
 		final Message mail = message;
 		Thread transporter = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 					Transport.send(mail);

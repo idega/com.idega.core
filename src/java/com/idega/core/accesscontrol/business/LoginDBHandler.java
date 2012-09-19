@@ -1,17 +1,18 @@
 /*
  * $Id: LoginDBHandler.java,v 1.72 2008/10/22 14:58:14 civilis Exp $
- * 
+ *
  * Copyright (C) 2002 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.core.accesscontrol.business;
 
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
@@ -37,6 +38,7 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
@@ -87,7 +89,7 @@ public class LoginDBHandler {
 		catch (FinderException fe) {
 			// No login found for user...
 		}
-		
+
 		if (update) {
 			if (loginTable == null) {
 				throw new LoginCreateException("User_id : " + userID + " , cannot update login : cannot find login");
@@ -101,16 +103,16 @@ public class LoginDBHandler {
 				throw new LoginCreateException(ce.getMessage());
 			}
 		}
-		
+
 		if (userID > 0 && !update) {
 			loginTable.setUserId(userID);
 		}
 		else if (!update) {
 			throw new LoginCreateException("invalid user_id");
 		}
-		
+
 		String encryptedPassword = null;
-		if (password != null && !"".equals(password)) {
+		if (password != null && !CoreConstants.EMPTY.equals(password)) {
 			encryptedPassword = Encrypter.encryptOneWay(password);
 			loginTable.setUserPassword(encryptedPassword, password);
 		}
@@ -118,7 +120,7 @@ public class LoginDBHandler {
 			throw new LoginCreateException("Password not valid");
 		}
 		if (update) {
-			if (userLogin != null && !"".equals(userLogin)) {
+			if (userLogin != null && !CoreConstants.EMPTY.equals(userLogin)) {
 				String userName = loginTable.getUserLogin();
 				LoginTable existingLogin = null;
 				if (!userName.equals(userLogin)) {
@@ -142,7 +144,7 @@ public class LoginDBHandler {
 			}
 		}
 		else {
-			if (userLogin != null && !"".equals(userLogin)) {
+			if (userLogin != null && !CoreConstants.EMPTY.equals(userLogin)) {
 				try {
 					loginTable = getLoginTableHome().findByLogin(userLogin);
 					throw new LoginCreateException("login not valid : in use");
@@ -163,20 +165,20 @@ public class LoginDBHandler {
 				if(!iwc.isSuperAdmin() && iwc.getCurrentUserId()!=userID){
 					User changer = iwc.getCurrentUser();
 					loginTable.setChangedByUser(changer);
-					
+
 					//don't change the primary group though!
 					if(loginTable.getChangedByGroupId()<0){
 						Group primary = changer.getPrimaryGroup();
-					
+
 						if(primary!=null){
 							loginTable.setChangedByGroup(primary);
 						}
 					}
 				}
 			} catch (Exception e) {
-				//no user, must be a system process setting a login				
+				//no user, must be a system process setting a login
 			}
-		
+
 		loginTable.store();
 		return loginTable;
 	}
@@ -386,10 +388,10 @@ public class LoginDBHandler {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * <p>
-	 * Finds and returns the first found login for user user 
+	 * Finds and returns the first found login for user user
 	 * with no set loginType.
 	 * </p>
 	 * @param user
@@ -405,10 +407,10 @@ public class LoginDBHandler {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * <p>
-	 * Finds and returns the first found login for user user 
+	 * Finds and returns the first found login for user user
 	 * with no set loginType.
 	 * </p>
 	 * @param user
@@ -462,10 +464,10 @@ public class LoginDBHandler {
 			try {
 				int id = ((Integer) login.getPrimaryKey()).intValue();
 				LoginRecordHome lr = ((LoginRecordHome) com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class));
-				java.util.Collection recs = lr.findAllLoginRecords(id);
-				Iterator iter = recs.iterator();
-				while (iter.hasNext()) {
-					((LoginRecord) iter.next()).remove();
+				@SuppressWarnings("unchecked")
+				Collection<LoginRecord> recs = lr.findAllLoginRecords(id);
+				for (Iterator<LoginRecord> iter = recs.iterator(); iter.hasNext();) {
+					iter.next().remove();
 				}
 			}
 			// catch (RemoteException ex)
@@ -559,7 +561,7 @@ public class LoginDBHandler {
 			return (0);
 		}
 	}
-	
+
 	public static boolean hasLoggedIn(LoginTable loginTable) {
 		return getNumberOfSuccessfulLogins(new Integer(loginTable.getPrimaryKey().toString()).intValue()) > 0;
 	}
@@ -596,7 +598,7 @@ public class LoginDBHandler {
 	/**
 	 * Generates a login for a user with a random password and a login derived
 	 * from the users name (or random login if all possible logins are taken)
-	 * 
+	 *
 	 * @param userId
 	 *          the id for the user.
 	 * @throws LoginCreateException
@@ -606,14 +608,13 @@ public class LoginDBHandler {
 		User user;
 		try {
 			user = getUser(userID);
-			List possibleLogins = getPossibleGeneratedUserLogins(user);
+			List<String> possibleLogins = getPossibleGeneratedUserLogins(user);
 			String generatedPassword = getGeneratedPasswordForUser(user);
 			// or (int i = 0; i < possibleLogins.length; i++)
 			// {
 			// String login = possibleLogins[i];
-			for (Iterator iter = possibleLogins.iterator(); iter.hasNext();) {
-				Object oLogin = iter.next();
-				String login = (String) oLogin;
+			for (Iterator<String> iter = possibleLogins.iterator(); iter.hasNext();) {
+				String login = iter.next();
 				try {
 					return createLogin(userID, login, generatedPassword);
 				}
@@ -622,7 +623,7 @@ public class LoginDBHandler {
 				}
 				catch (LoginCreateException e) {
 					// e.printStackTrace();
-					System.err.println("Error creating login for userID: " + user.getID() + " with login: " + login);
+					System.err.println("Error creating login for userID: " + user.getId() + " with login: " + login);
 				}
 			}
 		}
@@ -641,7 +642,7 @@ public class LoginDBHandler {
 		return com.idega.util.StringHandler.getRandomStringNonAmbiguous(8);
 	}
 
-	private static List getPossibleGeneratedUserLogins(User user) {
+	public static List<String> getPossibleGeneratedUserLogins(User user) {
 		String userFirstName = user.getFirstName();
 		String userLastName = user.getLastName();
 		String firstName = null;
@@ -654,57 +655,51 @@ public class LoginDBHandler {
 			lastName = StringHandler.stripNonRomanCharacters(userLastName).toLowerCase();
 		}
 		if (user.getMiddleName() != null) {
-			if (!user.getMiddleName().equals("")) {
+			if (!user.getMiddleName().equals(CoreConstants.EMPTY)) {
 				middleName = StringHandler.stripNonRomanCharacters(user.getMiddleName()).toLowerCase();
 			}
 		}
 		if (firstName == null) {
-			firstName = "";
+			firstName = CoreConstants.EMPTY;
 		}
 		if (middleName == null) {
-			middleName = "";
+			middleName = CoreConstants.EMPTY;
 		}
 		if (lastName == null) {
-			lastName = "";
+			lastName = CoreConstants.EMPTY;
 		}
-		// String finalPossibility = StringHandler.getRandomString(8);
-		ArrayList userNameList = new ArrayList(200);
+		List<String> userNameList = new ArrayList<String>(200);
 		try {
 			String usePidAsGenerated = getPropertyValue(IWMainApplication.getDefaultIWMainApplication().getCoreBundle(), LOGIN_USE_PID_AS_GENERATED, Boolean.toString(false));
 			if (new Boolean(usePidAsGenerated).booleanValue()) {
 				userNameList.add(user.getPersonalID());
 			}
-		}
-		catch (RuntimeException e1) {
+		} catch (RuntimeException e1) {
 			e1.printStackTrace();
 		}
 		try {
 			userNameList.add(firstName + lastName.substring(0, 1));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// userNameList.add(StringHandler.getRandomString(8));
 		}
 		try {
-			if (!"".equals(middleName)) {
+			if (!CoreConstants.EMPTY.equals(middleName)) {
 				userNameList.add(firstName.substring(0, 1) + middleName.substring(0, 1) + lastName.substring(0, 1));
 			}
 			else {
 				userNameList.add(firstName + lastName.substring(0, 2));
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// userNameList.add(StringHandler.getRandomString(8));
 		}
 		try {
 			userNameList.add(firstName.substring(0, firstName.length() - 1) + lastName.substring(0, 1));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// userNameList.add(StringHandler.getRandomString(8));
 		}
 		try {
 			userNameList.add(firstName.substring(0, firstName.length()) + lastName.substring(0, 3));
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			// userNameList.add(StringHandler.getRandomString(8));
 		}
 		userNameList.addAll(generatePossibleUserNames(firstName, middleName, lastName, 8, (Integer) user.getPrimaryKey()));
@@ -712,7 +707,7 @@ public class LoginDBHandler {
 		return userNameList;
 	}
 
-	public static List generatePossibleUserNames(String first, String middle, String last, int userNameLength, Integer userid) {
+	public static List<String> generatePossibleUserNames(String first, String middle, String last, int userNameLength, Integer userid) {
 		int namelength = userNameLength;
 		char[][] array = new char[196][namelength];
 		String alfabet = first + last + middle;
@@ -733,7 +728,7 @@ public class LoginDBHandler {
 		String startletters = new String("ZWYX");
 		int startlettercount = startletters.length();
 		int number = 1;
-		java.util.ArrayList list = new java.util.ArrayList(196);
+		ArrayList<String> list = new ArrayList<String>(196);
 		Random random = new Random();
 		boolean breakit = false;
 		for (int row = 0; row < array.length && !breakit; row++) {
@@ -756,7 +751,7 @@ public class LoginDBHandler {
 			// if we havent reached the final length
 			// we increase the letter count
 			if ((count2 + count1) < namelength) {
-				// 
+				//
 				if (count1 > count2 && count1 < first.length()) {
 					count1++;
 				}
@@ -814,9 +809,9 @@ public class LoginDBHandler {
 	}
 
 	public static void main(String[] args) {
-		java.util.List list = generatePossibleUserNames("Maria", "", "Ammar", 8, new Integer(9999));
-		for (Iterator iter = list.iterator(); iter.hasNext();) {
-			String element = (String) iter.next();
+		List<String> list = generatePossibleUserNames("Maria", CoreConstants.EMPTY, "Ammar", 8, new Integer(9999));
+		for (Iterator<String> iter = list.iterator(); iter.hasNext();) {
+			String element = iter.next();
 			System.out.println(element);
 		}
 	}

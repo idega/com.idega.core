@@ -2045,7 +2045,8 @@ IWCORE.pingServer = function(sleepTime, id) {
 IWCORE.sendingErrorMail = false;
 IWCORE.userDeniedToReloadPageOnError = false;
 IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
-	if (!IWCORE.sendingErrorMail) {
+	if (!IWCORE.sendingErrorMail	&& msg != 'Internal Server Error' && msg != 'Service Temporarily Unavailable' && msg != 'Timeout'
+									&& msg != 'Service Unavailable' && msg != 'OK') {
 		IWCORE.sendingErrorMail = true;
 		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
 			if (ex == null) {
