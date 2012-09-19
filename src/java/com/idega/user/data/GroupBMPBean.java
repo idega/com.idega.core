@@ -2090,7 +2090,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	@Override
 	public String getId(){
-		return getPrimaryKey().toString();
+		Object primaryKey = getPrimaryKey();
+		if (primaryKey == null) {
+			return null;
+		}
+		
+		return primaryKey.toString();
 	}
 
 	public Collection ejbFindAllByNamePhrase(String phrase, Locale locale) throws FinderException {
