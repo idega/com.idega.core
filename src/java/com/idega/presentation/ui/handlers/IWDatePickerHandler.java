@@ -20,6 +20,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.IWDatePicker;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
 
 /**
@@ -32,16 +33,17 @@ import com.idega.util.StringUtil;
  */
 public class IWDatePickerHandler implements ICPropertyHandler {
 
-	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd"),
-									TIME_FORMATTER = new SimpleDateFormat("HH:mm");
+	private static final DateFormat DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd");
 
 	private String method = null;
 	private String instanceId = null;
 
+	@Override
 	public List<?> getDefaultHandlerTypes() {
 		return null;
 	}
 
+	@Override
 	public PresentationObject getHandlerObject(String name, String stringValue, IWContext iwc, boolean oldGenerationHandler, String instanceId, String method) {
 		this.instanceId = instanceId;
 		this.method = method;
@@ -78,11 +80,12 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		return getParsedDateByCurrentLocale(source, null);
 	}
 
-	@SuppressWarnings("deprecation")
 	private static final Date getParsedDateByCurrentLocale(String source, Locale locale) {
-		if (StringUtil.isEmpty(source)) {
+		if (StringUtil.isEmpty(source))
 			return null;
-		}
+
+		if (source.endsWith(".0"))
+			source = source.substring(0, source.lastIndexOf(".0"));
 
 		if (locale == null) {
 			IWContext iwc = CoreUtil.getIWContext();
@@ -94,34 +97,19 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			}
 		}
 
-		Date date = null;
+		IWTimestamp date = null;
 		try {
-			date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale).parse(source);
+			date = new IWTimestamp(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale).parse(source));
 		} catch(Exception e) {}
 		if (date == null) {
 			try {
-				date = DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
+				date = new IWTimestamp(DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source));
 			} catch(Exception e) {
 				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: " + source + " by locale: " +
 						locale.toString());
-				return null;
 			}
 		}
-
-		String[] dateAndTimeSource = source.split(CoreConstants.SPACE);
-		if (dateAndTimeSource.length == 2) {
-			try {
-				Date time = TIME_FORMATTER.parse(dateAndTimeSource[1]);
-
-				date.setHours(time.getHours());
-				date.setMinutes(time.getMinutes());
-			} catch (ParseException e) {
-				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to time: " + dateAndTimeSource[1] +
-						" by locale: " + locale.toString());
-			}
-		}
-
-		return date;
+		return date.getDate();
 	}
 
 	public static final Timestamp getParsedTimestampByCurrentLocale(String source) {
@@ -141,6 +129,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		return date == null ? getParsedDateByDefaultPattern(source) : date;
 	}
 
+	@Override
 	public void onUpdate(String[] values, IWContext iwc) {
 		if (values == null || values.length == 0) {
 			return;
