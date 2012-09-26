@@ -1,57 +1,49 @@
 package com.idega.presentation.ui.autocomplete;
 
-import java.util.List;
-import java.util.logging.Logger;
-
-import com.idega.presentation.IWBaseComponent;
+import com.idega.core.bean.AutocompleteBean;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Layer;
+import com.idega.presentation.IWUIBase;
 import com.idega.util.PresentationUtil;
 
-public abstract class Autocomplete  extends IWBaseComponent{
+/**
+ * Main class for autocomplete components.
+ * @author alex
+ *
+ */
+public abstract class Autocomplete extends IWUIBase{
 
-	private String itemsFunction = null;
-	private StringBuilder scriptOnLoad = null;
+	private String selectionFunction = null;
+	private AutocompleteBean autocompleteBean = null;
 	
-	public String getItemsFunction() {
-		return itemsFunction;
+	/**
+	 * Set an instance of {@link AutocompleteBean} to manage queries of autocomplete.
+	 * @param autocompleteBean
+	 */
+	public void setAutocompleteBean(AutocompleteBean autocompleteBean) {
+		this.autocompleteBean = autocompleteBean;
 	}
 
-	public void setItemsFunction(String itemsFunction) {
-		this.itemsFunction = itemsFunction;
+	public AutocompleteBean AutocompleteBeangetAutocompleteBean() {
+		return autocompleteBean;
 	}
 
+	/**
+	 * Set javascript function that will take care of 
+	 * selected item of autocomplete
+	 * @return
+	 */
+	public String getSelectionFunction() {
+		return selectionFunction;
+	}
+
+	public void setSelectionFunction(String selectionFunction) {
+		this.selectionFunction = selectionFunction;
+	}
+
+	@Override
 	protected void addFiles(IWContext iwc){
-		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, getScripts(iwc));
-		PresentationUtil.addStyleSheetsToHeader(iwc, getStyleSheets(iwc));
-	}
-	
-	protected void addActions(IWContext iwc){
-		Layer scriptLayer = new Layer();
-		this.add(scriptLayer);
-		
-		String action = getScriptOnLoad().append("\n});").toString();
-		action = PresentationUtil.getJavaScriptAction(action);
-		scriptLayer.add(action);
-	}
-	
-	public abstract List<String> getScripts(IWContext iwc);
-	
-	public abstract List<String> getStyleSheets(IWContext iwc);
-
-	protected StringBuilder getScriptOnLoad() {
-		if(scriptOnLoad == null){
-			scriptOnLoad = new StringBuilder("jQuery(document).ready(function(){");
-		}
-		return scriptOnLoad;
-	}
-
-	protected void setScriptOnLoad(StringBuilder scriptOnLoad) {
-		this.scriptOnLoad = scriptOnLoad;
-	}
-	
-	protected Logger getLogger(){
-		return Logger.getLogger(getClass().getName());
+		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, getScripts());
+		PresentationUtil.addStyleSheetsToHeader(iwc, getStyleSheets());
 	}
 	
 }

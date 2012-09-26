@@ -45,11 +45,11 @@ public abstract class IWUIBase extends IWBaseComponent{
 	}
 	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
-		
 		super.encodeBegin(context);
 		if(!StringUtil.isEmpty(tag)){
 			writeTag(context);
 		}
+		addScriptOnLoad();
 	}
 	
 	private void writeTag(FacesContext context) throws IOException{
@@ -65,7 +65,6 @@ public abstract class IWUIBase extends IWBaseComponent{
 	
 	@Override
 	public void encodeEnd(FacesContext context)throws IOException{
-		addScriptOnLoad();
 		if(!StringUtil.isEmpty(tag)){
 			ResponseWriter responseWriter = context.getResponseWriter();
 			responseWriter.endElement(tag);
@@ -73,8 +72,15 @@ public abstract class IWUIBase extends IWBaseComponent{
 	}
 	
 	protected void addScriptOnLoad(){
+		Layer scriptLayer = new Layer();
+		add(scriptLayer);
+		if(scriptOnLoad == null){
+			return;
+		}
+		StringBuilder scriptOnLoad = getScriptOnLoad();
 		scriptOnLoad.append("\n});");
-		PresentationUtil.addJavaScriptActionToBody(getIwc(), scriptOnLoad.toString());
+		scriptLayer.add(PresentationUtil.getJavaScriptAction(scriptOnLoad.toString()));
+//		PresentationUtil.addJavaScriptActionToBody(getIwc(), scriptOnLoad.toString());
 	}
 	
 	protected StringBuilder getScriptOnLoad() {
@@ -181,6 +187,10 @@ public abstract class IWUIBase extends IWBaseComponent{
 
 	public void setMarkupAttribute(String name, String value){
 		getMarkupAttributes().put(name,value);
+	}
+	
+	public String getMarkupAttribute(String name){
+		return getMarkupAttributes().get(name);
 	}
 	private Map<String, String> getMarkupAttributes() {
 		if(markupAttributes == null){
