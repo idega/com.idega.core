@@ -1,8 +1,8 @@
 /*
  * $Id: Property.java,v 1.20 2009/01/21 10:03:33 valdas Exp $ Created on 21.12.2004
- * 
+ *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -37,13 +37,13 @@ import com.idega.util.CoreUtil;
 import com.idega.util.StringUtil;
 
 /**
- * 
+ *
  * This class holds an instance of a property with its value(s).
  * A property is in this case a setter method that has attatched set values (as a String or Object array).<br>
  * This is used in the Builder where properties are set via this class on PresentationObject instances.
- * 
+ *
  * Last modified: $Date: 2009/01/21 10:03:33 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
  * @version $Revision: 1.20 $
  */
@@ -59,15 +59,15 @@ public class Property implements Serializable{
 	private Method method;
 
 	private Object[] propertyValues;
-	
+
 	public Property() {
-		// doing nothing, called by subclass 
+		// doing nothing, called by subclass
 	}
 
 	/**
 	 * Construct a property from a so called methodIdentifier that is used to construct a Method instance.
 	 * @param methodIdentifier a string in the format ':method:[modifierInt]:[classIdentifier]:[returnClass]:[methodName]:[parameterClass]:' , example: ':method:1:com.idega.presentation.Table:void:setWidth:java.lang.String:'
-	 */		
+	 */
 	public Property(String methodIdentifier) {
 		this(methodIdentifier, null);
 	}
@@ -76,10 +76,10 @@ public class Property implements Serializable{
 	 * Construct a property from a so called methodIdentifier that is used to construct a Method instance.
 	 * @param methodIdentifier a string in the format ':method:[modifierInt]:[classIdentifier]:[returnClass]:[methodName]:[parameterClass]:' , example: ':method:1:implied:void:setWidth:java.lang.String:'
 	 * @param declaringClass The class that the method is declared in.
-	 */	
+	 */
 	public Property(String methodIdentifier, Class<?> declaringClass) {
 		if (declaringClass != null) {
-			setMethod(getMethodFinder().getMethod(methodIdentifier, declaringClass));		
+			setMethod(getMethodFinder().getMethod(methodIdentifier, declaringClass));
 		}
 		else {
 			setMethod(getMethodFinder().getMethod(methodIdentifier));
@@ -168,7 +168,7 @@ public class Property implements Serializable{
 
 	/**
 	 * Sets the property on the object instance
-	 * 
+	 *
 	 * @param instance
 	 */
 	public void setPropertyOnInstance(Object  instance) {
@@ -188,7 +188,7 @@ public class Property implements Serializable{
 			e.printStackTrace();
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static <T>T getValueFromExpression(String expression, Class<T> expectedResultType) {
 		if (StringUtil.isEmpty(expression) || expectedResultType == null) {
@@ -197,17 +197,17 @@ public class Property implements Serializable{
 		if (!expression.startsWith("#{") && !expression.endsWith("}")) {
 			return null;
 		}
-		
+
 		FacesContext fcContext = FacesContext.getCurrentInstance();
 		ELContext elContext = fcContext.getELContext();
 		ValueExpression ve = fcContext.getApplication().getExpressionFactory().createValueExpression(elContext, expression, expectedResultType);
 		return (T) ve.getValue(elContext);
 	}
-	
+
 	//Moved from ComponentPropertyHandler (in builder)
 	protected Object convertStringToObject(Class<?> parameterType, String stringValue) throws Exception {
 		Object argument = null;
-		
+
 		try {
 			argument = getValueFromExpression(stringValue, parameterType);
 		} catch(Exception e) {
@@ -216,7 +216,7 @@ public class Property implements Serializable{
 		if (argument != null) {
 			return argument;
 		}
-		
+
 		try {
 			if (parameterType.equals(Integer.class) || parameterType.equals(Integer.TYPE)) {
 				argument = Integer.valueOf(stringValue);
@@ -274,9 +274,10 @@ public class Property implements Serializable{
 				argument = IWDatePickerHandler.getParsedDate(stringValue);
 			}
 		} catch(Exception e) {
-			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get value from expression: " + stringValue);
+			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get value from expression: " + stringValue + ", expected type: " +
+					parameterType);
 		}
-		
+
 		return argument;
 	}
 }
