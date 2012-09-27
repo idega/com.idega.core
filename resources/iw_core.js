@@ -722,6 +722,10 @@ function isSafariBrowser() {
 	return true;
 }
 
+function isChromeBrowser() {
+	return navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
+}
+
 // Function to add event to any object, example: registerEvent(window, "load", foo);
 function registerEvent(object, eventType, functionName){ 
 	if (object.addEventListener) { 
