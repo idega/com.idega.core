@@ -72,11 +72,12 @@ public abstract class IWUIBase extends IWBaseComponent{
 	}
 	
 	protected void addScriptOnLoad(){
-		Layer scriptLayer = new Layer();
-		add(scriptLayer);
 		if(scriptOnLoad == null){
 			return;
 		}
+		Layer scriptLayer = new Layer();
+		add(scriptLayer);
+		scriptLayer.setStyleClass("script-layer");
 		StringBuilder scriptOnLoad = getScriptOnLoad();
 		scriptOnLoad.append("\n});");
 		scriptLayer.add(PresentationUtil.getJavaScriptAction(scriptOnLoad.toString()));
