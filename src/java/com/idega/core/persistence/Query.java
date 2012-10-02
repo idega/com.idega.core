@@ -43,4 +43,6 @@ public interface Query {
 	 * @param queryExpression
 	 */
 	public abstract void setQueryExpression(String queryExpression);
+	
+	public void executeUpdate(Param... params);
 }
