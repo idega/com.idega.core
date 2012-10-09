@@ -159,4 +159,5 @@ public class CoreConstants {
 								PAGE_VIEW_TYPE_MOBILE = "mobile",
 								
 								PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body";
+	public static final String PROPERTIES_FOLDER_NAME_IN_JAR = "properties";
 }
