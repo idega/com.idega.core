@@ -234,9 +234,7 @@ public class CoreUtil {
 			Locale locale = null;
 
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			if (loginSession == null) {
-				LOGGER.warning("LoginSession was not found");
-			} else {
+			if (loginSession != null) {
 				//	1. Trying to get from request
 				locale = loginSession.getCurrentLocale();
 				if (locale == null) {
@@ -276,7 +274,7 @@ public class CoreUtil {
 	public static final boolean isMobileClient(IWContext iwc) {
 		return CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(iwc.getSessionAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE));
 	}
-	
+
 	public static List<String> getIds(Collection<GenericEntity> entities) {
 		if(ListUtil.isEmpty(entities)){
 			return Collections.emptyList();
@@ -292,7 +290,7 @@ public class CoreUtil {
 		}
 		return ids;
 	}
-	
+
 	public static List<Integer> getIdsAsIntegers(Collection<GenericEntity> entities) {
 		if(ListUtil.isEmpty(entities)){
 			return Collections.emptyList();
