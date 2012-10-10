@@ -374,6 +374,7 @@ public static String getFileSeparator(){
   	    	long modifiedFile = file.lastModified();
   	    	if (currentTime - modifiedFile > timeInMillis)	{
   	    		FileUtil.deleteFileAndChildren(file);
+  	    		LOGGER.info("Deleted " + file + " and it's children. Last time it was modified " + new IWTimestamp(modifiedFile));
   	    	}
   	    }
     	}
@@ -444,6 +445,7 @@ public static String getFileSeparator(){
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
 
+				@Override
 				public boolean accept(File file) {
 					return file.isFile();
 				}
@@ -464,6 +466,7 @@ public static String getFileSeparator(){
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
 
+				@Override
 				public boolean accept(File file) {
 					return file.isDirectory();
 				}
@@ -489,7 +492,7 @@ public static String getFileSeparator(){
         strings.add(lineReader.readLine());
         lineReader.mark(1);
     }
-    
+
     lineReader.close();
 
     return strings;
@@ -870,7 +873,7 @@ public static String getFileSeparator(){
       output.write(buf,0,read);
       read = input.read(buf,0,buffersize);
     }
-    
+
     input.close();
     output.close();
   }
@@ -957,14 +960,14 @@ public static String getFileSeparator(){
 	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
 		  return null;
 	  }
-	  
+
 	  ArrayList<RepositoryItem> files = new ArrayList<RepositoryItem> (filesToZip.size());
 	  for (ICFile file : filesToZip) {
 		  files.add(new FileItem(file));
 	  }
 	  return getZippedFiles(files, fileName, false);
   }
-  
+
   public static void copyDirectoryRecursivelyKeepTimestamps(File inputDirectory,File outputDirectory) throws IOException {
   	FileUtil.copyDirectoryRecursively(inputDirectory, outputDirectory, true);
   }
