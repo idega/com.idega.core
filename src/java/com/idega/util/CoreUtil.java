@@ -9,11 +9,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -27,7 +30,9 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.presentation.JSFUtil;
 
 public class CoreUtil {
 
@@ -309,4 +314,16 @@ public class CoreUtil {
 		}
 		return ids;
 	}
+
+	public static final void doEnsureScopeIsSet(FacesContext context) {
+		Map<?, ?> utils = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
+				.getBeansOfType(JSFUtil.class);
+		if (MapUtil.isEmpty(utils))
+			return;
+
+		for (Object bean: utils.values()) {
+			if (bean instanceof JSFUtil)
+				((JSFUtil) bean).setFacesScope(context);
+		}
+    }
 }
