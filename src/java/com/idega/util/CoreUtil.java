@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
@@ -326,4 +327,30 @@ public class CoreUtil {
 				((JSFUtil) bean).setFacesScope(context);
 		}
     }
+
+	public static File getFileFromRepository(String pathInRepository) throws IOException {
+		if (StringUtil.isEmpty(pathInRepository))
+			throw new IOException("Path in repository is not defined: " + pathInRepository);
+
+		String realPath = System.getProperty("catalina.base");
+		if (StringUtil.isEmpty(realPath)) {
+			realPath = IWMainApplication.getDefaultIWMainApplication().getApplicationRealPath();
+			if (StringUtil.isEmpty(realPath))
+				throw new IOException("Unknown real path of the application: " + realPath);
+
+			String webappsFolder = File.separator.concat("webapps").concat(File.separator);
+			int webappsIndex = realPath.indexOf(webappsFolder);
+			if (webappsIndex <= 0)
+				throw new IOException("It is unknown how to navigate to repository folder given real path of the application: " + realPath);
+
+			realPath = realPath.substring(0, webappsIndex);
+		}
+
+		realPath = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
+		if (!pathInRepository.startsWith(CoreConstants.WEBDAV_SERVLET_URI))
+			realPath = realPath.concat(CoreConstants.WEBDAV_SERVLET_URI);
+		realPath = realPath.concat(pathInRepository);
+
+		return new File(realPath);
+	}
 }
