@@ -2,6 +2,7 @@ package com.idega.util;
 
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -168,6 +169,10 @@ public class CoreUtil {
 	}
 
 	public static boolean sendExceptionNotification(final String message, final Throwable exception) {
+		return sendExceptionNotification(message, exception, null);
+	}
+
+	public static boolean sendExceptionNotification(final String message, final Throwable exception, final File[] attachments) {
 		RequestResponseProvider reqResProvider = null;
 		try {
 			reqResProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
@@ -199,10 +204,6 @@ public class CoreUtil {
 			@Override
 			public void run() {
 				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
-				String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-		    	if (StringUtil.isEmpty(host)) {
-		    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
-		    	}
 
 		    	Writer writer = null;
 		    	PrintWriter printWriter = null;
@@ -220,8 +221,8 @@ public class CoreUtil {
 		    			notification.append("Message: ").append(message).append("\n");
 		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		        	SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, host,
-		        			"EXCEPTION: on ePlatform, server: " + server, notification.toString());
+		    		SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, null,
+		    				null, "EXCEPTION: on ePlatform, server: " + server,notification.toString(), false, true, attachments);
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
 		        } finally {
@@ -328,7 +329,19 @@ public class CoreUtil {
 		}
     }
 
-	public static File getFileFromRepository(String pathInRepository) throws IOException {
+	public static boolean doWriteFileToRepository(String pathInRepository, String fileName, InputStream stream) throws IOException {
+		String realPath = getRealPathToRepository(pathInRepository);
+		if (!realPath.endsWith(File.separator))
+			realPath = realPath.concat(File.separator);
+		realPath = realPath.concat(fileName).concat("_1.0");
+		File tmp = new File(realPath);
+		FileUtil.createFileIfNotExistent(tmp);
+		FileUtil.streamToFile(stream, tmp);
+
+		return true;
+	}
+
+	private static String getRealPathToRepository(String pathInRepository) throws IOException {
 		if (StringUtil.isEmpty(pathInRepository))
 			throw new IOException("Path in repository is not defined: " + pathInRepository);
 
@@ -346,11 +359,21 @@ public class CoreUtil {
 			realPath = realPath.substring(0, webappsIndex);
 		}
 
-		realPath = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
+		String temp = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
+		File tempDir = new File(temp);
+		if (!tempDir.exists())
+			temp = realPath.concat(File.separator).concat("store");
+
+		realPath = temp;
 		if (!pathInRepository.startsWith(CoreConstants.WEBDAV_SERVLET_URI))
 			realPath = realPath.concat(CoreConstants.WEBDAV_SERVLET_URI);
 		realPath = realPath.concat(pathInRepository);
 
+		return realPath;
+	}
+
+	public static File getFileFromRepository(String pathInRepository) throws IOException {
+		String realPath = getRealPathToRepository(pathInRepository);
 		return new File(realPath);
 	}
 }
