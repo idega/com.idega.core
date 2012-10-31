@@ -1,8 +1,8 @@
 /*
  * $Id: LoginBusinessBean.java,v 1.72 2009/01/30 10:23:35 laddi Exp $
- * 
+ *
  * Copyright (C) 2000-2006 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -29,6 +29,7 @@ import javax.servlet.http.HttpSession;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
+import com.idega.core.accesscontrol.bean.UserHasLoggedInEvent;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
@@ -63,9 +64,9 @@ import com.idega.util.expression.ELUtil;
  * Authentication system.<br/> This class is used by the IWAuthenticator filter
  * and the default Login module for logging users into the system.<br/>
  * </p>
- * 
+ *
  * Last modified: $Date: 2009/01/30 10:23:35 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>, <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.72 $
@@ -132,7 +133,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * <p>
 	 * Gets the Application-wide instance of this bean (LoginBusinessBean)
 	 * </p>
-	 * 
+	 *
 	 * @param iwac
 	 * @return
 	 */
@@ -165,12 +166,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Checks and return if a user is logged on into the idegaWeb User System.<br/>
 	 * This in turn checks if a certain session variable is set.
 	 * </p>
-	 * 
+	 *
 	 * @param iwc
 	 * @return
 	 */
 	public static boolean isLoggedOn(IWUserContext iwc) {
-		
+
 		return getLoginSessionBean().getUser() != null;
 //		if (isLoginSessionCreated(iwc)) {
 //			return getUser(iwc) != null;
@@ -190,7 +191,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * This in turn checks if a certain session variable is set on the session of
 	 * the current request.
 	 * </p>
-	 * 
+	 *
 	 * @param iwc
 	 * @return
 	 */
@@ -205,12 +206,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * This in turn checks if a certain session variable is set on the session of
 	 * the current request.
 	 * </p>
-	 * 
+	 *
 	 * @param iwc
 	 * @return
 	 */
 	public boolean isLoggedOn(HttpSession session) {
-		
+
 		return getLoginSessionBean().getUser() != null;
 //		if (isLoginSessionCreated(session)) {
 //			return getUser(session) != null;
@@ -235,7 +236,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	/**
 	 * To get the user name of the current log-in attempt
-	 * 
+	 *
 	 * @return The user name the current user is trying to log in with. Returns
 	 *         null if no log-in attempt is going on.
 	 */
@@ -247,13 +248,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 				request.getSession().removeAttribute(PARAMETER_USERNAME);
 			}
 		}
-		
+
 		return username;
 	}
 
 	/**
 	 * To get the password of the current log-in attempt
-	 * 
+	 *
 	 * @return The password the current user is trying to log in with. Returns
 	 *         null if no log-in attempt is going on.
 	 */
@@ -297,16 +298,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return false;
 		}
 	}
-	
+
 	public boolean logOutUser(IWContext iwc) {
 		return logOutUser(iwc.getRequest());
 	}
-		
+
 
 	/**
 	 * Used for the LoggedOnInfo object to be able to log off users when their
 	 * session expires.
-	 * 
+	 *
 	 * @return True if logOut was succesful, false if it failed
 	 */
 	public boolean logOutUserOnSessionTimeout(HttpSession session, LoggedOnInfo logOnInfo) {
@@ -370,7 +371,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * This method is called to remain backwards compatible, it may be removed in
 	 * future versions.
-	 * 
+	 *
 	 * @deprecated Replaced with onLoginSuccesful(HttpServletRequest);
 	 */
 	@Deprecated
@@ -420,6 +421,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * The method invoked when the login presentation module sends a login to this
 	 * class
 	 */
+	@Override
 	public boolean actionPerformed(IWContext iwc) throws IWException {
 		HttpServletRequest request = iwc.getRequest();
 		return processRequest(request);
@@ -513,7 +515,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * LOGIN_BY_UUID_AUTHORIZED_HOSTS application property. The
 	 * LOGIN_BY_UUID_AUTHORIZED_HOSTS property is a commaseparated list of host
 	 * names and ip numbers that can login via uuid.
-	 * 
+	 *
 	 * @param iwc
 	 * @return true if the parameter PARAM_LOGIN_BY_UNIQUE_ID is set and the
 	 *         referer is allowed to login by uuid.
@@ -534,7 +536,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @return Returns null if no basic authentication request was maid. Login has
 	 *         index = 0 and password = 1.
@@ -701,7 +703,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Get the user that is currently logged into the system if any.<br/> Returns
 	 * null if no user is logged on.<br/>
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -715,7 +717,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Get the user that is currently logged into the system if any.<br/> Returns
 	 * null if no user is logged on.<br/>
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -759,7 +761,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Use this method if the one calling this method is not logged in, else use
 	 * #logInAsAnotherUser(IWContext,User)
-	 * 
+	 *
 	 * @param iwc
 	 * @param user
 	 * @return
@@ -772,18 +774,28 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Use this method if the one calling this method is not logged in, else use
 	 * #logInAsAnotherUser(IWContext,User)
-	 * 
+	 *
 	 * @param iwc
 	 * @param user
 	 * @return
 	 * @throws Exception
 	 */
 	protected boolean logIn(HttpServletRequest request, User user) throws Exception {
-		LoginTable loginTable = getLoginTableHome().findLoginForUser(user);
-		storeUserAndGroupInformationInSession(request.getSession(), user);
-		LoginRecord loginRecord = LoginDBHandler.recordLogin(loginTable, request.getRemoteAddr());
-		storeLoggedOnInfoInSession(request.getSession(), loginTable, loginTable.getUserLogin(), user, loginRecord, loginTable.getLoginType());
-		return true;
+		boolean loggedIn = false;
+		Integer userId = null;
+		try {
+			LoginTable loginTable = getLoginTableHome().findLoginForUser(user);
+			userId = Integer.valueOf(loginTable.getUserId());
+			storeUserAndGroupInformationInSession(request.getSession(), user);
+			LoginRecord loginRecord = LoginDBHandler.recordLogin(loginTable, request.getRemoteAddr());
+			storeLoggedOnInfoInSession(request.getSession(), loginTable, loginTable.getUserLogin(), user, loginRecord, loginTable.getLoginType());
+			loggedIn = true;
+			return loggedIn;
+		} finally {
+			if (loggedIn && userId != null) {
+				ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(userId));
+			}
+		}
 	}
 
 	protected boolean logIn(IWContext iwc, LoginTable loginTable) throws Exception {
@@ -792,13 +804,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	protected boolean logIn(HttpServletRequest request, LoginTable loginTable) throws Exception {
-		UserHome uHome = (UserHome) IDOLookup.getHome(User.class);
-		User user = uHome.findByPrimaryKey(new Integer(loginTable.getUserId()));
+		boolean loggedIn = false;
+		Integer userId = null;
+		try {
+			UserHome uHome = (UserHome) IDOLookup.getHome(User.class);
+			userId = Integer.valueOf(loginTable.getUserId());
+			User user = uHome.findByPrimaryKey(userId);
 
-		storeUserAndGroupInformationInSession(request.getSession(), user);
-		LoginRecord loginRecord = LoginDBHandler.recordLogin(loginTable, request.getRemoteAddr());
-		storeLoggedOnInfoInSession(request.getSession(), loginTable, loginTable.getUserLogin(), user, loginRecord, loginTable.getLoginType());
-		return true;
+			storeUserAndGroupInformationInSession(request.getSession(), user);
+			LoginRecord loginRecord = LoginDBHandler.recordLogin(loginTable, request.getRemoteAddr());
+			storeLoggedOnInfoInSession(request.getSession(), loginTable, loginTable.getUserLogin(), user, loginRecord, loginTable.getLoginType());
+			loggedIn = true;
+			return loggedIn;
+		} finally {
+			if (loggedIn && userId != null) {
+				ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(userId));
+			}
+		}
 	}
 
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
@@ -849,7 +871,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	/**
 	 * TODO tryggvil describe method getIWApplicationContext
-	 * 
+	 *
 	 * @param session
 	 * @return
 	 */
@@ -860,7 +882,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	/**
 	 * TODO tryggvil describe method getIWApplicationContext
-	 * 
+	 *
 	 * @param session
 	 * @return
 	 */
@@ -990,7 +1012,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginTable loginTable = getLoginTableHome().findByUserAndLogin(user, login);
 		return verifyPassword(loginTable,password);
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns true if the password matches the encrypted value in loginTable.
@@ -1034,7 +1056,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * The key is the login name and the value is
 	 * com.idega.core.accesscontrol.business.LoggedOnInfo
-	 * 
+	 *
 	 * @return Returns empty Map if no one is logged on
 	 */
 	public static Map getLoggedOnInfoMap(IWContext iwc) {
@@ -1044,7 +1066,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * The key is the login name and the value is
 	 * com.idega.core.accesscontrol.business.LoggedOnInfo
-	 * 
+	 *
 	 * @return Returns empty Map if no one is logged on
 	 */
 	public Map getLoggedOnInfoMap(HttpSession session) {
@@ -1081,7 +1103,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * The key is the login name and the value is
 	 * com.idega.core.accesscontrol.business.LoggedOnInfo
-	 * 
+	 *
 	 * @param session
 	 * @return
 	 */
@@ -1089,7 +1111,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * public static Map getLoggedOnInfoMap(HttpSession session) { Map loggedOnMap =
 	 * null; MethodFinder finder = MethodFinder.getInstance(); ServletContext
 	 * context = null;
-	 * 
+	 *
 	 * try { Method method =
 	 * finder.getMethodWithNameAndNoParameters(HttpSession.class,
 	 * "getServletContext"); try { context =
@@ -1100,11 +1122,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * (NoSuchMethodException e) { System.out.println("The method
 	 * session.getServletContext() is not in this implementation of the Servlet
 	 * spec."); e.printStackTrace(); }
-	 * 
-	 * 
+	 *
+	 *
 	 * if (context != null) { loggedOnMap =
 	 * (Map)context.getAttribute(_APPADDRESS_LOGGED_ON_LIST); }
-	 * 
+	 *
 	 * if (loggedOnMap == null) { loggedOnMap = new TreeMap(); if (context !=
 	 * null) { context.setAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnMap); } }
 	 * return loggedOnMap; }
@@ -1144,7 +1166,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Creates a wrapper object around the users login name and password in clear
 	 * text (no decoding)
-	 * 
+	 *
 	 * @param user
 	 * @return
 	 */
@@ -1213,7 +1235,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * <p>
 	 * added for cookie login - calling this may be unsafe ( Aron )
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @param login
 	 * @return
@@ -1300,7 +1322,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Use this method if the one calling this method is logged in, else use
 	 * #logIn(IWContext,User)
-	 * 
+	 *
 	 * @param iwc
 	 * @param user
 	 * @return
@@ -1314,7 +1336,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Use this method if the one calling this method is logged in, else use
 	 * #logIn(HttpServletRequest,User)
-	 * 
+	 *
 	 * @param request
 	 * @param user
 	 * @return
@@ -1327,7 +1349,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Use this method if the one calling this method is logged in, else use
 	 * #logIn(IWContext,User)
-	 * 
+	 *
 	 * @param request
 	 * @param user
 	 * @return
@@ -1381,24 +1403,24 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public boolean logInByPersonalID(HttpServletRequest request, String personalId) throws Exception {
 		return logInByPersonalID(request,personalId,null,null,null);
 	}
-	
+
 	public boolean hasUserLogin(HttpServletRequest request, String personalId) throws Exception {
 		try {
 			IWApplicationContext iwac = getIWApplicationContext(request.getSession());
 			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
 			Collection logins = getLoginTableHome().findLoginsForUser(user);
-		
+
 			if (logins == null || logins.isEmpty()) {
 				return false;
 			}
-			
+
 			return true;
 		} catch (EJBException e) {
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * <p>
 	 * Logs the user in by given personalId and specified loginType.
@@ -1428,13 +1450,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 						return false;
 					}
 				}
-				
+
 				if(password!=null){
 					if(!verifyPassword(lTable,password)){
 						return false;
 					}
 				}
-				
+
 				returner = logIn(request, lTable);
 				if (returner) {
 					onLoginSuccessful(request);
@@ -1458,7 +1480,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Logs you into idegaweb by a universally unique identifier UUID if it finds
 	 * a user with that id.
-	 * 
+	 *
 	 * @param request
 	 * @param uuid
 	 * @return true if succeeded in login on a user with his UUID
@@ -1507,13 +1529,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 				//if (!(type != null && !type.equals(""))) {
 				if(loginType==null){
 					//searching for the default login where type is not set.
-					if (type == null || type.equals("")) {	
+					if (type == null || type.equals("")) {
 						chosenRecord = login;
 						break;
 					}
 				}
 				else{
-					if(loginType.equals(type)) {	
+					if(loginType.equals(type)) {
 						chosenRecord = login;
 						break;
 					}
@@ -1522,10 +1544,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		return chosenRecord;
 	}
-	
+
 	/**
 	 * <p>
-	 * Chooses a login record with loginType=null or loginType='' 
+	 * Chooses a login record with loginType=null or loginType=''
 	 * for logging a user in.
 	 * </p>
 	 * @param loginRecords -
@@ -1539,7 +1561,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Gets the last login record date before current logged record ( second last
 	 * entry)
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -1555,7 +1577,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * Gets the last login record date before current logged record ( second last
 	 * entry)
-	 * 
+	 *
 	 * @param userId
 	 * @return
 	 */
@@ -1605,14 +1627,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 //	public LoginSession getLoginSession(HttpSession session) throws RemoteException {
 //		return (LoginSession) IBOLookup.getSessionInstance(session, LoginSession.class);
 //	}
-	
+
 	public static LoginSession getLoginSessionBean() {
 		return ELUtil.getInstance().getBean(LoginSession.class);
 	}
-	
+
 	/**
 	 * Resets the LoginSession object
-	 * 
+	 *
 	 * @param iwc
 	 */
 	private static void removeLoginSession(IWUserContext iwc) {
@@ -1621,7 +1643,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	/**
 	 * Resets the LoginSession object
-	 * 
+	 *
 	 * @param iwc
 	 */
 	private void removeLoginSession(HttpSession session) {
