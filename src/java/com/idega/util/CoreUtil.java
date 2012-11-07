@@ -318,6 +318,11 @@ public class CoreUtil {
 	}
 
 	public static final void doEnsureScopeIsSet(FacesContext context) {
+		if (context == null) {
+			LOGGER.warning("FacesContext is not provided");
+			return;
+		}
+
 		Map<?, ?> utils = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
 				.getBeansOfType(JSFUtil.class);
 		if (MapUtil.isEmpty(utils))

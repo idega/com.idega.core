@@ -45,10 +45,10 @@ public class RenderUtils {
 		if (context == null || child == null)
 			return;
 
+		CoreUtil.doEnsureScopeIsSet(context);
+
 		if (!child.isRendered())
 			return;	//	No need to render
-
-		CoreUtil.doEnsureScopeIsSet(context);
 
 		child.encodeBegin(context);
 		if (child.getRendersChildren()) {
