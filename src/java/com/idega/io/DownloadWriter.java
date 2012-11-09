@@ -1,8 +1,8 @@
 /*
  * Created on 23.8.2004
- * 
+ *
  * Copyright (C) 2004 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -31,10 +31,10 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.data.IDOLookup;
-import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
@@ -42,7 +42,7 @@ import com.idega.util.StringUtil;
 
 /**
  * @author aron
- * 
+ *
  * DownloadWriter To be used when files are downloaded to the user. The response
  * is set so that the client browser opens a save dialog. Handles both files
  * from database and absolute paths from filesystem if read permission is active
@@ -50,7 +50,7 @@ import com.idega.util.StringUtil;
 public class DownloadWriter implements MediaWritable {
 
 	private static final Logger LOGGER = Logger.getLogger(DownloadWriter.class.getName());
-	
+
 	public final static String PRM_ABSOLUTE_FILE_PATH = "abs_fpath";
 
 	public final static String PRM_RELATIVE_FILE_PATH = "rel_fpath";
@@ -64,7 +64,7 @@ public class DownloadWriter implements MediaWritable {
 	private ICFile icFile = null;
 
 	private URL url = null;
-	
+
 	private String fileName;
 
 	protected void setFile(File file) {
@@ -80,29 +80,31 @@ public class DownloadWriter implements MediaWritable {
 			LOGGER.warning("There are no rights provided to read from file: " + file);
 			return;
 		}
-		
+
 		this.file = file;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.io.MediaWritable#getMimeType()
 	 */
+	@Override
 	public String getMimeType() {
 		if (fileName == null)
 			return MimeTypeUtil.MIME_TYPE_APPLICATION;
-		
+
 		String mimeType = MimeTypeUtil.resolveMimeTypeFromFileName(fileName);
 		return StringUtil.isEmpty(mimeType) ? MimeTypeUtil.MIME_TYPE_APPLICATION : mimeType;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.io.MediaWritable#init(javax.servlet.http.HttpServletRequest,
 	 *      com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void init(HttpServletRequest req, IWContext iwc) {
 		String fileId = iwc.getParameter(PRM_FILE_ID);
 		String absPath = iwc.getParameter(PRM_ABSOLUTE_FILE_PATH);
@@ -142,36 +144,15 @@ public class DownloadWriter implements MediaWritable {
 	}
 
 	protected File getFileFromRepository(String pathInRepository) throws IOException {
-		if (StringUtil.isEmpty(pathInRepository))
-			throw new IOException("Path in repository is not defined: " + pathInRepository);
-		
-		String realPath = System.getProperty("catalina.base");
-		if (StringUtil.isEmpty(realPath)) {
-			realPath = IWMainApplication.getDefaultIWMainApplication().getApplicationRealPath();
-			if (StringUtil.isEmpty(realPath))
-				throw new IOException("Unknown real path of the application: " + realPath);
-	
-			String webappsFolder = File.separator.concat("webapps").concat(File.separator);
-			int webappsIndex = realPath.indexOf(webappsFolder);
-			if (webappsIndex <= 0)
-				throw new IOException("It is unknown how to navigate to repository folder given real path of the application: " + realPath);
-			
-			realPath = realPath.substring(0, webappsIndex);
-		}
-		
-		realPath = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
-		if (!pathInRepository.startsWith(CoreConstants.WEBDAV_SERVLET_URI))
-			realPath = realPath.concat(CoreConstants.WEBDAV_SERVLET_URI);
-		realPath = realPath.concat(pathInRepository);
-		
-		return new File(realPath);
+		return CoreUtil.getFileFromRepository(pathInRepository);
 	}
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.io.MediaWritable#writeTo(java.io.OutputStream)
 	 */
+	@Override
 	public void writeTo(OutputStream out) throws IOException {
 		InputStream downloadStream = null;
 		if (this.file != null && this.file.exists() && this.file.canRead() && this.file.length() > 0) {
@@ -183,11 +164,11 @@ public class DownloadWriter implements MediaWritable {
 			//added for real relative path streaming
 			downloadStream = new BufferedInputStream(this.url.openStream());
 		}
-		
+
 		if (downloadStream == null) {
 			throw new IOException("No file to download!");
 		}
-		
+
 		try {
 			FileUtil.streamToOutputStream(downloadStream, out);
 		} catch(Exception e) {
@@ -202,7 +183,7 @@ public class DownloadWriter implements MediaWritable {
 	public void setAsDownload(IWContext iwc, String filename, int fileLength) {
 		setAsDownload(iwc, filename, fileLength, CoreConstants.EMPTY);
 	}
-	
+
 	public void setAsDownload(IWContext iwc, String filename, int fileLength, Object icFileIdOrHashValue) {
 		if (icFileIdOrHashValue instanceof String) {
 			setAsDownload(iwc, filename, fileLength, icFileIdOrHashValue.toString());
@@ -211,28 +192,28 @@ public class DownloadWriter implements MediaWritable {
 		} else {
 			setAsDownload(iwc, filename, fileLength);
 		}
-	}	
-	
+	}
+
 	public void setAsDownload(IWContext iwc, String filename, int fileLength, String icFileId) {
 		this.fileName = filename;
-		
+
 		if (!StringUtil.isEmpty(icFileId)) {
 			markFileAsDownloaded(iwc, icFileId);
 		}
-		
+
 		sendResponse(iwc, filename, fileLength);
 	}
-	
+
 	public void setAsDownload(IWContext iwc, String filename, int fileLength, Integer hash) {
 		this.fileName = filename;
-		
+
 		if (hash != null) {
 			markFileAsDownloaded(iwc, hash);
 		}
-		
+
 		sendResponse(iwc, filename, fileLength);
 	}
-	
+
 	private void sendResponse(IWContext iwc, String filename, int fileLength) {
 		HttpServletResponse response = iwc.getResponse();
 		response.setHeader("Expires", String.valueOf(0));
@@ -245,30 +226,30 @@ public class DownloadWriter implements MediaWritable {
 		if (fileLength > 0)
 			response.setContentLength(fileLength);
 	}
-	
+
 	protected boolean markFileAsDownloaded(IWContext iwc, Integer hash) {
 		return markFileAsDownloaded(iwc, getFile(hash));
 	}
-	
+
 	protected boolean markFileAsDownloaded(IWContext iwc, String icFileId) {
 		return markFileAsDownloaded(iwc, getFile(icFileId));
 	}
-	
+
 	protected boolean markFileAsDownloaded(IWContext iwc, ICFile attachment) {
 		if (attachment == null) {
 			return false;
 		}
-		
+
 		User user = iwc.isLoggedOn() ? iwc.getCurrentUser() : null;
 		if (user == null) {
 			return false;
 		}
-		
+
 		Collection<User> downloadedBy = attachment.getDownloadedBy();
 		if (!ListUtil.isEmpty(downloadedBy) && downloadedBy.contains(user)) {
 			return true;
 		}
-		
+
 		try {
 			attachment.addDownloadedBy(user);
 			attachment.store();
@@ -276,15 +257,15 @@ public class DownloadWriter implements MediaWritable {
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error while setting that user " + user + " has downloaded file " + attachment, e);
 		}
-		
+
 		return false;
 	}
-	
+
 	private ICFile getFile(Integer hash) {
 		if (hash == null) {
 			return null;
 		}
-		
+
 		ICFileHome fileHome = null;
 		try {
 			fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
@@ -294,7 +275,7 @@ public class DownloadWriter implements MediaWritable {
 		if (fileHome == null) {
 			return null;
 		}
-		
+
 		ICFile file = null;
 		try {
 			file = fileHome.findByHash(hash);
@@ -302,23 +283,23 @@ public class DownloadWriter implements MediaWritable {
 		} catch(Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting file by hash: " + hash, e);
 		}
-		
+
 		if (file == null) {
 			file = createFile(fileHome, hash);
 		}
-		
+
 		return file;
 	}
-	
+
 	private ICFile createFile(ICFileHome fileHome, Integer hash) {
 		try {
 			ICFile file = fileHome.create();
 			file.setHash(hash);
-			
+
 			if (!StringUtil.isEmpty(getFileName())) {
 				file.setName(URLEncoder.encode(getFileName(), CoreConstants.ENCODING_UTF8));
 			}
-			
+
 			file.store();
 			return file;
 		} catch(Exception e) {
@@ -326,17 +307,17 @@ public class DownloadWriter implements MediaWritable {
 		}
 		return null;
 	}
-	
+
 	private ICFile getFile(String icFileId) {
 		if (StringUtil.isEmpty(icFileId)) {
 			return null;
 		}
-		
+
 		try {
 			ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
 			return fileHome.findByPrimaryKey(icFileId);
 		} catch(Exception e) {}
-		
+
 		return null;
 	}
 

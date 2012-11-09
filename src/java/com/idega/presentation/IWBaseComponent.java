@@ -1,7 +1,7 @@
 /*
  * $Id: IWBaseComponent.java,v 1.23 2009/03/12 01:59:46 idegaweb Exp $
  * Created on 20.2.2004 by Tryggvi Larusson in project com.project
- * 
+ *
  * Copyright (C) 2004 Idega. All Rights Reserved.
  *
  * This software is the proprietary information of Idega.
@@ -27,6 +27,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.util.CoreUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.text.TextStyler;
 
@@ -39,24 +40,24 @@ import com.idega.util.text.TextStyler;
  * </p>
  * Copyright (C) idega software 2004-2006 <br/>
  * Last modified: $Date: 2009/03/12 01:59:46 $ by $Author: idegaweb $
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.23 $
- * 
+ *
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
-	
+
 	protected static final String divTag = 			"div";
 	protected static final String renderedAtt = 	"rendered";
-	
+
 	public static final String EXPRESSION_BEGIN = "#{";
 	public static final String EXPRESSION_END = "}";
-	
+
 	private TextStyler _styler;
 	private String styleAttribute;
 	private boolean isInitialized = false;
 	private long iSystemTime = 0;
-	
+
 	/**
 	 * This is an old idegaWeb style add method.
 	 * Does the same as getChildren().add(comp) in JSF>
@@ -65,7 +66,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	public void add(UIComponent comp){
 		getChildren().add(comp);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#decode(javax.faces.context.FacesContext)
 	 */
@@ -80,12 +81,13 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	public void processDecodes(FacesContext arg0) {
 		super.processDecodes(arg0);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeBegin(javax.faces.context.FacesContext)
 	 */
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
+		CoreUtil.doEnsureScopeIsSet(context);
 
 		UIComponentCacher cacher = getCacher(context);
 		if(cacher.existsInCache(this,context)){
@@ -95,7 +97,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 			if(cacher.isCacheEnbled(this,context)){
 				cacher.beginCache(this,context);
 			}
-			
+
 			this.iSystemTime = System.currentTimeMillis();
 			if(!isInitialized()){
 				initializeComponent(context);
@@ -127,18 +129,18 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 				UIComponent element = (UIComponent) children.next();
 				renderChild(context,element);
 			}*/
-		
+
 		UIComponentCacher cacher = getCacher(context);
 		if(cacher.existsInCache(this,context)){
 			// do nothing:
 		}
 		else{
-			super.encodeChildren(context);	
+			super.encodeChildren(context);
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * <p>
 	 * Renders a child component for the current component. This operation is handy when implementing
@@ -150,14 +152,14 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 */
 	public void renderChild(FacesContext context, UIComponent child) throws IOException {
 		RenderUtils.renderChild(context,child);
-	}	
-	
+	}
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
 	@Override
 	public void encodeEnd(FacesContext context) throws IOException {
-		
+
 
 		UIComponentCacher cacher = getCacher(context);
 		if(cacher.existsInCache(this,context)){
@@ -170,12 +172,12 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 			String renderingText = (endTime - this.iSystemTime) + " ms";
 			context.getResponseWriter().writeComment(renderingText);
 			super.encodeEnd(context);
-			
+
 			if(cacher.isCacheEnbled(this,context)){
 				cacher.endCache(this,context);
 			}
 		}
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getRendersChildren()
@@ -187,7 +189,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="styleAttribute"
 	 */
 	public void setStyleAttribute(String style) {
@@ -209,7 +211,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="styleAttribute"
 	 */
 	public String getStyleAttribute() {
@@ -245,7 +247,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	protected void initializeComponent(FacesContext context) {
 		//does nothing by default
 	}
-	
+
 	/**
 	 * <p>
 	 * This method is called when the component is already initialized (i.e. the second time and onwards when a faces rendering
@@ -259,7 +261,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	protected void updateComponent(FacesContext context) {
 		//Does nothing by default
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns if this component instance has been initialized, i.e. the initializeComponent() method called.
@@ -269,15 +271,15 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	protected boolean isInitialized(){
 		return this.isInitialized;
 	}
-	
+
 	protected void setInitialized(){
 		this.isInitialized=true;
 	}
-	
+
 	protected void setInitialized(boolean initialized) {
 		this.isInitialized = initialized;
 	}
-	
+
 	/**
 	 * @see javax.faces.component.UIComponentBase#saveState(javax.faces.context.FacesContext)
 	 */
@@ -303,7 +305,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		this._styler = (TextStyler) values[2];
 		this.isInitialized = ((Boolean) values[3]).booleanValue();
 	}
-	
+
 	/**
 	 * <p>
 	 * Get the IWMainapplication from the context
@@ -314,7 +316,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	protected static IWMainApplication getIWMainApplication(FacesContext context){
 		return IWMainApplication.getIWMainApplication(context);
 	}
-	
+
 	/**
 	 * <p>
 	 * Get the IWBundle from the bundleIdentifier.
@@ -327,7 +329,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		IWMainApplication iwma = getIWMainApplication(context);
 		return iwma.getBundle(bundleIdentifier);
 	}
-	
+
 	/**
 	 * <p>
 	 * Get the IWResourceBundle from the context and bundleIdentifier.
@@ -350,7 +352,8 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		return bundle.getResourceBundle(locale);
 	}
 
-	
+
+	@Override
 	public UIComponentCacher getCacher(FacesContext context){
 		return UIComponentCacher.getDefaultCacher(context);
 	}
@@ -358,22 +361,23 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	/* (non-Javadoc)
 	 * @see com.idega.core.cache.CacheableUIComponent#getViewState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public String getViewState(FacesContext context) {
 		return "view";
 	}
-	
+
 	@Override
 	public List<UIComponent> getChildren() {
 		List<UIComponent> children = super.getChildren();
 		return children;
 	}
-	
+
 	//@Override
 	//public Map<Object, UIComponent> getFacets() {
 	//	Map<Object, UIComponent> facets = super.getFacets();
 	//	return facets;
 	//}
-	
+
 	/**
 	 * <p>
 	 * A method to check if the passed String is a valuebinding expression,
@@ -387,12 +391,12 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
         if (value == null) {
 					return false;
 				}
-        
+
         int start = value.indexOf(EXPRESSION_BEGIN);
         if (start < 0) {
 					return false;
 				}
-        
+
         int end = value.lastIndexOf(EXPRESSION_END);
         return (end >=0 && start < end);
     }
@@ -414,42 +418,42 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
     @SuppressWarnings("unchecked")
     protected <T>T getExpressionValue(FacesContext ctx, String expression) {
-    	
+
     	ValueExpression vexp = getValueExpression(expression);
     	return vexp != null ? (T)vexp.getValue(ctx.getELContext()) : null;
     }
-    
+
     /**
      * <p>
      * This method finds a bean instance from a given beanId.<br/>
-     * 
+     *
      * </p>
      * @param beanId - could be either expression like #{bean.method} or just beanId like beanId
      * @return
      */
     public <T>T getBeanInstance(String beanId) {
 	    	FacesContext context = FacesContext.getCurrentInstance();
-	    
+
 	    	String expr;
-	    	
+
 	    	if(isValueBinding(beanId))
 	    		expr = beanId;
 	    	else
 	    		expr = getExpression(beanId);
-	    	
+
 		ValueBinding vb = context.getApplication().createValueBinding(expr);
     	//return vb.getValue(context);
     	@SuppressWarnings("unchecked")
 		T bean = (T)vb.getValue(context);
     	return bean;
     }
-    
+
     public IWBundle getBundle(FacesContext ctx, String bundleIdentifier) {
-    	
+
     	IWMainApplication iwma = IWMainApplication.getIWMainApplication(ctx);
 		return iwma.getBundle(bundleIdentifier);
     }
-    
+
     public IWBundle getBundle(IWUserContext iwuc, String bundleIdentifier) {
 		IWMainApplication iwma = iwuc.getApplicationContext().getIWMainApplication();
 		return iwma.getBundle(bundleIdentifier);

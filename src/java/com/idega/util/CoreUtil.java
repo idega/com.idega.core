@@ -1,6 +1,8 @@
 package com.idega.util;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -9,11 +11,14 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
@@ -27,7 +32,9 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.presentation.JSFUtil;
 
 public class CoreUtil {
 
@@ -162,6 +169,10 @@ public class CoreUtil {
 	}
 
 	public static boolean sendExceptionNotification(final String message, final Throwable exception) {
+		return sendExceptionNotification(message, exception, null);
+	}
+
+	public static boolean sendExceptionNotification(final String message, final Throwable exception, final File[] attachments) {
 		RequestResponseProvider reqResProvider = null;
 		try {
 			reqResProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
@@ -193,10 +204,6 @@ public class CoreUtil {
 			@Override
 			public void run() {
 				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
-				String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-		    	if (StringUtil.isEmpty(host)) {
-		    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
-		    	}
 
 		    	Writer writer = null;
 		    	PrintWriter printWriter = null;
@@ -214,8 +221,8 @@ public class CoreUtil {
 		    			notification.append("Message: ").append(message).append("\n");
 		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		        	SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, host,
-		        			"EXCEPTION: on ePlatform, server: " + server, notification.toString());
+		    		SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, null,
+		    				null, "EXCEPTION: on ePlatform, server: " + server,notification.toString(), false, true, attachments);
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
 		        } finally {
@@ -308,5 +315,70 @@ public class CoreUtil {
 			}
 		}
 		return ids;
+	}
+
+	public static final void doEnsureScopeIsSet(FacesContext context) {
+		if (context == null) {
+			LOGGER.warning("FacesContext is not provided");
+			return;
+		}
+
+		Map<?, ?> utils = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
+				.getBeansOfType(JSFUtil.class);
+		if (MapUtil.isEmpty(utils))
+			return;
+
+		for (Object bean: utils.values()) {
+			if (bean instanceof JSFUtil)
+				((JSFUtil) bean).setFacesScope(context);
+		}
+    }
+
+	public static boolean doWriteFileToRepository(String pathInRepository, String fileName, InputStream stream) throws IOException {
+		String realPath = getRealPathToRepository(pathInRepository);
+		if (!realPath.endsWith(File.separator))
+			realPath = realPath.concat(File.separator);
+		realPath = realPath.concat(fileName).concat("_1.0");
+		File tmp = new File(realPath);
+		FileUtil.createFileIfNotExistent(tmp);
+		FileUtil.streamToFile(stream, tmp);
+
+		return true;
+	}
+
+	private static String getRealPathToRepository(String pathInRepository) throws IOException {
+		if (StringUtil.isEmpty(pathInRepository))
+			throw new IOException("Path in repository is not defined: " + pathInRepository);
+
+		String realPath = System.getProperty("catalina.base");
+		if (StringUtil.isEmpty(realPath)) {
+			realPath = IWMainApplication.getDefaultIWMainApplication().getApplicationRealPath();
+			if (StringUtil.isEmpty(realPath))
+				throw new IOException("Unknown real path of the application: " + realPath);
+
+			String webappsFolder = File.separator.concat("webapps").concat(File.separator);
+			int webappsIndex = realPath.indexOf(webappsFolder);
+			if (webappsIndex <= 0)
+				throw new IOException("It is unknown how to navigate to repository folder given real path of the application: " + realPath);
+
+			realPath = realPath.substring(0, webappsIndex);
+		}
+
+		String temp = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
+		File tempDir = new File(temp);
+		if (!tempDir.exists())
+			temp = realPath.concat(File.separator).concat("store");
+
+		realPath = temp;
+		if (!pathInRepository.startsWith(CoreConstants.WEBDAV_SERVLET_URI))
+			realPath = realPath.concat(CoreConstants.WEBDAV_SERVLET_URI);
+		realPath = realPath.concat(pathInRepository);
+
+		return realPath;
+	}
+
+	public static File getFileFromRepository(String pathInRepository) throws IOException {
+		String realPath = getRealPathToRepository(pathInRepository);
+		return new File(realPath);
 	}
 }

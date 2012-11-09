@@ -5,18 +5,19 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 
 /**
@@ -24,30 +25,30 @@ import com.idega.util.ListUtil;
  * @version $Revision: 1.3 $ Last modified: $Date: 2009/05/22 04:55:13 $ by $Author: laddi $
  */
 @Service
-@Scope("singleton")
+@Scope(BeanDefinition.SCOPE_SINGLETON)
 public class DaoFunctionsImpl implements DaoFunctions {
 
-	private static final Logger logger = Logger
-	        .getLogger(DaoFunctionsImpl.class.getName());
+	private static final Logger logger = Logger.getLogger(DaoFunctionsImpl.class.getName());
 
-	private static final List<Class<?>> IMPLEMENTED_CONVERTERS = Collections
-	        .unmodifiableList(Arrays.asList(new Class<?>[] { Long.class,
-	                Integer.class, Float.class, Byte.class, Double.class,
-	                Short.class }));
+	private static final List<Class<?>> IMPLEMENTED_CONVERTERS = Collections.unmodifiableList(Arrays.asList(new Class<?>[] {
+			Long.class,
+			Integer.class,
+			Float.class,
+			Byte.class,
+			Double.class,
+			Short.class
+	}));
 
+	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	public <Expected> List<Expected> getResultListByQuery(Query q,
-	        Class<Expected> expectedReturnType, Param... params) {
-
+	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
 		if (params != null)
 			for (Param param : params) {
-
 				q.setParameter(param.getParamName(), param.getParamValue());
 			}
 
 		final List<Expected> fresult;
-
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
 			fresult = getRealResults(q.getResultList(), expectedReturnType);
 		} else {
@@ -58,11 +59,9 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	@SuppressWarnings("unchecked")
-	private <Exptected> List<Exptected> getRealResults(List<Object> results,
-	        Class<Exptected> expectedReturnType) {
-		if (ListUtil.isEmpty(results)) {
+	private <Exptected> List<Exptected> getRealResults(List<Object> results, Class<Exptected> expectedReturnType) {
+		if (ListUtil.isEmpty(results))
 			return null;
-		}
 
 		List<Exptected> realResults = new ArrayList<Exptected>();
 		for (Object result : results) {
@@ -96,23 +95,23 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					        .shortValue()));
 				}
 			} else {
-				logger.log(Level.SEVERE, "Can not convert " + result + " ("
-				        + result.getClass() + ") to: " + expectedReturnType
-				        + ": such converter is not implemented yet!");
+				String message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType +
+						": such converter is not implemented yet!";
+				logger.warning(message);
+				CoreUtil.sendExceptionNotification(message, null);
 			}
 		}
 
 		return ListUtil.isEmpty(realResults) ? null : realResults;
 	}
 
+	@Override
 	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
-	public <Expected> Expected getSingleResultByQuery(Query q,
-	        Class<Expected> expectedReturnType, Param... params) {
-
-		for (Param param : params) {
-
-			q.setParameter(param.getParamName(), param.getParamValue());
-		}
+	public <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
+		if (params != null)
+			for (Param param : params) {
+				q.setParameter(param.getParamName(), param.getParamValue());
+			}
 
 		@SuppressWarnings("unchecked")
 		Expected result = (Expected) q.getSingleResult();
@@ -120,19 +119,16 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		return result;
 	}
 
+	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	public <Expected> List<Expected> getResultListByQuery(Query q,
-			Class<Expected> expectedReturnType, Collection<Param> params) {
-
+	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Collection<Param> params) {
 		if (params != null)
 			for (Param param : params) {
-
 				q.setParameter(param.getParamName(), param.getParamValue());
 			}
 
 		final List<Expected> fresult;
-
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
 			fresult = getRealResults(q.getResultList(), expectedReturnType);
 		} else {

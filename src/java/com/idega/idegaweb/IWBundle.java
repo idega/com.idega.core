@@ -55,6 +55,7 @@ public interface IWBundle extends IWModule, Comparable<IWBundle> {
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
+	@Override
 	public abstract void unload();
 
 	/**
@@ -154,6 +155,10 @@ public interface IWBundle extends IWModule, Comparable<IWBundle> {
 	public abstract String getPropertiesRealPath();
 
 	public abstract void addLocale(Locale locale);
+
+	public boolean isLocaleEnabled(Locale locale);
+
+	public List<Locale> getEnabledLocales();
 
 	public abstract String getBundleIdentifier();
 

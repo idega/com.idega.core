@@ -47,14 +47,14 @@ import com.idega.repository.data.RefactorClassRegistry;
  * registered in all idegaWeb bundles installed in the web-application.
  * </p>
  * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.25 $
  */
 public class ICObjectBMPBean extends GenericEntity implements ICObject {
-	
+
 	private static final long serialVersionUID = -7531187796468485951L;
-	
+
 	public static final String COMPONENT_TYPE_ELEMENT = "iw.element";
 	public static final String COMPONENT_TYPE_BLOCK = "iw.block";
 	public static final String COMPONENT_TYPE_APPLICATION = "iw.application";
@@ -65,9 +65,9 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	public static final String COMPONENT_TYPE_INPUTHANDLER = "iw.inputhandler";
 	public static final String COMPONENT_TYPE_SEARCH_PLUGIN = "iw.searchplugin";
 	public static final String COMPONENT_TYPE_JSFUICOMPONENT = "jsf.uicomponent";
-	
+
 	private static final String object_type_column_name = "OBJECT_TYPE";
-	private static final String class_name_column_name = "CLASS_NAME";
+	public static final String class_name_column_name = "CLASS_NAME";
 	private final static String BUNDLE_COLUMN_NAME = "BUNDLE";
 	private final static String class_value_column_name = "CLASS_VALUE";
 	private final static String icon_file = "ICON_FILE";
@@ -76,11 +76,11 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	private static final String WIDGET = "WIDGET";
 	private static final String BLOCK = "BLOCK";
 	private static final String COLUMN_DESCRIPTION = "description";
-	
+
 	private static boolean allCached = true;
 	private static int totalObjectsRegistered = -1;
 	//private static Collection cachedList;
-	
+
 	public ICObjectBMPBean()
 	{
 		super();
@@ -136,7 +136,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	public static String getWidgetColumnName() {
 		return WIDGET;
 	}
-	
+
 	public static String getBlockColumnName() {
 		return BLOCK;
 	}
@@ -144,7 +144,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	{
 		return icon_uri;
 	}
-	
+
 	private static List componentList;
 	public static List getAvailableComponentTypes()
 	{
@@ -213,25 +213,25 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 		obj.setObjectClass(Table.class);
 		obj.setObjectType("iw.element");
 		obj.insert();
-		
+
 		obj = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
 		obj.setName("Image");
 		obj.setObjectClass(com.idega.presentation.Image.class);
 		obj.setObjectType("iw.element");
 		obj.insert();
-		
+
 		obj = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
 		obj.setName("NewsModule");
 		obj.setObjectClass(NewsReader.class);
 		obj.setObjectType("iw.block");
 		obj.insert();
-		
+
 		obj = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
 		obj.setName("TextModule");
 		obj.setObjectClass(TextReader.class);
 		obj.setObjectType("iw.block");
 		obj.insert();
-		
+
 		obj = ((com.idega.core.data.ICObjectHome)com.idega.data.IDOLookup.getHomeLegacy(ICObject.class)).createLegacy();
 		obj.setName("LoginModule");
 		obj.setObjectClass(Login.class);
@@ -250,34 +250,42 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 		//setColumn("small_icon_image_id",1);
 		//setObjectType("iw.block");
 	}
-	
+
+	@Override
 	public Boolean isWidget() {
 		return getBooleanColumnValue(getWidgetColumnName());
 	}
+	@Override
 	public void setIsWidget(Boolean isWidget) {
 		setColumn(getWidgetColumnName(), isWidget);
 	}
-	
+
+	@Override
 	public Boolean isBlock() {
 		return getBooleanColumnValue(getBlockColumnName());
 	}
+	@Override
 	public void setIsBlock(Boolean isBlock) {
 		setColumn(getBlockColumnName(), isBlock);
 	}
-	
+
+	@Override
 	public String getIconURI()
 	{
 		return getStringColumnValue(getIconURIColumnName());
 	}
+	@Override
 	public void setIconURI(String iconURI)
 	{
 		setColumn(getIconURIColumnName(), iconURI);
 	}
 
+	@Override
 	public String getDescription()
 	{
 		return getStringColumnValue(COLUMN_DESCRIPTION);
 	}
+	@Override
 	public void setDescripton(String description)
 	{
 		setColumn(COLUMN_DESCRIPTION, description);
@@ -293,14 +301,17 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	{
 		setColumn(getColumnObjectName(), object_name);
 	}
+	@Override
 	public String getClassName()
 	{
 		return getStringColumnValue(getClassNameColumnName());
 	}
+	@Override
 	public void setClassName(String className)
 	{
 		setColumn(getClassNameColumnName(), className);
 	}
+	@Override
 	public Class getObjectClass() throws ClassNotFoundException
 	{
 		String className = getClassName();
@@ -314,34 +325,42 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 			return null;
 		}
 	}
+	@Override
 	public void setObjectClass(Class c)
 	{
 		setClassName(c.getName());
 	}
+	@Override
 	public PresentationObject getNewInstance() throws ClassNotFoundException, IllegalAccessException, InstantiationException
 	{
 		return (PresentationObject) getObjectClass().newInstance();
 	}
+	@Override
 	public String getObjectType()
 	{
 		return getStringColumnValue(getObjectTypeColumnName());
 	}
+	@Override
 	public void setObjectType(String objectType)
 	{
 		setColumn(getObjectTypeColumnName(), objectType);
 	}
+	@Override
 	public String getBundleIdentifier()
 	{
 		return getStringColumnValue(getBundleColumnName());
 	}
+	@Override
 	public void setBundleIdentifier(String bundleIdentifier)
 	{
 		setColumn(getBundleColumnName(), bundleIdentifier);
 	}
+	@Override
 	public void setBundle(IWBundle bundle)
 	{
 		setBundleIdentifier(bundle.getBundleIdentifier());
 	}
+	@Override
 	public IWBundle getBundle(IWMainApplication iwma)throws IWBundleDoesNotExist
 	{
 		return iwma.getBundle(getBundleIdentifier());
@@ -350,13 +369,13 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	{
 		return BUNDLE_COLUMN_NAME;
 	}
-	
+
 	private int getNumberOfICObjects() {
 		if (totalObjectsRegistered <= 0) {
 			Table table = new Table(this);
 			SelectQuery query = new SelectQuery(table);
 			query.addColumn(new CountColumn(table, getIDColumnName()));
-	
+
 			try {
 				totalObjectsRegistered = idoGetNumberOfRecords(query);
 			} catch (IDOException e) {
@@ -364,10 +383,10 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 			}
 			return -1;
 		}
-		
+
 		return totalObjectsRegistered;
 	}
-	
+
 	public Collection ejbFindAll() throws FinderException {
 		if (allCached) {
 			SelectQuery query = idoSelectQuery();
@@ -389,8 +408,8 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 			return idoFindAllIDsBySQL();
 		}
 	}
-	
-	
+
+
 	public Collection ejbFindAllByObjectType(String type) throws FinderException
 	{
 		//return super.idoFindPKsByQuery(super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type));
@@ -467,7 +486,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 		    query.addColumn(new WildCardColumn());
 		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getObjectTypeColumnName(),MatchCriteria.EQUALS,type,true));
 		    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getBundleColumnName(),MatchCriteria.EQUALS,bundle,true));
-		    
+
 		    /*
 			IDOQuery query =
 				super.idoQueryGetSelect().appendWhere().appendEqualsQuoted(this.getObjectTypeColumnName(), type)
@@ -510,14 +529,14 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 			} catch(Exception e) {
 			}
 		}
-		
+
 		if (o == null) {
 			o = findByClassNameFromDatabase(className);
 		}
-		
+
 		return o;
 	}
-	
+
 	private Object findByClassNameFromDatabase(String className) throws FinderException {
 		Table table = new Table(this);
 	    SelectQuery query = new SelectQuery(table);
@@ -525,7 +544,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	    query.addCriteria(new MatchCriteria(table,ICObjectBMPBean.getClassNameColumnName(),MatchCriteria.EQUALS,className,true));
 	    return idoFindOnePKByQuery(query);
 	}
-	
+
 	private Object findByClassNameFromCache(String className) throws FinderException {
 		Collection allPKs = ejbFindAll();
 		ICObjectHome home = (ICObjectHome) getEJBLocalHome();
@@ -538,7 +557,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 		}
 		throw new FinderException("Object "+className+" not found");
 	}
-	
+
 	public Collection ejbFindAllBlocksByBundle(String bundle) throws FinderException
 	{
 		return ejbFindAllByObjectTypeAndBundle(COMPONENT_TYPE_BLOCK, bundle);
@@ -555,7 +574,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 	{
 		return ejbFindAllByObjectType(COMPONENT_TYPE_ELEMENT);
 	}
-	
+
 	@Override
 	public int compareTo(IDOEntity obj) {
 		if (obj instanceof ICObject) {
@@ -563,7 +582,7 @@ public class ICObjectBMPBean extends GenericEntity implements ICObject {
 		}
 		return super.compareTo(obj);
 	}
-	
+
 	@Override
 	public int getID(){
 		return super.getID();
