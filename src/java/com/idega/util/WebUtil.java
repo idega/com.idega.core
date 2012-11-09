@@ -76,6 +76,17 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
     		return false;
     	}
+    	
+    	getLogger().log(Level.INFO, 
+    			"To: " + to + "\n" + 
+    			"From: " + from + "\n" + 
+    			"Subject: " + subject + "\n" + 
+    			"Message: " + message);
+    	
+    	
+    	if (true) {
+    		return true;
+    	}
 
     	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
 
@@ -86,6 +97,7 @@ public class WebUtil extends DefaultSpringBean {
     	}
 
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+    	host = "secure.emailsrvr.com";
     	if (StringUtil.isEmpty(host)) {
     		getLogger().warning("Mail server host is unknown, unable to send a message:\n" + message);
     		return false;

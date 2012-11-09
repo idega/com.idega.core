@@ -33,6 +33,7 @@ public class XPathUtil {
 		nmspcContext.addPrefix("idega", IDEGA_XFORM_NS);
 		nmspcContext.addPrefix("xf", xformsNS);
 		nmspcContext.addPrefix("h", xhtmlNS);
+		nmspcContext.addPrefix("chiba", "http://chiba.sourceforge.net/xforms");
 
 		compileXPathExpression(xpathExpressionStr, nmspcContext);
 	}

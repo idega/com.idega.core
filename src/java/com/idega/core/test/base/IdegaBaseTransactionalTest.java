@@ -18,7 +18,7 @@ import com.idega.core.persistence.GenericDao;
  */
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration
-@TransactionConfiguration(transactionManager="transactionManager", defaultRollback=false)
+@TransactionConfiguration(transactionManager="idegaHibernateTestTransactionManager", defaultRollback=false)
 @Transactional
 public abstract class IdegaBaseTransactionalTest extends IdegaBaseTest {
 

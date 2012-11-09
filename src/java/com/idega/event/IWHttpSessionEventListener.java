@@ -1,5 +1,7 @@
 package com.idega.event;
 
+import java.util.logging.Logger;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
@@ -8,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.IWTimestamp;
 import com.idega.util.expression.ELUtil;
 
 public class IWHttpSessionEventListener implements HttpSessionListener {
@@ -25,7 +28,8 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
-
+		Logger.getLogger(getClass().getName()).info("*********** destroyed: " + destroyedSession.getId() + ". Created " + new IWTimestamp(destroyedSession.getCreationTime()));
+		
 		//	Redirecting only if property set
 		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("redirect_when_session_timeout", Boolean.FALSE)) {
 			LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
