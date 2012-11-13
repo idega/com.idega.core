@@ -60,6 +60,15 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_ACCOUNT = "mail_user_account";
 	public static final String PROP_SYSTEM_MAIL_HOST = "mail_host";
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
+	
+	/**
+	 * <p>Use this property for all stupid code hacks, when that code is 
+	 * needed only when developing. For example, if you want to generate some 
+	 * fake data to fill your fields in form or log some more information, this
+	 * could be used.</p>
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static final String DEVELOPEMENT_STATE_PROPERTY = "is_developement_mode";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
