@@ -215,4 +215,8 @@ public abstract class DefaultSpringBean {
 			container.put(value.getId(), value.getValue());
 	}
 
+	protected boolean isDevelopementState() {
+		return getApplication().getSettings().getBoolean("is_development_state", Boolean.FALSE);
+	}
+
 }
