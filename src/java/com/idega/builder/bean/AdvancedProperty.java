@@ -10,6 +10,7 @@ public class AdvancedProperty implements Serializable {
 
 	private boolean selected;
 	private String id, value;
+	private Long externalId;
 
 	public AdvancedProperty() {
 		super();
@@ -49,6 +50,14 @@ public class AdvancedProperty implements Serializable {
 
 	public void setSelected(boolean selected) {
 		this.selected = selected;
+	}
+
+	public Long getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(Long externalId) {
+		this.externalId = externalId;
 	}
 
 	@Override

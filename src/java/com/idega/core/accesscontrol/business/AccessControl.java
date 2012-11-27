@@ -649,7 +649,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 		}
 
-		groups.addAll(groupsToCheckForPermissions);
+		if (groups != null)
+			groups.addAll(groupsToCheckForPermissions);
+
 		return groups;
 	}
 
