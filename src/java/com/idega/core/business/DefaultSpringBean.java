@@ -29,6 +29,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -215,8 +216,17 @@ public abstract class DefaultSpringBean {
 			container.put(value.getId(), value.getValue());
 	}
 
+	/**
+	 * <p>Takes property from /workspace/developer/applicationproperties named
+	 * "is_developement_mode". Check this property, when you need to add code
+	 * necessary for development, but useless to production environment.</p>
+	 * @return <code>true</code> if it is developing environment, 
+	 * <code>false</code> otherwise.
+	 * @see CoreConstants#DEVELOPEMENT_STATE_PROPERTY
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
 	protected boolean isDevelopementState() {
-		return getApplication().getSettings().getBoolean("is_development_state", Boolean.FALSE);
+		return getApplication().getSettings().getBoolean(
+				CoreConstants.DEVELOPEMENT_STATE_PROPERTY);
 	}
-
 }

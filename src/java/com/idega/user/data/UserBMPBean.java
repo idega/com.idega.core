@@ -2985,4 +2985,14 @@ public void delete() throws SQLException {
 	public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException {
 		this.idoRemoveFrom(language);
 	}
+
+	@Override
+	public String toString() {
+		StringBuilder string = new StringBuilder();
+		string.append("\n")
+		.append("getName(): ").append(getName()).append("\n")
+		.append("getPersonalID(): " + getPersonalID()).append("\n")
+		.append("getPrimaryKey(): " + getPrimaryKey()).append("\n");
+		return string.toString();
+	}
 }
