@@ -77,15 +77,15 @@ public class WebUtil extends DefaultSpringBean {
     		return false;
     	}
     	
-    	getLogger().log(Level.INFO, 
-    			"To: " + to + "\n" + 
-    			"From: " + from + "\n" + 
-    			"Subject: " + subject + "\n" + 
-    			"Message: " + message);
-    	
-    	
-    	if (true) {
-    		return true;
+    	// Printing errors to console
+    	if (isDevelopementState()) {
+    		getLogger().log(Level.INFO, 
+        			"To: " + to + "\n" + 
+        			"From: " + from + "\n" + 
+        			"Subject: " + subject + "\n" + 
+        			"Message: " + message);
+    		
+    		return Boolean.TRUE;
     	}
 
     	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
