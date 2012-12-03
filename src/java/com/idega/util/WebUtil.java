@@ -76,6 +76,17 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
     		return false;
     	}
+    	
+    	// Printing errors to console
+    	if (isDevelopementState()) {
+    		getLogger().log(Level.INFO, 
+        			"To: " + to + "\n" + 
+        			"From: " + from + "\n" + 
+        			"Subject: " + subject + "\n" + 
+        			"Message: " + message);
+    		
+    		return Boolean.TRUE;
+    	}
 
     	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
 
