@@ -1,6 +1,7 @@
 package com.idega.core.persistence.impl;
 
 import java.util.List;
+import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
@@ -21,6 +22,14 @@ import com.idega.util.expression.ELUtil;
  */
 @Repository("genericDAO")
 public class GenericDaoImpl implements GenericDao {
+
+	private static Logger LOGGER;
+
+	protected Logger getLogger() {
+		if (LOGGER == null)
+			LOGGER = Logger.getLogger(getClass().getName());
+		return LOGGER;
+	}
 
 	private EntityManager entityManager;
 
