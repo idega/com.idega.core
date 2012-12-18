@@ -66,6 +66,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 
 	public Node getNode(String absolutePath) throws RepositoryException;
 	public Node getNodeAsRootUser(String absolutePath) throws RepositoryException;
+	public Node getNodeAsRootUser(String absolutePath, boolean closeSession) throws RepositoryException;
 
 	public boolean setProperties(String path, Property... properties) throws RepositoryException;
 
@@ -84,7 +85,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 
 	public <T extends RepositoryItem> T getRepositoryItem(String path) throws RepositoryException;
 	public RepositoryItem getRepositoryItem(User user, String path) throws RepositoryException;
-	public RepositoryItem getRepositoryItemAsRootUser(String path) throws RepositoryException;
+	public <T extends RepositoryItem> T getRepositoryItemAsRootUser(String path) throws RepositoryException;
 
 	public Collection<RepositoryItem> getChildNodes(User user, String path) throws RepositoryException;
 	public Collection<RepositoryItem> getChildNodesAsRootUser(String path) throws RepositoryException;
@@ -131,5 +132,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public void unLock(String path) throws RepositoryException;
 
 	public List<RepositoryItem> getSiblingResources(String path) throws RepositoryException;
+
+	public void logout(Session session);
 
 }
