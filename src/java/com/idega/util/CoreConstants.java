@@ -73,6 +73,14 @@ public class CoreConstants {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public static final String DEVELOPEMENT_STATE_PROPERTY = "is_developement_mode";
+	
+	/**
+	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
+	 * for problems with url.</p>
+	 * 
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
