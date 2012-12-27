@@ -181,7 +181,10 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected IWBundle getBundle(String bundleIdentifier) {
-		return getApplication().getBundle(bundleIdentifier);
+		try {
+			return getApplication().getBundle(bundleIdentifier);
+		} catch (Exception e) {}
+		return null;
 	}
 
 	protected IWResourceBundle getResourceBundle(IWBundle bundle) {
