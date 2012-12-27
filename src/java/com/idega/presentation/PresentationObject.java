@@ -10,6 +10,7 @@
 package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
+import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
 import java.util.Hashtable;
@@ -67,6 +68,7 @@ import com.idega.idegaweb.UnavailableIWContext;
 import com.idega.presentation.ui.Form;
 import com.idega.repository.RepositoryService;
 import com.idega.repository.RepositorySession;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -89,7 +91,7 @@ import com.idega.util.text.TextStyler;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.183 $
  */
-public class PresentationObject extends UIComponentBase implements Cloneable, PresentationObjectType{
+public class PresentationObject extends UIComponentBase implements Cloneable, PresentationObjectType {
 
 	//Static variables
 	private final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
@@ -172,7 +174,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * Should only be called by sublasses.
 	 */
 	protected PresentationObject() {
-		//TODO: Change this as components get state aware:
 		setTransient(true);
 	}
 	/**
@@ -181,24 +182,21 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * If the parent is not an instance of PresentationObject then this method will return null
 	 * to maintain backwards compatability.
 	 */
-	protected PresentationObject getParentObject()
-	{
-		try{
-			return (PresentationObject)getParent();
-		}
-		catch(ClassCastException e){
+	protected PresentationObject getParentObject(){
+		try {
+			return (PresentationObject) getParent();
+		} catch(ClassCastException e){
 			//If the parent is not a PresentationObject then return null
 			//to maintain backwards compatability.
 			return null;
 		}
 	}
-	protected String generateID()
-	{
+
+	protected String generateID() {
 		String UUID = UUIDGenerator.getInstance().generateId();
 		return "iwid" + UUID.substring(UUID.lastIndexOf("-") + 1);
 	}
-	protected String setID()
-	{
+	protected String setID() {
 		return setID(generateID());
 	}
 
@@ -211,65 +209,48 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		return theReturn;
 	}
 
-	public PresentationObject getRootParent()
-	{
+	public PresentationObject getRootParent() {
 		PresentationObject tempobj=null;
 		try{
 			tempobj = getParentObject();
-		}
-		catch(ClassCastException cce){}
-		if (tempobj == null)
-		{
+		} catch(ClassCastException cce){}
+
+		if (tempobj == null) {
 			return null;
-		}
-		else
-		{
-			while (tempobj.getParentObject() != null)
-			{
+		} else {
+			while (tempobj.getParentObject() != null) {
 				tempobj = tempobj.getParentObject();
 			}
 			return tempobj;
 		}
 	}
-	public void setParentObject(PresentationObject pObject)
-	{
+
+	public void setParentObject(PresentationObject pObject) {
 		setParent(pObject);
 	}
+
 	/**
 	 * Initializes variables contained in the IWContext object
 	 */
-	public void initVariables(IWContext iwc) throws IOException
-	{
-		/*if(!IWMainApplication.useJSF){
-			//These variables are not set when the JSF environment is enabled.
-			this._request = iwc.getRequest();
-			this._response = iwc.getResponse();
-			this.out = iwc.getWriter();
-		}*/
+	public void initVariables(IWContext iwc) throws IOException {
 		this.markupLanguage = iwc.getMarkupLanguage();
-		if (this.markupLanguage == null)
-		{
+		if (this.markupLanguage == null) {
 			this.markupLanguage = IWConstants.MARKUP_LANGUAGE_HTML;
 		}
 
 	}
 	protected void cleanVariables(IWContext iwc){
-		/*this._request=null;
-		this._response=null;
-		this.markupLanguage=null;
-		this.out=null;*/
 	}
 
-	protected void initInMain(IWContext iwc) throws Exception
-	{
+	protected void initInMain(IWContext iwc) throws Exception {
 		initializeInMain(iwc);
 		this.initializedInMain = true;
 	}
+
 	/**
 	 *
 	 */
-	public void initializeInMain(IWContext iwc) throws Exception
-	{
+	public void initializeInMain(IWContext iwc) throws Exception {
 	}
 
 	/**
@@ -280,8 +261,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		this.doPrint = ifDoPrint;
 	}
 
-	public boolean doPrint(IWContext iwc)
-	{
+	public boolean doPrint(IWContext iwc) {
 		if (this.doPrint)
 		{
 			UIComponent parent = getParent();
@@ -2236,7 +2216,9 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * @param fc
 	 * @throws IOException
 	 */
-	public void callMain(FacesContext fc)throws IOException{
+	public void callMain(FacesContext fc) throws IOException {
+		doParseBindings(fc);
+
 		try {
 			//if(!goneThroughRenderPhase()){
 				IWContext iwc = castToIWContext(fc);
@@ -2314,8 +2296,33 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		}
 	}
 
+	protected void doParseBindings(FacesContext context) {
+		if (bindings == null)
+			return;
+
+		Method[] methods = getClass().getMethods();
+		if (ArrayUtil.isEmpty(methods))
+			return;
+
+		for (String key: bindings.keySet()) {
+			ValueExpression valueExpression = bindings.get(key);
+			Object value = valueExpression.getValue(context.getELContext());
+
+			String name = "set" + key.substring(0, 1).toUpperCase() + key.substring(1);
+			for (Method m: methods) {
+				if (name.equals(m.getName()))
+					try {
+						m.invoke(this, value);
+					} catch (Exception e) {
+						getLogger().warning("Unable to set value (" + value + ") from binding " + key + " to object " + this + ", class: " +
+								this.getClass());
+					}
+			}
+		}
+	}
+
 	@Override
-	public void encodeBegin(FacesContext fc)throws IOException{
+	public void encodeBegin(FacesContext fc) throws IOException {
 		callMain(fc);
 		callPrint(fc);
 	}
