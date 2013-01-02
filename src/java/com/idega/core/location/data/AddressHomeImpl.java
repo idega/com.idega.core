@@ -12,7 +12,7 @@ import com.idega.data.IDOFactory;
 import com.idega.data.IDOQuery;
 
 public class AddressHomeImpl extends IDOFactory implements AddressHome {
-	
+
 	private static final long serialVersionUID = -3649183726541993776L;
 
 	@Override
@@ -20,11 +20,13 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return Address.class;
 	}
 
+	@Override
 	public Address create() throws CreateException {
 		return (Address) super.createIDO();
 	}
 
-	 public Address createLegacy(){
+	 @Override
+	public Address createLegacy(){
 			try{
 				return create();
 			}
@@ -34,11 +36,13 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 
 		 }
 
+	@Override
 	public Address findByPrimaryKey(Object pk) throws FinderException {
 		return (Address) super.findByPrimaryKeyIDO(pk);
 	}
-	
-	 public Address findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
+
+	 @Override
+	public Address findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 			try{
 				return findByPrimaryKey(id);
 			}
@@ -48,6 +52,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 
 		 }
 
+	@Override
 	public AddressType getAddressType1() throws RemoteException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		AddressType theReturn = ((AddressBMPBean) entity)
@@ -56,6 +61,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return theReturn;
 	}
 
+	@Override
 	public AddressType getAddressType2() throws RemoteException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		AddressType theReturn = ((AddressBMPBean) entity)
@@ -64,6 +70,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return theReturn;
 	}
 
+	@Override
 	public Address findPrimaryUserAddress(int userID) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((AddressBMPBean) entity).ejbFindPrimaryUserAddress(userID);
@@ -71,6 +78,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Address findUserAddressByAddressType(int userID, AddressType type)
 			throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -80,6 +88,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Collection findPrimaryUserAddresses(String[] userIDs)
 			throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -89,6 +98,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findPrimaryUserAddresses(IDOQuery query)
 			throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -98,6 +108,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUserAddressesByAddressType(int userID,
 			AddressType type) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -107,6 +118,7 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findByPostalCode(Integer postalCodeID)
 			throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();

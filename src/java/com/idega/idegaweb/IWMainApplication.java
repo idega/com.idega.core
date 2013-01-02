@@ -371,7 +371,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         for (IWBundle bundle : getLoadedBundles().values()) {
 
         	if(bundle.isPostponedBundleStartersRun()) {
-
         		bundle.setPostponedBundleStartersRun(false);
         		bundle.runBundleStarters();
         	}
@@ -557,8 +556,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
 		return getObjectInstanciatorURIOldURLScheme(className);
     }
 
-    public String getObjectInstanciatorURI(Class classToInstanciate) {
-    	if(useNewURLScheme){
+    public String getObjectInstanciatorURI(Class<? extends UIComponent> classToInstanciate) {
+    	if (useNewURLScheme) {
     		return getWindowOpenerURI(classToInstanciate);
     	}
     	return getObjectInstanciatorURIOldURLScheme(classToInstanciate.getName());
@@ -1150,14 +1149,13 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * Returns a List of IWBundle Objects
      */
-    public List getRegisteredBundles() {
-        List vector = new ArrayList();
-        Iterator iter = getBundlesFile().keySet().iterator();
-        while (iter.hasNext()) {
+    public List<IWBundle> getRegisteredBundles() {
+        List<IWBundle> bundles = new ArrayList<IWBundle>();
+        for (Iterator<?> iter = getBundlesFile().keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
-            vector.add(getBundle(key));
+            bundles.add(getBundle(key));
         }
-        return vector;
+        return bundles;
     }
 
     /**
@@ -1606,7 +1604,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * but for older versions this is '/servlet/WindowOpener?idegaweb_frame_class=1234'
      */
     public String getWindowOpenerURI(Class<? extends UIComponent> windowToOpen) {
-    	return getBufferedWindowOpenerURI(windowToOpen,true).toString();
+    	return getBufferedWindowOpenerURI(windowToOpen, true).toString();
     }
 
     /**
@@ -1617,28 +1615,19 @@ public class IWMainApplication	extends Application  implements MutableClass {
      *
      */
     public String getWindowOpenerURIWithoutContextPath(Class<? extends UIComponent> windowToOpen) {
-    	return getBufferedWindowOpenerURI(windowToOpen,false).toString();
+    	return getBufferedWindowOpenerURI(windowToOpen, false).toString();
     }
 
-    private StringBuffer getBufferedWindowOpenerURI(Class<? extends UIComponent> windowToOpen,boolean includeContextPath) {
+    private StringBuffer getBufferedWindowOpenerURI(Class<? extends UIComponent> windowToOpen, boolean includeContextPath) {
     	StringBuffer buffer = new StringBuffer();
-	String windowUri = null;
-	if(includeContextPath){
-		windowUri = getWindowOpenerURI();
-	}
-	else{
-		windowUri = getWindowOpenerURIWithoutContextPath();
-	}
-    	if(useNewURLScheme){
-    		buffer.append(windowUri).append(getEncryptedClassName(windowToOpen));
-    	}
-    	else{
-    		buffer.append(windowUri).append('?').append(PARAM_IW_FRAME_CLASS_PARAMETER).append('=');
-			buffer.append( getEncryptedClassName(windowToOpen));
+    	String windowUri = includeContextPath ? getWindowOpenerURI() : getWindowOpenerURIWithoutContextPath();
+    	buffer.append(windowUri);
+    	if (useNewURLScheme) {
+    		buffer.append(getEncryptedClassName(windowToOpen));
+    	} else {
+    		buffer.append('?').append(PARAM_IW_FRAME_CLASS_PARAMETER).append('=').append(getEncryptedClassName(windowToOpen));
     	}
 	    return buffer;
-	    //return
-	    // getWindowOpenerURI()+"?"+PARAM_IW_FRAME_CLASS_PARAMETER+"="+windowToOpen.getName();
     }
 
 

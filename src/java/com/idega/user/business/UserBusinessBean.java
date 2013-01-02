@@ -4097,7 +4097,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return users;
 	}
 
-
 	@Override
 	public String setPreferredRoleAndGetHomePageUri(String roleKey, IWUserContext iwuc) {
 		if (StringUtil.isEmpty(roleKey)) {

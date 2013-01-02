@@ -10,9 +10,11 @@
 package com.idega.presentation.ui;
 
 import java.util.Collection;
-import java.util.Iterator;
+
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
+import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -112,17 +114,22 @@ public class DropdownMenu extends GenericSelect {
 	/**	
 	* Add menu elements from an Collection of IDOLegacyEntity Objects
 	*/
-	public void addMenuElements(Collection entityList) {
-		if (entityList != null) {
-			IDOEntity entity = null;
-			Iterator iter = entityList.iterator();
-			while (iter.hasNext()) {
-				entity = (IDOEntity) iter.next();
-				
+	public void addMenuElements(Collection<?> entityList) {
+		if (entityList == null) {
+			return;
+		}
+		
+		for (Object obj: entityList) {
+			if (obj instanceof IDOEntity) {
+				IDOEntity entity = (IDOEntity) obj;
 				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
-			}
-			if (getName().equals(untitled) && entity != null) {
-				setName(entity.getEntityDefinition().getUniqueEntityName());
+				
+				if (getName().equals(untitled) && entity != null) {
+					setName(entity.getEntityDefinition().getUniqueEntityName());
+				}
+			} else if (obj instanceof AdvancedProperty) {
+				AdvancedProperty entity = (AdvancedProperty) obj;
+				addMenuElement(entity.getId(), entity.getValue());
 			}
 		}
 	}
@@ -161,5 +168,20 @@ public class DropdownMenu extends GenericSelect {
 	
 	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue) {
 		getMenuElement(ElementValue).setMarkupAttribute(AttributeName, AttributeValue);
+	}
+	
+	@Override
+	public void setValue(String value) {
+		Collection<?> entities = null;
+		try {
+			entities = ELUtil.isExpression(value) ? (Collection<?>) ELUtil.getInstance().evaluateExpression(value) : null;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (entities == null) {
+			super.setValue(value);
+		} else {
+			addMenuElements(entities);
+		}
 	}
 }

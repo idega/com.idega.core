@@ -36,7 +36,7 @@ public class PoolManager implements Singleton {
 	private static String DEFAULT_DSN = "default";
 
 	static private PoolManager instance;
-	static private int clients;
+	//static private int clients;
 
 	private static boolean isUnlocked = true;
 
@@ -70,7 +70,7 @@ public class PoolManager implements Singleton {
 		if (instance == null && isUnlocked) {
 			instance = new PoolManager();
 		}
-		clients++;
+		//clients++;
 		return instance;
 	}
 
@@ -78,7 +78,7 @@ public class PoolManager implements Singleton {
 		if (instance == null && isUnlocked) {
 			instance = new PoolManager(propertiesFileLocation);
 		}
-		clients++;
+		//clients++;
 		return instance;
 	}
 
@@ -86,7 +86,7 @@ public class PoolManager implements Singleton {
 		if (instance == null && isUnlocked) {
 			instance = new PoolManager(propertiesFileLocation, mainApplication);
 		}
-		clients++;
+		//clients++;
 		return instance;
 	}
 

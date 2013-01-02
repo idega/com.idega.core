@@ -31,6 +31,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.RepositoryService;
 import com.idega.repository.RepositorySession;
+import com.idega.util.CoreUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextStyler;
@@ -94,6 +95,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 */
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
+		CoreUtil.doEnsureScopeIsSet(context);
 
 		UIComponentCacher cacher = getCacher(context);
 		if(cacher.existsInCache(this,context)){

@@ -40,7 +40,7 @@ import com.idega.presentation.Image;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.100 $
  */
-public interface IWBundle extends IWModule{
+public interface IWBundle extends IWModule, Comparable<IWBundle> {
 	/**
 	 * Discards all unsaved changes to this bundle and loads it up again
 	 */
@@ -55,6 +55,7 @@ public interface IWBundle extends IWModule{
 	/**
 	 *Stores this bundle and unloads all resources;
 	 */
+	@Override
 	public abstract void unload();
 
 	/**
@@ -154,6 +155,10 @@ public interface IWBundle extends IWModule{
 	public abstract String getPropertiesRealPath();
 
 	public abstract void addLocale(Locale locale);
+
+	public boolean isLocaleEnabled(Locale locale);
+
+	public List<Locale> getEnabledLocales();
 
 	public abstract String getBundleIdentifier();
 

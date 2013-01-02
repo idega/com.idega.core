@@ -30,6 +30,7 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
 import com.idega.core.accesscontrol.dao.UserLoginDAO;
 import com.idega.core.accesscontrol.dao.UsernameExistsException;
@@ -46,6 +47,7 @@ import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.component.dao.ICObjectDAO;
 import com.idega.core.component.data.bean.ICObject;
 import com.idega.core.file.data.bean.ICFile;
+import com.idega.core.idgenerator.business.UUIDBusiness;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
@@ -68,6 +70,7 @@ import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -665,9 +668,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		//must be slow optimize
 		groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
 
-		Vector<Group> groupsToCheckForPermissions = new Vector<Group>();
-		Iterator<Group> iter = groups.iterator();
-		while (iter.hasNext()) {
+		List<Group> groupsToCheckForPermissions = new ArrayList<Group>();
+		for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
 			Group parent = iter.next();
 			Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
 			if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
@@ -675,7 +677,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 		}
 
-		groups.addAll(groupsToCheckForPermissions);
+		if (groups != null)
+			groups.addAll(groupsToCheckForPermissions);
+
 		return groups;
 	}
 
@@ -948,7 +952,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public void setJSPPagePermission(IWUserContext iwc, Group group, String PageContextValue, String permissionType, Boolean permissionValue) throws Exception {
 		ICPermission permission = getPermissionDAO().findPermission(CATEGORY_STRING_JSP_PAGE, PageContextValue, permissionType, group);
-
 		if (permission == null) {
 			permission = getPermissionDAO().createPermission(CATEGORY_STRING_JSP_PAGE, PageContextValue, group, permissionType, permissionValue);
 		}
@@ -962,7 +965,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public void setObjectPermission(IWUserContext iwc, Group group, PresentationObject obj, String permissionType, Boolean permissionValue) throws Exception {
 		ICPermission permission = getPermissionDAO().findPermission(CATEGORY_STRING_IC_OBJECT_ID, String.valueOf(obj.getICObjectID()), permissionType, group);
-
 		if (permission == null) {
 			permission = getPermissionDAO().createPermission(CATEGORY_STRING_IC_OBJECT_ID, String.valueOf(obj.getICObjectID()), group, permissionType, permissionValue);
 		}
@@ -976,7 +978,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public void setBundlePermission(IWUserContext iwc, Group group, PresentationObject obj, String permissionType, Boolean permissionValue) throws Exception {
 		ICPermission permission = getPermissionDAO().findPermission(CATEGORY_STRING_BUNDLE_IDENTIFIER, obj.getBundleIdentifier(), permissionType, group);
-
 		if (permission == null) {
 			permission = getPermissionDAO().createPermission(CATEGORY_STRING_BUNDLE_IDENTIFIER, obj.getBundleIdentifier(), group, permissionType, permissionValue);
 		}
@@ -1258,11 +1259,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-		/*
-		 * String[] groupsToReturn = new String[1]; groupsToReturn[0] =
-		 * com.idega.core.accesscontrol.data.PermissionGroupBMPBean.getStaticPermissionGroupInstance().getGroupTypeValue();
-		 */
-		//filter end
+
 		return groupsToReturn;
 	}
 
@@ -1411,23 +1408,32 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return newUser;
 	}
 
-	private void initAdministratorUser() throws UsernameExistsException {
-		Collection<User> users = getUserDAO().getUsersByNames(User.ADMINISTRATOR_DEFAULT_NAME, "", "");
+	private void initAdministratorUser() throws UsernameExistsException, IWServiceNotStartedException {
+		Collection<User> users = getUserDAO().getUsersByNames(User.ADMINISTRATOR_DEFAULT_NAME, CoreConstants.EMPTY, CoreConstants.EMPTY);
 
 		User adminUser = null;
 		if (ListUtil.isEmpty(users)) {
 			adminUser = createAdministratorUser();
-		}
-		else {
+		} else {
 			adminUser = users.iterator().next();
 		}
 
 		try {
 			getApplication().setAttribute(_APPADDRESS_ADMINISTRATOR_USER, adminUser);
-		}
-		catch (IWServiceNotStartedException e) {
+		} catch (IWServiceNotStartedException e) {
 			e.printStackTrace();
 		}
+		if (adminUser.getUniqueId() == null) {
+			UUIDBusiness uuidBean;
+			try {
+				uuidBean = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UUIDBusiness.class);
+				uuidBean.addUniqueKeyIfNeeded(adminUser, null);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
+		getApplication().setAttribute(_APPADDRESS_ADMINISTRATOR_USER, adminUser);
 	}
 
 	@Override
@@ -1454,8 +1460,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		try {
 			initAdministratorUser();
-		}
-		catch (UsernameExistsException e) {
+		} catch (IWServiceNotStartedException e) {
+			e.printStackTrace();
+		} catch (UsernameExistsException e) {
 			e.printStackTrace();
 		}
 	}
@@ -1470,42 +1477,28 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	@Override
-	public String[] getICObjectPermissionKeys(Class ICObject) {
+	public String[] getICObjectPermissionKeys(Class<?> icObject) {
 		String[] keys = new String[2];
 
 		keys[0] = PERMISSION_KEY_VIEW;
 		keys[1] = PERMISSION_KEY_EDIT;
-		//keys[2] = _PERMISSIONKEY_DELETE;
 
 		return keys;
-
-		// return new String[0]; // not null
 	}
 
 	@Override
-	public String[] getBundlePermissionKeys(Class ICObject) {
-		String[] keys = new String[2];
-
-		keys[0] = PERMISSION_KEY_VIEW;
-		keys[1] = PERMISSION_KEY_EDIT;
-		//keys[2] = _PERMISSIONKEY_DELETE;
-
-		return keys;
-
-		// return new String[0]; // not null
+	public String[] getBundlePermissionKeys(Class<?> icObject) {
+		return getICObjectPermissionKeys(icObject);
 	}
 
 	@Override
-	public String[] getBundlePermissionKeys(String BundleIdentifier) {
+	public String[] getBundlePermissionKeys(String bundleIdentifier) {
 		String[] keys = new String[2];
 
 		keys[0] = PERMISSION_KEY_VIEW;
 		keys[1] = PERMISSION_KEY_EDIT;
-		//keys[2] = _PERMISSIONKEY_DELETE;
 
 		return keys;
-
-		// return new String[0]; // not null
 	}
 
 	@Override
@@ -1514,11 +1507,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		keys[0] = PERMISSION_KEY_VIEW;
 		keys[1] = PERMISSION_KEY_EDIT;
-		//keys[2] = _PERMISSIONKEY_DELETE;
 
 		return keys;
-
-		// return new String[0]; // not null
 	}
 
 	@Deprecated
@@ -2671,7 +2661,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 		}
 		return true;
-
 	}
 
 	@Override
@@ -2755,6 +2744,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return RoleHelperObject.getStaticInstance().toString();
 	}
 
+	@Override
 	public void addRoleToGroup(String roleKey, com.idega.user.data.Group group, IWApplicationContext iwac) {
 		addRoleToGroup(roleKey, (Integer) group.getPrimaryKey(), iwac);
 	}
@@ -2837,7 +2827,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  			return hasViewPermissionForPageKey(pageKey,iwuc);
 	  		}
 	  		else{
-	  			getLogger().warning("No pageKey found for : "+pageUri);
+	  			//getLogger().warning("No pageKey found for : "+pageUri);
 	  			return false;
 	  		}
 		}
@@ -2866,7 +2856,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			//even if you have the view rights the page might not be published yet.
 			//extra check for unpublished pages
 			ICPage page = getPageDAO().findPage(new Integer(pageKey));
-
 			if (!page.isPublished()) {
 				//only editors can view unpublished pages.
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
@@ -2927,4 +2916,4 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return this.objectDAO;
 	}
 
-} // Class AccessControl
+}

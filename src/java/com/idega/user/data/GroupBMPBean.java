@@ -48,11 +48,14 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * Title: IW Core Description: Copyright: Copyright (c) 2001-2003 idega software
@@ -1246,8 +1249,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @deprecated use removeRelation(int relatedGroupId, String relationType,
 	 *             User performer)
 	 */
-	@Deprecated
 	@Override
+	@Deprecated
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
 		this.removeRelation(groupId, relationType);
@@ -1267,8 +1270,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @deprecated use removeRelation(int relatedGroupId, String relationType,
 	 *             User performer)
 	 */
-	@Deprecated
 	@Override
+	@Deprecated
 	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException {
 		int groupId = this.getGroupIDFromGroup(relatedGroup);
 		this.removeRelation(groupId, relationType, performer);
@@ -1912,7 +1915,12 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	@Override
 	public void store() {
+		String id = getId();
 		super.store();
+		if (StringUtil.isEmpty(id)) {
+			GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(this);
+			ELUtil.getInstance().publishEvent(groupCreatedEvent);
+		}
 	}
 
 	/**
@@ -2080,7 +2088,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	@Override
 	public String getId(){
-		return getPrimaryKey().toString();
+		Object primaryKey = getPrimaryKey();
+		return primaryKey == null ? null : primaryKey.toString();
 	}
 
 	public Collection ejbFindAllByNamePhrase(String phrase, Locale locale) throws FinderException {
@@ -2220,7 +2229,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			}
 			query.append(" AND (g.").append(COLUMN_GROUP_TYPE).append(" IN (").append(typeStrings).append("))");
 		}
-
+		query.append(" AND (g.").append(COLUMN_GROUP_TYPE).append(" != 'ic_user_representative')");
 		query.append(" ORDER BY g.").append(COLUMN_CREATED).append("  DESC");
 
 		if(amount > 0){
@@ -2231,4 +2240,4 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	}
 
-} // Class Group
+}

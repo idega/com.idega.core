@@ -22,12 +22,15 @@ public class URIUtil {
 	private String uri;
 	private Map<String, String> parameters;
 	
-	public URIUtil() { }
+	public URIUtil() {
+		this(CoreConstants.EMPTY);
+	}
 	
-	public URIUtil(String uriStr) { setUri(uriStr); }
+	public URIUtil(String uriStr) {
+		setUri(uriStr);
+	}
 	
 	public void setUri(String uri) {
-		
 		parameters = null;
 		this.uri = uri;
 	}
@@ -60,7 +63,7 @@ public class URIUtil {
 				
 			} catch (Exception e) {
 				parameters = null;
-				throw new RuntimeException(e);
+				Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage());
 			}
 		} else {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "No uri while resolving uri parameters");
@@ -101,7 +104,8 @@ public class URIUtil {
 			query = new URI(uri).getRawQuery();
 			
 		} catch (URISyntaxException e) {
-			throw new RuntimeException(e);
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
+			return;
 		}
 		
 		if(query == null)

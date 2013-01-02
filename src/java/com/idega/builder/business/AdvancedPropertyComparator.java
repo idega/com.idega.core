@@ -10,14 +10,14 @@ import com.idega.presentation.IWContext;
 import com.idega.util.CoreUtil;
 
 public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> {
-	
-	private boolean sortById = false;
+
+	private boolean sortById, descending;
 	private Locale locale = null;
 	private Collator collator;
-	
+
 	public AdvancedPropertyComparator() {
 		Locale locale = null;
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			locale = IWMainApplication.getDefaultIWMainApplication().getSettings().getDefaultLocale();
@@ -28,29 +28,35 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 		if (locale == null) {
 			locale = Locale.ENGLISH;
 		}
-		
+
 		this.locale = locale;
 	}
-	
+
 	public AdvancedPropertyComparator(Locale locale) {
 		this.locale = locale;
 	}
-	
+
 	public AdvancedPropertyComparator(boolean sortById, Locale locale) {
 		this(locale);
 		this.sortById = sortById;
 	}
 
+	public AdvancedPropertyComparator(Locale locale, boolean descending) {
+		this(locale);
+		this.descending = descending;
+	}
+
+	@Override
 	public int compare(AdvancedProperty prop1, AdvancedProperty prop2) {
 		int result = 0;
-		
+
 		String value1 = prop1.getValue();
 		String value2 = prop2.getValue();
-		
+
 		if (sortById) {
 			value1 = prop1.getId();
 			value2 = prop2.getId();
-			
+
 			if (value1 == null && value2 == null) {
 				result = 0;
 			}
@@ -63,13 +69,14 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 			else {
 				result = value1.compareTo(value2);
 			}
-			
+
 			return result;
 		}
-		
-		return getCollator().compare(value1, value2);
+
+		result = getCollator().compare(value1, value2);
+		return descending ? -1 * result : result;
 	}
-	
+
 	private Collator getCollator() {
 		if (collator == null) {
 			collator = Collator.getInstance(locale);

@@ -32,11 +32,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
+import com.idega.core.accesscontrol.bean.UserHasLoggedInEvent;
 import com.idega.core.accesscontrol.dao.UserLoginDAO;
+import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.accesscontrol.data.bean.LoginInfo;
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.user.business.UserBusiness;
+import com.idega.data.IDOLookup;
 import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWException;
@@ -284,11 +288,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return false;
 		}
 	}
-	
+
 	public boolean logOutUser(IWContext iwc) {
 		return logOutUser(iwc.getRequest());
 	}
-		
+
 
 	/**
 	 * Used for the LoggedOnInfo object to be able to log off users when their
@@ -298,7 +302,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean logOutUserOnSessionTimeout(HttpSession session, LoggedOnInfo logOnInfo) {
 		try {
-			Map m = getLoggedOnInfoMap(session);
+			Map<?, ?> m = getLoggedOnInfoMap(session);
 			LoggedOnInfo _logOnInfo = (LoggedOnInfo) m.remove(logOnInfo.getLogin());
 			if (_logOnInfo != null) {
 				getUserLoginDAO().createLogoutRecord(_logOnInfo.getLoginRecord());
@@ -766,6 +770,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		storeUserAndGroupInformationInSession(request.getSession(), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		storeLoggedOnInfoInSession(request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
+		if (user != null)
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
 		return true;
 	}
 
@@ -780,6 +786,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		storeUserAndGroupInformationInSession(request.getSession(), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		storeLoggedOnInfoInSession(request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
+		if (user != null)
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
 		return true;
 	}
 
@@ -1152,6 +1160,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	/**
 	 * added for cookie login - calling this may be unsafe ( Aron )
+<<<<<<< HEAD
+=======
+	 * </p>
+>>>>>>> caedf7bba3f629e1f49cde7e8a02f7404adcf01e
 	 *
 	 * @param request
 	 * @param login
@@ -1311,6 +1323,24 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return logInByPersonalID(request,personalId,null,null,null);
 	}
 
+	public boolean hasUserLogin(HttpServletRequest request, String personalId) throws Exception {
+		try {
+			IWApplicationContext iwac = getIWApplicationContext(request.getSession());
+			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
+			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
+			Collection logins = loginTableHome.findLoginsForUser(user);
+
+			if (logins == null || logins.isEmpty()) {
+				return false;
+			}
+
+			return true;
+		} catch (EJBException e) {
+		}
+
+		return false;
+	}
+
 	/**
 	 * <p>
 	 * Logs the user in by given personalId and specified loginType.
@@ -1448,7 +1478,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	public boolean isLoginExpired(UserLogin userLogin) {
 		LoginInfo loginInfo = userLogin.getLoginInfo();
-		return loginInfo.isLoginExpired();
+		return loginInfo == null || loginInfo.isLoginExpired();
 	}
 
 	protected com.idega.user.business.UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {

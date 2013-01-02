@@ -2,6 +2,7 @@ package com.idega.user.data;
 
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
+import java.util.Collection;
 
 import javax.ejb.EJBException;
 
@@ -9,7 +10,11 @@ import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
+import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDORelationshipException;
+import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOReportableEntity;
 
 
@@ -153,4 +158,9 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setDisplayNameSetManually(boolean diplayNameSetManually);
  public void setLastReadFromImport(Timestamp timestamp);
  public Timestamp getLastReadFromImport();
+ public void setResume(String resume);
+ public String getResume();
+ public Collection<ICLanguage> getLanguages() throws IDORelationshipException;
+ public void addLanguage(ICLanguage language) throws IDOAddRelationshipException;
+ public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException ;
 }

@@ -2,6 +2,7 @@ package com.idega.block.web2.business;
 
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.List;
 
 import com.idega.business.IBOService;
@@ -95,6 +96,9 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleURIsToMooToolsLib(String version, boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
 	public List<String> getBundleURIsToMooToolsLib(boolean needCompressedFiles, boolean needMooToolsMore, boolean addBridgingScript);
 	public List<String> getBundleURIsToMooToolsLib();
+
+	public String getBundleURIToKnockoutLib(String knockoutVersion) throws RemoteException;
+	public String getBundleURIToKnockoutLib() throws RemoteException;
 
 	/**
 	 * @deprecated use getJQuery().getBundleURIToJQueryLib
@@ -432,6 +436,7 @@ public interface Web2Business extends IBOService {
 	//	TinyMCE
 	public List<String> getScriptsForTinyMCE();
 	public List<String> getScriptsForTinyMCE(String version);
+	public List<String> getBundleUrisToTinyMceScriptFiles(String version, List<String> files);
 
 	//	JCaptcha
 	public boolean validateJCaptcha(String sessionId, String userCaptchaResponse);
@@ -444,4 +449,20 @@ public interface Web2Business extends IBOService {
 	public String getSWFUploadObjectScript();
 	public String getSWFUploadScript();
 	public String getSWFUploadPlugin();
+
+	public Collection<String> getBundleUrisToBxSliderScriptFiles(String version);
+	public Collection<String> getBundleUrisTojQueryMediaScriptFiles(String version);
+
+	//	Google Maps
+	public String getScriptURLForGoogleMaps();
+	public String getScriptURLForGoogleMaps(boolean useSensor);
+
+	//labelify (labels in inputs)
+	public String getScriptURLForLabelify(String version);
+
+	public Collection<String> getBundleUrisToBlueimpFileUploadScriptFiles(String version);
+	public Collection<String> getBundleUrisToBlueimpFileUploadStyleFiles(String version);
+
+	public String getBundleUriToBootstrapMainScriptFile(String version);
+	public String getBundleUriToBootstrapMainStyleFile(String version);
 }

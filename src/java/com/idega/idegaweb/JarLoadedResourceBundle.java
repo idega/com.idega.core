@@ -1,6 +1,9 @@
 package com.idega.idegaweb;
 
 import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
+import java.io.Serializable;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -27,7 +30,10 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
  */
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
-public class JarLoadedResourceBundle implements MessageResource {
+public class JarLoadedResourceBundle implements MessageResource, Serializable {
+	
+	private static final long serialVersionUID = 2817447347536356853L;
+	
 	private Level usagePriorityLevel = MessageResourceImportanceLevel.MIDDLE_ORDER;
 	private boolean autoInsert = false;
 	
@@ -114,5 +120,11 @@ public class JarLoadedResourceBundle implements MessageResource {
 
 	public Object getMessage(Object key) {
 		return resource.getMessage(key);
+	}
+	
+	private void writeObject(ObjectOutputStream out) throws IOException {
+	}
+	
+	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 	}
 }

@@ -5,29 +5,33 @@ package com.idega.core.idgenerator.business;
 
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.ejb.FinderException;
+
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.user.dao.GroupDAO;
+import com.idega.user.dao.UserDAO;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserHome;
 import com.idega.util.Timer;
+import com.idega.util.expression.ELUtil;
 
 /**
  * This beans contains methods to apply unique ids
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson </a>
- *  
+ *
  */
 public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 
+	private static final long serialVersionUID = 4631938949917909230L;
+
 	private IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
 
-	/**
-	 *  
-	 */
 	public UUIDBusinessBean() {
 		super();
 	}
@@ -35,6 +39,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 	/**
 	 * Adds a UUID to all users and groups
 	 */
+	@Override
 	public void generateUUIDsForAllUsersAndGroups() {
 		try {
 			generateUUIDsForAllUsers();
@@ -49,6 +54,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 	 * Adds a UUID to the group or user or copies the uuid you pass into the
 	 * method. Then stores the user/group
 	 */
+	@Override
 	public void addUniqueKeyIfNeeded(Group group, String uniqueIdToCopy) {
 		if (group.getUniqueId() == null) {
 			String uniqueId;
@@ -66,6 +72,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 	/**
 	 * Removes all UUID from all users and groups.
 	 */
+	@Override
 	public void removeUniqueIDsForUsersAndGroups() {
 		try {
 			removeUUIDsFromAllUsers();
@@ -76,6 +83,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 		}
 	}
 
+	@Override
 	public void generateUUIDsForAllGroups() throws FinderException, IDOLookupException {
 		int counter = 0;
 		int reportAfter = 500;
@@ -102,6 +110,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 		System.out.println("Time for groups : " + timer.getTime()/1000+"s");
 	}
 
+	@Override
 	public void generateUUIDsForAllUsers() throws FinderException, IDOLookupException {
 		int counter = 0;
 		int reportAfter = 500;
@@ -129,6 +138,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 		System.out.println("Time for users : " + timer.getTime()/1000+"s");
 	}
 
+	@Override
 	public void removeUUIDsFromAllGroups() throws FinderException, IDOLookupException {
 		int counter = 0;
 		int reportAfter = 100;
@@ -155,6 +165,7 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 		System.out.println("Time for groups : " + timer.getTime()/1000+"s");
 	}
 
+	@Override
 	public void removeUUIDsFromAllUsers() throws FinderException, IDOLookupException {
 		int counter = 0;
 		int reportAfter = 100;
@@ -185,13 +196,44 @@ public class UUIDBusinessBean extends IBOServiceBean implements UUIDBusiness {
 	/**
 	 * Removes the UUID from the user/group if it has been set and stores the
 	 * user/group if needed
-	 * 
+	 *
 	 * @param user
 	 */
+	@Override
 	public void removeUniqueIdIfPresent(Group group) {
 		if (group.getUniqueId() != null) {
 			group.setUniqueId(null);
 			group.store();
+		}
+	}
+
+	@Override
+	public void addUniqueKeyIfNeeded(com.idega.user.data.bean.Group group, String uniqueIdToCopy) {
+		if (group.getUniqueId() == null) {
+			String uniqueId;
+			if (uniqueIdToCopy == null) {
+				uniqueId = this.uidGenerator.generateId();
+			} else {
+				uniqueId = uniqueIdToCopy;
+			}
+			group.setUniqueId(uniqueId);
+			GroupDAO dao = ELUtil.getInstance().getBean(GroupDAO.class);
+			dao.merge(group);
+		}
+	}
+
+	@Override
+	public void addUniqueKeyIfNeeded(com.idega.user.data.bean.User user, String uniqueIdToCopy) {
+		if (user.getUniqueId() == null) {
+			String uniqueId;
+			if (uniqueIdToCopy == null) {
+				uniqueId = this.uidGenerator.generateId();
+			} else {
+				uniqueId = uniqueIdToCopy;
+			}
+			user.setUniqueId(uniqueId);
+			UserDAO dao = ELUtil.getInstance().getBean(UserDAO.class);
+			dao.merge(user);
 		}
 	}
 }

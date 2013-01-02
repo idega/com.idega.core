@@ -1,6 +1,8 @@
 package com.idega.core.business;
 
 import java.io.Serializable;
+import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.logging.Level;
@@ -9,10 +11,13 @@ import java.util.logging.Logger;
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpSession;
 
+import com.idega.builder.bean.AdvancedProperty;
+import com.idega.builder.business.AdvancedPropertyComparator;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -27,6 +32,7 @@ import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -150,7 +156,7 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
-		return getCache(cacheName, -1);
+		return getCache(cacheName, IWCacheManager2.DEFAULT_CACHE_TTL_SECONDS);
 	}
 
 	/**
@@ -215,5 +221,40 @@ public abstract class DefaultSpringBean {
 		if (repositoryService == null)
 			repositoryService = ELUtil.getInstance().getBean(RepositoryService.class);
 		return repositoryService;
+	}
+
+	protected String getHost() {
+    	IWContext iwc = CoreUtil.getIWContext();
+		ICDomain domain = iwc.getDomain();
+		int port = domain.getServerPort();
+		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
+		if (port > 0)
+			host = host.concat(":").concat(String.valueOf(port));
+		return host;
+    }
+
+	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {
+		doSortValues(values, container, locale, Boolean.FALSE);
+	}
+
+	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale, boolean descending) {
+		Collections.sort(values, new AdvancedPropertyComparator(locale, descending));
+
+		for (AdvancedProperty value: values)
+			container.put(value.getId(), value.getValue());
+	}
+
+	/**
+	 * <p>Takes property from /workspace/developer/applicationproperties named
+	 * "is_developement_mode". Check this property, when you need to add code
+	 * necessary for development, but useless to production environment.</p>
+	 * @return <code>true</code> if it is developing environment,
+	 * <code>false</code> otherwise.
+	 * @see CoreConstants#DEVELOPEMENT_STATE_PROPERTY
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	protected boolean isDevelopementState() {
+		return getApplication().getSettings().getBoolean(
+				CoreConstants.DEVELOPEMENT_STATE_PROPERTY, Boolean.FALSE);
 	}
 }

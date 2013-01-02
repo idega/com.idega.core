@@ -10,6 +10,7 @@
 package com.idega.idegaweb.help.presentation;
 
 import java.util.Locale;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
@@ -29,7 +30,7 @@ public class Help extends Block {
 	private static final String BUNDLE_IDENTIFIER = "com.idega.block.help";
 	
 	private static final String DEFAULT_HELP_TEXT = "hlp_default_text";
-	private static final String DEFAULT_HELP_IMAGE = "/help/help.gif";
+	public static final String DEFAULT_HELP_IMAGE = "/help.gif";
 	private static final String CORE_BUNDLE = "com.idega.core";
 	public static final String HELP_KEY = "hlp_key";
 	public static final String HELP_BUNDLE = "hlp_bundle";
@@ -50,6 +51,7 @@ public class Help extends Block {
 		this._helpLink = new Link();
 	}
 	
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		if (this._iwbCore == null) {
@@ -164,6 +166,7 @@ public class Help extends Block {
 //		return _showInNewWindow;
 //	}
 	
+	@Override
 	public Object clone(IWUserContext iwc, boolean askForPermission) {
 		Help obj = null;
 		try {
@@ -199,6 +202,7 @@ public class Help extends Block {
 	/**
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
+	@Override
 	public String getBundleIdentifier() {
 		if (this._helpTextBundle != null && !this._helpTextBundle.equals("")) {
 			return this._helpTextBundle;

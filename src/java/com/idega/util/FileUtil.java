@@ -11,7 +11,6 @@ package com.idega.util;
 
  import java.io.BufferedInputStream;
 import java.io.BufferedReader;
-import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileFilter;
 import java.io.FileInputStream;
@@ -38,6 +37,7 @@ import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.file.bean.EmptyItem;
 import com.idega.file.bean.FileItem;
 import com.idega.idegaweb.IWMainApplication;
@@ -47,11 +47,11 @@ import com.idega.servlet.filter.IWBundleResourceFilter;
 public class FileUtil {
 
 	private static final Logger LOGGER = Logger.getLogger(FileUtil.class.getName());
-	
+
   public static final char UNIX_FILE_SEPARATOR = '/';
   public static final char WINDOWS_FILE_SEPARATOR = '\\';
   public static final String BACKUP_SUFFIX = "backup~";
-  
+
   private FileUtil() {
   	// empty
   }
@@ -60,13 +60,13 @@ public class FileUtil {
 	  String filePath = getFileNameWithPath(path, fileNameWithoutFullPath);
 	  return exists(filePath);
   }
-	  
+
 	public static boolean exists(String fileNameWithFullPath)  {
 	  File file = new File(fileNameWithFullPath);
 	  return file.exists();
   }
-  
-  
+
+
   public static void createFileAndFolder(String path,String fileNameWithoutFullPath){
     createFolder(path);
     String filePath = getFileNameWithPath(path,fileNameWithoutFullPath);
@@ -97,12 +97,12 @@ public class FileUtil {
   }
 
   /**
-   * 	 Creates a file or folder if not existent. 
+   * 	 Creates a file or folder if not existent.
    * 	 If true is returned the file exists else something went wrong.
-   * 	
+   *
    * @param file
    * @return true if everything is fine else false
-   * @author thomas 
+   * @author thomas
    */
   public static boolean createFileIfNotExistent(File file) {
   	if (file.exists()) {
@@ -110,9 +110,9 @@ public class FileUtil {
   		return true;
   	}
   	// create parent directories (or the folder itself) if necessary
-  	boolean isDirectory = file.isDirectory();   
+  	boolean isDirectory = file.isDirectory();
 	File parentFile = (isDirectory) ? file : file.getParentFile();
-	if (! parentFile.exists()) {
+	if (parentFile != null && !parentFile.exists()) {
 		if (! parentFile.mkdirs()) {
 			return false;
 		}
@@ -132,11 +132,11 @@ public class FileUtil {
 	// everything is okay
 	return true;
   }
-  
-  
+
+
   /**
    * Gets the System wide path separator
-   * 
+   *
    * @deprecated Use File.separator
    */
   @Deprecated
@@ -216,7 +216,7 @@ public static String getFileSeparator(){
     return file.delete();
 }
 
-  
+
   /*
   * streams an inputstream to a file
   */
@@ -224,7 +224,7 @@ public static String getFileSeparator(){
     	FileOutputStream out = new FileOutputStream(toFile);
     	streamToOutputStream(input, out);
     }
-    
+
     /*
     * streams an inputstream to a file
     */
@@ -239,7 +239,7 @@ public static String getFileSeparator(){
         		LOGGER.warning("Provided InputStream is undefined!");
         		return null;
         	}
-          
+
         	input.available();	//	This method throws an IO exception if the stream is invalid
         	file = getFileAndCreateIfNotExists(filePath,fileName);
         	FileOutputStream fileOut = new FileOutputStream(file);
@@ -262,16 +262,16 @@ public static String getFileSeparator(){
 	    	  LOGGER.warning("Provided InputStream is undefined!");
 	    	  return;
 	      }
-	      
+
 	      buffered = new BufferedInputStream(input);
 	      buffered.available();
-	      
+
 	      int bytesRead;
 	      byte[] buf = new byte[4 * 1024];
 	      while ((bytesRead = buffered.read(buf)) != -1) {
 	    	  out.write(buf, 0, bytesRead);
 	      }
-	
+
 	      out.flush();
 	      out.close();
       } finally {
@@ -282,7 +282,7 @@ public static String getFileSeparator(){
       }
   }
 
-  /** 
+  /**
    * Deletes content of folder.
    * !! Be careful !!
    * Returns also false if the specified path doesn't exist.
@@ -291,9 +291,9 @@ public static String getFileSeparator(){
   public static boolean deleteContentOfFolder(String path) {
   	return FileUtil.deleteContentOfFolder(new File(path));
   }
-  
-  
-    /** 
+
+
+    /**
    * Deletes content of folder.
    * !! Be careful !!
    * Returns also false if the specified path doesn't exist.
@@ -314,20 +314,20 @@ public static String getFileSeparator(){
   	}
   	return false;
   }
-  
-  /** 
+
+  /**
    * Recursively delete not empty directory.
    * @author arunas
    */
   public static boolean deleteNotEmptyDirectory(String path) {
 	return FileUtil.deleteNotEmptyDirectory(new File(path));
   }
-  
-  /** 
+
+  /**
    * Recursively delete not empty directory.
    * @author arunas
    */
-  
+
   public static boolean deleteNotEmptyDirectory(File directory) {
       if (directory.exists() && directory.isDirectory()) {
 	  String [] children = directory.list();
@@ -336,14 +336,14 @@ public static String getFileSeparator(){
 	    if (!success)
 		return false;
 	}
-	
+
     }
       return directory.delete();
   }
 
   /** Deletes all files and folders in the specified folder that are older than the
    * specified time in milliseconds. Only the time of the files and folders in the specified folder
-   * are checked not the time of files or folders that belong to subfolders. 
+   * are checked not the time of files or folders that belong to subfolders.
    * !! Be careful !!
    * @param folderPath
    * @param timeInMillis
@@ -352,11 +352,11 @@ public static String getFileSeparator(){
   public static void deleteAllFilesAndFolderInFolderOlderThan(String folderPath, long timeInMillis) {
   	FileUtil.deleteAllFilesAndFolderInFolderOlderThan(new File(folderPath), timeInMillis);
   }
- 
-  
+
+
   /** Deletes all files and folders in the specified folder that are older than the
    * specified time in milliseconds. Only the time of the files and folders in the specified folder
-   * are checked not the time of files or folders that belong to subfolders. 
+   * are checked not the time of files or folders that belong to subfolders.
    * !! Be careful !!
    * @param folderPath
    * @param timeInMillis
@@ -374,13 +374,14 @@ public static String getFileSeparator(){
   	    	long modifiedFile = file.lastModified();
   	    	if (currentTime - modifiedFile > timeInMillis)	{
   	    		FileUtil.deleteFileAndChildren(file);
+  	    		LOGGER.info("Deleted " + file + " and it's children. Last time it was modified " + new IWTimestamp(modifiedFile));
   	    	}
   	    }
     	}
-    }  
-    
-  
-  /** 
+    }
+
+
+  /**
    * Deletes file and children.
    * !! Be careful !!
    * @author thomas
@@ -402,10 +403,10 @@ public static String getFileSeparator(){
   	}
   	return true;
   }
-  			
+
     /**
    * deletes entire contents of a folder. Returns true if deletion successful, false otherwise
-   * 
+   *
    * comment added by thomas:
    * doesn't delete folders that contain nonempty folders
    */
@@ -433,8 +434,8 @@ public static String getFileSeparator(){
 		}
 		return null;
 	}
-	
-	/** 
+
+	/**
 	 * Returns only files of a folder but not folder inside the folder. Returns null if no folder exist.
 	 * @param path
 	 * @return
@@ -443,6 +444,8 @@ public static String getFileSeparator(){
 	public static List<File> getFilesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
+
+				@Override
 				public boolean accept(File file) {
 					return file.isFile();
 				}
@@ -451,9 +454,9 @@ public static String getFileSeparator(){
 			return Arrays.asList(folders);
 		}
 		return null;
-	}	
-	
-	/** 
+	}
+
+	/**
 	 * Returns folders of a folder. Returns null if no folders exist.
 	 * @param path
 	 * @return
@@ -462,6 +465,8 @@ public static String getFileSeparator(){
 	public static List<File> getDirectoriesInDirectory(File folder) {
 		if (folder.exists()) {
 			FileFilter filter = new FileFilter() {
+
+				@Override
 				public boolean accept(File file) {
 					return file.isDirectory();
 				}
@@ -488,9 +493,11 @@ public static String getFileSeparator(){
         lineReader.mark(1);
     }
 
+    lineReader.close();
+
     return strings;
   }
-  
+
   	public static final File getFileFromWorkspace(String pathToFile) throws IOException {
   		File file = new File(pathToFile);
 	    if (!file.exists()) {
@@ -502,7 +509,7 @@ public static String getFileSeparator(){
 	    if (file != null && file.exists()) {
 	    	return file;
 	    }
-	    
+
 	    throw new IOException("File '" + pathToFile + "' doesn't exist!");
   	}
 
@@ -526,7 +533,7 @@ public static String getFileSeparator(){
 	  }
 	  return buffer.toString();
   }
-  
+
   /** Uses getLinesFromFile and returns them in a string with "\n" between them **/
   public static String getStringFromFile(File file) throws IOException{
 	  StringBuffer buffer = new StringBuffer();
@@ -578,7 +585,7 @@ public static String getFileSeparator(){
   	}
   	return result;
   }
-  
+
   /** Creates a file plus folders relative to the specified (existing) file according the specified path.
    * Note: Works with windows or unix separators.
    * + returns the specified file if the path is null or empty
@@ -657,7 +664,7 @@ public static String getFileSeparator(){
   public static String getStringFromURL(String uri){
 	  return getStringFromURL(uri, "UTF-8");
   }
-  
+
   /** This uses a BufferInputStream and an URLConnection to get an URL and return it as a String **/
   public static String getStringFromURL(String uri, String encoding){
     StringBuffer buffer = new StringBuffer("");
@@ -697,14 +704,14 @@ public static String getFileSeparator(){
   	try {
   		URL url = new URL(uri);
   		BufferedInputStream input = new BufferedInputStream(url.openStream());
-  		
+
   		FileOutputStream output  = new FileOutputStream(file);
-  		
+
   		byte buffer[]= new byte[1024];
   		int	noRead	= 0;
-  		
+
   		noRead = input.read( buffer, 0, 1024 );
-  		
+
   		//Write out the stream to the file
   		while ( noRead != -1 ){
   			output.write( buffer, 0, noRead );
@@ -712,7 +719,7 @@ public static String getFileSeparator(){
   		}
   		output.flush();
   		output.close();
- 
+
   	}
   	catch(MalformedURLException mue) { // URL c'tor
   		//return "MalformedURLException: Site not available or wrong url";
@@ -722,7 +729,7 @@ public static String getFileSeparator(){
   		//return "IOException: Site not available or wrong url";
   		LOGGER.log(Level.WARNING, "Site not available or wrong url", ioe);
   	}
-  	
+
   }
 
 
@@ -745,14 +752,14 @@ public static String getFileSeparator(){
     return tokens;
   }
 
-   
+
    /**
-    * Copies the specified sourcefile (source folder) to a backup file (backup folder), creates always a new 
-    * backup file without destroying an existing old backup file 
+    * Copies the specified sourcefile (source folder) to a backup file (backup folder), creates always a new
+    * backup file without destroying an existing old backup file
     * by adding a number to the suffix if necessary.
     * e.g. hello.txt -> hello.txt.backup~
     * e.g. hello.txt -> hello.txt.1_backup~
-    * 
+    *
     * @param sourceFile
     * @throws IOException
     * @throws FileNotFoundException
@@ -761,23 +768,23 @@ public static String getFileSeparator(){
    public static void backup(File sourceFile) throws FileNotFoundException, IOException {
    		FileUtil.backupToFolder(sourceFile, null);
    }
-   	
-   	
-   	
+
+
+
    /**
-    * Copies the specified sourcefile (source folder) to a backup file (backup folder) into the specified backup folder, 
-    * creates always a new 
-    * backup file without destroying an existing old backup file 
+    * Copies the specified sourcefile (source folder) to a backup file (backup folder) into the specified backup folder,
+    * creates always a new
+    * backup file without destroying an existing old backup file
     * by adding a number to the suffix if necessary.
     * e.g. hello.txt -> hello.txt.backup~
     * e.g. hello.txt -> hello.txt.1_backup~
-    * 
+    *
     * @param sourceFile
     * @param destination
     * @throws IOException
     * @throws FileNotFoundException
     * @author thomas
-    */   	
+    */
    public static void backupToFolder(File sourceFile, File destination) throws FileNotFoundException, IOException {
    	String name = sourceFile.getName();
    	if (destination == null) {
@@ -813,7 +820,7 @@ public static String getFileSeparator(){
    		copyFileKeepTimestamp(sourceFile, backupFile);
    	}
    }
-   
+
   public static void copyFile(File sourceFile,String newFileName)throws java.io.FileNotFoundException,java.io.IOException{
     File newFile = new File(newFileName);
     copyFile(sourceFile,newFile);
@@ -824,8 +831,8 @@ public static String getFileSeparator(){
   	long oldTimestamp = sourceFile.lastModified();
   	newFile.setLastModified(oldTimestamp);
   }
-  
-  
+
+
   public static void copyFile(File sourceFile,File newFile)throws java.io.FileNotFoundException,java.io.IOException{
     java.io.FileInputStream input = new java.io.FileInputStream(sourceFile);
     if(!newFile.exists()){
@@ -846,7 +853,7 @@ public static String getFileSeparator(){
     }
     output.flush();
     output.close();
-
+    input.close();
 
   }
 
@@ -866,8 +873,11 @@ public static String getFileSeparator(){
       output.write(buf,0,read);
       read = input.read(buf,0,buffersize);
     }
+
+    input.close();
+    output.close();
   }
-  
+
   public static final File getZippedFiles(Collection<File> filesToZip) throws IOException {
 	  return getZippedFiles(filesToZip, "Archive.zip");
   }
@@ -875,31 +885,31 @@ public static String getFileSeparator(){
 	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
 		  return null;
 	  }
-	  
+
 	  Collection<RepositoryItem> files = new ArrayList<RepositoryItem>(filesToZip.size());
 	  for (File file: filesToZip) {
 		  files.add(new FileItem(file));
 	  }
 	  return getZippedFiles(files, fileName, true);
   }
-  
+
   public static final File getZippedItems(Collection<RepositoryItem> itemsToZip, String fileName) throws IOException {
 	  return getZippedFiles(itemsToZip, fileName, true);
   }
-  
+
   public static final File getZippedFiles(Collection<RepositoryItem> filesToZip, String fileName, boolean deleteZippedFiles) throws IOException {
 	  return getZippedFiles(filesToZip, fileName, deleteZippedFiles, false);
   }
-  
+
   public static final File getZippedFiles(Collection<RepositoryItem> filesToZip, String fileName, boolean deleteZippedFiles, boolean handleEmptyDir) throws IOException {
 	  if (StringUtil.isEmpty(fileName)) {
 		  return null;
 	  }
-	  
+
 	  if (ListUtil.isEmpty(filesToZip) && !handleEmptyDir) {
 		  return null;
 	  }
-	  
+
 	  File zippedFile = new File(fileName);
 	  if (filesToZip == null) {
 		  filesToZip = new ArrayList<RepositoryItem>(1);
@@ -907,21 +917,14 @@ public static String getFileSeparator(){
 	  if (filesToZip.size() == 0) {
 		  filesToZip.add(new EmptyItem());
 	  }
-	  
+
 	  ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zippedFile));
 
 	  int bytesRead;
 	  CRC32 crc = new CRC32();
 	  byte[] buffer = new byte[1024];
 	  for (RepositoryItem item: filesToZip) {
-		  //	Do not want to open stream from the same source twice - keeping contents of an item in memory
-		  byte[] contents = IOUtil.getBytesFromInputStream(item.getInputStream());
-		  if (contents == null) {
-			  continue;
-		  }
-		  
-		  //	Compressing
-		  InputStream bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+		  InputStream bis = new BufferedInputStream(item.getInputStream());
 		  crc.reset();
 		  while ((bytesRead = bis.read(buffer)) != -1) {
               crc.update(buffer, 0, bytesRead);
@@ -931,36 +934,48 @@ public static String getFileSeparator(){
           //	Adding new entry
           long itemSize = item.getLength();
           itemSize = itemSize < 0 ? 0 : itemSize > 0xFFFFFFFFL ? Long.MAX_VALUE : itemSize;
-          bis = new BufferedInputStream(new ByteArrayInputStream(contents));
+          bis = new BufferedInputStream(item.getInputStream());
           ZipEntry entry = new ZipEntry(item.getName());
           entry.setMethod(ZipEntry.STORED);
           entry.setCompressedSize(itemSize);
           entry.setSize(itemSize);
           entry.setCrc(crc.getValue());
           zos.putNextEntry(entry);
-          while ((bytesRead = bis.read(buffer)) != -1) {
+          while ((bytesRead = bis.read(buffer)) > 0) {
               zos.write(buffer, 0, bytesRead);
           }
           bis.close();
-          
+
           if (deleteZippedFiles) {
         	  item.delete();
           }
 	  }
-	  
+
 	  zos.close();
-	  
+
 	  return zippedFile;
+  }
+
+  public static final File getZippedICFiles(Collection<ICFile> filesToZip, String fileName) throws IOException {
+	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
+		  return null;
+	  }
+
+	  ArrayList<RepositoryItem> files = new ArrayList<RepositoryItem> (filesToZip.size());
+	  for (ICFile file : filesToZip) {
+		  files.add(new FileItem(file));
+	  }
+	  return getZippedFiles(files, fileName, false);
   }
 
   public static void copyDirectoryRecursivelyKeepTimestamps(File inputDirectory,File outputDirectory) throws IOException {
   	FileUtil.copyDirectoryRecursively(inputDirectory, outputDirectory, true);
   }
-  
+
   public static void copyDirectoryRecursively(File inputDirectory, File outputDirectory) throws IOException {
   	FileUtil.copyDirectoryRecursively(inputDirectory, outputDirectory, false);
   }
-  
+
 
   private static void copyDirectoryRecursively(File inputDirectory,File outputDirectory, boolean keepTimestamp ) throws java.io.IOException{
     if(inputDirectory.isDirectory()){
@@ -993,7 +1008,7 @@ public static String getFileSeparator(){
       throw new IOException(inputDirectory.toString()+" is not a directory");
     }
   }
-  
+
   /**
    * Converts a long number representing bytes into human readable format.
    * <p>
@@ -1009,7 +1024,7 @@ public static String getFileSeparator(){
       long kb = (long) Math.pow(2, 10);
       long gb = (long) Math.pow(2, 30);
       long tb = (long) Math.pow(2, 40);
-      
+
       NumberFormat nf = NumberFormat.getNumberInstance();
       nf.setMaximumFractionDigits(1);
       double relSize = 0.0d;
@@ -1028,14 +1043,14 @@ public static String getFileSeparator(){
       } else if ((abytes / kb) >= 1) {
           relSize = (double) abytes / (double) kb;
           id = "KB";
-      }  
+      }
       else {
           relSize = abytes;
           id = "b";
       }
       return nf.format((bytes < 0 ? -1 : 1) * relSize) + " "+id;
   }
-  
+
   /**
    * <p>
    * Gets the "head" of a text file, as a List of Strings with the first lines with length numberOfLinesToRead
@@ -1050,7 +1065,7 @@ public static String getFileSeparator(){
   {
       return head(file, CoreConstants.ENCODING_UTF8 , numberOfLinesToRead);
   }
-  
+
   /**
    * <p>
    * Gets the "head" of a text file, as a List of Strings with the first lines with length numberOfLinesToRead
@@ -1066,7 +1081,7 @@ public static String getFileSeparator(){
       //assert (file != null) && file.exists() && file.isFile() && file.canRead();
       //assert numberOfLinesToRead > 0;
       //assert encoding != null;
-      
+
       LinkedList<String> lines = new LinkedList<String>();
       BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
       for (String line = null; (numberOfLinesToRead-- > 0) && (line = reader.readLine()) != null;)
@@ -1090,7 +1105,7 @@ public static String getFileSeparator(){
   {
       return tail(file, CoreConstants.ENCODING_UTF8 , numberOfLinesToRead);
   }
-  
+
   /**
    * <p>
    * Gets the "tail" of a text file, as a List of Strings of the last lines with length numberOfLinesToRead
@@ -1106,7 +1121,7 @@ public static String getFileSeparator(){
       //assert (file != null) && file.exists() && file.isFile() && file.canRead();
       //assert numberOfLinesToRead > 0;
       //assert (encoding != null) && encoding.matches("(?i)(iso-8859|ascii|us-ascii).*");
-      
+
       LinkedList<String> lines = new LinkedList<String>();
       BufferedReader reader= new BufferedReader(new InputStreamReader(new BackwardsFileInputStream(file), encoding));
       for (String line = null; (numberOfLinesToRead-- > 0) && (line = reader.readLine()) != null;)

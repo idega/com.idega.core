@@ -1,8 +1,8 @@
 // idega 2001 - Tryggvi Larusson
 /*
- * 
+ *
  * Copyright 2001 idega.is All Rights Reserved.
- * 
+ *
  */
 package com.idega.core.component.data;
 
@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
 
 import com.idega.core.component.business.ICObjectBusiness;
 import com.idega.data.IDOException;
@@ -28,9 +29,6 @@ import com.idega.presentation.PresentationObject;
  */
 public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implements ICObjectInstance {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = -1522439895980168899L;
 
 	public ICObjectInstanceBMPBean() {
@@ -54,9 +52,9 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		addManyToOneRelationship(IBPAGEID, "Page", com.idega.core.builder.data.ICPage.class);
 		addManyToOneRelationship(COLUMNNAME_PARENTID, "ParentId", ICObjectInstance.class);
 		addUniqueIDColumn();
-		
+
 		addIndex(getUniqueIdColumnName());
-		
+
 		getEntityDefinition().setBeanCachingActiveByDefault(true,10000);
 		getEntityDefinition().setUseFinderCollectionPrefetch(true);
 	}
@@ -76,30 +74,37 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		return getObject().getName() + " nr. " + this.getID();
 	}
 
+	@Override
 	public void setICObjectID(int id) {
 		this.setColumn(COLUMN_OBJECT_ID, id);
 	}
 
+	@Override
 	public void setICObject(ICObject object) {
 		this.setColumn(COLUMN_OBJECT_ID, object);
 	}
 
+	@Override
 	public int getIBPageID() {
 		return getIntColumnValue(IBPAGEID);
 	}
 
+	@Override
 	public void setIBPageID(int id) {
 		this.setColumn(IBPAGEID, id);
 	}
 
+	@Override
 	public int getParentInstanceID() {
 		return getIntColumnValue(COLUMNNAME_PARENTID);
 	}
 
+	@Override
 	public void setParentInstanceID(int id) {
 		this.setColumn(COLUMNNAME_PARENTID, id);
 	}
 
+	@Override
 	public ICObject getObject() {
 		int icObjectID = this.getIntColumnValue(COLUMN_OBJECT_ID);
 		if (icObjectID < 0) {
@@ -108,11 +113,13 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		return ICObjectBusiness.getInstance().getICObject(icObjectID);
 	}
 
+	@Override
 	public PresentationObject getNewInstance() throws ClassNotFoundException, IllegalAccessException,
 			InstantiationException {
 		return getObject().getNewInstance();
 	}
 
+	@Override
 	public void setIBPageByKey(String pageKey) {
 		try {
 			int id = Integer.parseInt(pageKey);
@@ -142,7 +149,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 	public void setUniqueId(String uniqueId) {
 		super.setUniqueId(uniqueId);
 	}
-	
+
 	@Override
 	public int getID(){
 		return super.getID();
@@ -162,7 +169,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		sql.addCriteria(new MatchCriteria(thisTable, getUniqueIdColumnName(), MatchCriteria.EQUALS, uuid));
 		return (Integer) idoFindOnePKByQuery(sql);
 	}
-	
+
 	public Collection ejbFindByPageKey(String pageKey) throws FinderException{
 		try{
 			int pageId = Integer.parseInt(pageKey);
@@ -177,14 +184,23 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		}
 
 	}
-	
+
 	public int ejbHomeGetCountByICObject(ICObject ico) throws IDOException {
 		Table thisTable = new Table(this);
 
 		SelectQuery query = new SelectQuery(thisTable);
 		query.addColumn(new CountColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(thisTable, COLUMN_OBJECT_ID, MatchCriteria.EQUALS, ico));
-		
+
 		return idoGetNumberOfRecords(query);
+	}
+
+	public Collection<?> ejbFindByClassName(Class<? extends UIComponent> className) throws FinderException {
+		SelectQuery query = idoSelectQuery();
+		Table thisTable = new Table(getEntityName());
+		Table icObjectTable = new Table(ICObject.class);
+		query.addJoin(thisTable, COLUMN_OBJECT_ID, icObjectTable, COLUMN_OBJECT_ID);
+		query.addCriteria(new MatchCriteria(icObjectTable, ICObjectBMPBean.class_name_column_name, MatchCriteria.EQUALS, className.getName()));
+		return idoFindPKsByQuery(query);
 	}
 }

@@ -10,15 +10,16 @@
 package com.idega.core.idgenerator.business;
 
 import javax.ejb.FinderException;
+
 import com.idega.business.IBOService;
 import com.idega.data.IDOLookupException;
 import com.idega.user.data.Group;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2004/09/16 17:49:08 $ by $Author: eiki $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.3 $
  */
@@ -33,6 +34,9 @@ public interface UUIDBusiness extends IBOService {
 	 * @see com.idega.core.idgenerator.business.UUIDBusinessBean#addUniqueKeyIfNeeded
 	 */
 	public void addUniqueKeyIfNeeded(Group group, String uniqueIdToCopy) throws java.rmi.RemoteException;
+
+	public void addUniqueKeyIfNeeded(com.idega.user.data.bean.Group group, String uniqueIdToCopy);
+	public void addUniqueKeyIfNeeded(com.idega.user.data.bean.User user, String uniqueIdToCopy);
 
 	/**
 	 * @see com.idega.core.idgenerator.business.UUIDBusinessBean#removeUniqueIDsForUsersAndGroups

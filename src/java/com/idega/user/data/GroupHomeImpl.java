@@ -22,7 +22,6 @@ import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
 
-
 /**
  *
  *  Last modified: $Date: 2008/08/12 13:52:55 $ by $Author: valdas $
@@ -33,7 +32,6 @@ import com.idega.data.IDOFactory;
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
 	private static final long serialVersionUID = -2368235582273397196L;
-
 
 	@Override
 	public Collection <Integer> getParentGroups(int groupId) {

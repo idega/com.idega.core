@@ -11,6 +11,7 @@ import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.util.text.TextSoap;
 
 /**
  * @author laddi
@@ -149,12 +150,12 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<option " + getMarkupAttributesString() + " >");
-			print(getName());
+			print(TextSoap.findAndRemoveHtmlTags(getName()));
 			println("</option>");
 		}
 		else if (getMarkupLanguage().equals("WML")) {
 			print("<option value=\"" + getValueAsString() + "\" >");
-			print(getName());
+			print(TextSoap.findAndRemoveHtmlTags(getName()));
 			println("</option>");
 		}
 	}

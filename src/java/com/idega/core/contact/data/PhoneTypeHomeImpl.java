@@ -1,5 +1,12 @@
 package com.idega.core.contact.data;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.ejb.FinderException;
+
 
 public class PhoneTypeHomeImpl extends com.idega.data.IDOFactory implements PhoneTypeHome
 {
@@ -38,6 +45,19 @@ public class PhoneTypeHomeImpl extends com.idega.data.IDOFactory implements Phon
 	}
 
  }
+
+@SuppressWarnings("unchecked")
+public Collection<PhoneType> getPhoneTypes(int maxAmount) {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	try {
+		Collection<Integer> ids = ((PhoneTypeBMPBean)entity).ejbFindPhoneTypes(maxAmount);
+		this.idoCheckInPooledEntity(entity);
+		return findByPrimaryKeyCollection(ids);
+	} catch (FinderException e) {
+		Logger.getLogger(this.getClass().getName()).log(Level.WARNING, "failed finding any phone types");
+		return Collections.emptyList();
+	}
+}
 
 
 }

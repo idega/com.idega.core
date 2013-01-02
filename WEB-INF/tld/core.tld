@@ -12,6 +12,46 @@
 	</description>
 
 	<tag>
+		<name>contactPurposeSelector</name>
+		<tag-class>com.idega.presentation.ui.contacts.ContactPurposeSelector</tag-class>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>Converter</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
+		<name>phoneTypeSelector</name>
+		<tag-class>com.idega.presentation.ui.contacts.PhoneTypeSelector</tag-class>
+		<attribute>
+			<name>value</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>Converter</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+		</attribute>
+		<attribute>
+			<name>name</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
+	</tag>
+	
+	<tag>
 		<name>page</name>
 		<tag-class>com.idega.presentation.PageTag</tag-class>
 		<attribute>
@@ -108,6 +148,11 @@
         	<required>false</required>
 			<rtexprvalue>false</rtexprvalue>
         </attribute>
+        <attribute>
+			<name>title</name>
+			<required>false</required>
+			<rtexprvalue>false</rtexprvalue>
+		</attribute>
         <attribute>
 			<name>styleClass</name>
 			<required>false</required>

@@ -1,7 +1,7 @@
 package com.idega.block.web2.business;
 
 public enum JQueryPlugin {
-	
+
 	COOKIE {
 		@Override
 		public String getFileName() {
@@ -42,7 +42,7 @@ public enum JQueryPlugin {
 		@Override
 		public String getFileName() {
 			return ".block.js";
-		}	
+		}
 	},
 	TABLE_SORTER {
 		@Override
@@ -54,6 +54,12 @@ public enum JQueryPlugin {
 		@Override
 		public String getFileName() {
 			return ".tablesorter.pager.js";
+		}
+	},
+	TABLE_SORTER_WIDGETS {
+		@Override
+		public String getFileName() {
+			return ".tablesorter.widgets.js";
 		}
 	},
 	TEXT_AREA_RESIZER {
@@ -114,6 +120,18 @@ public enum JQueryPlugin {
 		@Override
 		public String getFileName() {
 			return ".autogrowtextarea.js";
+		}
+	},
+	HIGHCHARTS {
+		@Override
+		public String getFileName() {
+			return ".highcharts.js";
+		}
+	},
+	TYPEWATCH {
+		@Override
+		public String getFileName() {
+			return ".typewatch.js";
 		}
 	};
 

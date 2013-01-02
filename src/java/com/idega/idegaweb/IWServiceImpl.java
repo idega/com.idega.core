@@ -5,6 +5,8 @@
 
 package com.idega.idegaweb;
 
+import java.util.logging.Logger;
+
 
 /**
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -13,33 +15,35 @@ package com.idega.idegaweb;
 */
 public abstract class IWServiceImpl implements IWService {
 
-
   private IWMainApplication application = null;
 
   protected abstract void executeService();
+
+  @Override
   public abstract String getServiceName();
 
+  @Override
   public void startService(IWMainApplication superApplication){
-    if(this.application == null){
+    if (this.application == null)
       setApplication(superApplication);
-    }
+
     executeService();
   }
 
+  @Override
   public void endService(){
-    System.out.println("Ending service "+getServiceName());
+    Logger.getLogger(getClass().getName()).info("Ending service " + getServiceName());
   }
 
   public IWMainApplication getApplication() throws IWServiceNotStartedException{
-    if(this.application == null){
+    if (this.application == null)
       throw new IWServiceNotStartedException(this);
-    }
+
     return this.application;
   }
 
   public void setApplication(IWMainApplication iwma){
     this.application=iwma;
   }
-
 
 }

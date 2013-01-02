@@ -18,6 +18,8 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.Collection;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
@@ -29,11 +31,13 @@ import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.data.IDOLookup;
 import com.idega.presentation.IWContext;
 import com.idega.repository.RepositoryService;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
@@ -48,6 +52,8 @@ import com.idega.util.expression.ELUtil;
  * from database and absolute paths from filesystem if read permission is active
  */
 public class DownloadWriter implements MediaWritable {
+
+	private static final Logger LOGGER = Logger.getLogger(DownloadWriter.class.getName());
 
 	public final static String PRM_ABSOLUTE_FILE_PATH = "abs_fpath";
 
@@ -68,6 +74,23 @@ public class DownloadWriter implements MediaWritable {
 	@Autowired
 	private RepositoryService repositoryService;
 
+	protected void setFile(File file) {
+		if (file == null) {
+			LOGGER.warning("File is undefined!");
+			return;
+		}
+		if (!file.exists()) {
+			LOGGER.warning("File " + file + " does not exist!");
+			return;
+		}
+		if (!file.canRead()) {
+			LOGGER.warning("There are no rights provided to read from file: " + file);
+			return;
+		}
+
+		this.file = file;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 *
@@ -75,7 +98,11 @@ public class DownloadWriter implements MediaWritable {
 	 */
 	@Override
 	public String getMimeType() {
-		return "application/octet-stream";
+		if (fileName == null)
+			return MimeTypeUtil.MIME_TYPE_APPLICATION;
+
+		String mimeType = MimeTypeUtil.resolveMimeTypeFromFileName(fileName);
+		return StringUtil.isEmpty(mimeType) ? MimeTypeUtil.MIME_TYPE_APPLICATION : mimeType;
 	}
 
 	/*
@@ -97,35 +124,34 @@ public class DownloadWriter implements MediaWritable {
 				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
 				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				this.icFile = null;
 			}
-		}
-		else if (absPath != null) {
+		} else if (absPath != null) {
 			this.file = new File(absPath);
 			if (this.file != null && this.file.exists() && this.file.canRead()) {
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
-		}
-		else if (relPath != null && altFileName == null) {
+		} else if (relPath != null && altFileName == null) {
 			this.file = new File(iwc.getIWMainApplication().getRealPath(relPath));
 			if (this.file != null && this.file.exists() && this.file.canRead()) {
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
-		}
-		else if (relPath != null && altFileName != null) {
+		} else if (relPath != null && altFileName != null) {
 			try {
 				if(relPath.startsWith("/")){
 					relPath = relPath.substring(1);
 				}
 				this.url = new URL(iwc.getServerURL()+relPath);
 				setAsDownload(iwc, altFileName, -1);
-			}
-			catch (MalformedURLException e) {
-				e.printStackTrace();
+			} catch (MalformedURLException e) {
+				LOGGER.log(Level.WARNING, "Error creating URL: " + relPath, e);
 			}
 		}
+	}
+
+	protected File getFileFromRepository(String pathInRepository) throws IOException {
+		return CoreUtil.getFileFromRepository(pathInRepository);
 	}
 
 	/*
@@ -137,12 +163,11 @@ public class DownloadWriter implements MediaWritable {
 	public void writeTo(OutputStream out) throws IOException {
 		InputStream downloadStream = null;
 		if (this.file != null && this.file.exists() && this.file.canRead() && this.file.length() > 0) {
+			LOGGER.info("Dowloading file: " + file);
 			downloadStream = new BufferedInputStream(new FileInputStream(this.file));
-		}
-		else if (this.icFile != null) {
+		} else if (this.icFile != null) {
 			downloadStream = new BufferedInputStream(this.icFile.getFileValue());
-		}
-		else if (this.url != null) {
+		} else if (this.url != null) {
 			//added for real relative path streaming
 			downloadStream = new BufferedInputStream(this.url.openStream());
 		}
@@ -154,7 +179,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			FileUtil.streamToOutputStream(downloadStream, out);
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error streaming from input to output streams", e);
 		} finally {
 			out.flush();
 			IOUtil.closeOutputStream(out);
@@ -237,7 +262,7 @@ public class DownloadWriter implements MediaWritable {
 			attachment.store();
 			return true;
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error while setting that user " + user + " has downloaded file " + attachment, e);
 		}
 
 		return false;
@@ -252,7 +277,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting instance of " + ICFileHome.class, e);
 		}
 		if (fileHome == null) {
 			return null;
@@ -263,7 +288,7 @@ public class DownloadWriter implements MediaWritable {
 			file = fileHome.findByHash(hash);
 		} catch(FinderException e) {
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting file by hash: " + hash, e);
 		}
 
 		if (file == null) {
@@ -285,7 +310,7 @@ public class DownloadWriter implements MediaWritable {
 			file.store();
 			return file;
 		} catch(Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error while creating file using hash: " + hash, e);
 		}
 		return null;
 	}
@@ -312,9 +337,20 @@ public class DownloadWriter implements MediaWritable {
 	}
 
 	protected RepositoryService getRepositoryService() {
-		if (repositoryService == null) {
+		if (repositoryService == null)
 			ELUtil.getInstance().autowire(this);
-		}
 		return repositoryService;
+	}
+
+	protected File getFile() {
+		return file;
+	}
+
+	protected ICFile getICFile() {
+		return icFile;
+	}
+
+	protected void setICFile(ICFile icFile) {
+		this.icFile = icFile;
 	}
 }

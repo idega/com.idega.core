@@ -10,6 +10,7 @@ public class Flash extends GenericPlugin {
 
 	private List sources;
 	private List files;
+	private String imageURL;
 
 	public Flash() {
 		super();
@@ -67,6 +68,20 @@ public class Flash extends GenericPlugin {
 
 		setParam("movie", url);
 		setMarkupAttribute("src", url);
+	}
+	
+	public String getParams() {
+		String params = super.getParams();
+		
+		if (this.imageURL != null) {
+			params = "<img src=\"" + this.imageURL + "\" width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\" alt=\"\" />" + params;
+		}
+		
+		return params;
+	}
+	
+	public void setImageURL(String url) {
+		this.imageURL = url;
 	}
 
 	public void setURL(String url) {

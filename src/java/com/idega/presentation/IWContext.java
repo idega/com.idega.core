@@ -97,7 +97,7 @@ import com.idega.util.expression.ELUtil;
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a * @version $Revision: 1.164 $
 $
  */
-public class IWContext extends javax.faces.context.FacesContext implements IWUserContext, IWApplicationContext {
+public class IWContext extends FacesContext implements IWUserContext, IWApplicationContext {
 
 	/**
 	 * Comment for <code>serialVersionUID</code>
@@ -152,7 +152,6 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		}
 
 		if (request.getSession() == null) {
-			LOGGER.warning("Session is null in request ("+request.getClass()+")! Trying to re-initialize session");
 			if (reInitializeRequest()) {
 				request = getRequest();
 			} else {
@@ -816,7 +815,7 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 	}
 
 	private void setServerURLToSystemProperties() {
-		this.getApplicationSettings().setProperty(IWConstants.SERVER_URL_PROPERTY_NAME, this.getServerURL());
+		//this.getApplicationSettings().setProperty(IWConstants.SERVER_URL_PROPERTY_NAME, this.getServerURL());
 	}
 
 	/**
@@ -1479,7 +1478,8 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
 		return loginBean.getCurrentUserLegacy(session);
 	}
-	
+
+	@Override
 	public User getLoggedInUser() {
 		HttpSession session = getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
@@ -1820,7 +1820,6 @@ public class IWContext extends javax.faces.context.FacesContext implements IWUse
 		return repository;
 	}
 
-//	public static final String JCR_SESSION_REQUEST_KEY = "jcrSession";
 	public Session getRepositorySession() throws javax.jcr.RepositoryException{
 //		 Session session = (Session) getExternalContext().getRequestMap().get(JCR_SESSION_REQUEST_KEY);
 //		 if (session == null) {

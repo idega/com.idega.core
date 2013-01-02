@@ -2,6 +2,7 @@ package com.idega.core.contact.data;
 import java.sql.SQLException;
 
 import javax.ejb.FinderException;
+import javax.ejb.RemoveException;
 
 import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
@@ -11,11 +12,12 @@ import com.idega.data.IDOFinderException;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guï¿½mundur ï¿½gï¿½st Sï¿½mundsson</a>
  * @version 1.0
  */
-public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.idega.core.contact.data.Phone
+public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.contact.data.Phone
 {
+	private static final long serialVersionUID = -4420896834850155007L;
 	private static String userRelationshipTableName=null;
 	
 	public PhoneBMPBean()
@@ -26,15 +28,25 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	{
 		super(id);
 	}
+	
 	public void initializeAttributes()
 	{
 		addAttribute(getIDColumnName());
 		addAttribute(getColumnNamePhoneNumber(), "Number", true, true, "java.lang.String");
-		//      addAttribute(getColumnNameCountryCodeId(),"Landsnúmer",true,true,Integer.class,"many-to-one",CountryCode.class);
+		//      addAttribute(getColumnNameCountryCodeId(),"Landsnï¿½mer",true,true,Integer.class,"many-to-one",CountryCode.class);
 		addManyToOneRelationship(getColumnNameAreaCodeId(), "Area code", AreaCode.class);
 		addManyToOneRelationship(getColumnNamePhoneTypeId(), "Type", PhoneType.class);
 		//      this.addManyToManyRelationShip(PhoneType.class,"ic_phone_phone_type");
 		this.addManyToManyRelationShip(User.class, "ic_user_phone");
+		super.initializeAttributes();
+	}
+	@Override
+	public void remove() throws RemoveException {
+		try {
+			idoRemoveFrom(User.class);
+		} catch (Exception e) {
+		}
+		super.remove();
 	}
 	public String getEntityName()
 	{
@@ -70,10 +82,16 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 	{
 		return getIntColumnValue(getColumnNamePhoneTypeId());
 	}
+	
 	public void setPhoneTypeId(int phone_type_id)
 	{
 		setColumn(getColumnNamePhoneTypeId(), phone_type_id);
 	}
+	
+	public PhoneType getPhoneType() {
+		return (PhoneType)getColumnValue(getColumnNamePhoneTypeId());
+	}
+	
 	public static int getHomeNumberID()
 	{
 		/*int returner = -1;
@@ -238,6 +256,6 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 		}
 		return userRelationshipTableName;
 	}
-
+	
 
 }

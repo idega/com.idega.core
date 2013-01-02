@@ -690,6 +690,23 @@ function isEnterEvent(event) {
 	return false;
 }
 
+function isNumberEntered(event) {
+	if (event == null)
+		return false;
+		
+	var code = event.keyCode ? event.keyCode : event.which ? event.which : event.charCode;
+	
+	//	Backspace or delete
+	if (code == 8 || code == 46)
+		return true;
+		
+	if (code >= 96 && code <= 105)
+		return true;
+	
+	var value = String.fromCharCode(code);
+	return IWCORE.isNumericValue(value);
+}
+
 function isSafariBrowser() {
 	if (navigator == null) {
 		return false;
@@ -703,6 +720,10 @@ function isSafariBrowser() {
 		return false;
 	}
 	return true;
+}
+
+function isChromeBrowser() {
+	return navigator.userAgent.toLowerCase().indexOf('chrome') > -1;
 }
 
 // Function to add event to any object, example: registerEvent(window, "load", foo);
@@ -1676,6 +1697,26 @@ function getDefaultDwrPath() {
 	return DEFAULT_DWR_PATH;
 }
 
+
+function getDwrCallType(remote) {
+	var dwrCallType = dwr.engine.XMLHttpRequest;
+	if (!dwrCallType) {
+		dwrCallType = dwr.engine.transport.xhr;
+	}
+	
+	if (remote) {
+		dwrCallType = dwr.engine.ScriptTag;
+		if (!dwrCallType) {
+			dwrCallType = dwr.engine.transport.scriptTag;
+		}
+		
+		if (dwr.engine._remoteHandleCallback == null)
+			dwr.engine._remoteHandleCallback = dwr.engine.remote.handleCallback;
+	}
+	
+	return dwrCallType;
+}
+
 /**
  * This function 'prepares' DWR to make call to the very server that point path
  * @param interfaceClass - class where our method lives (like ThemesEngine)
@@ -1937,9 +1978,8 @@ IWCORE.getSelectedFromAdvancedProperties = function(handlerUsers) {
 }
 
 IWCORE.isNumericValue = function(value) {
-	if (value == null || value.length == 0) {
+	if (value == null || value.length == 0)
 		return false;
-	}
 	
 	var validChars = '0123456789';
 	var isNumber = true;
@@ -2009,7 +2049,8 @@ IWCORE.pingServer = function(sleepTime, id) {
 IWCORE.sendingErrorMail = false;
 IWCORE.userDeniedToReloadPageOnError = false;
 IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
-	if (!IWCORE.sendingErrorMail) {
+	if (!IWCORE.sendingErrorMail	&& msg != 'Internal Server Error' && msg != 'Service Temporarily Unavailable' && msg != 'Timeout'
+									&& msg != 'Service Unavailable' && msg != 'OK') {
 		IWCORE.sendingErrorMail = true;
 		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
 			if (ex == null) {
@@ -2026,6 +2067,9 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 			if (ex.number) {
 				mailMessage += '\nError number: ' + ex.number;
 			}
+			if (ex.url) {
+				mailMessage += '\nURL: ' + ex.url;
+			}
 			
 			if (ex.javaClassName) {
 				mailMessage += '\nJava class name: ' + ex.javaClassName;
@@ -2035,9 +2079,6 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 			}
 			if (ex.cause) {
 				mailMessage += '\nCause: ' + ex.cause;
-			}
-			if (ex.lineNumber) {
-				mailMessage += '\nLine number: ' + ex.lineNumber;
 			}
 			
 			WebUtil.sendEmail(null, null, '[JavaScript error] ERROR on: ' + window.location.href, mailMessage, {
@@ -2086,4 +2127,20 @@ IWCORE.setSelectionRange = function(input, selectionStart, selectionEnd) {
 
 IWCORE.setCaretToPos = function(input, pos) {
 	IWCORE.setSelectionRange(input, pos, pos);
+}
+
+function moveOptionElementUp(element, id) {
+	var newPos = jQuery('#' + id + ' option').index(element) - 1;
+	if (newPos > -1) {
+		jQuery('#' + id + ' option').eq(newPos).before("<option value='"+element.val()+"' selected='selected'>"+element.text()+"</option>");
+		element.remove();
+	}
+}
+function moveOptionElementDown(element, id) {
+	var countOptions = jQuery('#' + id + ' option').size();
+	var newPos = jQuery('#' + id + ' option').index(element) + 1;
+	if (newPos < countOptions) {
+    	jQuery('#' + id + ' option').eq(newPos).after("<option value='"+element.val()+"' selected='selected'>"+element.text()+"</option>");
+        element.remove();
+    }
 }

@@ -43,15 +43,15 @@ public class FilesystemFileURIHandler implements FileURIHandler {
 	public FileInfo getFileInfo(URI uri) {
 		final File f = new File(uri);
 
-		if(!f.exists())
+		if (!f.exists())
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "File doesn't exist by uri provided="+uri);
 
 		final FileInfo fi = new FileInfo();
 
 		String fileName = f.getName();
 
-		//		replace windows absolute path filename with just filename
-		if(fileName.contains(CoreConstants.BACK_SLASH)) {
+		//	Replace windows absolute path filename with just filename
+		if (fileName.contains(CoreConstants.BACK_SLASH)) {
 			int lastBackSlashIndex = fileName.lastIndexOf(CoreConstants.BACK_SLASH);
 			fileName = fileName.substring(lastBackSlashIndex + 1);
 		}

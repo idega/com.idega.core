@@ -21,4 +21,6 @@ public interface JQuery {
 	
 	public abstract List<String> getBundleURISToValidation();
 	public abstract List<String> getBundleURISToValidation(boolean addAdditionalMethods);
+	public abstract List<String> getBundleURISToValidation(String language);
+	public abstract List<String> getBundleURISToValidation(String language, boolean addAdditionalMethods);
 }

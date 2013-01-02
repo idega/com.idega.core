@@ -30,6 +30,7 @@ public class CoreConstants {
 	public static final String COMMA = ",";
 	public static final String DOT = ".";
 	public static final String UNDER = "_";
+	public static final String AT = "@";
 	public static final String AMP = "&";
 	public static final String EQ = "=";
 	public static final String QMARK = "?";
@@ -46,9 +47,11 @@ public class CoreConstants {
 	public static final String BRACKET_RIGHT = ")";
 	public static final String QOUTE_MARK = "\"";
 	public static final String QOUTE_SINGLE_MARK = "'";
+	public static final String GRAVE_ACCENT_MARK = "`";
 
 	public static final String JS_STR_PARAM_SEPARATOR = "','";
 	public static final String JS_STR_PARAM_END = "');";
+	public static final String JS_STR_INITIALIZATION_END = "';";
 
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER;
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS;
@@ -58,6 +61,26 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_ACCOUNT = "mail_user_account";
 	public static final String PROP_SYSTEM_MAIL_HOST = "mail_host";
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
+
+	/**
+	 * <p>
+	 * Use this property for all stupid code hacks, when that code is needed
+	 * only when developing. For example, if you want to generate some fake data
+	 * to fill your fields in form or log some more information, this could be
+	 * used.
+	 * </p>
+	 *
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static final String DEVELOPEMENT_STATE_PROPERTY = "is_developement_mode";
+
+	/**
+	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
+	 * for problems with url.</p>
+	 *
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
@@ -87,6 +110,8 @@ public class CoreConstants {
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
+
+	public static final String UNDEFINED_VALUE = "-1";
 
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;
@@ -148,11 +173,14 @@ public class CoreConstants {
 	public static final String EMAIL_DEFAULT_FROM = "staff@idega.is",
 								EMAIL_DEFAULT_HOST = "smtp.emailsrvr.com";
 
+	public static final String REPOSITORY_DEFAULT_WORKSPACE = "default";
+
 	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration",
 
-								PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
-								PAGE_VIEW_TYPE_REGULAR = "regular",
-								PAGE_VIEW_TYPE_MOBILE = "mobile",
+			PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
+			PAGE_VIEW_TYPE_REGULAR = "regular",
+			PAGE_VIEW_TYPE_MOBILE = "mobile",
 
-								REPOSITORY_DEFAULT_WORKSPACE = "default";
+			PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body";
+	public static final String PROPERTIES_FOLDER_NAME_IN_JAR = "properties";
 }

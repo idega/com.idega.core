@@ -6,15 +6,20 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
+
+import org.apache.commons.io.IOUtils;
 
 import sun.net.www.MimeTable;
 
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.StringUtil;
@@ -58,7 +63,10 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_HTML = "text/html";
 	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
 	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
+	public static final String MIME_TYPE_CALENDAR = "text/calendar";
 
+	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
+	
 	private String pathToConfigFile;
 	private Properties properties;
 
@@ -174,7 +182,21 @@ public class MimeTypeUtil implements Singleton {
 			"application/x-macbinary", "application/x-zip-compressed",
 			"application/zip", "multipart/x-gzip" };
 
+	private static void initializeMimeTypesMap() {
+		if (!MIME_TYPES_MAPPING.isEmpty())
+			return;
+		
+		MIME_TYPES_MAPPING.put("doc", MIME_TYPE_WORD);
+		MIME_TYPES_MAPPING.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
+		MIME_TYPES_MAPPING.put("xls", MIME_TYPE_EXCEL);
+		MIME_TYPES_MAPPING.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		MIME_TYPES_MAPPING.put("ppt", MIME_TYPE_POWERPOINT);
+		MIME_TYPES_MAPPING.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+	}
+	
 	protected MimeTypeUtil() {
+		initializeMimeTypesMap();
+		
 		try {
 			this.properties = getMimeTypeSettings();
 		} catch (IOException e) {
@@ -199,8 +221,8 @@ public class MimeTypeUtil implements Singleton {
 		if (this.properties == null) {
 			String pathToFile = getRealPathToConfigFiles()
 					+ MIME_TYPE_PROPS_FILE_NAME;
+			InputStream in = null;
 			try {
-				InputStream in;
 				File file = new File(pathToFile);
 				if (file.exists()) {
 					in = new FileInputStream(file);
@@ -225,6 +247,9 @@ public class MimeTypeUtil implements Singleton {
 				fillPropertiesWithMimeTypes(this.properties);
 
 				storeProperties(this.properties, pathToFile);
+			}
+			finally {
+				IOUtils.closeQuietly(in);
 			}
 		}
 
@@ -371,10 +396,27 @@ public class MimeTypeUtil implements Singleton {
 		}
 		return null;
 	}
+	
+	private static String getMimeType(String fileName) {
+		if (StringUtil.isEmpty(fileName))
+			return null;
+		
+		int lastDot = fileName.lastIndexOf(CoreConstants.DOT);
+		if (lastDot == -1)
+			return null;
+		
+		initializeMimeTypesMap();
+		String fileType = fileName.substring(lastDot + 1).toLowerCase();
+		return MIME_TYPES_MAPPING.get(fileType);
+	}
 
 	public static String resolveMimeTypeFromFileName(String fileName) {
+		String mimeType = getMimeType(fileName);
+		if (!StringUtil.isEmpty(mimeType))
+			return mimeType;
+		
 		MimeTable mt = MimeTable.getDefaultTable();
-		String mimeType = mt.getContentTypeFor(fileName);
+		mimeType = mt.getContentTypeFor(fileName);
 		return StringUtil.isEmpty(mimeType) ? new MimetypesFileTypeMap().getContentType(fileName) : mimeType;
 	}
 

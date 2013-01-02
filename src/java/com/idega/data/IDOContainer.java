@@ -15,8 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
+
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
@@ -317,7 +321,6 @@ public class IDOContainer implements Singleton {
 	}
 
 	public synchronized void flushAllBeanCache() {
-		// if(this.beanCachingActive){
 		Iterator dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
 		while (dsIterator.hasNext()) {
 			String dataSource = (String) dsIterator.next();
@@ -327,8 +330,7 @@ public class IDOContainer implements Singleton {
 				this.getBeanCache(dataSource, interfaceClass).flushAllBeanCache();
 			}
 		}
-		System.out.println("[idoContainer] Flushed all Bean Cache");
-		// }
+		Logger.getLogger(this.getClass().getName()).log(Level.INFO, "[idoContainer] Flushed all Bean Cache");
 	}
 
 	public synchronized void flushAllQueryCache() {
@@ -342,7 +344,7 @@ public class IDOContainer implements Singleton {
 					this.getBeanCache(dataSource, interfaceClass).flushAllQueryCache();
 				}
 			}
-			System.out.println("[idoContainer] Flushed all Query Cache");
+			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "[idoContainer] Flushed all Query Cache");
 		}
 	}
 

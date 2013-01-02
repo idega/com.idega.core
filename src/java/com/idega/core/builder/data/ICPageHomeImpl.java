@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.builder.data;
 
@@ -16,13 +16,13 @@ import com.idega.data.IDOEntity;
  * TODO tryggvil Describe Type ICPageHomeImpl
  * </p>
  *  Last modified: $Date: 2009/01/14 15:12:24 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.7 $
  */
 
 public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageHome {
-	
+
 	private static final long serialVersionUID = -8153685941087501095L;
 
 	@Override
@@ -30,11 +30,13 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
   return ICPage.class;
  }
 
- public ICPage create() throws javax.ejb.CreateException{
+ @Override
+public ICPage create() throws javax.ejb.CreateException{
   return (ICPage) super.createIDO();
  }
 
- public ICPage createLegacy(){
+ @Override
+public ICPage createLegacy(){
 	try{
 		return create();
 	}
@@ -44,15 +46,18 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
 
  }
 
- public ICPage findByPrimaryKey(int id) throws javax.ejb.FinderException{
+ @Override
+public ICPage findByPrimaryKey(int id) throws javax.ejb.FinderException{
   return (ICPage) super.idoFindByPrimaryKey(id);
  }
 
- public ICPage findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
+ @Override
+public ICPage findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (ICPage) super.idoFindByPrimaryKey(pk);
  }
 
- public ICPage findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
+ @Override
+public ICPage findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
 		return findByPrimaryKey(id);
 	}
@@ -63,7 +68,8 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
  }
 
 
-    public Collection findByTemplate(Integer templateID) throws FinderException {
+    @Override
+	public Collection findByTemplate(Integer templateID) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindByTemplate(templateID);
     		this.idoCheckInPooledEntity(entity);
@@ -73,16 +79,18 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
 	/* (non-Javadoc)
 	 * @see com.idega.core.builder.data.ICPageHome#findByUri(java.lang.String, int)
 	 */
+	@Override
 	public ICPage findByUri(String pageUri, int domainId) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         Integer pk  = ((ICPageBMPBean)entity).ejbFindByPageUri(pageUri,domainId);
     		this.idoCheckInPooledEntity(entity);
     		return this.findByPrimaryKey(pk);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.core.builder.data.ICPageHome#findByUri(java.lang.String, int)
 	 */
+	@Override
 	public ICPage findExistingByUri(String pageUri, int domainId) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         Integer pk  = ((ICPageBMPBean)entity).ejbFindExistingPageByPageUri(pageUri,domainId);
@@ -92,37 +100,42 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
 	/* (non-Javadoc)
 	 * @see com.idega.core.builder.data.ICPageHome#findAllPagesWithoutUri()
 	 */
+	@Override
 	public Collection findAllPagesWithoutUri() throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllPagesWithoutUri();
     		this.idoCheckInPooledEntity(entity);
     		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.core.builder.data.ICPageHome#findAllPagesWithoutUri()
 	 */
+	@Override
 	public Collection findAllSimpleTemplates() throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllSimpleTemplates();
     		this.idoCheckInPooledEntity(entity);
     		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
-	
+
+	@Override
 	public Collection findBySubType(String subType, boolean deleted) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindBySubType(subType, deleted);
     		this.idoCheckInPooledEntity(entity);
     		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
-	
+
+	@Override
 	public Collection findAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllByPhrase(phrase, idsToAvoid);
     	this.idoCheckInPooledEntity(entity);
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
-	
+
+	@Override
 	public Collection findAllByPrimaryKeys(List<String> primaryKeys) throws FinderException {
         com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids  = ((ICPageBMPBean)entity).ejbFindAllByPrimaryKeys(primaryKeys);
@@ -130,13 +143,15 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllByName(String name, boolean findOnlyNotDeleted) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids = ((ICPageBMPBean)entity).ejbFindAllByName(name, findOnlyNotDeleted);
     	this.idoCheckInPooledEntity(entity);
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
-	
+
+	@Override
 	public Collection<ICPage> findAllPagesAndTemplates() throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         java.util.Collection ids = ((ICPageBMPBean)entity).ejbFindAllPagesAndTemplates();
@@ -144,6 +159,7 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public ICPage findByWebDavUri(String webDavUri) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
         Integer pk  = ((ICPageBMPBean)entity).ejbFindByWebDavUri(webDavUri);
@@ -158,5 +174,5 @@ public class ICPageHomeImpl extends com.idega.data.IDOFactory implements ICPageH
     	this.idoCheckInPooledEntity(entity);
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
-	
+
 }

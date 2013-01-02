@@ -12,19 +12,21 @@ import javax.faces.context.FacesContext;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.block.web2.business.JQuery;
+import com.idega.block.web2.business.JQueryUIType;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PresentationUtil;
+import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:valdas@idega.com">Valdas Žemaitis</a>
  * @version $Revision: 1.14 $
- * 
+ *
  *          Date (range) picker
- * 
+ *
  *          Last modified: $Date: 2009/03/17 13:14:59 $ by $Author: laddi $
  */
 public class IWDatePicker extends TextInput {
@@ -37,20 +39,21 @@ public class IWDatePicker extends TextInput {
 
 	private Date maxDate = null;
 	private Date minDate = null;
-	
+
 	private boolean dateRange = false;
+	private String yearRange = null;
 	private boolean useCurrentDateIfNotSet = true;
 	private boolean showCalendarImage = true;
 
 	private String onSelectAction = null;
 	private String inputName = null;
+	private String imageURI = null;
 
 	private String dateRangeSeparator = " - ";
 	private boolean showYearChange = false;
 	private boolean showMonthChange = false;
-	
 	private boolean showTime;
-	
+
 	private static final String INITIAL_DATE_PROPERTY = "initialDate";
 	private static final String INITIAL_DATE_TO_PROPERTY = "initialDateTo";
 	private static final String MAX_DATE_PROPERTY = "maxDate";
@@ -59,9 +62,12 @@ public class IWDatePicker extends TextInput {
 	private static final String DATE_RANGE_SEPARATOR_PROPERTY = "dateRangeSeparator";
 	private static final String SHOW_DATE_RANGE_PROPERTY = "showDateRange";
 	private static final String SHOW_CALENDAR_IMAGE_PROPERTY = "showCalendarImage";
+	private static final String SHOW_IMAGE_URI_PROPERTY = "imageURI";
 	private static final String SHOW_MONTH_PROPERTY = "showMonth";
 	private static final String SHOW_YEAR_PROPERTY = "showYear";
+	private static final String SHOW_TIME_PROPERTY = "showTime";
 	private static final String USE_CURRENT_PROPERTY = "useCurrent";
+	private static final String YEAR_RANGE_PROPERTY = "yearRange";
 
 	/**
 	 * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -79,7 +85,7 @@ public class IWDatePicker extends TextInput {
 	}
 
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(INITIAL_DATE_PROPERTY);
     	if (ve != null) {
 	    	Date date = (Date) ve.getValue(context.getELContext());
@@ -108,54 +114,72 @@ public class IWDatePicker extends TextInput {
     	if (ve != null) {
 	    	String name = (String) ve.getValue(context.getELContext());
 	    	setInputName(name);
-    	}    
-    	
+    	}
+
+		ve = getValueExpression(YEAR_RANGE_PROPERTY);
+    	if (ve != null) {
+	    	String yearRange = (String) ve.getValue(context.getELContext());
+	    	setYearRange(yearRange);
+    	}
+
 		ve = getValueExpression(DATE_RANGE_SEPARATOR_PROPERTY);
     	if (ve != null) {
 	    	String dateRangeSeperator = (String) ve.getValue(context.getELContext());
 	    	setDateRangeSeparator(dateRangeSeperator);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(SHOW_DATE_RANGE_PROPERTY);
     	if (ve != null) {
 	    	boolean showDateRange = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setDateRange(showDateRange);
     	}
-    	
+
 		ve = getValueExpression(SHOW_MONTH_PROPERTY);
     	if (ve != null) {
 	    	boolean showMonth = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowMonthChange(showMonth);
     	}
-    	
+
 		ve = getValueExpression(SHOW_YEAR_PROPERTY);
     	if (ve != null) {
 	    	boolean showYear = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowYearChange(showYear);
     	}
-    	
+
+		ve = getValueExpression(SHOW_TIME_PROPERTY);
+    	if (ve != null) {
+	    	boolean showTime = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
+	    	setShowTime(showTime);
+    	}
+
 		ve = getValueExpression(SHOW_CALENDAR_IMAGE_PROPERTY);
     	if (ve != null) {
 	    	boolean showCalendarImage = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setShowCalendarImage(showCalendarImage);
     	}
-    	
+
+		ve = getValueExpression(SHOW_IMAGE_URI_PROPERTY);
+    	if (ve != null) {
+	    	String imageURI = (String) ve.getValue(context.getELContext());
+	    	setImageURI(imageURI);
+    	}
+
 		ve = getValueExpression(USE_CURRENT_PROPERTY);
     	if (ve != null) {
 	    	boolean useCurrent = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setUseCurrentDateIfNotSet(useCurrent);
     	}
-    	
+
     	super.encodeBegin(context);
     }
-    
+
 	@Override
 	public void main(IWContext iwc) {
 		if (inputName == null) {
 			inputName = this.getId();
 		}
 		setName(inputName);
-		
+
 		Locale locale = iwc.getCurrentLocale();
 		if (locale == null) {
 			locale = Locale.ENGLISH;
@@ -180,11 +204,15 @@ public class IWDatePicker extends TextInput {
 			}
 		}
 		if (iwDate != null) {
-			StringBuilder value = new StringBuilder(iwDate.getLocaleDate(locale, IWTimestamp.SHORT));
+			StringBuilder value = new StringBuilder(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
 
 			if (isDateRange()) {
 				iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
-				value.append(dateRangeSeparator).append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+				value.append(dateRangeSeparator);
+				if (isShowTime())
+					value.append(iwDateTo.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT));
+				else
+					value.append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
 			}
 
 			setValue(value.toString());
@@ -202,29 +230,42 @@ public class IWDatePicker extends TextInput {
 		// Show month/year select
 		initAction.append(", changeMonth: ").append(isChangeMonth()).append(", changeYear: ").append(isChangeYear());
 
+		if (getYearRange() != null) {
+			initAction.append(", yearRange: ").append("'" + getYearRange() + "'");
+		}
+
 		// Max date
 		if (getMaxDate() != null) {
 			IWTimestamp maxDate = new IWTimestamp(getMaxDate());
 			initAction.append(", maxDate: ").append(new StringBuilder("new Date(").append(maxDate.getYear()).append(", ").append(maxDate.getMonth() - 1).append(", ")
 					.append(maxDate.getDay()).append(")").toString());
 		}
-		
+
 		// Min date
 		if (getMinDate() != null) {
 			IWTimestamp maxDate = new IWTimestamp(getMinDate());
 			initAction.append(", minDate: ").append(new StringBuilder("new Date(").append(maxDate.getYear()).append(", ").append(maxDate.getMonth() - 1).append(", ")
 					.append(maxDate.getDay()).append(")").toString());
 		}
-		
+
 		// Calendar image
 		if (isShowCalendarImage()) {
-			initAction.append(", showOn: 'button', buttonImage: '").append(getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif")).append("', buttonImageOnly: true");
+			String imageURI = getImageURI();
+			if (imageURI == null) {
+				imageURI = getBundle(iwc).getVirtualPathWithFileNameString("calendar.gif");
+			}
+
+			initAction.append(", showOn: 'button', buttonImage: '").append(imageURI).append("', buttonImageOnly: true");
 		}
 
 		if (isShowTime()) {
 			initAction.append(", showTime: true");
 		}
-		
+
+		if (isShowTime()) {
+			initAction.append(", showTime: true");
+		}
+
 		// onSelect action
 		if (onSelectAction != null) {
 			initAction.append(", onSelect: function() {").append(onSelectAction).append("}");
@@ -236,7 +277,7 @@ public class IWDatePicker extends TextInput {
 		if (canUseLocalizedText) {
 			initAction.append(", regional: ['").append(language).append("']");
 		}
-		
+
 		initAction.append("});");
 
 		// Initialization action
@@ -254,16 +295,17 @@ public class IWDatePicker extends TextInput {
 
 		JQuery jQuery = getJQuery();
 		scripts.add(jQuery.getBundleURIToJQueryLib());
-		scripts.add(jQuery.getBundleURIToJQueryUILib("1.6rc5", "ui.datepicker.js"));
+		scripts.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_CORE));
+		scripts.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_DATEPICKER));
 
 		if (language != null) {
-			scripts.add(jQuery.getBundleURIToJQueryUILib("1.6rc5/datepicker/i18n", "ui.datepicker-" + language + ".js"));
+			scripts.add(jQuery.getBundleURIToJQueryUILib("1.8.17/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.core.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.theme.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.6rc5/themes/base", "ui.datepicker.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.core.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.theme.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.datepicker.css"));
 	}
 
 	@Override
@@ -309,6 +351,14 @@ public class IWDatePicker extends TextInput {
 
 	public void setShowYearChange(boolean showYearChange) {
 		this.showYearChange = showYearChange;
+	}
+
+	public String getYearRange() {
+		return yearRange;
+	}
+
+	public void setYearRange(String yearRange) {
+		this.yearRange = yearRange;
 	}
 
 	private boolean isChangeMonth() {
@@ -366,7 +416,7 @@ public class IWDatePicker extends TextInput {
 	public void setMinDate(Date minDate) {
 		this.minDate = minDate;
 	}
-	
+
 	JQuery getJQuery() {
 		if (jQuery == null) {
 			ELUtil.getInstance().autowire(this);
@@ -380,5 +430,13 @@ public class IWDatePicker extends TextInput {
 
 	public void setShowTime(boolean showTime) {
 		this.showTime = showTime;
+	}
+
+	public String getImageURI() {
+		return imageURI;
+	}
+
+	public void setImageURI(String imageURI) {
+		this.imageURI = imageURI;
 	}
 }

@@ -16,6 +16,19 @@
       <value>
         <map>
           <key>
+            <name>com.idega.presentation.remote.RemotePageViewer</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.presentation.remote.RemotePageViewer.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
             <name>com.idega.presentation.text.Text</name>
             <value>
               <map>
@@ -972,6 +985,21 @@
                   <name>component_property_file</name>
                   <type>java.lang.String</type>
                   <value>com.idega.idegaweb.widget.user.Name.pxml</value>
+                </key>
+              </map>
+            </value>
+            <type>map</type>
+          </key>
+          <key>
+            <name>com.idega.core.builder.presentation.impl.StringListHandler</name>
+            <value>
+              <map>
+                <key>
+                  <name>component_property_file</name>
+                  <type>java.lang.String</type>
+                  <value>com.idega.core.builder.presentation.impl.StringListHandler.pxml</value>
+                  <simple>false</simple>
+                  <reload>false</reload>
                 </key>
               </map>
             </value>

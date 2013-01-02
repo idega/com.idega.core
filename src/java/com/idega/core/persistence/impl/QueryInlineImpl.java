@@ -1,9 +1,8 @@
 package com.idega.core.persistence.impl;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
@@ -11,20 +10,23 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
+import com.idega.util.CoreUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
  * @version $Revision: 1.1 $ Last modified: $Date: 2009/04/16 08:36:53 $ by $Author: civilis $
  */
+@Scope(BeanDefinition.SCOPE_PROTOTYPE)
 @Service(QueryInlineImpl.beanIdentifier)
-@Scope("prototype")
-public class QueryInlineImpl implements com.idega.core.persistence.Query {
+public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core.persistence.Query {
 
 	public static final String beanIdentifier = "QueryInlineImpl";
 
@@ -42,69 +44,87 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 
 	@Override
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultList(
-	        Class<Expected> expectedReturnType, Param... params) {
-
-		setExpectedReturnType(expectedReturnType);
-		return getDaoFunctions().getResultListByQuery(getQuery(),
-		    expectedReturnType, params);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultList(
-	        Class<Expected> expectedReturnType, String mappingName,
-	        Param... params) {
-
-		setMappingName(mappingName);
-		setExpectedReturnType(expectedReturnType);
-		return getDaoFunctions().getResultListByQuery(getQuery(),
-		    expectedReturnType, params);
-	}
-
-	@Override
-	@Transactional(readOnly = true)
-	public <Expected> Expected getSingleResult(
-	        Class<Expected> expectedReturnType, String mappingName,
-	        Param... params) {
-
-		setMappingName(mappingName);
+	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Param... params) {
 		setExpectedReturnType(expectedReturnType);
 
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getSingleResultByQuery(getQuery(),
-			    expectedReturnType, params);
-
-		} catch (NoResultException e) {
-			return null;
+			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) +
+						" ms");
+			}
 		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public <Expected> Expected getSingleResult(
-	        Class<Expected> expectedReturnType, Param... params) {
-
+	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, Param... params) {
+		setMappingName(mappingName);
 		setExpectedReturnType(expectedReturnType);
 
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getSingleResultByQuery(getQuery(),
-			    expectedReturnType, params);
+			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+		} catch (Exception e) {
+			CoreUtil.sendExceptionNotification("Error executing query: " + getQueryExpression() + " with parameters: " + Arrays.asList(params), e);
+			throw new RuntimeException(e);
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) +
+						" ms");
+			}
+		}
+	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, Param... params) {
+		setMappingName(mappingName);
+		setExpectedReturnType(expectedReturnType);
+
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+		try {
+			return getDaoFunctions().getSingleResultByQuery(getQuery(), expectedReturnType, params);
 		} catch (NoResultException e) {
 			return null;
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) + " ms");
+			}
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, Param... params) {
+		setExpectedReturnType(expectedReturnType);
+
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+		try {
+			return getDaoFunctions().getSingleResultByQuery(getQuery(), expectedReturnType, params);
+		} catch (NoResultException e) {
+			return null;
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) + " ms");
+			}
 		}
 	}
 
 	protected Query getQuery() {
-
 		if (query == null) {
-
 			if (getMappingName() != null) {
-				Logger
-				        .getLogger(getClass().getName())
-				        .log(Level.WARNING,
-				            "Mapping name set for hql inline query. This can't be used, ignoring");
+				getLogger().warning("Mapping name set for hql inline query. This can't be used, ignoring");
 			}
 
 			query = getEntityManager().createQuery(getQueryExpression());
@@ -175,10 +195,31 @@ public class QueryInlineImpl implements com.idega.core.persistence.Query {
 
 	@Override
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultList(
-			Class<Expected> expectedReturnType, Collection<Param> params) {
+	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Collection<Param> params) {
 		setExpectedReturnType(expectedReturnType);
-		return getDaoFunctions().getResultListByQuery(getQuery(),
-		    expectedReturnType, params);
+
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+		try {
+			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+		} finally {
+			if (measure) {
+				long end = System.currentTimeMillis();
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + params + " executed in " + (end - start) + " ms");
+			}
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public void executeUpdate(Param... params) {
+		Query query = getQuery();
+
+		if (params != null)
+			for (Param param : params) {
+				query.setParameter(param.getParamName(), param.getParamValue());
+			}
+
+		query.executeUpdate();
 	}
 }

@@ -76,11 +76,13 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 		return getPath();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<? extends ICTreeNode> getChildren() {
 		return getChildResources();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<? extends ICTreeNode> getChildrenIterator() {
 		Collection<? extends ICTreeNode> children = getChildResources();

@@ -1,12 +1,15 @@
 package com.idega.core.component.data;
 
 
-import com.idega.data.IDOException;
-import java.util.Collection;
-import javax.ejb.CreateException;
-import com.idega.data.IDOHome;
 import java.sql.SQLException;
+import java.util.Collection;
+
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponent;
+
+import com.idega.data.IDOException;
+import com.idega.data.IDOHome;
 import com.idega.data.IDORemoveRelationshipException;
 
 public interface ICObjectInstanceHome extends IDOHome {
@@ -28,4 +31,6 @@ public interface ICObjectInstanceHome extends IDOHome {
 	public Collection findByPageKey(String pageKey) throws FinderException;
 
 	public int getCountByICObject(ICObject ico) throws IDOException;
+
+	public Collection<ICObjectInstance> getByClassName(Class<? extends UIComponent> className) throws FinderException;
 }

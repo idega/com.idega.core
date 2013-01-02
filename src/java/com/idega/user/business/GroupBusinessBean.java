@@ -101,6 +101,10 @@ import com.idega.util.datastructures.NestedSetsContainer;
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.122 $
  */
+/**
+ * @author laddi
+ *
+ */
 public class GroupBusinessBean extends com.idega.business.IBOServiceBean implements GroupBusiness {
 
 	/**
@@ -2060,7 +2064,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	@Override
-	public void updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
+	public Phone updateGroupPhone(Group group, int phoneTypeId, String phoneNumber) throws EJBException {
 		try {
 			Phone phone = getGroupPhone(group, phoneTypeId);
 			boolean insert = false;
@@ -2079,7 +2083,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 				// ((com.idega.user.data.UserHome)com.idega.data.IDOLookup.getHomeLegacy(User.class)).findByPrimaryKeyLegacy(userId).addTo(phone);
 				group.addPhone(phone);
 			}
-
+			return phone;
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -2859,10 +2863,4 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 
-} // Class
-
-/**
- * @todo move implementation from methodName(Group group) to methodName(int
- *       groupId)
- * @todo reimplement all methods returning list of users
- */
+}

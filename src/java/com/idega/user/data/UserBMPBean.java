@@ -96,6 +96,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
 	private static final String COLUMN_LAST_READ_FROM_IMPORT = "last_imported";
+	private static final String COLUMN_RESUME = "RESUME";
+	private static final String COLUMN_LANGUAGES = TABLE_NAME + "_languages";
 
 	@Override
 	public String getEntityName() {
@@ -119,8 +121,9 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	addAttribute(getColumnNameFamilyID(), "Family ID", true, true, String.class, 20);
     	addAttribute(getColumnNamePreferredLocale(), "Preferred locale", true, true, String.class, 20);
     	addAttribute(User.FIELD_JURIDICAL_PERSON, "Juridical person", true, true, Boolean.class);
-
+    	addAttribute(COLUMN_RESUME, "Resume", true, true, java.lang.String.class, 2048);
     	addAttribute(COLUMN_LAST_READ_FROM_IMPORT, "Last read from national import", Timestamp.class);
+    	addManyToManyRelationShip(ICLanguage.class, COLUMN_LANGUAGES);
 
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
@@ -1158,6 +1161,13 @@ public void delete(int userId) throws SQLException {
 		}
 
 		return idoFindOnePKByQuery(query);
+	}
+
+	public Collection ejbFindByDateOfBirth(Date dateOfBirth) throws FinderException {
+	    SelectQuery query = idoSelectQuery();
+			query.addCriteria(new MatchCriteria(idoQueryTable(), FIELD_DATE_OF_BIRTH, MatchCriteria.EQUALS, dateOfBirth));
+
+		return idoFindPKsByQuery(query);
 	}
 
 	@Override
@@ -3061,6 +3071,32 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public void setJuridicalPerson(boolean juridicalPerson) {
 		setColumn(User.FIELD_JURIDICAL_PERSON, Boolean.valueOf(juridicalPerson));
+	}
+
+	@Override
+	public void setResume(String resume) {
+		setColumn(COLUMN_RESUME, resume);
+	}
+
+	@Override
+	public String getResume() {
+		return getStringColumnValue(COLUMN_RESUME);
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<ICLanguage> getLanguages() throws IDORelationshipException {
+		return super.idoGetRelatedEntities(ICLanguage.class);
+	}
+
+	@Override
+	public void addLanguage(ICLanguage language) throws IDOAddRelationshipException {
+		this.idoAddTo(language);
+	}
+
+	@Override
+	public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException {
+		this.idoRemoveFrom(language);
 	}
 
 }

@@ -23,16 +23,16 @@ import org.jdom.Namespace;
 import org.jdom.Text;
 import org.jdom.filter.Filter;
 
+import com.idega.util.ListUtil;
+
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
-public class XMLElement implements Serializable{
-  /**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+public class XMLElement implements Serializable {
+
 	private static final long serialVersionUID = 4076776738191516564L;
-private Element _element = null;
+	private Element _element = null;
 
   public XMLElement(String name) {
     this._element = new Element(name);
@@ -117,42 +117,44 @@ private Element _element = null;
     return(false);
   }
 
-  public List getChildren() {
+  public List<XMLElement> getChildren() {
     if (this._element != null) {
-      List li = this._element.getChildren();
-      ArrayList res = new ArrayList();
-      Iterator it = li.iterator();
+      List<?> li = this._element.getChildren();
+      List<XMLElement> res = new ArrayList<XMLElement>();
 
-      while (it.hasNext()) {
-        Element el = (Element)it.next();
-        if (el != null) {
-          XMLElement xmlel = new XMLElement(el);
-          res.add(xmlel);
-        }
+      for (Iterator<?> it = li.iterator(); it.hasNext();) {
+    	  Object o = it.next();
+    	  if (o instanceof Element) {
+    		  Element el = (Element) o;
+    		  XMLElement xmlel = new XMLElement(el);
+    		  res.add(xmlel);
+    	  }
       }
 
-      return(res);
+      return res;
     }
 
-    return(null);
+    return null;
   }
 
-  public List getAttributes() {
+  public List<XMLAttribute> getAttributes() {
     if (this._element != null) {
-      List li = this._element.getAttributes();
-      ArrayList res = new ArrayList();
-      Iterator it = li.iterator();
+      List<?> li = this._element.getAttributes();
+      List<XMLAttribute> res = new ArrayList<XMLAttribute>();
 
-      while (it.hasNext()) {
-        Attribute at = (Attribute)it.next();
-        XMLAttribute xmlat = new XMLAttribute(at);
-        res.add(xmlat);
+      for (Iterator<?> it = li.iterator(); it.hasNext();) {
+    	  Object o = it.next();
+    	  if (o instanceof Attribute) {
+	        Attribute at = (Attribute) o;
+	        XMLAttribute xmlat = new XMLAttribute(at);
+	        res.add(xmlat);
+    	  }
       }
 
-      return(res);
+      return res;
     }
 
-    return(null);
+    return null;
   }
 
   public String getAttributeValue(String name) {
@@ -211,9 +213,11 @@ private Element _element = null;
     return(null);
   }
 
-  public List getChildrenRecursive(final String name) {
+  public List<XMLElement> getChildrenRecursive(final String name) {
   	if (this._element != null) {
   		Filter filter = new Filter() {
+			private static final long serialVersionUID = -5101352919803781348L;
+
 			@Override
 			public boolean matches(Object object) {
 				if (object instanceof Element) {
@@ -223,9 +227,9 @@ private Element _element = null;
 				return false;
 			}
   		};
-  		List list = new ArrayList();
-  		Iterator iterator = this._element.getDescendants(filter);
-  		while (iterator.hasNext()) {
+
+  		List<XMLElement> list = new ArrayList<XMLElement>();
+  		for (Iterator<?> iterator = this._element.getDescendants(filter); iterator.hasNext();) {
   			Element el = (Element) iterator.next();
   			XMLElement element = new XMLElement(el);
   			list.add(element);
@@ -236,40 +240,38 @@ private Element _element = null;
   }
 
 
-  public List getChildren(String name) {
+  public List<XMLElement> getChildren(String name) {
     if (this._element != null) {
-      List li = this._element.getChildren(name);
-      ArrayList res = new ArrayList();
-      Iterator it = li.iterator();
+      List<?> li = this._element.getChildren(name);
+      List<XMLElement> res = new ArrayList<XMLElement>();
 
-      while (it.hasNext()) {
-        Element el = (Element)it.next();
+      for (Iterator<?> it = li.iterator(); it.hasNext();) {
+        Element el = (Element) it.next();
         XMLElement xmlel = new XMLElement(el);
         res.add(xmlel);
       }
 
-      return(res);
+      return res;
     }
 
-    return(null);
+    return null;
   }
 
-  public List <XMLElement> getChildren(String name, XMLNamespace namespace ) {
-	    if (this._element != null) {
-	      List li = this._element.getChildren(name, (Namespace)namespace.getNamespace());
-	      ArrayList res = new ArrayList();
-	      Iterator it = li.iterator();
+  public List<XMLElement> getChildren(String name, XMLNamespace namespace ) {
+	  if (this._element != null) {
+	      List<?> li = this._element.getChildren(name, (Namespace) namespace.getNamespace());
+	      List<XMLElement> res = new ArrayList<XMLElement>();
 
-	      while (it.hasNext()) {
-	        Element el = (Element)it.next();
+	      for (Iterator<?> it = li.iterator(); it.hasNext();) {
+	        Element el = (Element) it.next();
 	        XMLElement xmlel = new XMLElement(el);
 	        res.add(xmlel);
 	      }
 
-	      return(res);
-	    }
+	      return res;
+	  }
 
-	    return(null);
+	  return null;
   }
 
   public boolean removeContent(XMLElement element) {
@@ -337,47 +339,47 @@ private Element _element = null;
    * @return The first CDATA instance in the content for this Element, null otherwise.
    */
   public XMLCDATA getXMLCDATAContent() {
-  	if (this._element == null) {
-			return null;
-		}
+  	if (this._element == null)
+  		return null;
 
-		List li = this._element.getContent();
-		Iterator it = li.iterator();
-		while (it.hasNext()) {
-			Object obj = it.next();
-			if (obj instanceof CDATA) {
-				return new XMLCDATA((CDATA)obj);
-			}
-		}
+  	List<?> li = this._element.getContent();
+  	if (ListUtil.isEmpty(li))
+  		return null;
 
-		return null;
+  	for (Iterator<?> it = li.iterator(); it.hasNext();) {
+  		Object obj = it.next();
+  		if (obj instanceof CDATA)
+  			return new XMLCDATA((CDATA) obj);
+  	}
+
+  	return null;
   }
 
-  public List getContent() {
+  public List<Object> getContent() {
   	if (this._element == null) {
-			return null;
-		}
+  		return null;
+	}
 
-		List ret = new ArrayList();
-		List li = this._element.getContent();
-		Iterator it = li.iterator();
-		while (it.hasNext()) {
-			Object obj = it.next();
-			if (obj instanceof Element) {
-				XMLElement el = new XMLElement(obj);
-				ret.add(el);
-			}
-			else if (obj instanceof CDATA) {
-				XMLCDATA data = new XMLCDATA((CDATA)obj);
-				ret.add(data);
-			}
-			else if (obj instanceof Text) {
-				String text = ((Text)obj).getText();
-				ret.add(text);
-			}
-		}
+  	List<Object> ret = new ArrayList<Object>();
+	List<?> li = this._element.getContent();
+	if (ListUtil.isEmpty(li))
+		return null;
 
-		return ret;
+	for (Iterator<?> it = li.iterator(); it.hasNext();) {
+		Object obj = it.next();
+		if (obj instanceof Element) {
+			XMLElement el = new XMLElement(obj);
+			ret.add(el);
+		} else if (obj instanceof CDATA) {
+			XMLCDATA data = new XMLCDATA((CDATA)obj);
+			ret.add(data);
+		} else if (obj instanceof Text) {
+			String text = ((Text) obj).getText();
+			ret.add(text);
+		}
+	}
+
+	return ret;
   }
 
   public XMLElement setAttribute(XMLAttribute attribute) {
@@ -424,17 +426,15 @@ private Element _element = null;
 	return(false);
   }
 
-  public XMLElement setChildren(List children) {
+  public XMLElement setChildren(List<XMLElement> children) {
     if (this._element != null) {
       if (children != null) {
-        Iterator it = children.iterator();
-        ArrayList res = new ArrayList();
-        while (it.hasNext()) {
-          XMLElement xmlel = (XMLElement)it.next();
-          Element el = (Element)xmlel.getElement();
-          if (el != null) {
-						res.add(el);
-					}
+        List<Element> res = new ArrayList<Element>();
+        for (Iterator<XMLElement> it = children.iterator(); it.hasNext();) {
+          XMLElement xmlel = it.next();
+          Element el = (Element) xmlel.getElement();
+          if (el != null)
+        	  res.add(el);
         }
 
         this._element.setContent(res);
@@ -471,13 +471,13 @@ public synchronized Object clone() {
    * 	 The order of the returned elements corresponds to the result of a breadth first search.
    * @author Thomas
    */
-  public Iterator allChildrenBreadthFirstIterator() {
-  	return new Iterator() {
+  public Iterator<XMLElement> allChildrenBreadthFirstIterator() {
+  	return new Iterator<XMLElement>() {
 
-  		private Iterator iterator = null;
+  		private Iterator<XMLElement> iterator = null;
 
   		@Override
-		public Object next() {
+		public XMLElement next() {
   			checkInitialization();
   			return this.iterator.next();
   		}
@@ -494,25 +494,23 @@ public synchronized Object clone() {
   			this.iterator.remove();
   		}
 
-			private void checkInitialization() {
+		private void checkInitialization() {
   			 if (this.iterator == null) {
-  			 	List allChildren = new ArrayList();
+  			 	List<XMLElement> allChildren = new ArrayList<XMLElement>();
   			 	collectChildrenBreadthFirstMethod(XMLElement.this, allChildren);
   			 	this.iterator = allChildren.iterator();
   			 }
   		}
 
-
-			private void collectChildrenBreadthFirstMethod(XMLElement element, List allChildren) {
-					// breadth first search
-  				allChildren.add(element);
-  				List localChildren = element.getChildren();
-  				Iterator iterator = localChildren.iterator();
-  				while (iterator.hasNext()) {
-  					XMLElement elementItem = (XMLElement) iterator.next();
-  					collectChildrenBreadthFirstMethod(elementItem, allChildren);
-  				}
+		private void collectChildrenBreadthFirstMethod(XMLElement element, List<XMLElement> allChildren) {
+			// breadth first search
+  			allChildren.add(element);
+  			List<XMLElement> localChildren = element.getChildren();
+  			for (Iterator<XMLElement> iterator = localChildren.iterator(); iterator.hasNext();) {
+  				XMLElement elementItem = iterator.next();
+  				collectChildrenBreadthFirstMethod(elementItem, allChildren);
   			}
+		}
   	};
   }
 

@@ -201,7 +201,6 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 *
 	 * @param key the unique name of property
 	 * @param defaultValue the value that will be used by default
 	 * to create this attribute if it is not created

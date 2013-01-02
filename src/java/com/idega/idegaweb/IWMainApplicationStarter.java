@@ -32,7 +32,6 @@ import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
@@ -56,7 +55,6 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.SingletonRepository;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
@@ -388,9 +386,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// cleaning, maintaining, updating
 		if(!this.iwma.isInDatabaseLessMode()){
 			log.fine("Cleaning and updating database...");
-			updateClassReferencesInDatabase();
+			//updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
-			cleanEmailData();
+			//cleanEmailData();
 			log.fine("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();
@@ -639,7 +637,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		rfregistry.registerRefactoredClass("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class.getName());
 	}
 
-	private void updateClassReferencesInDatabase() {
+	/*private void updateClassReferencesInDatabase() {
 		try {
 			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
 			home.updateClassReferences("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class);
@@ -651,7 +649,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		catch (IDOException e) {
 			log.throwing(this.getClass().getName(), "updateClassReferencesInDatabase", e);
 		}
-	}
+	}*/
 	
 	protected void updateStartDataInDatabase() {
 		IWStartDataInserter.getInstance().insertStartData();
@@ -734,7 +732,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 
 	}
 	
-	private void cleanEmailData() {
+	/*private void cleanEmailData() {
 		try {
 			IWApplicationContext iwac = this.iwma.getIWApplicationContext();
 			UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
@@ -743,7 +741,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		catch (IBOLookupException e) {
 			log.throwing(this.getClass().getName(), "cleanEmailData", e);
 		}
-	}
+	}*/
 
 	
 	private void insertGroupRelationType(String groupRelationType) {

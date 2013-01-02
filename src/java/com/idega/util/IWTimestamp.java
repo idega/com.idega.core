@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.io.Serializable;
 import java.sql.Date;
 import java.sql.Time;
 import java.sql.Timestamp;
@@ -26,8 +27,10 @@ import com.idega.presentation.IWContext;
  * @author idega 2002 - idega team
  * @version 1.1
  */
-public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
+public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializable {
 	
+	private static final long serialVersionUID = -6152459981067600867L;
+
 	/**
 	 * This field sets if the toString and toSQLString methods should cut off their milliseconds part in the returned String.
 	 * This is default true but is set to false for certain databases such as Informix.
@@ -256,6 +259,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 	 * @see java.lang.Object#equals(Object)
 	 * @see IWTimestamp#equals(IWTimestamp compareStamp)
 	 */
+	@Override
 	public boolean equals(Object object) {
 		if (object instanceof IWTimestamp) {
 			return equals((IWTimestamp) object);
@@ -911,6 +915,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 	 * Get a date string with the icalandic data format: DAY MONTH (YEAR)
 	 * @return IWTimestamp#getDateString(String pattern)
 	 */
+	@Deprecated
 	public String getISLDate(String spacer, boolean withYear) {
 		String pattern = DAY + spacer + MONTH;
 		if (withYear) {
@@ -925,6 +930,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 	 * @param iwc		The <code>IWContext</code> to get the current locale from.
 	 * @return String
 	 */
+	@Deprecated
 	public String getLocaleDate(IWContext iwc) {
 		Locale currentLocale = iwc.getCurrentLocale();
 		return getLocaleDate(currentLocale);
@@ -1037,6 +1043,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 	 * @deprecated
 	 * @see IWTimestamp#getDate()
 	 */
+	@Deprecated
 	public Date getSQLDate() {
 		return getDate();
 	}
@@ -1366,9 +1373,11 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable {
 	 * @return String
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public String toString() {
 		return toString(CUT_MILLISECONDS_OFF_IN_TOSTRING);
 	}	
+	@Override
 	public Object clone(){
 		try {
 			IWTimestamp obj = (IWTimestamp)super.clone();

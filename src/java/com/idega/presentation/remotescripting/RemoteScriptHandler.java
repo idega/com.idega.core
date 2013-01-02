@@ -21,6 +21,7 @@ import com.idega.presentation.ui.IFrame;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.TextInput;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreUtil;
 import com.idega.util.PresentationUtil;
 
 
@@ -29,6 +30,7 @@ import com.idega.util.PresentationUtil;
  * @deprecated Use DWR for remote calls
  * @author gimmi
  */
+@Deprecated
 public class RemoteScriptHandler extends PresentationObjectContainer implements IFrameContent { //implements RemoteScriptable {
 	
 	private static final String PARAMETER_REMOTE_SCRIPT_HANDLING_CLASS = "prc";
@@ -76,6 +78,7 @@ public class RemoteScriptHandler extends PresentationObjectContainer implements 
 		this.iframeName = source.getName()+"_"+target.getName();
 	}
 	
+	@Override
 	public void main(IWContext iwc) throws Exception{
 		if (isRemoteCall(iwc)) {
 			
@@ -257,7 +260,10 @@ public class RemoteScriptHandler extends PresentationObjectContainer implements 
 		buff = addClearMethods(buff);
 				
 		buff.append("}\n");
-		getAssociatedScript().addFunction("handleResponse_"+this.source.getID(), buff.toString()); 
+		if (getAssociatedScript() == null) {
+			PresentationUtil.addJavaScriptActionToBody(CoreUtil.getIWContext(), buff.toString());
+		} else
+			getAssociatedScript().addFunction("handleResponse_"+this.source.getID(), buff.toString()); 
 	}
 	
 	private void addScriptForLayer() {

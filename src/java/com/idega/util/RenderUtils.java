@@ -12,6 +12,7 @@ package com.idega.util;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
@@ -19,40 +20,40 @@ import javax.faces.context.ResponseWriter;
 
 /**
  * Utility class for rendering logic in JSF.
- * 
+ *
  *  Last modified: $Date: 2009/01/12 05:52:57 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.9 $
  */
 public class RenderUtils {
-	
+
 	public static final String DIV_TAG="div";
 	public static final String STYLE_CLASS_ATTRIBUTE="class";
 	public static final String ID_ATTRIBUTE="id";
-	
-	
+
+
 	/**
 	 * Renders a child component for the current component. This operation is handy when implementing
 	 * renderes that perform child rendering themselves (eg. a layout renderer/grid renderer/ etc..).
 	 * Passes on any IOExceptions thrown by the child/child renderer.
-	 * 
+	 *
 	 * @param context the current FacesContext
 	 * @param child which child to render
 	 */
 	public static void renderChild(FacesContext context, UIComponent child) throws IOException {
-		if (child == null) {
+		if (context == null || child == null)
 			return;
-		}
-		if (!child.isRendered()) {
-			return;
-		}
-		
+
+		CoreUtil.doEnsureScopeIsSet(context);
+
+		if (!child.isRendered())
+			return;	//	No need to render
+
 		child.encodeBegin(context);
 		if (child.getRendersChildren()) {
 			child.encodeChildren(context);
-		}
-		else {
+		} else {
 			//	Special case for forms:
 			Collection<UIComponent> fChildren = child.getChildren();
 			for (Iterator<UIComponent> iter = fChildren.iterator(); iter.hasNext();) {
@@ -75,16 +76,15 @@ public class RenderUtils {
 			facet.encodeEnd(context);
 		}
 	}
-	
-	
+
 	public static void renderDividerBegin(ResponseWriter responseWriter) throws IOException{
 		renderDividerBegin(responseWriter,null,null);
 	}
-	
+
 	public static void renderDividerBegin(ResponseWriter responseWriter,String styleClassName) throws IOException{
 		renderDividerBegin(responseWriter,styleClassName,null);
 	}
-	
+
 	public static void renderDividerBegin(ResponseWriter responseWriter,String styleClassName,String id) throws IOException{
 		responseWriter.startElement(DIV_TAG,null);
 		if(styleClassName!=null){
@@ -94,10 +94,9 @@ public class RenderUtils {
 			responseWriter.writeAttribute(ID_ATTRIBUTE,id,null);
 		}
 	}
-	
+
 	public static void renderDividerEnd(ResponseWriter responseWriter,String className,String id) throws IOException{
 		responseWriter.endElement(DIV_TAG);
 	}
-	
-	
+
 }

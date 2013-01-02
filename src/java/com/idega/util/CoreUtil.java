@@ -1,33 +1,44 @@
 package com.idega.util;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.data.GenericEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.data.bean.User;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.presentation.JSFUtil;
 
 public class CoreUtil {
 
-	static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
 
 	private static final BASE64Encoder ENCODER_BASE64 = new BASE64Encoder();
 	private static final BASE64Decoder DECODER_BASE64 = new BASE64Decoder();
@@ -158,6 +169,10 @@ public class CoreUtil {
 	}
 
 	public static boolean sendExceptionNotification(final String message, final Throwable exception) {
+		return sendExceptionNotification(message, exception, null);
+	}
+
+	public static boolean sendExceptionNotification(final String message, final Throwable exception, final File[] attachments) {
 		RequestResponseProvider reqResProvider = null;
 		try {
 			reqResProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
@@ -166,48 +181,48 @@ public class CoreUtil {
     	String serverName = null;
     	String requestUri = null;
 		if (request != null) {
-	   		serverName = request.getServerName();
-	   		requestUri = request.getRequestURI();
-		}
-		serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
-    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
+	    	serverName = request.getServerName();
+	    	requestUri = request.getRequestURI();
 
-    	String userFullName = null;
+	    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
+	    	requestUri = StringUtil.isEmpty(requestUri) ? "unknown" : requestUri;
+		}
+
+		String user = null;
     	try {
     		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-    		User loggedInUser = loginSession.getUser();
-    		userFullName = loggedInUser == null ? null : (loggedInUser.getDisplayName() + ", user ID: " + loggedInUser.getId());
+    		User loggedInUser = loginSession == null ? null : loginSession.getUser();
+    		user = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
     	} catch (Exception e) {}
-    	userFullName = StringUtil.isEmpty(userFullName) ? "not logged in" : userFullName;
+    	user = StringUtil.isEmpty(user) ? "not logged in" : user;
 
-    	final String userName = userFullName;
 		final String server = serverName;
 		final String requestedUri = requestUri;
+		final String userFullName = user;
 		Thread sender = new Thread(new Runnable() {
+
 			@Override
 			public void run() {
-				String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-		    	if (StringUtil.isEmpty(host)) {
-		    		LOGGER.log(Level.WARNING, "Unable to send email about exception", exception);
-		    	}
+				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 
 		    	Writer writer = null;
 		    	PrintWriter printWriter = null;
 		    	StringBuffer notification = null;
 		    	try {
-		    		writer = new StringWriter();
-		    		printWriter = new PrintWriter(writer);
-		    		exception.printStackTrace(printWriter);
+		    		if (exception != null) {
+			    		writer = new StringWriter();
+			    		printWriter = new PrintWriter(writer);
+			    		exception.printStackTrace(printWriter);
+		    		}
 
 		    		notification = new StringBuffer("Requested uri: ").append(requestedUri).append("\n");
-		    		notification.append("User: ").append(userName).append("\n");
-		    		if (!StringUtil.isEmpty(message)) {
+		    		notification.append("User: ").append(userFullName).append("\n");
+		    		if (!StringUtil.isEmpty(message))
 		    			notification.append("Message: ").append(message).append("\n");
-		    		}
-		    		notification.append("Stack trace:\n").append(writer.toString());
+		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		        	SendMail.send("idegaweb@idega.com", "programmers@idega.com", null, null, host, "EXCEPTION: on ePlatform, server: " + server,
-		        			notification.toString());
+		    		SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, null,
+		    				null, "EXCEPTION: on ePlatform, server: " + server,notification.toString(), false, true, attachments);
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
 		        } finally {
@@ -226,9 +241,7 @@ public class CoreUtil {
 			Locale locale = null;
 
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			if (loginSession == null) {
-				LOGGER.warning("LoginSession was not found");
-			} else {
+			if (loginSession != null) {
 				//	1. Trying to get from request
 				locale = loginSession.getCurrentLocale();
 				if (locale == null) {
@@ -267,5 +280,105 @@ public class CoreUtil {
 
 	public static final boolean isMobileClient(IWContext iwc) {
 		return CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(iwc.getSessionAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE));
+	}
+
+	public static List<String> getIds(Collection<GenericEntity> entities) {
+		if(ListUtil.isEmpty(entities)){
+			return Collections.emptyList();
+		}
+		List<String> ids = new ArrayList<String>(entities.size());
+		for(GenericEntity entity : entities){
+			Object id = entity.getPrimaryKey();
+			if(id == null){
+				continue;
+			}
+			String strId = String.valueOf(id);
+			ids.add(strId);
+		}
+		return ids;
+	}
+
+	public static List<Integer> getIdsAsIntegers(Collection<GenericEntity> entities) {
+		if(ListUtil.isEmpty(entities)){
+			return Collections.emptyList();
+		}
+		List<Integer> ids = new ArrayList<Integer>(entities.size());
+		for(GenericEntity entity : entities){
+			Object id = entity.getPrimaryKey();
+			if(id == null){
+				continue;
+			}
+			String strId = String.valueOf(id);
+			try{
+				ids.add(Integer.valueOf(strId));
+			}catch (Exception e) {
+			}
+		}
+		return ids;
+	}
+
+	public static final void doEnsureScopeIsSet(FacesContext context) {
+		if (context == null) {
+			LOGGER.warning("FacesContext is not provided");
+			return;
+		}
+
+		Map<?, ?> utils = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
+				.getBeansOfType(JSFUtil.class);
+		if (MapUtil.isEmpty(utils))
+			return;
+
+		for (Object bean: utils.values()) {
+			if (bean instanceof JSFUtil)
+				((JSFUtil) bean).setFacesScope(context);
+		}
+    }
+
+	public static boolean doWriteFileToRepository(String pathInRepository, String fileName, InputStream stream) throws IOException {
+		String realPath = getRealPathToRepository(pathInRepository);
+		if (!realPath.endsWith(File.separator))
+			realPath = realPath.concat(File.separator);
+		realPath = realPath.concat(fileName).concat("_1.0");
+		File tmp = new File(realPath);
+		FileUtil.createFileIfNotExistent(tmp);
+		FileUtil.streamToFile(stream, tmp);
+
+		return true;
+	}
+
+	private static String getRealPathToRepository(String pathInRepository) throws IOException {
+		if (StringUtil.isEmpty(pathInRepository))
+			throw new IOException("Path in repository is not defined: " + pathInRepository);
+
+		String realPath = System.getProperty("catalina.base");
+		if (StringUtil.isEmpty(realPath)) {
+			realPath = IWMainApplication.getDefaultIWMainApplication().getApplicationRealPath();
+			if (StringUtil.isEmpty(realPath))
+				throw new IOException("Unknown real path of the application: " + realPath);
+
+			String webappsFolder = File.separator.concat("webapps").concat(File.separator);
+			int webappsIndex = realPath.indexOf(webappsFolder);
+			if (webappsIndex <= 0)
+				throw new IOException("It is unknown how to navigate to repository folder given real path of the application: " + realPath);
+
+			realPath = realPath.substring(0, webappsIndex);
+		}
+
+		String temp = realPath.concat(File.separator).concat("bin").concat(File.separator).concat("store");
+		File tempDir = new File(temp);
+		if (!tempDir.exists())
+			temp = realPath.concat(File.separator).concat("store");
+
+		realPath = temp;
+		if (!pathInRepository.startsWith(CoreConstants.WEBDAV_SERVLET_URI))
+			realPath = realPath.concat(CoreConstants.WEBDAV_SERVLET_URI);
+		realPath = realPath.concat(pathInRepository);
+
+		return realPath;
+	}
+
+	public static File getFileFromRepository(String pathInRepository) throws IOException {
+		String realPath = getRealPathToRepository(pathInRepository);
+		return new File(realPath);
 	}
 }

@@ -2323,6 +2323,8 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 
 	@Override
 	public void encodeBegin(FacesContext fc) throws IOException {
+		CoreUtil.doEnsureScopeIsSet(fc);
+
 		callMain(fc);
 		callPrint(fc);
 	}

@@ -14,6 +14,8 @@ import java.util.Iterator;
 import java.util.List;
 import javax.faces.context.FacesContext;
 
+import com.idega.util.ListUtil;
+
 
 /**
  * Last modified: $Date: 2005/09/19 15:00:22 $ by $Author: laddi $
@@ -22,6 +24,8 @@ import javax.faces.context.FacesContext;
  * @version $Revision: 1.3 $
  */
 public abstract class TableRowGroup extends PresentationObject {
+	
+	private boolean reverseRows = false;
 	
 	/**
 	 * Creates a new <code>TableRow</code> within the current <code>TableRowGroup</code> with the first available row number.
@@ -110,6 +114,10 @@ public abstract class TableRowGroup extends PresentationObject {
 
 			List theObjects = getChildren();
 			if (theObjects != null) {
+				if (isReverseRows()) {
+					theObjects = ListUtil.reverseList(theObjects);
+				}
+
 				Iterator iter = theObjects.iterator();
 				while (iter.hasNext()) {
 					PresentationObject item = (PresentationObject) iter.next();
@@ -127,5 +135,13 @@ public abstract class TableRowGroup extends PresentationObject {
 
 	public void encodeEnd(FacesContext arg0) throws IOException {
 		println("</" + getTag() + ">");
+	}
+
+	public boolean isReverseRows() {
+		return reverseRows;
+	}
+
+	public void setReverseRows(boolean reverseRows) {
+		this.reverseRows = reverseRows;
 	}
 }

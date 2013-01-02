@@ -5,12 +5,16 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jcr.RepositoryException;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.ArrayUtil;
 
@@ -18,29 +22,52 @@ public class FileItem extends RepositoryItem {
 
 	private static final long serialVersionUID = 9168933422320317136L;
 
-	private File file;
+	private File file = null;
+	private ICFile icFile = null;
 
 	public FileItem(File file) {
 		this.file = file;
 	}
+	public FileItem(ICFile file) {
+		this.icFile = file;
+	}
 
 	@Override
 	public InputStream getInputStream() throws IOException {
+		if(icFile != null){
+			return icFile.getFileValue();
+		}
 		return new FileInputStream(file);
 	}
 
 	@Override
 	public String getName() {
+		if(icFile != null){
+			return icFile.getName();
+		}
 		return file.getName();
 	}
 
 	@Override
 	public long getLength() {
+		if(icFile != null){
+			return icFile.getFileSize();
+		}
 		return file.length();
 	}
 
 	@Override
 	public boolean delete() {
+		if(icFile != null){
+			try {
+				icFile.delete();
+			} catch (SQLException e) {
+				Logger.getLogger(this.getClass().getName()).log(Level.WARNING,
+						"Failed to delete icFile " + icFile.getId(), e);
+				return false;
+			}
+			return true;
+		}
 		return file.delete();
 	}
 

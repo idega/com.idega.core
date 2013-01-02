@@ -535,7 +535,7 @@ public class Link extends Text {
 					prmString = prmString.substring(1, prmString.length());
 				}
 				StringTokenizer token = new StringTokenizer(prmString, "&=", false);
-				int index = 0;
+				//int index = 0;
 				while (token.hasMoreTokens()) {
 					String st = token.nextToken();
 					if (token.hasMoreTokens()) {
@@ -543,7 +543,7 @@ public class Link extends Text {
 						if (prmName.equals(st)) {
 							return true;
 						}
-						index++;
+						//index++;
 					}
 				}
 			}
@@ -1223,7 +1223,7 @@ public class Link extends Text {
 					prmString = prmString.substring(1, prmString.length());
 				}
 				StringTokenizer token = new StringTokenizer(prmString, "&=", false);
-				int index = 0;
+				//int index = 0;
 				while (token.hasMoreTokens()) {
 					String st = token.nextToken();
 					if (token.hasMoreTokens()) {
@@ -1231,7 +1231,7 @@ public class Link extends Text {
 						if (prmName.equals(st)) {
 							return value;
 						}
-						index++;
+						//index++;
 					}
 				}
 			}

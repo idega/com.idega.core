@@ -22,12 +22,65 @@ version="1.2">
 	</component>
 	
 	<component>
+		<component-type>contactPurposeSelector</component-type>
+		<component-class>com.idega.presentation.ui.contacts.ContactPurposeSelector</component-class>
+		<property>
+			<display-name>name</display-name>
+			<property-name>name</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>value</display-name>
+			<property-name>value</property-name>
+			<property-class>java.lang.Object</property-class>
+		</property>
+		<property>
+			<display-name>converter</display-name>
+			<property-name>converter</property-name>
+			<property-class>javax.faces.convert.Converter</property-class>
+		</property>
+	</component>
+	<component>
+		<component-type>phoneTypeSelector</component-type>
+		<component-class>com.idega.presentation.ui.contacts.PhoneTypeSelector</component-class>
+		<property>
+			<display-name>name</display-name>
+			<property-name>name</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
+			<display-name>value</display-name>
+			<property-name>value</property-name>
+			<property-class>java.lang.Object</property-class>
+		</property>
+		<property>
+			<display-name>converter</display-name>
+			<property-name>converter</property-name>
+			<property-class>javax.faces.convert.Converter</property-class>
+		</property>
+	</component>
+	<component>
 	    <component-type>DownloadLink</component-type>
 	    <component-class>com.idega.presentation.text.DownloadLink</component-class>
 	    <property>
 	      <display-name>Download link download writer class object</display-name>
 	      <property-name>downloadWriter</property-name>
 	      <property-class>java.lang.Class</property-class>
+	    </property>
+	    <property>
+	      <display-name>Link text</display-name>
+	      <property-name>value</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Title</display-name>
+	      <property-name>title</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
+	    <property>
+	      <display-name>Style class</display-name>
+	      <property-name>styleClass</property-name>
+	      <property-class>java.lang.String</property-class>
 	    </property>
 	</component>
 	
@@ -360,6 +413,11 @@ version="1.2">
 			<property-class>boolean</property-class>
 		</property>
 		<property>
+			<display-name>Calendar image URI</display-name>
+			<property-name>imageURI</property-name>
+			<property-class>java.lang.String</property-class>
+		</property>
+		<property>
 			<display-name>Show calendar image</display-name>
 			<property-name>showCalendarImage</property-name>
 			<property-class>boolean</property-class>
@@ -375,9 +433,19 @@ version="1.2">
 	      <property-class>boolean</property-class>
 	    </property>
 	    <property>
+	      <display-name>Show time</display-name>
+	      <property-name>showTime</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
 	      <display-name>Use current date if not set</display-name>
 	      <property-name>useCurrent</property-name>
 	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Year range</display-name>
+	      <property-name>yearRange</property-name>
+	      <property-class>java.lang.String</property-class>
 	    </property>
 	</component>
 	
@@ -442,6 +510,11 @@ version="1.2">
 	    <property>
 	      <display-name>Required</display-name>
 	      <property-name>required</property-name>
+	      <property-class>boolean</property-class>
+	    </property>
+	    <property>
+	      <display-name>Multiple</display-name>
+	      <property-name>multiple</property-name>
 	      <property-class>boolean</property-class>
 	    </property>
 	</component>

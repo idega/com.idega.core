@@ -5,6 +5,20 @@
 
 	<namespace>http://xmlns.idega.com/com.idega.core</namespace>
 	
+	<tag>
+		<tag-name>contactPurposeSelector</tag-name>
+		<component>
+            <component-type>contactPurposeSelector</component-type>
+        </component>
+	</tag>
+	
+	<tag>
+		<tag-name>phoneTypeSelector</tag-name>
+		<component>
+            <component-type>phoneTypeSelector</component-type>
+        </component>
+	</tag>
+	
     <tag>
         <tag-name>DownloadLink</tag-name>
         <component>

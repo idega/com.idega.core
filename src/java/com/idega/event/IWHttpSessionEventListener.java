@@ -45,10 +45,10 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 				}
 			}
 		}
-		
+
 		getSessionsManager().removeSession(destroyedSession.getId());
 	}
-	
+
 	private ScriptCallerInterface getScriptCaller() {
 		if (scriptCaller == null)
 			ELUtil.getInstance().autowire(this);
