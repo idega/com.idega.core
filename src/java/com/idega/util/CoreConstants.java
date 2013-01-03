@@ -63,18 +63,6 @@ public class CoreConstants {
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
 
 	/**
-	 * <p>
-	 * Use this property for all stupid code hacks, when that code is needed
-	 * only when developing. For example, if you want to generate some fake data
-	 * to fill your fields in form or log some more information, this could be
-	 * used.
-	 * </p>
-	 * 
-	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
-	 */
-	public static final String DEVELOPEMENT_STATE_PROPERTY = "is_developement_mode";
-	
-	/**
 	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
 	 * for problems with url.</p>
 	 * 

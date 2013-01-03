@@ -21,6 +21,7 @@ import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
+import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -226,7 +227,6 @@ public abstract class DefaultSpringBean {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	protected boolean isDevelopementState() {
-		return getApplication().getSettings().getBoolean(
-				CoreConstants.DEVELOPEMENT_STATE_PROPERTY, Boolean.FALSE);
+		return !DefaultIWBundle.isProductionEnvironment();
 	}
 }
