@@ -22,6 +22,7 @@ import org.springframework.context.ApplicationListener;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
 import com.idega.repository.access.AccessControlList;
+import com.idega.repository.authentication.AuthenticationBusiness;
 import com.idega.repository.bean.Property;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.repository.bean.RepositoryItemVersionInfo;
@@ -134,5 +135,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public List<RepositoryItem> getSiblingResources(String path) throws RepositoryException;
 
 	public void logout(Session session);
+
+	public AuthenticationBusiness getAuthenticationBusiness();
 
 }
