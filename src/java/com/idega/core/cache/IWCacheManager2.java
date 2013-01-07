@@ -135,7 +135,7 @@ public class IWCacheManager2 {
 		Cache cache = getInternalCache(cacheName);
 		if (cache == null) {
 			try {
-				//isEternal = cacheTTLSeconds > 0 || cacheTTLIdleSeconds > 0 ? false : isEternal;
+				isEternal = cacheTTLSeconds > 0 || cacheTTLIdleSeconds > 0 ? false : isEternal;
 				cache = new Cache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, null, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds,
 						overFlowToDisk, cacheTTLIdleSeconds, registeredEventListeners, bootstrapCacheLoader);
 				getInternalCacheManager().addCache(cache);
