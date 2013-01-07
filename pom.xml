@@ -97,6 +97,12 @@
       <artifactId>cos</artifactId>
       <version>05Nov2002</version>
       <type>jar</type>
+      <exclusions>
+			<exclusion>
+			  <groupId>javax.servlet</groupId>
+		      <artifactId>servlet-api</artifactId>
+			</exclusion>
+		</exclusions>
     </dependency>
     <dependency>
       <groupId>icu4j</groupId>
