@@ -25,39 +25,57 @@ import com.idega.user.data.bean.User;
 @Entity
 @Table(name = ICPermission.ENTITY_NAME)
 @NamedQueries({
-		@NamedQuery(name = "permission.findByCriteria", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group"),
-		@NamedQuery(name = "permission.findByValues", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionValue = :permissionValue"),
-		@NamedQuery(name = "permission.findByGroupAndContext", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue in (:contextValues) and i.permissionGroup = :group"),
-		@NamedQuery(name = "findByContextType", query = "select i from ICPermission i where i.contextType = :contextType"),
-		@NamedQuery(name = "permission.findByContext", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue"),
-		@NamedQuery(name = "permission.findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
-		@NamedQuery(name = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionValue = 'Y' and i.permissionGroup = :group and i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null"),
-		@NamedQuery(name = "permission.findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
-		@NamedQuery(name = "permission.findAllPermissionsByContextTypeAndPermissionGroupsOrderedByContextValue", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
-		@NamedQuery(name = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionString", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
-		@NamedQuery(name = "permission.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue", query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
-		@NamedQuery(name = "permission.findPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue", query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
-		@NamedQuery(name = "permission.deleteByCriteria", query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)")
+		@NamedQuery(name = ICPermission.BY_CRITERIA, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group"),
+		@NamedQuery(name = ICPermission.BY_VALUES, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionValue = :permissionValue"),
+		@NamedQuery(name = ICPermission.BY_GROUP_AND_CONTEXT, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue in (:contextValues) and i.permissionGroup = :group"),
+		@NamedQuery(name = ICPermission.BY_CONTEXTS, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue in (:contextValues)"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE, query = "select i from ICPermission i where i.contextType = :contextType"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue"),
+		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUP_AND_PERMISSION_STRING, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionValue = 'Y' and i.permissionGroup = :group and i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
+		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUPS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
+		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
+		@NamedQuery(name = ICPermission.DELETE_BY_CRITERIA, query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)")
 })
 public class ICPermission implements Serializable {
 
 	private static final long serialVersionUID = -3406574119826904555L;
 
-	public final static String STATUS_ACTIVE = "ST_ACTIVE";
-	public final static String STATUS_PASSIVE = "ST_PASSIVE";
+	public final static String	STATUS_ACTIVE = "ST_ACTIVE",
+								STATUS_PASSIVE = "ST_PASSIVE",
 
-	public static final String ENTITY_NAME = "ic_permission";
-	public static final String COLUMN_PERMISSION_ID = "ic_permission_id";
-	private static final String COLUMN_CONTEXT_TYPE = "permission_context_type";
-	private static final String COLUMN_CONTEXT_VALUE = "permission_context_value";
-	private static final String COLUMN_PERMISSION_STRING = "permission_string";
-	private static final String COLUMN_PERMISSION_VALUE = "permission_value";
-	private static final String COLUMN_GROUP = "group_id";
-	private static final String COLUMN_INITIATION_DATE = "initiation_date";
-	private static final String COLUMN_TERMINATION_DATE = "termination_date";
-	private static final String COLUMN_PASSIVE_BY = "set_passive_by";
-	private static final String COLUMN_STATUS = "status";
-	private final static String COLUMN_INHERIT_TO_CHILDREN = "inherit";
+								ENTITY_NAME = "ic_permission",
+								COLUMN_PERMISSION_ID = "ic_permission_id",
+
+								DELETE_BY_CRITERIA = "permission.deleteByCriteria",
+								BY_PERMISSION_GROUP = "permission.findPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue",
+								BY_PERMISSION_GROUPS = "permission.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue",
+								BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionString",
+								BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS = "permission.findAllPermissionsByContextTypeAndPermissionGroupsOrderedByContextValue",
+								BY_CONTEXT_TYPE_AND_PERMISSION_GROUP = "permission.findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue",
+								BY_CONTEXT_TYPE_AND_CONTEXT_VALUE = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup",
+								BY_PERMISSION_GROUP_AND_PERMISSION_STRING = "permission.findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue",
+								BY_CONTEXTS = "permission.findByContexts",
+								BY_CONTEXT = "permission.findByContext",
+								BY_CONTEXT_TYPE = "permission.findByContextType",
+								BY_GROUP_AND_CONTEXT = "permission.findByGroupAndContext",
+								BY_VALUES = "permission.findByValues",
+								BY_CRITERIA = "permission.findByCriteria",
+
+								COLUMN_CONTEXT_VALUE = "permission_context_value";
+
+	private static final String COLUMN_CONTEXT_TYPE = "permission_context_type",
+								COLUMN_PERMISSION_STRING = "permission_string",
+								COLUMN_PERMISSION_VALUE = "permission_value",
+								COLUMN_GROUP = "group_id",
+								COLUMN_INITIATION_DATE = "initiation_date",
+								COLUMN_TERMINATION_DATE = "termination_date",
+								COLUMN_PASSIVE_BY = "set_passive_by",
+								COLUMN_STATUS = "status",
+								COLUMN_INHERIT_TO_CHILDREN = "inherit";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,7 +85,7 @@ public class ICPermission implements Serializable {
 	@Column(name = COLUMN_CONTEXT_TYPE)
 	private String contextType;
 
-	@Column(name = COLUMN_CONTEXT_VALUE, length = 30)
+	@Column(name = COLUMN_CONTEXT_VALUE, length = ICRole.ROLE_KEY_MAX_LENGTH)
 	private String contextValue;
 
 	@Column(name = COLUMN_PERMISSION_STRING)

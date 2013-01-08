@@ -45,10 +45,10 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 
 	public abstract boolean delete() throws IOException;
 
-	public abstract RepositoryItem getParenItem();
+	public abstract <T extends ICTreeNode> T getParenItem();
 
-	public abstract Collection<RepositoryItem> getChildResources();
-	public abstract Collection<RepositoryItem> getSiblingResources();
+	public abstract <T extends RepositoryItem> Collection<T> getChildResources();
+	public abstract <T extends RepositoryItem> Collection<T> getSiblingResources();
 
 	public abstract boolean isCollection();
 
@@ -76,16 +76,15 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 		return getPath();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Collection<? extends ICTreeNode> getChildren() {
-		return getChildResources();
+	public <T extends ICTreeNode> Collection<T> getChildren() {
+		Collection<RepositoryItem> children = getChildResources();
+		return (Collection<T>) children;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Iterator<? extends ICTreeNode> getChildrenIterator() {
-		Collection<? extends ICTreeNode> children = getChildResources();
+	public <T extends ICTreeNode> Iterator<T> getChildrenIterator() {
+		Collection<T> children = getChildren();
 		return ListUtil.isEmpty(children) ? null : children.iterator();
 	}
 
@@ -95,15 +94,15 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 	}
 
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex) {
-		Collection<? extends ICTreeNode> children = getChildren();
+	public <T extends ICTreeNode> T getChildAtIndex(int childIndex) {
+		Collection<T> children = getChildren();
 		if (ListUtil.isEmpty(children))
 			return null;
 
 		if (childIndex >= children.size())
 			return null;
 
-		List<? extends ICTreeNode> childrenList = new ArrayList<ICTreeNode>(children);
+		List<T> childrenList = new ArrayList<T>(children);
 		return childrenList.get(childIndex);
 	}
 
@@ -124,7 +123,7 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 	}
 
 	@Override
-	public ICTreeNode getParentNode() {
+	public <T extends ICTreeNode> T getParentNode() {
 		return getParenItem();
 	}
 
@@ -167,5 +166,9 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 	@Override
 	public String toString() {
 		return getPath();
+	}
+
+	public boolean isHidden() {
+		return getName().startsWith(CoreConstants.DOT);
 	}
 }

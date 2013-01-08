@@ -14,7 +14,9 @@ import java.util.logging.Logger;
 
 import javax.jcr.RepositoryException;
 
+import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.ArrayUtil;
 
@@ -58,7 +60,7 @@ public class FileItem extends RepositoryItem {
 
 	@Override
 	public boolean delete() {
-		if(icFile != null){
+		if (icFile != null) {
 			try {
 				icFile.delete();
 			} catch (SQLException e) {
@@ -68,6 +70,7 @@ public class FileItem extends RepositoryItem {
 			}
 			return true;
 		}
+
 		return file.delete();
 	}
 
@@ -78,17 +81,24 @@ public class FileItem extends RepositoryItem {
 
 	@Override
 	public boolean isCollection() {
-		return false;
+		return icFile == null ?
+				file == null ? false : file.isDirectory() :
+				icFile.isFolder();
 	}
 
 	@Override
 	public boolean exists() {
-		return false;
+		return icFile == null ?
+				file == null ? false : file.exists() :
+				true;
 	}
 
 	@Override
 	public String getPath() {
-		return null;
+		String path =	icFile == null ?
+							file == null ? null : file.getPath() :
+						icFile.getFileUri();
+		return path;
 	}
 
 	@Override
@@ -98,7 +108,7 @@ public class FileItem extends RepositoryItem {
 
 	@Override
 	public String getMimeType() {
-		return null;
+		return MimeTypeUtil.resolveMimeTypeFromFileName(getName());
 	}
 
 	@Override
@@ -117,8 +127,9 @@ public class FileItem extends RepositoryItem {
 	}
 
 	@Override
-	public RepositoryItem getParenItem() {
-		return new FileItem(file.getParentFile());
+	public <T extends ICTreeNode> T getParenItem() {
+		T item = (T) new FileItem(file.getParentFile());
+		return item;
 	}
 
 	@Override

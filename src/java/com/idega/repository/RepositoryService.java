@@ -78,7 +78,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 
 	public Credentials getCredentials(String user, String password);
 
-	public boolean generateUserFolders(String loginName) throws RepositoryException;
+	public boolean generateUserFolders(User user, String loginName) throws RepositoryException;
 
 	public boolean getExistence(String absolutePath) throws RepositoryException;
 
@@ -93,7 +93,6 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public Collection<RepositoryItem> getChildResources(String path) throws RepositoryException;
 
 	public boolean isFolder(String path) throws RepositoryException;
-	public boolean isHiddenFile(String name) throws RepositoryException;
 
 	public void registerRepositoryEventListener(RepositoryEventListener listener);
 

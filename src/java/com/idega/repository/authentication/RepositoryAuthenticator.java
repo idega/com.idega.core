@@ -25,8 +25,10 @@ import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.RepositoryStartedEvent;
 import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.BaseFilter;
+import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
@@ -58,8 +60,8 @@ public class RepositoryAuthenticator extends BaseFilter {
 			defaultPermissionsApplied = true;
 			defaultPermissionsApplied = applyDefaultPermissionsToRepository();
 
-//			IWMainApplication iwma = IWMainApplication.getIWMainApplication((HttpServletRequest) request);
-//			ELUtil.getInstance().publishEvent(new RepositoryStartedEvent(iwma));
+			IWMainApplication iwma = IWMainApplication.getIWMainApplication((HttpServletRequest) request);
+			ELUtil.getInstance().publishEvent(new RepositoryStartedEvent(iwma));
 		}
 	}
 
@@ -129,7 +131,7 @@ public class RepositoryAuthenticator extends BaseFilter {
 		chain.doFilter(request, response);
 	}
 
-	private HttpServletRequest setAsAuthenticatedInRepository(HttpServletRequest request,String loginName, LoggedOnInfo lInfo)
+	private HttpServletRequest setAsAuthenticatedInRepository(HttpServletRequest request, String loginName, LoggedOnInfo lInfo)
 		throws RemoteException, IOException, RepositoryException {
 
 		String repositoryPrincipal = loginName;
@@ -143,9 +145,10 @@ public class RepositoryAuthenticator extends BaseFilter {
 				request = new RepositoryAuthenticatedRequest(request, rootUserName, Collections.singleton(rootUserName));
 				repositoryPrincipal = rootUserName;
 			} else {
-				if (request.getUserPrincipal() == null && lInfo != null) {
+				if (request.getUserPrincipal() == null && lInfo != null)
+					//	Wrapping request
 					request = new RepositoryAuthenticatedRequest(request, loginName, lInfo.getUserRoles());
-				}
+
 				updateRolesForUser(request, lInfo);
 			}
 		} else {
@@ -163,19 +166,32 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private void updateRolesForUser(HttpServletRequest request, LoggedOnInfo lInfo) throws RepositoryException, RemoteException, IOException {
-		generateUserFolders(request);
+		if (lInfo == null)
+			return;
+
+		HttpSession session = request.getSession();
+		Object userFolderGenerated = session.getAttribute("user_folder_generated");
+		if (userFolderGenerated == null || !((Boolean) userFolderGenerated)) {
+			session.setAttribute("user_folder_generated", Boolean.TRUE);
+			generateUserFolders(request, lInfo.getUser());
+		}
 
 		IWMainApplication iwma = getIWMainApplication(request);
 		boolean doUpdateRoles = iwma.getSettings().getBoolean(PROPERTY_UPDATE_ROLES, Boolean.TRUE);
-		if (doUpdateRoles && lInfo != null && lInfo.getAttribute(REPOSITORY_ROLES_UPDATED) == null) {
+		if (doUpdateRoles) {
+			Object updated = lInfo.getAttribute(REPOSITORY_ROLES_UPDATED);
+			if (updated instanceof Boolean && (Boolean) updated)
+				return;
+
 			AuthenticationBusiness business = getAuthenticationBusiness();
 			business.updateRoleMembershipForUser(lInfo.getLogin(), lInfo.getUserRoles(), null);
 			lInfo.setAttribute(REPOSITORY_ROLES_UPDATED, Boolean.TRUE);
 		}
 	}
 
-	private void generateUserFolders(HttpServletRequest request) throws RepositoryException {
-		getRepositoryService().generateUserFolders(request.getRemoteUser());
+	private void generateUserFolders(HttpServletRequest request, User user) throws RepositoryException {
+		if (getRepositoryService().generateUserFolders(user, request.getRemoteUser()))
+			request.getSession().setAttribute("user_folder_generated", Boolean.TRUE);
 	}
 
 	private String getUserAuthenticatedByRepository(HttpSession session) {
@@ -203,17 +219,19 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private RepositoryService getRepositoryService() {
-		if (repository == null) {
+		if (repository == null)
 			autowire();
-		}
+
 		return repository;
 	}
+
 	private AuthenticationBusiness getAuthenticationBusiness() {
-		if (authentication == null) {
+		if (authentication == null)
 			autowire();
-		}
+
 		return authentication;
 	}
+
 	private void autowire() {
 		ELUtil.getInstance().autowire(this);
 	}

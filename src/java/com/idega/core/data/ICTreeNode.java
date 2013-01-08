@@ -33,7 +33,7 @@ public interface ICTreeNode {
 	/**
 	 *  Returns the child TreeNode at index childIndex.
 	 */
-	public ICTreeNode getChildAtIndex(int childIndex);
+	public <T extends ICTreeNode> T getChildAtIndex(int childIndex);
 
 	/**
 	 *    Returns the number of children TreeNodes the receiver contains.
@@ -48,7 +48,7 @@ public interface ICTreeNode {
 	/**
 	 *  Returns the parent TreeNode of the receiver.
 	 */
-	public ICTreeNode getParentNode();
+	public <T extends ICTreeNode> T getParentNode();
 
 	/**
 	 *  Returns true if the receiver is a leaf.

@@ -3,7 +3,6 @@ package com.idega.repository.authentication;
 import java.io.IOException;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
@@ -26,6 +25,7 @@ import com.idega.core.accesscontrol.business.LoginContext;
 import com.idega.core.accesscontrol.business.StandardRoles;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
 import com.idega.core.accesscontrol.data.bean.ICPermission;
+import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.RepositoryService;
@@ -42,7 +42,7 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	private static final String	PATH_USERS = "/users",
 								PATH_GROUPS = "/groups",
 								PATH_ROLES = "/roles",
-								SLIDE_DEFAULT_ROOT_USER = "root",
+								REPOSITORY_DEFAULT_ROOT_USER = "root",
 
 //								SLIDE_ROLE_NAME_USER = "user",
 //								GROUP_MEMBER_SET = "group-member-set",
@@ -139,7 +139,7 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	public void updateRoleMembershipForUser(String userLoginName, Set<String> roleNamesForUser, Set<String> loginNamesOfAllLoggedOnUsers)
 		throws RepositoryException, IOException {
 
-		if (userLoginName != null && userLoginName.length() > 0 && !userLoginName.equals(SLIDE_DEFAULT_ROOT_USER)) {
+		if (userLoginName != null && userLoginName.length() > 0 && !userLoginName.equals(REPOSITORY_DEFAULT_ROOT_USER)) {
 //			Set<String> newRoles = new HashSet<String>(roleNamesForUser);
 //			Enumeration e = getAllRoles(rCredentials).getResources();
 //			String userURI = getUserURI(userLoginName);
@@ -222,27 +222,27 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 //		}
 //	}
 
-	/**
-	 * @param userSet
-	 *            Set of userpaths or grouppaths
-	 * @see getUserURI(String)
-	 * @see getGroupURI(String)
-	 * @return
-	 */
-	private String encodeGroupMemberSetPropertyString(Set<String> userOrGroupSet) {
-		return userOrGroupSet.toString();//PropertyParser.encodePropertyString(null, userOrGroupSet);
-	}
+//	/**
+//	 * @param userSet
+//	 *            Set of userpaths or grouppaths
+//	 * @see getUserURI(String)
+//	 * @see getGroupURI(String)
+//	 * @return
+//	 */
+//	private String encodeGroupMemberSetPropertyString(Set<String> userOrGroupSet) {
+//		return userOrGroupSet.toString();//PropertyParser.encodePropertyString(null, userOrGroupSet);
+//	}
 
-	/**
-	 * @param element
-	 * @return
-	 * @throws RepositoryException
-	 */
-	private Set<String> parseGroupMemberSetPropertyString(String propertyString) throws RepositoryException {
-		Set<String> prop = new HashSet<String>();
-		prop.add(propertyString);
-		return prop;//PropertyParser.parsePropertyString(null, propertyString);
-	}
+//	/**
+//	 * @param element
+//	 * @return
+//	 * @throws RepositoryException
+//	 */
+//	private Set<String> parseGroupMemberSetPropertyString(String propertyString) throws RepositoryException {
+//		Set<String> prop = new HashSet<String>();
+//		prop.add(propertyString);
+//		return prop;//PropertyParser.parsePropertyString(null, propertyString);
+//	}
 
 	@Override
 	public boolean isRootUser(HttpServletRequest request) {
@@ -278,17 +278,19 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 			AccessControlEntry[] entries = acl.getAccessControlEntries();
 			List<String> privileges = Arrays.asList(Privilege.JCR_READ, Privilege.JCR_WRITE);
 			for (String role : roles) {
-				String roleUri = getRoleURI(role);
 				for (String privilege: privileges) {
-					if (hasPermission(entries, roleUri, privilege))
+					if (hasPermission(entries, role, privilege))
 						continue;
 
-					ICPermission permission = getPermissionDAO().createPermission(path, roleUri, null, privilege, Boolean.TRUE);
+					if (role.length() > ICRole.ROLE_KEY_MAX_LENGTH)
+						role = role.substring(0, ICRole.ROLE_KEY_MAX_LENGTH + 1);
+					ICPermission permission = getPermissionDAO().createPermission(path, role, null, privilege, Boolean.TRUE);
 					acl.addPermission(permission);
 				}
 			}
 		} catch (Exception e) {
-			getLogger().log(Level.SEVERE, "Exception while applying roles permissions to repository path: " + acl.getResourcePath() + ", roles=" + roles, e);
+			getLogger().log(Level.SEVERE, "Exception while applying roles permissions to repository path: " + acl.getResourcePath() + ", roles=" +
+					roles, e);
 			return null;
 		}
 

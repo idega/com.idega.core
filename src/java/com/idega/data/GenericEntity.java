@@ -3203,19 +3203,20 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	@Override
 	public boolean equals(Object obj) {
-
-		boolean isEqual = false;
+		if (!(obj instanceof IDOEntity)) {
+			logWarning("Object " + obj + " is not instance of " + IDOEntity.class.getName() + " and is not equal to " + this +
+					" (" + this.getClass().getName() + ")");
+			return false;
+		}
 
 		try {
-			isEqual = equals((IDOEntity) obj);
-		}
-		catch (ClassCastException e) {
+			return equals((IDOEntity) obj);
+		} catch (ClassCastException e) {
 			// the user is comparing apples to oranges of course they are not equal
 			// and this is an error too!
 			e.printStackTrace();
 			return false;
 		}
-		return isEqual;
 	}
 
 	/**

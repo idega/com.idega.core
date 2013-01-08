@@ -3,6 +3,7 @@
  */
 package com.idega.core.accesscontrol.dao.impl;
 
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -10,6 +11,8 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.context.ApplicationEvent;
+import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
@@ -20,12 +23,16 @@ import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.PermissionGroup;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.SimpleQuerier;
+import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.IWMainApplicationStartedEvent;
 import com.idega.user.data.bean.Group;
+import com.idega.util.ListUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("permissionDAO")
 @Transactional(readOnly = true)
-public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
+public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, ApplicationListener {
 
 	@Override
 	@Transactional(readOnly = false)
@@ -53,6 +60,16 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 	@Override
 	@Transactional(readOnly = false)
 	public ICPermission createPermission(String contextType, String contextValue, Group group, String permissionString, boolean permissionValue) {
+		if (group == null) {
+			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ? "Y" : "N");
+			if (!ListUtil.isEmpty(permissions))
+				return permissions.iterator().next();
+		} else {
+			ICPermission permission = findPermission(contextType, contextValue, permissionString, group);
+			if (permission != null)
+				return permission;
+		}
+
 		ICPermission permission = new ICPermission();
 		permission.setContextType(contextType);
 		permission.setContextValue(contextValue);
@@ -67,7 +84,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 	@Override
 	@Transactional(readOnly = false)
 	public void removePermissions(String contextType, String contextValue, String permissionString, Collection<Group> groups) {
-		Query query = getEntityManager().createNamedQuery("permission.deleteByCriteria");
+		Query query = getEntityManager().createNamedQuery(ICPermission.DELETE_BY_CRITERIA);
 		query.setParameter("contextType", contextType);
 		query.setParameter("contextValue", contextValue);
 		query.setParameter("permissionString", permissionString);
@@ -80,7 +97,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 	public List<ICPermission> findPermissions(String contextType) {
 		Param param1 = new Param("contextType", contextType);
 
-		return getResultList("permission.findByContextType", ICPermission.class, param1);
+		return getResultList(ICPermission.BY_CONTEXT_TYPE, ICPermission.class, param1);
 	}
 
 	@Override
@@ -88,7 +105,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param1 = new Param("contextType", contextType);
 		Param param2 = new Param("contextValue", contextValue);
 
-		return getResultList("permission.findByContext", ICPermission.class, param1, param2);
+		return getResultList(ICPermission.BY_CONTEXT, ICPermission.class, param1, param2);
 	}
 
 	@Override
@@ -97,7 +114,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param2 = new Param("contextValue", contextValue);
 		Param param3 = new Param("permissionString", permissionString);
 
-		return getResultList("permission.findAllPermissionsByContextTypeAndContextValueAndPermissionString", ICPermission.class, param1, param2, param3);
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION, ICPermission.class, param1, param2, param3);
 	}
 
 	@Override
@@ -107,7 +124,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param3 = new Param("permissionString", permissionString);
 		Param param4 = new Param("group", group);
 
-		return getSingleResult("permission.findByCriteria", ICPermission.class, param1, param2, param3, param4);
+		return getSingleResult(ICPermission.BY_CRITERIA, ICPermission.class, param1, param2, param3, param4);
 	}
 
 	@Override
@@ -117,7 +134,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param3 = new Param("permissionString", permissionString);
 		Param param4 = new Param("permissionValue", permissionValue);
 
-		return getResultList("permission.findByValues", ICPermission.class, param1, param2, param3, param4);
+		return getResultList(ICPermission.BY_VALUES, ICPermission.class, param1, param2, param3, param4);
 	}
 
 	@Override
@@ -126,7 +143,15 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param2 = new Param("contextValues", contextValues);
 		Param param3 = new Param("group", group);
 
-		return getResultList("permission.findByGroupAndContext", ICPermission.class, param1, param2, param3);
+		return getResultList(ICPermission.BY_GROUP_AND_CONTEXT, ICPermission.class, param1, param2, param3);
+	}
+
+	@Override
+	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues) {
+		Param param1 = new Param("contextType", contextType);
+		Param param2 = new Param("contextValues", contextValues);
+
+		return getResultList(ICPermission.BY_CONTEXTS, ICPermission.class, param1, param2);
 	}
 
 	@Override
@@ -143,7 +168,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param2 = new Param("permissionStrings", permissionStrings);
 		Param param3 = new Param("contextType", contextType);
 
-		return getResultList("permission.findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue", ICPermission.class, param1, param2, param3);
+		return getResultList(ICPermission.BY_PERMISSION_GROUP_AND_PERMISSION_STRING, ICPermission.class, param1, param2, param3);
 	}
 
 	@Override
@@ -153,7 +178,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param3 = new Param("permissionStrings", permissionStrings);
 		Param param4 = new Param("group", group);
 
-		return getResultList("permission.findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup", ICPermission.class, param1, param2, param3, param4);
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE, ICPermission.class, param1, param2, param3, param4);
 	}
 
 	@Override
@@ -161,7 +186,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param1 = new Param("contextType", contextType);
 		Param param2 = new Param("group", group);
 
-		return getResultList("permission.findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue", ICPermission.class, param1, param2);
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, ICPermission.class, param1, param2);
 	}
 
 	@Override
@@ -169,7 +194,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param1 = new Param("contextType", contextType);
 		Param param2 = new Param("groups", groups);
 
-		return getResultList("permission.findAllPermissionsByContextTypeAndPermissionGroupsOrderedByContextValue", ICPermission.class, param1, param2);
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS, ICPermission.class, param1, param2);
 	}
 
 	@Override
@@ -186,7 +211,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param2 = new Param("permissionStrings", permissionStrings);
 		Param param3 = new Param("contextType", contextType);
 
-		return getResultList("permission.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue", ICPermission.class, param1, param2, param3);
+		return getResultList(ICPermission.BY_PERMISSION_GROUPS, ICPermission.class, param1, param2, param3);
 	}
 
 	@Override
@@ -196,7 +221,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 		Param param3 = new Param("contextType", contextType);
 		Param param4 = new Param("contextValue", contextValue);
 
-		return getSingleResult("permission.findPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue", ICPermission.class, param1, param2, param3, param4);
+		return getSingleResult(ICPermission.BY_PERMISSION_GROUP, ICPermission.class, param1, param2, param3, param4);
 	}
 
 	@Override
@@ -220,4 +245,21 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO {
 	public List<ICRole> findAllRoles() {
 		return getResultList("role.findAll", ICRole.class);
 	}
+
+	@Override
+	public void onApplicationEvent(ApplicationEvent event) {
+		if (event instanceof IWMainApplicationStartedEvent) {
+			IWMainApplicationSettings settings = ((IWMainApplicationStartedEvent) event).getIWMA().getSettings();
+			if (settings.getBoolean("enlarge_perm_cntxt_column", Boolean.TRUE)) {
+				try {
+					SimpleQuerier.executeUpdate("ALTER TABLE " + ICPermission.ENTITY_NAME + " modify " + ICPermission.COLUMN_CONTEXT_VALUE +
+							" varchar(" + ICRole.ROLE_KEY_MAX_LENGTH + ");", true);
+					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
+				} catch (SQLException e) {
+					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
+				}
+			}
+		}
+	}
+
 }
