@@ -76,6 +76,7 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 		return getPath();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
 	public <T extends ICTreeNode> Collection<T> getChildren() {
 		Collection<RepositoryItem> children = getChildResources();
@@ -108,7 +109,7 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 
 	@Override
 	public int getChildCount() {
-		Collection<?> children = getChildren();
+		Collection<? extends ICTreeNode> children = getChildren();
 		return ListUtil.isEmpty(children) ? 0 : children.size();
 	}
 

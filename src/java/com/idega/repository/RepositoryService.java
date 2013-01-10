@@ -51,6 +51,8 @@ public interface RepositoryService extends Repository, ApplicationListener {
 			throws RepositoryException;
 
 	public Binary getBinary(String path) throws RepositoryException;
+	public Binary getBinaryAsRoot(String path) throws RepositoryException;
+
 	public InputStream getInputStream(String path) throws IOException, RepositoryException;
 	public InputStream getInputStreamAsRoot(String path) throws IOException, RepositoryException;
 	public InputStream getFileContents(String path) throws IOException, RepositoryException;
@@ -65,7 +67,6 @@ public interface RepositoryService extends Repository, ApplicationListener {
 
 	public AccessControlPolicy[] applyAccessControl(String path, AccessControlPolicy[] acp) throws RepositoryException;
 
-	public Node getNode(String absolutePath) throws RepositoryException;
 	public Node getNodeAsRootUser(String absolutePath) throws RepositoryException;
 	public Node getNodeAsRootUser(String absolutePath, boolean closeSession) throws RepositoryException;
 
