@@ -9,13 +9,13 @@
  */
 package com.idega.idegaweb;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Handler;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -163,7 +163,6 @@ public class IWMainApplicationSettings implements MutableClass {
 				this.preloadedCache = true;
 			}
 			catch (Exception e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -237,12 +236,11 @@ public class IWMainApplicationSettings implements MutableClass {
 		removeFromApplicationBinding(key);
 	}
 
-	public Set keySet() {
+	public Set<String> keySet() {
 		// merge the keys from idegaweb.pxml file and ICApplicationBinding
-		Set keysFromApplicationBinding = getApplicationBindingBusiness().keySet();
-		Iterator iterator = getIdegawebPropertyList().getIWPropertyListIterator();
-		while (iterator.hasNext()) {
-			IWProperty property = (IWProperty) iterator.next();
+		Set<String> keysFromApplicationBinding = getApplicationBindingBusiness().keySet();
+		for (Iterator<IWProperty> iterator = getIdegawebPropertyList().getIWPropertyListIterator(); iterator.hasNext();) {
+			IWProperty property = iterator.next();
 			String key = property.getKey();
 			keysFromApplicationBinding.add(key);
 		}
@@ -394,7 +392,7 @@ public class IWMainApplicationSettings implements MutableClass {
 				locale = LocaleUtil.getLocale(localeIdentifier);
 			}
 			if (!getApplication().isInDatabaseLessMode()) {
-				List localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
+				List<Locale> localesInUse = ICLocaleBusiness.getListOfLocalesJAVA();
 				// if it is a legal locale depending on the users settings then set that
 				// as the default otherwise use the first in the list
 				if (localesInUse.isEmpty()) {
@@ -413,7 +411,7 @@ public class IWMainApplicationSettings implements MutableClass {
 						}
 						else {
 							// else just the first we find
-							locale = (Locale) localesInUse.iterator().next();
+							locale = localesInUse.iterator().next();
 						}
 						setDefaultLocale(locale);// to fix the default locale or set it for
 																			// the first time
@@ -432,38 +430,22 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	/**
 	 *
-	 * Returns false if the removing fails
-	 */
-	public boolean removeIWService(Class serviceClass) {
-		return false;
-	}
-
-	/**
-	 *
-	 * Returns false if the class is wrong or it fails
-	 */
-	public boolean addIWService(Class serviceClass) {
-		return false;
-	}
-
-	/**
-	 *
 	 * Returns a list of Class objects corresponding to the IWService Classes
 	 */
-	public List getServiceClasses() {
+	public List<Class<? extends IWService>> getServiceClasses() {
 		// return null;
 		IWPropertyList plist = getIdegawebPropertyList().getIWPropertyList(_SERVICE_CLASSES_KEY);
 		// list is not being modified, call of store not necessary
 		if (plist != null) {
-			List l = new Vector();
-			Iterator iter = plist.iterator();
-			while (iter.hasNext()) {
-				IWProperty item = (IWProperty) iter.next();
+			List<Class<? extends IWService>> l = new ArrayList<Class<? extends IWService>>();
+			for (Iterator<IWProperty> iter = plist.iterator(); iter.hasNext();) {
+				IWProperty item = iter.next();
 				String serviceClass = item.getValue();
 				try {
-					l.add(RefactorClassRegistry.forName(serviceClass));
-				}
-				catch (Exception ex) {
+					@SuppressWarnings("unchecked")
+					Class<? extends IWService> theClass = RefactorClassRegistry.forName(serviceClass);
+					l.add(theClass);
+				} catch (Exception ex) {
 					ex.printStackTrace();
 				}
 			}
@@ -550,7 +532,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		// info is default Level, so setting to that, when debug is false
 		Level levelToSet = debugFlag ? Level.FINER : Level.INFO;
 
-		Logger parentLogger = Logger.global.getParent();
+		Logger parentLogger = Logger.getLogger(Logger.GLOBAL_LOGGER_NAME).getParent();
 		Logger rootLogger = parentLogger;
 
 		while (parentLogger != null) {
@@ -771,7 +753,7 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	private boolean isApplicationBindingInMap(String key) {
 		if (this.cache) {
-			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			Map<String, Object> map = getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
 				return map.containsKey(key);
 			}
@@ -781,21 +763,24 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	private String getApplicationBindingFromMap(String key) {
 		if (this.cache) {
-			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			Map<String, String> map = getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
-				return (String) map.get(key);
+				return map.get(key);
 			}
 		}
 		return null;
 	}
 
 	void setApplicationBindingInMap(String key, String value) {
+		if (key == null || value == null)
+			return;
+
 		// note that on the other servers the cache might be active!
 		iwApplicationSettingsEventClient.setApplicationBindingInMap(key, value);
 		if (this.cache) {
-			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			Map<String, String> map = getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map == null) {
-				map = new HashMap();
+				map = new HashMap<String, String>();
 			}
 			map.put(key, value);
 			getApplication().getIWApplicationContext().setApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP, map);
@@ -806,7 +791,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		// note that on the other servers the cache might be active!
 		iwApplicationSettingsEventClient.removeApplicationBindingFromMap(key);
 		if (this.cache) {
-			Map map = (Map) getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
+			Map<String, String> map = getApplication().getIWApplicationContext().getApplicationAttribute(ATTRIBUTE_APPLICATION_BINDING_MAP);
 			if (map != null) {
 				map.remove(key);
 			}

@@ -9,37 +9,40 @@ import java.util.Iterator;
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
  * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
- *  
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.4 $
  */
-public class IWPropertyListIterator implements Iterator {
+public class IWPropertyListIterator implements Iterator<IWProperty> {
 
-  private Iterator innerIterator;
+  private Iterator<String> innerIterator;
   private IWPropertyList list;
   private String currentKey;
 
-  public IWPropertyListIterator(Iterator keyIterator,IWPropertyList list){
+  public IWPropertyListIterator(Iterator<String> keyIterator, IWPropertyList list) {
     this.innerIterator=keyIterator;
     this.list=list;
   }
 
-  public boolean hasNext() {
+  @Override
+public boolean hasNext() {
     return this.innerIterator.hasNext();
   }
 
-  public Object next() {
+  @Override
+public IWProperty next() {
     return nextProperty();
   }
 
-  public void remove(){
+  @Override
+public void remove(){
     if(this.currentKey!=null){
       this.list.removeProperty(this.currentKey);
     }
   }
 
   public IWProperty nextProperty(){
-    String key = (String)this.innerIterator.next();
+    String key = this.innerIterator.next();
     this.currentKey=key;
     return this.list.getIWProperty(key);
   }

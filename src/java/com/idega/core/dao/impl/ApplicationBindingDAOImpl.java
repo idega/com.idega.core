@@ -47,9 +47,8 @@ public class ApplicationBindingDAOImpl extends GenericDaoImpl implements Applica
 	@Override
 	public Set<String> keySet() {
 		Collection<ApplicationBinding> coll = getAllApplicationBindings();
-		if (coll == null) {
-			return new TreeSet();
-		}
+		if (coll == null)
+			return new TreeSet<String>();
 
 		// we are keeping things simple, the list is not very large
 		Set<String> keyList = new TreeSet<String>();
@@ -78,18 +77,16 @@ public class ApplicationBindingDAOImpl extends GenericDaoImpl implements Applica
 		ApplicationBinding binding = getApplicationBinding(key);
 		if (binding != null) {
 			oldValue = binding.getValue();
-		}
-		else {
+		} else {
 			binding = createApplicationBinding(key, value, type);
-			return null;
+			return binding.getValue();
 		}
 
 		if (value == null) {
 			remove(binding);
-		}
-		else {
+		} else {
 			binding.setValue(value);
-			persist(binding);
+			merge(binding);
 		}
 
 		return oldValue;
@@ -109,11 +106,12 @@ public class ApplicationBindingDAOImpl extends GenericDaoImpl implements Applica
 		}
 		binding.setValue(value);
 		binding.setType(type);
-		persist(binding);
+		merge(binding);
 
 		return binding;
 	}
 
+	@SuppressWarnings("unchecked")
 	private Collection<ApplicationBinding> getAllApplicationBindings() {
 		Query q = createNamedQuery("applicationBinding.findAll");
 		return q.getResultList();

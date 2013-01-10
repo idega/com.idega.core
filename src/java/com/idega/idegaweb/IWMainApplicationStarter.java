@@ -1,7 +1,7 @@
 /*
  * $Id: IWMainApplication.java,v 1.152 2005/11/16 17:59:10 gimmi Exp $
  * Created in 2002 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2002-2005 Idega software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
@@ -37,6 +37,7 @@ import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
+import com.idega.core.builder.data.ICPage;
 import com.idega.core.builder.presentation.ICPropertyHandler;
 import com.idega.core.component.business.ComponentRegistry;
 import com.idega.core.component.data.ICObject;
@@ -70,21 +71,21 @@ import com.idega.util.expression.ELUtil;
  * </p>
  * Copyright: Copyright (c) 2002-2005 idega software<br/>
  * Last modified: $Date: 2005/11/16 17:59:10 $ by $Author: gimmi $
- *  
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.152 $
  */
 public class IWMainApplicationStarter implements ServletContextListener  {
-	
+
 	IWMainApplication iwma = null;
 	private ServletContext context;
-	
+
 	private final Logger log = Logger.getLogger(IWMainApplicationStarter.class.getName());
 
 	public IWMainApplicationStarter(){
 		// empty
 	}
-	
+
 	public IWMainApplicationStarter(ServletContext context){
 	    initialize(context);
 	}
@@ -97,9 +98,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		_iwma.setApplicationServer(appServer);
 		this.iwma=_iwma;
 		this.context=context;
-		
+
 		this.startLogManager();
-		
+
 		//IWMainApplication iwma = IWMainApplication.getIWMainApplication(getServletContext());
 		//sendStartMessage("Initializing IWMainApplicationStarter");
 		String serverInfo = context.getServerInfo();
@@ -118,23 +119,25 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		startup();
     }
-    
+
     /* (non-Javadoc)
      * @see javax.servlet.ServletContextListener#contextInitialized(javax.servlet.ServletContextEvent)
      */
-    public void contextInitialized(ServletContextEvent event) {
+    @Override
+	public void contextInitialized(ServletContextEvent event) {
         initialize(event.getServletContext());
     }
-    
+
     /* (non-Javadoc)
      * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
      */
-    public void contextDestroyed(ServletContextEvent event) {
+    @Override
+	public void contextDestroyed(ServletContextEvent event) {
         log.fine("Destroying IWMainApplicationStarter");
         shutdown();
         log.fine("Destroyed IWMainApplicationStarter");
     }
-    
+
 	public void startup() {
 		log.info("Initializing IdegaWeb");
 		try{
@@ -143,10 +146,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 		catch(Exception re){
 			re.printStackTrace();
-		}	
+		}
 	}
-	
-	protected void fireAppStartedEvent() {		
+
+	protected void fireAppStartedEvent() {
 		ELUtil.getInstance().publishEvent(new IWMainApplicationStartedEvent(this));
 	}
 
@@ -184,7 +187,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				this.iwma.setInSetupMode(true);
 			}
 		}
-		
+
 		Connection conn=null;
 		try{
 			conn = ConnectionBroker.getConnection();
@@ -200,7 +203,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			}
 		}
 	}
-	
+
 	protected void startPoolManDatabasePool() {
 		ConnectionBroker.POOL_MANAGER_TYPE = ConnectionBroker.POOL_MANAGER_TYPE_POOLMAN;
 		//ServletContext cont = this.getServletContext();
@@ -226,10 +229,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			sfile1 = dbPropsFromSystemProperty;
 			log.info("Trying to load db.properties from system property ("+ConnectionBroker.SYSTEM_PROPERTY_DB_PROPERTIES_FILE_PATH+") :"+dbPropsFromSystemProperty);
 		}
-		
+
 		File file1 = new File(sfile1);
 		File file2 = new File(sfile2);
-		
+
 		if(file1.exists()){
 			fileName=sfile1;
 		}
@@ -240,12 +243,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			log.fine("No db.properties found");
 			return false;
 		}
-		
+
 		log.info("Reading Databases from file: "+fileName);
 		log.fine("Starting idega Datastore ConnectionPool");
 		PoolManager.unlock();
-		PoolManager.getInstance(fileName,this.iwma);	
-		
+		PoolManager.getInstance(fileName,this.iwma);
+
 		return true;
 	}
 	/**
@@ -265,9 +268,9 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			log.info("Starting JDBC Datastore ConnectionPool from url: "+ConnectionBroker.getDefaultJNDIUrl());
 		}
 		return theReturn;
-		
+
 	}
-	
+
 	public void endDatabasePool() {
 		//sendShutdownMessage("Stopping Database Pool");
 		try {
@@ -300,7 +303,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				thread.interrupt();
 			}
 		}
-	}		
+	}
 
 	/**
 	 * <p>
@@ -320,7 +323,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			p.put("derby.storage.fileSyncTransactionLog","true");
 		}
 	}
-	
+
 	/**
 	 * Adds the .jar files in /WEB-INF/lib to the ClassPath
 	 */
@@ -346,8 +349,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		log.fine("Classpath after adding libs:\n" + classPath);
 		System.setProperty(classPathProperty, classPath);
 	}
-	
-	
+
+
 	public void startIdegaWebApplication() {
 		long start = System.currentTimeMillis();
 
@@ -361,11 +364,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		IWMainApplication.shutdownApplicationServices();
 		// enable singletons
 		SingletonRepository.start();
-		
+
 		this.setDatabaseProperties();
 		registerSystemBeans();
 		this.startDatabasePool();
-		
+
 		// set application variables first before setting any properties (ICApplicationBinding table might be created first)
 		setApplicationVariables();
 		if (!this.iwma.getSettings().getBoolean("use_debug_mode", false)) {
@@ -382,7 +385,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		else{
 			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
 		}
-		*/		
+		*/
 		// cleaning, maintaining, updating
 		if(!this.iwma.isInDatabaseLessMode()){
 			log.fine("Cleaning and updating database...");
@@ -392,13 +395,13 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			log.fine("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();
-		
+
 		startComponentRegistry();
-		
+
 		if(!this.iwma.isInDatabaseLessMode()){
 			this.iwma.startAccessController();
 		}
-		
+
 		if(!this.iwma.isInDatabaseLessMode()){
 			this.iwma.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
 		}
@@ -411,7 +414,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			catch(Exception e){
 				log.log(Level.SEVERE, "Error loading the ViewManager", e);
 			}
-		//}		
+		//}
 
 		if(!this.iwma.isInDatabaseLessMode()){
 			this.iwma.loadBundles();
@@ -421,23 +424,18 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//create ibdomain
 		long end = System.currentTimeMillis();
 		long time = (end - start) / 1000;
-		
+
 		// test if all classes are available
 		testReferencedClasses();
 		log.info("Completed in " + time + " seconds");
 	}
-	
-	/**
-	 * <p>
-	 * TODO tryggvil describe method startComponentRegistry
-	 * </p>
-	 */
+
 	private void startComponentRegistry() {
 		ComponentRegistry.loadRegistry(this.iwma,this.context);
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	private void startLogManager() {
 		String propertiesRealPath = this.iwma.getPropertiesRealPath();
@@ -454,8 +452,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	}
 
 	protected void setApplicationVariables() {
-		// get the factory settings for auto create entities and set EntityControl. 
-		// In this way ICApplicationBinding table can be created if necessary and if it is allowed by the factory settings 
+		// get the factory settings for auto create entities and set EntityControl.
+		// In this way ICApplicationBinding table can be created if necessary and if it is allowed by the factory settings
 		// see call of getIfgetIfEntityAutoCreate() below
 		if (this.iwma.getSettings().getFactorySettingsForAutoCreateEntities()) {
 			EntityControl.setAutoCreationOfEntities(true);
@@ -498,7 +496,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			if(userSystem.equalsIgnoreCase("OLD")){
 				log.fine("Using Old idegaWeb User System");
 				LoginBusinessBean.USING_OLD_USER_SYSTEM=true;
-				IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);	
+				IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);
 			}
 		}
 		String accControlType = this.iwma.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
@@ -529,8 +527,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			log.fine("Using JavaServer Faces Runtime");
 		}
 	}
-	
-	
+
+
 	private void startTemporaryBundleStarters() {
 		// start these bundle starters explicitly because some old applications have not registered these bundles and
 		// therefore these bundle starters will not start automatically
@@ -538,14 +536,14 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//startTemporaryBundleStarter("com.idega.block.media.IWBundleStarter");
 		//startTemporaryBundleStarter("com.idega.builder.IWBundleStarter");
 		//Temporary, should be removed:
-		
+
 		/*try {
 			Class.forName("com.idega.hibernate.demo.Test").newInstance();
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 		}*/
-		
+
 		//startTemporaryBundleStarter("is.idega.idegaweb.member.IWBundleStarter");
 		//startTemporaryBundleStarter("se.idega.idegaweb.commune.childcare.IWBundleStarter");
 		//startTemporaryBundleStarter("se.idega.idegaweb.commune.school.IWBundleStarter");
@@ -553,11 +551,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		//startTemporaryBundleStarter("is.idega.idegaweb.egov.musicschool.IWBundleStarter");
 		//startTemporaryBundleStarter("se.idega.idegaweb.commune.adulteducation.IWBundleStarter");
 	}
-	
-	
+
+
 	/**
 	 * Category bundle is not registered in many web applications (but used) because category wasn't a bundle in the past
-	 * Call BundleStarter directly because the bundle is not loaded by old web applications! 
+	 * Call BundleStarter directly because the bundle is not loaded by old web applications!
 	 */
 	/*private void startTemporaryBundleStarter(String starterName) {
 	    IWBundleStartable starter;
@@ -578,8 +576,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			log.log(Level.WARNING, "Error starting " + starterName, e);
         }
 	}*/
-	
-	
+
+
 	/**
 	 * This is a fix so that these bundle starters are always started
 	 */
@@ -587,8 +585,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 	{
 	    //TODO: TL: Move this to be registered in a property file.
 		RefactorClassRegistry rfregistry = RefactorClassRegistry.getInstance();
-		rfregistry.registerRefactoredClass("com.idega.builder.data.IBDomain","com.idega.core.builder.data.ICDomain");
-		rfregistry.registerRefactoredClass("com.idega.builder.data.IBPage","com.idega.core.builder.data.ICPage");
+		rfregistry.registerRefactoredClass("com.idega.builder.data.IBDomain", ICDomain.class.getName());
+		rfregistry.registerRefactoredClass("com.idega.builder.data.IBPage", ICPage.class.getName());
 
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICFile","com.idega.core.file.data.ICFile");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICFileType","com.idega.core.file.data.ICFileType");
@@ -631,26 +629,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICNetwork","com.idega.core.net.data.ICNetwork");
 		rfregistry.registerRefactoredClass("com.idega.core.data.ICProtocol","com.idega.core.net.data.ICProtocol");
-		
+
 		// perhaps these entries are not necessary (by thomas)
 		rfregistry.registerRefactoredClass("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class.getName());
 		rfregistry.registerRefactoredClass("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class.getName());
 	}
 
-	/*private void updateClassReferencesInDatabase() {
-		try {
-			ICObjectTypeHome home = (ICObjectTypeHome) IDOLookup.getHome(ICObjectType.class);
-			home.updateClassReferences("com.idega.builder.handler.PropertyHandler", ICPropertyHandler.class);
-			home.updateClassReferences("com.idega.core.builder.data.ICPropertyHandler", ICPropertyHandler.class);
-		}
-		catch (IDOLookupException e) {
-			log.throwing(this.getClass().getName(), "updateClassReferencesInDatabase", e);
-		}
-		catch (IDOException e) {
-			log.throwing(this.getClass().getName(), "updateClassReferencesInDatabase", e);
-		}
-	}*/
-	
 	protected void updateStartDataInDatabase() {
 		IWStartDataInserter.getInstance().insertStartData();
 
@@ -658,13 +642,13 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		updateStartTypeEmailType();
 		updateDomainData();
 	}
-		
+
 	private void updateDomainData() {
-		
+
 		String propertyKey = "dataupdate_domain_done";
 		String done = iwma.getSettings().getProperty(propertyKey);
 		if(done==null){
-			
+
 			ICDomainHome domainHome = null;
 			ICDomain defaultDomain = null;
 			try {
@@ -679,12 +663,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 						defaultDomain.store();
 						iwma.getSettings().setProperty(propertyKey, "true");
 					} catch (FinderException e1) {
-						// TODO Auto-generated catch block
 						e1.printStackTrace();
 					}
 				}
 			} catch (IDOLookupException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
 		}
@@ -713,7 +695,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		insertGroupRelationType("FAM_CUSTODIAN");
 		insertGroupRelationType("FAM_SIBLING");
 	}
-	
+
 	private void updateStartTypeEmailType() {
 		EmailTypeHome home;
 		try {
@@ -731,7 +713,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 
 	}
-	
+
 	/*private void cleanEmailData() {
 		try {
 			IWApplicationContext iwac = this.iwma.getIWApplicationContext();
@@ -743,7 +725,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		}
 	}*/
 
-	
+
 	private void insertGroupRelationType(String groupRelationType) {
 		/**
 		 * @todo Move this to a more appropriate place
@@ -770,21 +752,19 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 			log.throwing(this.getClass().getName(), "insertGroupRelationType", e);
 		}
 	}
-	
+
 	/**
 	 * Not Implemented fully
 	 */
 	public void executeServices(IWMainApplication application) {
-		List list = application.getSettings().getServiceClasses();
+		List<Class<? extends IWService>> list = application.getSettings().getServiceClasses();
 		if (list != null) {
-			Iterator iter = list.iterator();
-			while (iter.hasNext()) {
-				Class theClass = (Class) iter.next();
+			for (Iterator<Class<? extends IWService>> iter = list.iterator(); iter.hasNext();) {
+				Class<? extends IWService> theClass = iter.next();
 				try {
-					IWService theService = (IWService) theClass.newInstance();
+					IWService theService = theClass.newInstance();
 					theService.startService(application);
-				}
-				catch (Exception ex) {
+				} catch (Exception ex) {
 					log.log(Level.WARNING, "Error starting service " + theClass.getName(), ex);
 				}
 			}
@@ -805,47 +785,45 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		log.fine("Completed");
 		Introspector.flushCaches();
 	}
-	
+
 	private void testReferencedClasses() {
 		ICObjectHome home = null;
 		try {
 			home =(ICObjectHome) IDOLookup.getHome(ICObject.class);
-		}
-		catch (IDOLookupException ex) {
+		} catch (IDOLookupException ex) {
 			log.severe("Could not find home of ICObject");
 			return;
 		}
+
 		// get the current classloader (it is the same that is used for "Class.forName()" )
 		ClassLoader currentClassLoader = getClass().getClassLoader();
 		try {
-			SortedSet classNames = new TreeSet();
-			Collection allICObjects = home.findAll();
-			Iterator iterator = allICObjects.iterator();
-			while (iterator.hasNext()) {
-				ICObject object = (ICObject) iterator.next();
+			SortedSet<String> classNames = new TreeSet<String>();
+			@SuppressWarnings("unchecked")
+			Collection<ICObject> allICObjects = home.findAll();
+			for (Iterator<ICObject> iterator = allICObjects.iterator(); iterator.hasNext();) {
+				ICObject object = iterator.next();
 				String className = object.getClassName();
 				try {
 					// delay initialization, we are not using the class here
 					RefactorClassRegistry.forName(className, false, currentClassLoader);
-				}
-				catch (ClassNotFoundException ex) {
+				} catch (ClassNotFoundException ex) {
 					// bad luck
 					classNames.add(className);
 					// go ahead
 				}
 			}
-			Iterator classNameIterator = classNames.iterator();
-			while (classNameIterator.hasNext()) {
-				String className = (String) classNameIterator.next();
+
+			for (Iterator<String> classNameIterator = classNames.iterator(); classNameIterator.hasNext();) {
+				String className = classNameIterator.next();
 				log.warning("Class " + className + " could not be found but is referenced as ICObject");
 			}
-			
-		}
-		catch (FinderException ex) {
+
+		} catch (FinderException ex) {
 			log.fine("Could not find any ICObjects");
 		}
 	}
-	
+
 	public IWMainApplication getIWMainApplication() {
 		return iwma;
 	}

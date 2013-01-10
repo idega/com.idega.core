@@ -35,12 +35,12 @@ import com.idega.xml.XMLParser;
  * <p>
  * This is an class for reading idegaweb .pxml files that are
  * xml files with key-value pairs.<br/>
- * This class is used and extended for idegaweb.pxml and bundles.pxml 
+ * This class is used and extended for idegaweb.pxml and bundles.pxml
  * files and a few others.
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
  * Last modified: $Date: 2008/11/05 16:39:40 $ by $Author: laddi $
- *  
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.37 $
  */
@@ -64,7 +64,7 @@ public class IWPropertyList {
 	static String stringTag = "string";
 	static String stringString = "java.lang.String";
 	static String backupEnding = ".bak";
-	
+
 	private static final Logger logger = Logger.getLogger(IWPropertyList.class.getName());
 
 	IWPropertyList() {
@@ -100,11 +100,11 @@ public class IWPropertyList {
 			file = createFile(path, fileNameWithoutFullPath);
 		}
 		else {
-			file = new File(path + FileUtil.getFileSeparator() + fileNameWithoutFullPath);
+			file = new File(path + File.separator + fileNameWithoutFullPath);
 		}
 		load(file);
 	}
-	
+
 	/**
 	 * IWPropertyList loaded from an inputStream
 	 * @param stream
@@ -200,10 +200,10 @@ public class IWPropertyList {
 		return new IWProperty(this);
 	}
 
-	public void setProperties(Map properties) {
+	@SuppressWarnings("unchecked")
+	public void setProperties(Map<Object, Object> properties) {
 		if (properties != null) {
-			Iterator iter = properties.keySet().iterator();
-			while (iter.hasNext()) {
+			for (Iterator<?> iter = properties.keySet().iterator(); iter.hasNext();) {
 				Object oKey = iter.next();
 				String sKey = oKey.toString();
 				Object oValue = properties.get(oKey);
@@ -212,7 +212,7 @@ public class IWPropertyList {
 					if (iwp == null) {
 						iwp = this.getNewPropertyList(sKey);
 					}
-					iwp.setProperties((Map) oValue);
+					iwp.setProperties((Map<Object, Object>) oValue);
 				}
 				else {
 					//String sValue = oValue.toString();
@@ -307,7 +307,7 @@ public class IWPropertyList {
 			return null;
 		}
 	}
-	
+
 	public String getProperty(String key, String defaultReturnValue) {
 		try {
 			return findKeyElement(key).getChild(valueTag).getText();
@@ -322,10 +322,9 @@ public class IWPropertyList {
 	 * @return null if no match
 	 */
 	static XMLElement findKeyElement(XMLElement startElement, String key) {
-		List list = startElement.getChildren();
-		Iterator iter = list.iterator();
-		while (iter.hasNext()) {
-			XMLElement keyElement = (XMLElement) iter.next();
+		List<XMLElement> list = startElement.getChildren();
+		for (Iterator<XMLElement> iter = list.iterator(); iter.hasNext();) {
+			XMLElement keyElement = iter.next();
 			XMLElement nameElement = keyElement.getChild(nameTag);
 			if(nameElement != null){
 				String childText = nameElement.getText();
@@ -385,7 +384,7 @@ public class IWPropertyList {
 			logger.fine("Property file does not exist : "+this.xmlFile);
 		}
 	}
-	
+
 	public void load(InputStream stream) {
 		XMLParser builder = new XMLParser(false);
 		try {
@@ -416,10 +415,9 @@ public class IWPropertyList {
 	 */
 
 	private XMLElement getArrayValueElement(XMLElement arrayElement, Object value) {
-		List arrayList = arrayElement.getChildren();
-		Iterator iter = arrayList.iterator();
-		while (iter.hasNext()) {
-			XMLElement item = (XMLElement) iter.next();
+		List<XMLElement> arrayList = arrayElement.getChildren();
+		for (Iterator<XMLElement> iter = arrayList.iterator(); iter.hasNext();) {
+			XMLElement item = iter.next();
 			if (IWProperty.valueContains(item, value)) {
 				return item;
 			}
@@ -435,7 +433,7 @@ public class IWPropertyList {
 		return valueElement.getText();
 	}
 
-	public Iterator iterator() {
+	public Iterator<IWProperty> iterator() {
 		return getIWPropertyListIterator();
 	}
 
@@ -503,7 +501,7 @@ public class IWPropertyList {
 			logger.log(Level.SEVERE, "Error deleting " + this.xmlFile.getAbsolutePath() + this.xmlFile.getName(), io);
 		}
 	}
-			
+
 
 	public void store(OutputStream stream) {
 		if (this.xmlDocument != null) {
@@ -519,7 +517,7 @@ public class IWPropertyList {
 			}
 		}
 	}
-	
+
 	public boolean getBooleanProperty(String propertyName)
 	{
 		return Boolean.valueOf(getProperty(propertyName)).booleanValue();
@@ -534,5 +532,5 @@ public class IWPropertyList {
 		this.parentElement=null;
 		this.mapElement=null;
 	}
-	
+
 }
