@@ -7,7 +7,6 @@ import java.util.Collection;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
-import javax.jcr.Binary;
 import javax.jcr.Credentials;
 import javax.jcr.Node;
 import javax.jcr.Repository;
@@ -43,6 +42,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public boolean uploadXMLFileAndCreateFoldersFromStringAsRoot(String parentPath, String fileName, String fileContentString)
 			throws RepositoryException;
 	public boolean uploadFile(String uploadPath, String fileName, String contentType, InputStream stream) throws RepositoryException;
+	public boolean uploadFile(String uploadPath, String fileName, String contentType, InputStream stream, User user) throws RepositoryException;
 
 	public boolean uploadZipFileContents(ZipInputStream zipStream, String uploadPath) throws RepositoryException;
 
@@ -50,10 +50,10 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public Node updateFileContents(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties)
 			throws RepositoryException;
 
-	public Binary getBinaryAsRoot(String path) throws RepositoryException;
-
+	public InputStream getInputStream(Session session, String path) throws IOException, RepositoryException;
 	public InputStream getInputStream(String path) throws IOException, RepositoryException;
 	public InputStream getInputStreamAsRoot(String path) throws IOException, RepositoryException;
+
 	public InputStream getFileContents(String path) throws IOException, RepositoryException;
 	public InputStream getFileContents(User user, String path) throws IOException, RepositoryException;
 
