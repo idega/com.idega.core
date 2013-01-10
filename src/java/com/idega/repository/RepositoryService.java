@@ -50,7 +50,6 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public Node updateFileContents(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties)
 			throws RepositoryException;
 
-	public Binary getBinary(String path) throws RepositoryException;
 	public Binary getBinaryAsRoot(String path) throws RepositoryException;
 
 	public InputStream getInputStream(String path) throws IOException, RepositoryException;
