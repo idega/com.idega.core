@@ -18,10 +18,8 @@ public class CoreConstants {
 
 	public static final String CORE_IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
-	private static final String[] _HEXIDECIMAL_LETTERS = new String[] { "a",
-			"b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F" };
-	public static final List<String> HEXIDECIMAL_LETTERS = Collections
-			.unmodifiableList(Arrays.asList(_HEXIDECIMAL_LETTERS));
+	private static final String[] _HEXIDECIMAL_LETTERS = new String[] {"a", "b", "c", "d", "e", "f", "A", "B", "C", "D", "E", "F"};
+	public static final List <String> HEXIDECIMAL_LETTERS = Collections.unmodifiableList(Arrays.asList(_HEXIDECIMAL_LETTERS));
 
 	public static final String EMPTY = "";
 	public static final String SLASH = "/";
@@ -75,6 +73,14 @@ public class CoreConstants {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public static final String DEVELOPEMENT_STATE_PROPERTY = "is_developement_mode";
+	
+	/**
+	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
+	 * for problems with url.</p>
+	 * 
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
@@ -121,8 +127,7 @@ public class CoreConstants {
 		}
 
 		try {
-			Class<?> clazz = Class.forName(ARTICLE_CONSTANTS.getClass()
-					.getName());
+			Class<?> clazz = Class.forName(ARTICLE_CONSTANTS.getClass().getName());
 			Method[] methods = clazz.getDeclaredMethods();
 			Method m = null;
 			String name = null;
@@ -158,10 +163,8 @@ public class CoreConstants {
 	public static final String BUILDER_MODULE_PROPERTY_YES_VALUE = "Y";
 	public static final String BUILDER_MODULE_PROPERTY_NO_VALUE = "N";
 
-	public static final String PAGE_ERROR_403_HANDLER_PORPERTY = HttpServletResponse.SC_FORBIDDEN
-			+ "_PAGE_URI";
-	public static final String PAGE_ERROR_404_HANDLER_PORPERTY = HttpServletResponse.SC_NOT_FOUND
-			+ "_PAGE_URI";
+	public static final String PAGE_ERROR_403_HANDLER_PORPERTY = HttpServletResponse.SC_FORBIDDEN + "_PAGE_URI";
+	public static final String PAGE_ERROR_404_HANDLER_PORPERTY = HttpServletResponse.SC_NOT_FOUND + "_PAGE_URI";
 
 	public static final String SYSTEM_RESTART_IN_PROPERTY = "system_restart_in";
 

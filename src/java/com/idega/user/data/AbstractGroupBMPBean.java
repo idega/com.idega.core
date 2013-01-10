@@ -35,6 +35,8 @@ import com.idega.idegaweb.IWApplicationContext;
 
 public abstract class AbstractGroupBMPBean extends GenericEntity implements Group {
 
+	private static final long serialVersionUID = -4190055194376271683L;
+
 	protected Group _group;
 
 	protected static final String GENERAL_GROUP_COLUMN_GROUP_ID = GroupBMPBean.COLUMN_GROUP_ID;
@@ -47,18 +49,20 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	protected static final String GENERAL_GROUP_COLUMN_ALIAS_TO_GROUP = GroupBMPBean.COLUMN_ALIAS_TO_GROUP;
 	protected static final String GENERAL_GROUP_COLUMN_SHORT_NAME = GroupBMPBean.COLUMN_SHORT_NAME;
 	protected static final String GENERAL_GROUP_COLUMN_ABBREVATION = GroupBMPBean.COLUMN_ABBREVATION;
-	
+
 	protected static final String SQL_JOINT_VARIABLE_GROUP = "t1";
 	protected static final String SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP = "t2";
 
 	/**
 	 * Returns a unique Key to identify this GroupType
 	 */
+	@Override
 	public abstract String getGroupTypeKey();
 	//  public String getGroupTypeKey(){return null;}
 	/**
 	 * Returns a description for the GroupType
 	 */
+	@Override
 	public abstract String getGroupTypeDescription();
 	//  public String getGroupTypeDescription(){return null;}
 
@@ -82,6 +86,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		this.getAttribute(getIDColumnName()).setAsPrimaryKey(true);
 	}
 
+	@Override
 	public Object ejbCreate() throws CreateException {
 			this._group = this.getGroupHome().create();
 			this._group.setGroupType(this.getGroupTypeKey());
@@ -97,10 +102,12 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return this.getGroupTypeKey();
 	}
 
+	@Override
 	public void setDefaultValues() {
 			setGroupType(getGroupTypeKey());
 	}
 
+	@Override
 	public void insertStartData() {
 		try {
 			GroupTypeHome tghome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
@@ -124,6 +131,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	protected boolean doInsertInCreate() {
 		return true;
 	}
@@ -138,6 +146,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	    }
 	  }
 	*/
+	@Override
 	public void store() throws IDOStoreException {
 			if (this.getGroupType() == null) { // || getGroupHome().getGroupType().equals(this.getGroupType())
 				this.setGroupType(this.getGroupTypeKey());
@@ -148,6 +157,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 			//      System.out.println("User after/st primaryKey = " + this.getPrimaryKey());
 	}
 
+	@Override
 	public void remove() throws RemoveException{
 			super.remove();
 			getGeneralGroup().remove();
@@ -161,7 +171,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		return home;
 	}
 
@@ -181,6 +191,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	//
 	//
 
+	@Override
 	public String getName() {
 		try {
 			return getGeneralGroup().getName();
@@ -190,6 +201,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public void setName(String name) {
 		try {
 			getGeneralGroup().setName(name);
@@ -199,6 +211,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public String getShortName() {
 		try {
 			return getGeneralGroup().getShortName();
@@ -208,6 +221,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public void setShortName(String shortName) {
 		try {
 			getGeneralGroup().setShortName(shortName);
@@ -217,6 +231,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public String getAbbrevation() {
 		try {
 			return getGeneralGroup().getAbbrevation();
@@ -226,6 +241,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public void setAbbrevation(String abbr) {
 		try {
 			getGeneralGroup().setAbbrevation(abbr);
@@ -235,53 +251,55 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public String getGroupType(){
 		return getGeneralGroup().getGroupType();
 	}
 
+	@Override
 	public void setGroupType(String type){
 		getGeneralGroup().setGroupType(type);
 	}
-	
+
+	@Override
 	public void setGroupType(GroupType type){
 		getGeneralGroup().setGroupType(type);
 	}
 
+	@Override
 	public String getDescription(){
 		return getGeneralGroup().getDescription();
 	}
 
+	@Override
 	public void setDescription(String description){
 		getGeneralGroup().setDescription(description);
 	}
 
+	@Override
 	public String getExtraInfo(){
 		return getGeneralGroup().getExtraInfo();
 	}
 
+	@Override
 	public void setExtraInfo(String extraInfo){
 		getGeneralGroup().setExtraInfo(extraInfo);
 	}
 
+	@Override
 	public Timestamp getCreated(){
 		return getGeneralGroup().getCreated();
 	}
 
+	@Override
 	public void setCreated(Timestamp created){
 		getGeneralGroup().setCreated(created);
 	}
 
-	//
-	//
-	//
-
-	//
-	//
-	//
-
 	/**
 	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
 	 */
+	@Override
 	public Collection getRelatedBy(GroupRelationType relationType) throws FinderException{
 		return this.getGeneralGroup().getRelatedBy(relationType);
 	}
@@ -289,99 +307,123 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	/**
 	 * Returns a collection of Group objects that are related by the relation type relationType with this Group
 	 */
+	@Override
 	public Collection getRelatedBy(String relationType) throws FinderException{
 		return this.getGeneralGroup().getRelatedBy(relationType);
 	}
 
+	@Override
 	public void addRelation(Group groupToAdd, String relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(groupToAdd, relationType);
 	}
-	
+
+	@Override
 	public Collection getReverseRelatedBy(String relationType) throws FinderException{
 		return this.getGeneralGroup().getReverseRelatedBy(relationType);
 	}
 
+	@Override
 	public void addRelation(Group groupToAdd, GroupRelationType relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(groupToAdd, relationType);
 	}
 
+	@Override
 	public void addRelation(int relatedGroupId, GroupRelationType relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(relatedGroupId, relationType);
 	}
-	
+
+	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType) throws CreateException{
 		this.getGeneralGroup().addUniqueRelation(relatedGroupId, relationType);
 	}
-	
+
+	@Override
 	public void addUniqueRelation(Group relatedGroup, String relationType) throws CreateException{
 		this.getGeneralGroup().addUniqueRelation(relatedGroup, relationType);
 	}
 
+	@Override
 	public void addRelation(int relatedGroupId, String relationType) throws CreateException{
 		this.getGeneralGroup().addRelation(relatedGroupId, relationType);
 	}
 
+	@Override
 	public void removeRelation(Group relatedGroup, String relationType) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroup, relationType);
 	}
 
+	@Override
 	public void removeRelation(Group relatedGroup, String relationType, User performer) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroup, relationType, performer);
 	}
 
+	@Override
 	public void removeRelation(int relatedGroupId, String relationType) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroupId, relationType);
 	}
 
+	@Override
 	public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException{
 		this.getGeneralGroup().removeRelation(relatedGroupId, relationType, performer);
 	}
 
+	@Override
 	public java.util.List getParentGroups() throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getParentGroups();
 	}
 
+	@Override
 	public void addGroup(com.idega.user.data.Group p0) throws javax.ejb.EJBException{
 		this.getGeneralGroup().addGroup(p0);
 	}
-	
+
+	@Override
 	public void addGroup(com.idega.user.data.User p0) throws javax.ejb.EJBException{
 		this.getGeneralGroup().addGroup(p0);
 	}
 
+	@Override
 	public java.util.List getChildGroups(java.lang.String[] p0, boolean p1) throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups(p0, p1);
 	}
 
+	@Override
 	public void addGroup(int p0) throws javax.ejb.EJBException{
 		this.getGeneralGroup().addGroup(p0);
 	}
 
+	@Override
 	public java.util.List getChildGroups() throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups();
 	}
-	
+
+	@Override
 	public java.util.Collection getChildGroups(Group returnProxy) throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getChildGroups(returnProxy);
 	}
 
+	@Override
 	public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)
 		throws javax.ejb.EJBException{
 		return this.getGeneralGroup().getAllGroupsContainingUser(p0);
 	}
 
+	@Override
 	public java.lang.String getGroupTypeValue(){
 		return this.getGroupTypeKey();
 	}
 
+	@Override
 	public boolean hasRelationTo(Group group){
 		return this.getGeneralGroup().hasRelationTo(group);
 	}
-	
+
+	@Override
 	public boolean hasRelationTo(int id){
 		return this.getGeneralGroup().hasRelationTo(id);
 	}
-	
+
+	@Override
 	public boolean hasRelationTo(int groupId, String relationType) {
 		return this.getGeneralGroup().hasRelationTo(groupId, relationType);
 	}
@@ -396,12 +438,13 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 				return this.getGeneralGroup().equals(group);
 			}
 			catch (Exception e) {
-				//throw new IDORuntimeException(e);	
+				//throw new IDORuntimeException(e);
 			}
 		}
 		return false;
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		//    System.out.println("AbstractPratyBMPBean in equals(Object obj)");
 		if (obj instanceof AbstractGroupBMPBean) {
@@ -416,6 +459,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		}
 	}
 
+	@Override
 	public boolean equals(IDOEntity obj) {
 		if (obj instanceof AbstractGroupBMPBean) {
 			return this.equals(((AbstractGroupBMPBean) obj).getGeneralGroup());
@@ -429,71 +473,78 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	}
 
 
+	@Override
 	public boolean isUser(){
 		try{
-			return getGeneralGroup().isUser();	
+			return getGeneralGroup().isUser();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
-	
+
+
+	@Override
 	public void setPermissionControllingGroupID(int id) {
 		try{
-			getGeneralGroup().setPermissionControllingGroupID(id);	
+			getGeneralGroup().setPermissionControllingGroupID(id);
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
+
+	@Override
 	public void setPermissionControllingGroup(Group controllingGroup) {
 		try{
-			getGeneralGroup().setPermissionControllingGroup(controllingGroup);	
+			getGeneralGroup().setPermissionControllingGroup(controllingGroup);
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
+
+	@Override
 	public int getPermissionControllingGroupID() {
 		try{
-			return getGeneralGroup().getPermissionControllingGroupID();	
+			return getGeneralGroup().getPermissionControllingGroupID();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
+
+	@Override
 	public Group getPermissionControllingGroup() {
 		try{
-			return getGeneralGroup().getPermissionControllingGroup();	
+			return getGeneralGroup().getPermissionControllingGroup();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
+
+	@Override
 	public void setIsPermissionControllingGroup(boolean isControlling){
 		try{
-			getGeneralGroup().setIsPermissionControllingGroup(isControlling);	
+			getGeneralGroup().setIsPermissionControllingGroup(isControlling);
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	
+
+	@Override
 	public boolean isPermissionControllingGroup(){
 		try{
-			return getGeneralGroup().isPermissionControllingGroup();	
+			return getGeneralGroup().isPermissionControllingGroup();
 		}
 		catch(Exception e){
-			throw new IDORuntimeException(e,this);	
+			throw new IDORuntimeException(e,this);
 		}
 	}
-	 
-	
+
+
 	//
 	//
 	//
@@ -502,48 +553,61 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	 * ICTreeNode implementation begins
 	 */
 
+	@Override
 	public Iterator getChildrenIterator() {
 		return this.getGeneralGroup().getChildrenIterator();
 	}
 
+	@Override
 	public boolean getAllowsChildren() {
 		return this.getGeneralGroup().getAllowsChildren();
 	}
+	@Override
 	public ICTreeNode getChildAtIndex(int childIndex) {
 		return this.getGeneralGroup().getChildAtIndex(childIndex);
 	}
+	@Override
 	public int getChildCount() {
 		return this.getGeneralGroup().getChildCount();
 	}
+	@Override
 	public int getIndex(ICTreeNode node) {
 		return this.getGeneralGroup().getIndex(node);
 	}
+	@Override
 	public ICTreeNode getParentNode() {
 		return this.getGeneralGroup().getParentNode();
 	}
+	@Override
 	public boolean isLeaf() {
 		return this.getGeneralGroup().isLeaf();
 	}
+	@Override
 	public String getNodeName() {
 		return this.getGeneralGroup().getNodeName();
 	}
 
+	@Override
 	public String getNodeName(Locale locale) {
 		return this.getGeneralGroup().getNodeName(locale);
 	}
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return this.getGeneralGroup().getNodeName(locale,iwac);
 	}
+	@Override
 	public int getNodeID() {
 		return this.getGeneralGroup().getNodeID();
 	}
+	@Override
 	public int getSiblingCount() {
 		return this.getGeneralGroup().getSiblingCount();
 	}
-	
+
 	/**
 	 * @see com.idega.core.ICTreeNode#getNodeType()
 	 */
+	@Override
 	public int getNodeType(){
 		return -1;
 	}
@@ -552,8 +616,8 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 	/**
 	 * ICTreeNode implementation ends
 	 */
-	
-	
+
+
 	/**
 	 * Creates the begining of a query: "select t2.* from #Group.tablename# t1, #this.tablename# t2 WHERE t1.#primarykey#=gr.#primaryKey#"
 	 * Grouptable is t1 and this table is t2
@@ -567,11 +631,11 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		query.appendSelect();
 		query.append(SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+".*");
 		query.appendFrom();
-		
+
 		IDOEntityDefinition groupDefinition = IDOLookup.getEntityDefinitionForClass(Group.class);
 		query.append(groupDefinition.getSQLTableName());
 		query.append(" "+SQL_JOINT_VARIABLE_GROUP+", ");
-		
+
 		query.append(this.getEntityName());
 		query.append(" "+SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+" ");
 
@@ -581,22 +645,26 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		query.appendEqualSign();
 		query.append(SQL_JOINT_VARIABLE_RELATED_ABSTRACTGROUP+".");
 		query.append(this.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
-		
+
 		return query;
 	}
-	
+
+	@Override
 	public SelectQuery getSelectQueryConstraints(){
 		return null;
 	}
-	
+
+	@Override
 	public void addGroup(int groupId, Timestamp time) throws EJBException {
 	    getGeneralGroup().addGroup(groupId,time);
 	}
 
+	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
 		getGeneralGroup().addUniqueRelation(relatedGroupId, relationType, time);
 	}
 
+	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
 		getGeneralGroup().removeGroup(relatedGroupId,currentUser, AllEntries, time);
 	}

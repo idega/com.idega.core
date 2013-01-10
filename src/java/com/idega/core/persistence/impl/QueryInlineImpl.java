@@ -70,6 +70,9 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+		} catch (Exception e) {
+			CoreUtil.sendExceptionNotification("Error executing query: " + getQueryExpression() + " with parameters: " + Arrays.asList(params), e);
+			throw new RuntimeException(e);
 		} finally {
 			if (measure) {
 				long end = System.currentTimeMillis();

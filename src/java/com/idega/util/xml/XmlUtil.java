@@ -49,7 +49,7 @@ import com.idega.util.StringUtil;
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
  * @version $Revision: 1.11 $
- * 
+ *
  *          Last modified: $Date: 2009/06/12 10:49:54 $ by $Author: valdas $
  */
 public class XmlUtil {
@@ -282,7 +282,7 @@ public class XmlUtil {
 	 * it searches for the element for the prefix associated with the specified
 	 * namespace. If the prefix isn't null, then this is returned. Otherwise, it
 	 * creates a new attribute using the namespace/prefix passed as parameters.
-	 * 
+	 *
 	 * @param element
 	 * @param namespace
 	 * @param prefix
@@ -330,8 +330,8 @@ public class XmlUtil {
 	 * <p>
 	 * prints out formatted node content to System.out stream
 	 * </p>
-	 * 
-	 * 
+	 *
+	 *
 	 * @param node
 	 */
 	public static void prettyPrintDOM(Node node) {
@@ -348,7 +348,7 @@ public class XmlUtil {
 	 * </p>
 	 * Serializes the specified node to the given stream. Serialization is
 	 * achieved by an identity transform.
-	 * 
+	 *
 	 * @param node
 	 *            the node to serialize
 	 * @param stream
@@ -458,87 +458,64 @@ public class XmlUtil {
 	}
 
 	public static String getCleanedXml(String xmlString) {
-		xmlString = StringHandler.replace(xmlString, "&#0;",
-				CoreConstants.EMPTY);
+		xmlString = StringHandler.replace(xmlString, "&#0;", CoreConstants.EMPTY);
 		return xmlString;
 	}
-	
+
 	/**
-	 * <p>Check all {@link Node#getChildNodes()} of given node, if it has 
+	 * <p>Check all {@link Node#getChildNodes()} of given node, if it has
 	 * given namespaceURI or name or both of them.</p>
 	 * @param node - where to check. Not <code>null</code>.
 	 * @param namespaceURI of node to search for.
 	 * @param name of node to search for.
-	 * @return {@link List} of {@link Node}s, which contains given criteria. 
+	 * @return {@link List} of {@link Node}s, which contains given criteria.
 	 * {@link Collections#emptyList()} on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public static List<Node> getChildNodes(org.w3c.dom.Element node, 
+	public static List<Node> getChildNodes(org.w3c.dom.Element node,
 			String namespaceURI, String name,
 			String attribute, String attributeValue) {
+
 		List<Node> items = new ArrayList<Node>();
-		if (node == null) {
-//			LOGGER.log(Level.INFO, Node.class + " is null. No search will be" +
-//					" applied.");
-			
+		if (node == null || !node.hasChildNodes())
 			return items;
-		}
-		
-		if (!node.hasChildNodes()) {
-//			LOGGER.log(Level.INFO, Node.class + " has no child nodes. " +
-//					"No search will be applied.");
-			
-			return items;
-		}
-		
+
 		boolean isNamespaceSet = !StringUtil.isEmpty(namespaceURI);
 		boolean isNameSet = !StringUtil.isEmpty(name);
 		boolean isAttributeNameSet = !StringUtil.isEmpty(attribute);
 		boolean isAttributeValueSet = !StringUtil.isEmpty(attributeValue);
-		
+
 		NodeList list = node.getChildNodes();
 		for (int i = 0; i < list.getLength(); i++) {
 			org.w3c.dom.Element element = null;
-			
+
 			Node item = list.item(i);
-			
-			if (!(item instanceof org.w3c.dom.Element)) {
+
+			if (!(item instanceof org.w3c.dom.Element))
 				continue;
-			}
-			
+
 			element = (org.w3c.dom.Element) item;
-			
+
 			boolean doAddItem = Boolean.TRUE;
-			
-			if (isNameSet && !name.equals(item.getLocalName())) {
+
+			if (isNameSet && !name.equals(item.getLocalName()))
 				doAddItem = Boolean.FALSE;
-			}
-			
-			if (isNamespaceSet && !namespaceURI.equals(item.getNamespaceURI())) {
+			if (isNamespaceSet && !namespaceURI.equals(item.getNamespaceURI()))
 				doAddItem = Boolean.FALSE;
-			}
-			
-			if (isAttributeNameSet && 
-					StringUtil.isEmpty(element.getAttribute(attribute))) {
+			if (isAttributeNameSet && StringUtil.isEmpty(element.getAttribute(attribute)))
 				doAddItem = Boolean.FALSE;
-			}
-			
-			if (isAttributeValueSet && 
-					!attributeValue.equals(element.getAttribute(attribute))) {
+			if (isAttributeValueSet && !attributeValue.equals(element.getAttribute(attribute)))
 				doAddItem = Boolean.FALSE;
-			}
-			
-			if (doAddItem) {
+
+			if (doAddItem)
 				items.add(item);
-			}
-			
-			items.addAll(getChildNodes(element, namespaceURI, name, 
-					attribute, attributeValue));
+
+			items.addAll(getChildNodes(element, namespaceURI, name, attribute, attributeValue));
 		}
-		
+
 		return items;
 	}
-	
+
 	/**
 	 * <p>Searches recursively for parent {@link Node} of given {@link Element}
 	 * with given parameters:</p>
@@ -547,56 +524,49 @@ public class XmlUtil {
 	 * @return {@link org.w3c.dom.Element} or <code>null</code> on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public static org.w3c.dom.Element getParentElement(
-			Node element, 
-			String name) {
-		if (element == null) {
+	public static org.w3c.dom.Element getParentElement(Node element, String name) {
+		if (element == null)
 			return null;
-		}
-						
+
 		Node parentNode = element.getParentNode();
-		if (parentNode == null) {
+		if (parentNode == null)
 			return null;
-		}
-		
+
 		boolean isRequiredElement = Boolean.TRUE;
-		if (!(parentNode instanceof org.w3c.dom.Element)) {
+		if (!(parentNode instanceof org.w3c.dom.Element))
 			isRequiredElement = Boolean.FALSE;
-		}
-		
-		
+
 		if (!StringUtil.isEmpty(name)) {
-			if (!name.equals(parentNode.getLocalName()) 
+			if (!name.equals(parentNode.getLocalName())
 					&& !name.equals(parentNode.getNodeName())) {
 				isRequiredElement = Boolean.FALSE;
 			}
 		}
-		
-		return isRequiredElement ? 
-				(org.w3c.dom.Element) parentNode : 
+
+		return isRequiredElement ?
+				(org.w3c.dom.Element) parentNode :
 				getParentElement(parentNode, name);
 	}
-	
+
 	/**
-	 * <p>Simply checks if {@link Node}s are instances of 
+	 * <p>Simply checks if {@link Node}s are instances of
 	 * {@link org.w3c.dom.Element}s.</p>
 	 * @param items to check;
-	 * @return {@link org.w3c.dom.Element}s of {@link List} of given 
+	 * @return {@link org.w3c.dom.Element}s of {@link List} of given
 	 * {@link Node}s or <code>null</code>.
  	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public List<Element> convertToElements(List<Node> items) {
-		if (ListUtil.isEmpty(items)) {
+		if (ListUtil.isEmpty(items))
 			return null;
-		}
-		
+
 		List<Element> elements = new ArrayList<Element>();
 		for (Node node : items) {
 			if (node instanceof Element) {
 				elements.add((Element) node);
 			}
 		}
-		
+
 		return elements;
 	}
 }

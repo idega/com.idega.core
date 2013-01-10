@@ -1,10 +1,10 @@
 /*
- * 
+ *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.data;
 
@@ -57,13 +57,15 @@ import com.idega.util.logging.LoggingHelper;
 /**
  * A class to serve as a base implementation for objects mapped to persistent
  * data in the IDO Framework.
- * 
- * 
+ *
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.4
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnsson</a>
  */
 public abstract class GenericEntity implements java.io.Serializable, IDOEntity, IDOEntityBean, EntityRepresentation {
+
+	private static final long serialVersionUID = -6654406719924582653L;
 
 	public static final String MANY_TO_ONE = "many-to-one";
 	public static final String ONE_TO_MANY = "one-to-many";
@@ -214,6 +216,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	public abstract void initializeAttributes();
 
+	@Override
 	public java.util.Collection<EntityAttribute> getAttributes() {
 		// ties the attribute vector to the subclass of IDOLegacyEntity because
 		// the theAttributes variable is static.
@@ -302,20 +305,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 */
 	@Override
 	public String toString() {
-		// Object pk = this.getPrimaryKey();
-		// if (pk != null) {
-		// return pk.toString();
-		// } else
-		// return "null";
 		return this.getName();
 	}
 
 	/**
 	 * Decodes a String into a primaryKey Object. Recognises strings of the same
 	 * format as com.idega.data.GenericEntity#toString() returns.
-	 * 
+	 *
 	 * @see com.idega.data.GenericEntity#toString()
 	 */
+	@Override
 	public Integer decode(String pkString) {
 		return Integer.decode(pkString);
 	}
@@ -323,9 +322,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Decodes a String into a primaryKey Object. Recognises strings of the same
 	 * format as com.idega.data.GenericEntity#toString() returns.
-	 * 
+	 *
 	 * @see com.idega.data.GenericEntity#toString()
 	 */
+	@Override
 	public Collection<Integer> decode(String[] primaryKeys) {
 		Collection<Integer> c = new ArrayList<Integer>();
 		for (int i = 0; i < primaryKeys.length; i++) {
@@ -381,7 +381,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Added by Eirikur Hrafnsson
-	 * 
+	 *
 	 */
 	protected void addAttribute(String attributeName, String longName, boolean ifVisible, boolean ifEditable, String storageClassName, int maxLength) {
 		try {
@@ -575,7 +575,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * only int's for the rows of id's from the datastore) - uses the
 	 * findByPrimaryKey method to instanciate a new object fetched from the
 	 * database
-	 * 
+	 *
 	 * @deprecated Only IDOLegacyEntity method, does not work with pure IDOEntity
 	 */
 	@Deprecated
@@ -596,7 +596,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Sets the colums value or removes the existing value if columnValue == null
-	 * 
+	 *
 	 * @param columnName
 	 * @param columnValue
 	 * @param needsToUpdate
@@ -653,7 +653,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * This method is called when changing a columns value or initilizing it
-	 * 
+	 *
 	 * @param columnName
 	 * @param columnValue
 	 * @param needsToUpdate
@@ -680,7 +680,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Sets the columns value and flags the column as changed
-	 * 
+	 *
 	 * @param columnName
 	 * @param columnValue
 	 */
@@ -691,7 +691,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Sets the column value for the first time, the column is NOT flagged as
 	 * changed
-	 * 
+	 *
 	 * @param columnName
 	 * @param columnValue
 	 */
@@ -824,13 +824,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	protected <T>T getRealValue(String columnName) {
 		return getRealValue(columnName, (T) null);	//	Type parameter added because of Maven 2 compiler - it fails without casting to T
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	protected <T>T getRealValue(String columnName, T defaultValue) {
 		Object value = getColumnValue(columnName);
 		return value == null ? defaultValue : (T) value;
 	}
-	
+
+	@Override
 	public Object getColumnValue(String columnName) {
 		Object returnObj = null;
 		Object value = getValue(columnName);
@@ -845,7 +846,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				if (value != null) {
 					EntityManagerService service = new EntityManagerService();
 					EntityManager manager = service.getEntityManagerFactory().createEntityManager();
-					
+
 					returnObj = manager.find(relationClass, value);
 				}
 			}
@@ -1166,6 +1167,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * another datasource (.e.g. when this instance is inserted into a new
 	 * datastore with another datasource).
 	 */
+	@Override
 	public void setDatasource(String dataSource) {
 		setDatasource(dataSource, false);
 	}
@@ -1175,7 +1177,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Can be used to switch the datasource when the entity has been fetched from
 	 * another datasource (.e.g. when this instance is inserted into a new
 	 * datastore with another datasource).
-	 * 
+	 *
 	 * @param reloadEntity
 	 *          if TRUE then the entity datatables in the new datasource will be
 	 *          checked for inconsistencies
@@ -1208,6 +1210,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
+	@Override
 	public String getDatasource() {
 		return this._dataSource;
 	}
@@ -1254,7 +1257,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Gets a String array with all the columns defined in this entity bean.
-	 * 
+	 *
 	 * @see com.idega.data.IDOLegacyEntity#getColumnNames()
 	 */
 	public String[] getColumnNames() {
@@ -1370,7 +1373,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * -1 ){ dataStoreType = "interbase"; } else if
 	 * (connection.getClass().getName().indexOf("mysql") != -1 ){ dataStoreType =
 	 * "mysql"; }
-	 * 
+	 *
 	 * else{ dataStoreType = "unimplemented"; } } else{ dataStoreType = ""; } }
 	 * return dataStoreType; }
 	 */
@@ -1514,14 +1517,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
-	
+
 	private void updateInCaches() {
 		flushQueryCache();
 		if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
 			IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).putCachedEntity(this.getPrimaryKey(), this);
 		}
 	}
-	
+
 
 	public void delete() throws SQLException {
 		try {
@@ -1548,7 +1551,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
-	
+
 	private void deleteInCaches() {
 		flushQueryCache();
 		if (IDOContainer.getInstance().beanCachingActive(this.getInterfaceClass())) {
@@ -1556,8 +1559,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		this.empty();
 	}
-	
-	
+
+
 
 	public void deleteMultiple(String columnName, String stringColumnValue) throws SQLException {
 		Connection conn = null;
@@ -1686,13 +1689,13 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		DatastoreInterface.getInstance(this).fillColumn(this, columnName, RS);
 		/*
 		 * int classType = getStorageClassType(columnName);
-		 * 
+		 *
 		 * if (classType==EntityAttribute.TYPE_JAVA_LANG_INTEGER){ //if
 		 * (RS.getInt(columnName) != -1){ int theInt = RS.getInt(columnName);
 		 * boolean wasNull = RS.wasNull(); if(!wasNull){ setColumn(columnName,new
 		 * Integer(theInt)); //setColumn(columnName.toLowerCase(),new
 		 * Integer(theInt)); }
-		 * 
+		 *
 		 * //} } else if (classType==EntityAttribute.TYPE_JAVA_LANG_STRING){ if
 		 * (RS.getString(columnName) != null){
 		 * setColumn(columnName,RS.getString(columnName)); }
@@ -1708,7 +1711,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 * theDouble = RS.getFloat(columnName); boolean wasNull = RS.wasNull();
 		 * if(!wasNull){ setColumn(columnName,new Double(theDouble));
 		 * //setColumn(columnName.toLowerCase(),new Double(theDouble)); }
-		 * 
+		 *
 		 * double doble = RS.getDouble(columnName); } else if
 		 * (classType==EntityAttribute.TYPE_JAVA_SQL_TIMESTAMP){ if
 		 * (RS.getTimestamp(columnName) != null){
@@ -1732,6 +1735,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 */
 	}
 
+	@Override
 	public synchronized void ejbLoad() throws EJBException {
 		try {
 			if (this.getEntityState() != IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE) {
@@ -1931,7 +1935,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				 * null){ fillColumn(columnNames[i],RS); //} } catch(SQLException exe){
 				 * try{ //if (RS.getString(columnNames[i].toLowerCase()) != null){
 				 * fillColumn(columnNames[i],RS); //} } catch(SQLException exep){
-				 * 
+				 *
 				 * System.err.println("Exception in "+this.getClass().getName()+"
 				 * findByPrimaryKey, RS.getString( "+columnNames[i]+" ) not found:
 				 * "+exep.getMessage()); //exep.printStackTrace(System.err); } }
@@ -2492,7 +2496,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * the database via a sql statement. Keep in mind that the BlobWrapper has to
 	 * execute a sql statement to get a stream of the value, that is the statement
 	 * of the method isStoredValueNull is even faster.
-	 * 
+	 *
 	 * @author thomas
 	 */
 	protected boolean isStoredValueNull(String columnName) {
@@ -2700,17 +2704,17 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 * metaData = RS.getMetaData(); int count = 1; while (RS.next() && check){
 		 * count++; if(returningNumberOfRecords!=-1){
 		 * if(count>returningNumberOfRecords){ check=false; } }
-		 * 
+		 *
 		 * IDOLegacyEntity tempobj=null; try{ tempobj =
 		 * (IDOLegacyEntity)Class.forName(this.getClass().getName()).newInstance(); }
 		 * catch(Exception ex){ System.err.println("There was an error in
 		 * com.idega.data.GenericEntity.findAll "+ex.getMessage());
 		 * ex.printStackTrace(System.err); } if(tempobj != null){ for (int i = 1; i <=
 		 * metaData.getColumnCount(); i++){
-		 * 
-		 * 
+		 *
+		 *
 		 * if ( RS.getObject(metaData.getColumnName(i)) != null){
-		 * 
+		 *
 		 * //System.out.println("ColumName "+i+": "+metaData.getColumnName(i));
 		 * tempobj.fillColumn(metaData.getColumnName(i),RS); } }
 		 *  } vector.addElement(tempobj);
@@ -3043,7 +3047,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			}
 		}
 	}
-	
+
 	private void removeFrom(IDOEntity entityToRemoveFrom) throws SQLException {
 		removeFrom(entityToRemoveFrom, getNameOfMiddleTable(entityToRemoveFrom, this));
 	}
@@ -3188,6 +3192,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
+	@Override
 	public int compareTo(IDOEntity entity) {
 		Collator coll = Collator.getInstance();
 		return coll.compare(this.getPrimaryKey().toString(), entity.getPrimaryKey().toString());
@@ -3215,7 +3220,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * The method returns true if the entity primary keys match
-	 * 
+	 *
 	 * @param entity
 	 * @return
 	 */
@@ -3409,7 +3414,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	/**
-	 * 
+	 *
 	 * @deprecated replaced with IDOLookup.findByPrimaryKeyLegacy();
 	 */
 	@Deprecated
@@ -3426,7 +3431,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	/**
-	 * 
+	 *
 	 * @deprecated Replaced with IDOLookup.instanciateEntity(entityClass);
 	 */
 	@Deprecated
@@ -3785,26 +3790,28 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		this._metaDataHasChanged = metaDataHasChanged;
 	}
 
+	@Override
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome) {
 		this._ejbHomes.put(this.getClass().getName() + getDatasource(), ejbHome);
 	}
 
 	/*
 	 * public void setEJBHome(javax.ejb.EJBHome ejbHome) { _ejbHome = ejbHome; }
-	 * 
+	 *
 	 * public javax.ejb.EJBHome getEJBHome() { if(_ejbHome==null){ try{ _ejbHome =
 	 * IDOLookup.getHome(this.getClass()); } catch(Exception e){ throw new
 	 * EJBException("Lookup for home for: "+this.getClass().getName()+" failed.
 	 * Errormessage was: "+e.getMessage()); } } return _ejbHome; }
-	 * 
+	 *
 	 * public EJBLocalHome getEJBLocalHome() { return (EJBLocalHome)
 	 * this.getEJBHome(); }
-	 * 
-	 * 
+	 *
+	 *
 	 * public javax.ejb.EJBHome getEJBHome() { return
 	 * (javax.ejb.EJBHome)getEJBLocalHome(); }
-	 * 
+	 *
 	 */
+	@Override
 	public javax.ejb.EJBLocalHome getEJBLocalHome() {
 		return getEJBLocalHome(getDatasource());
 	}
@@ -3826,13 +3833,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Not implemented
-	 * 
+	 *
 	 * @todo: implement
 	 */
 	public javax.ejb.Handle getHandle() {
 		return null;
 	}
 
+	@Override
 	public Object getPrimaryKey() {
 		return getPrimaryKeyValue();
 	}
@@ -3849,6 +3857,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return false;
 	}
 
+	@Override
 	public void remove() throws RemoveException {
 		try {
 			delete();
@@ -3858,6 +3867,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
+	@Override
 	public void store() throws IDOStoreException {
 		try {
 			if ((getEntityState() == IDOLegacyEntity.STATE_NEW) || (getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE)) {
@@ -3876,9 +3886,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
+	@Override
 	public void ejbActivate() {
 	}
 
+	@Override
 	public void ejbPassivate() {
 		if (this._columns != null) {
 			this._columns.clear();
@@ -3897,20 +3909,25 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	}
 
+	@Override
 	public void ejbRemove() throws javax.ejb.RemoveException {
 		remove();
 	}
 
+	@Override
 	public void ejbStore() {
 		store();
 	}
 
+	@Override
 	public void setEntityContext(javax.ejb.EntityContext ctx) {
 	}
 
+	@Override
 	public void unsetEntityContext() {
 	}
 
+	@Override
 	public Object ejbCreate() throws CreateException {
 
 		// if this entity has used addUniqueIdColumn() this method will generated
@@ -3949,7 +3966,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Gets the name for the UniqueId Column. Defaults to UNIQUE_ID
-	 * 
+	 *
 	 * @return
 	 */
 	protected String getUniqueIdColumnName() {
@@ -3959,7 +3976,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Sets the Unique ID column. This method should generally never be called
 	 * manually
-	 * 
+	 *
 	 * @param uniqueId
 	 */
 	public void setUniqueId(String uniqueId) {
@@ -4002,9 +4019,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/*
 	 * public Object ejbCreate(Object
 	 * primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
-	 * 
+	 *
 	 * public Object ejbPostCreate(Object primaryKey){return primaryKey;}
 	 */
+	@Override
 	public Object ejbFindByPrimaryKey(Object pk) throws FinderException {
 		this.setPrimaryKey(pk);
 		return getPrimaryKey();
@@ -4113,7 +4131,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Fetches the primarykey resultset and then loads the beans with data(the
 	 * prefect size determines how many get loaded) The query must be a select all
 	 * query!
-	 * 
+	 *
 	 * @param sqlQuery
 	 * @param countQuery
 	 * @param prefetchSize
@@ -4150,7 +4168,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sqlQuery
 	 * @return IDOPrimaryKeyList
 	 * @throws FinderException
@@ -4160,7 +4178,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sqlQuery
 	 * @param returnProxy
 	 *          If this entity and the returnProxy have one-to-one related primary
@@ -4296,7 +4314,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Finds all relationships this entity bean instane has with ALL
 	 * returningEntityInterfaceClass beans Returns a collection of returningEntity
 	 * instances
-	 * 
+	 *
 	 * @throws IDORelationshipException
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
@@ -4308,10 +4326,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 * try { //return
 		 * EntityFinder.getInstance().findRelated((IDOLegacyEntity)this,
 		 * returningEntityInterfaceClass);
-		 * 
+		 *
 		 * IDOEntity returningEntity =
 		 * IDOLookup.instanciateEntity(returningEntityInterfaceClass);
-		 * 
+		 *
 		 * String tableToSelectFrom =
 		 * EntityControl.getNameOfMiddleTable(returningEntity, this); StringBuffer
 		 * buffer = new StringBuffer(); buffer.append("select * from ");
@@ -4322,7 +4340,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 * //buffer.append(fromEntity.getIDColumnName()); String SQLString =
 		 * buffer.toString();
 		 *  //
-		 * 
+		 *
 		 * Connection conn = null; Statement Stmt = null; //Vector vector = new
 		 * Vector(); Vector vector = null;
 		 */
@@ -4337,16 +4355,16 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 * try { conn = this.getConnection(); Stmt = conn.createStatement();
 		 * ResultSet RS = Stmt.executeQuery(SQLString); while (RS != null &&
 		 * RS.next()) {
-		 * 
+		 *
 		 * IDOEntity tempobj = null; try { tempobj =
 		 * (IDOEntity)Class.forName(returningEntity.getClass().getName()).newInstance();
-		 * 
+		 *
 		 * Object pkObj =
 		 * RS.getObject(returningEntity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
 		 * ((IDOEntityBean)tempobj).setDatasource(this.getDatasource()); tempobj =
 		 * ((IDOHome)IDOLookup.getHome(returningEntity.getClass())).findByPrimaryKeyIDO(pkObj); }
 		 * catch (Exception ex) {
-		 * 
+		 *
 		 * System.err.println("There was an error in
 		 * com.idega.data.GenericEntity#idoGetRelatedEntities(Class
 		 * returningEntityInterfaceClass)\n returningEntityInterfaceClass=" +
@@ -4357,7 +4375,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 *  } RS.close();
 		 *  } finally { if (Stmt != null) { Stmt.close(); } if (conn != null) {
 		 * this.freeConnection(conn); } }
-		 * 
+		 *
 		 * if (vector != null) { vector.trimToSize(); //return (IDOLegacyEntity[])
 		 * vector.toArray((Object[])java.lang.reflect.Array.newInstance(returningEntity.getClass(),0));
 		 * //return vector.toArray(new IDOLegacyEntity[0]); return vector; } else {
@@ -4394,7 +4412,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns a collection of returningEntity instances
-	 * 
+	 *
 	 * @throws IDORelationshipException
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
@@ -4409,7 +4427,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns a collection of entity(this) instances
-	 * 
+	 *
 	 * @throws IDORelationshipException
 	 *           if the relatedEntity has no relationship defined with this bean
 	 *           or an error with the query
@@ -4430,7 +4448,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns a collection of returningEntity instances
-	 * 
+	 *
 	 * @throws IDORelationshipException
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
@@ -4473,7 +4491,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns a collection of returningEntity primary keys
-	 * 
+	 *
 	 * @throws IDORelationshipException
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
@@ -4613,7 +4631,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Finds all entities by a metadata key or metadata key and value
-	 * 
+	 *
 	 * @param key,
 	 *          the metadata name cannot be null
 	 * @param value,
@@ -4652,7 +4670,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Finds an entity by its unique id column. <br>
 	 * See also addUniqueIDColumn() on how to add a unique generated id column to
 	 * your entity.
-	 * 
+	 *
 	 * @param uniqueID,
 	 *          A 128 bit unique id string (36 characters long)
 	 * @return Object which is the primary key of the object found from the query.
@@ -4766,6 +4784,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Meant to be overrided in subclasses, returns default Integer.class
 	 */
+	@Override
 	public Class getPrimaryKeyClass() {
 		return Integer.class;
 	}
@@ -4773,7 +4792,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * The default implementation. Returns the number of all records for this
 	 * entity.
-	 * 
+	 *
 	 * @return int the count of all records
 	 * @throws IDOException
 	 *           if there was an exceptoin accessing the datastore
@@ -4789,7 +4808,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns the number of recors for the query sql.
-	 * 
+	 *
 	 * @param sql
 	 *          A count SQL query.
 	 * @return int the count of the records
@@ -4823,7 +4842,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns the number of recors for the query sql.
-	 * 
+	 *
 	 * @param query
 	 *          A count query.
 	 * @return int the count of the records
@@ -4837,7 +4856,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Returns the number of recors for the query sql.
-	 * 
+	 *
 	 * @param query
 	 *          A count query.
 	 * @return int the count of the records
@@ -4861,7 +4880,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * *Default remove behavior with a many-to-many relationship * Deletes <b>ALL</b>
 	 * records of relation with all instances of entityInterfaceClass with this
 	 * entity bean instance
-	 * 
+	 *
 	 * @throws IDORemoveRelationshipException
 	 *           if there is no relationship defined with the given entity class
 	 *           or there is an error accessing it
@@ -4883,7 +4902,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * *Default remove behavior with a many-to-many relationship * deletes only
 	 * one line in middle table if the genericentity wa consructed with a value
-	 * 
+	 *
 	 * @throws IDORemoveRelationshipException
 	 *           if there is no relationship defined with the given entity class
 	 *           or there is an error accessing it
@@ -4900,7 +4919,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			throw new IDORemoveRelationshipException(ex, this);
 		}
 	}
-	
+
 	protected void idoRemoveFrom(IDOEntity entity, String middleTableName) throws IDORemoveRelationshipException {
 		try {
 			removeFrom(entity, middleTableName);
@@ -4943,7 +4962,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			throw new IDOAddRelationshipException(e, this);
 		}
 	}
-	
+
 	protected void idoAddTo(IDOEntity entity, String middleTableName) throws IDOAddRelationshipException {
 		try {
 			idoAddTo(middleTableName, entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(), entity.getPrimaryKey());
@@ -5007,10 +5026,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * <br>
 	 * This method then throws away all cache associated with all instances of
 	 * <b>THIS</b> entity bean class.
-	 * 
+	 *
 	 * @throws IDOException
 	 *           if there is an error with the query or accessing the datastore
-	 * 
+	 *
 	 */
 	protected boolean idoExecuteTableUpdate(String sqlUpdateQuery) throws IDOException {
 		try {
@@ -5034,10 +5053,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * <br>
 	 * This method then flushes all cache associated with all instances of <b>ALL</b>
 	 * entity bean classes.
-	 * 
+	 *
 	 * @throws IDOException
 	 *           if there is an error with the query or accessing the datastore
-	 * 
+	 *
 	 */
 	protected boolean idoExecuteGlobalUpdate(String sqlUpdateQuery) throws IDOException {
 		try {
@@ -5069,6 +5088,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 	}
 
+	@Override
 	public IDOEntityDefinition getEntityDefinition() {
 		return getGenericEntityDefinition();
 	}
@@ -5089,6 +5109,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return IDOUtil.getInstance();
 	}
 
+	@Override
 	public boolean isIdentical(EJBLocalObject obj) {
 		return this.equals(obj);
 	}
@@ -5098,7 +5119,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * returns it value to be added to an sql query.<br>
 	 * e.g. if the primary key of of the type String this method returns the value
 	 * as = 'value' but if it is an integer as = value .
-	 * 
+	 *
 	 * @return String
 	 */
 	public String getPrimaryKeyValueSQLString() {
@@ -5107,14 +5128,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Method getPrimaryKeyValueSQLString.
-	 * 
+	 *
 	 * @return String
 	 */
 	/**
 	 * Method getKeyValueSQLString. Returns the value to be added to an sql query.<br>
 	 * e.g. if the value is of the type String this method returns the value as =
 	 * 'value' but if it is an integer as = value .
-	 * 
+	 *
 	 * @param keyValue
 	 * @return String
 	 */
@@ -5135,7 +5156,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Method isIdColumnValueNotEmpty gets the primarykey value and uses
 	 * isColumnValueNotEmpty to check if it is empty or not
-	 * 
+	 *
 	 * @return boolean
 	 */
 	public boolean isIdColumnValueNotEmpty() {
@@ -5146,7 +5167,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Method isColumnNotEmpty. This methods checks if the value is null,-1,'-1'
 	 * or "" and return false or true.
-	 * 
+	 *
 	 * @param value
 	 * @return boolean return true if the value is non of the above values
 	 */
@@ -5162,7 +5183,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Gets a new empty query
-	 * 
+	 *
 	 * @return IDOQuery which is new and emtpy
 	 */
 	protected IDOQuery idoQuery() {
@@ -5191,7 +5212,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	}
 
 	/**
-	 * 
+	 *
 	 * @param sqlQuery
 	 * @return IDOQuery with sqlQuery as the query
 	 */
@@ -5222,7 +5243,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
-	 * 
+	 *
 	 * @param query
 	 *          an IDOQuery for this entity.
 	 * @return Collection of Primary keys which is a result from the query.
@@ -5235,7 +5256,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
-	 * 
+	 *
 	 * @param query
 	 *          an IDOQuery for this entity.
 	 * @return Collection of Primary keys which is a result from the query.
@@ -5247,14 +5268,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			int prefetchSize = getEntityDefinition().getFinderCollectionPrefetchSize();
 			return idoFindPKsByQueryUsingLoadBalance(query, prefetchSize);
 		}
-		else{	
+		else{
 			return idoFindPKsByQuery(query, -1, -1);
 		}
 	}
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
-	 * 
+	 *
 	 * @param query
 	 *          an IDOQuery for this entity.
 	 * @return Collection of Primary keys which is a result from the query.
@@ -5267,7 +5288,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
-	 * 
+	 *
 	 * @param query
 	 *          an SelectQuery for this entity.
 	 * @return Collection of Primary keys which is a result from the query.
@@ -5280,7 +5301,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
-	 * 
+	 *
 	 * @param query
 	 *          an IDOQuery for this entity.
 	 * @return Collection of Primary keys which is a result from the query.
@@ -5293,7 +5314,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Method idoFindPKsByQuery. Gets the result of the query.
-	 * 
+	 *
 	 * @param query
 	 *          an SelectQuery for this entity.
 	 * @return Collection of Primary keys which is a result from the query.
@@ -5307,7 +5328,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Method idoFindOnePKByQuery. Gets the one primary key of the query or the
 	 * first result if there are many results.*
-	 * 
+	 *
 	 * @param query
 	 *          an IDOQuery for this entity.
 	 * @return Object which is the primary key of the object found from the query.
@@ -5321,7 +5342,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Method idoFindOnePKBySelectQuery. Gets the one primary key of the query or
 	 * the first result if there are many results.*
-	 * 
+	 *
 	 * @param query
 	 *          an IDOQuery for this entity.
 	 * @return Object which is the primary key of the object found from the query.
@@ -5334,7 +5355,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Default implimentation for IDOReportableEntity
-	 * 
+	 *
 	 * @param field
 	 * @return
 	 */
@@ -5344,7 +5365,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Convenience method to get a reference to a home for an entity
-	 * 
+	 *
 	 * @param entityClass
 	 *          The entity interface class to get a reference to its home.
 	 * @return the home instance
@@ -5355,7 +5376,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#hashCode()
 	 */
 	@Override
@@ -5370,7 +5391,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Logs out to the default log level (which is by default INFO)
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5382,7 +5403,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Logs out to the error log level (which is by default WARNING) to the
 	 * default Logger
-	 * 
+	 *
 	 * @param e
 	 *          The Exception to log out
 	 */
@@ -5392,7 +5413,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Logs out to the specified log level to the default Logger
-	 * 
+	 *
 	 * @param level
 	 *          The log level
 	 * @param msg
@@ -5406,7 +5427,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Logs out to the error log level (which is by default WARNING) to the
 	 * default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5418,7 +5439,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Logs out to the debug log level (which is by default FINER) to the default
 	 * Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5429,7 +5450,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Logs out to the SEVERE log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5440,7 +5461,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Logs out to the WARNING log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5451,7 +5472,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Logs out to the CONFIG log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5462,7 +5483,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Logs out to the debug log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -5474,7 +5495,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Gets the default Logger. By default it uses the package and the class name
 	 * to get the logger.<br>
 	 * This behaviour can be overridden in subclasses.
-	 * 
+	 *
 	 * @return the default Logger
 	 */
 	protected Logger getLogger() {
@@ -5483,7 +5504,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Gets the log level which messages are sent to when no log level is given.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getDefaultLogLevel() {
@@ -5492,7 +5513,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Gets the log level which debug messages are sent to.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getDebugLogLevel() {
@@ -5501,7 +5522,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	/**
 	 * Gets the log level which error messages are sent to.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getErrorLogLevel() {
@@ -5582,7 +5603,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * column.<br>
 	 * If you make your IDO interface extend the UniqueIDCapable interface you get
 	 * this method added to your bean.
-	 * 
+	 *
 	 * @return The unique id string of the entity if it has it, otherwise null
 	 */
 	public String getUniqueId() {

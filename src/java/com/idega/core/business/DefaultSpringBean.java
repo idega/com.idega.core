@@ -227,6 +227,6 @@ public abstract class DefaultSpringBean {
 	 */
 	protected boolean isDevelopementState() {
 		return getApplication().getSettings().getBoolean(
-				CoreConstants.DEVELOPEMENT_STATE_PROPERTY);
+				CoreConstants.DEVELOPEMENT_STATE_PROPERTY, Boolean.FALSE);
 	}
 }

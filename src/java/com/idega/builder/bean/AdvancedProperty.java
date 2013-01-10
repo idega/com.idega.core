@@ -9,7 +9,8 @@ public class AdvancedProperty implements Serializable {
 	private static final long serialVersionUID = 8520116287821698275L;
 
 	private boolean selected;
-	private String id, value;
+	private String id, value, name;
+	private Long externalId;
 
 	public AdvancedProperty() {
 		super();
@@ -25,6 +26,12 @@ public class AdvancedProperty implements Serializable {
 		this(id);
 
 		this.value = value;
+	}
+
+	public AdvancedProperty(String id, String value, String name) {
+		this(id, value);
+
+		this.name = name;
 	}
 
 	public String getId() {
@@ -51,8 +58,25 @@ public class AdvancedProperty implements Serializable {
 		this.selected = selected;
 	}
 
+	public Long getExternalId() {
+		return externalId;
+	}
+
+	public void setExternalId(Long externalId) {
+		this.externalId = externalId;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	@Override
 	public String toString() {
-		return new StringBuilder(id).append(CoreConstants.COLON).append(CoreConstants.SPACE).append(value).toString();
+		return new StringBuilder(id).append(CoreConstants.COLON).append(CoreConstants.SPACE).append(value).append(", name: ")
+				.append(getName()).toString();
 	}
 }

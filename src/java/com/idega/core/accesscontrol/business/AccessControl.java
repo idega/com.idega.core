@@ -649,7 +649,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 		}
 
-		groups.addAll(groupsToCheckForPermissions);
+		if (groups != null)
+			groups.addAll(groupsToCheckForPermissions);
+
 		return groups;
 	}
 
@@ -2753,14 +2755,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public Collection<ICPermission> getAllRolesForGroup(Group group) {
-		Collection<ICPermission> groupPermissions = new Vector<ICPermission>(); //empty
+		Collection<ICPermission> groupPermissions = new ArrayList<ICPermission>();
+		if (group == null)
+			return groupPermissions;
+
 		try {
 			Collection<ICPermission> permissions = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
 					RoleHelperObject.getStaticInstance().toString(), group);
 
-			if (ListUtil.isEmpty(permissions)) {
+			if (ListUtil.isEmpty(permissions))
 				return groupPermissions;
-			}
 
 			for (ICPermission perm: permissions) {
 //				perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
@@ -2769,12 +2773,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					groupPermissions.add(perm);
 				}
 			}
-		}
-		catch (FinderException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		catch (RemoteException x) {
-			x.printStackTrace();
 		}
 
 		return groupPermissions;

@@ -97,7 +97,6 @@ public class WebUtil extends DefaultSpringBean {
     	}
 
     	String host = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
-    	host = "secure.emailsrvr.com";
     	if (StringUtil.isEmpty(host)) {
     		getLogger().warning("Mail server host is unknown, unable to send a message:\n" + message);
     		return false;
