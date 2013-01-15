@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.localisation.data.bean;
 
@@ -23,12 +23,12 @@ public class ICLocale implements Serializable {
 
 	private static final long serialVersionUID = -6482804106633989994L;
 
-	public static final String ENTITY_NAME = "ic_locale";
-	public static final String COLUMN_LOCALE_ID = "ic_locale_id";
-	private static final String COLUMN_LOCALE = "locale";
-	private static final String COLUMN_LANGUAGE_ID = "ic_language_id";
-	private static final String COLUMN_COUNTRY_ID = "ic_country_id";
-	private static final String COLUMN_IN_USE = "in_use";
+	public static final String	ENTITY_NAME = "ic_locale",
+								COLUMN_LOCALE_ID = "ic_locale_id",
+								COLUMN_LOCALE = "locale";
+	private static final String COLUMN_LANGUAGE_ID = "ic_language_id",
+								COLUMN_COUNTRY_ID = "ic_country_id",
+								COLUMN_IN_USE = "in_use";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
