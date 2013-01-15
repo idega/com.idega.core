@@ -1,11 +1,11 @@
 package com.idega.core.localisation.business;
 
+import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.localisation.data.ICLocaleHome;
@@ -27,26 +27,26 @@ import com.idega.util.StringUtil;
  */
 
 public class ICLocaleBusiness  implements MutableClass {
-  private static Hashtable LocaleHashByString = null, LocaleHashById = null;
-  private static Hashtable LocaleHashInUseByString = null, LocaleHashInUseById = null;
-  private static List allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
+  private static Hashtable<String, ICLocale> LocaleHashByString = null, LocaleHashInUseByString = null;
+  private static Hashtable<Object, ICLocale> LocaleHashById = null, LocaleHashInUseById = null;
+  private static List<ICLocale> allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
   private static IWTimestamp reloadStamp = null;
 
 
-  private static List listOfAllICLocales(){
+  @SuppressWarnings("unchecked")
+private static List<ICLocale> listOfAllICLocales(){
     try {
-      //return EntityFinder.getInstance().findAll(ICLocale.class);
-      return new Vector(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAll());
+      return new ArrayList<ICLocale>(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAll());
     }
     catch (Exception ex) {
       return null;
     }
   }
 
-  private static List listOfICLocalesInUse(){
+  @SuppressWarnings("unchecked")
+private static List<ICLocale> listOfICLocalesInUse(){
     try {
-     //return  EntityFinder.getInstance().findAllByColumn(ICLocale.class,com.idega.core.localisation.data.ICLocaleBMPBean.getColumnNameInUse(),"Y");
-     return new Vector(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAllInUse());
+     return new ArrayList<ICLocale>(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAllInUse());
     }
     catch (Exception ex) {
       ex.printStackTrace();
@@ -54,11 +54,11 @@ public class ICLocaleBusiness  implements MutableClass {
     }
   }
 
-  public static List listLocaleCreateIsEn(){
-    List L = listOfLocales();
+  public static List<ICLocale> listLocaleCreateIsEn(){
+    List<ICLocale> L = listOfLocales();
     if(L == null){
       try {
-        Vector V = new Vector();
+        List<ICLocale> V = new ArrayList<ICLocale>();
         ICLocale is= ((com.idega.core.localisation.data.ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class)).create();
         is.setLocale("is_IS");
         is.store();
@@ -83,21 +83,21 @@ public class ICLocaleBusiness  implements MutableClass {
   /**
    * @return a list of ICLocales that are in use
    */
-  public static List listOfLocales(){
+  public static List<ICLocale> listOfLocales(){
     if(usedIcLocales ==null) {
 			reload();
 		}
       return usedIcLocales;
   }
 
-  public static List listOfAllLocales(){
+  public static List<ICLocale> listOfAllLocales(){
     if(allIcLocales==null) {
 			reload();
 		}
     return allIcLocales;
   }
 
-  public static List listOfLocales(boolean inUse){
+  public static List<ICLocale> listOfLocales(boolean inUse){
     if(inUse){
       if(usedIcLocales == null) {
 				reload();
@@ -116,13 +116,13 @@ public class ICLocaleBusiness  implements MutableClass {
    * @return a list of Locale object of the locales in use
    */
   public static List<Locale> getListOfLocalesJAVA(){
-    List list = listOfLocales();
-    List<Locale> localeList = new Vector<Locale>();
+    List<ICLocale> list = listOfLocales();
+    List<Locale> localeList = new ArrayList<Locale>();
 
     if ( list != null ) {
-      Iterator iter = list.iterator();
+      Iterator<ICLocale> iter = list.iterator();
       while (iter.hasNext()) {
-       ICLocale item = (ICLocale) iter.next();
+       ICLocale item = iter.next();
        Locale locale = getLocaleFromLocaleString(item.getLocale());
        if ( locale != null ) {
 				localeList.add(locale);
@@ -131,18 +131,18 @@ public class ICLocaleBusiness  implements MutableClass {
     }
     return localeList;
   }
-  
+
   /**
    * @return a list of Locale object of all locales
    */
-	public static List getListOfAllLocalesJAVA(){
-		List list = listOfAllLocales();
-		List localeList = new Vector();
+	public static List<Locale> getListOfAllLocalesJAVA(){
+		List<ICLocale> list = listOfAllLocales();
+		List<Locale> localeList = new ArrayList<Locale>();
 
 		if ( list != null ) {
-			Iterator iter = list.iterator();
+			Iterator<ICLocale> iter = list.iterator();
 			while (iter.hasNext()) {
-			 ICLocale item = (ICLocale) iter.next();
+			 ICLocale item = iter.next();
 			 Locale locale = getLocaleFromLocaleString(item.getLocale());
 			 if ( locale != null ) {
 				localeList.add(locale);
@@ -153,15 +153,15 @@ public class ICLocaleBusiness  implements MutableClass {
 	}
 
   private static void makeHashtables(){
-    List L = listOfAllLocales();
+    List<ICLocale> L = listOfAllLocales();
     if(L!=null){
       int len = L.size();
-      LocaleHashById = new Hashtable(len);
-      LocaleHashByString  = new Hashtable(len);
-      LocaleHashInUseByString = new Hashtable();
-      LocaleHashInUseById = new Hashtable();
+      LocaleHashById = new Hashtable<Object, ICLocale>(len);
+      LocaleHashByString  = new Hashtable<String, ICLocale>(len);
+      LocaleHashInUseByString = new Hashtable<String, ICLocale>();
+      LocaleHashInUseById = new Hashtable<Object, ICLocale>();
       for (int i = 0; i < len; i++) {
-        ICLocale ICL = (ICLocale) L.get(i);
+        ICLocale ICL = L.get(i);
         LocaleHashById.put(ICL.getPrimaryKey(),ICL);
         LocaleHashByString.put(ICL.getLocale(),ICL);
         if(ICL.getInUse()){
@@ -175,19 +175,19 @@ public class ICLocaleBusiness  implements MutableClass {
   private static void makeLists(){
     allIcLocales = listOfAllICLocales();
     usedIcLocales = listOfICLocalesInUse();
-    notUsedIcLocales = new Vector();
+    notUsedIcLocales = new ArrayList<ICLocale>();
     notUsedIcLocales.addAll(allIcLocales);
     notUsedIcLocales.removeAll(usedIcLocales);
   }
 
-  public static Map mapOfLocalesInUseById(){
+  public static Map<Object, ICLocale> mapOfLocalesInUseById(){
     if(LocaleHashInUseById == null) {
 			reload();
 		}
     return LocaleHashInUseById;
   }
 
-  public static Map mapOfLocalesInUseByString(){
+  public static Map<String, ICLocale> mapOfLocalesInUseByString(){
    if(LocaleHashInUseByString == null) {
 		reload();
 	}
@@ -200,7 +200,7 @@ public class ICLocaleBusiness  implements MutableClass {
 
     reloadStamp = IWTimestamp.RightNow();
   }
-  
+
   public static void unload(){
   	allIcLocales=null;
   	LocaleHashById=null;
@@ -218,21 +218,21 @@ public class ICLocaleBusiness  implements MutableClass {
     return reloadStamp;
   }
 
-  public static Map getMapOfLocalesById(){
+  public static Map<Object, ICLocale> getMapOfLocalesById(){
     return getLocaleHashById();
   }
 
-  public static Map getMapOfLocalesByString(){
+  public static Map<String, ICLocale> getMapOfLocalesByString(){
     return getLocaleHashByString();
   }
 
-  public static Hashtable getLocaleHashById(){
+  public static Hashtable<Object, ICLocale> getLocaleHashById(){
     if(LocaleHashById == null) {
 			reload();
 		}
     return LocaleHashById;
   }
-  public static Hashtable getLocaleHashByString(){
+  public static Hashtable<String, ICLocale> getLocaleHashByString(){
     if(LocaleHashByString == null) {
 			reload();
 		}
@@ -245,7 +245,7 @@ public class ICLocaleBusiness  implements MutableClass {
 			reload();
 		}
     if( LocaleHashByString!=null && LocaleHashByString.containsKey(locale.toString()) ){
-      ICLocale ICL = (ICLocale) LocaleHashByString.get(locale.toString());
+      ICLocale ICL = LocaleHashByString.get(locale.toString());
       r = ((Integer)ICL.getPrimaryKey()).intValue();
     }
     return r;
@@ -256,7 +256,7 @@ public class ICLocaleBusiness  implements MutableClass {
 			reload();
 		}
     if( LocaleHashByString!=null && LocaleHashByString.containsKey(locale.toString()) ){
-      ICLocale ICL = (ICLocale) LocaleHashByString.get(locale.toString());
+      ICLocale ICL = LocaleHashByString.get(locale.toString());
       return ICL;
     }
     return null;
@@ -271,7 +271,7 @@ public class ICLocaleBusiness  implements MutableClass {
         reload();
       }
       if( LocaleHashByString!=null && LocaleHashByString.containsKey(localeString) ){
-        ICLocale ICL = (ICLocale) LocaleHashByString.get(localeString);
+        ICLocale ICL = LocaleHashByString.get(localeString);
         return ICL;
       }
     }
@@ -286,7 +286,7 @@ public class ICLocaleBusiness  implements MutableClass {
 	  if (StringUtil.isEmpty(localeString)) {
 		  return null;
 	  }
-	  
+
     if(localeString.length() == 2){
       return new Locale(localeString, CoreConstants.EMPTY);
     }
@@ -306,18 +306,18 @@ public class ICLocaleBusiness  implements MutableClass {
   	Locale icelandicLocale =  new Locale("is","IS");
   	return getLocale(iLocaleId, icelandicLocale);
   }
-  
+
   public static Locale getLocale(int iLocaleId) {
   	return getLocale(iLocaleId, null);
   }
-  
+
   public static Locale getLocale(int iLocaleId, Locale returnValueIfNotFound){
   	if(LocaleHashById == null ) {
         reload();
   	}
     Integer i = new Integer(iLocaleId);
      if(LocaleHashById != null && LocaleHashById.containsKey(i)){
-     	ICLocale ICL = (ICLocale) LocaleHashById.get(i);
+     	ICLocale ICL = LocaleHashById.get(i);
         return getLocaleFromLocaleString(ICL.getLocale());
      }
      return returnValueIfNotFound;
@@ -328,8 +328,8 @@ public class ICLocaleBusiness  implements MutableClass {
       Iterator<String> I = listOfStringIds.iterator();
       try{
         ICLocaleHome home = (ICLocaleHome)com.idega.data.IDOLookup.getHome(ICLocale.class);
-        List currentLocales = listOfICLocalesInUse();
-        List oldCurrentLocales = new Vector();
+        List<ICLocale> currentLocales = listOfICLocalesInUse();
+        List<ICLocale> oldCurrentLocales = new ArrayList<ICLocale>();
         oldCurrentLocales.addAll(currentLocales);
         while (I.hasNext()) {
           ICLocale locale = home.findByPrimaryKey(Integer.valueOf(I.next()));
@@ -338,9 +338,9 @@ public class ICLocaleBusiness  implements MutableClass {
           oldCurrentLocales.remove(locale);
         }
 
-        Iterator iter = oldCurrentLocales.iterator();
+        Iterator<ICLocale> iter = oldCurrentLocales.iterator();
         while (iter.hasNext()) {
-          ICLocale locale = (ICLocale)iter.next();
+          ICLocale locale = iter.next();
           locale.setInUse(false);
           locale.store();
         }
@@ -381,14 +381,14 @@ public class ICLocaleBusiness  implements MutableClass {
   public static DropdownMenu getAvailableLocalesDropdownStringKeyed(IWMainApplication iwma,String name){
 	  return getAvailableLocalesDropdownStringKeyed(iwma, name, false);
   }
-  
+
   public static DropdownMenu getAvailableLocalesDropdownStringKeyed(IWMainApplication iwma, String name, boolean useLanguageOnly){
 	  List<Locale> locales = ICLocaleBusiness.getListOfLocalesJAVA();
 	  DropdownMenu down = new DropdownMenu(name);
 	  if (locales == null) {
 		  return down;
 	  }
-	  
+
 	  Locale l = null;
 	  for (int i = 0; i < locales.size(); i++) {
 		  l = locales.get(i);

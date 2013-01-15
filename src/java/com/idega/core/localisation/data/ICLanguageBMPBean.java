@@ -20,7 +20,9 @@ import com.idega.data.IDOQuery;
 
 public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements com.idega.core.localisation.data.ICLanguage {
 
-  public static final String _COLUMN_LanguageName = "name";
+	private static final long serialVersionUID = 2193937076444096929L;
+
+public static final String _COLUMN_LanguageName = "name";
   public static final String _COLUMN_LanguageDescription = "description";
   public static final String _COLUMN_ISOabbreviation = "iso_abbreviation";
 
@@ -33,18 +35,21 @@ public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements c
   }
 
 
-  public void initializeAttributes() {
+  @Override
+public void initializeAttributes() {
     addAttribute(getIDColumnName());
     addAttribute(_COLUMN_LanguageName,"Name",true,true, "java.lang.String");
     addAttribute(_COLUMN_LanguageDescription,"Description",true,true, "java.lang.String", 510);
     addAttribute(_COLUMN_ISOabbreviation,"ISO abbreviation",true,true,String.class,10);
     this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return "ic_language";
   }
 
-  public void insertStartData()throws Exception{
+  @Override
+public void insertStartData()throws Exception{
     String[] JavaLocales = Locale.getISOLanguages();
     ICLanguage lang;
     Locale l = null;
@@ -59,38 +64,44 @@ public class ICLanguageBMPBean extends com.idega.data.GenericEntity implements c
 
 
 
-  public String getName(){
+  @Override
+public String getName(){
     return (String) getColumnValue(_COLUMN_LanguageName);
   }
 
-  public String getDescription(){
+  @Override
+public String getDescription(){
     return (String) getColumnValue(_COLUMN_LanguageDescription);
   }
 
-  public String getIsoAbbreviation(){
+  @Override
+public String getIsoAbbreviation(){
     return this.getStringColumnValue(_COLUMN_ISOabbreviation);
   }
 
 
 
-  public void setName(String Name){
+  @Override
+public void setName(String Name){
     setColumn(_COLUMN_LanguageName, Name);
   }
 
-  public void setDescription(String description){
+  @Override
+public void setDescription(String description){
     setColumn(_COLUMN_LanguageDescription, description);
   }
 
-  public void setIsoAbbreviation(String IsoAbbreviation){
+  @Override
+public void setIsoAbbreviation(String IsoAbbreviation){
     this.setColumn(_COLUMN_ISOabbreviation,IsoAbbreviation);
   }
-  
-  public Collection ejbFindAll() throws FinderException {
+
+  public Collection<?> ejbFindAll() throws FinderException {
   	IDOQuery query = idoQuery();
   	query.appendSelectAllFrom(this);
   	return idoFindPKsByQuery(query);
   }
-  
+
   public Integer ejbFindByDescription(String description) throws FinderException {
   	IDOQuery query = idoQuery();
   	query.appendSelectAllFrom(this).appendWhereEqualsWithSingleQuotes(_COLUMN_LanguageDescription, description);
