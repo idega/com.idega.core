@@ -12,26 +12,19 @@ import org.springframework.transaction.annotation.Transactional;
 public interface Query {
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> List<Expected> getResultList(
-	        Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Param... params);
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> List<Expected> getResultList(
-	        Class<Expected> expectedReturnType,Collection <Param> params);
+	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Collection<Param> params);
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> List<Expected> getResultList(
-	        Class<Expected> expectedReturnType, String mappingName,
-	        Param... params);
+	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, Param... params);
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> Expected getSingleResult(
-	        Class<Expected> expectedReturnType, String mappingName,
-	        Param... params);
+	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, Param... params);
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> Expected getSingleResult(
-	        Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, Param... params);
 
 	public abstract void setMaxResults(Integer maxResults);
 

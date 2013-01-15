@@ -116,7 +116,8 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		} finally {
 			if (measure) {
 				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) + " ms");
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) +
+						" ms");
 			}
 		}
 	}
