@@ -588,4 +588,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		}
 		return firstName.concat(middleName).concat(lastName);
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }
