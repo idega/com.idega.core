@@ -115,8 +115,6 @@ public interface RepositoryService extends Repository, ApplicationListener {
 
 	public void addRepositoryChangeListeners(RepositoryEventListener listener);
 
-	public OutputStream getOutputStream(String path) throws IOException, RepositoryException;
-
 	public AccessControlList getAccessControlList(String path);
 	public void storeAccessControlList(AccessControlList acl);
 
@@ -136,5 +134,7 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public void logout(Session session);
 
 	public AuthenticationBusiness getAuthenticationBusiness();
+
+	public OutputStream getOutputStreamAsRoot(String path) throws IOException, RepositoryException;
 
 }
