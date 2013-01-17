@@ -17,7 +17,6 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -224,13 +223,7 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected String getHost() {
-    	IWContext iwc = CoreUtil.getIWContext();
-		ICDomain domain = iwc.getDomain();
-		int port = domain.getServerPort();
-		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
-		if (port > 0)
-			host = host.concat(":").concat(String.valueOf(port));
-		return host;
+    	return CoreUtil.getHost();
     }
 
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {

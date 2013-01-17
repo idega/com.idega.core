@@ -24,6 +24,7 @@ import sun.misc.BASE64Decoder;
 import sun.misc.BASE64Encoder;
 
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.GenericEntity;
 import com.idega.idegaweb.IWBundle;
@@ -380,5 +381,15 @@ public class CoreUtil {
 	public static File getFileFromRepository(String pathInRepository) throws IOException {
 		String realPath = getRealPathToRepository(pathInRepository);
 		return new File(realPath);
+	}
+
+	public static final String getHost() {
+		IWContext iwc = CoreUtil.getIWContext();
+		ICDomain domain = iwc.getDomain();
+		int port = domain.getServerPort();
+		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
+		if (port > 0)
+			host = host.concat(":").concat(String.valueOf(port));
+		return host;
 	}
 }
