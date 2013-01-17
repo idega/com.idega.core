@@ -2274,22 +2274,22 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						Map aliasMap = new HashMap();
 						IDOUtil idoUtil = IDOUtil.getInstance();
 						GroupHome grHome = getGroupHome();
-						Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
-						Iterator iterating = directlyRelatedParents.iterator();
-						List additionalGroups = new ArrayList();
+						Collection<Group> directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+						Iterator<Group> iterating = directlyRelatedParents.iterator();
+						List<Group> additionalGroups = new ArrayList<Group>();
 						while (iterating.hasNext()) {
-							Group parent = (Group) iterating.next();
+							Group parent = iterating.next();
 							if (parent != null && parent.getPermissionControllingGroupID() > 0) {
 								additionalGroups.add(parent.getPermissionControllingGroup());
 							}
 						}
 						directlyRelatedParents.addAll(additionalGroups);
-						Collection allViewAndOwnerPermissionGroupPKs = new ArrayList();
+						Collection<Object> allViewAndOwnerPermissionGroupPKs = new ArrayList<Object>();
 						// get all view permissions for direct parent and put in
 						// a list
-						Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
+						Collection<ICPermission> viewPermissions = AccessControl.getAllGroupViewPermissionsLegacy(directlyRelatedParents);
 						addGroupPKsToCollectionFromICPermissionCollection(viewPermissions, allViewAndOwnerPermissionGroupPKs);
-						Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+						Collection<ICPermission> ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
 						// allViewAndOwnerPermissions.removeAll(ownedPermissions);//no
 						// double entries thank you
 						addGroupPKsToCollectionFromICPermissionCollection(ownedPermissions, allViewAndOwnerPermissionGroupPKs);
@@ -2512,7 +2512,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	@Override
-	public void addGroupPKsToCollectionFromICPermissionCollection(Collection ICPermissionSRC, Collection GroupDEST) {
+	public void addGroupPKsToCollectionFromICPermissionCollection(Collection<ICPermission> ICPermissionSRC, Collection<Object> GroupDEST) {
 		GroupHome grHome = getGroupHome();
 		for (Iterator iter = ICPermissionSRC.iterator(); iter.hasNext();) {
 			ICPermission perm = (ICPermission) iter.next();

@@ -24,6 +24,7 @@ import javax.ejb.RemoveException;
 
 import com.idega.business.IBOService;
 import com.idega.core.accesscontrol.business.LoginCreateException;
+import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.builder.data.ICDomain;
@@ -696,7 +697,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#addGroupPKsToCollectionFromICPermissionCollection
 	 */
-	public void addGroupPKsToCollectionFromICPermissionCollection(Collection ICPermissionSRC, Collection GroupDEST)
+	public void addGroupPKsToCollectionFromICPermissionCollection(Collection<ICPermission> ICPermissionSRC, Collection<Object> GroupDEST)
 			throws java.rmi.RemoteException;
 
 	/**
