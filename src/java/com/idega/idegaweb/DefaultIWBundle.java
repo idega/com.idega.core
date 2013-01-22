@@ -1759,7 +1759,7 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 
 	public static boolean isProductionEnvironment() {
 		String directory = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
-		return (directory == null) ? true : false;
+		return StringUtil.isEmpty(directory);
 	}
 
 	@Override

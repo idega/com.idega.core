@@ -19,13 +19,16 @@ import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
+import com.idega.business.IBOLookup;
 import com.idega.business.chooser.helper.CalendarsChooserHelper;
 import com.idega.business.chooser.helper.GroupsChooserHelper;
 import com.idega.cal.bean.CalendarPropertiesBean;
+import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.PasswordInput;
@@ -47,11 +50,8 @@ import com.idega.util.StringUtil;
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson </a>
  * @version $Revision: 1.20 $
  */
-public class Property implements Serializable{
+public class Property implements Serializable {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = 4451503674746022678L;
 
 	private String propertyName;
@@ -213,9 +213,8 @@ public class Property implements Serializable{
 		} catch(Exception e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get by value from ValueExpression by expression: " + stringValue, e);
 		}
-		if (argument != null) {
+		if (argument != null)
 			return argument;
-		}
 
 		try {
 			if (parameterType.equals(Integer.class) || parameterType.equals(Integer.TYPE)) {
@@ -272,6 +271,10 @@ public class Property implements Serializable{
 			}
 			else if (parameterType.equals(java.util.Date.class)) {
 				argument = IWDatePickerHandler.getParsedDate(stringValue);
+			}
+			else if (parameterType.equals(ICPage.class)) {
+				BuilderService builder = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), BuilderService.class);
+				argument = builder.getICPage(stringValue);
 			}
 		} catch(Exception e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to get value from expression: " + stringValue + ", expected type: " +
