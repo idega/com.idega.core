@@ -126,4 +126,9 @@ public class ICLocale implements Serializable {
 	public void setInUse(boolean inUse) {
 		this.inUse = inUse ? 'Y' : 'N';
 	}
+
+	@Override
+	public String toString() {
+		return "Locale ID: " + getId() + ", " + getLocale();
+	}
 }
