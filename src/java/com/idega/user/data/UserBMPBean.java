@@ -2973,7 +2973,8 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 
 	@Override
 	public String getId(){
-		return getPrimaryKey().toString();
+		Object primaryKey = getPrimaryKey();
+		return primaryKey == null ? null : primaryKey.toString();
 	}
 
 
@@ -3099,4 +3100,11 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		this.idoRemoveFrom(language);
 	}
 
+	@Override
+	public boolean equals(Object obj) {
+		if (obj instanceof com.idega.user.data.bean.User)
+			return getId().equals(String.valueOf(((com.idega.user.data.bean.User) obj).getId()));
+
+		return super.equals(obj);
+	}
 }
