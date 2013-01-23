@@ -15,4 +15,6 @@ public interface ICLocaleDAO extends GenericDao {
 
 	public ICLocale getLocale(String locale);
 
+	public ICLocale doCreateLocale(String locale);
+
 }

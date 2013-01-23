@@ -31,10 +31,28 @@ public class ICLocaleDAOImpl extends GenericDaoImpl implements ICLocaleDAO {
 		if (StringUtil.isEmpty(locale))
 			return null;
 
-		return getSingleResultByInlineQuery("from " + ICLocale.class.getName() + " l where l." + ICLocale.COLUMN_LOCALE + " = :localeParam",
+		ICLocale icLocale = getSingleResultByInlineQuery("from " + ICLocale.class.getName() + " l where l." + ICLocale.COLUMN_LOCALE + " = :localeParam",
 											ICLocale.class,
 											new Param("localeParam", locale)
 		);
+		if (icLocale == null)
+			return doCreateLocale(locale);
+
+		return icLocale;
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public ICLocale doCreateLocale(String locale) {
+		if (StringUtil.isEmpty(locale))
+			return null;
+
+		ICLocale icLocale = new ICLocale();
+		icLocale.setLocale(locale);
+		persist(icLocale);
+		return icLocale.getId() == null ? null : icLocale;
+	}
+
+
 
 }
