@@ -49,6 +49,8 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public Node updateFileContents(String absolutePath, InputStream fileContents, AdvancedProperty... properties) throws RepositoryException;
 	public Node updateFileContents(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties)
 			throws RepositoryException;
+	public Node updateFileContentsAsRoot(String absolutePath, InputStream fileContents, boolean createFile, AdvancedProperty... properties)
+			throws RepositoryException;
 
 	public InputStream getInputStream(Session session, String path) throws IOException, RepositoryException;
 	public InputStream getInputStream(String path) throws IOException, RepositoryException;
