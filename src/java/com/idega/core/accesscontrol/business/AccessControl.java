@@ -2800,18 +2800,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	public Collection<ICPermission> getAllRolesForGroupCollection(Collection groups) {
 	    Collection<ICPermission> returnCol = new Vector<ICPermission>(); //empty
-	    if (ListUtil.isEmpty(groups)) {
+	    if (ListUtil.isEmpty(groups))
 	    	return ListUtil.getEmptyList();
-	    }
+
 	    try {
 	        Collection permissions = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
 	                    RoleHelperObject.getStaticInstance().toString(),
-	                    groups);
+	                    groups
+	        );
 
 	        //only return active and only actual roles and not group permission definitation roles
-	        if(permissions!=null && !permissions.isEmpty()){
-	            Iterator permissionsIter = permissions.iterator();
-	            while (permissionsIter.hasNext()) {
+	        if (!ListUtil.isEmpty(permissions)) {
+	            for (Iterator permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
 	                ICPermission perm = (ICPermission) permissionsIter.next();
 	                //perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
 	                //if not it is a role for a permission key
@@ -2820,12 +2820,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	                }
 	            }
 	        }
-	    }
-	    catch (FinderException ex) {
+	    } catch (FinderException ex) {
 	        ex.printStackTrace();
-	    }
-	    catch (RemoteException x) {
+	    } catch (RemoteException x) {
 	        x.printStackTrace();
+	    } catch (Exception e) {
+	    	e.printStackTrace();
 	    }
 
 		return returnCol;
