@@ -61,7 +61,7 @@ public class FileUtil {
 	  return exists(filePath);
   }
 
-	public static boolean exists(String fileNameWithFullPath)  {
+  public static boolean exists(String fileNameWithFullPath)  {
 	  File file = new File(fileNameWithFullPath);
 	  return file.exists();
   }
@@ -137,9 +137,7 @@ public class FileUtil {
   /**
    * Gets the System wide path separator
    *
-   * @deprecated Use File.separator
    */
-  @Deprecated
 public static String getFileSeparator(){
     return File.separator;
   }
