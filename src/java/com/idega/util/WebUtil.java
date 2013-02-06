@@ -90,7 +90,7 @@ public class WebUtil extends DefaultSpringBean {
 
     	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
 
-    	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "programmers@idega.com") : to;
+    	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "abuse@idega.com") : to;
     	if (StringUtil.isEmpty(to)) {
     		getLogger().warning("Receiver is unknown! Unable to send a message:\n" + message);
     		return false;

@@ -1133,7 +1133,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     /**
-     * Regsters and loads a IWBundle with the abstact pathname relative to
+     * Registers and loads a IWBundle with the abstract pathname relative to
      * /idegaweb on the WebServer and the identifier specified by
      * bundleIdentifier <br>
      * <br>
@@ -2282,14 +2282,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
 		return getFacesApplication().createValueBinding(ref);
 	}
-	
+
 	public ValueExpression createValueExpression(String ref, Class<?> expectedReturnType) {
 		return createValueExpression(FacesContext.getCurrentInstance().getELContext(), ref, expectedReturnType);
 	}
 	public ValueExpression createValueExpression(ELContext elContext, String ref, Class<?> expectedReturnType) {
 		return getFacesApplication().getExpressionFactory().createValueExpression(elContext, ref, expectedReturnType);
 	}
-	
+
 	//End JSF Application implementation
 
 	/**

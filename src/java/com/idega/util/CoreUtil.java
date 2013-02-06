@@ -222,7 +222,7 @@ public class CoreUtil {
 		    			notification.append("Message: ").append(message).append("\n");
 		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		    		SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "programmers@idega.com"), null, null, null,
+		    		SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "abuse@idega.com"), null, null, null,
 		    				null, "EXCEPTION: on ePlatform, server: " + server,notification.toString(), false, true, attachments);
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);

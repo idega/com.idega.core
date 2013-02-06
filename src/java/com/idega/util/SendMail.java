@@ -316,12 +316,12 @@ public class SendMail {
 		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(), mv.getHeaders(), false, true, attachment);
 	}
 
-	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
-		send(from, to, cc, bcc, null, host, subject, text);
+	public static Message send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
+		return send(from, to, cc, bcc, null, host, subject, text);
 	}
 
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, true, false, new File[] {});
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text) throws MessagingException {
+		return send(from, to, cc, bcc, replyTo, host, subject, text, true, false, new File[] {});
 	}
 
 	/**
