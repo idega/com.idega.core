@@ -30,6 +30,7 @@
     <entity class="com.idega.core.file.data.bean.ICMimeType" />
     <entity class="com.idega.core.localisation.data.bean.ICLanguage" />
     <entity class="com.idega.core.localisation.data.bean.ICLocale" />
+    <entity class="com.idega.core.localisation.data.bean.LocalizedText" />
     <entity class="com.idega.core.location.data.bean.Address" />
     <entity class="com.idega.core.location.data.bean.AddressCoordinate" />
     <entity class="com.idega.core.location.data.bean.AddressType" />
