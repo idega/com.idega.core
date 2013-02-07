@@ -9,10 +9,12 @@ import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.idega.block.web2.business.Web2Business;
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
@@ -27,6 +29,9 @@ import com.idega.user.data.User;
 @Service("webUtil")
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class WebUtil extends DefaultSpringBean {
+
+	@Autowired
+	private Web2Business web2;
 
 	public String getLocalizedString(String bundleIdentifier, String key, String returnValueIfNotFound) {
 		return getMultipleLocalizedStrings(bundleIdentifier, Arrays.asList(
@@ -261,5 +266,9 @@ public class WebUtil extends DefaultSpringBean {
 
     public String getLastDayOfCurrentMonth(boolean showTime) {
     	return getLocalizedDate(getLastDay(showTime), getCurrentLocale(), showTime);
+    }
+
+    public boolean isValidJCaptchaText(String sessionId, String text) {
+    	return web2.validateJCaptcha(sessionId, text);
     }
 }
