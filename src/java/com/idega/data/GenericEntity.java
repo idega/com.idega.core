@@ -4289,24 +4289,24 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 
 	private ResultHelper prepareResultSet(Connection conn, String sqlString, SelectQuery query) throws SQLException {
 		ResultHelper rsh = new ResultHelper();
-		if (query != null) {
+		if (conn != null) {
+			if (query != null) {
+				DatastoreInterface dsi = DatastoreInterface.getDatastoreInterfaceByDatasource(getDatasource());
+				List values = query.getValues();
+				if (values != null && dsi.isUsingPreparedStatements()) {
+					rsh.stmt = conn.prepareStatement(query.toString(true));
+					dsi.insertIntoPreparedStatement(values, (PreparedStatement) rsh.stmt, 1);
+					rsh.rs = ((PreparedStatement) rsh.stmt).executeQuery();
+				}
+				else {
+					rsh.stmt = conn.createStatement();
+					rsh.rs = rsh.stmt.executeQuery(query.toString());
+				}
 
-			DatastoreInterface dsi = DatastoreInterface.getDatastoreInterfaceByDatasource(getDatasource());
-			List values = query.getValues();
-			if (values != null && dsi.isUsingPreparedStatements()) {
-				rsh.stmt = conn.prepareStatement(query.toString(true));
-				dsi.insertIntoPreparedStatement(values, (PreparedStatement) rsh.stmt, 1);
-				rsh.rs = ((PreparedStatement) rsh.stmt).executeQuery();
-			}
-			else {
+			} else if (sqlString != null) {
 				rsh.stmt = conn.createStatement();
-				rsh.rs = rsh.stmt.executeQuery(query.toString());
+				rsh.rs = rsh.stmt.executeQuery(sqlString);
 			}
-
-		}
-		else if (sqlString != null) {
-			rsh.stmt = conn.createStatement();
-			rsh.rs = rsh.stmt.executeQuery(sqlString);
 		}
 		return rsh;
 	}

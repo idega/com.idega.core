@@ -4302,4 +4302,27 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return usersBynameEmailAndPhone;
 	}
 
-}
+	@Override
+	public Collection<User> getUsers(String name, String personalID) {
+		Collection<User> users = new ArrayList<User>();
+
+		if (!StringUtil.isEmpty(personalID)) {
+			try {
+				User userByPersonalID = getUser(personalID);
+				if (userByPersonalID != null) {
+					users.add(userByPersonalID);
+				}
+			} catch (FinderException e) {
+				getLogger().log(Level.WARNING, "Unable to find " + User.class
+						+ " by personalID: " + personalID);
+			}
+		}
+
+		if (ListUtil.isEmpty(users) && !StringUtil.isEmpty(name)) {
+			users = getUsersByNameOrEmailOrPhone(name);
+		}
+
+		return users;
+	}
+
+} // Class UserBusiness

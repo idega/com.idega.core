@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -517,7 +518,19 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsers
 	 */
-	public Collection getUsers() throws FinderException, RemoteException;
+	public Collection<User> getUsers() throws FinderException, RemoteException;
+	
+	/**
+	 * 
+	 * <p>Searches for {@link User} in database by {@link User#getPersonalID()},
+	 * if nothing found, than by {@link User#getName()}.</p>
+	 * @param name of {@link User};
+	 * @param personalID of {@link User};
+	 * @return {@link Collection} of {@link User}s, matching given criteria or 
+	 * {@link Collections#emptyList()} on failure.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public Collection<User> getUsers(String name, String personalID);
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUser

@@ -20,7 +20,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
@@ -300,7 +300,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean isOwner(List groupIds, Object obj, IWUserContext iwc) throws Exception {
 		Boolean returnVal = Boolean.FALSE;
-		List[] permissionOrder = new Vector[1];
+		List[] permissionOrder = new ArrayList[1];
 		permissionOrder[0] = groupIds;
 		returnVal = checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER, iwc);
 
@@ -612,7 +612,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				if (primaryGroup != null) {
 					groups.remove(primaryGroup);
 				}
-				List<String> groupIds = new Vector<String>();
+
+				List<String> groupIds = new ArrayList<String>();
 				Iterator<Group> iter = groups.iterator();
 				while (iter.hasNext()) {
 					Group group = iter.next();
@@ -1313,6 +1314,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public List<Group> getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception {
 		List<Group> toReturn = new ArrayList<Group>();
 		List<ICPermission> permissions = null;
+		com.idega.core.accesscontrol.data.ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
 
 		switch (permissionCategory) {
 			case AccessController.CATEGORY_OBJECT_INSTANCE :
@@ -1846,26 +1848,27 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return dao.findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType, dao.findPermissionGroup(group.getID()));
 	}
 
-	public static Collection<com.idega.core.accesscontrol.data.ICPermission> getAllGroupPermissionsForGroup(com.idega.user.data.Group group) {
+	@Deprecated
+	public static Collection<com.idega.core.accesscontrol.data.ICPermission> getAllGroupPermissionsForGroupLegacy(com.idega.user.data.Group group) {
 		GroupDAO dao = ELUtil.getInstance().getBean(GroupDAO.class);
 		Group g = dao.findGroup(new Integer(group.getPrimaryKey().toString()));
 
 		Collection<com.idega.core.accesscontrol.data.ICPermission> oldPermissions = new ArrayList<com.idega.core.accesscontrol.data.ICPermission>();
 		Collection<ICPermission> permissions = getAllGroupPermissionsForGroup(g);
+		if (ListUtil.isEmpty(permissions))
+			return oldPermissions;
+
 		try {
-			ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
-			for (ICPermission permission : permissions) {
-				try {
-					oldPermissions.add(home.findByPrimaryKey(permission.getId()));
-				}
-				catch (FinderException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
+			ICPermissionHome permissionHome = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
+			for (ICPermission permission: permissions) {
+				com.idega.core.accesscontrol.data.ICPermission tmp = permissionHome.findByPrimaryKey(permission.getId());
+				if (tmp == null)
+					continue;
+
+				oldPermissions.add(tmp);
 			}
-		}
-		catch (IDOLookupException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			Logger.getLogger(AccessControl.class.getName()).log(Level.WARNING, "Error converting permissions " + permissions, e);
 		}
 
 		return oldPermissions;
@@ -2001,7 +2004,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
 	 */
 	public Collection<ICPermission> getAllRolesForGroupCollection(Collection<Group> groups) {
-	    Collection<ICPermission> returnCol = new Vector<ICPermission>(); //empty
+	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>(); //empty
 	    if (ListUtil.isEmpty(groups)) {
 	    	return ListUtil.getEmptyList();
 	    }
@@ -2264,6 +2267,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public Collection<com.idega.core.accesscontrol.data.ICRole> getAllRolesLegacy() {
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			ICRoleHome home = (ICRoleHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICRole.class);
 			return home.findAllRoles();
@@ -2411,7 +2415,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    			permGroups,
 					AccessController.PERMISSION_KEY_PERMIT,
 					AccessController.CATEGORY_STRING_GROUP_ID);
-
 		return returnCol;
 	}
 
@@ -2491,7 +2494,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    			permGroups,
 					AccessController.PERMISSION_KEY_EDIT,
 					AccessController.CATEGORY_STRING_GROUP_ID);
-
 		return returnCol;
 	}
 
@@ -2546,7 +2548,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					permGroups,
 					AccessController.PERMISSION_KEY_VIEW,
 					AccessController.CATEGORY_STRING_GROUP_ID);
-
 		return returnCol;
 	}
 
@@ -2567,7 +2568,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					permGroups,
 					AccessController.PERMISSION_KEY_CREATE,
 					AccessController.CATEGORY_STRING_GROUP_ID);
-
 		return returnCol;
 	}
 
@@ -2588,7 +2588,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					permGroups,
 					AccessController.PERMISSION_KEY_DELETE,
 					AccessController.CATEGORY_STRING_GROUP_ID);
-
 		return returnCol;
 	}
 
