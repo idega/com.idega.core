@@ -11,6 +11,7 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -56,6 +57,7 @@ import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
@@ -90,14 +92,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private static boolean NULL_CLONE_PAGE_INITIALIZED = false;
 	protected final static String ROWS_PROPERTY = "ROWS";
 	protected final static String IW_PAGE_KEY = "idegaweb_page";
+
 	public final static String IW_FRAME_STORAGE_PARMETER = "idegaweb_frame_page";
 	public final static String IW_FRAME_CLASS_PARAMETER = "idegaweb_frame_class";
 	public final static String IW_FRAMESET_PAGE_PARAMETER = "idegaweb_frameset_path";
 	public final static String IW_FRAME_NAME_PARAMETER = "idegaweb_frame_name";
-	public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s";
-	// private final static String START_TAG="<!DOCTYPE HTML PUBLIC
-	// \"-//W3C//DTD HTML 4.01 Transitional//EN\"
-	// \"http://www.w3.org/TR/html4/loose.dtd\">\n<html>";
+	public final static String PRM_IW_BROWSE_EVENT_SOURCE = "iw_b_e_s",
+								PAGE_ASSOCIATED_SCRIPT = "page_associated_script";
+
 	/**
 	 * By skipping the validation URL XML compliant browser still recognise attributes such as height / width *
 	 */
@@ -875,7 +877,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	@Override
 	public void setAssociatedScript(Script myScript) {
-		getFacets().put("page_associated_script", myScript);
+		getFacets().put(PAGE_ASSOCIATED_SCRIPT, myScript);
 	}
 
 	/*
@@ -885,11 +887,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Description of the Method
 	 */
 	private void initializeAssociatedScript() {
-		Script _theAssociatedScript = (Script) getFacets().get("page_associated_script");
-		if (_theAssociatedScript == null) {
-			_theAssociatedScript = new Script();
+		UIComponent component = getFacets().get(PAGE_ASSOCIATED_SCRIPT);
+		if (component instanceof Script) {
+			Script _theAssociatedScript = (Script) component;
 			setAssociatedScript(_theAssociatedScript);
-		}
+		} else
+			setAssociatedScript(new Script());
 	}
 
 	/**
@@ -898,7 +901,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	@Override
 	public Script getAssociatedScript() {
 		initializeAssociatedScript();
-		return (Script) getFacets().get("page_associated_script");
+		return (Script) getFacets().get(PAGE_ASSOCIATED_SCRIPT);
 	}
 
 	/**
@@ -2085,13 +2088,22 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	/**
-	 * Used to add source of scriptfiles (JavaScript) The file url should end on the form "scriptfile.js"
+	 * Used to add source of script files (JavaScript) The file URL should end on the form "scriptfile.js"
 	 *
 	 * @param jsString
 	 *          The feature to be added to the ScriptSource attribute
 	 */
 	public void addScriptSource(String jsString) {
-		getAssociatedScript().addScriptSource(jsString);
+		if (StringUtil.isEmpty(jsString))
+			return;
+
+		String[] sources = jsString.split(CoreConstants.COMMA);
+		IWContext iwc = CoreUtil.getIWContext();
+		if (iwc == null) {
+			for (String source: sources)
+				getAssociatedScript().addScriptSource(source);
+		} else
+			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(sources));
 	}
 
 	/**
@@ -2383,6 +2395,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		return values;
 	}
 
+	@Override
 	public List<PropertyDescription> getPropertyDescriptions() {
 		List<PropertyDescription> list = new ArrayList<PropertyDescription>();
 		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1", File.class.getName(), FileObjectReader.class.getName(),

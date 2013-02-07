@@ -1,21 +1,23 @@
 /*
- * $Id: Script.java,v 1.32 2008/12/11 08:03:30 laddi Exp $ 
+ * $Id: Script.java,v 1.32 2008/12/11 08:03:30 laddi Exp $
  * Created in 2000 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2000-2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
 package com.idega.presentation;
 
-import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.Map;
+
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWConstants;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  * <p>
@@ -24,18 +26,18 @@ import com.idega.idegaweb.IWConstants;
  * add to a component or a page.
  * </p>
  * Last modified: $Date: 2008/12/11 08:03:30 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.32 $
  */
 public class Script extends PresentationObject {
 
 	private String scriptType;
-	private Map scriptCode;
-	private Hashtable variables;
-	private Hashtable methods;
+	private Map<String, String> scriptCode;
+	private Map<String, String> variables;
+	private Map<String, String> methods;
 	private String scriptLines;
-	
+
 	private static final String SCRIPT_TYPE_JAVACRIPT="javascript";
 	private static final String MIMETYPE_JAVACRIPT="text/javascript";
 	private static final String ATTRIBUTE_SOURCE="src";
@@ -49,20 +51,15 @@ public class Script extends PresentationObject {
 		super();
 		setType();
 		setTransient(false);
-		// scriptCode = new LinkedHashMap();
 	}
-	
+
 	public boolean isEmpty() {
 		return getScriptCode().isEmpty() && getMarkupAttribute(ATTRIBUTE_SOURCE) == null;
 	}
 
-	/*
-	 * public void setScriptType(String scriptType){
-	 * setAttribute("language",scriptType); }
-	 */
-	protected Map getScriptCode() {
+	protected Map<String, String> getScriptCode() {
 		if (this.scriptCode == null) {
-			this.scriptCode = new LinkedHashMap();
+			this.scriptCode = new LinkedHashMap<String, String>();
 		}
 		return this.scriptCode;
 	}
@@ -79,19 +76,10 @@ public class Script extends PresentationObject {
 		setMarkupAttribute(ATTRIBUTE_SOURCE, sourceURL);
 	}
 
-	/*
-	 * public void addToScriptCode(String code){ this.scriptCode=this.scriptCode +
-	 * "\n" + code; }
-	 * 
-	 * public void setScriptCode(String code){ this.scriptCode=code; }
-	 * 
-	 */
 	public String getScriptCode(IWContext iwc) {
 		StringBuffer returnString = new StringBuffer();
-		Iterator iter = getScriptCode().keySet().iterator();
-		while (iter.hasNext()) {
-			Object function = iter.next();
-			String functionCode = (String) getScriptCode().get(function);
+		for (Iterator<String> iter = getScriptCode().keySet().iterator(); iter.hasNext();) {
+			String functionCode = getScriptCode().get(iter.next());
 			returnString.append(functionCode + "\n");
 		}
 		return returnString.toString();
@@ -110,7 +98,7 @@ public class Script extends PresentationObject {
 
 	public void addToFunction(String functionName, String scriptString) {
 		if (getScriptCode() != null) {
-			String functionCode = (String) getScriptCode().get(functionName);
+			String functionCode = getScriptCode().get(functionName);
 			if (functionCode != null) {
 				String beginString;
 				String endString;
@@ -127,7 +115,7 @@ public class Script extends PresentationObject {
 
 	public void addToBeginningOfFunction(String functionName, String scriptString) {
 		if (getScriptCode() != null) {
-			String functionCode = (String) getScriptCode().get(functionName);
+			String functionCode = getScriptCode().get(functionName);
 			if (functionCode != null) {
 				String beginString;
 				String endString;
@@ -148,7 +136,7 @@ public class Script extends PresentationObject {
 
 	public void addVariable(String variableName, String variableValue) {
 		if (this.variables == null) {
-			this.variables = new Hashtable();
+			this.variables = new Hashtable<String, String>();
 		}
 		this.variables.put(variableName, variableValue);
 	}
@@ -158,16 +146,14 @@ public class Script extends PresentationObject {
 	}
 
 	public String getVariable(String variableName) {
-		return (String) this.variables.get(variableName);
+		return this.variables.get(variableName);
 	}
 
 	public String getVariables() {
 		StringBuffer returnString = new StringBuffer();
 		if (this.variables != null) {
-			Enumeration e = this.variables.keys();
-			while (e.hasMoreElements()) {
-				Object function = e.nextElement();
-				String variableName = (String) function;
+			for (Iterator<String> varsIter = variables.keySet().iterator(); varsIter.hasNext();) {
+				String variableName = varsIter.next();
 				String variableValue = getVariable(variableName);
 				if (variableValue != null) {
 					returnString.append("var " + variableName + " = " + variableValue + ";\n");
@@ -183,21 +169,20 @@ public class Script extends PresentationObject {
 
 	public void addMethod(String methodName, String methodValue) {
 		if (this.methods == null) {
-			this.methods = new Hashtable();
+			this.methods = new Hashtable<String, String>();
 		}
 		this.methods.put(methodName, methodValue);
 	}
 
 	public String getMethod(String methodName) {
-		return (String) this.methods.get(methodName);
+		return this.methods.get(methodName);
 	}
 
 	public String getMethods() {
 		StringBuffer returnString = new StringBuffer();
 		if (this.methods != null) {
-			for (Enumeration e = this.methods.keys(); e.hasMoreElements();) {
-				Object function = e.nextElement();
-				String methodName = (String) function;
+			for (Iterator<String> methodsIter = this.methods.keySet().iterator(); methodsIter.hasNext();) {
+				String methodName = methodsIter.next();
 				String methodValue = getMethod(methodName);
 				returnString.append("" + methodName + " = " + methodValue + ";\n");
 			}
@@ -216,15 +201,11 @@ public class Script extends PresentationObject {
 				  "l.setAttribute('src', '"+jsString+"'); "+
 				  "l.setAttribute('type', 'text/javascript'); "+
 				  "document.getElementsByTagName('head')[0].appendChild(l); \n");
-			
-			
-			// document.write("<scr"+"ipt
-			// src=/js/curtain_menu/menumaker.jsp><"+"/script>")
 		}
 	}
 
 	public String getFunction(String functionName) {
-		return (String) getScriptCode().get(functionName);
+		return getScriptCode().get(functionName);
 	}
 
 	@Override
@@ -251,7 +232,7 @@ public class Script extends PresentationObject {
 				println("<script " + getMarkupAttributesString() + " >");
 				println("<!--");
 				if (!isMarkupAttributeSet(ATTRIBUTE_SOURCE)) {
-					
+
 					String lines = getScriptLines();
 					if(lines!=null){
 						print(lines);
@@ -286,7 +267,7 @@ public class Script extends PresentationObject {
 			obj = (Script) super.clone();
 			obj.scriptType = this.scriptType;
 			if (this.scriptCode != null) {
-				obj.scriptCode = (Map) ((LinkedHashMap) this.scriptCode).clone();
+				obj.scriptCode = MapUtil.deepCopy(scriptCode);
 			}
 		}
 		catch (Exception ex) {
@@ -295,28 +276,18 @@ public class Script extends PresentationObject {
 		return obj;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext,
-	 *      java.lang.Object)
-	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(context, values[0]);
 		this.scriptType = (String) values[1];
-		this.scriptCode = (Map) values[2];
-		this.variables = (Hashtable) values[3];
-		this.methods = (Hashtable) values[4];
+		this.scriptCode = (Map<String, String>) values[2];
+		this.variables = (Map<String, String>) values[3];
+		this.methods = (Map<String, String>) values[4];
 		this.scriptLines = (String)values[5];
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
-	 */
 	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[6];
@@ -328,24 +299,24 @@ public class Script extends PresentationObject {
 		values[5] = this.scriptLines;
 		return values;
 	}
-	
+
 	@Override
 	public void println(String str) {
 		String convertedString = convertStringToUnicode(str);
 		super.println(convertedString);
 	}
-	
+
 	@Override
 	public void print(String str) {
 		String convertedString = convertStringToUnicode(str);
 		super.print(convertedString);
 	}
-		
+
 	private String convertStringToUnicode(String str) {
 		if (str == null) {
 			return null;
 		}
-		StringBuffer sb = new StringBuffer();	
+		StringBuffer sb = new StringBuffer();
 		char c;
 		for (int i = 0; i < str.length(); ++i) {
 			c = str.charAt(i);
@@ -374,11 +345,11 @@ public class Script extends PresentationObject {
 		}
 		return sb.toString();
 	}
-	
+
 	public String getScriptLines(){
 		return this.scriptLines;
 	}
-	
+
 	/**
 	 * <p>
 	 * Adds a single script line to the source body of the script object, not within any function declaration.<br/>
