@@ -39,7 +39,7 @@ public class LocalizedText implements Serializable {
 	@JoinColumn(name = ICLocale.COLUMN_LOCALE_ID, nullable = false)
 	private ICLocale locale;
 
-	@Column(name = "text", length = 65535)
+	@Column(name = "text", length = 65535, nullable = false)
 	private String text;
 
 	public Long getId() {
