@@ -40,6 +40,7 @@
     <entity class="com.idega.core.location.data.bean.Province" />
     <entity class="com.idega.core.location.data.bean.RealEstate" />
     <entity class="com.idega.core.location.data.bean.Street" />
+    <entity class="com.idega.core.location.data.bean.Location" />
     <entity class="com.idega.core.net.data.bean.ICNetwork" />
     <entity class="com.idega.core.net.data.bean.ICProtocol" />
     <entity class="com.idega.core.version.data.bean.ICItem" />
