@@ -140,10 +140,6 @@ public class SendMail {
 		if (!StringUtil.isEmpty(port))
 			props.put("mail.smtp.port", port);
 
-		// Set the smtp server port
-		if (!StringUtil.isEmpty(port))
-			props.put("mail.smtp.port", port);
-
 		// Start a session
 		Session session;
 		if (useSmtpAuthentication) {
