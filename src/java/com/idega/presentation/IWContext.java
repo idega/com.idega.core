@@ -24,6 +24,7 @@ import java.util.WeakHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.el.ELContext;
 import javax.faces.application.Application;
 import javax.faces.application.FacesMessage;
 import javax.faces.application.FacesMessage.Severity;
@@ -1576,6 +1577,15 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		ExternalContext extContext = getRealFacesContext() != null ? getRealFacesContext().getExternalContext() : null;
 		if (extContext == null) {
 			extContext = getFacesContextInitializer().getInitializedExternalContext(getServletContext(), getRequest(), getResponse());
+		}
+		return extContext;
+	}
+	
+	@Override
+	public ELContext getELContext() {
+		ELContext extContext = getRealFacesContext() != null ? getRealFacesContext().getELContext() : null;
+		if (extContext == null) {
+			throw new IllegalStateException("realFacesContext is not initialized yet.");
 		}
 		return extContext;
 	}
