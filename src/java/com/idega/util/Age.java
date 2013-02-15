@@ -48,8 +48,9 @@ public class Age {
 	 * @return
 	 */
 	public int getYears(Date date) {
-		IWTimestamp stamp = new IWTimestamp(date);
-		GregorianCalendar now = new GregorianCalendar(stamp.getYear(), stamp.getMonth(), stamp.getDay());
+		//IWTimestamp stamp = new IWTimestamp(date);
+		GregorianCalendar now = new GregorianCalendar();//stamp.getYear(), stamp.getMonth(), stamp.getDay());
+		now.setTime(date);
 		int yearAge = now.get(Calendar.YEAR) - this.startDate.get(Calendar.YEAR);
 		if (now.get(Calendar.MONTH) < this.startDate.get(Calendar.MONTH)) {
 			yearAge--;
