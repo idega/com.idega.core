@@ -226,6 +226,9 @@ public class Property implements Serializable {
 			else if (parameterType.equals(Boolean.class) || parameterType.equals(Boolean.TYPE)) {
 				argument = CoreUtil.getBooleanValueFromString(stringValue);
 			}
+			else if (parameterType.equals(Long.class) || parameterType.equals(Long.TYPE)) {
+				argument = Long.valueOf(stringValue);
+			}
 			else if (parameterType.equals(Float.class) || parameterType.equals(Float.TYPE)) {
 				argument = new Float(stringValue);
 			}
