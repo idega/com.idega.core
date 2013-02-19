@@ -10,9 +10,10 @@
 package com.idega.xml;
 
 import java.io.Serializable;
-import org.jdom.DocType;
-import org.jdom.Document;
-import org.jdom.Element;
+
+import org.jdom2.DocType;
+import org.jdom2.Document;
+import org.jdom2.Element;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -24,7 +25,7 @@ public class XMLDocument implements Serializable {
 	 */
 	private static final long serialVersionUID = -7635890602981794914L;
 Document _doc = null;
-  
+
   public XMLDocument(XMLElement element) {
     Element el = (Element)element.getElement();
     if (el != null) {
@@ -40,7 +41,7 @@ Document _doc = null;
 			}
 	  }
 
-  
+
   /**
    * This object really only accepts a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
    * @param oDocument a Document instance
@@ -55,7 +56,7 @@ Document _doc = null;
    * This object really only accepts a org.jdom.Document type but is declared Object becaluse of jdom dependency issues.
    * @param oDocument the Document instance to set
    * @throws ClassCastException if object not of correct type
-   */  
+   */
   public void setDocument(Object oDocument) {
   	Document doc = (Document)oDocument;
     this._doc = doc;
@@ -84,19 +85,19 @@ Document _doc = null;
 			}
     }
   }
-  
+
   public DocType getDocType(){
 	if (this._doc != null) {
 		return this._doc.getDocType();
 	}
-		
+
 	return(null);
   }
-  
+
   public void setDocType(DocType docType){
   	if(this._doc != null){
   		this._doc.setDocType(docType);
   	}
   }
-  
+
 }

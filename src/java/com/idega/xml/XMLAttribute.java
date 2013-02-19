@@ -10,19 +10,18 @@
 package com.idega.xml;
 
 import java.io.Serializable;
-import org.jdom.Attribute;
-import org.jdom.DataConversionException;
+
+import org.jdom2.Attribute;
+import org.jdom2.DataConversionException;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
 public class XMLAttribute implements Serializable{
-  /**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+
 	private static final long serialVersionUID = 1883155348794852652L;
-private Attribute _attribute = null;
+	private Attribute _attribute = null;
 
   public XMLAttribute(String name, String value) {
     this._attribute = new Attribute(name,value);
@@ -47,7 +46,7 @@ private Attribute _attribute = null;
 
     return(null);
   }
-  
+
   public void setValue(String value) {
 	  if (this._attribute == null) {
 		  return;

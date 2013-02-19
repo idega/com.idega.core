@@ -1,21 +1,22 @@
 /*
  * $Id: XMLOutput.java,v 1.12 2006/04/09 12:13:14 laddi Exp $
- * 
+ *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.xml;
 
 import java.io.IOException;
 import java.io.OutputStream;
 import java.io.StringWriter;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.output.Format;
-import org.jdom.output.XMLOutputter;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
@@ -26,14 +27,14 @@ public class XMLOutput {
 	XMLOutputter _output = null;
 
 	/**
-	 * 
+	 *
 	 */
 	public XMLOutput() {
 		this._output = new XMLOutputter();
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public XMLOutput(String indent, boolean newlines) {
 		Format f = (newlines) ? Format.getPrettyFormat() : Format.getCompactFormat();
@@ -42,7 +43,7 @@ public class XMLOutput {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setLineSeparator(String seperator) {
 		if (this._output != null) {
@@ -55,7 +56,7 @@ public class XMLOutput {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void setTextNormalize(boolean normalize) {
 		if (this._output != null && normalize) {
@@ -68,7 +69,7 @@ public class XMLOutput {
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void output(XMLDocument document, OutputStream stream) throws IOException {
 		if (this._output != null) {

@@ -10,11 +10,12 @@
 package com.idega.xml;
 
 import java.io.Serializable;
-import org.jdom.CDATA;
+
+import org.jdom2.CDATA;
 
 /**
  * This class does something very clever.....
- * 
+ *
  * @author <a href="palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
@@ -24,42 +25,43 @@ public class XMLCDATA implements Serializable{
 	 */
 	private static final long serialVersionUID = 4174364764872333264L;
 	CDATA _data = null;
-	
+
 	public XMLCDATA(String content) {
 		this._data = new CDATA(content);
 	}
-	
+
 	public XMLCDATA(CDATA data) {
-		this._data = data;	
+		this._data = data;
 	}
-	
+
 	CDATA getContentData() {
-		return this._data;	
+		return this._data;
 	}
-	
-  public synchronized Object clone() {
+
+  @Override
+public synchronized Object clone() {
     if (this._data == null) {
 			return(null);
 		}
 
-    CDATA data = (CDATA)this._data.clone();
+    CDATA data = this._data.clone();
     XMLCDATA xml = new XMLCDATA(data);
     return xml;
   }
-  
+
   public String getText() {
   	if (this._data == null) {
 			return null;
 		}
-  		
-  	return this._data.getText();	
+
+  	return this._data.getText();
   }
-  
+
   public XMLCDATA setText(String text) {
   	if (this._data != null) {
 			this._data.setText(text);
 		}
-  		
+
   	return this;
   }
 }

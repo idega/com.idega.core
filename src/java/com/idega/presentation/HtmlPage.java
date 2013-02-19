@@ -1,6 +1,6 @@
 /**
  * Copyright (C) 2004  idega Software
- * 
+ *
  */
 package com.idega.presentation;
 
@@ -20,10 +20,10 @@ import java.util.regex.Pattern;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
-import org.jdom.Attribute;
-import org.jdom.Document;
-import org.jdom.Element;
-import org.jdom.Namespace;
+import org.jdom2.Attribute;
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
@@ -45,30 +45,30 @@ import com.idega.util.xml.XmlUtil;
  * Inside the Layout template tags are used to define "regions" where UIComponent
  * components can be added in and rendered dynamically.<br>
  * The regions are defined like this:
- * 
+ *
  * <code><pre>
  * <HTML>... <BODY>... <!-- TemplateBeginEditable name="MyUniqueRegionId1" -->MyUniqueRegionId1<!-- TemplateEndEditable --> ... <table><tr><td><!-- TemplateBeginEditable name="MyUniqueRegionId2" -->MyUniqueRegionId2<!-- TemplateEndEditable --</td></tr></table>
  * </pre></code>
- * 
+ *
  * This class parses the HTML and looks for the tag  <code><pre><!-- TemplateBeginEditable ... ></pre></code>
  * Where the first region found becomes the "default".
- * This class also parses the  <code><pre> <HEAD> </pre></code> attribute contents and includes the things normally found inside 
+ * This class also parses the  <code><pre> <HEAD> </pre></code> attribute contents and includes the things normally found inside
  * an idegaWeb Page.
  */
 public class HtmlPage extends Page {
 
 	private static final Logger LOGGER = Logger.getLogger(HtmlPage.class.getName());
-	
+
 	private String html;
 	private Map<String, Integer> regionMap;
-	
+
 	//This variable sets if regions are treated as facets if set to true. Otherwise they are treated as children
 	private boolean regionAsFacet;
 
 	public HtmlPage() {
 		super();
 	}
-	
+
 	public void setResource(InputStream htmlStream) {
 		if (htmlStream != null) {
 			try {
@@ -79,21 +79,21 @@ public class HtmlPage extends Page {
 				IOUtil.closeInputStream(htmlStream);
 			}
 		}
-		
+
 		findOutRegions();
 	}
 
 	/**
-	 * Need to render my children myself. Typical for layout 
+	 * Need to render my children myself. Typical for layout
 	 * management components.
-	 * 
+	 *
 	 * @see javax.faces.component.UIComponent#getRendersChildren()
 	 */
 	@Override
 	public boolean getRendersChildren() {
 		return true;
 	}
-	
+
 	/**
 	 * Gets the default (first found) region.
 	 * Returns null if none is found.
@@ -109,7 +109,7 @@ public class HtmlPage extends Page {
 		}
 		return null;
 	}
-	
+
 	/**
 	 *
 	 */
@@ -117,7 +117,7 @@ public class HtmlPage extends Page {
 	public List<UIComponent> getChildren() {
 		return super.getChildren();
 	}
-	
+
 	/**
 	 *
 	 */
@@ -125,7 +125,7 @@ public class HtmlPage extends Page {
 	protected void setChildren(List<UIComponent> newChildren) {
 		super.setChildren(newChildren);
 	}
-	
+
 	public UIComponent getRegion(String regionKey) {
 		if (this.regionAsFacet) {
 			return getFacets().get(regionKey);
@@ -142,7 +142,7 @@ public class HtmlPage extends Page {
 			}
 		}
 	}
-	
+
 	public void setRegion(String regionKey, UIComponent region){
 		if (this.regionAsFacet) {
 			if (regionKey != null) {
@@ -153,7 +153,7 @@ public class HtmlPage extends Page {
 			getChildren().add(region);
 		}
 	}
-	
+
 	public void add(UIComponent component, String regionId) {
 		UIComponent region = getRegion(regionId);
 		if (region != null) {
@@ -176,7 +176,7 @@ public class HtmlPage extends Page {
 
 	/**
 	 * The Map over the regions.
-	 * Has as a key the regionId and as the value the index of 
+	 * Has as a key the regionId and as the value the index of
 	 * the corresponding HtmlPageRegion object int the getChildren() List.
 	 * @return
 	 */
@@ -201,13 +201,13 @@ public class HtmlPage extends Page {
 			LOGGER.info("There is no template for this page");
 			return;
 		}
-		
+
 		String[] parts = template.split("<!-- TemplateBeginEditable");
 		int regionIndex=0;
 		for (int i = 1; i < parts.length; i++) {
 			String part = parts[i];
 			String[] t = part.split("TemplateEndEditable -->");
-		
+
 			String toParse = t[0];
 			String[] a1 = toParse.split("name=\"");
 			if (a1.length < 2) {
@@ -215,9 +215,9 @@ public class HtmlPage extends Page {
 				continue;
 			}
 			String[] a2 = a1[1].split("\"");
-			
+
 			String regionId = a2[0];
-			
+
 			getRegionIdsMap().put(regionId,new Integer(regionIndex));
 			//	Instantiate the region in the children list:
 			HtmlPageRegion region = new HtmlPageRegion();
@@ -226,7 +226,7 @@ public class HtmlPage extends Page {
 			regionIndex++;
 		}
 	}
-	
+
 	/**
 	 * Overrided from Page
 	 */
@@ -234,7 +234,7 @@ public class HtmlPage extends Page {
 	public void encodeBegin(FacesContext context)throws IOException{
 		//Does nothing here
 	}
-	
+
 	/**
 	 * Overrided from Page
 	 * @throws IOException
@@ -244,7 +244,7 @@ public class HtmlPage extends Page {
 		//Does just call the print(iwc) method below:
 		callPrint(context);
 	}
-	
+
 	/**
 	 * Overrided from Page
 	 */
@@ -253,25 +253,25 @@ public class HtmlPage extends Page {
 		//Does nothing here
 		encodeRenderTime(context);
 	}
-	
+
 	@Override
 	public void print(IWContext ctx) throws IOException {
 		IWContext iwc = IWContext.getIWContext(ctx);
-		
+
 		addSessionPollingDWRFiles(iwc);
 		addNotifications(iwc);
 		enableReverseAjax(iwc);
 		enableChromeFrame(iwc);
-		
+
 		Writer out = IWMainApplication.useJSF ? ctx.getResponseWriter() : ctx.getWriter();
-		
+
 		String template = getHtml();
 		if (template == null) {
 			out.write("Template file could not be found.");
 			out.close();
 			return;
 		}
-		
+
 		//	Process the HEAD first:
 		Pattern headOpensPattern = Pattern.compile("<head>", Pattern.CASE_INSENSITIVE);
 		String[] headOpensSplit = headOpensPattern.split(template);
@@ -279,17 +279,17 @@ public class HtmlPage extends Page {
 		String postHeadOpens = headOpensSplit[1];
 		out.write(preHead);
 		out.write("<head>");
-		
+
 		Pattern headClosesPattern = Pattern.compile("</head>", Pattern.CASE_INSENSITIVE);
 		String[] headClosesSplit = headClosesPattern.split(postHeadOpens);
 		String headContent = headClosesSplit[0];
 		String body = headClosesSplit[1];
-		
+
 		//	Get the contents from the superclass first
 		out.write(getHeadContents(ctx));
 		Script associatedScript = getAssociatedScript();
 		renderChild(ctx,associatedScript);
-		
+
 		//	Then printout the head contents from the HTML page find out where the title is in the head:
 		String htmlTitle = CoreConstants.EMPTY;
 		try {
@@ -298,12 +298,12 @@ public class HtmlPage extends Page {
 			String[] titleSplit = titlePattern.split(headContent);
 			String preTitleHead= titleSplit[0];
 			String postTitleOpens = titleSplit[1];
-			
+
 			Pattern postTitlePattern = Pattern.compile("</title>", Pattern.CASE_INSENSITIVE);
 			String[] postTitleSplit = postTitlePattern.split(postTitleOpens);
 			htmlTitle = postTitleSplit[0];
 			String postTitleHead = postTitleSplit[1];
-			
+
 			//	Print out all before the TITLE tag in the HEAD
 			out.write(preTitleHead);
 			//	Print out the title from the idegaWeb page
@@ -332,8 +332,8 @@ public class HtmlPage extends Page {
 			}
 			out.write("</title>");
 		}
-		out.write("</head>");	
-		
+		out.write("</head>");
+
 		String[] htmlBody = body.split("<body");
 		int index = 0;
 		if (htmlBody.length > 1) {
@@ -360,16 +360,16 @@ public class HtmlPage extends Page {
 		}
 		String attributesString = getMarkupAttributesString();
 		out.write("<body" + (StringUtil.isEmpty(attributesString) ? CoreConstants.EMPTY : (CoreConstants.SPACE + attributesString + CoreConstants.SPACE)) + ">\n");
-		
+
 		body = body.substring(body.indexOf(">") + 1);
-		
-		//	Process the template regions:			
+
+		//	Process the template regions:
 		String[] parts = body.split("<!-- TemplateBeginEditable");
 		out.write(parts[0]);
 		for (int i = 1; i < parts.length; i++) {
 			String part = parts[i];
 			String[] t = part.split("TemplateEndEditable -->");
-			
+
 			String toParse = t[0];
 			String[] a1 = toParse.split("name=\"");
 			if (a1.length < 2) {
@@ -377,9 +377,9 @@ public class HtmlPage extends Page {
 				continue;
 			}
 			String[] a2 = a1[1].split("\"");
-			
+
 			String regionId = a2[0];
-			
+
 			try {
 				UIComponent region = getRegion(regionId);
 				renderChild(ctx,region);
@@ -393,13 +393,13 @@ public class HtmlPage extends Page {
 				out.write(t[1]);
 			}
 		}
-			
+
 		for (UIComponent child: getChildren()) {
 			if (!(child instanceof HtmlPageRegion)) {
 				renderChild(ctx, child);
 			}
 		}
-		
+
 		out.close();
 	}
 
@@ -415,7 +415,7 @@ public class HtmlPage extends Page {
 		values[3] = Boolean.valueOf(this.regionAsFacet);
 		return values;
 	}
-	
+
 	/**
 	 * @see javax.faces.component.UIPanel#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
@@ -444,23 +444,23 @@ public class HtmlPage extends Page {
 		findOutRegions();
 		findOutResources();
 	}
-	
+
 	private void findOutResources() {
 		if (StringUtil.isEmpty(html)) {
 			return;
 		}
-		
+
 		Document templateDoc = XmlUtil.getJDOMXMLDocument(html, false);
 		if (templateDoc == null) {
 			Logger.getLogger(getClass().getName()).warning("Unable to optimize resources! Template file can not be resolved!");
 			return;
 		}
-		
+
 		Element root = templateDoc.getRootElement();
 		Namespace namespace = root.getNamespace();
 		List<Element> uselessElements = new ArrayList<Element>();
-		
-		List<Element> javaScripts = XmlUtil.getElementsByXPath(templateDoc, "script", namespace);
+
+		List<Element> javaScripts = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), "script", namespace);
 		if (!ListUtil.isEmpty(javaScripts)) {
 			for (Element script: javaScripts) {
 				Attribute source = script.getAttribute("src");
@@ -475,15 +475,15 @@ public class HtmlPage extends Page {
 					if (StringUtil.isEmpty(sourceUri)) {
 						break;
 					}
-					
+
 					addJavascriptURL(sourceUri);
 				}
-				
+
 				uselessElements.add(script);
 			}
 		}
-	
-		List<Element> styleSheets = XmlUtil.getElementsByXPath(templateDoc, "link", namespace);
+
+		List<Element> styleSheets = XmlUtil.getElementsByXPath(templateDoc.getRootElement(), "link", namespace);
 		if (!ListUtil.isEmpty(styleSheets)) {
 			for (Element style: styleSheets) {
 				Attribute source = style.getAttribute("href");
@@ -494,26 +494,26 @@ public class HtmlPage extends Page {
 				if (StringUtil.isEmpty(sourceUri)) {
 					break;
 				}
-				
+
 				Attribute media = style.getAttribute("media");
 				if (media == null) {
 					break;
 				}
-				
+
 				addStyleSheetURL(sourceUri, media.getValue());
 				uselessElements.add(style);
 			}
 		}
-		
+
 		if (uselessElements.size() > 0) {
 			for (Iterator<Element> uselessElementsIter = uselessElements.iterator(); uselessElementsIter.hasNext();) {
 				uselessElementsIter.next().detach();
 			}
-			
+
 			this.html = XmlUtil.getPrettyJDOMDocument(templateDoc);
 		}
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	@Override
 	public Object clone(IWUserContext iwc, boolean askForPermission){
@@ -523,12 +523,12 @@ public class HtmlPage extends Page {
 		}
 		return newPage;
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#_main(com.idega.presentation.IWContext)
 	 */
@@ -554,7 +554,7 @@ public class HtmlPage extends Page {
 	protected void setRegionAsFacet(boolean regionAsFacet) {
 		this.regionAsFacet = regionAsFacet;
 	}
-	
+
 	@Override
 	public Map<String, UIComponent> getFacets() {
 		if (this.facetMap == null) {

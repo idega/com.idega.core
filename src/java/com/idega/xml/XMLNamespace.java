@@ -10,27 +10,27 @@
 package com.idega.xml;
 
 import java.io.Serializable;
-import org.jdom.Namespace;
+
+import org.jdom2.Namespace;
 
 
 /**
  * A wrapper to hide JDOM in case we want to replace it later on.
- * 
+ *
  * Last modified: $Date: 2006/04/09 12:13:14 $ by $Author: laddi $
  *
  * @author Joakim Johnson
  * @version $Revision: 1.6 $
  */
 public class XMLNamespace implements Serializable {
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+
 	private static final long serialVersionUID = 5808416982189649239L;
+
 	//Namespace is not Serializable:
 	private transient Namespace namespace;
 	private String sNamespace;
 	private String prefix;
-	
+
 	/**
 	 * Constructor
 	 * @param nsStr the namespace string. Typically it will be something like."http://xmlns.idega.com/block/article/document"
@@ -39,7 +39,7 @@ public class XMLNamespace implements Serializable {
 		this.sNamespace=nsStr;
 		this.namespace = Namespace.getNamespace(nsStr);
 	}
-	
+
 	/**
 	 * Constructor
 	 * @param nsStr the namespace string. Typically it will be something like."http://xmlns.idega.com/block/article/document"
@@ -50,7 +50,7 @@ public class XMLNamespace implements Serializable {
 		this.sNamespace=nsStr;
 		this.namespace = Namespace.getNamespace(prefix,nsStr);
 	}
-	
+
 	/**
 	 * This object really returns a org.jdom.Namespace type but is declared Object because of jdom dependency issues.
 	 * @return the set Namespace instance
@@ -67,7 +67,8 @@ public class XMLNamespace implements Serializable {
 		}
 		return this.namespace;
 	}
-	
+
+	@Override
 	public boolean equals(Object obj){
 		return getNamespace().equals(obj);
 	}

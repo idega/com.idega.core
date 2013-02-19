@@ -6,7 +6,7 @@ import java.util.List;
 import javax.faces.component.UIComponent;
 import javax.servlet.http.HttpSession;
 
-import org.jdom.Document;
+import org.jdom2.Document;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.IBOServiceBean;
@@ -23,9 +23,9 @@ import com.idega.util.StringUtil;
 public class ChooserServiceBean extends IBOServiceBean implements ChooserService {
 
 	private static final long serialVersionUID = -6325150611506329083L;
-	
+
 	private BuilderService service = null;
-	
+
 	private synchronized BuilderService getBuilderService(IWContext iwc) {
 		if (service == null) {
 			if (iwc == null) {
@@ -39,29 +39,31 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		}
 		return service;
 	}
-	
+
+	@Override
 	public boolean updateHandler(String[] values) {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return false;
 		}
-		
+
 		HttpSession session = iwc.getSession();
 		if (session == null) {
 			return false;
 		}
-		
+
 		Object o = session.getAttribute(CoreConstants.HANDLER_PARAMETER);
 		if (!(o instanceof ICPropertyHandler)) {
 			return true;	//	No handler assigned
 		}
 		ICPropertyHandler handler = (ICPropertyHandler) o;
-		
+
 		handler.onUpdate(values, iwc);
-		
+
 		return true;
 	}
 
+	@Override
 	public boolean setModuleProperty(String moduleId, String propertyName, List<AdvancedProperty> properties) {
 		if (propertyName == null) {
 			return false;
@@ -72,12 +74,12 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		if (properties.size() == 0) {
 			return false;
 		}
-		
+
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return false;
 		}
-		
+
 		String pageKey = null;
 		try {
 			pageKey = getBuilderService(iwc).getCurrentPageKey(iwc);
@@ -85,17 +87,18 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 			e.printStackTrace();
 			return false;
 		}
-		
+
 		return getBuilderService(iwc).setProperty(iwc, pageKey, moduleId, propertyName, properties);
 	}
-	
+
+	@Override
 	public Document getRenderedPresentationObject(String className, String hiddenInputAttribute, String chooserObject, String value, String displayValue,
 			boolean cleanHtml) {
 		Object o = getObjectInstance(className);
-		
+
 		if (o instanceof AbstractChooserBlock) {
 			AbstractChooserBlock chooser = (AbstractChooserBlock) o;
-		
+
 			if (!StringUtil.isEmpty(hiddenInputAttribute)) {
 				chooser.setHiddenInputAttribute(hiddenInputAttribute);
 			}
@@ -103,13 +106,13 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 				chooser.setChooserObject(chooserObject);
 			}
 			chooser.setValue(value);
-			
+
 			return getRenderedPresentationObject(chooser, cleanHtml);
 		}
-		
+
 		return null;
 	}
-	
+
 	private Document getRenderedPresentationObject(Object object, boolean cleanHtml) {
 		if (object instanceof UIComponent) {
 			IWContext iwc = CoreUtil.getIWContext();
@@ -117,7 +120,7 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 		}
 		return null;
 	}
-	
+
 	private Object getObjectInstance(String className) {
 		if (className == null) {
 			return null;

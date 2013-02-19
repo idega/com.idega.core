@@ -161,18 +161,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public static boolean isLoggedOn(IWUserContext iwc) {
-
 		return getLoginSessionBean().getUser() != null;
-//		if (isLoginSessionCreated(iwc)) {
-//			return getUser(iwc) != null;
-//		}
-//		else {
-//			return false;
-//		}
-		// if (iwc.getSessionAttribute(LoginAttributeParameter) == null) {
-		// return false;
-		// }
-		// return true;
 	}
 
 	/**
@@ -201,14 +190,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public boolean isLoggedOn(HttpSession session) {
-
 		return getLoginSessionBean().getUser() != null;
-//		if (isLoginSessionCreated(session)) {
-//			return getUser(session) != null;
-//		}
-//		else {
-//			return false;
-//		}
 	}
 
 	// public static void internalSetState(IWContext iwc, int state) {
@@ -709,8 +691,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public User getUser(HttpSession session) {
 		try {
 			return LoginBusinessBean.getLoginSessionBean().getUser();
-		}
-		catch (NotLoggedOnException ex) {
+		} catch (NotLoggedOnException ex) {
 			return null;
 		}
 	}

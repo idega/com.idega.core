@@ -15,20 +15,19 @@ import java.io.InputStream;
 import java.io.Serializable;
 import java.io.StringReader;
 
-import org.jdom.Document;
-import org.jdom.JDOMException;
-import org.jdom.input.SAXBuilder;
+import org.jdom2.Document;
+import org.jdom2.JDOMException;
+import org.jdom2.input.SAXBuilder;
 
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
 public class XMLParser implements Serializable{
-  /**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+
 	private static final long serialVersionUID = 25401278597901991L;
-private SAXBuilder _builder = null;
+
+	private SAXBuilder _builder = null;
 
   /**
    *
@@ -59,7 +58,7 @@ private SAXBuilder _builder = null;
 			e.printStackTrace();
 			throw new XMLException(e.getMessage());
 		}
-    
+
     XMLDocument xdoc = new XMLDocument(doc);
 
     return(xdoc);
@@ -80,7 +79,7 @@ private SAXBuilder _builder = null;
 			e.printStackTrace();
 			throw new XMLException(e.getMessage());
 		}
-    
+
     XMLDocument xdoc = new XMLDocument(doc);
 
     return(xdoc);
@@ -100,7 +99,7 @@ private SAXBuilder _builder = null;
 		catch(IOException e) {
 			e.printStackTrace();
 			throw new XMLException(e.getMessage());
-		}    
+		}
 
     XMLDocument xdoc = new XMLDocument(doc);
 

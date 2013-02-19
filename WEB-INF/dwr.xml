@@ -2,6 +2,9 @@
 <!DOCTYPE dwr PUBLIC "-//GetAhead Limited//DTD Direct Web Remoting 3.0//EN" "http://getahead.org/dwr//dwr30.dtd">
 
 <dwr>
+	<init>
+		<converter id="jdom2" class="com.idega.dwr.convert.JDocumentConverter"/>
+	</init>
 	<allow>
 		<create creator="ibo" javascript="BuilderService" scope="application">
 			<param name="class" value="com.idega.core.builder.business.BuilderService"/>
@@ -41,6 +44,8 @@
 		<convert match="java.lang.Exception" converter="exception">
 			<param name='include' value='javaClassName, message, cause, lineNumber' />
 		</convert>
+		<convert converter="jdom2" match="org.jdom2.Document"/>
+    	<convert converter="jdom2" match="org.jdom2.Element"/>
 	</allow>
 	<signatures>
 		<![CDATA[

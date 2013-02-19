@@ -12,7 +12,7 @@ import java.io.OutputStream;
 import java.rmi.RemoteException;
 import java.util.zip.ZipInputStream;
 
-import org.jdom.IllegalDataException;
+import org.jdom2.IllegalDataException;
 
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -43,115 +43,115 @@ import com.idega.xml.XMLParser;
  * Created on May 22, 2003
  */
 public class XMLData implements Storable {
-  
+
   private final String DEFAULT_ROOT = "default_root";
-  
+
   public final String DEFAULT_NAME = "xml_data";
-  
+
   public final String AUXILIARY_FOLDER = "auxiliaryXMLDataFolder";
   public final String AUXILIARY_FILE = "auxililary_xml_data_file_";
   public final String XML_EXTENSION = ".xml";
-  
+
   private XMLDocument document = null;
- 
+
   // xmlFileId and xmlFile are synchronized
   private int xmlFileId = -1;
   private ICFile xmlFile = null;
-  
+
   private String name = null;
   private String rootName = null;
-  
+
   public static XMLData getInstanceForInputStream(InputStream inputStream) throws IOException {
   	XMLData data = new XMLData();
     data.initialize(inputStream);
     return data;
   }
-  
+
   public static XMLData getInstanceForInputStream(ZipInputStream zipInputStream) throws IOException {
   	XMLData data = new XMLData();
     data.initialize(zipInputStream);
     return data;
   }
-  
+
   public static XMLData getInstanceForFile(int xmlFileId) throws IOException {
     XMLData data = new XMLData();
     data.initialize(xmlFileId);
     return data;
   }
-  
+
   public static XMLData getInstanceForFile(ICFile file) throws IOException {
     XMLData data = new XMLData();
     data.initialize(file);
     return data;
   }
-  
+
   public static XMLData getInstanceForFile(String path) throws IOException {
   	XMLData data = new XMLData();
   	data.initialize(path);
   	return data;
   }
-  
+
   public static XMLData getInstanceForFile(File file) throws IOException {
   	XMLData data = new XMLData();
   	data.initialize(file);
   	return data;
   }
-  
+
   public static XMLData getInstanceWithoutExistingFile()  {
     XMLData data = new XMLData();
     return data;
-  } 
-  
+  }
+
   public static XMLData getInstanceWithoutExistingFileSetName(String name) {
     XMLData data = XMLData.getInstanceWithoutExistingFile();
     data.setName(name);
     return data;
   }
-  
+
   public static XMLData getInstanceWithoutExistingFileSetNameSetRootName(String name, String rootName) {
   	XMLData data = getInstanceWithoutExistingFileSetName(name);
   	data.rootName = rootName;
   	return data;
   }
- 
+
   public void initialize(int fileId) throws IOException {
     ICFile tempXmlFile = getXMLFile(fileId);
     initialize(tempXmlFile);
   }
-  
+
   public String getName()  {
     // name is set
     if (this.name != null && this.name.length() > 0) {
       return this.name;
     }
     // name is not set, file id is set
-    if (this.xmlFileId > -1) { 
+    if (this.xmlFileId > -1) {
       StringBuffer buffer = new StringBuffer(this.DEFAULT_NAME);
       buffer.append('_').append(this.xmlFileId);
       return buffer.toString();
     }
     // neither name nor file id is set
     return this.DEFAULT_NAME;
-  }   
+  }
 
-  
+
   public void setName(String name)  {
     this.name = name;
   }
-   
+
   public XMLDocument getDocument()  {
     if (this.document == null)  {
       // create an empty document
     	String tempRootName = (this.rootName == null) ? this.DEFAULT_ROOT : this.rootName;
       this.document = new XMLDocument(new XMLElement(tempRootName));
-    }  
+    }
     return this.document;
   }
-  
+
   public void setDocument(XMLDocument document) {
     this.document = document;
-  }        
-  
+  }
+
   public ICFile store() throws IOException {
     // create or fetch existing ICFile
     ICFile tempXmlFile = (this.xmlFileId < 0) ? getNewXMLFile() : getXMLFile(this.xmlFileId);
@@ -173,18 +173,18 @@ public class XMLData implements Storable {
       }
     }
 
-    // To avoid problems with databases (e.g. MySQL) 
+    // To avoid problems with databases (e.g. MySQL)
     // we do not write directly to the ICFile object but
     // create an auxiliary file on the hard disk and write the xml file to that file.
     // After that we read the file on the hard disk an write it to the ICFile object.
     // Finally we delete the auxiliary file.
-    
-    // write the output first to a file object  
-    // get the output stream      
+
+    // write the output first to a file object
+    // get the output stream
     String separator = FileUtil.getFileSeparator();
     IWMainApplication mainApp = IWContext.getInstance().getIWMainApplication();
     StringBuffer path = new StringBuffer(mainApp.getApplicationRealPath());
-           
+
     path.append(IWCacheManager.IW_ROOT_CACHE_DIRECTORY)
       .append(separator)
       .append(this.AUXILIARY_FOLDER);
@@ -211,7 +211,7 @@ public class XMLData implements Storable {
       throw new IOException("xml file could not be stored");
     }
     // now we have an input stream of the auxiliary file
-    
+
     // write to the ICFile object
     tempXmlFile.setFileSize(size);
     try {
@@ -235,8 +235,8 @@ public class XMLData implements Storable {
     auxiliaryFile.delete();
     return tempXmlFile;
   }
-  
-  
+
+
 
   private void initialize(ICFile aXmlFile) throws IOException {
   	 this.name = aXmlFile.getName();
@@ -244,7 +244,7 @@ public class XMLData implements Storable {
   	 InputStream inputStream = aXmlFile.getFileValue();
   	 initialize(inputStream);
   }
-  	 
+
   private void initialize(ZipInputStream inputStream) throws IOException {
   	// do not close zip input streams
   	try {
@@ -262,7 +262,7 @@ public class XMLData implements Storable {
       throw new IOException("[XMLData] input stream could not be parsed. Message is: " + ex.getMessage());
   	}
   }
-  
+
   public void initialize(InputStream inputStream) throws IOException {
     try {
       XMLParser parser = new XMLParser();
@@ -278,11 +278,11 @@ public class XMLData implements Storable {
       this.xmlFileId = -1;
       throw new IOException("[XMLData] input stream could not be parsed. Message is: " + ex.getMessage());
     }
-     finally { 
+     finally {
         close(inputStream);
      }
-  } 
-    
+  }
+
   private void initialize(String path) throws IOException {
   	File file = new File(path);
   	if (! (file.exists() && file.canRead() && file.isFile())) {
@@ -290,8 +290,8 @@ public class XMLData implements Storable {
   	}
   	initialize(file);
   }
-  	
-  	
+
+
   private void initialize(File file) throws IOException {
   	InputStream inputStream = null;
    	try {
@@ -310,8 +310,8 @@ public class XMLData implements Storable {
    		throw new IOException(message);
    	}
   }
-  	
-    
+
+
   private ICFile getXMLFile(int fileId)  {
   	if (this.xmlFile != null) {
   		return this.xmlFile;
@@ -324,11 +324,11 @@ public class XMLData implements Storable {
     // FinderException, RemoteException
     catch(Exception ex){
       System.err.println("[XMLData]: Can't retrieve file with id "+ fileId + "Message is:" + ex.getMessage());
-      ex.printStackTrace(System.err); 
+      ex.printStackTrace(System.err);
       return null;
     }
-  } 
-  
+  }
+
   private ICFile getNewXMLFile()  {
     try {
       ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
@@ -339,9 +339,9 @@ public class XMLData implements Storable {
     catch (Exception ex)  {
       throw new RuntimeException("[XMLData]: Message was: " + ex.getMessage());
     }
-    
+
   }
-  
+
   private void close(InputStream input) {
   	try {
 			if (input != null) {
@@ -351,8 +351,8 @@ public class XMLData implements Storable {
 		catch (IOException io) {
 			// do not hide an existing exception
 		}
-  }		
-  
+  }
+
   private void close(OutputStream output) {
   	try {
   		if (output != null) {
@@ -376,7 +376,7 @@ public class XMLData implements Storable {
   */
   public void setXmlFileId(int i) {
    this.xmlFileId = i;
-   // check existing file 
+   // check existing file
    if ((this.xmlFile != null) && (((Integer)this.xmlFile.getPrimaryKey()).intValue() != i)) {
    	// different file is set therefore set existing xmlFile to null
    	this.xmlFile = null;
@@ -387,22 +387,24 @@ public class XMLData implements Storable {
   	this.xmlFile = file;
   	this.xmlFileId = ((Integer)this.xmlFile.getPrimaryKey()).intValue();
   }
-  
-  
-  public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
+
+
+  @Override
+public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
   	return writer.write(this, iwc);
   }
 
-  public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
+  @Override
+public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
   	return reader.read(this, iwc);
   }
-  
+
   public void add(XMLData data) {
   	XMLElement dataRootElement = data.getDocument().getRootElement();
   	dataRootElement = dataRootElement.detach();
-  	getDocument().getRootElement().addContent(dataRootElement);  	
+  	getDocument().getRootElement().addContent(dataRootElement);
   }
-  
+
   public void writeToFile(File output) throws IOException {
     BufferedOutputStream outputStream = null;
     try {
@@ -418,10 +420,10 @@ public class XMLData implements Storable {
       XMLOutput xmlOutput = new XMLOutput("  ", true);
       xmlOutput.setLineSeparator(System.getProperty("line.separator"));
       xmlOutput.setTextNormalize(true);
-      
+
       //xmlOutput.setEncoding("iso-8859-1");
       xmlOutput.setEncoding(CoreConstants.ENCODING_UTF8);
-      
+
       // do not use document directly use accessor method
       XMLDocument myDocument = getDocument();
       try {
@@ -429,6 +431,6 @@ public class XMLData implements Storable {
       }
      finally {
      	close(outputStream);
-     } 	
+     }
   }
 }

@@ -64,7 +64,7 @@
   
   <dependencies>
     <dependency>
-      <groupId>jdom</groupId>
+      <groupId>org.jdom</groupId>
       <artifactId>jdom</artifactId>
     </dependency>
     <dependency>

@@ -16,12 +16,13 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import org.jdom.Attribute;
-import org.jdom.CDATA;
-import org.jdom.Element;
-import org.jdom.Namespace;
-import org.jdom.Text;
-import org.jdom.filter.Filter;
+import org.jdom2.Attribute;
+import org.jdom2.CDATA;
+import org.jdom2.Element;
+import org.jdom2.Namespace;
+import org.jdom2.Text;
+import org.jdom2.filter.ElementFilter;
+import org.jdom2.filter.Filter;
 
 import com.idega.util.ListUtil;
 
@@ -215,19 +216,7 @@ public class XMLElement implements Serializable {
 
   public List<XMLElement> getChildrenRecursive(final String name) {
   	if (this._element != null) {
-  		Filter filter = new Filter() {
-			private static final long serialVersionUID = -5101352919803781348L;
-
-			@Override
-			public boolean matches(Object object) {
-				if (object instanceof Element) {
-					String elementName = ((Element) object).getName();
-					return name.equals(elementName);
-				}
-				return false;
-			}
-  		};
-
+  		Filter<Element> filter = new ElementFilter(name);
   		List<XMLElement> list = new ArrayList<XMLElement>();
   		for (Iterator<?> iterator = this._element.getDescendants(filter); iterator.hasNext();) {
   			Element el = (Element) iterator.next();
@@ -450,7 +439,7 @@ public synchronized Object clone() {
 			return(null);
 		}
 
-    Element el = (Element)this._element.clone();
+    Element el = this._element.clone();
     XMLElement element = new XMLElement(el);
     return element;
   }

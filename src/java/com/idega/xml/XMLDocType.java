@@ -2,12 +2,14 @@ package com.idega.xml;
 
 import java.io.Serializable;
 
-import org.jdom.DocType;
+import org.jdom2.DocType;
 
 public class XMLDocType implements Serializable {
-	
+
+	private static final long serialVersionUID = -92530920747835544L;
+
 	DocType type = null;
-	
+
 	public XMLDocType(String elementName) {
 		this.type = new DocType(elementName);
 	}
@@ -19,7 +21,7 @@ public class XMLDocType implements Serializable {
 	public XMLDocType(String elementName, String publicID, String systemID) {
 		this.type = new DocType(elementName, publicID, systemID);
 	}
-	
+
 	public Object getDocType() {
 		return this.type;
 	}
