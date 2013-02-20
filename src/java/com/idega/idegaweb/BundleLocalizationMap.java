@@ -40,7 +40,7 @@ public class BundleLocalizationMap implements Map<String, String> {
 	}
 
 	public String get(Object key) {
-		return getIWMainAppliction().getLocalisedStringMessage(String.valueOf(key), String.valueOf(key), bundle.getBundleIdentifier());
+		return getIWMainAppliction().getLocalizedStringMessage(String.valueOf(key), String.valueOf(key), bundle.getBundleIdentifier());
 	}
 
 	private IWMainApplication getIWMainAppliction() {

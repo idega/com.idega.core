@@ -114,8 +114,8 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 	public void setMessages(Map<Object, Object> values) {}
 
 	@SuppressWarnings("unchecked")
-	public Set<String> getAllLocalisedKeys() {
-		return resource.getAllLocalisedKeys();
+	public Set<String> getAllLocalizedKeys() {
+		return resource.getAllLocalizedKeys();
 	}
 
 	public Object getMessage(Object key) {
