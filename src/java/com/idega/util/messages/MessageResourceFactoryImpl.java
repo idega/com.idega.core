@@ -97,7 +97,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	 * @return object that was found in resource and/or set to it or valueIfNotFound object in case no messages were found 
 	 * 		   or auto inserted
 	 */
-	public Object getLocalisedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale) {
+	public Object getLocalizedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 
 		for (MessageResource resource: resources) {
@@ -123,7 +123,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return valueIfNotFound;
 	}
 
-	public Object setLocalisedMessage(Object key, Object value, String bundleIdentifier, Locale locale) {
+	public Object setLocalizedMessage(Object key, Object value, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 		for (MessageResource resource: resources) {
 			resource.setMessage(key, value);
@@ -131,14 +131,14 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return value;
 	}
 	
-	public void setLocalisedMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale) {
+	public void setLocalizedMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 		for (MessageResource resource: resources) {
 			resource.setMessages(values);
 		}
 	}
 	
-	public Map<String, Object> setLocalisedMessageToAutoInsertRes(Object key, Object value, String bundleIdentifier, Locale locale) {
+	public Map<String, Object> setLocalizedMessageToAutoInsertRes(Object key, Object value, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 		Map<String, Object> setMessages = new HashMap<String, Object>(resources.size());
 		
@@ -154,7 +154,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return setMessages;
 	}
 	
-	public void removeLocalisedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale) {
+	public void removeLocalizedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 		for (MessageResource resource: resources) {
 			if (resource.isAutoInsert()) {

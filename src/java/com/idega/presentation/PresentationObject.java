@@ -1372,31 +1372,22 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		}
 		return null;
 	}
-	public String getLocalizedString(String key, IWUserContext iwuc)
-	{
-		//TODO use such method everywhere for getting localised messages
-//		IWContext iwc = (IWContext)iwuc;
-//		return iwc.getIWMainApplication().getLocalisedStringMessage(key, null, getBundleIdentifier(), iwc.getCurrentLocale());
 
+	public String getLocalizedString(String key, IWUserContext iwuc) {
 		IWResourceBundle bundle = getResourceBundle(iwuc);
-		if (bundle != null)
-		{
+		if (bundle != null) {
 			return bundle.getLocalizedString(key, null);
 		}
 		return null;
 	}
-	public String getLocalizedString(String key, String defaultValue, IWUserContext iwuc)
-	{
-//		IWContext iwc = (IWContext)iwuc;
-//		return ((IWContext)iwuc).getIWMainApplication().getLocalisedStringMessage(key, defaultValue, getBundleIdentifier(), iwc.getCurrentLocale());
-
+	public String getLocalizedString(String key, String defaultValue, IWUserContext iwuc) {
 		IWResourceBundle bundle = getResourceBundle(iwuc);
-		if (bundle != null)
-		{
+		if (bundle != null) {
 			return bundle.getLocalizedString(key, defaultValue);
 		}
 		return null;
 	}
+
 	public void setUseBuilderObjectControl(boolean use)
 	{
 		this._useBuilderObjectControl = use;

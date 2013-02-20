@@ -75,13 +75,12 @@ public class ApplicationBindingDAOImpl extends GenericDaoImpl implements Applica
 		String oldValue = null;
 
 		ApplicationBinding binding = getApplicationBinding(key);
-		if (binding != null) {
-			oldValue = binding.getValue();
-		} else {
+		if (binding == null) {
 			binding = createApplicationBinding(key, value, type);
 			return binding.getValue();
 		}
 
+		oldValue = binding.getValue();
 		if (value == null) {
 			remove(binding);
 		} else {

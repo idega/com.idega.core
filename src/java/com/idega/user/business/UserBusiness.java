@@ -503,12 +503,12 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
 	 */
-	public Collection getUserGroups(int iUserId) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getUserGroups(int iUserId) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInGroup
 	 */
-	public Collection getUsersInGroup(int iGroupId) throws java.rmi.RemoteException;
+	public Collection<User> getUsersInGroup(int iGroupId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInGroup
@@ -519,14 +519,14 @@ public interface UserBusiness extends IBOService {
 	 * @see com.idega.user.business.UserBusinessBean#getUsers
 	 */
 	public Collection<User> getUsers() throws FinderException, RemoteException;
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Searches for {@link User} in database by {@link User#getPersonalID()},
 	 * if nothing found, than by {@link User#getName()}.</p>
 	 * @param name of {@link User};
 	 * @param personalID of {@link User};
-	 * @return {@link Collection} of {@link User}s, matching given criteria or 
+	 * @return {@link Collection} of {@link User}s, matching given criteria or
 	 * {@link Collections#emptyList()} on failure.
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
@@ -586,7 +586,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
 	 */
-	public Collection getUserGroups(User aUser) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getUserGroups(User aUser) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups

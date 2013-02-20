@@ -1059,15 +1059,17 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public IWBundle getBundle(String bundleIdentifier, boolean autoCreate)throws IWBundleDoesNotExist{
         IWBundle bundle = getLoadedBundles().get(bundleIdentifier);
         if (bundle == null) {
-        	if(loadBundlesFromWorkspace){
-            	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
-            	loadBundle(bundle);
-        	}
-        	else if(loadBundlesFromJars){
+        	if (loadBundlesFromWorkspace) {
+        		try {
+	            	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
+	            	loadBundle(bundle);
+        		} catch (Exception e) {
+        			log.warning("Bundle " + bundleIdentifier + " does not exist");
+        		}
+        	} else if (loadBundlesFromJars) {
         		bundle = loadBundleFromJar(bundleIdentifier);
         		loadBundle(bundle);
-        	}
-        	else if (loadBundlesLegacy){
+        	} else if (loadBundlesLegacy) {
             	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
             	loadBundle(bundle);
         	}
@@ -1153,7 +1155,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
         List<IWBundle> bundles = new ArrayList<IWBundle>();
         for (Iterator<?> iter = getBundlesFile().keySet().iterator(); iter.hasNext();) {
             String key = (String) iter.next();
-            bundles.add(getBundle(key));
+            IWBundle bundle = getBundle(key);
+            if (bundle == null)
+            	continue;
+
+            bundles.add(bundle);
         }
         return bundles;
     }
@@ -1161,7 +1167,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     /**
      * Returns a List of Locale Objects in use
      */
-    public List getAvailableLocales() {
+    public List<Locale> getAvailableLocales() {
         return ICLocaleBusiness.getListOfAllLocalesJAVA();
     }
 
@@ -1255,10 +1261,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     public void addLocaleToRegisteredBundles(Locale locale) {
-        List bundles = this.getRegisteredBundles();
-        Iterator iter = bundles.iterator();
-        while (iter.hasNext()) {
-            IWBundle item = (IWBundle) iter.next();
+        List<IWBundle> bundles = this.getRegisteredBundles();
+        for (Iterator<IWBundle> iter = bundles.iterator(); iter.hasNext();) {
+            IWBundle item = iter.next();
             item.addLocale(locale);
         }
     }
@@ -1275,8 +1280,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private static Properties cryptoCodesPropertiesKeyedByClassName = null;
 
     private static Properties cryptoClassNamesPropertiesKeyedByCode = null;
-
-
 
     private static boolean isCryptoUsed = true;
 
@@ -2239,7 +2242,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @see javax.faces.application.Application#getSupportedLocales()
 	 */
 	@Override
-	public Iterator getSupportedLocales() {
+	public Iterator<Locale> getSupportedLocales() {
 		return getFacesApplication().getSupportedLocales();
 	}
 
@@ -2247,7 +2250,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 * @see javax.faces.application.Application#setSupportedLocales(java.util.Collection)
 	 */
 	@Override
-	public void setSupportedLocales(Collection locales) {
+	public void setSupportedLocales(Collection<Locale> locales) {
 		getFacesApplication().setSupportedLocales(locales);
 	}
 
@@ -2419,15 +2422,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
 	/**
 	 * <p>
-	 * Gets localised String message from one of many messageResources
+	 * Gets localized String message from one of many messageResources
 	 * </p>
 	 * @param key - message key
 	 * @param valueIfNotFound - value that is set to message resource (if autoinsert is enabled) and/or returned in case if not found
 	 * @param bundleIdentifier - bundleIdentifier for which message should belong
 	 * @param locale - locale for string
 	 */
-	public String getLocalisedStringMessage(String key, String valueIfNotFound, String bundleIdentifier, Locale locale) {
-		Object foundValue = getMessageFactory().getLocalisedMessage(key, valueIfNotFound, bundleIdentifier, locale);
+	public String getLocalizedStringMessage(String key, String valueIfNotFound, String bundleIdentifier, Locale locale) {
+		Object foundValue = getMessageFactory().getLocalizedMessage(key, valueIfNotFound, bundleIdentifier, locale);
 		if (foundValue == null) {
 			return null;
 		} else {
@@ -2437,15 +2440,15 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
 	/**
 	 * <p>
-	 * Gets localised String message from one of many messageResources
+	 * Gets localized String message from one of many messageResources
 	 * </p>
 	 * @param key - message key
 	 * @param valueIfNotFound - value that is set to message resource (if autoinsert is enabled) and/or returned in case if not found
 	 * @param bundleIdentifier - bundleIdentifier for which message should belong
 	 */
-	public String getLocalisedStringMessage(String key, String valueIfNotFound, String bundleIdentifier) {
+	public String getLocalizedStringMessage(String key, String valueIfNotFound, String bundleIdentifier) {
 		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
-		Object foundValue = getMessageFactory().getLocalisedMessage(key, valueIfNotFound, bundleIdentifier, locale);
+		Object foundValue = getMessageFactory().getLocalizedMessage(key, valueIfNotFound, bundleIdentifier, locale);
 		if (foundValue == null) {
 			return null;
 		} else {

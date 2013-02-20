@@ -1617,14 +1617,14 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		}
 		return extContext;
 	}
-	
+
 	@Override
 	public ELContext getELContext() {
-		ELContext extContext = getRealFacesContext() != null ? getRealFacesContext().getELContext() : null;
-		if (extContext == null) {
-			throw new IllegalStateException("realFacesContext is not initialized yet.");
-		}
-		return extContext;
+		ELContext elContext = getRealFacesContext() != null ? getRealFacesContext().getELContext() : null;
+		if (elContext == null)
+			throw new IllegalStateException("Real FacesContext is not initialized yet.");
+
+		return elContext;
 	}
 
 	private FacesContextInitializer getFacesContextInitializer() {
