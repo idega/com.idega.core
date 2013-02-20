@@ -43,6 +43,14 @@ public class PhoneType extends GenericType implements Serializable {
 	@Column(name = COLUMN_PHONE_TYPE_ID)
   private Integer id;
   
+  public PhoneType() {
+	  
+  }
+  
+  public PhoneType(int id) {
+	  this.id = id;
+  }
+  
 	public Integer getId() {
 		return id;
 	}

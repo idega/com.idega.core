@@ -39,6 +39,7 @@ public class Address implements Serializable {
 	private static final String COLUMN_STREET_NAME = "street_name";
 	private static final String COLUMN_ORIGINAL_STREET_NAME = "street_name_original";
 	private static final String COLUMN_STREET_NUMBER = "street_number";
+	private static final String COLUMN_ROAD_NUMBER = "road_number";
 	private static final String COLUMN_STREET_ADDRESS_NOMINATIVE = "street_address_nominative";
 	private static final String COLUMN_PO_BOX = "p_o_box";
 	private static final String COLUMN_COMMUNE = "ic_commune_id";
@@ -63,7 +64,10 @@ public class Address implements Serializable {
 
 	@Column(name = COLUMN_STREET_NUMBER, length = 30)
 	private String streetNumber;
-
+	
+	@Column(name = COLUMN_ROAD_NUMBER, length = 30)
+	private String roadNumber;
+	
 	@Column(name = COLUMN_STREET_ADDRESS_NOMINATIVE)
 	private String streetAddressNominative;
 
@@ -156,6 +160,14 @@ public class Address implements Serializable {
 	 */
 	public void setStreetNumber(String streetNumber) {
 		this.streetNumber = streetNumber;
+	}
+
+	public String getRoadNumber() {
+		return roadNumber;
+	}
+
+	public void setRoadNumber(String roadNumber) {
+		this.roadNumber = roadNumber;
 	}
 
 	/**

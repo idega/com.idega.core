@@ -41,6 +41,21 @@ public class PresentationUtil {
 
 		return url;
 	}
+	
+	/**
+	 * Add javascript resources to the default location of the HTML header.
+	 */
+	@SuppressWarnings("unchecked")
+	public static void addJs(IWContext iwc, Object ... scripts) {
+		for (Object s : scripts) {
+			if (s instanceof List) {
+				addJavaScriptSourcesLinesToHeader(iwc, (List<String>) s);
+			}
+			if (s instanceof String) {
+				addJavaScriptSourceLineToHeader(iwc, (String) s);
+			}
+		}
+	}
 
 	public static boolean addJavaScriptSourceLineToHeader(IWContext iwc, String scriptUri) {
 		if (iwc == null || StringUtil.isEmpty(scriptUri))
@@ -265,6 +280,21 @@ public class PresentationUtil {
 			e.printStackTrace();
 		}
 		return null;
+	}
+
+	/**
+	 * Add style sheets to default location of the HTML head.
+	 */
+	@SuppressWarnings("unchecked")
+	public static void addCss(IWContext iwc, Object ... styleSheets) {
+		for (Object s : styleSheets) {
+			if (s.getClass().equals(List.class)) {
+				addStyleSheetsToHeader(iwc, (List<String>) s);
+			}
+			if (s.getClass().equals(String.class)) {
+				addStyleSheetToHeader(iwc, (String) s);
+			}
+		}
 	}
 
 	public static boolean addStyleSheetsToHeader(IWContext iwc, List<String> styleSheetsUris) {

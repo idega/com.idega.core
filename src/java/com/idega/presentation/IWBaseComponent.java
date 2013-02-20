@@ -379,6 +379,10 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		List<UIComponent> children = super.getChildren();
 		return children;
 	}
+	
+	public void addChild(UIComponent component) {
+		getChildren().add(component);
+	}
 
 	//@Override
 	//public Map<Object, UIComponent> getFacets() {
