@@ -31,6 +31,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.text.Text;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 
@@ -205,7 +206,7 @@ private void init(String name){
 
 
 
-	//theYear.addMenuElement("","Ár");
+	//theYear.addMenuElement("","ï¿½r");
 
 
 
@@ -225,33 +226,33 @@ private void init(String name){
 
 
 
-	//theMonth.addMenuElement("","Mánuður");
+	//theMonth.addMenuElement("","Mï¿½nuï¿½ur");
 
 
 
         /*
 
-	theMonth.addMenuElement("01","janúar");
+	theMonth.addMenuElement("01","janï¿½ar");
 
-	theMonth.addMenuElement("02","febrúar");
+	theMonth.addMenuElement("02","febrï¿½ar");
 
 	theMonth.addMenuElement("03","mars");
 
-	theMonth.addMenuElement("04","apríl");
+	theMonth.addMenuElement("04","aprï¿½l");
 
-	theMonth.addMenuElement("05","maí");
+	theMonth.addMenuElement("05","maï¿½");
 
-	theMonth.addMenuElement("06","júní");
+	theMonth.addMenuElement("06","jï¿½nï¿½");
 
-	theMonth.addMenuElement("07","júlí");
+	theMonth.addMenuElement("07","jï¿½lï¿½");
 
-	theMonth.addMenuElement("08","ágúst");
+	theMonth.addMenuElement("08","ï¿½gï¿½st");
 
 	theMonth.addMenuElement("09","september");
 
-	theMonth.addMenuElement("10","október");
+	theMonth.addMenuElement("10","oktï¿½ber");
 
-	theMonth.addMenuElement("11","nóvember");
+	theMonth.addMenuElement("11","nï¿½vember");
 
 	theMonth.addMenuElement("12","desember");
 
@@ -419,7 +420,7 @@ private void init(String name){
 
 
 
-	//theMinute.addMenuElement("","Mínútur");
+	//theMinute.addMenuElement("","Mï¿½nï¿½tur");
 
 
 
@@ -741,7 +742,7 @@ private void init(String name){
 
           this.theMonth.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.MONTH_KEY_S,"M"));
 
-          this.theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S,"Y"));
+          this.theYear.addMenuElementFirst(emptyString,iwrb.getLocalizedString(DateInput.YEAR_KEY_S,CoreConstants.Y));
 
           this.theHour.addMenuElementFirst(emptyString,iwrb.getLocalizedString(TimeInput.HOUR_KEY_S,"H"));
 
@@ -1063,6 +1064,7 @@ private Script getJavaScript(){
 
 
 
+@Override
 public void keepStatusOnAction(){
 
 	this.theDay.keepStatusOnAction();
@@ -1087,6 +1089,7 @@ public void keepStatusOnAction(){
 
 **/
 
+@Override
 public void add(PresentationObject mo){
 
 	//does nothing
@@ -1095,6 +1098,7 @@ public void add(PresentationObject mo){
 
 
 
+@Override
 public void main(IWContext iwc){
 
   addLocalized(iwc);
@@ -1105,6 +1109,7 @@ public void main(IWContext iwc){
 
 
 
+@Override
 public void print(IWContext iwc)throws Exception{
 
 
@@ -1170,12 +1175,14 @@ public void setYearRange(int fromYear,int toYear){
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}

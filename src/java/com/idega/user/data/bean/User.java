@@ -209,19 +209,16 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
+		if (!(obj instanceof User))
 			return false;
-		if (getClass() != obj.getClass())
-			return false;
+
 		User other = (User) obj;
 		if (this.userID == null) {
 			if (other.userID != null)
 				return false;
-		}
-		else if (!this.userID.equals(other.userID))
+		} else if (!this.userID.equals(other.userID))
 			return false;
+
 		return true;
 	}
 

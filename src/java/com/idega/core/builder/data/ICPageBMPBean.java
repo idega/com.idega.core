@@ -75,7 +75,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public static final String PAGE_IS_PUBLISHED = "PAGE_IS_PUBLISHED";
 	public static final String PAGE_IS_LOCKED = "PAGE_IS_LOCKED";
 	private ICFile _file;
-	
+
 
 	public final static String PAGE = "P";
 	public final static String TEMPLATE = "T";
@@ -86,14 +86,14 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public final static String SUBTYPE_SIMPLE_TEMPLATE = "SIMPLE_TEMPLATE";
 	public final static String SUBTYPE_SIMPLE_TEMPLATE_PAGE = "SIMPLE_TEMPLATE_PAGE";
 
-	public final static String DELETED = "Y";
+	public final static String DELETED = CoreConstants.Y;
 	public final static String NOT_DELETED = "N";
 	private static final String FORMAT_IBXML = "IBXML";
 	private static final String FORMAT_IBXML2 = "IBXML2";
 	private static final String FORMAT_HTML = "HTML";
 	private static final String FORMAT_JSP_1_2 = "JSP_1_2";
 	private static final String FORMAT_FACELET = "FACELET";
-	
+
 	/**
 	 *
 	 */
@@ -131,15 +131,15 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addAttribute(HIDE_PAGE_IN_MENU, "Hide page in navigation menu", true, true, Boolean.class);
 		addAttribute(PAGE_IS_PUBLISHED, "Set page published/unpublished", true, true, Boolean.class);
 		addAttribute(PAGE_IS_LOCKED, "Set page locked/unlocked", true, true, Boolean.class);
-		
+
 		addManyToOneRelationship(DOMAIN_ID,ICDomain.class);
 		addUniqueIDColumn();
 		addIndex(getUniqueIdColumnName());
-		
+
 		addAttribute(WEBDAV_URI, "Webdav/Slide path", String.class);
-		
+
 		addIndex("idx_page_uri",PAGE_URI);
-		
+
 	}
 
 	/**
@@ -172,7 +172,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	public String getName() {
 		return (getStringColumnValue(getColumnName()));
 	}
-	
+
+	@Override
 	public String getName(Locale locale) {
 		/*int localeID = ICLocaleBusiness.getLocaleId(locale);
 		try {
@@ -201,6 +202,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public int getTemplateId() {
 		return (getIntColumnValue(getColumnTemplateID()));
 	}
@@ -208,6 +210,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setTemplateId(int id) {
 		setColumn(getColumnTemplateID(), id);
 	}
@@ -215,6 +218,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public String getType() {
 		return (getStringColumnValue(getColumnType()));
 	}
@@ -222,6 +226,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public String getSubType() {
 		return (getStringColumnValue(getColumnSubType()));
 	}
@@ -229,6 +234,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public int getLockedBy() {
 		return (getIntColumnValue(getColumnLockedBy()));
 	}
@@ -236,6 +242,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setLockedBy(int id) {
 		setColumn(getColumnLockedBy(), id);
 	}
@@ -243,6 +250,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean getDeleted() {
 		String deleted = getStringColumnValue(getColumnDeleted());
 
@@ -256,18 +264,21 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 			return (false);
 		}
 	}
-	
+
+	@Override
 	public boolean isCategory() {
 		return getBooleanColumnValue(IS_CATEGORY, false);
 	}
 
+	@Override
 	public void setIsCategory(boolean isCategory) {
 		setColumn(IS_CATEGORY, isCategory);
 	}
-	
+
 	/**
 	 *
 	 */
+	@Override
 	public void setDeleted(boolean deleted) {
 		if (deleted) {
 			setColumn(getColumnDeleted(), DELETED);
@@ -283,6 +294,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public int getDeletedBy() {
 		return (getIntColumnValue(getColumnDeletedBy()));
 	}
@@ -300,6 +312,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public Timestamp getDeletedWhen() {
 		return ((Timestamp)getColumnValue(getColumnDeletedWhen()));
 	}
@@ -314,6 +327,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setType(String type) {
 		if ((type.equals(PAGE)) || (type.equals(TEMPLATE)) || (type.equals(DRAFT)) || (type.equals(DPT_TEMPLATE)) || (type.equals(DPT_PAGE))) {
 			setColumn(getColumnType(), type);
@@ -323,6 +337,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setSubType(String type) {
 		setColumn(getColumnSubType(), type);
 	}
@@ -335,8 +350,9 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	}
 
 	/**
-	 * Gets the file 
+	 * Gets the file
 	 */
+	@Override
 	public ICFile getFile() {
 		// if we already have an instance of the file we do not
 		// want to loose it, especially not if a filevalue has been
@@ -353,6 +369,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setFile(ICFile file) {
 		file.setMimeType(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_XML);
 		setColumn(getColumnFile(), file);
@@ -362,6 +379,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setPageValue(InputStream stream) {
 		ICFile file = getFile();
 		if (file == null) {
@@ -373,7 +391,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 			} catch (CreateException e) {
 				e.printStackTrace();
 			}
-			
+
 		}
 		file.setFileValue(stream);
 	}
@@ -381,6 +399,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public InputStream getPageValue() {
 		try {
 			ICFile file = getFile();
@@ -396,6 +415,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public OutputStream getPageValueForWrite() {
 		ICFile file = getFile();
 		if (file == null) {
@@ -530,6 +550,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void delete(int userId) throws SQLException {
 		setColumn(getColumnDeleted(), DELETED);
 		setDeletedWhen(IWTimestamp.getTimestampRightNow());
@@ -541,6 +562,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setIsPage() {
 		setType(PAGE);
 	}
@@ -548,6 +570,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setIsTemplate() {
 		setType(TEMPLATE);
 	}
@@ -555,6 +578,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setIsDraft() {
 		setType(DRAFT);
 	}
@@ -562,6 +586,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public void setIsFolder() {
 		setType(FOLDER);
 	}
@@ -569,6 +594,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isPage() {
 		String type = getType();
 		if (type.equals(PAGE)) {
@@ -582,6 +608,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isTemplate() {
 		String type = getType();
 		if (type.equals(TEMPLATE)) {
@@ -595,6 +622,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isDraft() {
 		String type = getType();
 		if (type.equals(DRAFT)) {
@@ -608,6 +636,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isFolder() {
 		String type = getType();
 		if (type.equals(FOLDER)) {
@@ -621,6 +650,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isDynamicTriggeredPage() {
 		String type = getType();
 		if (type.equals(DPT_PAGE)) {
@@ -634,6 +664,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	/**
 	 *
 	 */
+	@Override
 	public boolean isDynamicTriggeredTemplate() {
 		String type = getType();
 		if (type.equals(DPT_TEMPLATE)) {
@@ -657,6 +688,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 	}
 
+	@Override
 	public void setOwner(IWUserContext iwuc) {
 		try {
 			iwuc.getApplicationContext().getIWMainApplication().getAccessController().setCurrentUserAsOwner(this, iwuc);
@@ -665,34 +697,41 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 	}
 
+	@Override
 	public void setTreeOrder(int order) {
 		setColumn(TREE_ORDER, order);
 	}
 
+	@Override
 	public void setTreeOrder(Integer order) {
 		setColumn(TREE_ORDER, order);
 	}
 
+	@Override
 	public int getTreeOrder() {
 		return getIntColumnValue(TREE_ORDER);
 	}
-	
+
 	public static String getColumnTreeOrder() {
 		return (TREE_ORDER);
 	}
-	
+
+	@Override
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
 		return BuilderServiceFactory.getBuilderPageWriterService(iwc).write(this, writer, iwc);
 	}
-	
+
+	@Override
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
 		return reader.read(this, iwc);
 	}
-	
+
+	@Override
 	public void setFormat(String format){
 		this.setColumn(PAGE_FORMAT,format);
 	}
-	
+
+	@Override
 	public String getFormat(){
 		String format = getStringColumnValue(PAGE_FORMAT);
 		//This is to maintain backwards compatabilty, default is IBXML:
@@ -702,7 +741,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		setFormat(format);
 		return format;
 	}
-	
+
+	@Override
 	public boolean getIsFormattedInIBXML(){
 		String format = getFormat();
 		if(format!=null){
@@ -710,7 +750,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 		return true;
 	}
-	
+
+	@Override
 	public boolean getIsFormattedInIBXML2(){
 		String format = getFormat();
 		if(format!=null){
@@ -718,7 +759,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 		return true;
 	}
-	
+
+	@Override
 	public boolean getIsFormattedInHTML(){
 		String format = getFormat();
 		if(format!=null){
@@ -726,7 +768,8 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 		return false;
 	}
-	
+
+	@Override
 	public boolean getIsFormattedInJSP(){
 		String format = getFormat();
 		if(format!=null){
@@ -734,7 +777,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 		return false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.data.GenericEntity#getEntityState()
 	 */
@@ -745,11 +788,11 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		ICFile file = getFile();
 		if ( file!=null && (((GenericEntity)file).getEntityState() == STATE_NOT_IN_SYNCH_WITH_DATASTORE) ){
 			this.setEntityState(STATE_NOT_IN_SYNCH_WITH_DATASTORE);
-		}	
-		
+		}
+
 		return super.getEntityState();
 	}
-	
+
 	public Collection ejbFindByTemplate(Integer templateID)throws javax.ejb.FinderException{
 	    	Table table = new Table(this);
 	    	SelectQuery query = new SelectQuery(table);
@@ -757,7 +800,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	query.addCriteria(new MatchCriteria(table,getColumnTemplateID(),MatchCriteria.EQUALS,templateID));
 	    	return idoFindPKsByQuery(query);
 	}
-	
+
 	public Integer ejbFindByPageUri(String pageUri,int domainId)throws javax.ejb.FinderException{
 	    	Table table = new Table(this);
 	    	SelectQuery query = new SelectQuery(table);
@@ -766,22 +809,23 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	//query.addCriteria(new MatchCriteria(table,DOMAIN_ID,MatchCriteria.EQUALS,domainId));
 	    	return (Integer)idoFindOnePKByQuery(query);
 	}
-	
+
+	@Override
 	public Collection ejbFindBySubType(String subType, boolean deleted)  throws javax.ejb.FinderException {
-		
-		Table table = new Table(this);	
+
+		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
     	query.addColumn(new Column(table, getIDColumnName()));
     	query.addCriteria(new MatchCriteria(table, getColumnSubType(), MatchCriteria.EQUALS, subType));
-    	
+
     	if(deleted)
     		query.addCriteria(new MatchCriteria(table, getColumnDeleted(), MatchCriteria.ISNOT, MatchCriteria.NULL));
     	else
     		query.addCriteria(new MatchCriteria(table, getColumnDeleted(), MatchCriteria.IS, MatchCriteria.NULL));
-    	
+
     	return idoFindPKsByQuery(query);
 	}
-	
+
 	public Integer ejbFindExistingPageByPageUri(String pageUri,int domainId)throws javax.ejb.FinderException{
 	    Table table = new Table(this);
 	    	SelectQuery query = new SelectQuery(table);
@@ -791,7 +835,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	//query.addCriteria(new MatchCriteria(table,DOMAIN_ID,MatchCriteria.EQUALS,domainId));
 	    	return (Integer)idoFindOnePKByQuery(query);
 	}
-	
+
 	public Integer ejbFindByWebDavUri(String webDavUri) throws FinderException {
 		Table table = new Table(this);
     	SelectQuery query = new SelectQuery(table);
@@ -800,12 +844,13 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
     	query.addCriteria(new MatchCriteria(table, DELETED_COLUMN, MatchCriteria.IS, NULL));
     	return (Integer) idoFindOnePKByQuery(query);
 	}
-	
+
 	/**
 	 * Gets the id/key of the template of this page as a String.
 	 * Returns null if no template is set (templateId<=0)
 	 * @return
 	 */
+	@Override
 	public String getTemplateKey() {
 		if(getTemplateId()>0){
 			return Integer.toString(getTemplateId());
@@ -819,6 +864,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 * Sets the id/key of the template of this page as a String
 	 * @return
 	 */
+	@Override
 	public void setTemplateKey(String templateKey) {
 		setTemplateId(Integer.parseInt(templateKey));
 	}
@@ -826,43 +872,51 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	 * Gets the id/key of the page as a String
 	 * @return
 	 */
+	@Override
 	public String getPageKey(){
 		return getPrimaryKey().toString();
 	}
-	
-	
+
+
+	@Override
 	public String getDefaultPageURI(){
 		String uri = getStringColumnValue(PAGE_URI);
 		return uri;
 	}
-	
+
+	@Override
 	public void setDefaultPageURI(String pageUri){
 		setColumn(PAGE_URI,pageUri);
 	}
 
+	@Override
 	public String getWebDavUri(){
 		String uri = getStringColumnValue(WEBDAV_URI);
 		return uri;
 	}
-	
+
+	@Override
 	public void setWebDavUri(String fileUri){
 		setColumn(WEBDAV_URI,fileUri);
 	}
-	
+
+	@Override
 	public ICDomain getDomain(){
 		ICDomain domain = (ICDomain) getColumnValue(DOMAIN_ID);
 		return domain;
 	}
-	
+
+	@Override
 	public int getDomainId(){
 		int domainId = getIntColumnValue(DOMAIN_ID);
 		return domainId;
 	}
-	
+
+	@Override
 	public void setDomain(ICDomain domain){
 		setColumn(DOMAIN_ID,domain);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -873,21 +927,21 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	query.addCriteria(new MatchCriteria(table,PAGE_URI,MatchCriteria.IS,(String)null));
 	    	return idoFindPKsByQuery(query);
 	}
-	
+
 	public Collection<?> ejbFindAllTemplatesWithWebDavUri() throws FinderException {
 		Table table = new Table(this);
     	SelectQuery query = new SelectQuery(table);
     	query.addColumn(new Column(table, getIDColumnName()));
     	query.addCriteria(new MatchCriteria(table, TYPE_COLUMN, MatchCriteria.EQUALS, TEMPLATE));
-    	
+
     	query.addCriteria(new MatchCriteria(table, WEBDAV_URI, MatchCriteria.LIKE, "%/themes/%"));
-    	
+
     	Criteria isNull = new MatchCriteria(new Column(table, DELETED_COLUMN), MatchCriteria.IS, MatchCriteria.NULL);
 		Criteria isFalse = new MatchCriteria(new Column(table, DELETED_COLUMN), MatchCriteria.EQUALS, false);
     	query.addCriteria(new OR(isNull, isFalse));
     	return idoFindPKsByQuery(query);
 	}
-	
+
 	/**
 	 * @return
 	 */
@@ -897,30 +951,36 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 	    	return idoFindPKsByQuery(query);
 	}
 
+	@Override
 	public boolean isHidePageInMenu() {
 		return getBooleanColumnValue(HIDE_PAGE_IN_MENU);
 	}
 
+	@Override
 	public void setHidePageInMenu(boolean hidePageInMenu) {
 		setColumn(HIDE_PAGE_IN_MENU, hidePageInMenu);
 	}
 
+	@Override
 	public boolean isPublished() {
 		return getBooleanColumnValue(PAGE_IS_PUBLISHED);
 	}
 
+	@Override
 	public void setPublished(boolean published) {
 		setColumn(PAGE_IS_PUBLISHED, published);
 	}
 
+	@Override
 	public boolean isLocked() {
 		return getBooleanColumnValue(PAGE_IS_LOCKED);
 	}
 
+	@Override
 	public void setLocked(boolean locked) {
 		setColumn(PAGE_IS_LOCKED, locked);
 	}
-	
+
 	public Collection ejbFindAllByPhrase(String phrase, List<String> idsToAvoid) throws FinderException {
 		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName()).appendWhere().append("lower(").append(NAME_COLUMN);
 		query.append(")").appendLike().appendSingleQuote().append(CoreConstants.PERCENT).append(phrase.toLowerCase()).append(CoreConstants.PERCENT).appendSingleQuote();
@@ -929,24 +989,25 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		}
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public Collection ejbFindAllByPrimaryKeys(List<String> primaryKeys) throws FinderException {
 		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName());
 		query.appendWhere(getIDColumnName()).appendInCollection(primaryKeys);
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public Collection ejbFindAllByName(String name, boolean findOnlyNotDeleted) throws FinderException {
 		IDOQuery query = idoQuery("select ").append(getIDColumnName()).append(" from ").append(getEntityName());
 		query.appendWhere(NAME_COLUMN).appendEqualSign().appendSingleQuote().append(name).appendSingleQuote();
-		
+
 		if (findOnlyNotDeleted) {
-			query.appendAnd().append(DELETED_COLUMN).appendNOTEqual().appendSingleQuote().append("Y").appendSingleQuote();
+			query.appendAnd().append(DELETED_COLUMN).appendNOTEqual().appendSingleQuote().append(CoreConstants.Y).appendSingleQuote();
 		}
-		
+
 		return idoFindPKsByQuery(query);
 	}
 
+	@Override
 	public boolean getIsFormattedInFacelet() {
 		String format = getFormat();
 		if(format!=null){

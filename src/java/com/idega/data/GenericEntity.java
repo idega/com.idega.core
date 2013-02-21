@@ -51,6 +51,7 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreConstants;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
@@ -94,8 +95,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	private boolean _metaDataHasChanged = false;
 	public String _lobColumnName;
 	private boolean insertStartData = true;
-	protected static String COLUMN_VALUE_TRUE = "Y";
-	protected static String COLUMN_VALUE_FALSE = "N";
+	protected static String COLUMN_VALUE_TRUE = CoreConstants.Y;
+	protected static String COLUMN_VALUE_FALSE = CoreConstants.N;
 	private boolean canRegisterColumnsForUpdate = false;
 
 	private Table idoQueryTable = null;
@@ -891,10 +892,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		if (getValue(columnName) != null) {
 			if (this.getStorageClass(columnName).equals(java.lang.Boolean.class)) {
 				if (((Boolean) getColumnValue(columnName)).booleanValue() == true) {
-					return "Y";
+					return CoreConstants.Y;
 				}
 				else {
-					return "N";
+					return CoreConstants.N;
 				}
 			}
 			else {
@@ -1637,10 +1638,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		else if (classType == EntityAttribute.TYPE_JAVA_LANG_BOOLEAN) {
 			if (columnValue != null) {
-				if (columnValue.equals("Y")) {
+				if (columnValue.equals(CoreConstants.Y)) {
 					setColumn(columnName, new Boolean(true), true);
 				}
-				else if (columnValue.equals("N")) {
+				else if (columnValue.equals(CoreConstants.N)) {
 					setColumn(columnName, new Boolean(false), true);
 				}
 				else {
@@ -1701,8 +1702,8 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		 * setColumn(columnName,RS.getString(columnName)); }
 		 *  } else if (classType==EntityAttribute.TYPE_JAVA_LANG_BOOLEAN){ String
 		 * theString = RS.getString(columnName); if (theString != null){ if
-		 * (theString.equals("Y")){ setColumn(columnName,new Boolean(true)); } else
-		 * if (theString.equals("N")){ setColumn(columnName,new Boolean(false)); } } }
+		 * (theString.equals(CoreConstants.Y)){ setColumn(columnName,new Boolean(true)); } else
+		 * if (theString.equals(CoreConstants.N)){ setColumn(columnName,new Boolean(false)); } } }
 		 * else if (classType==EntityAttribute.TYPE_JAVA_LANG_FLOAT){ float theFloat =
 		 * RS.getFloat(columnName); boolean wasNull = RS.wasNull(); if(!wasNull){
 		 * setColumn(columnName,new Float(theFloat));

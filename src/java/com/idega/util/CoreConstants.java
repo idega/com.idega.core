@@ -160,8 +160,10 @@ public class CoreConstants {
 
 	public static final String BUILDER = "builder";
 	public static final String BUILDER_APPLICATION = "builderApplication";
-	public static final String BUILDER_MODULE_PROPERTY_YES_VALUE = "Y";
-	public static final String BUILDER_MODULE_PROPERTY_NO_VALUE = "N";
+	public static final String Y = "Y";
+	public static final String BUILDER_MODULE_PROPERTY_YES_VALUE = Y;
+	public static final String N = "N";
+	public static final String BUILDER_MODULE_PROPERTY_NO_VALUE = N;
 
 	public static final String PAGE_ERROR_403_HANDLER_PORPERTY = HttpServletResponse.SC_FORBIDDEN + "_PAGE_URI";
 	public static final String PAGE_ERROR_404_HANDLER_PORPERTY = HttpServletResponse.SC_NOT_FOUND + "_PAGE_URI";
