@@ -1856,8 +1856,12 @@ LazyLoader.doRealLoading = function(url, callback, parameters) {
 			LazyLoader.resources.push(url);
 			
 			//	To avoid caching (that possibly may do browser)
-			url += '?LazyLoaderFlag=' + new Date().getTime();
-			
+			if (url.indexOf("?") == -1) {
+				url += '?LazyLoaderFlag=' + new Date().getTime();
+			} else {
+				url += '&LazyLoaderFlag=' + new Date().getTime();
+			}
+
 			var resource = null;
 			if (isCSS) {
 				resource = document.createElement('link');
