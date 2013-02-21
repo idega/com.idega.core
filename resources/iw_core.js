@@ -945,7 +945,6 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 	
 	//	Script
 	if (element.nodeName == 'script') {
-		
 		if (element.nodeValue != null && element.nodeValue != '') {
 			var action = '' + element.nodeValue;
 			
@@ -970,16 +969,15 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 		}
 		
 		if (element.childNodes != null) {
-
 			var allActions = '';
 			for (var i = 0; i < element.childNodes.length; i++) {
 				var scriptNodeValue = element.childNodes[i].nodeValue;
 				
-				if(scriptNodeValue.indexOf('<!--') != -1) {
+				if (scriptNodeValue.indexOf('<!--') != -1) {
 					scriptNodeValue = scriptNodeValue.replace(/<!--/g, '');
 				}
 				
-				if(scriptNodeValue.indexOf('//-->') != -1) {
+				if (scriptNodeValue.indexOf('//-->') != -1) {
                     scriptNodeValue = scriptNodeValue.replace(/\/\/-->/g, '');
                 }
                 
@@ -1037,34 +1035,28 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 				var event = attribute.nodeName.substring(attribute.nodeName.indexOf('on') + 2);
 				var functionCall = attribute.nodeValue;
 				functionsToRegister.push(event + DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR + functionCall);
-			}
-			else if (attribute.nodeName == 'checked' && IE) {
+			} else if (attribute.nodeName == 'checked' && IE) {
 				var isChecked = attribute.nodeValue == 'true';
 				if (isChecked) {
 					result.setAttribute('checked', true);
 					result.setAttribute('defaultChecked', true);
 				}
-			}
-			else if (attribute.nodeName == 'style' && IE) {
+			} else if (attribute.nodeName == 'style' && IE) {
 				var styleValue = attribute.nodeValue;
 				result.setAttribute('style', styleValue);
-			}
-			else if (attribute.nodeName == 'href') {
+			} else if (attribute.nodeName == 'href') {
 				var hrefValue = IWCORE.getFixedHrefValue(attribute.nodeValue);
 				if (hrefValue != null) {
 					result.setAttribute(attribute.nodeName, hrefValue);
 				}
-			}
-			else if (attribute.nodeName == 'src' && element.nodeName == 'script') {
+			} else if (attribute.nodeName == 'src' && element.nodeName == 'script') {
 				if (resourcesToAdd == null) {
 					resourcesToAdd = new Array();
 				}
 				resourcesToAdd.push(attribute.nodeValue);	//	Adding source file
-			}
-			else if (attribute.nodeName == 'class' && IE) {
+			} else if (attribute.nodeName == 'class' && IE) {
 				result.className = attribute.nodeValue;
-			}
-			else if (attribute.nodeName != null && attribute.nodeValue != null) {
+			} else if (attribute.nodeName != null && attribute.nodeValue != null) {
 				result.setAttribute(attribute.nodeName, attribute.nodeValue);
 			}
 		}
@@ -1097,7 +1089,6 @@ IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 };
 
 IWCORE.includeResourcesAndExecuteActions = function(resourcesToAdd, scriptsToEval) {
-	
 	var actionsToExecute = null;
 	if (scriptsToEval != null && scriptsToEval.length > 0) {
 		actionsToExecute = '';

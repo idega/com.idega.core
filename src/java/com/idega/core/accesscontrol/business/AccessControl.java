@@ -2267,7 +2267,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public Collection<com.idega.core.accesscontrol.data.ICRole> getAllRolesLegacy() {
-		Collection returnCol = new ArrayList(); //empty
 		try {
 			ICRoleHome home = (ICRoleHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICRole.class);
 			return home.findAllRoles();
@@ -2341,7 +2340,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection<com.idega.core.accesscontrol.data.ICPermission> oldPermissions = new ArrayList<com.idega.core.accesscontrol.data.ICPermission>();
 
 		try {
-			ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(ICPermission.class);
+			ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
 			for (ICPermission permission : permissions) {
 				try {
 					oldPermissions.add(home.findByPrimaryKey(permission.getId()));
@@ -2383,7 +2382,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection<com.idega.core.accesscontrol.data.ICPermission> oldPermissions = new ArrayList<com.idega.core.accesscontrol.data.ICPermission>();
 
 		try {
-			ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(ICPermission.class);
+			ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
 			for (ICPermission permission : permissions) {
 				try {
 					oldPermissions.add(home.findByPrimaryKey(permission.getId()));
