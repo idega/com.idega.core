@@ -224,8 +224,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			Object ob = LoginBusinessBean.getLoginAttribute(getAdministratorGroupName(), iwc);
 			if (ob != null) {
 				return ((Boolean) ob).booleanValue();
-			}
-			else {
+			} else {
 				if (getAdministratorUser().equals(LoginBusinessBean.getUser(iwc))) {
 					LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(), Boolean.TRUE, iwc);
 					return true;
@@ -243,8 +242,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 			LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(), Boolean.FALSE, iwc);
 			return false;
-		}
-		catch (NotLoggedOnException ex) {
+		} catch (NotLoggedOnException ex) {
 			return false;
 		}
 	}
@@ -1087,102 +1085,102 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				getPermissionCacherStatic().updatePermissions(permissionCategory, identifier, permissionKey, IWMainApplication.getDefaultIWApplicationContext());
 
 				return true;
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 				return false;
 			}
-		}
-		else {
+		} else {
 			return true;
 		}
 	}
 
 	@Override
-	public void setPermission(int permissionCategory, IWApplicationContext iwac, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue) throws Exception {
+	public ICPermission setPermission(int permissionCategory, IWApplicationContext iwac, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue) throws Exception {
 		Group group = getGroupDAO().findGroup(new Integer(permissionGroupId));
+		if (group == null) {
+			getLogger().warning("Can not find group by ID: " + permissionGroupId);
+			return null;
+		}
 
-		if (group != null) {
-			ICPermission permission = null;
-			switch (permissionCategory) { //todo remove this int category crap just use the strings
+		ICPermission permission = null;
+		switch (permissionCategory) {
+			case AccessController.CATEGORY_OBJECT_INSTANCE :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_OBJECT :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_BUNDLE :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_PAGE_INSTANCE :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_PAGE :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_JSP_PAGE :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_FILE_ID :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_FILE_ID, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_GROUP_ID :
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_GROUP_ID, identifier, permissionKey, group);
+				break;
+			case AccessController.CATEGORY_ROLE :
+				permission = getPermissionDAO().findPermission(RoleHelperObject.getStaticInstance().toString(), identifier, permissionKey, group);
+				break;
+		}
+
+		if (permission == null) {
+			String contextType = null;
+			switch (permissionCategory) {
 				case AccessController.CATEGORY_OBJECT_INSTANCE :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID;
 					break;
 				case AccessController.CATEGORY_OBJECT :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_IC_OBJECT_ID;
 					break;
 				case AccessController.CATEGORY_BUNDLE :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER;
 					break;
 				case AccessController.CATEGORY_PAGE_INSTANCE :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_PAGE_ID;
 					break;
 				case AccessController.CATEGORY_PAGE :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_PAGE;
 					break;
 				case AccessController.CATEGORY_JSP_PAGE :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_JSP_PAGE;
 					break;
 				case AccessController.CATEGORY_FILE_ID :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_FILE_ID, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_FILE_ID;
 					break;
 				case AccessController.CATEGORY_GROUP_ID :
-					permission = getPermissionDAO().findPermission(CATEGORY_STRING_GROUP_ID, identifier, permissionKey, group);
+					contextType = AccessController.CATEGORY_STRING_GROUP_ID;
 					break;
 				case AccessController.CATEGORY_ROLE :
-					permission = getPermissionDAO().findPermission(RoleHelperObject.getStaticInstance().toString(), identifier, permissionKey, group);
+					contextType = RoleHelperObject.getStaticInstance().toString();
 					break;
 			}
 
-			if (permission == null) {
-				String contextType = null;
-				switch (permissionCategory) {
-					case AccessController.CATEGORY_OBJECT_INSTANCE :
-						contextType = AccessController.CATEGORY_STRING_OBJECT_INSTANCE_ID;
-						break;
-					case AccessController.CATEGORY_OBJECT :
-						contextType = AccessController.CATEGORY_STRING_IC_OBJECT_ID;
-						break;
-					case AccessController.CATEGORY_BUNDLE :
-						contextType = AccessController.CATEGORY_STRING_BUNDLE_IDENTIFIER;
-						break;
-					case AccessController.CATEGORY_PAGE_INSTANCE :
-						contextType = AccessController.CATEGORY_STRING_PAGE_ID;
-						break;
-					case AccessController.CATEGORY_PAGE :
-						contextType = AccessController.CATEGORY_STRING_PAGE;
-						break;
-					case AccessController.CATEGORY_JSP_PAGE :
-						contextType = AccessController.CATEGORY_STRING_JSP_PAGE;
-						break;
-					case AccessController.CATEGORY_FILE_ID :
-						contextType = AccessController.CATEGORY_STRING_FILE_ID;
-						break;
-					case AccessController.CATEGORY_GROUP_ID :
-						contextType = AccessController.CATEGORY_STRING_GROUP_ID;
-						break;
-					case AccessController.CATEGORY_ROLE :
-						contextType = RoleHelperObject.getStaticInstance().toString();
-						break;
+			permission = getPermissionDAO().createPermission(contextType, identifier, group, permissionKey, permissionValue);
+		} else {
+			//	Updating
+			permission.setPermissionValue(permissionValue);
+			if (PERMISSION_KEY_OWNER.equals(permission.getPermissionString()) || PERMISSION_KEY_ROLE.equals(identifier)) {
+				if (permissionValue.booleanValue()) {
+					permission.setActive();
+				} else {
+					permission.setPassive();
 				}
-
-				getPermissionDAO().createPermission(contextType, identifier, group, permissionKey, permissionValue);
 			}
-			else { //updating
-				permission.setPermissionValue(permissionValue);
-				if (AccessController.PERMISSION_KEY_OWNER.equals(permission.getPermissionString())) {
-					if (permissionValue.booleanValue()) {
-						permission.setActive();
-					}
-					else {
-						permission.setPassive();
-					}
-				}
-				getPermissionDAO().merge(permission);
-			}
-
-			getPermissionCacher().updatePermissions(permissionCategory, identifier, permissionKey, iwac);
+			getPermissionDAO().merge(permission);
 		}
+
+		getPermissionCacher().updatePermissions(permissionCategory, identifier, permissionKey, iwac);
+		return permission;
 	}
 
 	@Override
@@ -1314,26 +1312,25 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public List<Group> getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception {
 		List<Group> toReturn = new ArrayList<Group>();
 		List<ICPermission> permissions = null;
-		com.idega.core.accesscontrol.data.ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
 
 		switch (permissionCategory) {
 			case AccessController.CATEGORY_OBJECT_INSTANCE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, identifier, "Y");
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, CoreConstants.Y);
 				break;
 			case AccessController.CATEGORY_OBJECT :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_IC_OBJECT_ID, identifier, identifier, "Y");
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, CoreConstants.Y);
 				break;
 			case AccessController.CATEGORY_BUNDLE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, identifier, "Y");
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, CoreConstants.Y);
 				break;
 			case AccessController.CATEGORY_PAGE_INSTANCE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE_ID, identifier, identifier, "Y");
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, CoreConstants.Y);
 				break;
 			case AccessController.CATEGORY_PAGE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE, identifier, identifier, "Y");
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE, identifier, permissionKey, CoreConstants.Y);
 				break;
 			case AccessController.CATEGORY_JSP_PAGE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_JSP_PAGE, identifier, identifier, "Y");
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, CoreConstants.Y);
 				break;
 		}
 
@@ -2051,18 +2048,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(user.getGroup());
 		if (!ListUtil.isEmpty(userRolesFromGroup)) {
-			for (String key: userRolesFromGroup) {
+			for (String key: userRolesFromGroup)
 				s.add(key);
-			}
 		}
 
 		try {
 			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
-			if (c == null) {
+			if (c == null)
 				return s;
-			}
+
 			for (ICPermission p: c) {
-				if (p.isActive()) {		//if(p.getPermissionValue()){  // always true for this roles
+				if (p.isActive()) {
 					String key = p.getPermissionString();
 					if (!s.contains(key)) {
 						s.add(key);
@@ -2829,10 +2825,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public boolean addRoleToGroup(String roleKey, String permissionKey, Integer groupId, IWApplicationContext iwac) {
 		try {
-			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), permissionKey ,roleKey, Boolean.TRUE);
+			setPermission(AccessController.CATEGORY_ROLE, iwac, groupId.toString(), permissionKey, roleKey, Boolean.TRUE);
 			return true;
-		}
-		catch (Exception e) { //setPermission throws Exception!? but does it rollback on errors?
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}

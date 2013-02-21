@@ -1,9 +1,9 @@
 /*
  * $Id: LoginSessionBean.java,v 1.12 2009/05/27 09:44:51 laddi Exp $ Created
  * on 3.9.2004
- * 
+ *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -27,9 +27,9 @@ import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreUtil;
 
 /**
- * 
+ *
  * Last modified: $Date: 2009/05/27 09:44:51 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:aron@idega.com">aron</a>
  * @version $Revision: 1.12 $
  */
@@ -42,6 +42,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
 	private Locale currentLocale;
 
+	@Override
 	public void reset() {
 		sessionHelper = new SessionHelper();
 		reservedSessionHelpers = new Stack<SessionHelper>();
@@ -50,6 +51,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the permissionGroups.
 	 */
+	@Override
 	public List<Group> getPermissionGroups() {
 		return this.sessionHelper.permissionGroups;
 	}
@@ -58,6 +60,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param permissionGroups
 	 *          The permissionGroups to set.
 	 */
+	@Override
 	public void setPermissionGroups(List<Group> permissionGroups) {
 		this.sessionHelper.permissionGroups = permissionGroups;
 	}
@@ -65,6 +68,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the primaryGroup.
 	 */
+	@Override
 	public Group getPrimaryGroup() {
 		return this.sessionHelper.primaryGroup;
 	}
@@ -73,6 +77,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param primaryGroup
 	 *          The primaryGroup to set.
 	 */
+	@Override
 	public void setPrimaryGroup(Group primaryGroup) {
 		this.sessionHelper.primaryGroup = primaryGroup;
 	}
@@ -80,6 +85,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the repGroup.
 	 */
+	@Override
 	public UserGroupRepresentative getRepresentativeGroup() {
 		return this.sessionHelper.repGroup;
 	}
@@ -88,6 +94,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param repGroup
 	 *          The repGroup to set.
 	 */
+	@Override
 	public void setRepresentativeGroup(UserGroupRepresentative repGroup) {
 		this.sessionHelper.repGroup = repGroup;
 	}
@@ -95,6 +102,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the user.
 	 */
+	@Override
 	public User getUser() {
 		return this.sessionHelper.user;
 	}
@@ -103,6 +111,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param user
 	 *          The user to set.
 	 */
+	@Override
 	public void setUser(User user) {
 		this.sessionHelper.user = user;
 	}
@@ -110,6 +119,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the loggedOnInfo.
 	 */
+	@Override
 	public LoggedOnInfo getLoggedOnInfo() {
 		return this.sessionHelper.loggedOnInfo;
 	}
@@ -118,6 +128,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param loggedOnInfo
 	 *          The loggedOnInfo to set.
 	 */
+	@Override
 	public void setLoggedOnInfo(LoggedOnInfo loggedOnInfo) {
 		this.sessionHelper.loggedOnInfo = loggedOnInfo;
 	}
@@ -125,6 +136,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the loginState.
 	 */
+	@Override
 	public LoginState getLoginState() {
 		return this.sessionHelper.loginState;
 	}
@@ -133,6 +145,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param loginState
 	 *          The loginState to set.
 	 */
+	@Override
 	public void setLoginState(LoginState loginState) {
 		this.sessionHelper.loginState = loginState;
 	}
@@ -140,6 +153,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the userLoginName.
 	 */
+	@Override
 	public String getUserLoginName() {
 		return this.sessionHelper.userLoginName;
 	}
@@ -148,21 +162,25 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param userLoginName
 	 *          The userLoginName to set.
 	 */
+	@Override
 	public void setUserLoginName(String userLoginName) {
 		this.sessionHelper.userLoginName = userLoginName;
 	}
 
+	@Override
 	public void setLoginAttribute(String key, Object value) {
 		this.sessionHelper.mapOfExtraAttributes.put(key, value);
 	}
 
+	@Override
 	public Object getLoginAttribute(String key) {
 		if (this.sessionHelper.mapOfExtraAttributes == null) {
-			this.sessionHelper.mapOfExtraAttributes = new Hashtable();
+			this.sessionHelper.mapOfExtraAttributes = new Hashtable<String, Object>();
 		}
 		return this.sessionHelper.mapOfExtraAttributes.get(key);
 	}
 
+	@Override
 	public void removeLoginAttribute(String key) {
 		this.sessionHelper.mapOfExtraAttributes.remove(key);
 	}
@@ -170,7 +188,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	/**
 	 * @return Returns the mapOfExtraAttributes.
 	 */
-	protected Map getMapOfExtraAttributes() {
+	protected Map<String, Object> getMapOfExtraAttributes() {
 		return this.sessionHelper.mapOfExtraAttributes;
 	}
 
@@ -178,13 +196,14 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param mapOfExtraAttributes
 	 *          The mapOfExtraAttributes to set.
 	 */
-	protected void setMapOfExtraAttributes(Map mapOfExtraAttributes) {
+	protected void setMapOfExtraAttributes(Map<String, Object> mapOfExtraAttributes) {
 		this.sessionHelper.mapOfExtraAttributes = mapOfExtraAttributes;
 	}
 
 	/**
 	 * @return Returns the userProperties.
 	 */
+	@Override
 	public UserProperties getUserProperties() {
 		return this.sessionHelper.userProperties;
 	}
@@ -193,16 +212,19 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @param userProperties
 	 *          The userProperties to set.
 	 */
+	@Override
 	public void setUserProperties(UserProperties userProperties) {
 		this.sessionHelper.userProperties = userProperties;
 	}
 
+	@Override
 	public void retrieve() {
 		if (this.reservedSessionHelpers != null && !this.reservedSessionHelpers.isEmpty()) {
 			this.sessionHelper = this.reservedSessionHelpers.pop();
 		}
 	}
 
+	@Override
 	public void reserve() {
 		this.reservedSessionHelpers.push(this.sessionHelper);
 		reset();
@@ -220,24 +242,17 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		protected LoginState loginState = LoginState.NoState;
 		protected String userLoginName = null;
 		protected UserProperties userProperties = null;
-		protected Map mapOfExtraAttributes = new Hashtable();
+		protected Map<String, Object> mapOfExtraAttributes = new Hashtable<String, Object>();
 		protected User reserveUser = null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see com.idega.core.accesscontrol.business.LoginSession#iSuperAdmin()
-	 */
+	@Override
 	public boolean isSuperAdmin() {
 		try {
-			// if (this.isLoggedOn())
 			User user = getUser();
-			if (user != null) {
+			if (user != null)
 				return user.equals(this.getAccessController().getAdministratorUser());
-			}
-		}
-		catch (Exception ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
 		return false;
@@ -254,6 +269,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		return this.getIWApplicationContext().getIWMainApplication().getAccessController();
 	}
 
+	@Override
 	public String getSuperAdminId() {
 		if (isSuperAdmin()) {
 			return getUser().getId().toString();
@@ -261,17 +277,19 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		return null;
 	}
 
+	@Override
 	public Locale getCurrentLocale() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			Logger.getLogger(getClass().getName()).warning(IWContext.class.getName() + " is unavailable!");
 			return null;
 		}
-		
+
 		currentLocale = iwc.getCurrentLocale();
 		return currentLocale;
 	}
 
+	@Override
 	public boolean isLoggedIn() {
 		return getUser() != null;
 	}

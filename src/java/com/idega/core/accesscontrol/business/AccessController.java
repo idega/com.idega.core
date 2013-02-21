@@ -40,7 +40,7 @@ import com.idega.user.data.bean.User;
  * @author <a href="gummi@idega.is">Gudmundur Agust Saemundsson</a>
  * @version $Revision: 1.38 $
  */
-public interface AccessController extends com.idega.idegaweb.IWService{
+public interface AccessController extends com.idega.idegaweb.IWService {
 
 	public static final String CATEGORY_STRING_OBJECT_INSTANCE_ID = "ic_object_instance_id";
 	public static final String CATEGORY_STRING_IC_OBJECT_ID = "ic_object_id";
@@ -126,7 +126,7 @@ public interface AccessController extends com.idega.idegaweb.IWService{
 	public void setObjectPermission(IWUserContext iwc, Group group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
 	public void setBundlePermission(IWUserContext iwc, Group group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
 	public void setObjectInstacePermission(IWUserContext iwc, Group group, PresentationObject obj, String permissionType, Boolean permissionValue)throws Exception;
-	public void setPermission(int permissionCategory, IWApplicationContext iwac, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws Exception;
+	public ICPermission setPermission(int permissionCategory, IWApplicationContext iwac, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue)throws Exception;
 	public void setObjectInstacePermission(IWUserContext iwc, String permissionGroupId, String ObjectInstanceId, String permissionType, Boolean permissionValue)throws Exception;
 	public int createPermissionGroup(String GroupName, String Description, String ExtraInfo, int[] userIDs, int[] groupIDs)throws Exception;
 	public List<Group> getAllPermissionGroups()throws Exception;
