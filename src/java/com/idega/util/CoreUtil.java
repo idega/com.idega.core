@@ -381,8 +381,17 @@ public class CoreUtil {
 	}
 
 	public static final String getHost() {
+		ICDomain domain = null;
 		IWContext iwc = CoreUtil.getIWContext();
-		ICDomain domain = iwc.getDomain();
+		if (iwc == null) {
+			domain = IWMainApplication.getDefaultIWApplicationContext().getDomain();
+		} else
+			domain = iwc.getDomain();
+		if (domain == null) {
+			LOGGER.warning("Domain is unknown!");
+			return CoreConstants.EMPTY;
+		}
+
 		int port = domain.getServerPort();
 		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
 		if (port > 0)
