@@ -27,6 +27,7 @@ import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
 import com.idega.user.data.bean.Group;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
@@ -61,7 +62,8 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	@Transactional(readOnly = false)
 	public ICPermission createPermission(String contextType, String contextValue, Group group, String permissionString, boolean permissionValue) {
 		if (group == null) {
-			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ? "Y" : "N");
+			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ?
+					CoreConstants.Y : CoreConstants.N);
 			if (!ListUtil.isEmpty(permissions))
 				return permissions.iterator().next();
 		} else {

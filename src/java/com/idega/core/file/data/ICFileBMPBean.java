@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
@@ -45,6 +46,7 @@ import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Resource;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.IWTimestamp;
@@ -61,8 +63,7 @@ import com.idega.util.ListUtil;
 
 public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, TreeableEntity, MetaDataCapable, Resource, Storable{
 
-	//UFN - UNIQUE_FIELD_NAME
-	//${iConst} public final static String UFN_NAME = "NAME";
+	private static final long serialVersionUID = 6911355143485852117L;
 
 	public final static String IW_BUNDLE_IDENTIFIER = "com.idega.core";
 
@@ -72,19 +73,19 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public static String IC_ROOT_FOLDER_NAME = "ICROOT";
 	public static String IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER = "system_folder";
 	private static final String FILE_URI_IN_SLIDE = "FILE_URI_IN_SLIDE";
-	
+
 	public static final int NODETYPE_FOLDER = 0;
 	public static final int NODETYPE_FILE = 1;
 
-	public final static String DELETED = "Y";
+	public final static String DELETED = CoreConstants.Y;
 	public final static String NOT_DELETED = "N";
-	
+
 	private static final String COLUMN_HASH = "HASH_VALUE";
 
 	private static final String TABLENAME_ICFILE_ICITEM = "ic_file_ic_item";
 	private static final String TABLENAME_ICFILE_ICVERSION = "ic_file_ic_version";
 	private static final String FILE_DOWNLOADERS = ENTITY_NAME + "_DOWNLOADERS";
-	
+
 	public ICFileBMPBean() {
 		super();
 		this._sortLeafs = true;
@@ -110,7 +111,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		addAttribute(getColumnNameModificationDate(), "Modification date", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnNameFileSize(), "file size in bytes", true, true, Integer.class);
 		addAttribute(COLUMN_HASH, "Hash value", true, true, Integer.class);
-		
+
 		addAttribute(getColumnDeleted(), "Deleted", true, true, String.class, 1);
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(getColumnDeletedWhen(), "Deleted when", true, true, Timestamp.class);
@@ -120,7 +121,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		addManyToManyRelationShip(ICItem.class, TABLENAME_ICFILE_ICITEM);
 		addManyToManyRelationShip(ICVersion.class, TABLENAME_ICFILE_ICVERSION);
 		addManyToManyRelationShip(com.idega.user.data.User.class, FILE_DOWNLOADERS);
-		
+
 		addMetaDataRelationship(); //can have extra info in the ic_metadata table
 
 		addIndex("IDX_IC_FILE_1", getColumnNameName());
@@ -172,7 +173,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public static String getColumnDeletedWhen() {
 		return "DELETED_WHEN";
 	}
-	
+
 	/**
 	 * @deprecated Replaced with getColumnLocale()
 	 */
@@ -185,10 +186,12 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return FILE_VALUE;
 	}
 
+	@Override
 	public int getLanguage() {
 		return getIntColumnValue(getColumnNameLanguageId());
 	}
 
+	@Override
 	public String getMimeType() {
 		return getStringColumnValue(getColumnNameMimeType());
 	}
@@ -197,11 +200,13 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public String getName() {
 		return getStringColumnValue(getColumnNameName());
 	}
-	
+
+	@Override
 	public String getLocalizationKey() {
 		return getStringColumnValue(getColumnNameLocalizationKey());
 	}
 
+	@Override
 	public String getDescription() {
 		return getStringColumnValue(getColumnNameDescription());
 	}
@@ -210,22 +215,27 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return (BlobWrapper)getColumnValue(getColumnFileValue());
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return isStoredValueNull(getColumnNameFileValue());
 	}
-	
+
+	@Override
 	public InputStream getFileValue() {
 		return getInputStreamColumnValue(getColumnFileValue());
 	}
 
+	@Override
 	public Timestamp getCreationDate() {
 		return (Timestamp)getColumnValue(getColumnNameCreationDate());
 	}
 
+	@Override
 	public Timestamp getModificationDate() {
 		return (Timestamp)getColumnValue(getColumnNameModificationDate());
 	}
 
+	@Override
 	public Integer getFileSize() {
 		Integer size = (Integer) getColumnValue(getColumnNameFileSize());
 		if (size == null) {
@@ -247,10 +257,12 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return size;
 	}
 
+	@Override
 	public void setLanguage(int language) {
 		setColumn(getColumnNameLanguageId(), new Integer(language));
 	}
 
+	@Override
 	public void setMimeType(String mimeType) {
 		setColumn(getColumnNameMimeType(), mimeType);
 	}
@@ -259,19 +271,23 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public void setName(String Name) {
 		setColumn(getColumnNameName(), Name);
 	}
-	
+
+	@Override
 	public void setLocalizationKey(String key) {
 		setColumn(getColumnNameLocalizationKey(), key);
 	}
 
+	@Override
 	public void setDescription(String description) {
 		setColumn(getColumnNameDescription(), description);
 	}
 
+	@Override
 	public void setFileSize(Integer fileSize) {
 		setColumn(getColumnNameFileSize(), fileSize);
 	}
 
+	@Override
 	public void setFileSize(int fileSize) {
 		setColumn(getColumnNameFileSize(), fileSize);
 	}
@@ -280,18 +296,22 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		setColumn(getColumnFileValue(), fileValue);
 	}
 
+	@Override
 	public void setFileValue(InputStream fileValue) {
 		setColumn(getColumnFileValue(), fileValue);
 	}
 
+	@Override
 	public OutputStream getFileValueForWrite() {
 		return getColumnOutputStream(getColumnFileValue());
 	}
 
+	@Override
 	public void setCreationDate(Timestamp creationDate) {
 		setColumn(getColumnNameCreationDate(), creationDate);
 	}
 
+	@Override
 	public void setModificationDate(Timestamp modificationDate) {
 		setColumn(getColumnNameModificationDate(), modificationDate);
 	}
@@ -308,6 +328,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		super.update();
 	}
 
+	@Override
 	public Locale getLocale() {
 		ICLocale icLocale = this.getICLocale();
 		if (icLocale != null) {
@@ -316,14 +337,17 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return null;
 	}
 
+	@Override
 	public ICLocale getICLocale() {
 		return (ICLocale)super.getColumnValue(ICFileBMPBean.getColumnNameLocale());
 	}
 
+	@Override
 	public int getLocaleId() {
 		return super.getIntColumnValue(ICFileBMPBean.getColumnNameLocale());
 	}
 
+	@Override
 	public void setLocale() {
 		super.getIntColumnValue(ICFileBMPBean.getColumnNameLocale());
 	}
@@ -338,6 +362,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return true;
 	}
 
+	@Override
 	public boolean getDeleted() {
 		String deleted = getStringColumnValue(getColumnDeleted());
 
@@ -352,6 +377,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 	}
 
+	@Override
 	public void setDeleted(boolean deleted) {
 		if (deleted) {
 			setColumn(getColumnDeleted(), DELETED);
@@ -360,6 +386,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 	}
 
+	@Override
 	public int getDeletedByUserId() {
 		return (getIntColumnValue(getColumnDeletedBy()));
 	}
@@ -368,6 +395,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		setColumn(getColumnDeletedBy(), id);
 	}
 
+	@Override
 	public Timestamp getDeletedWhen() {
 		return ((Timestamp)getColumnValue(getColumnDeletedWhen()));
 	}
@@ -411,6 +439,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 
 	}
 	/** undeletes this file **/
+	@Override
 	public void unDelete(boolean setICRootAsParent) throws SQLException {
 		setDeleted(false);
 		setDeletedWhen(IWTimestamp.getTimestampRightNow());
@@ -436,6 +465,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	 * This method delete the file from the database permenantly. Recursive function if the file has children.
 	 * Use with caution!
 	 */
+	@Override
 	public void superDelete() throws SQLException {
 		ICFile file = (ICFile)getParentNode();
 		if (file != null) {
@@ -485,10 +515,10 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public Object ejbFindRootFolder() throws FinderException {
 		//EntityFinder.findAllByColumn(file,com.idega.core.data.ICFileBMPBean.getColumnNameName(),com.idega.core.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME,com.idega.core.data.ICFileBMPBean.getColumnNameMimeType(),com.idega.core.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
 		Object pkToReturn;
-	
+
 		try {
 			ICApplicationBindingHome bHome =((ICApplicationBindingHome)IDOLookup.getHome(ICApplicationBinding.class));
-			
+
 			try {
 				ICApplicationBinding b = bHome.findByPrimaryKey(ICFileBMPBean.IC_ROOT_FOLDER_NAME);
 				pkToReturn = new Integer(b.getValue());
@@ -497,17 +527,17 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 				query.appendSelectAllFrom(this);
 				query.appendWhereEqualsQuoted(ICFileBMPBean.getColumnNameName(), ICFileBMPBean.IC_ROOT_FOLDER_NAME);
 				query.appendAndEqualsQuoted(com.idega.core.file.data.ICFileBMPBean.getColumnNameMimeType(), com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
-				
+
 				Object folderPK = idoFindOnePKByQuery(query);
-				
+
 				try {
 					ICApplicationBinding b = bHome.create();
 					b.setKey(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME);
 					b.setBindingType(IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER);
-								
+
 					b.setValue(folderPK.toString());
 					b.store();
-					
+
 					ICFile folder = ((ICFileHome)getEJBLocalHome()).findByPrimaryKey(folderPK);
 					folder.setLocalizationKey(IC_ROOT_FOLDER_NAME);
 					folder.store();
@@ -521,7 +551,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 					e1.printStackTrace();
 					throw new IDORuntimeException(e1,this);
 				}
-				
+
 				pkToReturn = folderPK;
 			}
 		} catch (IDOLookupException e) {
@@ -538,6 +568,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#isFolder()
 	 */
+	@Override
 	public boolean isFolder() {
 		if (getMimeType().equals(com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER)) {
 			return true;
@@ -546,14 +577,16 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		}
 	}
 
+	@Override
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
 		return writer.write(this, iwc);
 	}
 
+	@Override
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
 		return reader.read(this, iwc);
 	}
-	
+
 	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		if (getLocalizationKey() != null) {
@@ -570,7 +603,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	public Collection ejbFindChildren(ICFile parent, Collection visibleMimeTypes, Collection hiddenMimeTypes, String orderBy) throws FinderException {
 		return ejbFindChildren(parent, visibleMimeTypes, hiddenMimeTypes, orderBy, -1, -1);
 	}
-	
+
 	public Collection ejbFindChildren(ICFile parent, Collection visibleMimeTypes, Collection hiddenMimeTypes, String orderBy, int starting, int numberOfReturns) throws FinderException {
 		try {
 			String thisTable = parent.getEntityDefinition().getSQLTableName();
@@ -578,29 +611,29 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 			String idColumnName = parent.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 			String childIDColumnName = EntityControl.getTreeRelationShipChildColumnName(parent);
 			IDOQuery buffer = idoQuery();
-			
+
 			if(parent.getPrimaryKey() instanceof Integer){
-				buffer.append("select " ).append( thisTable ).append(".").append(getIDColumnName()).append(" from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(parent.getPrimaryKey().toString());	
+				buffer.append("select " ).append( thisTable ).append(".").append(getIDColumnName()).append(" from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(parent.getPrimaryKey().toString());
 			}
 			else{//add the ' for strings, dates etc.
 				buffer.append("select " ).append( thisTable ).append(".").append(getIDColumnName()).append(" from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = '").append(parent.getPrimaryKey().toString()).append("'");
 			}
-			
+
 			if(visibleMimeTypes != null && !visibleMimeTypes.isEmpty()){
 				buffer.appendAnd().append(getColumnNameMimeType()).appendInForStringCollectionWithSingleQuotes(visibleMimeTypes);
 			}
-			
+
 			if(hiddenMimeTypes != null && !hiddenMimeTypes.isEmpty()){
 				buffer.appendAnd().append(getColumnNameMimeType()).appendNotInForStringCollectionWithSingleQuotes(hiddenMimeTypes);
 			}
-			
-			
+
+
 			if (orderBy != null && !orderBy.equals("")) {
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 			}
 			//System.out.println(buffer.toString());
 			return idoFindPKsBySQL( buffer.toString(), numberOfReturns, starting);
-			
+
 		} catch (IDOCompositePrimaryKeyException e) {
 			e.printStackTrace(System.err);
 			return ListUtil.getEmptyList();
@@ -616,19 +649,23 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		BlobWrapper wrapper = getBlobColumnValue(getColumnNameFileValue());
 		wrapper.setInputStreamForBlobWrite(null);
 	}
-	
+
+	@Override
 	public void setFileUri(String uri) {
 		setColumn(FILE_URI_IN_SLIDE, uri);
 	}
-	
+
+	@Override
 	public String getFileUri() {
 		return getStringColumnValue(FILE_URI_IN_SLIDE);
 	}
 
+	@Override
 	public void addDownloadedBy(com.idega.user.data.User downloader) throws IDOAddRelationshipException {
 		this.idoAddTo(downloader);
 	}
 
+	@Override
 	@SuppressWarnings("unchecked")
 	public Collection<com.idega.user.data.User> getDownloadedBy() {
 		try {
@@ -639,26 +676,28 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 		return null;
 	}
 
+	@Override
 	public void removeDownloadedBy(com.idega.user.data.User downloader) throws IDORemoveRelationshipException {
 		this.idoRemoveFrom(downloader);
 	}
 
+	@Override
 	public Integer getHash() {
 		return getIntegerColumnValue(COLUMN_HASH);
 	}
 
+	@Override
 	public void setHash(Integer hash) {
 		setValue(COLUMN_HASH, hash);
 	}
-	
+
 	public Object ejbFindByHash(Integer hash) throws FinderException {
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(new Column(table, getIDColumnName()));
-		
+
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_HASH), MatchCriteria.EQUALS, hash));
-		
+
 		return this.idoFindOnePKByQuery(query);
 	}
 }
-		

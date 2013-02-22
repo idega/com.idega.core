@@ -1,8 +1,8 @@
 /*
  * $Id: DateInput.java,v 1.60 2006/04/09 12:13:16 laddi Exp $
- * 
+ *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -17,12 +17,14 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
+
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 
@@ -118,7 +120,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 
 	/**
 	 * Creates a new DateInput object.
-	 * 
+	 *
 	 * @param name
 	 *          Name of the parameter string
 	 */
@@ -128,7 +130,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 
 	/**
 	 * Creates a new DateInput object.
-	 * 
+	 *
 	 * @param name
 	 *          Name of the parameter string
 	 * @param _inShort
@@ -140,7 +142,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 
 	/**
 	 * Creates a new Dateinput object.
-	 * 
+	 *
 	 * @param name
 	 *          Name of the parameter string
 	 * @param _inShort
@@ -157,6 +159,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		constructInputs();
 	}
 
+	@Override
 	public Object clone() {
 		DateInput newObject = (DateInput) super.clone();
 
@@ -183,6 +186,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		return newObject;
 	}
 
+	@Override
 	public void setName(String name) {
 		super.setName(name);
 
@@ -207,10 +211,11 @@ public class DateInput extends InterfaceObject implements InputHandler {
 
 	/**
 	 * Sets the content (value) of the date input.
-	 * 
+	 *
 	 * @param value
 	 *          The content to set.
 	 */
+	@Override
 	public void setContent(String content) {
 		if(!"".equals(content)){
 			IWTimestamp stamp = new IWTimestamp(content);
@@ -284,6 +289,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
+	@Override
 	public void setDisabled(boolean disabled) {
 		this.isDisabled = disabled;
 	}
@@ -300,12 +306,14 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
+	@Override
 	public void setStyleAttribute(String attributeName, String attributeValue) {
 		this.theDay.setMarkupAttribute(attributeName, attributeValue);
 		this.theMonth.setMarkupAttribute(attributeName, attributeValue);
 		this.theYear.setMarkupAttribute(attributeName, attributeValue);
 	}
 
+	@Override
 	public void setStyleAttribute(String attributeName) {
 		this.theDay.setStyleAttribute(attributeName);
 		this.theMonth.setStyleAttribute(attributeName);
@@ -348,7 +356,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 
 	/**
 	 * Method setMonth.
-	 * 
+	 *
 	 * @param month
 	 */
 	public void setMonth(String month) {
@@ -483,6 +491,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		this.empty();
 		initilizeValues();
@@ -661,7 +670,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 			if (this.inShort) {
 				this.dayString = iwrb.getLocalizedString(DAY_KEY_S, "D");
 				this.monthString = iwrb.getLocalizedString(MONTH_KEY_S, "M");
-				this.yearString = iwrb.getLocalizedString(YEAR_KEY_S, "Y");
+				this.yearString = iwrb.getLocalizedString(YEAR_KEY_S, CoreConstants.Y);
 			}
 			else {
 				this.dayString = iwrb.getLocalizedString(DAY_KEY, "Day");
@@ -714,10 +723,11 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 		initilizeValues();
 		String name = iwc.getParameter(getName());
-		
+
 		String nameDay = null;
 		String nameMonth = null;
 		String nameYear = null;
@@ -745,10 +755,12 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
+	@Override
 	public void keepStatusOnAction(boolean keepStatus) {
 		this.keepStatusOnAction = keepStatus;
 	}
 
+	@Override
 	public void keepStatusOnAction() {
 		keepStatusOnAction(true);
 	}
@@ -756,6 +768,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	/**
 	 * @see com.idega.presentation.PresentationObject#setStyleClass(java.lang.String)
 	 */
+	@Override
 	public void setStyleClass(String styleName) {
 		this.styleClass = styleName;
 	}
@@ -775,7 +788,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	/**
 	 * Sets if the drop down menu should contain a null value (that is a choice
 	 * corresponding to no date) or not. The default value is true.
-	 * 
+	 *
 	 * @param b
 	 */
 	public void setShowNullValue(boolean b) {
@@ -784,13 +797,15 @@ public class DateInput extends InterfaceObject implements InputHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
 
+	@Override
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		Locale locale = iwc.getCurrentLocale();
 		if (value != null) {
@@ -801,6 +816,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
+	@Override
 	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
 		this.setName(name);
 		if (value != null) {
@@ -822,6 +838,7 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		return this;
 	}
 
+	@Override
 	public Object getResultingObject(String[] value, IWContext iwc) throws Exception {
 		if (value != null && value.length > 0) {
 			String dateString = value[0];
@@ -840,11 +857,13 @@ public class DateInput extends InterfaceObject implements InputHandler {
 		}
 	}
 
+	@Override
 	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
 		String value = (String) Collections.min(values);
 		return getHandlerObject(name, value, iwc);
 	}
 
+	@Override
 	public Object convertSingleResultingObjectToType(Object value, String className) {
 		if (value != null) {
 			IWTimestamp stamp = new IWTimestamp(value.toString());

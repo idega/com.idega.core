@@ -571,7 +571,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroupsDirectlyRelated
 	 */
-	public Collection getUserGroupsDirectlyRelated(User user) throws java.rmi.RemoteException;
+	public Collection<Group> getUserGroupsDirectlyRelated(User user) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getParentGroupsInDirectForUser

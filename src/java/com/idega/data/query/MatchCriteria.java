@@ -10,6 +10,7 @@ import java.util.Vector;
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
+import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
@@ -38,7 +39,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
 	 * NULL...)
-	 * 
+	 *
 	 * @param column
 	 */
 	public MatchCriteria(Column column) {
@@ -50,7 +51,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
 	 * NULL...)
-	 * 
+	 *
 	 * @param column
 	 */
 	public MatchCriteria(Column column, boolean notNull) {
@@ -82,7 +83,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		}
 
 	}
-	
+
 	public MatchCriteria(Column column, String matchType, String value) {
 		this(column, matchType, false, value);
 	}
@@ -122,13 +123,13 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	public MatchCriteria(Column column, String matchType, boolean value) {
 		this.column = column;
 		if (value) {
-			this.value = quote("Y");
+			this.value = quote(CoreConstants.Y);
 			if (!matchType.equalsIgnoreCase(LIKE)) {
 				this.placeHolderValue = Boolean.TRUE;
 			}
 		}
 		else {
-			this.value = quote("N");
+			this.value = quote(CoreConstants.N);
 			if (!matchType.equalsIgnoreCase(LIKE)) {
 				this.placeHolderValue = Boolean.FALSE;
 			}
@@ -252,6 +253,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		return this.placeHolderValue;
 	}
 
+	@Override
 	public List getValues() {
 		Vector v = new Vector(1);
 		if (this.placeHolderValue != null) {
