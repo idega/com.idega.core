@@ -341,6 +341,8 @@ public interface BuilderService extends IBOService
 
 	public UIComponent findComponentInPage(IWContext iwc, String pageKey, String instanceId);
 
+	public ICPage findPageForModule(IWMainApplication iwma, String instanceId);
+	
 	public String addNewModule(String pageKey, String parentObjectInstanceID, String regionId, int newICObjectID, String label);
 
 	public int getICObjectId(String objectClass);
@@ -352,6 +354,8 @@ public interface BuilderService extends IBOService
 	public String getUriToObject(Class<? extends UIComponent> objectClass, List<AdvancedProperty> parameters);
 
 	public boolean isFirstBuilderRun();
+	
+	public boolean isBuilderApplicationRunning(IWUserContext iwuc);
 
 	public boolean reloadGroupsInCachedDomain(IWApplicationContext iwac, String serverName);
 
