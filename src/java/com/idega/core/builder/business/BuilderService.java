@@ -210,9 +210,9 @@ public interface BuilderService extends IBOService
 	 */
 	public boolean changePageName(int ID, String newName, IWContext iwc);
 
-	public Collection getTopLevelPages(IWContext iwc);
+	public Collection<? extends ICTreeNode> getTopLevelPages(IWContext iwc);
 
-	public Collection getTopLevelTemplates(IWApplicationContext iwac);
+	public Collection<? extends ICTreeNode> getTopLevelTemplates(IWApplicationContext iwac);
 
 	public String getTemplateKey();
 
@@ -220,17 +220,20 @@ public interface BuilderService extends IBOService
 
 	public String getHTMLTemplateKey();
 
-	public String getTopLevelTemplateId(Collection templates);
+	public String getTopLevelTemplateId(Collection<?> templates);
 
-	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map tree, IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup);
+	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map<Integer, ? extends ICTreeNode> tree,
+			IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup);
 
-	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map tree, IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup, String treeOrder);
+	public int createNewPage(String parentId, String name, String type, String templateId, String pageUri, Map<Integer, ? extends ICTreeNode> tree,
+			IWUserContext creatorContext, String subType, int domainId, String format, String sourceMarkup, String treeOrder);
 
-	public int createPageOrTemplateToplevelOrWithParent(String name, String parentId, String type, String templateId, Map tree, IWContext creatorContext);
+	public int createPageOrTemplateToplevelOrWithParent(String name, String parentId, String type, String templateId,
+			Map<Integer, ? extends ICTreeNode> tree, IWContext creatorContext);
 
 	public boolean setProperty(String pageKey, String instanceId, String propertyName, String[] propertyValues, IWMainApplication iwma);
 
-	public boolean deletePage(String pageId, boolean deleteChildren, Map tree, int userId, ICDomain domain);
+	public boolean deletePage(String pageId, boolean deleteChildren, Map<Integer, ? extends ICTreeNode> tree, int userId, ICDomain domain);
 
 	public boolean checkDeletePage(String pageId, ICDomain domain);
 
@@ -331,7 +334,7 @@ public interface BuilderService extends IBOService
 
 	public boolean setProperty(IWContext iwc, String pageKey, String instanceId, String propertyName, List<AdvancedProperty> properties);
 
-	public Map getTree(IWApplicationContext iwac);
+	public Map<Integer, ? extends ICTreeNode> getTree(IWApplicationContext iwac);
 
 	public boolean setPageUri(ICPage page, String pageUri, int domainId);
 
@@ -342,7 +345,7 @@ public interface BuilderService extends IBOService
 	public UIComponent findComponentInPage(IWContext iwc, String pageKey, String instanceId);
 
 	public ICPage findPageForModule(IWMainApplication iwma, String instanceId);
-	
+
 	public String addNewModule(String pageKey, String parentObjectInstanceID, String regionId, int newICObjectID, String label);
 
 	public int getICObjectId(String objectClass);
@@ -354,7 +357,7 @@ public interface BuilderService extends IBOService
 	public String getUriToObject(Class<? extends UIComponent> objectClass, List<AdvancedProperty> parameters);
 
 	public boolean isFirstBuilderRun();
-	
+
 	public boolean isBuilderApplicationRunning(IWUserContext iwuc);
 
 	public boolean reloadGroupsInCachedDomain(IWApplicationContext iwac, String serverName);
