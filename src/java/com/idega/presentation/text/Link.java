@@ -47,6 +47,7 @@ import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.Parameter;
 import com.idega.presentation.ui.Window;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -550,9 +551,20 @@ public class Link extends Text {
 		else if (this.protocol != null) {
 			String attr = getMarkupAttribute(HREF_ATTRIBUTE);
 			StringBuffer url = new StringBuffer();
-			url.append(this.protocol).append("://").append(iwc.getServerName()).append(slash);
-			if (attr != null) {
+			String host = getHostname();
+			if(StringUtil.isEmpty(host)){
+				host = iwc.getServerName();
+			}
+			url.append(this.protocol).append("://").append(host);
+			if (!StringUtil.isEmpty(attr)) {
+				if(!attr.startsWith(slash) && (url.lastIndexOf(slash) != (url.length() - 1))){
+					url.append(slash);
+				}
 				url.append(attr);
+			}else{
+				if(url.lastIndexOf(slash) != (url.length() - 1)){
+					url.append(slash);
+				}
 			}
 			return url.toString();
 		}

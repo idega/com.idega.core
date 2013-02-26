@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -22,7 +23,6 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-//import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 
@@ -68,7 +68,11 @@ public class CountryDropdownMenu extends DropdownMenu {
 			countries = new Hashtable(counts.size());
 			for (Iterator iter = counts.iterator(); iter.hasNext();) {
 				Country element = (Country) iter.next();
-				countries.put(element.getIsoAbbreviation(),element);
+				try{
+					countries.put(element.getIsoAbbreviation(),element);
+				}catch (Exception e) {
+					getLogger().log(Level.WARNING, "faled adding country " + element, e);
+				}
 			}
 		}
 		catch (IDOLookupException e) {
@@ -119,6 +123,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 				}
 			}
 			catch (Exception e1) {
+				getLogger().log(Level.WARNING, "Problem with country " + ISOCountry, e1);
 				//e1.printStackTrace();
 			}
 		}
