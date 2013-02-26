@@ -136,7 +136,7 @@ public class Address implements Serializable {
 	 *          the streetName to set
 	 */
 	public void setStreetName(String streetName) {
-		this.streetName = streetName.toUpperCase();
+		this.streetName = streetName != null ? streetName.toUpperCase() : null;
 		this.streetNameOriginal = streetName;
 	}
 
