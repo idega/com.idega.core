@@ -10,6 +10,7 @@ import com.idega.core.file.data.ICFileHome;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.text.Link;
+import com.idega.util.CoreConstants;
 
 public class ImageSlideShow extends Block {
 
@@ -28,6 +29,7 @@ public class ImageSlideShow extends Block {
 	private boolean showButtons = true;
 	private PresentationObject leftObject, rightObject;
 
+	@Override
 	public void main(IWContext iwc) {
 		IWBundle iwb = getBundle(iwc);
 		if (this.leftObject == null) {
@@ -123,7 +125,7 @@ public class ImageSlideShow extends Block {
 				T.mergeCells(1, imageRow, 2, imageRow);
 				if (size > 1) {
 					if (getParentPage() != null) {
-						getParentPage().getAssociatedScript().addFunction("slide" + name, getSlideScript(name, urls));
+						getParentPage().getAssociatedScript().addFunction(CoreConstants.REPOSITORY + name, getSlideScript(name, urls));
 					}
 					if (this.showButtons) {
 						T.add(getLeftLink(name), 1, buttonRow);
@@ -189,6 +191,7 @@ public class ImageSlideShow extends Block {
 		}
 	}
 
+	@Override
 	public void setWidth(String width) {
 		this.width = Integer.parseInt(width);
 	}
@@ -197,6 +200,7 @@ public class ImageSlideShow extends Block {
 		this.width = width;
 	}
 
+	@Override
 	public void setHeight(String height) {
 		this.height = Integer.parseInt(height);
 	}
@@ -301,6 +305,7 @@ public class ImageSlideShow extends Block {
 		return addPics.toString();
 	}
 
+	@Override
 	public Object clonePermissionChecked(IWUserContext iwc) {
 		ImageSlideShow obj = null;
 		try {

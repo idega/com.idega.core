@@ -31,7 +31,8 @@ import com.idega.user.data.bean.User;
 @SpringBeanName(RepositoryService.BEAN_NAME)
 public interface RepositoryService extends Repository, ApplicationListener {
 
-	public static final String BEAN_NAME = "repositoryService";
+	public static final String	BEAN_NAME = "repositoryService",
+								REQUEST_LOCALIZATIONS = "iwRequestLocalizations";
 
 	public void initializeRepository(InputStream configSource, String repositoryName) throws Exception;
 

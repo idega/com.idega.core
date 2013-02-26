@@ -18,18 +18,18 @@ public interface MessageResourceFactory {
 
 	/**
 	 * Gets localized message for specified locale
-	 * @return object that was found in resource and/or set to it or valueIfNotFound object in case no messages were found
+	 * @return String that was found in resource and/or set to it or valueIfNotFound String in case no messages were found
 	 * 		   or autoinserted
 	 */
-	public Object getLocalizedMessage(Object key, Object valueIfNotFound, String bundleIdentifier, Locale locale);
+	public String getLocalizedMessage(String key, String valueIfNotFound, String bundleIdentifier, Locale locale);
 
-	public Object setLocalizedMessage(Object key, Object value, String bundleIdentifier, Locale locale);
+	public String setLocalizedMessage(String key, String value, String bundleIdentifier, Locale locale);
 
-	public void setLocalizedMessages(Map<Object, Object> values, String bundleIdentifier, Locale locale);
+	public void setLocalizedMessages(Map<String, String> values, String bundleIdentifier, Locale locale);
 
-	public Map<String, Object> setLocalizedMessageToAutoInsertRes(Object key, Object value, String bundleIdentifier, Locale locale);
+	public Map<String, String> setLocalizedMessageToAutoInsertRes(String key, String value, String bundleIdentifier, Locale locale);
 
-	public void removeLocalizedMessageFromAutoInsertRes(Object key, String bundleIdentifier, Locale locale);
+	public void removeLocalizedMessageFromAutoInsertRes(String key, String bundleIdentifier, Locale locale);
 
 	public MessageResource getResource(String storageIdentifier, String bundleIdentifier, Locale locale);
 

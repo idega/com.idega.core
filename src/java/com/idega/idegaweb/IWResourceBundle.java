@@ -144,9 +144,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	/**
-	 * <p>
-	 * TODO tryggvil describe method initialize
-	 * </p>
 	 * @param parent
 	 * @param file
 	 * @param locale
@@ -277,6 +274,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 
 	protected void setLocale(Locale locale) {
 		this.locale = locale;
+	}
+
+	@Override
+	public void store() {
+		storeState();
 	}
 
 	public synchronized void storeState() {
@@ -603,7 +605,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	 * @return object that was found in resource or null if nothing is found
 	 */
 	@Override
-	public Object getMessage(Object key) {
+	public String getMessage(String key) {
 		return getBundleLocalizedString(String.valueOf(key), null);
 	}
 
@@ -611,9 +613,9 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	 * @return object that was set or null if there was a failure setting object
 	 */
 	@Override
-	public Object setMessage(Object key, Object value) {
+	public String setMessage(String key, String value) {
 		try {
-			setString(String.valueOf(key), String.valueOf(value));
+			setString(key, value);
 			return value;
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -622,13 +624,13 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	@Override
-	public void setMessages(Map<Object, Object> values) {
+	public void setMessages(Map<String, String> values) {
 		try {
 			Map<String, String> stringMap = new HashMap<String, String>();
 
-			for(Object key : values.keySet()) {
+			for (Object key : values.keySet())
 				stringMap.put(String.valueOf(key), String.valueOf(values.get(key)));
-			}
+
 			setStrings(stringMap);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -642,7 +644,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Set<String> getAllLocalizedKeys() {
 		if (getBundleIdentifier() != null && !getBundleIdentifier().equals(MessageResource.NO_BUNDLE)) {
 			IWBundle bundle = getIWMainApplication().getBundle(getBundleIdentifier());
@@ -654,7 +655,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	@Override
-	public void removeMessage(Object key) {
+	public void removeMessage(String key) {
 		getLookup().remove(key);
 		this.storeState();
 	}

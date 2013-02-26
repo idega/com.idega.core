@@ -406,9 +406,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Key is a string (bundle identifier) and value is a IWBundle instance
      */
     public Map<String, IWBundle> getLoadedBundles() {
-
-    	if(loadedBundles == null)
-    		 loadedBundles = new HashMap<String, IWBundle>();
+    	if (loadedBundles == null)
+    		loadedBundles = new HashMap<String, IWBundle>();
 
     	return loadedBundles;
     }
