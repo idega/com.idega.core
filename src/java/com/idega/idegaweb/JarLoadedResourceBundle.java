@@ -21,9 +21,9 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
 
 /**
  *
- * 
+ *
  * @author <a href="anton@idega.com">Anton Makarov</a>
- * @version Revision: 1.0 
+ * @version Revision: 1.0
  *
  * Last modified: $Date: 2009/03/11 15:48:59 $ by $Author: valdas $
  *
@@ -31,14 +31,14 @@ import com.idega.util.messages.MessageResourceImportanceLevel;
 @Service
 @Scope(BeanDefinition.SCOPE_PROTOTYPE)
 public class JarLoadedResourceBundle implements MessageResource, Serializable {
-	
+
 	private static final long serialVersionUID = 2817447347536356853L;
-	
+
 	private Level usagePriorityLevel = MessageResourceImportanceLevel.MIDDLE_ORDER;
 	private boolean autoInsert = false;
-	
+
 	public static final String RESOURCE_IDENTIFIER = "jar_loaded_resource";
-	
+
 	private IWResourceBundle resource;
 
 	public IWResourceBundle getResource() {
@@ -50,7 +50,8 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 		setLevel(usagePriorityLevel);
 		setAutoInsert(autoInsert);
 	}
-	
+
+	@Override
 	public void initialize(String bundleIdentifier, Locale locale) throws OperationNotSupportedException {
 		if(/*DefaultIWBundle.isProductionEnvironment() && */!bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
 			IWBundle bundle = IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
@@ -69,11 +70,13 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 		}
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		String identifier = resource.getBundleIdentifier();
 		return identifier;
 	}
 
+	@Override
 	public String getIdentifier() {
 		if(resource != null) {
 			String identifier = resource.getIdentifier();
@@ -83,48 +86,61 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 		}
 	}
 
+	@Override
 	public Level getLevel() {
 		return resource.getLevel();
 	}
 
+	@Override
 	public boolean isAutoInsert() {
 		return resource.isAutoInsert();
 	}
 
-	public void removeMessage(Object key) {}
+	@Override
+	public void removeMessage(String key) {}
 
+	@Override
 	public void setAutoInsert(boolean value) {}
 
+	@Override
 	public void setBundleIdentifier(String identifier) {
 		resource.setBundleIdentifier(identifier);
 	}
 
+	@Override
 	public void setIdentifier(String identifier) {
 		resource.setIdentifier(identifier);
 	}
 
+	@Override
 	public void setLevel(Level priorityLevel) {
-		resource.setLevel(priorityLevel);	
+		resource.setLevel(priorityLevel);
 	}
 
-	public Object setMessage(Object key, Object value) {
+	@Override
+	public String setMessage(String key, String value) {
 		return null;
 	}
 
-	public void setMessages(Map<Object, Object> values) {}
+	@Override
+	public void setMessages(Map<String, String> values) {}
 
-	@SuppressWarnings("unchecked")
+	@Override
 	public Set<String> getAllLocalizedKeys() {
 		return resource.getAllLocalizedKeys();
 	}
 
-	public Object getMessage(Object key) {
+	@Override
+	public String getMessage(String key) {
 		return resource.getMessage(key);
 	}
-	
+
+	@Override
+	public void store() {}
+
 	private void writeObject(ObjectOutputStream out) throws IOException {
 	}
-	
+
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
 	}
 }
