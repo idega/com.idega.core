@@ -11,7 +11,9 @@ package com.idega.presentation.ui;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.faces.context.FacesContext;
+
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
@@ -20,6 +22,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
+import com.idega.util.StringHandler;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.list.KeyValueList;
 import com.idega.util.datastructures.list.KeyValuePair;
@@ -198,7 +201,11 @@ public class GenericButton extends GenericInput {
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			if (this.asImageButton) {
-				Image generatedImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(getValueAsString());
+				String normalizedName = StringHandler.stripNonRomanCharacters(getValueAsString(),
+						new char[] { '0', '1', '2', '3',
+								'4', '5', '6', '7', '8',
+								'9', '-', '.' });
+				Image generatedImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(normalizedName);
 				setButtonImage(generatedImage);
 			}
 			if (!this._onClickConfirm) {

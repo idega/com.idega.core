@@ -1354,7 +1354,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		SelectQuery query = idoSelectQuery();
 
 		Criteria theCriteria = null;
-
+		
 		// name
 		if ((firstName != null && !"".equals(firstName)) || (middleName != null && !"".equals(middleName)) || (lastName != null && !"".equals(lastName))) {
 			theCriteria = getUserNameSearchCriteria(firstName, middleName, lastName, useAnd);
@@ -1443,7 +1443,18 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		// group search
 		// TODO Eiki filter out only allowed and create and use method getUserInAllowedGroupsCriteria
 		if (groupName != null || (allowedGroups != null && allowedGroups.length > 0)) {
-			Criteria groupNameCriteria = new InCriteria(idoQueryTable(), getIDColumnName(), getUserInAllowedGroupsSearchString(groupName, allowedGroups));
+			Table groupRelation = new Table(GroupRelation.class, "gr");
+			Table group = new Table(Group.class, "r");
+
+			query.addJoin(idoQueryTable(), "IC_USER_ID", groupRelation, "RELATED_IC_GROUP_ID");
+			query.addJoin(group, "IC_GROUP_ID", groupRelation, "IC_GROUP_ID");
+			Criteria groupNameCriteria = new OR(new MatchCriteria(groupRelation, "GROUP_RELATION_STATUS", MatchCriteria.EQUALS, "ST_ACTIVE"), new MatchCriteria(groupRelation, "GROUP_RELATION_STATUS", MatchCriteria.EQUALS, "PASS_PEND"));
+			if (allowedGroups != null && allowedGroups.length > 0) {
+				groupNameCriteria = new AND(groupNameCriteria, new InCriteria(group, "IC_GROUP_ID", IDOUtil.getInstance().convertArrayToCommaseparatedString(allowedGroups)));
+			}
+			if (groupName != null) {
+				groupNameCriteria = new AND(groupNameCriteria, new MatchCriteria(group, "NAME", MatchCriteria.EQUALS, groupName));					
+			}
 			if (theCriteria == null) {
 				theCriteria = groupNameCriteria;
 			}
@@ -1476,6 +1487,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		}
 
 		query.addCriteria(theCriteria);
+		query.setAsDistinct(true);
 		addOrderByName(query, orderLastFirst, true);
 
 		// return this.idoFindIDsBySQL(query.toString());
