@@ -59,6 +59,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.xml.XMLElement;
 
@@ -1732,6 +1733,10 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 			bundleInWorkspace = new StringBuilder(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier()).append(CoreConstants.SLASH).toString();
 		} else
 			bundleInWorkspace = getBundleBaseRealPath();
+
+		String doubledSlash = CoreConstants.SLASH + CoreConstants.SLASH;
+		bundleInWorkspace = StringHandler.replace(bundleInWorkspace, doubledSlash, CoreConstants.SLASH);
+		pathWithinBundle = StringHandler.replace(pathWithinBundle, doubledSlash, CoreConstants.SLASH);
 
 		File file = new File(bundleInWorkspace, pathWithinBundle);
 		if (!file.exists())
