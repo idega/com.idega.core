@@ -13,13 +13,14 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Logger;
 
+import javax.el.ELContext;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
-import javax.faces.el.ValueBinding;
 
 import com.idega.core.cache.CacheableUIComponent;
 import com.idega.core.cache.UIComponentCacher;
@@ -47,6 +48,8 @@ import com.idega.util.text.TextStyler;
  */
 public class IWBaseComponent extends UIComponentBase implements CacheableUIComponent {
 
+	protected static Logger LOGGER = null;
+
 	protected static final String divTag = 			"div";
 	protected static final String renderedAtt = 	"rendered";
 
@@ -57,6 +60,12 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	private String styleAttribute;
 	private boolean isInitialized = false;
 	private long iSystemTime = 0;
+
+	protected Logger getLogger() {
+		if (LOGGER == null)
+			LOGGER = Logger.getLogger(getClass().getName());
+		return LOGGER;
+	}
 
 	/**
 	 * This is an old idegaWeb style add method.
@@ -179,13 +188,15 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		}
 
 	}
-	/* (non-Javadoc)
-	 * @see javax.faces.component.UIComponent#getRendersChildren()
-	 */
+
 	@Override
 	public boolean getRendersChildren() {
-		//return true;
-		return super.getRendersChildren();
+		try {
+			return super.getRendersChildren();
+		} catch (Exception e) {
+			getLogger().warning("Error while resolving whether to render or not children (" + getChildren() + ") of " + getClass().getName());
+		}
+		return false;
 	}
 
 	/**
@@ -432,24 +443,22 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
      * @return
      */
     public <T>T getBeanInstance(String beanId) {
-	    	FacesContext context = FacesContext.getCurrentInstance();
+	    FacesContext context = FacesContext.getCurrentInstance();
 
-	    	String expr;
+	    String expr;
+	    if (isValueBinding(beanId))
+	    	expr = beanId;
+	    else
+	    	expr = getExpression(beanId);
 
-	    	if(isValueBinding(beanId))
-	    		expr = beanId;
-	    	else
-	    		expr = getExpression(beanId);
-
-		ValueBinding vb = context.getApplication().createValueBinding(expr);
-    	//return vb.getValue(context);
-    	@SuppressWarnings("unchecked")
-		T bean = (T)vb.getValue(context);
+	    ELContext elContext = context.getELContext();
+	    ValueExpression ve = context.getApplication().getExpressionFactory().createValueExpression(elContext, expr, Object.class);
+	    @SuppressWarnings("unchecked")
+		T bean = (T) ve.getValue(elContext);
     	return bean;
     }
 
     public IWBundle getBundle(FacesContext ctx, String bundleIdentifier) {
-
     	IWMainApplication iwma = IWMainApplication.getIWMainApplication(ctx);
 		return iwma.getBundle(bundleIdentifier);
     }

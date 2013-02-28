@@ -672,9 +672,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
     public static IWMainApplication getIWMainApplication(FacesContext facesContext) {
 		try {
-			HttpServletRequest request = (HttpServletRequest)facesContext.getExternalContext().getRequest();
+			HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 			return getIWMainApplication(request);
-		} catch(ClassCastException cce) {
+		} catch (ClassCastException cce) {
 			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a HttpServletRequest", cce);
 		}
     }
@@ -2282,14 +2282,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	public ValueBinding createValueBinding(String ref) throws ReferenceSyntaxException {
 		return getFacesApplication().createValueBinding(ref);
 	}
-	
+
 	public ValueExpression createValueExpression(String ref, Class<?> expectedReturnType) {
 		return createValueExpression(FacesContext.getCurrentInstance().getELContext(), ref, expectedReturnType);
 	}
 	public ValueExpression createValueExpression(ELContext elContext, String ref, Class<?> expectedReturnType) {
 		return getFacesApplication().getExpressionFactory().createValueExpression(elContext, ref, expectedReturnType);
 	}
-	
+
 	//End JSF Application implementation
 
 	/**
