@@ -35,7 +35,6 @@ import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.expression.ELUtil;
-import com.sun.xml.internal.messaging.saaj.packaging.mime.internet.MimeUtility;
 
 /**
  * <p>
@@ -647,7 +646,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public String getCharSetForSendMail() {
 		String charSet = getFromApplicationBinding(CHARSET_SEND_MAIL);
 		if (StringHandler.isEmpty(charSet)) {
-			charSet = MimeUtility.getDefaultJavaCharset();
+			charSet = javax.mail.internet.MimeUtility.getDefaultJavaCharset();
 		}
 		return charSet;
 	}
@@ -735,8 +734,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		String value = null;
 		if (isApplicationBindingInMap(key)) {
 			value = getApplicationBindingFromMap(key);
-		}
-		else {
+		} else {
 			value = getApplicationBindingBusiness().get(key);
 			if (value != null) {
 				setApplicationBindingInMap(key, value);
