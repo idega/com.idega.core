@@ -164,6 +164,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private QueueMap<String, JavaScriptLink> _javascriptStringsAfterJSUrls;
 	private Map<String, String> _HTTPEquivs;
 	private boolean addGlobalScript = true;
+	private boolean addGlobalStylesheet = true;
 	private ICFile styleFile = null;
 	private ICDynamicPageTrigger dynamicPageTrigger = null;
 	private boolean _isCategory = false;
@@ -264,18 +265,19 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	private String getStyleSheetURL(String markup, IWContext iwc) {
 		StringBuffer buffer = new StringBuffer();
 
-		// The default style sheet MUST come first so we can override it in
-		// latter sheets!
-		List<StyleSheetLink> sheets = GlobalIncludeManager.getInstance().getStyleSheets();
-		for (Iterator<StyleSheetLink> iter = sheets.iterator(); iter.hasNext();) {
-			StyleSheetLink sheet = iter.next();
-			String url = sheet.getUrl();
-			String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
-
-			if (sheet.getMedia() == null)
-				addStyleSheet(iwc, buffer, markup, styleSheetURL);
-			else
-				addStyleSheet(iwc, buffer, markup, styleSheetURL, sheet.getMedia());
+		// The default style sheet MUST come first so we can override it in latter sheets!
+		if (addGlobalStylesheet) {
+			List<StyleSheetLink> sheets = GlobalIncludeManager.getInstance().getStyleSheets();
+			for (Iterator<StyleSheetLink> iter = sheets.iterator(); iter.hasNext();) {
+				StyleSheetLink sheet = iter.next();
+				String url = sheet.getUrl();
+				String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
+	
+				if (sheet.getMedia() == null)
+					addStyleSheet(iwc, buffer, markup, styleSheetURL);
+				else
+					addStyleSheet(iwc, buffer, markup, styleSheetURL, sheet.getMedia());
+			}
 		}
 
 		String className = this.getClass().getName().toLowerCase();
@@ -2418,6 +2420,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setAddGlobalScript(boolean addGlobalScript) {
 		this.addGlobalScript = addGlobalScript;
+	}
+	
+	public void setAddGlobalStylesheet(boolean addGlobalStylesheet) {
+		this.addGlobalStylesheet = addGlobalStylesheet;
 	}
 
 
