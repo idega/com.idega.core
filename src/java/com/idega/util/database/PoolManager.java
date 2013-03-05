@@ -7,11 +7,14 @@ import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Enumeration;
-import java.util.Hashtable;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -21,7 +24,7 @@ import com.idega.repository.data.Singleton;
 import com.idega.util.text.TextSoap;
 
 /**
- * 
+ *
  * @author <a href="http://www.wrox.com">wrox</a> modified by <a
  *         href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3 Class to deliver database connections through a connectionpool
@@ -29,10 +32,10 @@ import com.idega.util.text.TextSoap;
 public class PoolManager implements Singleton {
 
 	private static final Logger log = Logger.getLogger(PoolManager.class.getName());
-	
+
 	private static final String IW_APPLICATION_PATH_PLACE_HOLDER = "{iw_application_path}";// a
 	private static final String IW_BUNDLES_PATH_PLACE_HOLDER = "{iw_bundles_path}";// a
-	
+
 	private static String DEFAULT_DSN = "default";
 
 	static private PoolManager instance;
@@ -40,8 +43,8 @@ public class PoolManager implements Singleton {
 
 	private static boolean isUnlocked = true;
 
-	private Vector drivers = new Vector();
-	private Hashtable pools = new Hashtable();
+	private List<Driver> drivers = new ArrayList<Driver>();
+	private Map<String, ConnectionPool> pools = new HashMap<String, ConnectionPool>();
 	private IWMainApplication iwma;
 
 	private PoolManager() {
@@ -114,7 +117,7 @@ public class PoolManager implements Singleton {
 			try {
 				Driver driver = (Driver) RefactorClassRegistry.forName(driverClassName).newInstance();
 				DriverManager.registerDriver(driver);
-				this.drivers.addElement(driver);
+				this.drivers.add(driver);
 				log.info( "Registered JDBC driver " + driverClassName);
 			}
 			catch (Exception e) {
@@ -124,7 +127,7 @@ public class PoolManager implements Singleton {
 	}
 
 	private void createPools(Properties props) {
-		Enumeration propNames = props.propertyNames();
+		Enumeration<?> propNames = props.propertyNames();
 		while (propNames.hasMoreElements()) {
 			String name = (String) propNames.nextElement();
 			if (name.endsWith(".url")) {
@@ -207,7 +210,7 @@ public class PoolManager implements Singleton {
 
 	public Connection getConnection(String dataSourceName) {
 		Connection conn = null;
-		ConnectionPool pool = (ConnectionPool) this.pools.get(dataSourceName);
+		ConnectionPool pool = this.pools.get(dataSourceName);
 		if (pool != null) {
 			try {
 				conn = pool.getConnection();
@@ -220,7 +223,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public void freeConnection(String datasourceName, Connection con) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.freeConnection(con);
 		}
@@ -231,23 +234,14 @@ public class PoolManager implements Singleton {
 	}
 
 	public synchronized void release() {
-		// Wait until called by the last client
-		// if (--clients != 0)
-		// {
-		// return;
-		// }
-
 		// prevent creation
 		PoolManager.lock();
 
-		Enumeration allPools = this.pools.elements();
-		while (allPools.hasMoreElements()) {
-			ConnectionPool pool = (ConnectionPool) allPools.nextElement();
+		Collection<ConnectionPool> allPools = this.pools.values();
+		for (ConnectionPool pool: allPools) {
 			pool.release();
 		}
-		Enumeration allDrivers = this.drivers.elements();
-		while (allDrivers.hasMoreElements()) {
-			Driver driver = (Driver) allDrivers.nextElement();
+		for (Driver driver: drivers) {
 			try {
 				DriverManager.deregisterDriver(driver);
 				log.info("Deregistered JDBC driver " + driver.getClass().getName());
@@ -261,38 +255,35 @@ public class PoolManager implements Singleton {
 
 	// debug
 	public String getStats(String name) {
-		ConnectionPool tempPool = (ConnectionPool) this.pools.get(name);
+		ConnectionPool tempPool = this.pools.get(name);
 		return tempPool.getStats();
 	}
 
 	// Status of all pools:
 	public String getStats() {
 		String returnString = "";
-		for (Enumeration e = this.pools.keys(); e.hasMoreElements();) {
-			String name = (String) e.nextElement();
-			ConnectionPool tempPool = (ConnectionPool) this.pools.get(name);
+		for (String name: this.pools.keySet()) {
+			ConnectionPool tempPool = this.pools.get(name);
 			returnString = returnString + "\nStatus of datasource " + name + " is: " + tempPool.getStats() + " ";
 		}
 		return returnString;
 	}
 
-	public Hashtable getStatsHashtable() {
-		Hashtable table = new Hashtable();
-		for (Enumeration e = this.pools.keys(); e.hasMoreElements();) {
-			String name = (String) e.nextElement();
-			ConnectionPool tempPool = (ConnectionPool) this.pools.get(name);
+	public Map<String, String> getStatsHashtable() {
+		Map<String, String> table = new HashMap<String, String>();
+		for (String name: this.pools.keySet()) {
+			ConnectionPool tempPool = this.pools.get(name);
 			table.put(name, "Status of datasource " + name + " is: " + tempPool.getStats() + " ");
 		}
 		return table;
 	}
 
 	public String[] getDatasources() {
-		Vector sources = new Vector();
-		for (Enumeration e = this.pools.keys(); e.hasMoreElements();) {
-			String name = (String) e.nextElement();
+		Collection<String> sources = new ArrayList<String>();
+		for (String name: this.pools.keySet()) {
 			sources.add(name);
 		}
-		return (String[]) sources.toArray(new String[0]);
+		return sources.toArray(new String[0]);
 	}
 
 	public boolean hasDatasource(String datasource) {
@@ -301,7 +292,7 @@ public class PoolManager implements Singleton {
 
 	public String getPasswordForPool(String datasourceName) {
 		String password = null;
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			password = pool.getPassword();
 		}
@@ -314,7 +305,7 @@ public class PoolManager implements Singleton {
 
 	public String getUserNameForPool(String datasourceName) {
 		String userName = null;
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			userName = pool.getUserName();
 		}
@@ -327,7 +318,7 @@ public class PoolManager implements Singleton {
 
 	public String getURLForPool(String datasourceName) {
 		String URL = null;
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			URL = pool.getURL();
 		}
@@ -339,29 +330,29 @@ public class PoolManager implements Singleton {
 	}
 
 	/**
-	 * 
+	 *
 	 * This only works if there is one driver definition in the db.properties file
-	 * 
+	 *
 	 * TODO: Fix this limitation
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * public String getDriverClassForPool(String datasourceName){
-	 * 
+	 *
 	 * String driverClass = null;
-	 * 
+	 *
 	 * ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
-	 * 
+	 *
 	 * if (pool != null)
 	 *  {
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * driverClass = drivers.elementAt(0);
-	 * 
-	 * 
+	 *
+	 *
 	 *  }
-	 * 
+	 *
 	 * return driverClass;
 	 *  }
 	 */
@@ -369,7 +360,7 @@ public class PoolManager implements Singleton {
 		String driverClass = null;
 		// ConnectionPool pool = (ConnectionPool) pools.get(datasourceName);
 		if (this.drivers != null) {
-			driverClass = ((Driver) this.drivers.elementAt(0)).getClass().getName();
+			driverClass = this.drivers.get(0).getClass().getName();
 		}
 		return driverClass;
 		// return getDriverClassForPool(DEFAULT_DSN);
@@ -380,54 +371,54 @@ public class PoolManager implements Singleton {
 	}
 
 	public Connection recycleConnection(Connection conn, String dataSourceName) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(dataSourceName);
+		ConnectionPool pool = this.pools.get(dataSourceName);
 		return pool.recycleConnection(conn);
 	}
 
 	/**
-	 * 
+	 *
 	 * Trims the pool so that it has only size connections
-	 * 
+	 *
 	 */
 	public void trimTo(String datasourceName, int size) {
 		trimTo(datasourceName, size, size, size);
 	}
 
 	/**
-	 * 
+	 *
 	 * Trims the pool so that it has only size,minSize,maxSize connections
-	 * 
+	 *
 	 */
 	public void trimTo(String datasourceName, int size, int minSize, int maxSize) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.trimTo(size, minSize, maxSize);
 		}
 	}
 
 	/**
-	 * 
+	 *
 	 * Enlarges the pool so it has size number of connections
-	 * 
+	 *
 	 */
 	public void enlargeTo(String datasourceName, int size) {
 		this.enlargeTo(datasourceName, size, size, size);
 	}
 
 	/**
-	 * 
+	 *
 	 * Enlarges the pool so it has size number of connections
-	 * 
+	 *
 	 */
 	public void enlargeTo(String datasourceName, int size, int minSize, int maxSize) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.enlargeTo(size, minSize, maxSize);
 		}
 	}
 
 	public int getCurrentConnectionCount(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getCurrentConnectionCount();
 		}
@@ -435,7 +426,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public int getMaximumConnectionCount(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getMaximumConnectionCount();
 		}
@@ -447,7 +438,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public int getMinimumConnectionCount(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getMinimumConnectionCount();
 		}
@@ -459,7 +450,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public int getTimeOut(String datasourceName) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			return pool.getTimeOut();
 		}
@@ -467,7 +458,7 @@ public class PoolManager implements Singleton {
 	}
 
 	public void setTimeOut(String datasourceName, int timeout) {
-		ConnectionPool pool = (ConnectionPool) this.pools.get(datasourceName);
+		ConnectionPool pool = this.pools.get(datasourceName);
 		if (pool != null) {
 			pool.setTimeOut(timeout);
 		}

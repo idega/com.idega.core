@@ -28,8 +28,8 @@ import com.idega.transaction.IdegaTransactionManager;
  * It can deliver connections from the old style idegaWeb PoolManager or a J2EE style JDBC/JNDI DataSource.<br>
  * Works in conjunction with com.idega.transaction.IdegaTransactionManager,
  * com.idega.util.database.PoolManager and javax.sql.DataSource.<br>
- * 
- * Whenever a connection object is gotten with getConnection(x) there should always follow a call to freeConnection(x) 
+ *
+ * Whenever a connection object is gotten with getConnection(x) there should always follow a call to freeConnection(x)
  * when the Connection is not used anymore, otherwise the Pool could get empty and unused connections left out in limbo.
  * <br>
  * The implementation is such that if a db.properties file is found in the webapp under either /idegaweb/properties
@@ -50,12 +50,12 @@ public class ConnectionBroker
 	public static final String SYSTEM_PROPERTY_DB_PROPERTIES_FILE_PATH = "idegaweb.db.properties";
 	public static int POOL_MANAGER_TYPE = POOL_MANAGER_TYPE_IDEGA;
 	private static String DEFAULT_JDBC_JNDI_URL = "jdbc/DefaultDS";
-	
+
 	private static DataSource defaultDs;
-	private static Map dataSourcesMap=new HashMap();
+	private static Map<String, DataSource> dataSourcesMap=new HashMap<String, DataSource>();
 	private static Logger log = Logger.getLogger(ConnectionBroker.class.getName());
 	public static int gottenConns=0;
-	/**	
+	/**
 	 * Returns a Datastore connection from the default datasource
 	 */
 	public static Connection getConnection()
@@ -92,7 +92,7 @@ public class ConnectionBroker
 		else
 		{
 			Connection conn = null;
-			IdegaTransactionManager tm = (IdegaTransactionManager) IdegaTransactionManager.getInstance();
+			IdegaTransactionManager tm = (IdegaTransactionManager) IdegaTransactionManager.getInstance(dataSourceName);
 			if (tm.hasCurrentThreadBoundTransaction())
 			{
 				try
@@ -148,9 +148,9 @@ public class ConnectionBroker
 		freeConnection(connection, true);
 	}
 	/**
-	
+
 	 * Returns a Datastore connection from the default datasource
-	
+
 	 */
 	public static void freeConnection(Connection connection, boolean doTransactionCheck)
 	{
@@ -188,17 +188,17 @@ public class ConnectionBroker
 		else if (isUsingPoolManPool())
 		{
 			/**
-			
+
 			 * @todo: Commit in support for com.codestudio.util PoolMan
-			
+
 			 */
 			//com.codestudio.util.SQLManager.getInstance().returnConnection(connection);
 		}
 	}
 	/**
-	
+
 	 * Frees (Reallocates) a Datastore connection to the datasource
-	
+
 	 */
 	public static void freeConnection(String dataSourceName, Connection connection, boolean doTransactionCheck)
 	{
@@ -208,7 +208,7 @@ public class ConnectionBroker
 		}
 		else
 		{
-			if (doTransactionCheck && !((IdegaTransactionManager) IdegaTransactionManager.getInstance()).hasCurrentThreadBoundTransaction())
+			if (doTransactionCheck && !((IdegaTransactionManager) IdegaTransactionManager.getInstance(dataSourceName)).hasCurrentThreadBoundTransaction())
 			{
 				freePooledConnection(dataSourceName,connection);
 			}
@@ -219,9 +219,9 @@ public class ConnectionBroker
 		}
 	}
 	/**
-	
+
 	 * Frees (Reallocates) a Datastore connection to the datasource
-	
+
 	 */
 	public static void freeConnection(String dataSourceName, Connection connection)
 	{
@@ -279,8 +279,8 @@ public class ConnectionBroker
 	{
 		return (POOL_MANAGER_TYPE == POOL_MANAGER_TYPE_JDBC_DATASOURCE);
 	}
-	
-	
+
+
 	public static boolean tryDefaultJNDIDataSource(){
 		/**
 		 * @todo change:
@@ -303,7 +303,7 @@ public class ConnectionBroker
 		}
 		return false;
 	}
-	
+
 	/**
 	 * <p>
 	 * Checks if the datasource from the string 'datasourceName' is available<br>
@@ -330,7 +330,7 @@ public class ConnectionBroker
 			return true;
 		}
 		else{
-			DataSource dataSource = (DataSource)dataSourcesMap.get(datasourceName);
+			DataSource dataSource = dataSourcesMap.get(datasourceName);
 			if(dataSource==null){
 				try
 				{
@@ -345,8 +345,8 @@ public class ConnectionBroker
 			return true;
 		}
 	}
-	
-	
+
+
 	/**
 	 * <p>
 	 * Gets the datasource from the string 'datasourceName'<br>
@@ -374,7 +374,7 @@ public class ConnectionBroker
 			return defaultDs;
 		}
 		else{
-			DataSource dataSource = (DataSource)dataSourcesMap.get(datasourceName);
+			DataSource dataSource = dataSourcesMap.get(datasourceName);
 			if(dataSource==null){
 				try
 				{
@@ -396,14 +396,14 @@ public class ConnectionBroker
 	public static void setDefaultJDBCDatasourceURL(String url){
 		DEFAULT_JDBC_JNDI_URL=url;
 	}
-	
+
 	private static Context getEnvContext()throws NamingException{
 		if(initialContext==null){
 			initialContext = new InitialContext();
 		}
 		return (Context) initialContext.lookup("java:comp/env");
 	}
-	
+
 	public static String getDefaultJNDIUrl(){
 		return DEFAULT_JDBC_JNDI_URL;
 	}

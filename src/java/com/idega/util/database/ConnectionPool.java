@@ -3,11 +3,11 @@ package com.idega.util.database;
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
-import java.util.Enumeration;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -18,21 +18,21 @@ import com.idega.data.DatastoreConnection;
  * idegaWeb. The connectionpool handles retrieving and putting back java.sql.
  * Connection objects. This class should in most cases not be used on its own
  * but rather access Connections through <code>ConnectionBroker</code>.<br><br>
- * 
+ *
  * The Connectionpool reads its properties through a properties file (db.
  * properties) and supports the following attributes.
- * 
+ *
  * drivers=[JDBCdriverClassName] This must be set for the pool to initialize
  * correctly with the correct Driver class.<br><br>
- * 
+ *
  * All connection properties must be prefixed with the name of the pool
  * [poolname] and the default pool name is "default".<br><br>
- * 
+ *
  * [poolname].url The fully qualified JDBC URL to the datastore<br>
  * [poolname].user The user name to log into the databstore<br>
- * [poolname].password The password to log into the databstore<br> 
+ * [poolname].password The password to log into the databstore<br>
  * [poolname].initconns The number of connections that the pool should hold
- * initially<br> 
+ * initially<br>
  * [poolname].maxconns The number of connections that the pool should hold
  * maximally at any time<br>
  * [poolname].logintimeout The timout (in
@@ -44,13 +44,13 @@ import com.idega.data.DatastoreConnection;
  *<br>
  * This software is the proprietary information of Idega hf. Use is subject
  *to license terms.
- * 
+ *
  *@author Originally by <a href="http://www.wrox.com">wrox</a> modified by <a
  *href="mailto: tryggvi@idega.is">Tryggvi Larusson</a>
  *@version 1.3
  */
 public class ConnectionPool {
-	
+
 	private static final Logger log = Logger.getLogger(ConnectionPool.class.getName());
 
 	/**
@@ -72,7 +72,7 @@ public class ConnectionPool {
 		int max,
 		int init,
 		int timeOut) {
-			this(poolName,url,user,password,max,init,timeOut,-1);			
+			this(poolName,url,user,password,max,init,timeOut,-1);
 	}
 	private String name;
 	private String URL;
@@ -82,14 +82,14 @@ public class ConnectionPool {
 	private int maxConns;
 	private int timeOut;
 	private long lConnectionTimeOut = 10 * 60 * 1000; //10 minutes
-	private Map checkedOutInfoMap;
+	private Map<Connection, Long> checkedOutInfoMap;
 	//private long lastRefresh;
 	//private final long refreshIntervalMillis = 1 * 60 * 1000;
 	private long refreshIntervalMillis = 20 * 60 * 1000;
 
 	private ConnectionRefresher refresher;
 	//private int checkedOut;
-	private Vector freeConnections = new Vector();
+	private List<Connection> freeConnections = new ArrayList<Connection>();
 	private static String DEBUG_RETURNED_CONNECTION = "Returned connection to correct pool";
 	private static String DEBUG_REQUESTING_CONNECTION = "Requested connection";
 	public ConnectionPool(
@@ -158,7 +158,7 @@ public class ConnectionPool {
 		log.fine("size=" + size + ", conns=" + conns + ", getCheckedOutCount()=" + this.getCheckedOutCount());
 		if(conns==0){
 			//This should only happen if the datastore has become unreachable
-			initPool(this.minConns);	
+			initPool(this.minConns);
 			return;
 		}
 		for (int i = 0; i < conns; i++)
@@ -215,7 +215,7 @@ public class ConnectionPool {
 			try
 			{
 				Connection pc = newConnection();
-				this.freeConnections.addElement(pc);
+				this.freeConnections.add(pc);
 			}
 			catch (SQLException e)
 			{
@@ -283,69 +283,69 @@ public class ConnectionPool {
 		return conn;
 	}
 	/*private boolean isConnectionOK(Connection conn)
-	
+
 	{
-	
+
 	   Statement testStmt = null;
-	
+
 	   try
-	
+
 	   {
-	
+
 	      if (!conn.isClosed())
-	
+
 	      {
-	
+
 	         // Try to createStatement to see if it's really alive
-	
+
 	         testStmt = conn.createStatement();
-	
+
 	         testStmt.close();
-	
+
 	      }
-	
+
 	      else
-	
+
 	      {
-	
+
 	         return false;
-	
+
 	      }
-	
+
 	   }
-	
+
 	   catch (SQLException e)
-	
+
 	   {
-	
+
 	      if (testStmt != null)
-	
+
 	      {
-	
+
 	         try
-	
+
 	         {
-	
+
 	            testStmt.close();
-	
+
 	         }
-	
+
 	         catch (SQLException se)
-	
+
 	         { }
-	
+
 	      }
-	
+
 	      logWriter.log(e, "Pooled Connection was not okay",
-	
+
 	                        LogWriter.ERROR);
-	
+
 	      return false;
-	
+
 	   }
-	
+
 	   return true;
-	
+
 	}*/
 	private boolean isConnectionOK(Connection conn)
 	{
@@ -364,8 +364,8 @@ public class ConnectionPool {
 		{
 			// Pick the first Connection in the Vector
 			// to get round-robin usage
-			conn = (Connection) this.freeConnections.firstElement();
-			this.freeConnections.removeElementAt(0);
+			conn = this.freeConnections.get(0);
+			this.freeConnections.remove(0);
 		}
 		else if (this.maxConns == 0 || this.getCheckedOutCount() < this.maxConns)
 		{
@@ -427,7 +427,7 @@ public class ConnectionPool {
 	private synchronized void addConnectionToPool(Connection conn)
 	{
 		// Put the connection at the end of the Vector
-		this.freeConnections.addElement(conn);
+		this.freeConnections.add(conn);
 	}
 	public synchronized void release()
 	{
@@ -435,10 +435,9 @@ public class ConnectionPool {
 			this.refresher.stop();
 		}
 		this.refresher=null;
-		Enumeration allConnections = this.freeConnections.elements();
-		while (allConnections.hasMoreElements())
+		for (Iterator<Connection> allConnections = this.freeConnections.iterator(); allConnections.hasNext();)
 		{
-			Connection con = (Connection) allConnections.nextElement();
+			Connection con = allConnections.next();
 			try
 			{
 				con.close();
@@ -449,7 +448,7 @@ public class ConnectionPool {
 				log.log(Level.WARNING, "Couldn't close connection", e);
 			}
 		}
-		this.freeConnections.removeAllElements();
+		this.freeConnections.clear();
 	}
 	//  debug
 	//  private String getStats() {
@@ -488,9 +487,9 @@ public class ConnectionPool {
 		}
 	}
 	/**
-	
+
 	 * Trims the pool so that it has only size number of connections
-	
+
 	 */
 	public synchronized void trimTo(int size, int minSize, int maxSize)
 	{
@@ -511,7 +510,7 @@ public class ConnectionPool {
 		}
 		else
 		{
-			Vector connections = new Vector();
+			List<Connection> connections = new ArrayList<Connection>();
 			try
 			{
 				int dummy = 0;
@@ -534,15 +533,14 @@ public class ConnectionPool {
 				this.maxConns = maxSize;
 				for (int i = 0; i < size; i++)
 				{
-					Connection conn = (Connection) connections.get(0);
+					Connection conn = connections.get(0);
 					connections.remove(0);
-					connections.trimToSize();
 					this.freeConnection(conn);
 				}
-				Iterator iter = connections.iterator();
-				while (iter.hasNext())
+
+				for (Iterator<Connection> iter = connections.iterator(); iter.hasNext();)
 				{
-					Connection item = (Connection) iter.next();
+					Connection item = iter.next();
 					this.removeFromCheckedOutList(item);
 					item.close();
 					//System.out.print("Closing database connection");
@@ -560,9 +558,9 @@ public class ConnectionPool {
 		//setTimeOut((int)getTimeOut()/3);
 	}
 	/**
-	
+
 	 * Enlarges the pool so it has size number of connections
-	
+
 	 */
 	public synchronized void enlargeTo(int size, int minSize, int maxSize)
 	{
@@ -585,7 +583,7 @@ public class ConnectionPool {
 		}
 		else
 		{
-			Vector connections = new Vector();
+			List<Connection> connections = new ArrayList<Connection>();
 			try
 			{
 				int dummy = 0;
@@ -623,15 +621,14 @@ public class ConnectionPool {
 				//this.checkedOut=size;
 				for (int i = 0; i < size; i++)
 				{
-					Connection conn = (Connection) connections.get(0);
+					Connection conn = connections.get(0);
 					connections.remove(0);
-					connections.trimToSize();
 					this.freeConnection(conn);
 				}
-				Iterator iter = connections.iterator();
-				while (iter.hasNext())
+
+				for (Iterator<Connection> iter = connections.iterator(); iter.hasNext();)
 				{
-					Connection item = (Connection) iter.next();
+					Connection item = iter.next();
 					item.close();
 					//System.out.print("Closing database connection");
 				}
@@ -675,11 +672,11 @@ public class ConnectionPool {
 	{
 		return getCheckedOutMap().size();
 	}
-	private Map getCheckedOutMap()
+	private Map<Connection, Long> getCheckedOutMap()
 	{
 		if (this.checkedOutInfoMap == null)
 		{
-			this.checkedOutInfoMap = new HashMap();
+			this.checkedOutInfoMap = new HashMap<Connection, Long>();
 		}
 		return this.checkedOutInfoMap;
 	}
@@ -694,11 +691,10 @@ public class ConnectionPool {
 	private void cleanUpCheckedOut()
 	{
 		//debug("Running cleanUpCheckedOut()");
-		Iterator iter = getCheckedOutMap().keySet().iterator();
-		while (iter.hasNext())
+		for (Iterator<Connection> iter = getCheckedOutMap().keySet().iterator(); iter.hasNext();)
 		{
-			Connection conn = (Connection) iter.next();
-			Long timeCheckedOut = (Long) getCheckedOutMap().get(conn);
+			Connection conn = iter.next();
+			Long timeCheckedOut = getCheckedOutMap().get(conn);
 			long lCheckedOut = timeCheckedOut.longValue();
 			if (lCheckedOut + this.lConnectionTimeOut < System.currentTimeMillis())
 			{
@@ -708,7 +704,7 @@ public class ConnectionPool {
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns the name.
 	 * @return String
