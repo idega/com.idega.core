@@ -17,6 +17,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 
@@ -39,14 +40,32 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			Short.class
 	}));
 
+	private void setParameters(Query q, Param... params) {
+		if (ArrayUtil.isEmpty(params))
+			return;
+
+		setParameters(q, Arrays.asList(params));
+	}
+
+	private void setParameters(Query q, Collection<Param> params) {
+		if (ListUtil.isEmpty(params))
+			return;
+
+		for (Param param : params) {
+			String name = param.getParamName();
+			Object value = param.getParamValue();
+			if (value instanceof String && ((String) value).length() == 1)
+				value = Character.valueOf(((String) value).charAt(0));
+
+			q.setParameter(name, value);
+		}
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
-		if (params != null)
-			for (Param param : params) {
-				q.setParameter(param.getParamName(), param.getParamValue());
-			}
+		setParameters(q, params);
 
 		final List<Expected> fresult;
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
@@ -108,10 +127,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Override
 	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
 	public <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
-		if (params != null)
-			for (Param param : params) {
-				q.setParameter(param.getParamName(), param.getParamValue());
-			}
+		setParameters(q, params);
 
 		@SuppressWarnings("unchecked")
 		Expected result = (Expected) q.getSingleResult();
@@ -123,10 +139,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Collection<Param> params) {
-		if (params != null)
-			for (Param param : params) {
-				q.setParameter(param.getParamName(), param.getParamValue());
-			}
+		setParameters(q, params);
 
 		final List<Expected> fresult;
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
