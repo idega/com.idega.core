@@ -20,6 +20,7 @@ import org.springframework.context.ApplicationListener;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.SpringBeanName;
+import com.idega.idegaweb.IWMainApplicationShutdownEvent;
 import com.idega.repository.access.AccessControlList;
 import com.idega.repository.authentication.AuthenticationBusiness;
 import com.idega.repository.bean.Property;
@@ -29,7 +30,7 @@ import com.idega.repository.event.RepositoryEventListener;
 import com.idega.user.data.bean.User;
 
 @SpringBeanName(RepositoryService.BEAN_NAME)
-public interface RepositoryService extends Repository, ApplicationListener {
+public interface RepositoryService extends Repository, ApplicationListener<IWMainApplicationShutdownEvent> {
 
 	public static final String	BEAN_NAME = "repositoryService",
 								REQUEST_LOCALIZATIONS = "iwRequestLocalizations";
@@ -139,5 +140,8 @@ public interface RepositoryService extends Repository, ApplicationListener {
 	public AuthenticationBusiness getAuthenticationBusiness();
 
 	public OutputStream getOutputStreamAsRoot(String path) throws IOException, RepositoryException;
+
+	public boolean doExportWorkspace(String workspaceName, String outputPath) throws IOException, RepositoryException;
+	public boolean doImportWorkspace(String workspaceName, String inputPath) throws IOException, RepositoryException;
 
 }
