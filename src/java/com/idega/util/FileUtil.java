@@ -78,12 +78,17 @@ public class FileUtil {
    * Creates a folder if it does not exists. Returns true if creation successful, false otherwise
    */
   public static boolean createFolder(String path){
-    File folder = new File(path);
-    if(!folder.exists()){
-      folder.mkdirs();
-      return true;
-    }
-    return false;
+    File folder = getFolder(path);
+    return folder == null || !folder.exists() ? false : true;
+  }
+
+  public static File getFolder(String path) {
+	  File folder = new File(path);
+	  if (!folder.exists()) {
+	      folder.mkdirs();
+	      return folder;
+	  }
+	  return folder;
   }
 
   public static boolean createFile(String fileNameWithFullPath){
