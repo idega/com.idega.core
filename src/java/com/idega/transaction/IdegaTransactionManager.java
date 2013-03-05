@@ -1,9 +1,9 @@
 /*
  * $Id: IdegaTransactionManager.java,v 1.18 2006/04/09 12:13:20 laddi Exp $ Created
  * in 2001 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -18,7 +18,9 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 import javax.transaction.TransactionManager;
 import javax.transaction.UserTransaction;
+
 import com.idega.data.GenericEntity;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -36,7 +38,7 @@ import com.idega.util.database.ConnectionBroker;
  * transaction and associate it with the current Thread.
  * </p>
  * Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.18 $
  */
@@ -44,7 +46,8 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 
 	static String transaction_attribute_name = "idega_transaction";
 	private static Instantiator instantiator = new Instantiator() {
-		
+
+		@Override
 		public Object getInstance(Object datasource) {
 			return new IdegaTransactionManager((String) datasource);
 		}
@@ -52,9 +55,9 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 	private String datasource = com.idega.util.database.ConnectionBroker.DEFAULT_POOL;
 
 	/**
-	 * 
+	 *
 	 * Only this class can construct itself
-	 * 
+	 *
 	 */
 	public String getDatasource() {
 		return this.datasource;
@@ -69,12 +72,13 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 	/**
 	 * @deprecated use getInstance(String datasource) instead
 	 */
+	@Deprecated
 	public static TransactionManager getInstance() {
 		return getInstance(ConnectionBroker.DEFAULT_POOL);
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>
 	 * The only way to get an instance of the TransactionManager
 	 * </p>
@@ -91,11 +95,11 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 	/**
 	 * Looks up the datasource for the returing entity, and calls
 	 * getInstance(datasource)
-	 * 
+	 *
 	 * @param returningEntityInterfaceClass
 	 * @return
 	 */
-	public static TransactionManager getInstance(Class returningEntityInterfaceClass) {
+	public static TransactionManager getInstance(Class<? extends IDOEntity> returningEntityInterfaceClass) {
 		try {
 			IDOHome home = IDOLookup.getHome(returningEntityInterfaceClass);
 			return getInstance(home.getDatasource());
@@ -107,11 +111,12 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 	}
 
 	/**
-	 * 
+	 *
 	 * Start a transaction, constructs a new Transaction and associates it with
 	 * the current thread.
-	 * 
+	 *
 	 */
+	@Override
 	public void begin() throws NotSupportedException, SystemException {
 		Transaction trans = null;
 		try {
@@ -155,26 +160,29 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 	}
 
 	/**
-	 * 
+	 *
 	 * Commits the current transaction and deassociates it with the current
 	 * thread.
-	 * 
+	 *
 	 */
+	@Override
 	public void commit() throws RollbackException, HeuristicMixedException, HeuristicRollbackException,
 			java.lang.SecurityException, java.lang.IllegalStateException, SystemException {
 		Transaction transaction = getTransaction();
 		transaction.commit();
 	}
 
+	@Override
 	public int getStatus() throws SystemException {
 		return getTransaction().getStatus();
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns the current Transaction, If no transaction has been begun, it
 	 * creates a new (unassigned) Transaction object
 	 */
+	@Override
 	public Transaction getTransaction() throws SystemException {
 		Transaction trans = (Transaction) ThreadContext.getInstance().getAttribute(Thread.currentThread(),
 				getTransactionAttributeName());
@@ -190,55 +198,60 @@ public class IdegaTransactionManager implements javax.transaction.TransactionMan
 	}
 
 	/**
-	 * 
+	 *
 	 * UNIMPLEMENTED
-	 * 
+	 *
 	 */
+	@Override
 	public void resume(Transaction tobj) throws InvalidTransactionException, java.lang.IllegalStateException,
 			SystemException {
 		// Transaction trans = getTransaction();
 	}
 
 	/**
-	 * 
+	 *
 	 * Rollbacks the current transaction and deassociates it with the current
 	 * thread.
-	 * 
+	 *
 	 */
+	@Override
 	public void rollback() throws java.lang.IllegalStateException, java.lang.SecurityException, SystemException {
 		Transaction transaction = getTransaction();
 		transaction.rollback();
 	}
 
+	@Override
 	public void setRollbackOnly() throws java.lang.IllegalStateException, SystemException {
 		Transaction trans = getTransaction();
 		trans.setRollbackOnly();
 	}
 
 	/**
-	 * 
+	 *
 	 * UNIMPLEMENTED
-	 * 
+	 *
 	 */
+	@Override
 	public void setTransactionTimeout(int seconds) throws SystemException {
 		// Transaction trans = getTransaction();
 	}
 
 	/**
-	 * 
+	 *
 	 * UNIMPLEMENTED
-	 * 
+	 *
 	 */
+	@Override
 	public Transaction suspend() throws SystemException {
 		Transaction trans = getTransaction();
 		return trans;
 	}
 
 	/**
-	 * 
+	 *
 	 * Returns true if the TransactionManager has bound a Transaction Object to
 	 * the current Thread
-	 * 
+	 *
 	 */
 	public boolean hasCurrentThreadBoundTransaction() {
 		/*
