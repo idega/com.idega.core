@@ -205,7 +205,7 @@ private void init(String name){
 
 
 
-	//theYear.addMenuElement("","Ár");
+	//theYear.addMenuElement("","Ãr");
 
 
 
@@ -225,33 +225,33 @@ private void init(String name){
 
 
 
-	//theMonth.addMenuElement("","Mánuğur");
+	//theMonth.addMenuElement("","MÃ¡nuÃ°ur");
 
 
 
         /*
 
-	theMonth.addMenuElement("01","janúar");
+	theMonth.addMenuElement("01","janÃºar");
 
-	theMonth.addMenuElement("02","febrúar");
+	theMonth.addMenuElement("02","febrÃºar");
 
 	theMonth.addMenuElement("03","mars");
 
-	theMonth.addMenuElement("04","apríl");
+	theMonth.addMenuElement("04","aprÃ­l");
 
-	theMonth.addMenuElement("05","maí");
+	theMonth.addMenuElement("05","maÃ­");
 
-	theMonth.addMenuElement("06","júní");
+	theMonth.addMenuElement("06","jÃºnÃ­");
 
-	theMonth.addMenuElement("07","júlí");
+	theMonth.addMenuElement("07","jÃºlÃ­");
 
-	theMonth.addMenuElement("08","ágúst");
+	theMonth.addMenuElement("08","Ã¡gÃºst");
 
 	theMonth.addMenuElement("09","september");
 
-	theMonth.addMenuElement("10","október");
+	theMonth.addMenuElement("10","oktÃ³ber");
 
-	theMonth.addMenuElement("11","nóvember");
+	theMonth.addMenuElement("11","nÃ³vember");
 
 	theMonth.addMenuElement("12","desember");
 
@@ -419,7 +419,7 @@ private void init(String name){
 
 
 
-	//theMinute.addMenuElement("","Mínútur");
+	//theMinute.addMenuElement("","MÃ­nÃºtur");
 
 
 

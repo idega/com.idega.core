@@ -15,7 +15,7 @@ import com.idega.data.query.WildCardColumn;
  * <p>
  * Entity bean for the IC_LOCALE table for storing all existing Locales.
  * </p>
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guğmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">GuÃ°mundur ÃgÃºst SÃ¦mundsson</a>
  * @version 1.0
  */
 public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements ICLocale{

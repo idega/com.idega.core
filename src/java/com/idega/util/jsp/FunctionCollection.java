@@ -19,7 +19,7 @@ public class FunctionCollection{
 
 *
 
-*Margt mjög merkilegt
+*Margt mjÃ¶g merkilegt
 
 *
 
@@ -159,13 +159,13 @@ public class FunctionCollection{
 
 			case 01 :
 
-					manudurnafn=("Janúar");
+					manudurnafn=("JanÃºar");
 
 				break;
 
 			case 02 :
 
-					manudurnafn=("Febrúar");
+					manudurnafn=("FebrÃºar");
 
 				break;
 
@@ -177,31 +177,31 @@ public class FunctionCollection{
 
 			case 04 :
 
-					manudurnafn=("Apríl");
+					manudurnafn=("AprÃ­l");
 
 				break;
 
 			case 05 :
 
-					manudurnafn=("Maí");
+					manudurnafn=("MaÃ­");
 
 				break;
 
 			case 06 :
 
-					manudurnafn=("Júní");
+					manudurnafn=("JÃºnÃ­");
 
 				break;
 
 			case 07 :
 
-					manudurnafn=("Júlí");
+					manudurnafn=("JÃºlÃ­");
 
 				break;
 
 			case 8 :
 
-					manudurnafn=("Ágúst");
+					manudurnafn=("ÃgÃºst");
 
 				break;
 
@@ -213,13 +213,13 @@ public class FunctionCollection{
 
 			case 10 :
 
-					manudurnafn=("Október");
+					manudurnafn=("OktÃ³ber");
 
 				break;
 
 			case 11 :
 
-					manudurnafn=("Nóvember");
+					manudurnafn=("NÃ³vember");
 
 				break;
 
@@ -231,7 +231,7 @@ public class FunctionCollection{
 
 			case 13 :
 
-					manudurnafn=("Janúar");
+					manudurnafn=("JanÃºar");
 
 				break;
 
@@ -259,19 +259,19 @@ public class FunctionCollection{
 
 			case 2:
 
-				nafn=("Mánudagur");
+				nafn=("MÃ¡nudagur");
 
 				break;
 
 			case 3:
 
-				nafn=("Şriğjudagur");
+				nafn=("ÃriÃ°judagur");
 
 				break;
 
 			case 4:
 
-				nafn=("Miğvikudagur");
+				nafn=("MiÃ°vikudagur");
 
 				break;
 
@@ -283,7 +283,7 @@ public class FunctionCollection{
 
 			case 6:
 
-				nafn=("Föstudagur");
+				nafn=("FÃ¶studagur");
 
 				break;
 

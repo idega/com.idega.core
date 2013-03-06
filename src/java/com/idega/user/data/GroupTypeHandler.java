@@ -9,7 +9,7 @@ import com.idega.presentation.Image;
  * <p>Description: </p>
  * <p>Copyright: Copyright (c) 2002</p>
  * <p>Company: idega Software</p>
- * @author <a href="gummi@idega.is">Guğmundur Ágúst Sæmundsson</a>
+ * @author <a href="gummi@idega.is">GuÃ°mundur ÃgÃºst SÃ¦mundsson</a>
  * @version 1.0
  */
 

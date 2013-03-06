@@ -15,9 +15,9 @@ import java.text.RuleBasedCollator;
 public class IsCollator {
 	private static final String isl =
 		"< 1,1< 2,2< 3,3< 4,4< 5,5< 6,6< 7,7< 8,8< 9,9"
-			+ "< a,A< á,Á< b,B< c,C< d,D< ð,Ð< e,E< é,É< f,F< g,G< h,H< i,I< í,Í< j,J"
-			+ "< k,K< l,L< m,M< n,N< o,O< ó,Ó< p,P< q,Q< r,R< s,S< t,T"
-			+ "< u,U< ú,Ú< v,V< w,W< x,X< y,Y< ý,Ý< z,Z< þ,Þ< æ,Æ< ö,Ö";
+			+ "< a,A< Ã¡,Ã< b,B< c,C< d,D< Ã°,Ã< e,E< Ã©,Ã‰< f,F< g,G< h,H< i,I< Ã­,Ã< j,J"
+			+ "< k,K< l,L< m,M< n,N< o,O< Ã³,Ã“< p,P< q,Q< r,R< s,S< t,T"
+			+ "< u,U< Ãº,Ãš< v,V< w,W< x,X< y,Y< Ã½,Ã< z,Z< Ã¾,Ãž< Ã¦,Ã†< Ã¶,Ã–";
 			
 	public IsCollator() {
 	}

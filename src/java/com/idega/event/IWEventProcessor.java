@@ -152,7 +152,7 @@ public class IWEventProcessor implements Singleton {
 					((ActiveEvent) obj).dispatch();
 					return true;
 					/*
-					 * Kommentağ út şar til kerfiğ ræğur viğ şræği EventQueue q =
+					 * KommentaÃ° Ãºt Ã¾ar til kerfiÃ° rÃ¦Ã°ur viÃ° Ã¾rÃ¦Ã°i EventQueue q =
 					 * Toolkit.getDefaultToolkit().getSystemEventQueue();
 					 * q.postEvent((AWTEvent)obj);
 					 */
@@ -215,8 +215,8 @@ public class IWEventProcessor implements Singleton {
 						}
 						//System.err.println("PresentationServelt - checking
 						// stateList");
-						// object geta safnast upp í hashtöflunum şví şarf ağ
-						// fjarlægja şau instöns sem ekki eru á nıju síğunni
+						// object geta safnast upp Ã­ hashtÃ¶flunum Ã¾vÃ­ Ã¾arf aÃ°
+						// fjarlÃ¦gja Ã¾au instÃ¶ns sem ekki eru Ã¡ nÃ½ju sÃ­Ã°unni
 						/**
 						 * @todo handle pages in frames or iframes with
 						 * different pageIds

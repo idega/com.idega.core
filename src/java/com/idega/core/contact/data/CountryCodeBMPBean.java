@@ -9,7 +9,7 @@ import com.idega.core.location.data.*;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gumundur ¡g˙st SÊmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu√∞mundur √Åg√∫st S√¶mundsson</a>
  * @version 1.0
  */
 
@@ -24,7 +24,7 @@ public class CountryCodeBMPBean extends com.idega.data.GenericEntity implements 
   }
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameCountryCode(),"Landsn˙mer",true,true,String.class,10);
+    this.addAttribute(getColumnNameCountryCode(),"Landsn√∫mer",true,true,String.class,10);
     this.addAttribute(getColumnNameCountryId(),"Land",true,true,Integer.class,"many-to-one",Country.class);
   }
   public String getEntityName() {
