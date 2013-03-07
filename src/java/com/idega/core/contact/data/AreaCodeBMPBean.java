@@ -7,7 +7,7 @@ import java.sql.SQLException;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guğmundur Ágúst Sæmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">GuÃ°mundur ÃgÃºst SÃ¦mundsson</a>
  * @version 1.0
  */
 
@@ -23,7 +23,7 @@ public class AreaCodeBMPBean extends com.idega.data.GenericEntity implements com
 
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameAreaCode(),"Svæğisnúmer",true,true,String.class,10);
+    this.addAttribute(getColumnNameAreaCode(),"SvÃ¦Ã°isnÃºmer",true,true,String.class,10);
     this.addAttribute(getColumnNameAreaName(),"Heiti",true,true,String.class,255);
     this.addAttribute(getColumnNameCountryCodeId(),"Land",true,true,Integer.class,"many-to-one",CountryCode.class);
   }

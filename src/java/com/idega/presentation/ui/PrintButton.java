@@ -1,4 +1,4 @@
-//idega 2000 - Grímur Jónsson
+//idega 2000 - GrÃ­mur JÃ³nsson
 /*
 *Copyright 2001 idega.is All Rights Reserved.
 */
@@ -7,7 +7,7 @@ package com.idega.presentation.ui;
 import com.idega.presentation.Image;
 
 /**
-*@author <a href="mailto:gimmi@idega.is">Grímur Jónsson</a>
+*@author <a href="mailto:gimmi@idega.is">GrÃ­mur JÃ³nsson</a>
 *@version 1.0
 */
 public class PrintButton extends GenericButton {

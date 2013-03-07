@@ -5,7 +5,7 @@ package com.idega.core.accesscontrol.business;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega - <a href="mailto:gimmi@idega.is">Grímur Jónsson</a>
+ * @author 2000 - idega - <a href="mailto:gimmi@idega.is">GrÃ­mur JÃ³nsson</a>
  * @version 1.0
  */
 

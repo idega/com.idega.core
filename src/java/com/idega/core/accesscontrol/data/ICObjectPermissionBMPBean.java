@@ -12,7 +12,7 @@ import com.idega.core.component.data.ICObject;
  * 
  * Copyright: Copyright (c) 2001 idega.is All Rights Reserved
  * 
- * Company: idega margmiðlun
+ * Company: idega margmiÃ°lun
  * 
  * @author idega 2001 - <a href="mailto:idega@idega.is">idega team</a>
  * 

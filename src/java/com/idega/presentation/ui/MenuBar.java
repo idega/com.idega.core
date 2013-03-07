@@ -13,11 +13,11 @@ import com.idega.presentation.Script;
 
  * Description:  <p>
 
- * Copyright:    Copyright (c) idega margmiğlun hf.<p>
+ * Copyright:    Copyright (c) idega margmiÃ°lun hf.<p>
 
- * Company:      idega margmiğlun hf.<p>
+ * Company:      idega margmiÃ°lun hf.<p>
 
- * @author idega 2000 - idega team - <a href="mailto:gummi@idega.is">Guğmundur Á. Sæmundsson</a>
+ * @author idega 2000 - idega team - <a href="mailto:gummi@idega.is">GuÃ°mundur Ã. SÃ¦mundsson</a>
 
  * @version 2.0
 
