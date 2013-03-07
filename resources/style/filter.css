@@ -1,0 +1,8 @@
+@CHARSET "UTF-8";
+
+.filterListStyle {
+	border: 1px solid #A0A0A0;
+	height: 150px;
+	overflow: auto;
+	width: auto;
+}
