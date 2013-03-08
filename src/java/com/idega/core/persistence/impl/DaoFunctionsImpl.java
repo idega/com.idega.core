@@ -20,6 +20,7 @@ import com.idega.core.persistence.Param;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -54,7 +55,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		for (Param param : params) {
 			String name = param.getParamName();
 			Object value = param.getParamValue();
-			if (value instanceof String && ((String) value).length() == 1)
+			if (value instanceof String && ((String) value).length() == 1 && !StringHandler.isNumeric((String) value))
 				value = Character.valueOf(((String) value).charAt(0));
 
 			q.setParameter(name, value);
