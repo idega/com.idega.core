@@ -11,7 +11,6 @@ import java.util.List;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.config.BeanDefinition;
-import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ApplicationListener;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -33,7 +32,7 @@ import com.idega.util.ListUtil;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("permissionDAO")
 @Transactional(readOnly = true)
-public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, ApplicationListener {
+public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, ApplicationListener<IWMainApplicationStartedEvent> {
 
 	@Override
 	@Transactional(readOnly = false)
@@ -249,9 +248,8 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	}
 
 	@Override
-	public void onApplicationEvent(ApplicationEvent event) {
-		if (event instanceof IWMainApplicationStartedEvent) {
-			IWMainApplicationSettings settings = ((IWMainApplicationStartedEvent) event).getIWMA().getSettings();
+	public void onApplicationEvent(IWMainApplicationStartedEvent event) {
+			IWMainApplicationSettings settings = event.getIWMA().getSettings();
 			if (settings.getBoolean("enlarge_perm_cntxt_column", Boolean.TRUE)) {
 				try {
 					SimpleQuerier.executeUpdate("ALTER TABLE " + ICPermission.ENTITY_NAME + " modify " + ICPermission.COLUMN_CONTEXT_VALUE +
@@ -261,7 +259,6 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
 				}
 			}
-		}
 	}
 
 }
