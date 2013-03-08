@@ -84,6 +84,19 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<url-pattern>/servlet/WindowOpener/*</url-pattern>
 	</servlet-mapping>
 
+
+	<filter>
+	    <filter-name>UrlRewriteFilter</filter-name>
+	    <filter-class>org.tuckey.web.filters.urlrewrite.UrlRewriteFilter</filter-class>
+	</filter>
+	<filter-mapping>
+	    <filter-name>UrlRewriteFilter</filter-name>
+	    <url-pattern>/*</url-pattern>
+	    <dispatcher>REQUEST</dispatcher>
+	    <dispatcher>FORWARD</dispatcher>
+	</filter-mapping>
+
+
 	<!-- The IWEncodingFilter Filter , MUST be the first filter -->
 	<filter>
 		<filter-name>IWEncodingFilter</filter-name>
@@ -94,6 +107,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 	<filter-mapping>
 		<filter-name>IWEncodingFilter</filter-name>
 		<url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	
 	<!-- Repository authenticator filter -->
@@ -197,6 +212,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 	<filter-mapping>
 		<filter-name>CacheFilter</filter-name>
 		<url-pattern>/pages/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 
 	<!-- MyFaces Extensions Filter, is here because faces needs to be first in web.xml but iwencoding filter must before extensionsfilter (any filter) -->
@@ -233,6 +250,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 	<filter-mapping>
 		<filter-name>extensionsFilter</filter-name>
 		<url-pattern>/pages/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
 	</filter-mapping>
 	<filter-mapping>
 		<filter-name>extensionsFilter</filter-name>
@@ -328,6 +347,8 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<filter-mapping>
 		<filter-name>compress</filter-name>
 		<url-pattern>/pages/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>FORWARD</dispatcher>
 		</filter-mapping>
 		
 		<filter-mapping>
