@@ -272,7 +272,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				StyleSheetLink sheet = iter.next();
 				String url = sheet.getUrl();
 				String styleSheetURL = iwc.getIWMainApplication().getTranslatedURIWithContext(url);
-	
+
 				if (sheet.getMedia() == null)
 					addStyleSheet(iwc, buffer, markup, styleSheetURL);
 				else
@@ -796,32 +796,32 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public String getLocalizedTitle(IWContext iwc) {
-		if (getTitle() == null) {
-			BuilderService bservice;
-			ICTreeNode node = null;
-			try {
-				bservice = getBuilderService(iwc);
-				int pageId = bservice.getCurrentPageId(iwc);
-				int currentUserId = -1;
-				if (iwc.isLoggedOn()) {
-					currentUserId = iwc.getCurrentUserId();
-					node = bservice.getPageTree(pageId, currentUserId);
-				}
-				else {
-					node = bservice.getPageTree(pageId);
-				}
+		ICTreeNode node = null;
+		try {
+			BuilderService bservice = getBuilderService(iwc);
+			int pageId = getPageID();
+			if (pageId < 0) {
+				pageId = bservice.getCurrentPageId(iwc);
 			}
-			catch (Exception e) {
-				e.printStackTrace();
+
+			int currentUserId = -1;
+			if (iwc.isLoggedOn()) {
+				currentUserId = iwc.getCurrentUserId();
+				node = bservice.getPageTree(pageId, currentUserId);
+			} else {
+				node = bservice.getPageTree(pageId);
 			}
-			catch (IDONoDatastoreError de) {}
-			if (node != null) {
-				String locName = node.getNodeName(iwc.getCurrentLocale());
-				if (locName != null && !locName.equals("")) {
-					return locName;
-				}
-			}
+		} catch (IDONoDatastoreError de) {
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
+
+		if (node != null) {
+			String locName = node.getNodeName(iwc.getCurrentLocale());
+			if (!StringUtil.isEmpty(locName))
+				return locName;
+		}
+
 		return getTitle();
 	}
 
@@ -2421,7 +2421,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	public void setAddGlobalScript(boolean addGlobalScript) {
 		this.addGlobalScript = addGlobalScript;
 	}
-	
+
 	public void setAddGlobalStylesheet(boolean addGlobalStylesheet) {
 		this.addGlobalStylesheet = addGlobalStylesheet;
 	}
