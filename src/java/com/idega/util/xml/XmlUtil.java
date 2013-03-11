@@ -422,21 +422,29 @@ public class XmlUtil {
 		}
 
 		elements = getElementsByXPath(container, expression, namespace);
-		return ListUtil.isEmpty(elements) ?
-				nameSpaceId == null ? getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID) : null
-				: elements;
+		if (ListUtil.isEmpty(elements)) {
+			if (StringUtil.isEmpty(nameSpaceId))
+				elements = getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID);
+			else
+				elements = getElementsByXPath(container, expression, Namespace.NO_NAMESPACE);
+		}
+		return elements;
 	}
 
 	public static <T> List<T> getContentByXPath(Content container, String expression, Filter<T> filter) {
-		return getContentByXPath(container, expression, XHTML_NAMESPACE_ID, filter);
+		List<T> content = getContentByXPath(container, expression, XHTML_NAMESPACE_ID, filter);
+		if (ListUtil.isEmpty(content))
+			content = getContentByXPath(container, expression, CoreConstants.EMPTY, filter);
+		return content;
 	}
 
 	public static <T> List<T> getContentByXPath(Content container, String expression, String nameSpaceId, Filter<T> filter) {
-		if (container == null || expression == null) {
+		if (container == null || expression == null)
 			return null;
-		}
 
-		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ? null : Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
+		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ?
+				Namespace.NO_NAMESPACE :
+				Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
 		try {
 			XPathExpression<T> xpathExpression = XPathFactory.instance().compile(expression, filter, null, namespace);
 			List<T> content = xpathExpression.evaluate(container);
