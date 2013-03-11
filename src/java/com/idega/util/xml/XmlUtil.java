@@ -30,9 +30,13 @@ import org.jdom2.Content;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.jdom2.filter.ElementFilter;
+import org.jdom2.filter.Filter;
+import org.jdom2.filter.Filters;
 import org.jdom2.input.DOMBuilder;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
@@ -404,16 +408,44 @@ public class XmlUtil {
 	}
 
 	public static List<Element> getElementsByXPath(Content container, String expression, String nameSpaceId) {
+		List<Element> elements = getContentByXPath(container, expression, nameSpaceId, Filters.element());
+		if (!ListUtil.isEmpty(elements))
+			return elements;
+
+		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ? null : Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
+
+		if (container instanceof Element) {
+			Filter<Element> f = namespace == null ? new ElementFilter(expression) : new ElementFilter(expression, namespace);
+			elements = ((Element) container).getContent(f);
+			if (!ListUtil.isEmpty(elements))
+				return elements;
+		}
+
+		elements = getElementsByXPath(container, expression, namespace);
+		return ListUtil.isEmpty(elements) ?
+				nameSpaceId == null ? getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID) : null
+				: elements;
+	}
+
+	public static <T> List<T> getContentByXPath(Content container, String expression, Filter<T> filter) {
+		return getContentByXPath(container, expression, XHTML_NAMESPACE_ID, filter);
+	}
+
+	public static <T> List<T> getContentByXPath(Content container, String expression, String nameSpaceId, Filter<T> filter) {
 		if (container == null || expression == null) {
 			return null;
 		}
 
 		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ? null : Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
-		List<Element> elements = getElementsByXPath(container, expression, namespace);
+		try {
+			XPathExpression<T> xpathExpression = XPathFactory.instance().compile(expression, filter, null, namespace);
+			List<T> content = xpathExpression.evaluate(container);
+			return content;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		return ListUtil.isEmpty(elements) ?
-				nameSpaceId == null ? getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID) : null
-				: elements;
+		return null;
 	}
 
 	public static List<Element> getElementsByXPath(Content container, String expression, Namespace namespace) {
