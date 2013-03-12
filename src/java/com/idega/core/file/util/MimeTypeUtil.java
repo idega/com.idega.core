@@ -64,8 +64,6 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
 	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
 	public static final String MIME_TYPE_CALENDAR = "text/calendar";
-
-	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
 	
 	private String pathToConfigFile;
 	private Properties properties;
@@ -182,10 +180,12 @@ public class MimeTypeUtil implements Singleton {
 			"application/x-macbinary", "application/x-zip-compressed",
 			"application/zip", "multipart/x-gzip" };
 
+	
+	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
+
 	private static void initializeMimeTypesMap() {
-		if (!MIME_TYPES_MAPPING.isEmpty())
-			return;
-		
+		if (!MIME_TYPES_MAPPING.isEmpty()) return;
+
 		MIME_TYPES_MAPPING.put("doc", MIME_TYPE_WORD);
 		MIME_TYPES_MAPPING.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 		MIME_TYPES_MAPPING.put("xls", MIME_TYPE_EXCEL);
@@ -194,6 +194,7 @@ public class MimeTypeUtil implements Singleton {
 		MIME_TYPES_MAPPING.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
 		MIME_TYPES_MAPPING.put("css", "text/css");
 		MIME_TYPES_MAPPING.put("js", "text/javascript");
+		MIME_TYPES_MAPPING.put("woff", "application/x-font-woff");
 	}
 	
 	protected MimeTypeUtil() {
@@ -408,6 +409,14 @@ public class MimeTypeUtil implements Singleton {
 			return null;
 		
 		initializeMimeTypesMap();
+
+		// reduce filename by removing query string
+		// files can be loaded using something like
+		// image.png?v=1.2.3
+		if (fileName.contains(CoreConstants.QMARK)) {
+			fileName = fileName.substring(0, fileName.lastIndexOf(CoreConstants.QMARK));
+		}
+
 		String fileType = fileName.substring(lastDot + 1).toLowerCase();
 		return MIME_TYPES_MAPPING.get(fileType);
 	}
