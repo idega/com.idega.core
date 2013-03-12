@@ -33,7 +33,7 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.idega.core.file.business.FileIconSupplier;
+import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
@@ -450,8 +450,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 	
 	protected String getMimeType(String filePath){
-		String mimeType = FileIconSupplier.getInstance().guessMimeTypeFromFileName(filePath);
-		return mimeType;
+		return MimeTypeUtil.getInstance().resolveMimeTypeFromFileName(filePath);
 	}
 
 	protected String getMimeType(File realFile) {
