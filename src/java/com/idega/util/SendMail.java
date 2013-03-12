@@ -119,14 +119,13 @@ public class SendMail {
 		String charset = settings.getCharSetForSendMail();
 		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.TRUE);
 		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.TRUE);
-		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "idegatest@idega.com");
-		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "pl4tf0rm");
+		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "idega");
+		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "d2B]kc3CVpdmgp");
 		String port = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
 		if (StringUtil.isEmpty(host)) {
-			host = useSSL ? "secure.emailsrvr.com" :
-				settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.emailsrvr.com");
+			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.sendgrid.net");
 			if (StringUtil.isEmpty(host))
-				throw new MessagingException("Mail server is not configured.");
+				throw new MessagingException("Mail server is not configured!");
 		}
 
 		if (StringUtil.isEmpty(username))

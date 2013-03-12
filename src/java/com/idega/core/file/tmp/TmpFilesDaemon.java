@@ -29,7 +29,7 @@ import com.idega.util.IWTimestamp;
  */
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Service
-public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListener, ActionListener {
+public class TmpFilesDaemon implements ApplicationContextAware, ApplicationListener<ApplicationEvent>, ActionListener {
 
 	public static final String THREAD_NAME = "uploaded_file_Daemon";
 	public static final Logger logger = Logger.getLogger(TmpFilesDaemon.class.getName());
