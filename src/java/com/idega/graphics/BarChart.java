@@ -41,7 +41,7 @@ public class BarChart extends Chart {
   }
 
   /**
-   * Lısing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -242,7 +242,7 @@ System.out.println("Chart filename = " + filename);
   private double getRoundedValue(double inValue) {
     int intValue = (int)inValue;
 
-    //Şarf ağ búa til almennilega rútínu hérna. Á şetta til í Berghita forritinu, og set şağ inn seinna.
+    //Ãarf aÃ° bÃºa til almennilega rÃºtÃ­nu hÃ©rna. Ã Ã¾etta til Ã­ Berghita forritinu, og set Ã¾aÃ° inn seinna.
 
     if (intValue == 0) {
 			return(1);

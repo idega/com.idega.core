@@ -17,6 +17,7 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.builder.data.ICDomain;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -214,7 +215,17 @@ public abstract class DefaultSpringBean {
 			provider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 		} catch (Exception e) {}
 
-		return provider == null ? null : provider.getRequest().getSession(Boolean.TRUE);
+		HttpSession session = null;
+		if (provider != null && provider.getRequest() != null)
+			session = provider.getRequest().getSession(Boolean.TRUE);
+
+		if (session == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null)
+				session = iwc.getSession();
+		}
+
+		return session;
 	}
 
 	protected RepositoryService getRepositoryService() {
@@ -224,7 +235,18 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected String getHost() {
-    	return CoreUtil.getHost();
+    	ICDomain domain = null;
+		IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null) {
+    		domain = IWMainApplication.getDefaultIWApplicationContext().getDomain();
+    	} else
+    		domain = iwc.getDomain();
+
+    	int port = domain.getServerPort();
+		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
+		if (port > 0)
+			host = host.concat(":").concat(String.valueOf(port));
+		return host;
     }
 
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {

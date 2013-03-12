@@ -17,7 +17,7 @@ import com.idega.data.query.Table;
  * Description:
  * Copyright:    Copyright (c) 2001
  * Company:      idega.is
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gumundur ¡g˙st SÊmundsson</a>
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu√∞mundur √Åg√∫st S√¶mundsson</a>
  * @version 1.0
  */
 
@@ -34,8 +34,8 @@ public class CountryBMPBean extends GenericEntity implements Country{
   public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
-    this.addAttribute(getColumnNameDescription(),"L˝sing",true,true,String.class,500);
-    this.addAttribute(getColumnNameIsoAbbreviation(),"ISO skammstˆfun",true,true,String.class,10);
+    this.addAttribute(getColumnNameDescription(),"L√Ωsing",true,true,String.class,500);
+    this.addAttribute(getColumnNameIsoAbbreviation(),"ISO skammst√∂fun",true,true,String.class,10);
     this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 

@@ -10,13 +10,16 @@ import com.idega.data.query.Table;
 import com.idega.user.data.Group;
 
 /**
- * Title: IW Core Description: Copyright: Copyright (c) 2001 Company: idega.is
- * 
- * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur �g�st
- *         S�mundsson</a>
+ * Title:        IW Core
+ * Description:
+ * Copyright:    Copyright (c) 2001
+ * Company:      idega.is
+ * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson</a>
  * @version 1.0
  */
 public class ICProtocolBMPBean extends com.idega.core.data.GenericTypeBMPBean implements com.idega.core.net.data.ICProtocol {
+
+	private static final long serialVersionUID = 6351516516189745606L;
 
 	public final static String _PROTOCOL_HTTP = "HTTP";
 	public final static String _PROTOCOL_HTTPS = "HTTPS";
@@ -29,6 +32,7 @@ public class ICProtocolBMPBean extends com.idega.core.data.GenericTypeBMPBean im
 		super(id);
 	}
 
+	@Override
 	public void initializeAttributes() {
 		super.initializeAttributes();
 		// this.addManyToManyRelationShip(GenericGroup.class,"ic_group_protocol");
@@ -36,10 +40,12 @@ public class ICProtocolBMPBean extends com.idega.core.data.GenericTypeBMPBean im
 		this.addManyToManyRelationShip(ICNetwork.class, "ib_protocol_network");
 	}
 
+	@Override
 	public String getEntityName() {
 		return "ic_protocol";
 	}
 
+	@Override
 	public void insertStartData() {
 		try {
 			ICProtocol icp = ((com.idega.core.net.data.ICProtocolHome) com.idega.data.IDOLookup.getHomeLegacy(ICProtocol.class)).createLegacy();

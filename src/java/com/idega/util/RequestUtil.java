@@ -33,11 +33,11 @@ public class RequestUtil {
 
 	private static String	SLASH = CoreConstants.SLASH,
 							IMAGEBUTTON_XPOS_SUFFIX = ".x",
-							HEADER_USER_AGENT = "User-agent",
 							HEADER_REFERER = "Referer",
 							HEADER_AUTHORIZATION = "Authorization";
 
-	public  static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
+	public static final String	HEADER_ACCEPT_LANGUAGE = "Accept-Language",
+								HEADER_USER_AGENT = "User-agent";
 
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it
@@ -267,11 +267,11 @@ public class RequestUtil {
 	 */
 	public static String getParametersStringFromRequest(HttpServletRequest request, List<String> keysToIgnore) {
 		StringBuilder parametersString = new StringBuilder();
-		Map parameters = request.getParameterMap();
+		Map<?, ?> parameters = request.getParameterMap();
 
 		if (parameters != null && !parameters.isEmpty()) {
-			Set<String> parametersSet = parameters.keySet();
-			for (Iterator iterator = parametersSet.iterator(); iterator.hasNext();) {
+			Set<?> parametersSet = parameters.keySet();
+			for (Iterator<?> iterator = parametersSet.iterator(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				if(ListUtil.isEmpty(keysToIgnore) || !(keysToIgnore.contains(key)) ){
 					String[] values = request.getParameterValues(key);

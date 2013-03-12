@@ -41,11 +41,11 @@ public class EmploymentMemberInfoBMPBean extends com.idega.data.GenericEntity im
 
 		addAttribute("education","Menntun",true,true, "java.lang.String",3500);
 
-//		addAttribute("school","Skóli",true,true, "java.lang.String",3500);
+//		addAttribute("school","SkÃ³li",true,true, "java.lang.String",3500);
 
 		addAttribute("cv","Starfsferill",true,true, "java.lang.String",3500);
 
-		addAttribute("began_work","hóf störf", true, true, "java.lang.String");
+		addAttribute("began_work","hÃ³f stÃ¶rf", true, true, "java.lang.String");
 
                 addAttribute("","Deild",true,true,"java.lang.Integer");
 
@@ -117,7 +117,7 @@ public class EmploymentMemberInfoBMPBean extends com.idega.data.GenericEntity im
 
 		if (getID() == -1) {
 
-			returner = "óskírğ / ur";
+			returner = "Ã³skÃ­rÃ° / ur";
 
 		}
 

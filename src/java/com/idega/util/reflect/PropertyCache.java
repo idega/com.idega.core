@@ -28,7 +28,7 @@ import com.idega.repository.data.Singleton;
  */
 public class PropertyCache implements Singleton {
 	
-	//private PropertyCache instance¾
+	//private PropertyCache instanceÂ¾
 	private Map propertyListCache;
 	private static String appKey =  "IW_PROPERTYCACHE";
 	

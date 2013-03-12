@@ -1,9 +1,9 @@
 /*
  * $Id: PermissionCacher.java,v 1.35 2009/01/14 15:12:23 tryggvil Exp $ Created
  * in 2001
- * 
+ *
  * Copyright (C) 2001-2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -27,12 +27,12 @@ import com.idega.user.data.bean.Group;
  * Class used for caching of permissions from the ICPermission table - used by
  * AccessControl.
  * </p>
- * 
+ *
  * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
- * 
- * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson </a>,
+ *
+ * @author <a href="mailto:gummi@idega.is">Guðmundur Ágúst Sæmundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
- * 
+ *
  * @version $Revision: 1.35 $
  */
 class PermissionCacher {
@@ -333,7 +333,7 @@ class PermissionCacher {
 
 	/**
 	 * The permissionchecking ends in this method.
-	 * 
+	 *
 	 * @param permissionMapKey
 	 * @param identifier
 	 * @param iwac

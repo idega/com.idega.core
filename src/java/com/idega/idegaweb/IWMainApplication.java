@@ -671,9 +671,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
      */
     public static IWMainApplication getIWMainApplication(FacesContext facesContext) {
 		try {
-			HttpServletRequest request = (HttpServletRequest)facesContext.getExternalContext().getRequest();
+			HttpServletRequest request = (HttpServletRequest) facesContext.getExternalContext().getRequest();
 			return getIWMainApplication(request);
-		} catch(ClassCastException cce) {
+		} catch (ClassCastException cce) {
 			throw new RuntimeException("IWMainApplication.getIWMainApplication(): FacesContext does not contain a HttpServletRequest", cce);
 		}
     }
