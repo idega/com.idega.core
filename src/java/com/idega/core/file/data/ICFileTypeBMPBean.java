@@ -2,6 +2,11 @@ package com.idega.core.file.data;
 
 import java.sql.SQLException;
 
+import javax.ejb.FinderException;
+
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
 import com.idega.idegaweb.IWMainApplication;
 
 /**
@@ -191,9 +196,15 @@ public void insertStartData() {
   }
 
   @Override
-public String getCacheKey(){
+  public String getCacheKey(){
     return getColumnNameUniqueName();
   }
 
-
+  	public Object ejbFindByUniqueName(String uniqueName) throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table.getColumn(getIDColumnName()));
+		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUniqueName()), MatchCriteria.EQUALS, uniqueName));
+		return idoFindOnePKByQuery(query);
+	}
 }

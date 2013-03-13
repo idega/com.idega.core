@@ -354,16 +354,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	public String getUserAgent() {
 		return RequestUtil.getUserAgent(getRequest());
 	}
-	
-	/**
-	 * Check whether user agent supports HTML5.
-	 */
-	public boolean isUserAgentHtml5() {
-		if (isIE() && getBrowserVersion() < 9) {
-			return false;
-		}
-		return true;
-	}
 
 	/**
 	 * Check whether user agent supports HTML5.
