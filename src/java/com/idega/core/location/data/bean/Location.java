@@ -10,6 +10,7 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
  * Data structure to capture coordinates: latitude (Double), longitude (Double), radius (Double)
@@ -17,7 +18,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
  * @author valdas
  *
  */
-@XmlAccessorType(XmlAccessType.FIELD)	//	This means GSON will be able to transform JSON into Java's object.
+@XmlRootElement
+@XmlAccessorType(XmlAccessType.FIELD)
 @Entity
 @Table(name = Location.TABLE_NAME)
 public class Location implements Serializable {
@@ -66,7 +68,7 @@ public class Location implements Serializable {
 	}
 
 	public Double getLatitude() {
-		return lat;
+		return lat == null ? -91 : lat;
 	}
 
 	public void setLatitude(Double latitude) {
@@ -74,7 +76,7 @@ public class Location implements Serializable {
 	}
 
 	public Double getLongitude() {
-		return lon;
+		return lon == null ? -181 : lon;
 	}
 
 	public void setLongitude(Double longitude) {
