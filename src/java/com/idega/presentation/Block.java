@@ -288,7 +288,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	public void _main(IWContext iwc) throws Exception {
-		this.editPermission = iwc.hasEditPermission(this);
+		//this.editPermission = iwc.hasEditPermission(this);
 		this.manager = IWStyleManager.getInstance();
 
 		if (this.debugParameters) {
