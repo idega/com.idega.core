@@ -64,6 +64,7 @@ import com.idega.idegaweb.IWPropertyList;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.UnavailableIWContext;
+import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -2272,7 +2273,7 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 				//e.printStackTrace();
 				//throw new IOException(e.getMessage());
 			}
-			getChildren().add(new ExceptionWrapper(e));
+			getChildren().add(new Text(e.getMessage()));
 		}
 	}
 

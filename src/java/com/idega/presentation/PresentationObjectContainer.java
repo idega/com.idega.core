@@ -267,7 +267,7 @@ public class PresentationObjectContainer extends PresentationObject
 				//throw the exception further:
 				throw noex;
 			} catch (Exception ex) {
-				add(new ExceptionWrapper(ex, this));
+				add(ex.getMessage());
 				getLogger().log(Level.WARNING, "Some error occured rendering " + this, ex);
 			}
 			
@@ -285,7 +285,7 @@ public class PresentationObjectContainer extends PresentationObject
 								}
 							}
 						} catch (Exception ex) {
-							add(new ExceptionWrapper(ex, this));
+							add(ex.getMessage());
 							getLogger().log(Level.WARNING, "Some error occured rendering " + tempobj, ex);
 						}
 					} catch (Exception e) {
