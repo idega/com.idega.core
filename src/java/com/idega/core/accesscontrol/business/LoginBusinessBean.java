@@ -58,6 +58,8 @@ import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.expression.ELUtil;
 
+import org.springframework.beans.factory.BeanCreationException;
+
 /**
  * <p>
  * This is the default business handler for logging a User into the idegaWeb
@@ -171,8 +173,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public static boolean isLoggedOn(IWUserContext iwc) {
-
-		return getLoginSessionBean().getUser() != null;
+		try {
+			return getLoginSessionBean().getUser() != null;
+		}
+		catch (BeanCreationException bce) {
+			return false;
+		}
 //		if (isLoginSessionCreated(iwc)) {
 //			return getUser(iwc) != null;
 //		}

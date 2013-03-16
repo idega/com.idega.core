@@ -15,6 +15,7 @@ import javax.faces.application.Application;
 import javax.faces.context.FacesContext;
 
 import org.springframework.beans.BeansException;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
@@ -63,7 +64,7 @@ public class ELUtil implements ApplicationContextAware {
 		}
 	}
 
-	public <T>T getBean(String expression) {
+	public <T>T getBean(String expression) throws BeanCreationException {
 		if (expression.contains(CoreConstants.DOT)) {
 			FacesContext fctx = FacesContext.getCurrentInstance();
 			if (fctx != null) {
@@ -122,7 +123,7 @@ public class ELUtil implements ApplicationContextAware {
 		ac.publishEvent(event);
 	}
 
-	public <T>T getBean(Class<T> clazz) {
+	public <T>T getBean(Class<T> clazz) throws BeanCreationException {
 		if(!clazz.isAnnotationPresent(SpringBeanName.class)) {
 			throw new RuntimeException("Interface is not annotated with "+SpringBeanName.class.getName()+" annotation");
 		}
