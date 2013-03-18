@@ -37,6 +37,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.contact.data.bean.Email;
@@ -66,6 +67,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID")
 })
+@XmlTransient
 public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode {
 
 	private static final long serialVersionUID = -9014094183053434782L;
@@ -739,5 +741,10 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@Override
 	public boolean isLeaf() {
 		return children == null || children.isEmpty();
+	}
+
+	@Override
+	public String toString() {
+		return getId();
 	}
 }

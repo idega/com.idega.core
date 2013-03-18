@@ -14,11 +14,13 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.idega.core.location.data.bean.Country;
 
 @Entity
 @Table(name = ICLocale.ENTITY_NAME)
+@XmlTransient
 public class ICLocale implements Serializable {
 
 	private static final long serialVersionUID = -6482804106633989994L;
