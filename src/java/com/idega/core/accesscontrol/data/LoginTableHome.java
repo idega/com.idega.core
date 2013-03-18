@@ -10,10 +10,12 @@
 package com.idega.core.accesscontrol.data;
 
 import java.util.Collection;
+
 import javax.ejb.FinderException;
-import com.idega.user.data.User;
+
 import com.idega.data.IDOException;
 import com.idega.data.IDOHome;
+import com.idega.user.data.User;
 
 
 /**
@@ -21,7 +23,7 @@ import com.idega.data.IDOHome;
  * TODO laddi Describe Type LoginTableHome
  * </p>
  *  Last modified: $Date: 2006/03/29 13:10:16 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.6 $
  */
@@ -39,7 +41,7 @@ public interface LoginTableHome extends IDOHome {
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindLoginsForUser
 	 */
-	public Collection findLoginsForUser(User user) throws FinderException;
+	public Collection<LoginTable> findLoginsForUser(User user) throws FinderException;
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindLoginForUser
@@ -49,7 +51,7 @@ public interface LoginTableHome extends IDOHome {
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbFindLoginsForUser
 	 */
-	public Collection findLoginsForUser(int userID) throws FinderException;
+	public Collection<LoginTable> findLoginsForUser(int userID) throws FinderException;
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginTableBMPBean#ejbHomeGetNumberOfLogins

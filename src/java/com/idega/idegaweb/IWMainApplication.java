@@ -625,12 +625,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return this.application.getInitParameterNames();
     }
 
-    public Object getAttribute(String parameterName) {
-        return this.application.getAttribute(parameterName);
+    public <V extends Object> V getAttribute(String parameterName) {
+        return (V) this.application.getAttribute(parameterName);
     }
 
-    public Object getAttribute(String parameterName, Object defaultObjectToReturnIfValueIsNull){
-    	Object value = getAttribute(parameterName);
+    public <V extends Object> V getAttribute(String parameterName, V defaultObjectToReturnIfValueIsNull){
+    	V value = getAttribute(parameterName);
     	if (value == null) {
     		value = defaultObjectToReturnIfValueIsNull;
     	}
@@ -1478,8 +1478,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
     public void startFileSystem() {
         try {
-            ICFileSystem fs = ICFileSystemFactory.getFileSystem(this
-                    .getIWApplicationContext());
+            ICFileSystem fs = ICFileSystemFactory.getFileSystem(this.getIWApplicationContext());
             fs.initialize();
         } catch (Exception e) {
             log.warning("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");

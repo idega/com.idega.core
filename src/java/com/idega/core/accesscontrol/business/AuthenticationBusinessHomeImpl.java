@@ -13,18 +13,22 @@ import com.idega.business.IBOHomeImpl;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2005/11/04 14:18:27 $ by $Author: eiki $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.3 $
  */
 public class AuthenticationBusinessHomeImpl extends IBOHomeImpl implements AuthenticationBusinessHome {
 
-	protected Class getBeanInterfaceClass() {
+	private static final long serialVersionUID = 8300355422017802540L;
+
+	@Override
+	protected Class<AuthenticationBusiness> getBeanInterfaceClass() {
 		return AuthenticationBusiness.class;
 	}
 
+	@Override
 	public AuthenticationBusiness create() throws javax.ejb.CreateException {
 		return (AuthenticationBusiness) super.createIBO();
 	}

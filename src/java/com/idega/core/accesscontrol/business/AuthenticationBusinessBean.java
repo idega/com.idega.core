@@ -13,6 +13,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+
 import com.idega.business.IBOServiceBean;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.bean.User;
@@ -21,55 +22,59 @@ import com.idega.user.data.bean.User;
  * A service bean that is/will be used for all standard idegaweb authentication methods.<br>
  * Also provides plugable behavior for objects that want to be notified when a user logs on and off (see AuthenticationListener interface).<br>
  * This bean is supposed to gradually replace LoginBusinessBean and AccessController/AccessControl and weed out static and obsolete methods.
- * 
+ *
  *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
  * @version $Revision: 1.4 $
  */
 public class AuthenticationBusinessBean extends IBOServiceBean implements AuthenticationBusiness{
-	
-	Map authenticationListeners = new HashMap();
+
+	private static final long serialVersionUID = 3929644508788699086L;
+
+	Map<String, AuthenticationListener> authenticationListeners = new HashMap<String, AuthenticationListener>();
 
 	public AuthenticationBusinessBean(){}
 
 	/**
 	 * @see com.idega.core.accesscontrol.business.AuthenticationListener
 	 */
+	@Override
 	public void addAuthenticationListener(AuthenticationListener listener){
 		String listenerName = listener.getAuthenticationListenerName();
 		if(!this.authenticationListeners.containsKey(listenerName)){
 			this.authenticationListeners.put(listenerName, listener);
 		}
 	}
-		
+
 	/**
 	 * @see com.idega.core.accesscontrol.business.AuthenticationListener
 	 */
+	@Override
 	public void callOnLogonMethodInAllAuthenticationListeners(IWContext iwc, User user) throws ServletFilterChainInterruptException{
 		//do we need to worry about thread problems?
-		Collection listeners = this.authenticationListeners.values();
-		
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-			AuthenticationListener listener = (AuthenticationListener) iter.next();
+		Collection<AuthenticationListener> listeners = this.authenticationListeners.values();
+
+		for (Iterator<AuthenticationListener> iter = listeners.iterator(); iter.hasNext();) {
+			AuthenticationListener listener = iter.next();
 			listener.onLogon(iwc, user);
 		}
-		
+
 	}
-	
+
 	/**
 	 * @see com.idega.core.accesscontrol.business.AuthenticationListener
 	 */
+	@Override
 	public void callOnLogoffMethodInAllAuthenticationListeners(IWContext iwc, User user) throws ServletFilterChainInterruptException{
 		//do we need to worry about thread problems?
-		Collection listeners = this.authenticationListeners.values();
-		
-		for (Iterator iter = listeners.iterator(); iter.hasNext();) {
-			AuthenticationListener listener = (AuthenticationListener) iter.next();
+		Collection<AuthenticationListener> listeners = this.authenticationListeners.values();
+
+		for (Iterator<AuthenticationListener> iter = listeners.iterator(); iter.hasNext();) {
+			AuthenticationListener listener = iter.next();
 			listener.onLogoff(iwc, user);
 		}
-		
+
 	}
-	
-	
+
 }

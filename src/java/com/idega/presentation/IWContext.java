@@ -100,15 +100,12 @@ $
  */
 public class IWContext extends FacesContext implements IWUserContext, IWApplicationContext {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = 3761970466885022262L;
 	private static final Logger LOGGER = Logger.getLogger(IWContext.class.getName());
 
 	private HttpServletRequest _request;
 	private HttpServletResponse _response;
-	private final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
+	public final static String LOCALE_ATTRIBUTE = "idegaweb_locale";
 	public final static String IDEGA_SESSION_KEY = "idega_session_id";
 	private final static String WEAK_HASHMAP_KEY = "idegaweb_weak_hashmap";
 	private final static String CHARACTER_SET_PREFIX = "; charset=";
@@ -923,12 +920,12 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	}
 
 	@Override
-	public Object getApplicationAttribute(String attributeName) {
+	public <V extends Object>V  getApplicationAttribute(String attributeName) {
 		return getIWMainApplication().getAttribute(attributeName);
 	}
 
 	@Override
-	public Object getApplicationAttribute(String attributeName, Object defaultObjectToReturnIfValueIsNull) {
+	public <V extends Object> V getApplicationAttribute(String attributeName, V defaultObjectToReturnIfValueIsNull) {
 		return getIWMainApplication().getAttribute(attributeName, defaultObjectToReturnIfValueIsNull);
 	}
 
