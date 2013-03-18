@@ -23,6 +23,10 @@ import javax.mail.internet.MimeMessage;
 import javax.mail.internet.MimeMultipart;
 import javax.mail.internet.MimePart;
 
+import org.apache.commons.mail.DefaultAuthenticator;
+import org.apache.commons.mail.Email;
+import org.apache.commons.mail.SimpleEmail;
+
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.core.messaging.MessagingSettings;
@@ -69,7 +73,7 @@ public class SendMail {
 	 */
 	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
 			File... attachedFiles) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, false, attachedFiles);
+		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, false, false, attachedFiles);
 	}
 
 	/**
@@ -87,9 +91,62 @@ public class SendMail {
 	 * @param attachedFiles
 	 * @throws MessagingException
 	 */
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType, boolean deleteFiles,
-			File... attachedFiles) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, null, false, deleteFiles, attachedFiles);
+	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+			boolean deleteFiles, boolean simpleMessage, File... attachedFiles) throws MessagingException {
+		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, null, false, deleteFiles, simpleMessage, attachedFiles);
+	}
+
+	public static boolean sendSimpleMail(String from, String to, String subject, String message) {
+		return sendSimpleMail(from, to, null, subject, message);
+	}
+
+	public static boolean sendSimpleMail(String from, String to, String replyTo, String subject, String message) {
+		try {
+			Email email = new SimpleEmail();
+			email.setHostName(getHost());
+			int port = 465;
+			String portValue = getPort();
+			if (!StringUtil.isEmpty(portValue))
+				port = Integer.valueOf(portValue);
+			email.setSmtpPort(port);
+			email.setAuthenticator(new DefaultAuthenticator(getUsername(), getPassword()));
+			email.setSSLOnConnect(true);
+			email.setFrom(from);
+			email.setSubject(subject);
+			email.setMsg(message);
+			email.addTo(to);
+			if (!StringUtil.isEmpty(replyTo))
+				email.addReplyTo(replyTo);
+			email.send();
+
+			return true;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error sending mail to " + to + " from " + from + ". Subject: " + subject + ", message: " + message, e);
+		}
+		return false;
+	}
+
+	private static String getUsername() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "idega");
+	}
+
+	private static String getPassword() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "d2B]kc3CVpdmgp");
+	}
+
+	private static String getPort() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
+	}
+
+	private static String getHost() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings()
+				.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.sendgrid.net");
+	}
+
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+			List<AdvancedProperty> headers, final boolean useThread, final boolean deleteFiles, final File... attachedFiles)
+		throws MessagingException {
+		return send(from, to, cc, bcc, replyTo, host, subject, text, mailType, headers, useThread, deleteFiles, false, attachedFiles);
 	}
 
 	/**
@@ -112,18 +169,24 @@ public class SendMail {
 	 * @throws MessagingException
 	 */
 	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
-			List<AdvancedProperty> headers, final boolean useThread, final boolean deleteFiles, final File... attachedFiles) throws MessagingException {
+			List<AdvancedProperty> headers, final boolean useThread, final boolean deleteFiles, boolean simpleMessage, final File... attachedFiles)
+		throws MessagingException {
+
+		if (simpleMessage) {
+			sendSimpleMail(from, to, subject, text);
+			return null;
+		}
 
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
 		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.TRUE);
 		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.TRUE);
-		String username = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME, "idega");
-		String password = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD, "d2B]kc3CVpdmgp");
-		String port = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_PORT, CoreConstants.EMPTY);
+		String username = getUsername();
+		String password = getPassword();
+		String port = getPort();
 		if (StringUtil.isEmpty(host)) {
-			host = settings.getProperty(MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER, "smtp.sendgrid.net");
+			host = getHost();
 			if (StringUtil.isEmpty(host))
 				throw new MessagingException("Mail server is not configured!");
 		}
@@ -215,13 +278,6 @@ public class SendMail {
 			}
 		}
 
-		//	Headers
-		if (!ListUtil.isEmpty(headers)) {
-			for (AdvancedProperty header: headers) {
-				message.addHeader(header.getId(), header.getValue());
-			}
-		}
-
 		// Send the message and close the connection
 		final Message mail = message;
 		Thread transporter = new Thread(new Runnable() {
@@ -297,25 +353,28 @@ public class SendMail {
 		return true;
 	}
 
-	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile) throws MessagingException {
+	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, File attachedFile)
+			throws MessagingException {
 		send(from, to, cc, bcc, host, subject, text, false, false, attachedFile);
 	}
 
-	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, boolean useThread, boolean deleteFile, File attachedFile)
-			throws MessagingException {
+	public static void send(String from, String to, String cc, String bcc, String host, String subject, String text, boolean useThread,
+			boolean deleteFile, File attachedFile) throws MessagingException {
 		send(from, to, cc, bcc, null, host, subject, text, useThread, deleteFile, attachedFile);
 	}
 
 	public static void send(SendMailMessageValue mv) throws MessagingException {
 		File attachment = mv.getAttachedFile();
-		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(), mv.getHeaders(), false, true, attachment);
+		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(), mv.getHeaders(), false,
+				true, attachment);
 	}
 
 	public static Message send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
 		return send(from, to, cc, bcc, null, host, subject, text);
 	}
 
-	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text) throws MessagingException {
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text)
+			throws MessagingException {
 		return send(from, to, cc, bcc, replyTo, host, subject, text, true, false, new File[] {});
 	}
 
@@ -335,8 +394,8 @@ public class SendMail {
 	 * @return
 	 * @throws MessagingException
 	 */
-	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, boolean useThread, boolean deleteFiles,
-			File... attachedFiles) throws MessagingException {
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text,
+			boolean useThread, boolean deleteFiles, File... attachedFiles) throws MessagingException {
 		List<AdvancedProperty> headers = Collections.emptyList();
 		return send(from, to, cc, bcc, replyTo, host, subject, text, headers, useThread, deleteFiles, attachedFiles);
 	}
@@ -358,8 +417,9 @@ public class SendMail {
 	 * @return
 	 * @throws MessagingException
 	 */
-	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, List<AdvancedProperty> headers,
-			boolean useThread, boolean deleteFiles, File... attachedFiles) throws MessagingException {
-		return send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, useThread, deleteFiles, attachedFiles);
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text,
+			List<AdvancedProperty> headers, boolean useThread, boolean deleteFiles, File... attachedFiles) throws MessagingException {
+		return send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, useThread, deleteFiles, false,
+				attachedFiles);
 	}
 }

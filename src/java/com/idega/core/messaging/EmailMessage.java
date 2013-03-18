@@ -174,7 +174,7 @@ public class EmailMessage extends SimpleMessage {
 		File[] attachments = ArrayUtil.convertListToArray(getAttachedFiles());
 		try {
 			SendMail.send(getFromAddress(), getToAddress(), getCcAddress(), getBccAddress(), getReplyToAddress(), getMailServer(), getSubject(), getBody(),
-					getMailType(), isAutoDeletedAttachments(), attachments);
+					getMailType(), isAutoDeletedAttachments(), false, attachments);
 		} catch (MessagingException e){
 			throw e; //fix
 		}
