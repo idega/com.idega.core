@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
@@ -28,6 +29,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
@@ -39,6 +41,8 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.accesscontrol.data.bean.LoginInfo;
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
+import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.core.localisation.data.bean.ICLanguage;
 import com.idega.core.user.business.UserBusiness;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWPageEventListener;
@@ -54,9 +58,11 @@ import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
+import com.idega.util.CoreConstants;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.RequestUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -514,17 +520,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
-				int seperator = unencodedNamePassword.indexOf(':');
+				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
+				int seperator = unencodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
 					String[] toReturn = new String[2];
 					toReturn[0] = unencodedNamePassword.substring(0, seperator);
 					toReturn[1] = unencodedNamePassword.substring(seperator + 1);
 					return toReturn;
 				}
-			}
-			catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -536,14 +540,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
+//				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
+				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
 				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
 					return unencodedNamePassword.substring(0, seperator);
 				}
-			}
-			catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -555,14 +558,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
-				int seperator = unencodedNamePassword.indexOf(':');
+				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
+				int seperator = unencodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
 					return unencodedNamePassword.substring(seperator + 1);
 				}
-			}
-			catch (IOException e) {
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
@@ -578,8 +579,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (sAuthorizationHeader != null) {
 				HttpSession session = request.getSession();
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-				String unencodedNamePassword = new String(dec.decodeBuffer(encodedNamePassword));
+				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
 
 				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
@@ -734,7 +734,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @throws Exception
 	 */
 	protected boolean logIn(IWContext iwc, User user) throws Exception {
-		return logIn(iwc.getRequest(), user);
+		return logIn(iwc.getRequest(), iwc.getResponse(), user);
 	}
 
 	/**
@@ -746,34 +746,38 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 * @throws Exception
 	 */
-	protected boolean logIn(HttpServletRequest request, User user) throws Exception {
+	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, User user) throws Exception {
 		UserLogin userLogin = getUserLoginDAO().findLoginForUser(user);
 		storeUserAndGroupInformationInSession(request.getSession(), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
-		storeLoggedOnInfoInSession(request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
+		storeLoggedOnInfoInSession(request, response, request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord,
+				userLogin.getLoginType());
 		if (user != null)
 			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
 		return true;
 	}
 
 	protected boolean logIn(IWContext iwc, UserLogin userLogin) throws Exception {
-		HttpServletRequest request = iwc.getRequest();
-		return logIn(request, userLogin);
+		return logIn(iwc.getRequest(), iwc.getResponse(), userLogin);
 	}
 
 	protected boolean logIn(HttpServletRequest request, UserLogin userLogin) throws Exception {
+		return logIn(request, null, userLogin);
+	}
+
+	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, UserLogin userLogin) throws Exception {
 		User user = userLogin.getUser();
 
 		storeUserAndGroupInformationInSession(request.getSession(), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
-		storeLoggedOnInfoInSession(request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
+		storeLoggedOnInfoInSession(request, response, request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
 		if (user != null)
 			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
 		return true;
 	}
 
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
-		List groups = null;
+		List<Group> groups = null;
 		LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
 		if (isUsingOldUserSystem()) {
 			// Old user system
@@ -782,8 +786,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			lSession.setUser(user);
 			groups = UserBusiness.getUserGroups(user.getId().intValue());
 			// Old user system end
-		}
-		else {
+		} else {
 			// New user system
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 			// LoginBusinessBean.setUser(iwc, user);
@@ -793,7 +796,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			com.idega.user.data.User newUser = userbusiness.getUser(user.getId());
 			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
 			if (userGroups != null) {
-				groups = new ArrayList();
+				groups = new ArrayList<Group>();
 				for (com.idega.user.data.Group group : userGroups) {
 					groups.add(getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString())));
 				}
@@ -802,7 +805,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		}
 		if (groups != null) {
-			// LoginBusinessBean.setPermissionGroups(iwc, groups);
 			lSession.setPermissionGroups(groups);
 		}
 		lSession.setRepresentativeGroup(user.getGroup());
@@ -814,12 +816,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
 		UserProperties properties = new UserProperties(iwma, user.getId());
-		// setLoginAttribute(USER_PROPERTY_PARAMETER, properties, iwc);
 		lSession.setUserProperties(properties);
 	}
 
 	/**
-	 * TODO tryggvil describe method getIWApplicationContext
 	 *
 	 * @param session
 	 * @return
@@ -830,7 +830,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	/**
-	 * TODO tryggvil describe method getIWApplicationContext
 	 *
 	 * @param session
 	 * @return
@@ -847,25 +846,42 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return LoginBusinessBean.USING_OLD_USER_SYSTEM;
 	}
 
-	protected void storeLoggedOnInfoInSession(HttpSession session, UserLogin userLogin, String login, User user, LoginRecord loginRecord, String loginType) throws NotLoggedOnException, RemoteException {
+	protected void storeLoggedOnInfoInSession(HttpServletRequest request, HttpServletResponse response, HttpSession session, UserLogin userLogin, String login, User user,
+			LoginRecord loginRecord, String loginType) throws NotLoggedOnException, RemoteException {
+
 		LoggedOnInfo lInfo = createLoggedOnInfo();
 		lInfo.setUserLogin(userLogin);
 		lInfo.setLogin(login);
-		// lInfo.setSession(iwc.getSession());
 		lInfo.setTimeOfLogon(IWTimestamp.RightNow());
 		lInfo.setUser(user);
 		lInfo.setLoginRecord(loginRecord);
-		if (loginType != null && !loginType.equals("")) {
+		if (!StringUtil.isEmpty(loginType)) {
 			lInfo.setLoginType(loginType);
 		}
+
 		IWMainApplication iwma = getIWMainApplication(session);
 		AccessController aController = iwma.getAccessController();
 		IWUserContext iwuc = new IWUserContextImpl(session, session.getServletContext());
 		lInfo.setUserRoles(aController.getAllRolesForCurrentUser(iwuc));
-		Map m = getLoggedOnInfoMap(session);
+		Map<String, Object> m = getLoggedOnInfoMap(session);
 		m.put(lInfo.getLogin(), lInfo);
-		// getLoggedOnInfoList(iwc).add(lInfo);
 		setLoggedOnInfo(lInfo, session);
+
+		//	Setting current locale for user that just logged in
+		String preferredLocale = user.getPreferredLocale();
+		Locale locale = null;
+		if (StringUtil.isEmpty(preferredLocale)) {
+			ICLanguage language = user.getNativeLanguage();
+			if (language != null)
+				locale = ICLocaleBusiness.getLocaleFromLocaleString(language.getISOAbbreviation());
+		} else
+			locale = ICLocaleBusiness.getLocaleFromLocaleString(preferredLocale);
+		if (locale == null && !StringUtil.isEmpty(preferredLocale)) {
+			LOGGER.warning("Failed to get preffered locale from '" + preferredLocale + "'");
+		} else {
+			LOGGER.info("Found preferred locale " + locale + " from '" + preferredLocale + "' for " + user + ", will set as default");
+			request.getSession().setAttribute(IWContext.LOCALE_ATTRIBUTE, locale);
+		}
 	}
 
 	private LoginState verifyPasswordAndLogin(HttpServletRequest request, String login, String password) throws Exception {
@@ -972,7 +988,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
 			LoggedOnInfo info = getLoggedOnInfo(session);
 			if (info != null) {
-				Map lm = getLoggedOnInfoMap(session);
+				Map<String, Object> lm = getLoggedOnInfoMap(session);
 				lm.remove(info.getLogin());
 			}
 			UserProperties properties = getUserProperties(session);
@@ -991,7 +1007,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 *
 	 * @return Returns empty Map if no one is logged on
 	 */
-	public static Map getLoggedOnInfoMap(IWContext iwc) {
+	public static Map<String, Object> getLoggedOnInfoMap(IWContext iwc) {
 		return getDefaultLoginBusinessBean().getLoggedOnInfoMap(iwc.getSession());
 	}
 
@@ -1001,11 +1017,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 *
 	 * @return Returns empty Map if no one is logged on
 	 */
-	public Map getLoggedOnInfoMap(HttpSession session) {
+	public Map<String, Object> getLoggedOnInfoMap(HttpSession session) {
 		ServletContext sc = session.getServletContext();
-		Map loggedOnMap = (Map) sc.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
+		@SuppressWarnings("unchecked")
+		Map<String, Object> loggedOnMap = (Map<String, Object>) sc.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
 		if (loggedOnMap == null) {
-			loggedOnMap = new TreeMap();
+			loggedOnMap = new TreeMap<String, Object>();
 			sc.setAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnMap);
 		}
 		return loggedOnMap;
@@ -1014,7 +1031,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return returns empty Collection if no one is logged on
 	 */
-	public static Collection getLoggedOnInfoCollection(IWContext iwc) {
+	public static Collection<Object> getLoggedOnInfoCollection(IWContext iwc) {
 		return getLoggedOnInfoMap(iwc).values();
 	}
 
@@ -1183,7 +1200,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public boolean retrieveLoginInformation(HttpServletRequest request) throws NotLoggedOnException, RemoteException {
 		HttpSession session = request.getSession();
 		if (LoginBusinessBean.getLoginSessionBean() != null) {
-			Map m = getLoggedOnInfoMap(session);
+			Map<String, Object> m = getLoggedOnInfoMap(session);
 			LoggedOnInfo _logOnInfo = (LoggedOnInfo) m.remove(getLoggedOnInfo(session).getLogin());
 			if (_logOnInfo != null) {
 				getUserLoginDAO().createLogoutRecord(_logOnInfo.getLoginRecord());
@@ -1277,7 +1294,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 			storeUserAndGroupInformationInSession(session, user);
 			LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
-			storeLoggedOnInfoInSession(session, userLogin, login, user, loginRecord, LOGINTYPE_AS_ANOTHER_USER);
+			storeLoggedOnInfoInSession(request, null, session, userLogin, login, user, loginRecord, LOGINTYPE_AS_ANOTHER_USER);
 			onLoginSuccessful(request);
 			return true;
 		}
@@ -1309,7 +1326,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			IWApplicationContext iwac = getIWApplicationContext(request.getSession());
 			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
 			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
-			Collection logins = loginTableHome.findLoginsForUser(user);
+			Collection<LoginTable> logins = loginTableHome.findLoginsForUser(user);
 
 			if (logins == null || logins.isEmpty()) {
 				return false;
@@ -1421,9 +1438,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public UserLogin chooseLoginRecord(HttpServletRequest request, Collection<UserLogin> loginRecords, User user,String loginType) throws Exception {
 		UserLogin chosenRecord = null;
 		if (loginRecords != null) {
-			Iterator iter = loginRecords.iterator();
-			while (iter.hasNext()) {
-				UserLogin login = (UserLogin) iter.next();
+			for (Iterator<UserLogin> iter = loginRecords.iterator(); iter.hasNext();) {
+				UserLogin login = iter.next();
 				String type = login.getLoginType();
 				//if (!(type != null && !type.equals(""))) {
 				if(loginType==null){
