@@ -30,7 +30,7 @@ import com.idega.user.data.Group;
  * 
  * Last modified: $Date: 2009/01/14 15:12:23 $ by $Author: tryggvil $
  * 
- * @author <a href="mailto:gummi@idega.is">Guğmundur Ágúst Sæmundsson </a>,
+ * @author <a href="mailto:gummi@idega.is">GuÃ°mundur ÃgÃºst SÃ¦mundsson </a>,
  *         Eirikur Hrafnsson, Tryggvi Larusson
  * 
  * @version $Revision: 1.35 $

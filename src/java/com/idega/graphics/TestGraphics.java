@@ -34,7 +34,7 @@ public class TestGraphics {
     String legend[] = new String[5];
     legend[0] = "Ernir";
     legend[1] = "Fuglar";
-    legend[2] = "Pör";
+    legend[2] = "PÃ¶r";
     legend[3] = "Skollar";
     legend[4] = "Skrambar+";
     Double data[] = new Double[5];
@@ -48,7 +48,7 @@ public class TestGraphics {
       CreateChart chart =new CreateChart();
       chart.setData(data);
       chart.setLegend(legend);
-      //Hérna á að nota Constants.getChartFileRootDir() í staðinn
+      //HÃ©rna Ã¡ aÃ° nota Constants.getChartFileRootDir() Ã­ staÃ°inn
       chart.setFilePrefix("c:\\");
       chart.setFilePostfix("temp");
       chart.setWebPrefix("/tio/no/survey/results/");

@@ -35,7 +35,7 @@ public class WindowOpener extends IWJSPPresentationServlet {
 	 * 
 	 * theReturn = new Window();
 	 * 
-	 * theReturn.add("<H2>Síğa útrunnin, vinsamlegast endurhlağiğ síğurnar</H2>");
+	 * theReturn.add("<H2>SÃ­Ã°a Ãºtrunnin, vinsamlegast endurhlaÃ°iÃ° sÃ­Ã°urnar</H2>");
 	 *  }
 	 * 
 	 * 

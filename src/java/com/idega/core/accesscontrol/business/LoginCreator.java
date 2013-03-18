@@ -17,11 +17,11 @@ import com.idega.data.IDOLookupException;
  */
 public class LoginCreator {
 
-	public static String alpha = "aA·¡bBcCdD–eEÈ…fFgGhHiIÌÕjJkKlLmMnNoOÛ”pPqQrRsStTuU˙⁄vVwWxXyY˝›zZ˛ﬁÊ∆ˆ÷";
+	public static String alpha = "aA√°√ÅbBcCdD√∞√êeE√©√âfFgGhHiI√≠√çjJkKlLmMnNoO√≥√ìpPqQrRsStTuU√∫√övVwWxXyY√Ω√ùzZ√æ√û√¶√Ü√∂√ñ";
 	public static String beta = "aaaabbccddddeeeeffgghhiiiijjkkllmmnnooooppqqrrssttuuuuvvwwxxyyyyzzttaaoo";
 	public static String dega = "aAbBcCdDeEfFgGhHiIjJkKlLmMnNoOpPqQrRsStTuUvVwWxXyYzZ0123456789";
-	public static String consonants = "bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZ˛ﬁ";
-	public static String vowels = "aA·¡eEÈ…iIÌÕoOÛ”uU˙⁄yY˝›Ê∆ˆ÷";
+	public static String consonants = "bBcCdDfFgGhHjJkKlLmMnNpPqQrRsStTvVwWxXzZ√æ√û";
+	public static String vowels = "aA√°√ÅeE√©√âiI√≠√çoO√≥√ìuU√∫√öyY√Ω√ù√¶√Ü√∂√ñ";
 	private static final int ONE = 1, TWO = 2, THREE = 3;
 
 	public LoginCreator() {

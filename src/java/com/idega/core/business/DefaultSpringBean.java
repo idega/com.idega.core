@@ -193,13 +193,28 @@ public abstract class DefaultSpringBean {
 			provider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 		} catch (Exception e) {}
 
-		return provider == null ? null : provider.getRequest().getSession(Boolean.TRUE);
+		HttpSession session = null;
+		if (provider != null && provider.getRequest() != null)
+			session = provider.getRequest().getSession(Boolean.TRUE);
+
+		if (session == null) {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null)
+				session = iwc.getSession();
+		}
+
+		return session;
 	}
 
 	protected String getHost() {
-    	IWContext iwc = CoreUtil.getIWContext();
-		ICDomain domain = iwc.getDomain();
-		int port = domain.getServerPort();
+    	ICDomain domain = null;
+		IWContext iwc = CoreUtil.getIWContext();
+    	if (iwc == null) {
+    		domain = IWMainApplication.getDefaultIWApplicationContext().getDomain();
+    	} else
+    		domain = iwc.getDomain();
+
+    	int port = domain.getServerPort();
 		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
 		if (port > 0)
 			host = host.concat(":").concat(String.valueOf(port));
@@ -221,7 +236,7 @@ public abstract class DefaultSpringBean {
 	 * <p>Takes property from /workspace/developer/applicationproperties named
 	 * "is_developement_mode". Check this property, when you need to add code
 	 * necessary for development, but useless to production environment.</p>
-	 * @return <code>true</code> if it is developing environment, 
+	 * @return <code>true</code> if it is developing environment,
 	 * <code>false</code> otherwise.
 	 * @see CoreConstants#DEVELOPEMENT_STATE_PROPERTY
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>

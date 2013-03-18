@@ -70,7 +70,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -89,7 +89,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -108,7 +108,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -118,7 +118,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -137,7 +137,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -148,7 +148,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -171,7 +171,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -182,7 +182,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.
@@ -233,7 +233,7 @@ public class CreateChart {
   }
 
   /**
-   * Lýsing á falli
+   * LÃ½sing Ã¡ falli
    *
    * @param parameter-name description  Adds a parameter to the "Parameters" section. The description may be continued on the next line.
    * @return description                Adds a "Returns" section with the description text. This text should describe the return type and permissible range of values.

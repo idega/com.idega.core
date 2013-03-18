@@ -20,7 +20,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
@@ -224,10 +223,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (iwc.isLoggedOn()) {
 			User user = iwc.getCurrentUser();
 
-			List[] permissionOrder = new Vector[2];
-			permissionOrder[0] = new Vector();
+			List[] permissionOrder = new ArrayList[2];
+			permissionOrder[0] = new ArrayList();
 			permissionOrder[0].add(Integer.toString(user.getGroupID()));
-			permissionOrder[1] = new Vector();
+			permissionOrder[1] = new ArrayList();
 			permissionOrder[1].add(Integer.toString(user.getPrimaryGroupID()));
 
 			returnVal = checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER, iwc);
@@ -247,10 +246,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (iwc.isLoggedOn()) {
 			User user = iwc.getCurrentUser();
 
-			List[] permissionOrder = new Vector[2];
-			permissionOrder[0] = new Vector();
+			List[] permissionOrder = new ArrayList[2];
+			permissionOrder[0] = new ArrayList();
 			permissionOrder[0].add(Integer.toString(user.getGroupID()));
-			permissionOrder[1] = new Vector();
+			permissionOrder[1] = new ArrayList();
 			permissionOrder[1].add(Integer.toString(user.getPrimaryGroupID()));
 
 			returnVal = checkForPermission(permissionOrder, category, identifier, AccessController.PERMISSION_KEY_OWNER,  IWMainApplication.getDefaultIWApplicationContext());
@@ -266,7 +265,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public boolean isOwner(List groupIds, Object obj, IWUserContext iwc) throws Exception {
 		Boolean returnVal = Boolean.FALSE;
-		List[] permissionOrder = new Vector[1];
+		List[] permissionOrder = new ArrayList[1];
 		permissionOrder[0] = groupIds;
 		returnVal = checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER,  iwc);
 
@@ -580,7 +579,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				if (primaryGroup != null) {
 					groups.remove(primaryGroup);
 				}
-				List groupIds = new Vector();
+				List groupIds = new ArrayList();
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
 					GenericGroup group = (GenericGroup) iter.next();
@@ -675,7 +674,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				if (groupIds.size() == 1) {
 					if (groupIds.get(0).equals(Integer.toString(_GROUP_ID_EVERYONE))) {
 						permissionOrder = new List[1];
-						permissionOrder[0] = new Vector();
+						permissionOrder[0] = new ArrayList();
 						permissionOrder[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
 					}
 					else {
@@ -686,17 +685,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 							permissionOrder = new List[3];
 							permissionOrder[2] = groupIds;
 						}
-						permissionOrder[0] = new Vector();
+						permissionOrder[0] = new ArrayList();
 						permissionOrder[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
-						permissionOrder[1] = new Vector();
+						permissionOrder[1] = new ArrayList();
 						permissionOrder[1].add(Integer.toString(getPermissionGroupUsers().getID()));
 					}
 				}
 				else if (groupIds.size() > 1) {
 					permissionOrder = new List[3];
-					permissionOrder[0] = new Vector();
+					permissionOrder[0] = new ArrayList();
 					permissionOrder[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
-					permissionOrder[1] = new Vector();
+					permissionOrder[1] = new ArrayList();
 					permissionOrder[1].add(Integer.toString(getPermissionGroupUsers().getID()));
 					permissionOrder[2] = groupIds;
 					// Everyone, users, (primaryGroup), otherGroups
@@ -1881,7 +1880,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	public List getAllowedGroups(int permissionCategory, String identifier, String permissionKey) throws Exception {
-		List toReturn = new Vector(0);
+		List toReturn = new ArrayList(0);
 		ICPermission permission = com.idega.core.accesscontrol.data.ICPermissionBMPBean.getStaticInstance();
 		List permissions = null;
 
@@ -2061,7 +2060,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	private void initStandardGroups() throws Exception {
-		this.standardGroups = new Vector();
+		this.standardGroups = new ArrayList();
 		//standardGroups.add(AccessControl.getPermissionGroupAdministrator());
 		this.standardGroups.add(this.getPermissionGroupEveryOne());
 		this.standardGroups.add(this.getPermissionGroupUsers());
@@ -2664,7 +2663,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	//Methods added after big changes by Eiki
 	public static Collection getAllPermissions(Group group, String contextType) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType, group);
 		}
@@ -2684,7 +2683,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static Collection getAllPermissionsOwnedByGroup(Group group, String contextType) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
@@ -2704,7 +2703,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static Collection getAllPermissionsForContextTypeAndContextValue(String contextType, String contextValue) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol = getPermissionHome().findAllPermissionsByContextTypeAndContextValue(contextType, contextValue);
 		}
@@ -2732,7 +2731,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @return
 	 */
 	public static Collection getAllGroupPermissionsReverseForGroupAndPermissionString(Group group, String permissionString) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol =
 				getPermissionHome().findAllPermissionsByContextTypeAndContextValueAndPermissionString(
@@ -2799,19 +2798,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
 	 */
 	public Collection<ICPermission> getAllRolesForGroupCollection(Collection groups) {
-	    Collection<ICPermission> returnCol = new Vector<ICPermission>(); //empty
-	    if (ListUtil.isEmpty(groups)) {
+	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>(); //empty
+	    if (ListUtil.isEmpty(groups))
 	    	return ListUtil.getEmptyList();
-	    }
+
 	    try {
 	        Collection permissions = getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
 	                    RoleHelperObject.getStaticInstance().toString(),
-	                    groups);
+	                    groups
+	        );
 
 	        //only return active and only actual roles and not group permission definitation roles
-	        if(permissions!=null && !permissions.isEmpty()){
-	            Iterator permissionsIter = permissions.iterator();
-	            while (permissionsIter.hasNext()) {
+	        if (!ListUtil.isEmpty(permissions)) {
+	            for (Iterator permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
 	                ICPermission perm = (ICPermission) permissionsIter.next();
 	                //perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
 	                //if not it is a role for a permission key
@@ -2820,12 +2819,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	                }
 	            }
 	        }
-	    }
-	    catch (FinderException ex) {
+	    } catch (FinderException ex) {
 	        ex.printStackTrace();
-	    }
-	    catch (RemoteException x) {
+	    } catch (RemoteException x) {
 	        x.printStackTrace();
+	    } catch (Exception e) {
+	    	e.printStackTrace();
 	    }
 
 		return returnCol;
@@ -2887,7 +2886,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public Collection getAllRolesWithRolePermissionsForGroup(Group group) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			Collection permissions=
 				getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
@@ -2919,7 +2918,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public Collection getAllRolesWithRolePermissionsForGroupCollection(Collection groups) {
-	    Collection returnCol = new Vector(); //empty
+	    Collection returnCol = new ArrayList(); //empty
 	    try {
 	        Collection permissions=
 	            getPermissionHome().findAllPermissionsByContextTypeAndPermissionGroupCollectionOrderedByContextValue(
@@ -2950,7 +2949,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public Collection getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac) {
 
-		Collection groups = new Vector();
+		Collection groups = new ArrayList();
 		try {
 
 			Collection permissions = getPermissionHome().findAllPermissionsByContextTypeAndContextValueAndPermissionString(RoleHelperObject.getStaticInstance().toString(),RoleHelperObject.getStaticInstance().toString(),roleKey);
@@ -3001,7 +3000,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	public Collection getAllRoles() {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol = getICRoleHome().findAllRoles();
 		}
@@ -3033,7 +3032,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static Collection getAllGroupOwnerPermissionsByGroup(Group group) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
@@ -3053,7 +3052,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	public static Collection getAllGroupPermitPermissionsByGroup(Group group) {
-		Collection returnCol = new Vector(); //empty
+		Collection returnCol = new ArrayList(); //empty
 		try {
 			returnCol =
 				getPermissionHome().findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(
@@ -3086,11 +3085,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		return returnCol;
 	}
@@ -3106,11 +3105,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 
 		return returnCol;
@@ -3127,11 +3126,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 
 		return returnCol;
@@ -3148,11 +3147,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 
 		return returnCol;
@@ -3169,11 +3168,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 
 		return returnCol;
@@ -3194,11 +3193,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		return returnCol;
 	}
@@ -3217,11 +3216,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		return returnCol;
 	}
@@ -3240,11 +3239,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		return returnCol;
 	}
@@ -3263,11 +3262,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					AccessController.CATEGORY_STRING_GROUP_ID);
 		}
 		catch (FinderException ex) {
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		catch (RemoteException x) {
 			x.printStackTrace();
-			returnCol = new Vector(); //empty
+			returnCol = new ArrayList(); //empty
 		}
 		return returnCol;
 	}

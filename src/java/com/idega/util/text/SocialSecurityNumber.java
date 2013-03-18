@@ -103,7 +103,7 @@ public class SocialSecurityNumber {
 			return isValidIcelandicSocialSecurityNumber(ssn);
 		} else {
 			Logger.getLogger(SocialSecurityNumber.class.getName()).warning("Social security number '" + ssn + "' can not be verified by locale " + locale +
-					". Please implemente verifier!");
+					". Please implement verifier!");
 			return true;
 		}
 	}

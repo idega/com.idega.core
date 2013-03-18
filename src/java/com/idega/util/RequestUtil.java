@@ -1,9 +1,9 @@
 /*
  * $Id: RequestUtil.java,v 1.8 2008/12/19 08:54:45 valdas Exp $ Created on
  * 27.1.2005
- * 
+ *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -23,9 +23,9 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.servlet.filter.IWAuthenticator;
 
 /**
- * 
+ *
  * Last modified: $Date: 2008/12/19 08:54:45 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.8 $
  */
@@ -33,7 +33,7 @@ public class RequestUtil {
 
 	private static String SLASH = "/";
 	private static final String IMAGEBUTTON_XPOS_SUFFIX = ".x";
-	private static final String HEADER_USER_AGENT = "User-agent";
+	public static final String HEADER_USER_AGENT = "User-agent";
 	private static final String HEADER_REFERER = "Referer";
 	private static final String HEADER_AUTHORIZATION = "Authorization";
 	private static final String HEADER_ACCEPT_LANGUAGE = "Accept-Language";
@@ -41,7 +41,7 @@ public class RequestUtil {
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it
 	 * the Context path if any.
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -66,7 +66,7 @@ public class RequestUtil {
 
 	/**
 	 * Gets a constructed base URL for the server.
-	 * 
+	 *
 	 * @return the servername with port and protocol, e.g.
 	 *         http://www.idega.com:8080/
 	 */
@@ -98,7 +98,7 @@ public class RequestUtil {
 	 * Gets the cookie with the name cookieName from the Request.<br/> Returns
 	 * null if no cookie is found with name.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @param cookieName
 	 * @return
@@ -180,7 +180,7 @@ public class RequestUtil {
 	public static String getUserAgent(HttpServletRequest request) {
 		return request.getHeader(HEADER_USER_AGENT);
 	}
-	
+
 	public static String getBrowserLanguage(HttpServletRequest request) {
 		return request.getHeader(HEADER_ACCEPT_LANGUAGE);
 	}
@@ -206,13 +206,13 @@ public class RequestUtil {
 	public static String getAuthorizationHeader(HttpServletRequest request) {
 		return request.getHeader(HEADER_AUTHORIZATION);
 	}
-	
+
 	public static String getRedirectUriByApplicationProperty(HttpServletRequest request, int code) {
 		String requestedPage = request.getRequestURI();
 		if (!requestedPage.startsWith("/pages/")) {
 			return null;
 		}
-		
+
 		IWMainApplicationSettings settings = null;
 		try {
 			settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
@@ -222,7 +222,7 @@ public class RequestUtil {
 		if (settings == null) {
 			return null;
 		}
-		
+
 		boolean addLoginRedirectParameter = false;
 		String redirectUri = null;
 		String loginRedirectString = null;
@@ -232,45 +232,45 @@ public class RequestUtil {
 				addLoginRedirectParameter = true;
 				String parameters = getParametersStringFromRequest(request);
 				loginRedirectString = new StringBuilder().append("?").append(IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON).append('=').append(requestedPage).append("&").append(parameters).toString();
-				
+
 				break;
 			}
 			case HttpServletResponse.SC_NOT_FOUND : {
 				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_404_HANDLER_PORPERTY);
-				
+
 				break;
 			}
 		}
 		if (StringUtil.isEmpty(redirectUri)) {
 			return null;
 		}
-		
-		
-		
+
+
+
 		return new StringBuilder(redirectUri).append(addLoginRedirectParameter ? loginRedirectString : CoreConstants.EMPTY).toString();
 	}
 
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @return String with request parameters, e.g. "parameter1=value1&parameter2=value1&parameter2=value2"
 	 */
 	public static String getParametersStringFromRequest(HttpServletRequest request) {
 		return getParametersStringFromRequest(request,null);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param request
 	 * @return String with request parameters, e.g. "parameter1=value1&parameter2=value1&parameter2=value2"
 	 */
 	public static String getParametersStringFromRequest(HttpServletRequest request, List<String> keysToIgnore) {
 		StringBuilder parametersString = new StringBuilder();
-		Map parameters = request.getParameterMap();
+		Map<?, ?> parameters = request.getParameterMap();
 
 		if (parameters != null && !parameters.isEmpty()) {
-			Set<String> parametersSet = parameters.keySet();
-			for (Iterator iterator = parametersSet.iterator(); iterator.hasNext();) {
+			Set<?> parametersSet = parameters.keySet();
+			for (Iterator<?> iterator = parametersSet.iterator(); iterator.hasNext();) {
 				String key = (String) iterator.next();
 				if(ListUtil.isEmpty(keysToIgnore) || !(keysToIgnore.contains(key)) ){
 					String[] values = request.getParameterValues(key);
@@ -282,7 +282,7 @@ public class RequestUtil {
 				}
 			}
 		}
-		
+
 		if(parametersString.length()>0){
 			//just to remove the first &
 			return parametersString.substring(1);
@@ -291,12 +291,12 @@ public class RequestUtil {
 			return "";
 		}
 	}
-	
+
 	public static String getRequestParametersAsString(HttpServletRequest request){
-		
-		
-		
+
+
+
 		return "";
 	}
-	
+
 }
