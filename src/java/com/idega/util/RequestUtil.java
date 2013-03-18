@@ -210,7 +210,7 @@ public class RequestUtil {
 
 	public static String getRedirectUriByApplicationProperty(HttpServletRequest request, int code) {
 		String requestedPage = request.getRequestURI();
-		if (!requestedPage.startsWith("/pages/")) {
+		if (!requestedPage.startsWith(CoreConstants.PAGES_URI_PREFIX + CoreConstants.SLASH)) {
 			return null;
 		}
 
