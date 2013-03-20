@@ -417,6 +417,12 @@ public interface Web2Business extends IBOService {
 	public String getBundleURIToFancyBoxStyleFile(String version);
 	public List<String> getBundleURIsToFancyBoxScriptFiles(String version);
 
+	//	Dropkick
+	public List<String> getBundleURIsToDropkickScriptFiles();
+	public String getBundleURIToDropkickStyleFile();
+	public String getBundleURIToDropkickStyleFile(String version);
+	public List<String> getBundleURIsToDropkickScriptFiles(String version);
+
 	//	CodeMirror
 	public String getBundleURIToCodeMirrorScriptFile();
 	public String getBundleURIToCodeMirrorScriptFile(String scriptFile);

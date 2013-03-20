@@ -681,7 +681,7 @@ public class Form
 			
 			UIComponent eventParameter = getEventParameter();
 			renderChild(iwc,eventParameter);
-			if(associatedScript!=null){
+			if(associatedScript!=null && !associatedScript.isEmpty()){
 				renderChild(iwc,associatedScript);
 			}
 			super.print(iwc);

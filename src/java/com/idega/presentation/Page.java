@@ -1581,14 +1581,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 				println("<head>");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 				print(getHeadContents(markup, characterEncoding, iwc));
-				if (getAssociatedScript() != null) {
+				if (getAssociatedScript() != null && !getAssociatedScript().isEmpty(iwc)) {
 					UIComponent script = getAssociatedScript();
 					this.renderChild(iwc, script);
 				}
 				println("\n</head>");
 				if (this._addBody) {
 					println("<body " + getMarkupAttributesString() + ">");
-					if (!getAssociatedBodyScript().isEmpty()) {
+					if (!getAssociatedBodyScript().isEmpty(iwc)) {
 						UIComponent script = getAssociatedBodyScript();
 						this.renderChild(iwc, script);
 					}

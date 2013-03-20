@@ -248,10 +248,13 @@ public class Script extends PresentationObject {
 				// if (getInterfaceStyle().equals("something")){
 				// }
 				// else{
-				println("<script " + getMarkupAttributesString() + " >");
-				println("<!--");
-				if (!isMarkupAttributeSet(ATTRIBUTE_SOURCE)) {
-					
+				if (isMarkupAttributeSet(ATTRIBUTE_SOURCE)) {
+					println("<script " + getMarkupAttributesString() + " ></script>\n");
+				}
+				else {
+					println("<script " + getMarkupAttributesString() + " >");
+					println("<!--");
+						
 					String lines = getScriptLines();
 					if(lines!=null){
 						print(lines);
@@ -259,9 +262,10 @@ public class Script extends PresentationObject {
 					print(getVariables());
 					print(getMethods());
 					print(getScriptCode(iwc));
+
+					println("//-->");
+					println("</script>\n");
 				}
-				println("//-->");
-				println("</script>\n");
 				// flush();
 				// }
 			}
@@ -393,5 +397,9 @@ public class Script extends PresentationObject {
 		else{
 			scriptLines=scriptLines+singleScriptLine+"\n";
 		}
+	}
+	
+	public boolean isEmpty(IWContext iwc) {
+		return getVariables().length() == 0 && getMethods().length() == 0 && getScriptCode(iwc).length() == 0 && getScriptLines() == null && getMarkupAttribute(ATTRIBUTE_SOURCE) == null;
 	}
 }
