@@ -128,6 +128,7 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public long getLastModified(String path) throws RepositoryException;
 
 	public long getLength(String path) throws RepositoryException;
+	public long getLength(String path, User user) throws RepositoryException;
 
 	public boolean isLocked(String path) throws RepositoryException;
 	public Lock lock(String path, boolean isDeep, boolean isSessionScoped) throws RepositoryException;
