@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.idegaweb;
 
@@ -21,16 +21,18 @@ import com.idega.util.SortedProperties;
  * Implementation of an IWBundle loaded from a jar file instead of a folder
  * </p>
  *  Last modified: $Date: 2009/01/05 10:27:32 $ by $Author: anton $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.13 $
  */
 
 public class JarLoadedIWBundle extends DefaultIWBundle {
 
+	private static final long serialVersionUID = 8895958470418903712L;
 	private static final Logger LOGGER = Logger.getLogger(JarLoadedIWBundle.class.getName());
+
 	private JarModule jarModule;
-	
+
 	/**
 	 * @param rootRealPath
 	 * @param bundleIdentifier
@@ -42,7 +44,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		String virtualPath = "/idegaweb/bundles/"+module.getModuleIdentifier()+".bundle";
 		initialize(realPath, virtualPath, module.getModuleIdentifier(), superApplication, false);
 	}
-	
+
 	/**
 	 * <p>
 	 * Initializes a IWPropertyList relative to the 'properties' folder within the bundle
@@ -77,18 +79,18 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		}
 		return false;
 	}
-	
+
 	@Override
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
-		
+
 		if (entry == null) {
 			throw new FileNotFoundException("File not found inside jar module " + jarModule.getModuleIdentifier() + ": " + pathWithinBundle);
 		}
 		InputStream inStream = jarModule.getInputStream(entry);
 		return inStream;
 	}
-	
+
 	/**
 	 * Returns time of jar entry identified by <code>pathWithinBundle</code>.
 	 * @param pathWithinBundle resource path within jar file
@@ -107,13 +109,13 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	@Override
 	public synchronized void unload(boolean storeState) {
 		super.unload(storeState);
-		this.jarModule=null;	
+		this.jarModule=null;
 	}
 
 	protected String getLocalizedResourcePath(Locale locale){
 		return "resources/" + locale.toString() + ".locale";
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.DefaultIWBundle#initializeResourceBundle(java.util.Locale)
@@ -124,7 +126,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		try {
 			InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale) + "/" + getLocalizedStringsFileName());
 			IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, defaultInputStream, locale);
-			
+
 			if (isUsingLocalVariants()) {
 				String variantPath = getLocalizedResourcePath(locale)+"/"+getLocalizedStringsVariantFileName();
 				if (doesResourceExist(variantPath)) {
@@ -143,13 +145,13 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 			// if any error occurs, try default way (autocreated resources in webapp's bundle directory)
 			theReturn = super.initializeResourceBundle(locale);
 		}
-		
+
 		//adding resourceBundle to localized message factory
 		theReturn.setBundleIdentifier(getBundleIdentifier());
 //		getApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
 		return theReturn;
 	}
-	
+
 	@Override
 	public IWResourceBundle getResourceBundle(Locale locale)
 	{
@@ -168,7 +170,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		}
 		return theReturn;
 	}
-	
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.idegaweb.DefaultIWBundle#initializeLocalizableStrings()
@@ -185,5 +187,5 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		}
 		return locProps;
 	}
-	
+
 }
