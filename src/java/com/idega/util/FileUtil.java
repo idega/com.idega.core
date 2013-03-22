@@ -52,8 +52,14 @@ public class FileUtil {
   public static final char WINDOWS_FILE_SEPARATOR = '\\';
   public static final String BACKUP_SUFFIX = "backup~";
 
+  public static final FileUtil instance = new FileUtil();
+
   private FileUtil() {
   	// empty
+  }
+
+  public static final FileUtil getInstance() {
+	  return instance;
   }
 
   public static boolean exists(String path, String fileNameWithoutFullPath) {
@@ -66,6 +72,9 @@ public class FileUtil {
 	  return file.exists();
   }
 
+  public Boolean getExistence(String fileNameWithPath) {
+	  return FileUtil.exists(fileNameWithPath);
+  }
 
   public static void createFileAndFolder(String path,String fileNameWithoutFullPath){
     createFolder(path);
@@ -147,8 +156,12 @@ public static String getFileSeparator(){
     return File.separator;
   }
 
-  public static String getFileNameWithPath(String path,String fileNameWithoutFullPath){
-    return path+File.separator+fileNameWithoutFullPath;
+  public static String getFileNameWithPath(String path, String fileNameWithoutFullPath) {
+	  if (!path.endsWith(File.separator))
+		  path = path.concat(File.separator);
+	  if (fileNameWithoutFullPath.startsWith(File.separator))
+		  fileNameWithoutFullPath = fileNameWithoutFullPath.substring(1);
+	  return path.concat(fileNameWithoutFullPath);
   }
 
   /**
@@ -244,7 +257,7 @@ public static String getFileSeparator(){
         	}
 
         	input.available();	//	This method throws an IO exception if the stream is invalid
-        	file = getFileAndCreateIfNotExists(filePath,fileName);
+        	file = getFileAndCreateIfNotExists(filePath, fileName);
         	FileOutputStream fileOut = new FileOutputStream(file);
         	streamToOutputStream(input, fileOut, closeStream);
         } catch(IOException e) {

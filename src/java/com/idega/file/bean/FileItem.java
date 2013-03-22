@@ -128,6 +128,7 @@ public class FileItem extends RepositoryItem {
 
 	@Override
 	public <T extends ICTreeNode> T getParenItem() {
+		@SuppressWarnings("unchecked")
 		T item = (T) new FileItem(file.getParentFile());
 		return item;
 	}
