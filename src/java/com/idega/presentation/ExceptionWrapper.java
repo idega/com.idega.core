@@ -10,7 +10,6 @@
 
 package com.idega.presentation;
 
-import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.text.PreformattedText;
 import com.idega.presentation.text.Text;
 
@@ -39,11 +38,7 @@ public class ExceptionWrapper extends ExpandContainer {
   }
 
 	protected void initialize(IWContext iwc) {
-		super.initialize(iwc);
-		IWResourceBundle iwrb = getResourceBundle(iwc);
-		
-		String errorMessage = iwrb.getLocalizedString("error.exception_occurred","The following exception occurred");
-		Text error = new Text(errorMessage);
+		Text error = new Text("");
 		if (this._exception != null) {
 			PreformattedText stackTrace = new PreformattedText(getStackTrace(this._exception));
 			if (this._errorStyle != null) {

@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
@@ -167,7 +168,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public static boolean isLoggedOn(IWUserContext iwc) {
-		return getLoginSessionBean().getUser() != null;
+		try {
+			return getLoginSessionBean().getUser() != null;
+		}
+		catch (BeanCreationException bce) {
+			return false;
+		}
 	}
 
 	/**

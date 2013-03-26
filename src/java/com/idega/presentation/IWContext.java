@@ -964,7 +964,14 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public Locale getCurrentLocale() {
-		Locale theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
+		Locale theReturn = null;
+		try {
+			theReturn = (Locale) this.getSessionAttribute(LOCALE_ATTRIBUTE);
+		}
+		catch (IllegalStateException ise) {
+			theReturn = null;
+		}
+
 		if (theReturn == null) {
 			theReturn = getIWMainApplication().getSettings().getDefaultLocale();
 			setCurrentLocale(theReturn);
@@ -978,7 +985,12 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public void setCurrentLocale(Locale locale) {
-		this.setSessionAttribute(LOCALE_ATTRIBUTE, locale);
+		try {
+			this.setSessionAttribute(LOCALE_ATTRIBUTE, locale);
+		}
+		catch (IllegalStateException ise) {
+			//Do nothign...
+		}
 	}
 
 	/**
