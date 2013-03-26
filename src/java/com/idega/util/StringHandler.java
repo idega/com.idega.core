@@ -225,8 +225,8 @@ public class StringHandler {
 		return concatAlphabetically(string1, string2, "");
 	}
 
-	public static Iterator getSeparatorIterator(final String stringToCutDown, final String separator) {
-		return new Iterator() {
+	public static Iterator<String> getSeparatorIterator(final String stringToCutDown, final String separator) {
+		return new Iterator<String>() {
 
 			private String theString = stringToCutDown;
 
@@ -237,7 +237,7 @@ public class StringHandler {
 			private boolean hasNext = true;
 
 			@Override
-			public Object next() throws NoSuchElementException {
+			public String next() throws NoSuchElementException {
 				String theReturn = null;
 				try {
 					if (this.hasNext) {
@@ -369,12 +369,12 @@ public class StringHandler {
 	 * Returns true if each element of the collection returns a non empty string
 	 * when the toString() method is invoked else false.
 	 */
-	public static boolean elementsAreNotEmpty(Collection collection) {
+	public static boolean elementsAreNotEmpty(Collection<Object> collection) {
 		if (collection == null || collection.isEmpty()) {
 			return false;
 		}
-		Iterator iter = collection.iterator();
-		while (iter.hasNext()) {
+
+		for (Iterator<Object> iter = collection.iterator(); iter.hasNext();) {
 			Object element = iter.next();
 			String aString = element.toString();
 			if (!StringHandler.isNotEmpty(aString)) {
@@ -476,8 +476,8 @@ public class StringHandler {
 	 * By adding the maps and replacing the characters according to the keys the
 	 * result is: "A rat is not a rateurpillaur"
 	 */
-	public static Map getReplaceMapIgnoreCase(String str, String pattern, String replace) {
-		Map indexMap = new HashMap();
+	public static Map<Integer, String> getReplaceMapIgnoreCase(String str, String pattern, String replace) {
+		Map<Integer, String> indexMap = new HashMap<Integer, String>();
 		int s = 0;
 		int e = 0;
 		String upperPattern = pattern.toUpperCase();
@@ -615,12 +615,12 @@ public class StringHandler {
 	 *            sensitivity
 	 * @author thomas
 	 */
-	public static List getElementsIgnoreCase(String str, Collection allowedWords) {
-		List words = new ArrayList(allowedWords.size());
+	public static List<String> getElementsIgnoreCase(String str, Collection<String> allowedWords) {
+		List<String> words = new ArrayList<String>(allowedWords.size());
 		String string = str.toUpperCase();
-		Iterator iterator = allowedWords.iterator();
-		while (iterator.hasNext()) {
-			String word = (String) iterator.next();
+
+		for (Iterator<String> iterator = allowedWords.iterator(); iterator.hasNext();) {
+			String word = iterator.next();
 			words.add(word.toUpperCase());
 		}
 		return getElements(string, words);
@@ -677,9 +677,9 @@ public class StringHandler {
 	 *            of strings
 	 * @return string with added or increased counter if necessary
 	 */
-	public static String addOrIncreaseCounterIfNecessary(String string, String token, Collection collectionOfStrings) {
+	public static String addOrIncreaseCounterIfNecessary(String string, String token, Collection<String> collectionOfStrings) {
 		if (string == null) {
-			string = "";
+			string = CoreConstants.EMPTY;
 		}
 		if (collectionOfStrings == null) {
 			return string;
@@ -687,9 +687,8 @@ public class StringHandler {
 		boolean stop = false;
 		do {
 			stop = false;
-			Iterator iterator = collectionOfStrings.iterator();
-			while (stop == false && iterator.hasNext()) {
-				String name = (String) iterator.next();
+			for (Iterator<String> iterator = collectionOfStrings.iterator(); stop == false && iterator.hasNext();) {
+				String name = iterator.next();
 				if (string.equals(name)) {
 					string = addOrIncreaseCounter(string, token);
 					stop = true;
@@ -786,22 +785,22 @@ public class StringHandler {
 	 *            of allowed words in str else null
 	 * @author thomas
 	 */
-	public static List getElements(String string, Collection allowedWords) {
-		List result = new ArrayList();
+	public static List<String> getElements(String string, Collection<String> allowedWords) {
+		List<String> result = new ArrayList<String>();
 		// order of conditions
-		SortedSet orderedWords = new TreeSet(new Comparator() {
+		SortedSet<String> orderedWords = new TreeSet<String>(new Comparator<String>() {
 
 			@Override
-			public int compare(Object first, Object second) {
-				int firstLength = ((String) first).length();
-				int secondLength = ((String) second).length();
+			public int compare(String first, String second) {
+				int firstLength = first.length();
+				int secondLength = second.length();
 				if (firstLength < secondLength) {
 					return 1;
 				}
 				else if (firstLength > secondLength) {
 					return -1;
 				}
-				return ((Comparable) first).compareTo(second);
+				return first.compareTo(second);
 			}
 		});
 		orderedWords.addAll(allowedWords);
@@ -811,9 +810,8 @@ public class StringHandler {
 		int index = 0;
 		while (index < length && wordIsRecognized) {
 			wordIsRecognized = false;
-			Iterator wordIterator = orderedWords.iterator();
-			while (wordIterator.hasNext() && (!wordIsRecognized)) {
-				String tempWord = (String) wordIterator.next();
+			for (Iterator<String> wordIterator = orderedWords.iterator(); wordIterator.hasNext() && (!wordIsRecognized);) {
+				String tempWord = wordIterator.next();
 				if (stringWithoutWhiteSpace.startsWith(tempWord, index)) {
 					wordIsRecognized = true;
 					result.add(tempWord);
@@ -1015,7 +1013,7 @@ public class StringHandler {
 		String s2 = null;
 		String s3 = null;
 		String s4 = null;
-		List list = null;
+		List<String> list = null;
 		StringTokenizer st = new StringTokenizer(urlString, SLASH);
 		int index = 0;
 		while (st.hasMoreTokens()) {
@@ -1033,7 +1031,7 @@ public class StringHandler {
 				s4 = st.nextToken();
 			}
 			else if (index == 5) {
-				list = new ArrayList();
+				list = new ArrayList<String>();
 				list.add(s1);
 				list.add(s2);
 				list.add(s3);
@@ -1061,7 +1059,7 @@ public class StringHandler {
 			return theReturn;
 		}
 		else if (index > 4) {
-			String[] theReturn = (String[]) list.toArray(new String[0]);
+			String[] theReturn = list.toArray(new String[0]);
 			return theReturn;
 		}
 		return null;
