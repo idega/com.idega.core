@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -64,8 +65,12 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 
 		//	There is no bundle with specified bundleIdentifier and locale
 		List<MessageResource> resources = getUninitializedMessageResources();
+		if (ListUtil.isEmpty(resources))
+			return resources;
+
 		List<MessageResource> failedInitializationResources = new ArrayList<MessageResource>();
-		for (MessageResource resource: resources) {
+		List<MessageResource> localCopyOfResources = new ArrayList<MessageResource>(resources);
+		for (MessageResource resource: localCopyOfResources) {
 			try {
 				resource.initialize(bundleIdentifier, locale);
 			} catch (IOException e) {
@@ -76,13 +81,12 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			}
 		}
 
-		for (MessageResource resource: failedInitializationResources) {
-			resources.remove(resource);
-		}
+		for (MessageResource resource: failedInitializationResources)
+			localCopyOfResources.remove(resource);
 
-		bundleResources.put(locale, resources);
-		sortResourcesByImportance(resources);
-		return resources;
+		bundleResources.put(locale, localCopyOfResources);
+		sortResourcesByImportance(localCopyOfResources);
+		return localCopyOfResources;
 	}
 
 	@Override
