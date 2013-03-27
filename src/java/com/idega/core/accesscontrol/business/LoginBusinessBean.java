@@ -882,9 +882,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				locale = ICLocaleBusiness.getLocaleFromLocaleString(language.getISOAbbreviation());
 		} else
 			locale = ICLocaleBusiness.getLocaleFromLocaleString(preferredLocale);
-		if (locale == null || StringUtil.isEmpty(preferredLocale)) {
-			LOGGER.warning("Failed to get preffered locale from '" + preferredLocale + "'");
-		} else {
+		if (locale != null) {
 			LOGGER.info("Found preferred locale " + locale + " from '" + preferredLocale + "' for " + user + ", will set as default");
 			request.getSession().setAttribute(IWContext.LOCALE_ATTRIBUTE, locale);
 		}
