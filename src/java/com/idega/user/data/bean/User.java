@@ -53,6 +53,7 @@ import com.idega.util.StringUtil;
 	@NamedQuery(name = "user.findAllByPrimaryGroup", query = "select u from User u where u.primaryGroup = :primaryGroup and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID"),
 	@NamedQuery(name = "user.findByUniqueID", query = "select u from User u where u.uniqueId = :uniqueId"),
+	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName")
 })
 public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
@@ -190,6 +191,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
     @OneToMany(mappedBy = "pk.user")
     private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+
+    @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
+    private String sha1;
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -584,6 +588,14 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 			lastName = CoreConstants.SPACE.concat(lastName);
 		}
 		return firstName.concat(middleName).concat(lastName);
+	}
+
+	public String getSHA1() {
+		return sha1;
+	}
+
+	public void setSHA1(String sha1) {
+		this.sha1 = sha1;
 	}
 
 	@Override

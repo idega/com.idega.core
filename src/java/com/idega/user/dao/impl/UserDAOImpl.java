@@ -21,6 +21,7 @@ import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
+import com.idega.util.StringUtil;
 
 @Repository("userDAO")
 @Transactional(readOnly = true)
@@ -78,6 +79,11 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	}
 
 	@Override
+	public List<User> getUsersByLastName(String lastName) {
+		return getResultList("user.findByLastName", User.class, new Param("lastName", lastName));
+	}
+
+	@Override
 	public Email getUsersMainEmail(User user) {
 		return contactDAO.findEmailForUserByType(user, contactDAO.getMainEmailType());
 	}
@@ -114,5 +120,13 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	@Override
 	public Gender getFemaleGender() {
 		return getGender(Gender.NAME_FEMALE);
+	}
+
+	@Override
+	public User getUserBySHA1(String sha1) {
+		if (StringUtil.isEmpty(sha1))
+			return null;
+
+		return getSingleResultByInlineQuery("from " + User.class.getName() + " u where u.sha1 = :sha1", User.class, new Param("sha1", sha1));
 	}
 }

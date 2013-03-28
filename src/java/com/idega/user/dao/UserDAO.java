@@ -27,7 +27,11 @@ public interface UserDAO extends GenericDao {
 
 	public User getUserByUUID(String uniqueID);
 
+	public User getUserBySHA1(String sha1);
+
 	public List<User> getUsersByNames(String firstName, String middleName, String lastName);
+
+	public List<User> getUsersByLastName(String lastName);
 
 	public Email getUsersMainEmail(User user);
 
