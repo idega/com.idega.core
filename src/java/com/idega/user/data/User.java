@@ -3,12 +3,15 @@ package com.idega.user.data;
 import java.rmi.RemoteException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Iterator;
+import java.util.List;
 
 import javax.ejb.EJBException;
 
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
+import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
@@ -20,7 +23,7 @@ import com.idega.data.IDOReportableEntity;
 
 public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User, IDOReportableEntity
 {
- 
+
  public static final String FIELD_USER_ID = "IC_USER_ID";
  public static final String FIELD_FIRST_NAME = "FIRST_NAME";
  public static final String FIELD_MIDDLE_NAME = "MIDDLE_NAME";
@@ -38,94 +41,159 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public static final String FIELD_DELETED_WHEN = "DELETED_WHEN";
  public static final String USER_GROUP_TYPE="ic_user_representative";
  public static final String FIELD_JURIDICAL_PERSON = "juridical_person";
-  
-	
- public void setPrimaryGroupID(java.lang.Integer p0);
- public int getHomePageID();
- public void setDateOfBirth(java.sql.Date p0);
+
+ public static final String FIELD_SHA1 = "sha1",
+		 					FIELD_SHA1_INDEX = "IDX_IC_USER_SHA1";
+
+ @Override
+public void setPrimaryGroupID(java.lang.Integer p0);
+ @Override
+public int getHomePageID();
+ @Override
+public void setDateOfBirth(java.sql.Date p0);
  //public java.lang.String getNameLastFirst();
- public void setHomePageID(int p0);
- public java.util.Collection getEmails();
- public com.idega.core.builder.data.ICPage getHomePage();
- public java.util.Collection getPhones();
- public java.util.Collection getPhones(String phoneTypeID);
- public void setGender(java.lang.Integer p0);
+ @Override
+public void setHomePageID(int p0);
+ @Override
+public Collection<Email> getEmails();
+ @Override
+public com.idega.core.builder.data.ICPage getHomePage();
+ @Override
+public Collection<Phone> getPhones();
+ @Override
+public Collection<Phone> getPhones(String phoneTypeID);
+ @Override
+public void setGender(java.lang.Integer p0);
  public void addUser(com.idega.user.data.User p0);
- public void setFirstName(java.lang.String p0);
- public void addGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
- public com.idega.core.data.ICTreeNode getChildAtIndex(int p0);
- public void setGender(int p0);
- public void setCreated(java.sql.Timestamp p0);
- public java.sql.Date getDateOfBirth();
- public java.lang.String getFirstName();
+ @Override
+public void setFirstName(java.lang.String p0);
+ @Override
+public void addGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
+ @Override
+public <U extends ICTreeNode> U getChildAtIndex(int p0);
+ @Override
+public void setGender(int p0);
+ @Override
+public void setCreated(java.sql.Timestamp p0);
+ @Override
+public java.sql.Date getDateOfBirth();
+ @Override
+public java.lang.String getFirstName();
  public void removeAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDORemoveRelationshipException;
- public int getSystemImageID();
- public int getIndex(com.idega.core.data.ICTreeNode p0);
- public void setSystemImageID(java.lang.Integer p0);
- public void setLastName(java.lang.String p0);
- public void setGroupType(java.lang.String p0);
- public int getNodeID();
- public int getPrimaryGroupID();
- public void setExtraInfo(java.lang.String p0);
- public int getChildCount();
- public void addEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
- public boolean isLeaf();
+ @Override
+public int getSystemImageID();
+ @Override
+public int getIndex(com.idega.core.data.ICTreeNode p0);
+ @Override
+public void setSystemImageID(java.lang.Integer p0);
+ @Override
+public void setLastName(java.lang.String p0);
+ @Override
+public void setGroupType(java.lang.String p0);
+ @Override
+public int getNodeID();
+ @Override
+public int getPrimaryGroupID();
+ @Override
+public void setExtraInfo(java.lang.String p0);
+ @Override
+public int getChildCount();
+ @Override
+public void addEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDOAddRelationshipException;
+ @Override
+public boolean isLeaf();
  public void setFullName(java.lang.String p0);
  public void removeEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDORemoveRelationshipException;
- public java.util.List getListOfAllGroupsContaining(int p0)throws javax.ejb.EJBException;
- public java.util.Iterator getChildrenIterator();
- public java.util.Collection getAddresses();
- public boolean isUser();
- public java.lang.String getGroupType();
- public java.lang.String getName();
- public java.lang.String getExtraInfo();
- public java.lang.String getPersonalID();
- public void setPersonalID(java.lang.String p0);
- public void setPrimaryGroupID(int p0);
- public java.lang.String getNodeName();
- public void setHomePageID(java.lang.Integer p0);
- public void setSystemImageID(int p0);
+ public List<Group> getListOfAllGroupsContaining(int p0)throws javax.ejb.EJBException;
+ @Override
+public <U extends ICTreeNode> Iterator<U> getChildrenIterator();
+ public Collection<Address> getAddresses();
+ @Override
+public boolean isUser();
+ @Override
+public java.lang.String getGroupType();
+ @Override
+public java.lang.String getName();
+ @Override
+public java.lang.String getExtraInfo();
+ @Override
+public java.lang.String getPersonalID();
+ @Override
+public void setPersonalID(java.lang.String p0);
+ @Override
+public void setPrimaryGroupID(int p0);
+ @Override
+public java.lang.String getNodeName();
+ @Override
+public void setHomePageID(java.lang.Integer p0);
+ @Override
+public void setSystemImageID(int p0);
  public void removeGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
- public java.util.List getParentGroups();
- public java.util.Collection getAllGroupsContainingUser(com.idega.user.data.User p0)throws javax.ejb.EJBException;
- public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
- public java.lang.String getLastName();
- public int getGroupID();
- public java.lang.String getGroupTypeKey();
- public void addAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
- public void setDescription(java.lang.String p0);
- public void setDisplayName(java.lang.String p0);
- public void addGroup(int p0)throws javax.ejb.EJBException;
+ @Override
+public List<Group> getParentGroups();
+ @Override
+public Collection<Group> getAllGroupsContainingUser(com.idega.user.data.User p0)throws javax.ejb.EJBException;
+ @Override
+public List<Group> getChildGroups(java.lang.String[] p0,boolean p1)throws javax.ejb.EJBException;
+ @Override
+public java.lang.String getLastName();
+ @Override
+public int getGroupID();
+ @Override
+public java.lang.String getGroupTypeKey();
+ @Override
+public void addAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDOAddRelationshipException;
+ @Override
+public void setDescription(java.lang.String p0);
+ @Override
+public void setDisplayName(java.lang.String p0);
+ @Override
+public void addGroup(int p0)throws javax.ejb.EJBException;
  public void removeGroup(int p0,boolean p1)throws javax.ejb.EJBException;
  public void removeGroup()throws javax.ejb.EJBException;
- public java.util.List getChildGroups()throws javax.ejb.EJBException;
+ @Override
+public List<Group> getChildGroups()throws javax.ejb.EJBException;
  public com.idega.user.data.Group getUserGroup();
- public com.idega.core.data.ICTreeNode getParentNode();
- public java.lang.String getDisplayName();
+ @Override
+public <U extends ICTreeNode> U getParentNode();
+ @Override
+public java.lang.String getDisplayName();
  public void removeUser(com.idega.user.data.User p0);
  public com.idega.user.data.Group getGroup();
- public boolean getAllowsChildren();
- public java.lang.String getGroupTypeDescription();
- public java.lang.String getDescription();
- public int getGenderID();
+ @Override
+public boolean getAllowsChildren();
+ @Override
+public java.lang.String getGroupTypeDescription();
+ @Override
+public java.lang.String getDescription();
+ @Override
+public int getGenderID();
  public com.idega.user.data.Gender getGender();
  public com.idega.user.data.Group getPrimaryGroup();
- public java.sql.Timestamp getCreated();
- public void setHomePage(com.idega.core.builder.data.ICPage p0);
+ @Override
+public java.sql.Timestamp getCreated();
+ @Override
+public void setHomePage(com.idega.core.builder.data.ICPage p0);
  public void removeAllAddresses()throws com.idega.data.IDORemoveRelationshipException;
- public void addPhone(com.idega.core.contact.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
+ @Override
+public void addPhone(com.idega.core.contact.data.Phone p0)throws com.idega.data.IDOAddRelationshipException;
  public void initializeAttributes();
  public boolean getGroupTypeVisibility();
- public void setGroupID(int p0);
+ @Override
+public void setGroupID(int p0);
  public void removePhone(com.idega.core.contact.data.Phone p0)throws com.idega.data.IDORemoveRelationshipException;
- public java.lang.String getMiddleName();
- public void setMiddleName(java.lang.String p0);
+ @Override
+public java.lang.String getMiddleName();
+ @Override
+public void setMiddleName(java.lang.String p0);
  //public java.lang.String getNameLastFirst(boolean p0);
  public void removeAllEmails()throws com.idega.data.IDORemoveRelationshipException;
  public void removeAllPhones()throws com.idega.data.IDORemoveRelationshipException;
  public void setPrimaryGroup(com.idega.user.data.Group p0);
- public java.lang.String getGroupTypeValue();
- public java.lang.String getIDColumnName();
+ @Override
+public java.lang.String getGroupTypeValue();
+ @Override
+public java.lang.String getIDColumnName();
  public boolean getDeleted();
  public void setDeleted(boolean isDeleted);
  public int getDeletedBy();
@@ -144,7 +212,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setPreferredRole(ICRole preferredRole);
  public String getPreferredLocale();
  public ICRole getPreferredRole();
- public void setUserProperties(ICFile file);	
+ public void setUserProperties(ICFile file);
  public ICFile getUserProperties();
  public Address getUsersMainAddress() throws EJBException, RemoteException ;
  public Phone getUsersHomePhone() throws EJBException, RemoteException ;
@@ -162,5 +230,8 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public String getResume();
  public Collection<ICLanguage> getLanguages() throws IDORelationshipException;
  public void addLanguage(ICLanguage language) throws IDOAddRelationshipException;
- public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException ;
+ public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException;
+
+ public String getSHA1();
+ public void setSHA1(String sha1);
 }

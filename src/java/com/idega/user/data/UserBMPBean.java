@@ -123,13 +123,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	addAttribute(User.FIELD_JURIDICAL_PERSON, "Juridical person", true, true, Boolean.class);
     	addAttribute(COLUMN_RESUME, "Resume", true, true, java.lang.String.class, 2048);
     	addAttribute(COLUMN_LAST_READ_FROM_IMPORT, "Last read from national import", Timestamp.class);
+    	addAttribute(User.FIELD_SHA1, "SHA1", true, true, String.class, 40);
     	addManyToManyRelationShip(ICLanguage.class, COLUMN_LANGUAGES);
 
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
 		this.setNullable(COLUMN_NAME_USER_PROPERTIES_FILE_ID, true);
 
-	//adds a unique id string column to this entity that is set when the entity is first stored.
-	addUniqueIDColumn();
+		//adds a unique id string column to this entity that is set when the entity is first stored.
+		addUniqueIDColumn();
 
 		addManyToOneRelationship(getColumnNameGender(), "Gender", com.idega.user.data.Gender.class);
 		addOneToOneRelationship(getColumnNameSystemImage(), "Image", com.idega.core.file.data.ICFile.class);
@@ -143,22 +144,22 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		this.addManyToManyRelationShip(Phone.class, SQL_RELATION_PHONE);
 		this.addManyToManyRelationShip(Email.class, SQL_RELATION_EMAIL);
 		this.setNullable(getColumnNameSystemImage(), true);
-    addMetaDataRelationship();
+		addMetaDataRelationship();
 		//      this.setNullable(_COLUMNNAME_PRIMARY_GROUP_ID,true);
 		// this.setUnique(getColumnNamePersonalID(),true);
 
-    //Added by Laddi 17.10.2003
-    addManyToOneRelationship(getColumnNameNativeLanguage(), ICLanguage.class);
+	    //Added by Laddi 17.10.2003
+	    addManyToOneRelationship(getColumnNameNativeLanguage(), ICLanguage.class);
 
-    addIndex("IDX_IC_USER_1", new String[]{getColumnNameLastName(), getColumnNameFirstName(), getColumnNameMiddleName()});
-    addIndex("IDX_IC_USER_2", new String[]{getColumnNameFirstName(), getColumnNameLastName(), getColumnNameMiddleName()});
-    addIndex("IDX_IC_USER_3", getColumnNameFirstName());
-    addIndex("IDX_IC_USER_4", getColumnNamePersonalID());
-    addIndex("IDX_IC_USER_5", _COLUMNNAME_USER_GROUP_ID);
-    addIndex("IDX_IC_USER_6", getUniqueIdColumnName());
+	    addIndex("IDX_IC_USER_1", new String[]{getColumnNameLastName(), getColumnNameFirstName(), getColumnNameMiddleName()});
+	    addIndex("IDX_IC_USER_2", new String[]{getColumnNameFirstName(), getColumnNameLastName(), getColumnNameMiddleName()});
+	    addIndex("IDX_IC_USER_3", getColumnNameFirstName());
+	    addIndex("IDX_IC_USER_4", getColumnNamePersonalID());
+	    addIndex("IDX_IC_USER_5", _COLUMNNAME_USER_GROUP_ID);
+	    addIndex("IDX_IC_USER_6", getUniqueIdColumnName());
+	    addIndex(User.FIELD_SHA1_INDEX, User.FIELD_SHA1);
 
     	getEntityDefinition().setBeanCachingActiveByDefault(true);
-
 	}
 
     @Override
@@ -921,20 +922,18 @@ public void setHomePageURL(String homePageURL)  {
 	}
 
 	@Override
-	public Collection getAddresses() {
+	public Collection<Address> getAddresses() {
 		try {
-		    Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
-
-		   return addresses;
-		}
-		catch (Exception e) {
+			Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
+			return addresses;
+		} catch (Exception e) {
 			e.printStackTrace();
 			throw new RuntimeException("Error in getAddresses() : " + e.getMessage());
 		}
 	}
 
 	@Override
-	public Collection getEmails() {
+	public Collection<Email> getEmails() {
 		try {
 			return super.idoGetRelatedEntities(Email.class);
 		}
@@ -945,7 +944,7 @@ public void setHomePageURL(String homePageURL)  {
 	}
 
 	@Override
-	public Collection getPhones() {
+	public Collection<Phone> getPhones() {
 		try {
 			return super.idoGetRelatedEntities(Phone.class);
 		}
@@ -956,7 +955,7 @@ public void setHomePageURL(String homePageURL)  {
 	}
 
 	@Override
-	public Collection getPhones(String phoneTypeID) {
+	public Collection<Phone> getPhones(String phoneTypeID) {
 		try {
 			return super.idoGetRelatedEntities(Phone.class, PhoneBMPBean.getColumnNamePhoneTypeId(), phoneTypeID);
 		}
@@ -1079,7 +1078,7 @@ public void delete(int userId) throws SQLException {
    * @return Collection
    * @throws FinderException
    */
-	public Collection ejbFindAllUsers() throws FinderException {
+	public Collection<User> ejbFindAllUsers() throws FinderException {
     // use where not because DELETED = NULL means also not deleted
     // select * from ic_user where deleted != 'Y'
 		SelectQuery query = idoSelectQuery();
@@ -1095,7 +1094,7 @@ public void delete(int userId) throws SQLException {
    * @return Collection
    * @throws FinderException
    */
-	public Collection ejbFindNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException {
+	public Collection<Integer> ejbFindNewestUsers(int returningNumberOfRecords, int startingRecord) throws FinderException {
     // use where not because DELETED = NULL means also not deleted
     // select * from ic_user where deleted != 'Y'
 	    IDOQuery query = idoQueryGetSelect();
@@ -1103,7 +1102,6 @@ public void delete(int userId) throws SQLException {
 	    appendIsNotDeleted(query);
 	    query.appendOrderByDescending(getIDColumnName());
 	    return idoFindPKsBySQL(query.toString(), returningNumberOfRecords, startingRecord);
-
 	}
 
 
@@ -3082,6 +3080,16 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public String getResume() {
 		return getStringColumnValue(COLUMN_RESUME);
+	}
+
+	@Override
+	public String getSHA1() {
+		return getStringColumnValue(User.FIELD_SHA1);
+	}
+
+	@Override
+	public void setSHA1(String sha1) {
+		setColumn(User.FIELD_SHA1, sha1);
 	}
 
 	@Override
