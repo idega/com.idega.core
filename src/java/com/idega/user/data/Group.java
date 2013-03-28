@@ -412,13 +412,13 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getChildrenIterator
 	 */
 	@Override
-	public Iterator<Group> getChildrenIterator();
+	public <G extends ICTreeNode> Iterator<G> getChildrenIterator();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildren
 	 */
 	@Override
-	public Collection<Group> getChildren();
+	public <G extends ICTreeNode> Collection<G> getChildren();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAllowsChildren
@@ -430,7 +430,7 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getChildAtIndex
 	 */
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex);
+	public <G extends ICTreeNode> G getChildAtIndex(int childIndex);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildCount
@@ -448,7 +448,7 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getParentNode
 	 */
 	@Override
-	public ICTreeNode getParentNode();
+	public <G extends ICTreeNode> G getParentNode();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#isLeaf

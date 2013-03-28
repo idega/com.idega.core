@@ -2204,7 +2204,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		Statement Stmt = null;
 		int[] toReturn = null;
 		int length;
-		Vector vector = new Vector();
+		List<Integer> ids = new ArrayList<Integer>();
 		/*
 		 * String tableToSelectFrom = ""; if (entity.getEntityName().endsWith("_")) {
 		 * tableToSelectFrom = entity.getEntityName() + this.getEntityName(); } else {
@@ -2217,8 +2217,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 			length = 0;
 			while (RS.next()) {
 				try {
-					vector.addElement(RS.getObject(entity.getIDColumnName()));
-					length++;
+					Object result = RS.getObject(entity.getIDColumnName());
+					if (result instanceof Number) {
+						ids.add(((Number) result).intValue());
+						length++;
+					}
 				}
 				catch (Exception ex) {
 					System.err.println("There was an error in com.idega.data.GenericEntity.findRelatedIDs(IDOLegacyEntity entity,String SQLString): " + ex.getMessage());
@@ -2236,14 +2239,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		}
 		if (length > 0) {
 			toReturn = new int[length];
-			Iterator iter = vector.iterator();
 			int index = 0;
-			while (iter.hasNext()) {
-				Integer item = (Integer) iter.next();
+			for (Iterator<Integer> iter = ids.iterator(); iter.hasNext();) {
+				Integer item = iter.next();
 				toReturn[index++] = item.intValue();
 			}
-		}
-		else {
+		} else {
 			toReturn = new int[0];
 		}
 		return toReturn;
@@ -4116,11 +4117,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @deprecated replacced with idoFindPKsBySQL
 	 */
 	@Deprecated
-	protected Collection idoFindIDsBySQL(String sqlQuery) throws FinderException {
+	protected Collection<Object> idoFindIDsBySQL(String sqlQuery) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery);
 	}
 
-	protected Collection idoFindPKsBySQL(String sqlQuery) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsBySQL(String sqlQuery) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, -1, -1);
 	}
 
@@ -4140,7 +4141,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @return
 	 * @throws FinderException
 	 */
-	protected Collection idoFindPKsByQueryUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsByQueryUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize) throws FinderException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -4195,11 +4196,11 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		return new IDOPrimaryKeyList(sqlQuery, this, returnProxy, proxyQueryConstraints, prefetchSize);
 	}
 
-	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
+	protected Collection<Object> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry) throws FinderException {
 		return idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumber, startingEntry, null);
 	}
 
-	protected Collection idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query) throws FinderException {
+	protected Collection<Object> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query) throws FinderException {
 
 		// if (this.isDebugActive()) {
 		logSQL(sqlQuery);
@@ -4216,7 +4217,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 		// ResultSet rs = null;
 		ResultHelper rsh = null;
 
-		Vector vector = new Vector();
+		List<Object> primaryKeys = new ArrayList<Object>();
 		try {
 
 			conn = getConnection(getDatasource());
@@ -4241,7 +4242,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 						Object pk = this.getPrimaryKeyFromResultSet(rsh.rs);
 						if (pk != null) {
 							// prefetchBeanFromResultSet(pk, RS);
-							vector.addElement(pk);
+							primaryKeys.add(pk);
 						}
 					}
 				}
@@ -4260,7 +4261,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				freeConnection(getDatasource(), conn);
 			}
 		}
-		return vector;
+		return primaryKeys;
 	}
 
 	protected class ResultHelper {
@@ -4321,7 +4322,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
 		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass, getDatasource());
 		return idoGetRelatedEntitiesBySQL(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
 		/*
@@ -4397,7 +4398,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Returns a collection of returningEntity instances
 	 */
-	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass, String columnName, String entityColumnValue) throws IDOException {
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(Class returningEntityInterfaceClass, String columnName, String entityColumnValue) throws IDOException {
 		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
 		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
@@ -4455,29 +4456,24 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	private Collection idoGetRelatedEntitiesBySQL(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
-		Vector vector = new Vector();
+	private <T extends IDOEntity> Collection<T> idoGetRelatedEntitiesBySQL(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
+		List<T> entities = new ArrayList<T>();
 		Collection ids = idoGetRelatedEntityPKs(returningEntity, sqlQuery);
-		Iterator iter = ids.iterator();
 		try {
 			IDOHome home = IDOLookup.getHome(returningEntity.getClass(), getDatasource());
-			// IDOHome home =
-			// (IDOHome)returningEntity.getEJBLocalHome(this.getDatasource());
-			while (iter.hasNext()) {
+			for (Iterator iter = ids.iterator(); iter.hasNext();) {
 				try {
 					Object pk = iter.next();
-					IDOEntity entityToAdd = home.findByPrimaryKeyIDO(pk);
-					vector.addElement(entityToAdd);
-				}
-				catch (Exception e) {
+					T entityToAdd = home.findByPrimaryKeyIDO(pk);
+					entities.add(entityToAdd);
+				} catch (Exception e) {
 					throw new EJBException(e.getMessage());
 				}
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			throw new IDORelationshipException("Error in idoGetRelatedEntities()" + e.getMessage());
 		}
-		return vector;
+		return entities;
 	}
 
 	protected Collection idoGetRelatedEntityPKs(Class returningEntityInterfaceClass) throws IDORelationshipException {
@@ -4506,10 +4502,10 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Returns a collection of returningEntity primary keys
 	 */
-	private Collection idoGetRelatedEntityPKs(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
+	private Collection<Object> idoGetRelatedEntityPKs(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
 		Connection conn = null;
 		Statement Stmt = null;
-		Vector vector = new Vector();
+		List<Object> primaryKeys = new ArrayList<Object>();
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
@@ -4520,14 +4516,12 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				// Integer pk = (Integer)RS.getObject(legacyEntity.getIDColumnName());
 				// IDOEntity entityToAdd = home.idoFindByPrimaryKey(pk);
 				// vector.addElement(entityToAdd);
-				vector.add(pk);
+				primaryKeys.add(pk);
 			}
 			RS.close();
-		}
-		catch (Exception sqle) {
+		} catch (Exception sqle) {
 			throw new IDORelationshipException(sqle, this);
-		}
-		finally {
+		} finally {
 			if (Stmt != null) {
 				try {
 					Stmt.close();
@@ -4540,7 +4534,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				freeConnection(getDatasource(), conn);
 			}
 		}
-		return vector;
+		return primaryKeys;
 	}
 
 	protected Collection idoFindAllIDsOrderedBySQL(String oderByColumnName) throws FinderException {
@@ -4562,7 +4556,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * Finds one primary key by an SQL query
 	 */
 	private Object idoFindOnePKBySQL(String sqlQuery, SelectQuery selectQuery) throws FinderException {
-		Collection coll = idoFindPKsBySQL(sqlQuery, 1, -1, selectQuery);
+		Collection<Object> coll = idoFindPKsBySQL(sqlQuery, 1, -1, selectQuery);
 		try {
 			if (!coll.isEmpty()) {
 				return coll.iterator().next();
@@ -4577,18 +4571,18 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	/**
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
-	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, returningNumberOfRecords, -1);
 	}
 
-	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, returningNumberOfRecords, startingEntry, null);
 	}
 
 	/**
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
-	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry, SelectQuery selectQuery) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry, SelectQuery selectQuery) throws FinderException {
 		Collection pkColl = null;
 		Class interfaceClass = this.getInterfaceClass();
 		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
@@ -4613,14 +4607,14 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @deprecated replaced with idoFindPKsBySQL
 	 */
 	@Deprecated
-	protected Collection idoFindIDsBySQL(String SQLString, int returningNumberOfRecords) throws FinderException {
+	protected Collection<Object> idoFindIDsBySQL(String SQLString, int returningNumberOfRecords) throws FinderException {
 		return idoFindPKsBySQL(SQLString, returningNumberOfRecords);
 	}
 
 	/**
 	 * @todo use selectquery in all ido find methods
 	 */
-	protected Collection idoFindAllIDsByColumnBySQL(String columnName, String toFind) throws FinderException {
+	protected Collection<Object> idoFindAllIDsByColumnBySQL(String columnName, String toFind) throws FinderException {
 		return idoFindIDsBySQL("select " + getIDColumnName() + " from " + getTableName() + " where " + columnName + "='" + toFind + "'");
 	}
 
@@ -4641,7 +4635,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @return all collection of primary keys of the current genericentity
 	 * @throws FinderException
 	 */
-	protected Collection idoFindPKsByMetaData(String key, String value) throws FinderException {
+	protected Collection<Object> idoFindPKsByMetaData(String key, String value) throws FinderException {
 		MetaData metadata = (MetaData) getStaticInstance(MetaData.class);
 		final String middleTableName = getNameOfMiddleTable(metadata, this);
 		final String tableToSelectFrom = getEntityName();
@@ -5284,7 +5278,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities) throws FinderException {
 		return idoFindPKsByQuery(query, returningNumberOfEntities, -1);
 	}
 
@@ -5297,7 +5291,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities) throws FinderException {
 		return idoFindPKsByQuery(query, returningNumberOfEntities, -1);
 	}
 
@@ -5310,7 +5304,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry, null);
 	}
 
@@ -5323,7 +5317,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
+	protected <T extends Object> Collection<T> idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry, query);
 	}
 
