@@ -156,15 +156,16 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		try {
 			this.properties = new SortedProperties();
 			this.properties.load(streamForRead);
-		}
-		catch (FileNotFoundException e) {
+		} catch (FileNotFoundException e) {
 			// System.err.println("IWResourceBundle: File Not
 			// Found:"+file.getAbsolutePath());
 		}
 
-		this.lookup = new TreeMap<String, String>();
-		for (Entry<Object, Object> entry: this.properties.entrySet()) {
-			lookup.put(entry.getKey().toString(), entry.getValue().toString());
+		synchronized (this) {
+			this.lookup = new TreeMap<String, String>();
+			for (Entry<Object, Object> entry: this.properties.entrySet()) {
+				lookup.put(entry.getKey().toString(), entry.getValue().toString());
+			}
 		}
 
 		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
