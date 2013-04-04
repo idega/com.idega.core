@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.CoreConstants;
 import com.idega.util.expression.ELUtil;
 
 public class IWHttpSessionEventListener implements HttpSessionListener {
@@ -38,7 +39,7 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 					//	Redirect
 					ScriptCallerInterface scriptCaller = getScriptCaller();
 					if (scriptCaller != null) {
-						scriptCaller.setScript("window.location.pathname = '/pages/';");
+						scriptCaller.setScript("window.location.pathname = '" + CoreConstants.PAGES_URI_PREFIX + "';");
 						scriptCaller.setSessionId(destroyedSession.getId());
 						scriptCaller.run();
 					}

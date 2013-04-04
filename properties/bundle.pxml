@@ -7,11 +7,6 @@
       <value>com.idega.core</value>
     </key>
     <key>
-      <name>iw_bundle_starter_class</name>
-      <type>java.lang.String</type>
-      <value>com.idega.event.IWSessionsDaemon</value>
-    </key>
-    <key>
       <name>iw_components</name>
       <value>
         <map>
