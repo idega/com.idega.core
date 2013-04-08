@@ -43,6 +43,11 @@ public enum JQueryUIType {
 			return "ui.draggable.js";
 		}
 	},
+	UI_SORTABLE {
+		public String getFileName() {
+			return "ui.sortable.js";
+		}
+	},
 	UI_DROPPABLE {
 		public String getFileName() {
 			return "ui.droppable.js";
