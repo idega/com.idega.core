@@ -208,10 +208,8 @@ public class IWMainApplicationSettings implements MutableClass {
 		String value = getProperty(key);
 		if (value != null) {
 			return Boolean.valueOf(value).booleanValue();
-		}
-		else {
+		} else {
 			setProperty(key, Boolean.toString(defaultValue));
-
 			return defaultValue;
 		}
 	}
@@ -219,6 +217,13 @@ public class IWMainApplicationSettings implements MutableClass {
 	public boolean getBoolean(String key) {
 		String value = getProperty(key);
 		return Boolean.valueOf(value).booleanValue();
+	}
+
+	public int getInt(String key, int defaultValue) {
+		String value = getProperty(key, String.valueOf(defaultValue));
+		if (StringHandler.isNumeric(value))
+			return Integer.valueOf(value);
+		return -1;
 	}
 
 	public void setProperty(String key, String value) {
