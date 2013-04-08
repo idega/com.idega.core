@@ -22,9 +22,19 @@ import com.idega.presentation.PresentationObject;
  */
 public class DownloadLink extends Link {
     
+	private boolean encryptClasses = true;
+	
     private Class writerClass = null;
     
-    /**
+    public boolean isEncryptClasses() {
+		return encryptClasses;
+	}
+
+	public void setEncryptClasses(boolean encryptClasses) {
+		this.encryptClasses = encryptClasses;
+	}
+
+	/**
      * 
      */
     public DownloadLink() {
@@ -105,11 +115,13 @@ public class DownloadLink extends Link {
     public void main(IWContext iwc)throws Exception{
         super.main(iwc);
         setURL(iwc.getIWMainApplication().getMediaServletURI());
-        if(this.writerClass!=null){
-            addParameter(MediaWritable.PRM_WRITABLE_CLASS, IWMainApplication.getEncryptedClassName(this.writerClass));
+        if (this.writerClass != null) {
+            addParameter(MediaWritable.PRM_WRITABLE_CLASS, isEncryptClasses() ?
+            		IWMainApplication.getEncryptedClassName(this.writerClass) :
+            		this.writerClass.getName()
+            );
         }
     }
-    
     
     public void setRelativeFilePath(String relativeFilePath){
     		addParameter(DownloadWriter.PRM_RELATIVE_FILE_PATH,relativeFilePath);
