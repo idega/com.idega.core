@@ -290,6 +290,7 @@ public static String getFileSeparator(){
 
 	      out.flush();
 	      out.close();
+
       } finally {
     	  if (closeInputStream) {
     		  IOUtil.close(input);

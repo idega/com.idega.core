@@ -128,7 +128,6 @@ public abstract class BaseFilter implements Filter, MutableClass {
 	
 	protected String getURIMinusContextPath(HttpServletRequest request) {
 		return RequestUtil.getURIMinusContextPath(request);
-		
 	}
 
 	

@@ -16,6 +16,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -42,6 +43,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.RequestUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.resources.ResourcesAdder;
@@ -69,7 +71,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	protected boolean feedFromJarFiles = IWMainApplication.loadBundlesFromJars;
 	protected String sBundlesDirectory;
 
-	protected List<String> flushedResources = new ArrayList<String>();
+	protected List<String> flushedResources = Collections.synchronizedList(new ArrayList<String>());
 	public static String BUNDLES_STANDARD_DIR = "/idegaweb/bundles/";
 	static String BUNDLE_SUFFIX = DefaultIWBundle.BUNDLE_FOLDER_STANDARD_SUFFIX;
 
@@ -129,6 +131,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 				}
 			}
 			if (feedFromJarFiles || !fileExists) {
+
 				if (requestUriWithoutContextPath.startsWith(BUNDLES_STANDARD_DIR)) {
 					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
 					//THIS IS VERY SIMPLE CACHING that invalidates on restart
@@ -143,7 +146,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 							log.log(Level.FINE, "Flushed file to webapp : "+requestUriWithoutContextPath);
 							return;
 						}
-
 					}catch (Exception e) {
 						log.log(Level.WARNING, "Error serving file from jar : "+ requestUriWithoutContextPath, e);
 					}
@@ -570,5 +572,16 @@ public class IWBundleResourceFilter extends BaseFilter {
 			fileInWorkspace = new File(sFileInWorkspace);
 		}
 		return fileInWorkspace;
+	}
+	
+
+	@Override
+	protected String getURIMinusContextPath(HttpServletRequest request) {
+		String uriMinusContextPath = RequestUtil.getURIMinusContextPath(request);
+		if (uriMinusContextPath != null && uriMinusContextPath.lastIndexOf("?") > 0) {
+			return uriMinusContextPath.substring(0, uriMinusContextPath.lastIndexOf("?"));
+		} else {
+			return uriMinusContextPath;
+		}
 	}
 }
