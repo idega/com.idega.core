@@ -24,7 +24,7 @@ import java.util.regex.Pattern;
 
 /**
  * @author tryggvil
- * 
+ *
  * A class to merge files from many similar sources to a single file. e.g. to merge web.xml files from many sources into one.<br>
  * The file generates markers around what it merges and can use that to re-merge if changes occur.<br>
  * The merged file will look something like this:<br>
@@ -35,7 +35,7 @@ import java.util.regex.Pattern;
  *	<somexmltag>... </somexmltag>
  * <!-- MODULE:END com.idega.core 1.0 -->
  * </rootxml>
- * 
+ *
  */
 public class ModuleFileMerger {
 
@@ -45,12 +45,12 @@ public class ModuleFileMerger {
 	private File outputFile;
 	private String rootXMLElement="web-app";
 	//Sources of input Files:
-	private List sources;
-	private Map moduleMap;
+	private List<ModuleFile> sources;
+	private Map<String, ModuleFile> moduleMap;
 	private String fileHeader;
 	private boolean removeOlderModules=true;
 	private String initalRootContents=null;
-	
+
 	/**
 	 * @return Returns the rootXMLElement.
 	 */
@@ -77,7 +77,7 @@ public class ModuleFileMerger {
 			setInput(new FileReader(inputFile));
 		} catch (IOException e) {
 			e.printStackTrace();
-		}		
+		}
 		this.inputFile = inputFile;
 	}
 	/**
@@ -113,27 +113,29 @@ public class ModuleFileMerger {
 	/**
 	 * @return Returns the sources.
 	 */
-	public List getMergeInSources() {
+	public List<ModuleFile> getMergeInSources() {
 		if(this.sources==null){
-			this.sources = new ArrayList();
+			this.sources = new ArrayList<ModuleFile>();
 		}
 		return this.sources;
 	}
 	/**
 	 * @param sources The sources to set.
 	 */
-	public void setMergeInSources(List sources) {
+	public void setMergeInSources(List<ModuleFile> sources) {
 		this.sources = sources;
 	}
-	
+
 	public void addMergeInSourceFile(File sourceFile,String moduleIdentifier){
-		getMergeInSources().add(new ModuleFile(getRootXMLElement(),sourceFile,moduleIdentifier));
+		if (sourceFile != null && sourceFile.exists())
+			getMergeInSources().add(new ModuleFile(getRootXMLElement(),sourceFile,moduleIdentifier));
 	}
-	
+
 	public void addMergeInSourceFile(File sourceFile,String moduleIdentifier,String moduleVersion){
-		getMergeInSources().add(new ModuleFile(this.getRootXMLElement(),sourceFile,moduleIdentifier,moduleVersion));
+		if (sourceFile != null && sourceFile.exists())
+			getMergeInSources().add(new ModuleFile(this.getRootXMLElement(),sourceFile,moduleIdentifier,moduleVersion));
 	}
-	
+
 	/**
 	 * Read the contents of the Reader to a StringBuffer
 	 * @param reader a reader (from file e.g.)
@@ -165,7 +167,7 @@ public class ModuleFileMerger {
 		preProcess();
 		processFileMerge();
 	}
-	
+
 	/**
 	 * <p>
 	 * Does all processing before processFileMerge() is called.
@@ -175,7 +177,7 @@ public class ModuleFileMerger {
 	protected void preProcess(){
 		buildMapfromModules();
 	}
-	
+
 	/**
 	 * Execute the processing. Read the input files, search/replace and write to the output.
 	 * This method should be called last, after all set methods are called.
@@ -183,7 +185,7 @@ public class ModuleFileMerger {
 	protected void processFileMerge(){
 		StringBuffer outString = new StringBuffer();
 		StringBuffer inString = new StringBuffer();
-		
+
 		Reader reader = getInput();
 		if(reader!=null){
 			inString = readIntoBuffer(reader);
@@ -196,48 +198,47 @@ public class ModuleFileMerger {
 			}
 			outString.append("<"+getRootXMLElement()+">\n");
 		}
-		
-		
+
+
 		String initialRootContents = getInitalRootContents();
 		if(initialRootContents!=null){
 			outString.append(initialRootContents+"\n");
 		}
-		
-		
-		Iterator moduleIter = getMergeInSources().iterator();
-		while (moduleIter.hasNext()) {
-			ModuleFile module = (ModuleFile)moduleIter.next();
+
+
+		for (Iterator<ModuleFile> moduleIter = getMergeInSources().iterator(); moduleIter.hasNext();) {
+			ModuleFile module = moduleIter.next();
 			//Not include the module part again
 			if(!module.isHasBeenProcessed()){
 				appendModulePartWithComments(module,outString);
 			}
-			
+
 			//replaceBuffer=new StringBuffer(outString.toString());
 		}
 		outString.append("\n</"+getRootXMLElement()+">");
-		
+
 		PrintWriter out = new PrintWriter(getOutput());
 		out.write(outString.toString());
 		out.close();
 	}
-	
+
 	protected void appendModulePartWithComments(ModuleFile module,StringBuffer outString){
 		String moduleId = module.getModuleIdentifier();
 		String moduleVersion = module.getModuleVersion();
 		//File inputFile = module.getSourcefile();
-		
+
 		String modulePartBegin = "<!-- MODULE:BEGIN "+moduleId+" "+moduleVersion+" -->\n";
 		String modulePartEnd = "<!-- MODULE:END "+moduleId+" "+moduleVersion+" -->\n";
-		
+
 		String moduleContents = module.getContentsWithinRootElement();
-		
+
 		outString.append(modulePartBegin);
 		outString.append(moduleContents);
 		outString.append(modulePartEnd);
-		
+
 		module.setHasBeenProcessed(true);
 	}
-	
+
 	/**
 	 * Process contents in the out source file (already existing and older module tags)
 	 * @param inString
@@ -252,7 +253,7 @@ public class ModuleFileMerger {
 		//StringBuffer remainder = new StringBuffer();
 		//remainder.append(inString);
 		StringBuffer remainder = null;
-		
+
 		while (moduleBeginMatcher.find()) {
 			// this pattern matches.
 			String moduleId = moduleBeginMatcher.group(1);
@@ -260,18 +261,18 @@ public class ModuleFileMerger {
 			StringBuffer oldModuleContents = new StringBuffer();
 			oldModuleContents.append(moduleBeginMatcher.group(0));
 			moduleBeginMatcher.appendReplacement(semiOutBuffer,"");
-			
+
 			remainder = new StringBuffer();
 			moduleBeginMatcher.appendTail(remainder);
-			
+
 			String regexString = "<!-- MODULE:END "+getRegExEscaped(moduleId)+" "+getRegExEscaped(version)+"[^\\n\\r]+";
 			Pattern moduleEndPattern = Pattern.compile(regexString,Pattern.CASE_INSENSITIVE);
 			Matcher moduleEndMatcher = moduleEndPattern.matcher(remainder);
-			
-			
-			
-			ModuleFile module = (ModuleFile) this.getModuleMap().get(moduleId);
-			
+
+
+
+			ModuleFile module = this.getModuleMap().get(moduleId);
+
 			moduleEndMatcher.find();
 			//This must work, i.e. find() must return a result, otherwise the file is corrupt
 			moduleEndMatcher.appendReplacement(oldModuleContents,"$0");
@@ -280,7 +281,7 @@ public class ModuleFileMerger {
 			moduleEndMatcher.appendTail(remainder);
 			//Begin from where the last module tag ended for the next iteration:
 			moduleBeginMatcher = moduleBeginPattern.matcher(remainder);
-			
+
 			if(module!=null){
 				appendModulePartWithComments(module,semiOutBuffer);
 			}
@@ -300,11 +301,11 @@ public class ModuleFileMerger {
 		//Cut </web-app> off the ending:
 		//replaceBuffer=new StringBuffer(outString.toString());
 		String out = semiOutBuffer.toString();
-		
+
 		outString.append(out.substring(0,out.lastIndexOf("</"+getRootXMLElement()+">")));
 	}
 	/**
-	 * Gets if to remove older module parts found 
+	 * Gets if to remove older module parts found
 	 * in the source file but not found in the sources.
 	 * Default is true.
 	 * @return
@@ -314,7 +315,7 @@ public class ModuleFileMerger {
 		return this.removeOlderModules;
 	}
 	/**
-	 * Sets if to remove older module parts found 
+	 * Sets if to remove older module parts found
 	 * in the source file but not found in the sources.
 	 * @return
 	 */
@@ -322,24 +323,22 @@ public class ModuleFileMerger {
 		this.removeOlderModules=value;
 	}
 	/**
-	 * 
+	 *
 	 */
 	protected void buildMapfromModules() {
-		Iterator moduleIter = getMergeInSources().iterator();
-		
-		while (moduleIter.hasNext()) {
-			ModuleFile module = (ModuleFile)moduleIter.next();
-			String moduleId = module.getModuleIdentifier();			
-			Map moduleMap = getModuleMap();
-			moduleMap.put(moduleId,module);
+		for (Iterator<ModuleFile> moduleIter = getMergeInSources().iterator(); moduleIter.hasNext();) {
+			ModuleFile module = moduleIter.next();
+			String moduleId = module.getModuleIdentifier();
+			Map<String, ModuleFile> moduleMap = getModuleMap();
+			moduleMap.put(moduleId, module);
 		}
 	}
 	/**
 	 * @return
 	 */
-	private Map getModuleMap() {
+	private Map<String, ModuleFile> getModuleMap() {
 		if(this.moduleMap==null){
-			this.moduleMap=new HashMap();
+			this.moduleMap=new HashMap<String, ModuleFile>();
 		}
 		return this.moduleMap;
 	}
@@ -369,7 +368,7 @@ public class ModuleFileMerger {
 	public void setOutput(Writer output) {
 		this.output = output;
 	}
-	
+
 	/**
 	 * Gets the file Header (doctype) if it is generated
 	 * @return
@@ -377,7 +376,7 @@ public class ModuleFileMerger {
 	public String getFileHeader(){
 		return this.fileHeader;
 	}
-	
+
 	public void setFileHeader(String fileHeader){
 		this.fileHeader=fileHeader;
 	}
@@ -418,9 +417,9 @@ public class ModuleFileMerger {
 			}
 		}
 		return out.toString();
-	}	
-	
-	
+	}
+
+
 	public class ModuleFile{
 		private Reader reader;
 		private String moduleIdentifier;
@@ -502,7 +501,7 @@ public class ModuleFileMerger {
 			}
 			this.sourcefile = sourcefile;
 		}
-		
+
 		/**
 		 * @return Returns the rootXmlElement.
 		 */
@@ -515,7 +514,7 @@ public class ModuleFileMerger {
 		public void setRootXmlElement(String rootXmlElement) {
 			this.rootXmlElement = rootXmlElement;
 		}
-		
+
 		public String getFileContents(){
 			Reader reader = getReader();
 			StringBuffer sb = new StringBuffer();
@@ -533,7 +532,7 @@ public class ModuleFileMerger {
 			}
 			return sb.toString();
 		}
-		
+
 		public String getContentsWithinRootElement(){
 			//Pattern p = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)",Pattern.CASE_INSENSITIVE);
 			String fileContents = getFileContents();
@@ -557,17 +556,17 @@ public class ModuleFileMerger {
 		public void setHasBeenProcessed(boolean hasBeenProcessed) {
 			this.hasBeenProcessed = hasBeenProcessed;
 		}
-		
+
 	}
-	
-	
+
+
 	/**
 	 * @return Returns the initalRootContents.
 	 */
 	public String getInitalRootContents() {
 		return this.initalRootContents;
 	}
-	
+
 	/**
 	 * @param initalRootContents The initalRootContents to set.
 	 */
