@@ -13,6 +13,7 @@ import java.util.jar.JarEntry;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.idega.util.CoreConstants;
 import com.idega.util.SortedProperties;
 
 
@@ -85,7 +86,12 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
 
 		if (entry == null) {
-			throw new FileNotFoundException("File not found inside jar module " + jarModule.getModuleIdentifier() + ": " + pathWithinBundle);
+			if (pathWithinBundle.startsWith(CoreConstants.SLASH)) {
+				pathWithinBundle = pathWithinBundle.substring(1);
+				entry = jarModule.getJarEntry(pathWithinBundle);
+			}
+			if (entry == null)
+				throw new FileNotFoundException("File not found inside jar module " + jarModule.getModuleIdentifier() + ": " + pathWithinBundle);
 		}
 		InputStream inStream = jarModule.getInputStream(entry);
 		return inStream;
