@@ -1,6 +1,7 @@
 package com.idega.core.localisation.business;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -16,6 +17,7 @@ import com.idega.repository.data.MutableClass;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  * Title:
@@ -402,5 +404,31 @@ private static List<ICLocale> listOfICLocalesInUse(){
 	  return down;
   }
 
+  	private static Map<String, String> isoLanguages = null;
+  	public static final Map<String, String> getISOLanguages() {
+  		if (!MapUtil.isEmpty(isoLanguages))
+  			return isoLanguages;
+
+  		isoLanguages = new HashMap<String, String>();
+  		synchronized (isoLanguages) {
+			Map<String, Boolean> addedLanguages = new HashMap<String, Boolean>();
+			String[] languages = Locale.getISOLanguages();
+			for (String language: languages) {
+				Locale locale = getLocaleFromLocaleString(language);
+				if (locale == null)
+					continue;
+
+				String languageId = locale.getLanguage();
+				if (StringUtil.isEmpty(languageId) || addedLanguages.containsKey(languageId))
+					continue;
+
+				addedLanguages.put(languageId, Boolean.TRUE);
+
+				String displayLanguage = locale.getDisplayLanguage(locale);
+				isoLanguages.put(languageId, displayLanguage);
+			}
+		}
+  		return isoLanguages;
+	}
 
 }
