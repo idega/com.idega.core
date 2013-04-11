@@ -1,5 +1,6 @@
 package com.idega.core.localisation.data.dao.impl;
 
+import java.util.List;
 import java.util.Locale;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -53,6 +54,9 @@ public class ICLocaleDAOImpl extends GenericDaoImpl implements ICLocaleDAO {
 		return icLocale.getId() == null ? null : icLocale;
 	}
 
-
+	@Override
+	public List<ICLocale> getAllLocales() {
+		return getResultListByInlineQuery("from " + ICLocale.class.getName() + " l", ICLocale.class);
+	}
 
 }
