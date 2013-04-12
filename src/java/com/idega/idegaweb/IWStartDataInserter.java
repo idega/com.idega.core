@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.idegaweb;
 
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -32,11 +33,10 @@ import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.localisation.data.ICLocaleHome;
+import com.idega.core.location.dao.AddressDAO;
 import com.idega.core.location.data.AddressType;
 import com.idega.core.location.data.AddressTypeBMPBean;
 import com.idega.core.location.data.AddressTypeHome;
-import com.idega.core.location.data.Country;
-import com.idega.core.location.data.CountryHome;
 import com.idega.core.net.data.ICProtocol;
 import com.idega.core.net.data.ICProtocolBMPBean;
 import com.idega.core.net.data.ICProtocolHome;
@@ -59,13 +59,14 @@ import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
  * TODO laddi Describe Type IWStartDataInserter
  * </p>
  * Last modified: $Date: 2004/06/28 09:09:50 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.1 $
  */
@@ -73,6 +74,7 @@ public class IWStartDataInserter implements Singleton {
 
 	private static Instantiator instantiator = new Instantiator() {
 
+		@Override
 		public Object getInstance() {
 			return new IWStartDataInserter();
 		}
@@ -293,27 +295,22 @@ public class IWStartDataInserter implements Singleton {
 			Locale locale = Locale.ENGLISH;
 			String lang = Locale.ENGLISH.getISO3Language();
 
-			CountryHome home = (CountryHome) IDOLookup.getHome(Country.class);
-			String[] JavaLocales = Locale.getISOCountries();
-			for (String string : JavaLocales) {
+			AddressDAO addressDAO = ELUtil.getInstance().getBean(AddressDAO.class);
+			String[] isoCountries = Locale.getISOCountries();
+			for (String isoCountry : isoCountries) {
+				com.idega.core.location.data.bean.Country country = null;
 				try {
-					home.findByIsoAbbreviation(string);
-				}
-				catch (FinderException e) {
-					Locale countryLocale = new Locale(lang, string);
-
-					Country country = home.create();
-					country.setName(countryLocale.getDisplayCountry(locale));
-					country.setIsoAbbreviation(string);
-					country.store();
+					country = addressDAO.getCountryByISOAbbreviation(isoCountry);
+				} catch (Exception e) {}
+				if (country == null) {
+					Locale countryLocale = new Locale(lang, isoCountry);
+					country = addressDAO.createCountry(countryLocale.getDisplayCountry(locale), isoCountry, null);
+					if (country == null || country.getId() == null)
+						Logger.getLogger(getClass().getName()).warning("Failed to create country: " + isoCountry);
 				}
 			}
-		}
-		catch (CreateException ex) {
+		} catch (Exception ex) {
 			ex.printStackTrace();
-		}
-		catch (IDOLookupException e) {
-			e.printStackTrace();
 		}
 	}
 
@@ -487,12 +484,12 @@ public class IWStartDataInserter implements Singleton {
 			e.printStackTrace();
 		}
 	}
-	
+
 	private void insertGenders() {
 		insertGender(GenderBMPBean.NAME_MALE);
 		insertGender(GenderBMPBean.NAME_FEMALE);
 	}
-	
+
 	private void insertGender(String name) {
 		try {
 			GenderHome home = (GenderHome) IDOLookup.getHome(Gender.class);

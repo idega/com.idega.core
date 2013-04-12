@@ -1,5 +1,6 @@
 package com.idega.core.localisation.data.dao;
 
+import java.util.List;
 import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
@@ -16,5 +17,7 @@ public interface ICLocaleDAO extends GenericDao {
 	public ICLocale getLocale(String locale);
 
 	public ICLocale doCreateLocale(String locale);
+
+	public List<ICLocale> getAllLocales();
 
 }

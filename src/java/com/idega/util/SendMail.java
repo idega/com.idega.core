@@ -25,6 +25,7 @@ import javax.mail.internet.MimePart;
 
 import org.apache.commons.mail.DefaultAuthenticator;
 import org.apache.commons.mail.Email;
+import org.apache.commons.mail.EmailConstants;
 import org.apache.commons.mail.SimpleEmail;
 
 import com.idega.builder.bean.AdvancedProperty;
@@ -104,6 +105,7 @@ public class SendMail {
 	public static boolean sendSimpleMail(String from, String to, String replyTo, String subject, String message) {
 		try {
 			Email email = new SimpleEmail();
+			email.setCharset(EmailConstants.UTF_8);
 			email.setHostName(getHost());
 			int port = 465;
 			String portValue = getPort();
@@ -182,7 +184,7 @@ public class SendMail {
 			LOGGER.log(Level.INFO, "to: " + to + " mail: " + text);
 			return null;
 		}
-		
+
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
