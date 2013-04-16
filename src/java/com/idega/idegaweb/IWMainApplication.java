@@ -97,6 +97,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.Executer;
 import com.idega.util.FileUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.ThreadContext;
 import com.idega.util.dbschema.SQLSchemaAdapter;
 import com.idega.util.expression.ELUtil;
@@ -2446,31 +2447,24 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	 */
 	public String getLocalizedStringMessage(String key, String valueIfNotFound, String bundleIdentifier) {
 		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
-		Object foundValue = getMessageFactory().getLocalizedMessage(key, valueIfNotFound, bundleIdentifier, locale);
-		if (foundValue == null) {
-			return null;
-		} else {
-			return String.valueOf(foundValue);
-		}
+		String foundValue = getMessageFactory().getLocalizedMessage(key, valueIfNotFound, bundleIdentifier, locale);
+		return StringUtil.isEmpty(foundValue) ? null : foundValue;
 	}
 
 	public List<String> getAvailableMessageStorageTypes() {
 		List<MessageResource> resources = getMessageFactory().getAvailableUninitializedMessageResources();
 
 		List<String> stringTypes = new ArrayList<String>(resources.size());
-		for(MessageResource resource : resources) {
+		for (MessageResource resource: resources) {
 			stringTypes.add(resource.getIdentifier());
 		}
 		return stringTypes;
 	}
 
 	public MessageResourceFactory getMessageFactory() {
-		if(messageFactory == null) {
+		if (messageFactory == null)
 			ELUtil.getInstance().autowire(this);
-			return messageFactory;
-		} else {
-			return messageFactory;
-		}
+		return messageFactory;
 	}
 
 	@Override

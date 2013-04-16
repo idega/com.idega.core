@@ -48,7 +48,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
-import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceImportanceLevel;
 
@@ -372,19 +372,18 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty.
 	 */
 	private String getBundleLocalizedString(String key, String returnValueIfNotFound) {
-		String returnString = getBundleLocalizedString(key);
-		if (((returnString == null) || StringHandler.EMPTY_STRING.equals(returnString))) {
+		String localization = getBundleLocalizedString(key);
+		if (StringUtil.isEmpty(localization)) {
 			IWBundle bundle = getIWBundleParent();
-			String value = bundle.getLocalizableStringDefaultValue(key);
+			String defaultLocalization = bundle.getLocalizableStringDefaultValue(key);
 
-			if( value==null || ("".equals(value) && (returnValueIfNotFound!=null)) ){
+			if (StringUtil.isEmpty(defaultLocalization) && returnValueIfNotFound != null) {
 				return returnValueIfNotFound;
-			}
-			else{
-				return value;
+			} else {
+				return defaultLocalization;
 			}
 		} else {
-			return returnString;
+			return localization;
 		}
 	}
 

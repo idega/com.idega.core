@@ -109,7 +109,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		for (MessageResource resource: resources) {
 			if (!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
 				String message = resource.getMessage(key);
-				if (message != null && message.length() > 0) {
+				if (!StringUtil.isEmpty(message)) {
 					return message;
 				}
 			}
