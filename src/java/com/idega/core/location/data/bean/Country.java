@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.data.bean;
 
@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+import javax.xml.bind.annotation.XmlTransient;
 
 @Entity
 @Table(name=Country.ENTITY_NAME)
@@ -21,8 +22,9 @@ import javax.persistence.Table;
 	@NamedQuery(name="country.findByISOAbbreviation", query="select c from Country c where c.ISOAbbreviation = :isoAbbreviation"),
 	@NamedQuery(name="country.findByName", query="select c from Country c where c.name = :name")
 })
+@XmlTransient
 public class Country implements Serializable {
-	
+
 	private static final long serialVersionUID = -1327585207316065093L;
 
 	public static final String ENTITY_NAME = "ic_country";
@@ -38,7 +40,7 @@ public class Country implements Serializable {
 
 	@Column(name = Country.COLUMN_NAME)
 	private String name;
-	
+
 	@Column(name = Country.COLUMN_DESCRIPTION)
 	private String description;
 
@@ -51,21 +53,21 @@ public class Country implements Serializable {
 	public Integer getId() {
 		return this.countryID;
 	}
-	
+
 	/**
 	 * @param countryID the countryID to set
 	 */
 	public void setId(Integer countryID) {
 		this.countryID = countryID;
 	}
-	
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * @param name the name to set
 	 */
@@ -86,7 +88,7 @@ public class Country implements Serializable {
 	public void setDescription(String description) {
 		this.description = description;
 	}
-	
+
 	/**
 	 * @return the ISOAbbreviation
 	 */
