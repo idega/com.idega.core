@@ -128,9 +128,18 @@ public class DownloadWriter implements MediaWritable {
 				this.icFile = null;
 			}
 		} else if (absPath != null) {
-			this.file = new File(absPath);
-			if (this.file != null && this.file.exists() && this.file.canRead()) {
-				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
+			if (absPath.startsWith("http")) {
+				try {
+					this.url = new URL(absPath);
+				} catch (MalformedURLException e) {
+					LOGGER.log(Level.WARNING, "Error creating URL: " + absPath, e);
+				}
+				setAsDownload(iwc, altFileName, -1);
+			} else {
+				this.file = new File(absPath);
+				if (this.file != null && this.file.exists() && this.file.canRead()) {
+					setAsDownload(iwc, this.file.getName(), (int) this.file.length());
+				}
 			}
 		} else if (relPath != null && altFileName == null) {
 			this.file = new File(iwc.getIWMainApplication().getRealPath(relPath));
