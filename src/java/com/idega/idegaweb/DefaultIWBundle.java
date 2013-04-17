@@ -1620,7 +1620,7 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 
 	@Override
 	public String getLocalizedString(String localizationKey) {
-		return getLocalizedString(localizationKey,localizationKey);
+		return getLocalizedString(localizationKey, localizationKey);
 	}
 
 	@Override

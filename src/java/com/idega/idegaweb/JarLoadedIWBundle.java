@@ -7,6 +7,8 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.Reader;
+import java.io.StringReader;
 import java.util.Locale;
 import java.util.Properties;
 import java.util.jar.JarEntry;
@@ -14,7 +16,9 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.idega.util.CoreConstants;
+import com.idega.util.IOUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringHandler;
 
 
 /**
@@ -130,31 +134,27 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	protected IWResourceBundle initializeResourceBundle(Locale locale) throws IOException {
 		IWResourceBundle theReturn;
 		try {
-			InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale) + "/" + getLocalizedStringsFileName());
+			InputStream defaultInputStream = getResourceInputStream(getLocalizedResourcePath(locale) + CoreConstants.SLASH + getLocalizedStringsFileName());
 			IWResourceBundle defaultLocalizedResourceBundle = new IWResourceBundle(this, defaultInputStream, locale);
 
 			if (isUsingLocalVariants()) {
-				String variantPath = getLocalizedResourcePath(locale)+"/"+getLocalizedStringsVariantFileName();
+				String variantPath = getLocalizedResourcePath(locale)+CoreConstants.SLASH+getLocalizedStringsVariantFileName();
 				if (doesResourceExist(variantPath)) {
 					InputStream variantStream = getResourceInputStream(variantPath);
 					theReturn = new IWResourceBundle(defaultLocalizedResourceBundle, variantStream, locale);
-				}
-				else {
+				} else {
 					theReturn = defaultLocalizedResourceBundle;
 				}
-			}
-			else {
+			} else {
 				theReturn = defaultLocalizedResourceBundle;
 			}
-		}
-		catch (IOException e) {
+		} catch (IOException e) {
 			// if any error occurs, try default way (autocreated resources in webapp's bundle directory)
 			theReturn = super.initializeResourceBundle(locale);
 		}
 
 		//adding resourceBundle to localized message factory
 		theReturn.setBundleIdentifier(getBundleIdentifier());
-//		getApplication().getMessageFactory().addInitializedMessageResource(theReturn, getBundleIdentifier(), locale);
 		return theReturn;
 	}
 
@@ -177,19 +177,21 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 		return theReturn;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.idega.idegaweb.DefaultIWBundle#initializeLocalizableStrings()
-	 */
 	@Override
 	protected Properties initializeLocalizableStrings() {
 		Properties locProps = new SortedProperties();
+		Reader reader = null;
+		InputStream stream = null;
 		try {
-			locProps.load(getResourceInputStream("resources/" + getLocalizableStringsFileName()));
-			// localizableStringsMap = new TreeMap(localizableStringsProperties);
-		}
-		catch (IOException ex) {
-			LOGGER.log(Level.WARNING, null, ex);
+			stream = getResourceInputStream("resources/" + getLocalizableStringsFileName());
+			String content = StringHandler.getContentFromInputStream(stream);
+			reader = new StringReader(content);
+			locProps.load(reader);
+		} catch (Exception ex) {
+			LOGGER.log(Level.WARNING, "Error loading " + getLocalizableStringsFileName() + " for bundle " + getBundleIdentifier(), ex);
+		} finally {
+			IOUtil.close(stream);
+			IOUtil.close(reader);
 		}
 		return locProps;
 	}
