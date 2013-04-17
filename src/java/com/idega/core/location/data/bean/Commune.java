@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +21,7 @@ import javax.persistence.Table;
 import com.idega.user.data.bean.Group;
 
 @Entity
+@Cacheable
 @Table(name = Commune.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "commune.findAll", query = "select c from Commune c order by c.name"),

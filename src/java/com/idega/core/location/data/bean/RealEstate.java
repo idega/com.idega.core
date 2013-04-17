@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -16,6 +17,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
+@Cacheable
 @Table(name = RealEstate.ENTITY_NAME)
 @NamedQuery(name = "realEstate.findByIdentifier", query = "select r from RealEstate r where r.landRegisterMapNumber = :landRegisterMapNumber and r.realEstateNumber = :number and  r.realEstateUnit = :unit and r.realEstateCode = :code")
 public class RealEstate implements Serializable {

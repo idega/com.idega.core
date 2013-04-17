@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -15,6 +16,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
+@Cacheable
 @Table(name=Country.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name="country.findAll", query="select c from Country c order by c.name"),

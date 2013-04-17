@@ -2,6 +2,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement
 @XmlAccessorType(XmlAccessType.FIELD)
 @Entity
+@Cacheable
 @Table(name = Location.TABLE_NAME)
 public class Location implements Serializable {
 

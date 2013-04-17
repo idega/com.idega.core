@@ -2,6 +2,7 @@ package com.idega.core.localisation.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -12,6 +13,7 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
 @Entity
+@Cacheable
 @Table(name = LocalizedText.TABLE_NAME)
 public class LocalizedText implements Serializable {
 

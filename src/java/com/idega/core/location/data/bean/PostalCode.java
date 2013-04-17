@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -18,6 +19,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
+@Cacheable
 @Table(name = PostalCode.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "postalCode.findAll", query = "select p from PostalCode p order by p.postalCode"),

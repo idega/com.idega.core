@@ -6,6 +6,7 @@ package com.idega.core.location.data.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 import com.idega.user.data.bean.User;
 
 @Entity
+@Cacheable
 @Table(name = Address.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "address.findByPostalCode", query = "select a from Address a where a.postalCode = :postalCode"),

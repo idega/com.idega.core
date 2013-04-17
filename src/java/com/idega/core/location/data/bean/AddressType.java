@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -17,6 +18,7 @@ import javax.persistence.Table;
 import com.idega.core.data.bean.GenericType;
 
 @Entity
+@Cacheable
 @Table(name = AddressType.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "addressType.findByUniqueName", query = "select at from AddressType at where at.uniqueName = :uniqueName")
