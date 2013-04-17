@@ -19,7 +19,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -57,6 +59,7 @@ import com.idega.user.business.UserProperties;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.LocaleUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.StringHandler;
@@ -603,10 +606,16 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 
 	protected Properties initializeLocalizableStrings() {
 		Properties locProps = new SortedProperties();
+		Reader reader = null;
 		try {
-			locProps.load(new FileInputStream(getLocalizableStringsFile()));
-		} catch (IOException ex) {
-			LOGGER.log(Level.WARNING, null, ex);
+			String content = StringHandler.getContentFromInputStream(new FileInputStream(getLocalizableStringsFile()));
+			reader = new StringReader(content);
+			locProps.load(reader);
+		} catch (Exception ex) {
+			LOGGER.log(Level.WARNING, "Error loading localizations from bundle " + getBundleIdentifier() + ", file: " +
+					getLocalizableStringsFileName(), ex);
+		} finally {
+			IOUtil.close(reader);
 		}
 		return locProps;
 	}
@@ -615,7 +624,7 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		if (this.localizableStringsFile == null) {
 			try {
 				// TODO: save to workspace if the property is set
-				this.localizableStringsFile = FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), getLocalizableStringsFileName() );
+				this.localizableStringsFile = FileUtil.getFileAndCreateIfNotExists(getResourcesRealPath(), getLocalizableStringsFileName());
 			} catch (IOException ex) {
 				LOGGER.log(Level.WARNING, null, ex);
 			}

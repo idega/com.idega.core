@@ -39,8 +39,10 @@ public class BundleLocalizationMap implements Map<String, String> {
 		this.bundle = bundle;
 	}
 
+	@Override
 	public String get(Object key) {
-		return getIWMainAppliction().getLocalizedStringMessage(String.valueOf(key), String.valueOf(key), bundle.getBundleIdentifier());
+		String localization = getIWMainAppliction().getLocalizedStringMessage(String.valueOf(key), String.valueOf(key), bundle.getBundleIdentifier());
+		return localization;
 	}
 
 	private IWMainApplication getIWMainAppliction() {
@@ -79,14 +81,17 @@ public class BundleLocalizationMap implements Map<String, String> {
 		return (IWResourceBundle)getResourceBundle();
 	}
 
+	@Override
 	public boolean isEmpty() {
 		return !getResourceBundle().getKeys().hasMoreElements();
 	}
 
+	@Override
 	public boolean containsKey(Object key) {
 		return getResourceBundle().getObject(key.toString()) != null;
 	}
 
+	@Override
 	public Collection<String> values() {
 		if (this.values == null) {
 			this.values = new ArrayList<String>();
@@ -98,27 +103,33 @@ public class BundleLocalizationMap implements Map<String, String> {
 		return this.values;
 	}
 
+	@Override
 	public int size() {
 		return values().size();
 	}
 
+	@Override
 	public boolean containsValue(Object value) {
 		return values().contains(value);
 	}
 
+	@Override
 	public Set<Map.Entry<String, String>> entrySet() {
 		Set<Map.Entry<String, String>> set = new HashSet<Map.Entry<String, String>>();
 		for (Enumeration<String> enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
 			final String k = enumer.nextElement();
 			set.add(new Map.Entry<String, String>() {
+				@Override
 				public String getKey() {
 					return k;
 				}
 
+				@Override
 				public String getValue() {
 					return (String) getResourceBundle().getObject(k);
 				}
 
+				@Override
 				public String setValue(String value) {
 					throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 				}
@@ -127,6 +138,7 @@ public class BundleLocalizationMap implements Map<String, String> {
 		return set;
 	}
 
+	@Override
 	public Set<String> keySet() {
 		Set<String> set = new HashSet<String>();
 		for (Enumeration<String> enumer = getResourceBundle().getKeys(); enumer.hasMoreElements();) {
@@ -135,20 +147,24 @@ public class BundleLocalizationMap implements Map<String, String> {
 		return set;
 	}
 
+	@Override
 	public String remove(Object key) {
 		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 	}
 
+	@Override
 	public void putAll(Map<? extends String, ? extends String> t) {
 		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 	}
 
+	@Override
 	public String put(String key, String value) {
 		String oldValue = get(key);
 		((IWResourceBundle) getResourceBundle()).setLocalizedString(key, value);
 		return oldValue;
 	}
 
+	@Override
 	public void clear() {
 		throw new UnsupportedOperationException(this.getClass().getName() + " UnsupportedOperationException");
 	}

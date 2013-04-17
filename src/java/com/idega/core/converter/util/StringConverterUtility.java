@@ -8,6 +8,7 @@ import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
 /**
@@ -33,16 +34,16 @@ public class StringConverterUtility {
 				FileWriter out = new FileWriter(outputFile);
 				while ((line = in.readLine()) != null) {
 
-					String UTF8Str = new String(line.getBytes(), "UTF-8");
+					String UTF8Str = new String(line.getBytes(), CoreConstants.ENCODING_UTF8);
 
-					int index = UTF8Str.indexOf("=");
+					int index = UTF8Str.indexOf(CoreConstants.EQ);
 					if (index > 0) {
 						String key = UTF8Str.substring(0, index);
 						String value = UTF8Str.substring(index + 1, UTF8Str.length());
 						value = saveConvert(value, false);
 
 						out.write(key);
-						out.write("=");
+						out.write(CoreConstants.EQ);
 						out.write(value);
 						out.write("\n");
 					}

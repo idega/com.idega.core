@@ -39,6 +39,11 @@ public class WebUtil extends DefaultSpringBean {
 		)).get(0);
 	}
 
+	public String getClientIP() {
+		IWContext iwc = CoreUtil.getIWContext();
+		return iwc == null ? null : iwc.getRemoteIpAddress();
+	}
+
 	public List<String> getMultipleLocalizedStrings(String bundleIdentifier, List<AdvancedProperty> multipleRequiredLocalizations) {
 		List<String> defaultValues = getDefaultValues(multipleRequiredLocalizations);
 		if (ListUtil.isEmpty(multipleRequiredLocalizations)) {
@@ -95,7 +100,8 @@ public class WebUtil extends DefaultSpringBean {
 
     	from = StringUtil.isEmpty(from) ? "idegaweb@idega.com" : from;
 
-    	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("js_error_mail_to", "abuse@idega.com") : to;
+    	to = StringUtil.isEmpty(to) ? IWMainApplication.getDefaultIWMainApplication().getSettings()
+    			.getProperty("js_error_mail_to", "abuse@idega.com") : to;
     	if (StringUtil.isEmpty(to)) {
     		getLogger().warning("Receiver is unknown! Unable to send a message:\n" + message);
     		return false;
