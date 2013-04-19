@@ -329,7 +329,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	@Deprecated
 	public String getLocalizedString(String key) {
 		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
+		Locale locale = this.locale == null ? CoreUtil.getIWContext().getCurrentLocale() : this.locale;
 		return getIWBundleParent().getApplication().getLocalizedStringMessage(key, null, bundleIdentifier, locale);
 	}
 
