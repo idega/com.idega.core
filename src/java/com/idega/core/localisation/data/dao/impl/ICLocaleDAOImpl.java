@@ -59,4 +59,13 @@ public class ICLocaleDAOImpl extends GenericDaoImpl implements ICLocaleDAO {
 		return getResultListByInlineQuery("from " + ICLocale.class.getName() + " l", ICLocale.class);
 	}
 
+	@Override
+	public List<ICLocale> doFindLocalesByLanguage(String language) {
+		if (StringUtil.isEmpty(language))
+			return null;
+
+		return getResultListByInlineQuery("from " + ICLocale.class.getName() + " l where l.locale like :language", ICLocale.class,
+				new Param("language", language));
+	}
+
 }

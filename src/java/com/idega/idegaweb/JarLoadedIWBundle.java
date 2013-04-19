@@ -159,19 +159,15 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	}
 
 	@Override
-	public IWResourceBundle getResourceBundle(Locale locale)
-	{
-		JarLoadedResourceBundle jarReturn = (JarLoadedResourceBundle)getApplication().getMessageFactory().getResource(JarLoadedResourceBundle.RESOURCE_IDENTIFIER, getBundleIdentifier(), locale);
+	public IWResourceBundle getResourceBundle(Locale locale) {
+		JarLoadedResourceBundle jarReturn = (JarLoadedResourceBundle) getApplication().getMessageFactory()
+				.getResource(JarLoadedResourceBundle.RESOURCE_IDENTIFIER, getBundleIdentifier(), locale);
 		IWResourceBundle theReturn = jarReturn.getResource();
-		try
-		{
-			if (theReturn == null)
-			{
+		try {
+			if (theReturn == null) {
 				theReturn = initializeResourceBundle(locale);
 			}
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			LOGGER.log(Level.WARNING, null, ex);
 		}
 		return theReturn;

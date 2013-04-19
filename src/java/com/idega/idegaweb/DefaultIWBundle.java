@@ -654,16 +654,12 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 	public IWResourceBundle getResourceBundle(Locale locale) {
 		IWResourceBundle theReturn = getResourceBundles().get(locale);
 
-		try
-		{
-			if (theReturn == null)
-			{
+		try {
+			if (theReturn == null) {
 				theReturn = initializeResourceBundle(locale);
 				getResourceBundles().put(locale, theReturn);
 			}
-		}
-		catch (Exception ex)
-		{
+		} catch (Exception ex) {
 			LOGGER.log(Level.WARNING, null, ex);
 		}
 		return theReturn;
