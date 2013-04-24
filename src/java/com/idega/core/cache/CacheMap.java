@@ -10,6 +10,7 @@
 package com.idega.core.cache;
 
 import java.io.Serializable;
+import java.util.AbstractMap;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -335,7 +336,13 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
-		throw new UnsupportedOperationException("Method entrySet() not implemented");
+		Set<Map.Entry<K, V>> entrySet = new HashSet<Map.Entry<K, V>>(); 
+		for (Iterator<K> iter = keySet().iterator(); iter.hasNext();) {
+			K key = iter.next();
+			V  value = get(key);
+			entrySet.add(new AbstractMap.SimpleEntry<K, V>(key, value));
+		}
+		return entrySet;
 	}
 
 	/**
