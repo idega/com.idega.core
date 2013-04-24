@@ -17,7 +17,9 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.Reader;
 import java.io.Serializable;
+import java.io.StringReader;
 import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
@@ -33,6 +35,7 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.naming.OperationNotSupportedException;
 
@@ -47,7 +50,9 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.SortedProperties;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.messages.MessageResource;
 import com.idega.util.messages.MessageResourceImportanceLevel;
@@ -72,10 +77,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 
 	private static final long serialVersionUID = 2495736573750344100L;
 
+	private static final Logger LOGGER = Logger.getLogger(IWResourceBundle.class.getName());
+
 	public static final String RESOURCE_IDENTIFIER = "bundle_resource";
 
 	// ==================privates====================
-	Map<String, String> lookup;
+	private Map<String, String> lookup;
 	private Properties properties;
 	private Locale locale;
 	private File file;
@@ -153,12 +160,19 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		setIWBundleParent(parent);
 		setLocale(locale);
 		this.file = file;
+
+		Reader reader = null;
 		try {
 			this.properties = new SortedProperties();
-			this.properties.load(streamForRead);
-		} catch (FileNotFoundException e) {
-			// System.err.println("IWResourceBundle: File Not
-			// Found:"+file.getAbsolutePath());
+			String content = StringHandler.getContentFromInputStream(streamForRead);
+			if (content != null) {
+				reader = new StringReader(content);
+				this.properties.load(reader);
+			}
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error initializing bundle " + getBundleIdentifier(), e);
+		} finally {
+			IOUtil.close(reader);
 		}
 
 		synchronized (this) {
@@ -168,34 +182,30 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			}
 		}
 
-		setResourcesURL(parent.getResourcesVirtualPath() + "/" + locale.toString() + ".locale");
+		setResourcesURL(parent.getResourcesVirtualPath() + CoreConstants.SLASH + locale.toString() + ".locale");
 	}
 
 	@Override
 	public void initialize(String bundleIdentifier, Locale newLocale) throws IOException, OperationNotSupportedException {
-		if(bundleIdentifier == null || bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
+		if (bundleIdentifier == null || bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
 			throw new OperationNotSupportedException("Empty bundle is not supported supported");
 		} else {
 			setBundleIdentifier(bundleIdentifier);
 			IWContext iwc = IWContext.getCurrentInstance();
 
-			if(newLocale == null)
+			if (newLocale == null)
 				newLocale = iwc.getCurrentLocale();
 
 			IWBundle bundle = getIWMainApplication().getBundle(bundleIdentifier);
 
 			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
 				file = FileUtil.getFileAndCreateIfNotExists(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
-			}
-			else {
+			} else {
 				file = new File(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
 			}
 
-//			setAutoInsert(iwc.getApplicationSettings().getBoolean(AUTO_INSERT_PROPERTY, false));
-
 			initialize(bundle, new FileInputStream(file), file, newLocale);
 		}
-
 	}
 
 	/**
@@ -206,13 +216,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		if (this.lookup != null) {
 			Object obj = this.lookup.get(key);
 			return obj; // once serialization is in place, you can do non-strings
-		}
-		else {
+		} else {
 			IWBundle parent = getIWBundleParent();
 			if (parent != null) {
 				throw new IWBundleDoesNotExist(parent.getBundleIdentifier());
-			}
-			else {
+			} else {
 				throw new IWBundleDoesNotExist();
 			}
 		}
@@ -259,8 +267,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 
 				String temp = null;
 			};
-		}
-		else {
+		} else {
 			Iterator<String> iter = this.lookup.keySet().iterator();
 			result = new EnumerationIteratorWrapper<String>(iter);
 		}
@@ -283,7 +290,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	public synchronized void storeState() {
-		if(file!=null){
+		if (file != null) {
 			try {
 				this.properties.clear();
 				if (this.lookup != null) {
@@ -297,22 +304,19 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 					}
 					if (!this.file.exists()) {
 						this.file.createNewFile();
-						System.out.println("IWResourceBundle: Created new file: " + this.file.getAbsolutePath());
+						LOGGER.info("Created new file: " + this.file.getAbsolutePath());
 					}
 					FileOutputStream fos = new FileOutputStream(this.file);
 					this.properties.store(fos, null);
 					fos.close();
 				}
-			}
-			catch (FileNotFoundException e) {
+			} catch (FileNotFoundException e) {
 				e.printStackTrace();
-			}
-			catch (IOException ex) {
+			} catch (IOException ex) {
 				ex.printStackTrace();
 			}
-		}
-		else{
-			System.out.println("IWResourceBundle: Cannot save, was nat read from file ");
+		} else {
+			LOGGER.warning("Cannot save " + getBundleIdentifier() + ", was nat read from file ");
 		}
 	}
 
@@ -325,7 +329,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	@Deprecated
 	public String getLocalizedString(String key) {
 		String bundleIdentifier = getIWBundleParent().getBundleIdentifier();
-		Locale locale = CoreUtil.getIWContext().getCurrentLocale();
+		Locale locale = this.locale == null ? CoreUtil.getIWContext().getCurrentLocale() : this.locale;
 		return getIWBundleParent().getApplication().getLocalizedStringMessage(key, null, bundleIdentifier, locale);
 	}
 
@@ -336,11 +340,9 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	 * @return
 	 */
 	protected String getBundleLocalizedString(String key) {
-
 		try {
 			return super.getString(key);
-		}
-		catch (MissingResourceException e) {
+		} catch (MissingResourceException e) {
 			return null;
 		}
 	}
@@ -423,8 +425,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		try {
 			String text = getLocalizedString(key);
 			return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());
-		}
-		catch (MissingResourceException e) {
+		} catch (MissingResourceException e) {
 			return null;
 		}
 	}
@@ -441,8 +442,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		try {
 			String text = getLocalizedString(key);
 			return this.iwBundleParent.getApplication().getImageFactory().createTab(text, this.iwBundleParent, getLocale(), flip);
-		}
-		catch (MissingResourceException e) {
+		} catch (MissingResourceException e) {
 			return null;
 		}
 	}
@@ -553,10 +553,9 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			bundle.addLocalizableString(key, value);
 			try {
 				((DefaultIWBundle) bundle).storeLocalizableStrings();
-			}
-			catch (ClassCastException ce) {
-				System.err.println("Cant store LocalizableStrings becauase bundle " + bundle.getBundleIdentifier() + " is not subclass of DefaultIWBundle");
-				ce.printStackTrace();
+			} catch (ClassCastException ce) {
+				LOGGER.log(Level.WARNING, "Cant store LocalizableStrings becauase bundle " + bundle.getBundleIdentifier() +
+						" is not subclass of DefaultIWBundle", ce);
 			}
 			return true;
 		}
@@ -568,8 +567,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		IWBundle bundleParent = this.getIWBundleParent();
 		if (bundleParent != null) {
 			return bundleParent + CoreConstants.SLASH + this.locale;
-		}
-		else {
+		} else {
 			return this.locale.toString();
 		}
 	}

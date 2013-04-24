@@ -63,7 +63,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			return resources;
 		}
 
-		//	There is no bundle with specified bundleIdentifier and locale
+		//	There is no bundle with specified bundleIdentifier and locale in cache
 		List<MessageResource> resources = getUninitializedMessageResources();
 		if (ListUtil.isEmpty(resources))
 			return resources;
@@ -118,7 +118,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		if (valueIfNotFound == null)
 			return null;
 
-		//Auto inserting message in case none of resources has it
+		//	Auto inserting message in case none of resources has it
 		for (MessageResource resource: resources) {
 			if (resource.isAutoInsert()) {
 				resource.setMessage(key, valueIfNotFound);
@@ -242,7 +242,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		List<MessageResource> allUninitializedResources = getUninitializedMessageResources();
 
 		List<MessageResource> resourcesToRemove = new ArrayList<MessageResource>();
-		for (MessageResource resource : allUninitializedResources) {
+		for (MessageResource resource: allUninitializedResources) {
 			List<MessageResource> availableResourcesOfType = getResourceListByStorageIdentifier(resource.getIdentifier());
 
 			if (availableResourcesOfType.isEmpty()) {
@@ -271,7 +271,19 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		}
 	}
 
-	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
-		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CACHED_RESOURCES, 1000, true, false, 50, 10);
+	private Integer maxCacheSize = null;
+	private Integer getMaxCacheSize() {
+		if (maxCacheSize != null)
+			return maxCacheSize;
+
+		maxCacheSize = Locale.getAvailableLocales().length;
+		return maxCacheSize;
 	}
+
+	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
+		long time = Long.MAX_VALUE;
+		return IWCacheManager2.getInstance(getIWMainApplication())
+				.getCache(CACHED_RESOURCES, getMaxCacheSize(), false, true, time, time);
+	}
+
 }

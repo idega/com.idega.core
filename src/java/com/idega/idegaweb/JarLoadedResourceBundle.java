@@ -53,7 +53,7 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 
 	@Override
 	public void initialize(String bundleIdentifier, Locale locale) throws OperationNotSupportedException {
-		if(/*DefaultIWBundle.isProductionEnvironment() && */!bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
+		if (!bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
 			IWBundle bundle = IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
 			try {
 				if (bundle instanceof DefaultIWBundle) {
@@ -72,15 +72,15 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 
 	@Override
 	public String getBundleIdentifier() {
-		String identifier = resource.getBundleIdentifier();
-		return identifier;
+		if (resource != null)
+			return resource.getBundleIdentifier();
+		return null;
 	}
 
 	@Override
 	public String getIdentifier() {
-		if(resource != null) {
-			String identifier = resource.getIdentifier();
-			return identifier;
+		if (resource != null) {
+			return resource.getIdentifier();
 		} else {
 			return RESOURCE_IDENTIFIER;
 		}
@@ -142,5 +142,10 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 	}
 
 	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	}
+
+	@Override
+	public String toString() {
+		return "Jar loaded resource: " + getBundleIdentifier();
 	}
 }

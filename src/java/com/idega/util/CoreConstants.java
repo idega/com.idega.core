@@ -110,6 +110,8 @@ public class CoreConstants {
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
+	
+	public static final String PDF_ICON_LINK =  "idegaweb/bundles/org.jboss.jbpm.bundle/resources/images/pdf.gif";
 
 	public static final String UNDEFINED_VALUE = "-1";
 
