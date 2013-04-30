@@ -9,6 +9,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
+import java.util.logging.Logger;
 
 import javax.activation.MimetypesFileTypeMap;
 
@@ -51,6 +52,8 @@ import com.idega.util.StringUtil;
  */
 public class MimeTypeUtil implements Singleton {
 
+	private static final Logger LOGGER = Logger.getLogger(MimeTypeUtil.class.getName());
+
 	public static final String MIME_TYPE_WORD = "application/msword";
 	public static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	public static final String MIME_TYPE_EXCEL_2 = "application/x-msexcel";
@@ -64,7 +67,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
 	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
 	public static final String MIME_TYPE_CALENDAR = "text/calendar";
-	
+
 	private String pathToConfigFile;
 	private Properties properties;
 
@@ -180,7 +183,7 @@ public class MimeTypeUtil implements Singleton {
 			"application/x-macbinary", "application/x-zip-compressed",
 			"application/zip", "multipart/x-gzip" };
 
-	
+
 	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
 
 	private static void initializeMimeTypesMap() {
@@ -196,10 +199,10 @@ public class MimeTypeUtil implements Singleton {
 		MIME_TYPES_MAPPING.put("js", "text/javascript");
 		MIME_TYPES_MAPPING.put("woff", "application/x-font-woff");
 	}
-	
+
 	protected MimeTypeUtil() {
 		initializeMimeTypesMap();
-		
+
 		try {
 			this.properties = getMimeTypeSettings();
 		} catch (IOException e) {
@@ -399,33 +402,52 @@ public class MimeTypeUtil implements Singleton {
 		}
 		return null;
 	}
-	
-	private static String getMimeType(String fileName) {
-		if (StringUtil.isEmpty(fileName))
+
+	private static String getMimeType(String name) {
+		String fileName = name;
+		if (StringUtil.isEmpty(fileName)) {
+			LOGGER.warning("Unable to resolve mime type from empty file name");
 			return null;
-		
-		int lastDot = fileName.lastIndexOf(CoreConstants.DOT);
-		if (lastDot == -1)
-			return null;
-		
-		initializeMimeTypesMap();
+		}
 
 		// reduce filename by removing query string
-		// files can be loaded using something like
-		// image.png?v=1.2.3
-		if (fileName.contains(CoreConstants.QMARK)) {
+		// files can be loaded using something like image.png?v=1.2.3
+		if (fileName.contains(CoreConstants.QMARK) && fileName.contains(CoreConstants.EQ)) {
 			fileName = fileName.substring(0, fileName.lastIndexOf(CoreConstants.QMARK));
 		}
 
+		if (StringUtil.isEmpty(fileName)) {
+			LOGGER.warning("Unable to resolve mime type from file " + name);
+			return null;
+		}
+
+		int lastDot = fileName.lastIndexOf(CoreConstants.DOT);
+		if (lastDot == -1 || lastDot + 1 > fileName.length()) {
+			LOGGER.warning("Unable to resolve mime type from file " + fileName);
+			return null;
+		}
+
+		initializeMimeTypesMap();
+
 		String fileType = fileName.substring(lastDot + 1).toLowerCase();
-		return MIME_TYPES_MAPPING.get(fileType);
+		String mimeType = MIME_TYPES_MAPPING.get(fileType);
+		if (!StringUtil.isEmpty(mimeType))
+			return mimeType;
+
+		try {
+			MimeType type = MimeType.valueOf(fileType);
+			if (type != null)
+				return type.getMimeType();
+		} catch (Exception e) {}
+
+		return null;
 	}
 
 	public static String resolveMimeTypeFromFileName(String fileName) {
 		String mimeType = getMimeType(fileName);
 		if (!StringUtil.isEmpty(mimeType))
 			return mimeType;
-		
+
 		MimeTable mt = MimeTable.getDefaultTable();
 		mimeType = mt.getContentTypeFor(fileName);
 		return StringUtil.isEmpty(mimeType) ? new MimetypesFileTypeMap().getContentType(fileName) : mimeType;
