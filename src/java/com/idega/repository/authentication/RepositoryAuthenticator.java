@@ -190,8 +190,10 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private void generateUserFolders(HttpServletRequest request, User user) throws RepositoryException {
-		if (getRepositoryService().generateUserFolders(user, request.getRemoteUser()))
-			request.getSession().setAttribute("user_folder_generated", Boolean.TRUE);
+		synchronized (this) {
+			if (getRepositoryService().generateUserFolders(user, request.getRemoteUser()))
+				request.getSession().setAttribute("user_folder_generated", Boolean.TRUE);
+		}
 	}
 
 	private String getUserAuthenticatedByRepository(HttpSession session) {
