@@ -15,8 +15,6 @@ import javax.activation.MimetypesFileTypeMap;
 
 import org.apache.commons.io.IOUtils;
 
-import sun.net.www.MimeTable;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
@@ -427,18 +425,18 @@ public class MimeTypeUtil implements Singleton {
 			return null;
 		}
 
-		initializeMimeTypesMap();
-
 		String fileType = fileName.substring(lastDot + 1).toLowerCase();
-		String mimeType = MIME_TYPES_MAPPING.get(fileType);
-		if (!StringUtil.isEmpty(mimeType))
-			return mimeType;
-
 		try {
 			MimeType type = MimeType.valueOf(fileType);
 			if (type != null)
 				return type.getMimeType();
 		} catch (Exception e) {}
+
+		initializeMimeTypesMap();
+
+		String mimeType = MIME_TYPES_MAPPING.get(fileType);
+		if (!StringUtil.isEmpty(mimeType))
+			return mimeType;
 
 		return null;
 	}
@@ -448,8 +446,6 @@ public class MimeTypeUtil implements Singleton {
 		if (!StringUtil.isEmpty(mimeType))
 			return mimeType;
 
-		MimeTable mt = MimeTable.getDefaultTable();
-		mimeType = mt.getContentTypeFor(fileName);
 		return StringUtil.isEmpty(mimeType) ? new MimetypesFileTypeMap().getContentType(fileName) : mimeType;
 	}
 
