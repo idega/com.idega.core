@@ -1350,11 +1350,15 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	{
 		return IW_BUNDLE_IDENTIFIER;
 	}
-	public IWBundle getBundle(IWUserContext iwuc)
-	{
+
+	public IWBundle getBundle(IWUserContext iwuc) {
 		IWMainApplication iwma = iwuc == null ? IWMainApplication.getDefaultIWMainApplication() : iwuc.getApplicationContext().getIWMainApplication();
-		return iwma.getBundle(getBundleIdentifier());
+		IWBundle bundle = iwma.getBundle(getBundleIdentifier());
+		if (bundle == null)
+			bundle = iwma.getBundle(getBundleIdentifier(), true);
+		return bundle;
 	}
+
 	public IWResourceBundle getResourceBundle(IWUserContext iwuc)
 	{
 		IWBundle bundle = getBundle(iwuc);
