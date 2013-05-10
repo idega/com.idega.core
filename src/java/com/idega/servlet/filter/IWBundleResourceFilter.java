@@ -107,7 +107,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletRequest request = (HttpServletRequest) sreq;
 		HttpServletResponse response = (HttpServletResponse) sres;
 		String requestUriWithoutContextPath = getURIMinusContextPath(request);
-
+		int sessionIdIndex = requestUriWithoutContextPath.indexOf(";jsessionid=");
+		if (sessionIdIndex > 0)
+			requestUriWithoutContextPath = requestUriWithoutContextPath.substring(0, sessionIdIndex);
 
 		if(!flushedResources.contains(requestUriWithoutContextPath)){
 			IWMainApplication iwma = getIWMainApplication(request);
@@ -453,7 +455,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 
 	protected String getMimeType(String filePath){
-		return MimeTypeUtil.getInstance().resolveMimeTypeFromFileName(filePath);
+		return MimeTypeUtil.resolveMimeTypeFromFileName(filePath);
 	}
 
 	protected String getMimeType(File realFile) {
@@ -573,7 +575,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		}
 		return fileInWorkspace;
 	}
-	
+
 
 	@Override
 	protected String getURIMinusContextPath(HttpServletRequest request) {
