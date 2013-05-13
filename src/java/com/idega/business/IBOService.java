@@ -1,10 +1,10 @@
 package com.idega.business;
 
-import javax.ejb.EJBObject;
-import java.util.Locale;
-
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
+import java.util.Locale;
+
+import javax.ejb.EJBObject;
 
 import com.idega.idegaweb.IWApplicationContext;
 
@@ -21,7 +21,6 @@ public interface IBOService extends EJBObject {
 	public void initializeBean();
 	public void addActionListener(ActionListener listener); 
 	public String getServiceDescription()throws RemoteException;
-  public String getLocalizedServiceDescription(Locale locale)throws RemoteException;
-  public IWApplicationContext getIWApplicationContext()throws RemoteException;
-
+	public String getLocalizedServiceDescription(Locale locale)throws RemoteException;
+	public IWApplicationContext getIWApplicationContext()throws RemoteException;
 }

@@ -63,11 +63,12 @@ public class CoreConstants {
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
 
 	/**
-	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
-	 * for problems with url.</p>
-	 * 
+	 * <p>Application property for organization name, for example:
+	 * "fiskistofa", "golf", "vso".</p>
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
+	public static final String ORGANIZATION_NAME = "organization_name";
+	
 	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
