@@ -1,5 +1,7 @@
 package com.idega.util.xml;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -19,7 +21,10 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Result;
+import javax.xml.transform.Source;
 import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.dom.DOMSource;
@@ -42,6 +47,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.InputSource;
+import org.xml.sax.SAXException;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.builder.business.BuilderService;
@@ -608,5 +614,68 @@ public class XmlUtil {
 		}
 
 		return elements;
+	}
+	
+	/**
+	 * 
+	 * <p>Converts {@link Document} to {@link Byte} array.</p>
+	 * @param node to convert, not <code>null</code>;
+	 * @return converted bytes or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static byte[] getBytes(Node node) {
+		if (node == null) {
+			return null;
+		}
+
+		Source source = new DOMSource(node);
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		Result result = new StreamResult(out);
+		TransformerFactory factory = TransformerFactory.newInstance();
+
+		try {
+			Transformer transformer = factory.newTransformer();
+			transformer.transform(source, result);
+			return out.toByteArray();
+		} catch (TransformerConfigurationException e) {
+			LOGGER.log(Level.WARNING, "Unable to create " + Transformer.class
+					+ " cause of: ", e);
+		} catch (TransformerException e) {
+			LOGGER.log(Level.WARNING, "Unable to transform document case of: ",
+					e);
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * <p>Parses {@link InputStream} to {@link Document}.</p>
+	 * @param in - {@link InputStream} to parse, not <code>null</code>;
+	 * @return parsed {@link Document} or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static Document getDocument(InputStream in) {
+		DocumentBuilderFactory factory = null;
+		DocumentBuilder builder = null;
+		Document ret = null;
+
+		try {
+			factory = DocumentBuilderFactory.newInstance();
+			builder = factory.newDocumentBuilder();
+		} catch (ParserConfigurationException e) {
+			LOGGER.log(Level.WARNING, "Unable to create parser: ", e);
+		}
+
+		try {
+			ret = builder.parse(new InputSource(in));
+		} catch (SAXException e) {
+			LOGGER.log(Level.WARNING, "Failed to parse " + InputStream.class + 
+					" cause of: ", e);
+		} catch (IOException e) {
+			LOGGER.log(Level.WARNING, "Unable to get " + InputStream.class + 
+					" cause of :" , e);
+		}
+		return ret;
 	}
 }

@@ -38,6 +38,7 @@ import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -243,7 +244,17 @@ public abstract class DefaultSpringBean {
     		domain = iwc.getDomain();
 
     	int port = domain.getServerPort();
-		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
+    	String protocol = domain.getServerProtocol();
+    	if (!StringUtil.isEmpty(protocol)) {
+    		protocol += "://";
+    	}
+    	String serverName = domain.getServerName();
+    	if (StringUtil.isEmpty(serverName)) {
+    		getLogger().warning("Server name is unknown for domain " + domain);
+    		return CoreConstants.EMPTY;
+    	}
+
+		String host = protocol + serverName;
 		if (port > 0)
 			host = host.concat(":").concat(String.valueOf(port));
 		return host;
