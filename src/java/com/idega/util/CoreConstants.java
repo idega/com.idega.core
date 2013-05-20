@@ -63,7 +63,6 @@ public class CoreConstants {
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
 
 	/**
-<<<<<<< HEAD
 	 * <p>
 	 * Use this property for all stupid code hacks, when that code is needed
 	 * only when developing. For example, if you want to generate some fake data
@@ -78,16 +77,14 @@ public class CoreConstants {
 	/**
 	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
 	 * for problems with url.</p>
-	 *
-=======
-	 * <p>Application property for organization name, for example:
+	 */
+	 public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
+
+	 /** <p>Application property for organization name, for example:
 	 * "fiskistofa", "golf", "vso".</p>
->>>>>>> 5a13f96956246f591dde1a6cd5d838470bef3393
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public static final String ORGANIZATION_NAME = "organization_name";
-	
-	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
@@ -117,7 +114,7 @@ public class CoreConstants {
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
-	
+
 	public static final String PDF_ICON_LINK =  "idegaweb/bundles/org.jboss.jbpm.bundle/resources/images/pdf.gif";
 
 	public static final String UNDEFINED_VALUE = "-1";
