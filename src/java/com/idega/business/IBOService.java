@@ -30,4 +30,5 @@ public interface IBOService extends EJBObject {
 	public IWApplicationContext getIWApplicationContext() throws RemoteException;
 
 	public RepositoryService getRepositoryService();
+
 }
