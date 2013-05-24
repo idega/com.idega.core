@@ -36,11 +36,11 @@ import com.idega.presentation.Script;
 /**
  * <p>
  * This is the default implementation of a Form element in idegaWeb.<br>
- * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects 
+ * JSF has a new object called javax.faces.component.UIForm or javax.faces.component.html.HtmlForm and these new objects
  * are recommended to use instead of this class in pure JSF applications.<br>
  * </p>
  *  Last modified: $Date: 2008/12/15 14:07:35 $ by $Author: anton $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.101 $
  */
@@ -113,7 +113,7 @@ public class Form
 		this.loadingLayerLocalizationKey = values[14].toString();
 		this.loadingLayerTextValue = values[15].toString();
 	}
-	
+
 	/**
 	 * Defaults to send to the page itself and the POST method
 	 */
@@ -216,7 +216,7 @@ public class Form
 			this.oldPopupWindow = window;
 //		}
 	}
-	
+
 	protected Window getWindow(){
 //		if(IWMainApplication.useJSF){
 //			return (Window)getFacet("popupwindow");
@@ -395,7 +395,7 @@ public class Form
 */
 	/**
 	 * Set to show a loading image in middle of window, when button pressed
-	 * 
+	 *
 	 * @param show
 	 */
 	public void setToShowLoadingOnSubmit(boolean show) {
@@ -433,7 +433,7 @@ public class Form
 	}
 
 	/**
-	 * 
+	 *
 	 */
 	public void addParameter(String parameterName, int parameterValue) {
 		addParameter(parameterName, Integer.toString(parameterValue));
@@ -475,7 +475,7 @@ public class Form
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	private void addGloballyMaintainedParameters(IWContext iwc) {
 		List list = com.idega.idegaweb.IWURL.getGloballyMaintainedParameters(iwc);
@@ -501,7 +501,7 @@ public class Form
 	}
 
 	/*
-	 * 
+	 *
 	 */
 	private void addTheMaintainedBuilderParameters(IWContext iwc) {
 		List list = com.idega.idegaweb.IWURL.getGloballyMaintainedBuilderParameters(iwc);
@@ -555,7 +555,7 @@ public class Form
 
 	/**
 	 * For printing out the maintained hidden parameters
-	 * 
+	 *
 	 * Currently not implemented well enough, parameters should be dynamically
 	 * added
 	 */
@@ -617,7 +617,7 @@ public class Form
 		 * String tempString = (String)enum.nextElement(); add(); } }
 		 */
 	}
-	
+
 	/**
 	 * Gets the Parameter object for the old idegaWeb event sytem.
 	 * <p>
@@ -654,7 +654,7 @@ public class Form
 			// setAction(window.getURL(iwc)+"?idega_session_id="+iwc.getSession().getId());
 			setAction(getWindow().getURL(iwc));
 			setTarget(getWindow().getTarget());
-			// setTarget("#");
+			// setTarget(CoreConstants.NUMBER_SIGN);
 			setOnSubmit(getWindow().getCallingScriptStringForForm(iwc));
 		}
 
@@ -672,13 +672,13 @@ public class Form
 			// if (Action.indexOf("idega_session_id") == -1){
 			// setAction(Action+"?idega_session_id="+iwc.getSession().getId());
 			// }
-			
+
 			Script associatedScript = getAssociatedFormScript();
 			//if (getAssociatedFormScript() != null)
 			//	add(getAssociatedFormScript());
 
 			println("<form " + (markup.equals(Page.HTML) ? "name=\"" + getName() + "\"" : "") + getMarkupAttributesString() + " >");
-			
+
 			UIComponent eventParameter = getEventParameter();
 			renderChild(iwc,eventParameter);
 			if(associatedScript!=null && !associatedScript.isEmpty()){
@@ -830,7 +830,7 @@ public class Form
 	/**
 	 * Sets the interface object(s) with the given name to be enabled when this
 	 * object receives the action specified.
-	 * 
+	 *
 	 * @param action
 	 *          The action to perform on.
 	 * @param objectToEnable
@@ -847,7 +847,7 @@ public class Form
 	/**
 	 * Sets the interface object(s) to be enabled when this object receives the
 	 * action specified.
-	 * 
+	 *
 	 * @param action
 	 *          The action to perform on.
 	 * @param objectToEnable
@@ -862,7 +862,7 @@ public class Form
 	/**
 	 * Sets the interface object(s) to be enabled when this <code>Form</code> is
 	 * submitted.
-	 * 
+	 *
 	 * @param objectToEnable
 	 *          The interface object(s) to enable.
 	 * @param enable
@@ -911,7 +911,7 @@ public class Form
 			addParameter(Page.IW_FRAME_CLASS_PARAMETER, IWMainApplication.getEncryptedClassName(windowClass));
 		}
 		setWindow(Window.getStaticInstance(windowClass));
-	}	
+	}
 	public void setWindowToOpen(Class windowClass) {
 		this.windowClass = windowClass;
 		// setAction(IWMainApplication.windowOpenerURL);
@@ -1011,7 +1011,7 @@ public class Form
 
 	/**
 	 * Returns the associatedScript.
-	 * 
+	 *
 	 * @return Script
 	 */
 	//TODO remove this variable declaration and move totally to facets:
@@ -1067,7 +1067,7 @@ public class Form
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObject#getName()
 	 */
 	@Override
@@ -1077,7 +1077,7 @@ public class Form
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObject#setName(java.lang.String)
 	 */
 	@Override
@@ -1087,7 +1087,7 @@ public class Form
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
 	@Override
@@ -1096,7 +1096,7 @@ public class Form
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
 	@Override
@@ -1106,34 +1106,34 @@ public class Form
 
 	// TODO: Commit in these methods when extension is moved to be UIForm
 	/*
-	 * 
-	 * 
+	 *
+	 *
 	 * //Legacy methods reimplemented from PresentationObject -> UIComponent move
 	 * public void add(UIComponent component){ getChildren().add(component); }
-	 * 
+	 *
 	 * public String getID(){ return getId(); }
-	 * 
+	 *
 	 * public void empty() { getChildren().clear(); }
-	 * 
+	 *
 	 * public void add(String text){ add(new Text(text)); }
-	 * 
+	 *
 	 * public void addBreak(){ add(Text.getBreak()); }
-	 * 
+	 *
 	 * private Map markupAttributesMap;
-	 * 
+	 *
 	 * protected Map getMarkupAttributes(){ if (markupAttributesMap==null){
 	 * markupAttributesMap=new HashMap(); } return markupAttributesMap; }
-	 * 
+	 *
 	 * protected void setMarkupAttribute(String key,String value){
 	 * getMarkupAttributes().put(key,value); }
-	 * 
+	 *
 	 * protected void setMarkupAttribute(String key,int value){
 	 * getMarkupAttributes().put(key,new Integer(value)); }
-	 * 
+	 *
 	 * protected String getMarkupAttribute(String key){ return
 	 * (String)getMarkupAttributes().get(key); } public Page getParentPage() {
 	 * return PresentationObjectUtil.getParentPage(this); }
-	 * 
+	 *
 	 */
 
 } // Class ends

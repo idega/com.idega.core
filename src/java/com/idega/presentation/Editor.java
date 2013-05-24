@@ -4,6 +4,7 @@ package com.idega.presentation;
 
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.InterfaceObject;
+import com.idega.util.CoreConstants;
 
 
 
@@ -101,15 +102,15 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   public void setColors(String LightColor,String MainColor,String DarkColor){
 
-    if(LightColor.startsWith("#")) {
+    if(LightColor.startsWith(CoreConstants.HASH)) {
 			this.LightColor = LightColor;
 		}
 
-    if(MainColor.startsWith("#")) {
+    if(MainColor.startsWith(CoreConstants.HASH)) {
 			this.MiddleColor = MainColor;
 		}
 
-    if(DarkColor.startsWith("#")) {
+    if(DarkColor.startsWith(CoreConstants.HASH)) {
 			this.DarkColor = DarkColor;
 		}
 
@@ -157,7 +158,8 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   }
 
-  public void setStyleAttribute(String style){
+  @Override
+public void setStyleAttribute(String style){
 
     this.styleAttribute = style;
 
@@ -339,7 +341,8 @@ public abstract class Editor extends com.idega.presentation.PresentationObjectCo
 
   }
 
-  public void main(IWContext iwc){
+  @Override
+public void main(IWContext iwc){
 
 
 

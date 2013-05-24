@@ -1,6 +1,7 @@
 package com.idega.presentation.text;
 
 import com.idega.presentation.PresentationObject;
+import com.idega.util.CoreConstants;
 /**
  * Title:
  * Description:
@@ -36,12 +37,13 @@ public class AnchorLink extends Link {
    this.anchorName = anchorName;
   }
 
-  protected void setFinalUrl(String url) {
+  @Override
+protected void setFinalUrl(String url) {
     if (this.anchorName != null) {
     	if (this.addCurrentURLToLink) {
-    		super.setFinalUrl(url+"#"+this.anchorName);
+    		super.setFinalUrl(url+CoreConstants.HASH+this.anchorName);
     	} else {
-        super.setFinalUrl("#"+this.anchorName);
+        super.setFinalUrl(CoreConstants.HASH+this.anchorName);
     	}
     }else {
       super.setFinalUrl(url);
