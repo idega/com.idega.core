@@ -9,6 +9,8 @@
  */
 package com.idega.core.component.dao.impl;
 
+import java.util.List;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -18,6 +20,7 @@ import com.idega.core.component.dao.ICObjectDAO;
 import com.idega.core.component.data.bean.ICObject;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.util.ListUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("icObjectDAO")
@@ -30,9 +33,12 @@ public class ICObjectDAOImpl extends GenericDaoImpl implements ICObjectDAO {
 	}
 
 	@Override
-	public ICObject findByClass(Class objectClass) {
+	public ICObject findByClass(Class<?> objectClass) {
 		Param param = new Param("className", objectClass.getName());
-
-		return getSingleResult("object.findAllByClass", ICObject.class, param);
+		List<ICObject> objects = getResultList("object.findAllByClass", ICObject.class, param);
+		if (ListUtil.isEmpty(objects))
+			return null;
+		return objects.get(0);
 	}
+
 }

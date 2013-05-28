@@ -17,9 +17,11 @@ import java.util.Map;
 import java.util.Stack;
 import java.util.logging.Logger;
 
+import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserProperties;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -41,11 +43,13 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	private SessionHelper sessionHelper = new SessionHelper();
 	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
 	private Locale currentLocale;
+	private com.idega.user.data.User legacyUser;
 
 	@Override
 	public void reset() {
 		sessionHelper = new SessionHelper();
 		reservedSessionHelpers = new Stack<SessionHelper>();
+		legacyUser = null;
 	}
 
 	/**
@@ -103,7 +107,26 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @return Returns the user.
 	 */
 	@Override
-	public User getUser() {
+	public com.idega.user.data.User getUser() {
+		if (legacyUser != null)
+			return legacyUser;
+
+		User user = getUserEntity();
+		if (user == null)
+			return null;
+
+		try {
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+			legacyUser = userBusiness.getUser(user.getId());
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return legacyUser;
+	}
+
+	@Override
+	public User getUserEntity() {
 		return this.sessionHelper.user;
 	}
 
@@ -249,7 +272,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	@Override
 	public boolean isSuperAdmin() {
 		try {
-			User user = getUser();
+			User user = getUserEntity();
 			if (user != null)
 				return user.equals(this.getAccessController().getAdministratorUser());
 		} catch (Exception ex) {

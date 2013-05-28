@@ -13,14 +13,14 @@ import java.util.List;
 import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
+import com.idega.user.business.UserProperties;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
-import com.idega.user.business.UserProperties;
 
 /**
  *  <p />Last modified: $Date: 2008/06/05 18:24:14 $ by $Author: civilis $
- * 
+ *
  * @author <a href="mailto:aron@idega.com">aron</a>
  * @version $Revision: 1.9 $
  */
@@ -59,7 +59,9 @@ public interface LoginSession {
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getUser
      */
-    public User getUser();
+    public com.idega.user.data.User getUser();
+
+    public User getUserEntity();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setUser
@@ -135,14 +137,14 @@ public interface LoginSession {
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#reserve
      */
     public void reserve();
-    
+
     public boolean isSuperAdmin();
-    
+
     public abstract void reset();
-    
+
     public String getSuperAdminId();
-    
+
     public Locale getCurrentLocale();
-    
+
     public abstract boolean isLoggedIn();
 }

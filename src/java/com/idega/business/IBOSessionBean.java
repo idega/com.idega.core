@@ -89,7 +89,7 @@ public IWUserContext getUserContext() {
     if (getUserContext() == null) {
     	try {
     		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-    		return loginSession.getUser();
+    		return loginSession.getUserEntity();
     	} catch (Exception e) {
     		e.printStackTrace();
     		return null;

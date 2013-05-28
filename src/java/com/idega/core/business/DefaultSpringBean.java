@@ -115,7 +115,7 @@ public abstract class DefaultSpringBean {
 		User user = null;
 		try {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			user = loginSession.getUser();
+			user = loginSession.getUserEntity();
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current user");
 		}

@@ -187,7 +187,7 @@ public class CoreUtil {
 		String user = null;
     	try {
     		LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-    		User loggedInUser = loginSession == null ? null : loginSession.getUser();
+    		User loggedInUser = loginSession == null ? null : loginSession.getUserEntity();
     		user = loggedInUser == null ? null : (loggedInUser.getName() + ", user ID: " + loggedInUser.getId());
     	} catch (Exception e) {}
     	user = StringUtil.isEmpty(user) ? "not logged in" : user;
@@ -241,7 +241,7 @@ public class CoreUtil {
 				//	1. Trying to get from request
 				locale = loginSession.getCurrentLocale();
 				if (locale == null) {
-					User currentUser = loginSession.getUser();
+					User currentUser = loginSession.getUserEntity();
 					if (currentUser != null) {
 						//	2. Trying to get from user settings
 						String preferredLocaleId = currentUser.getPreferredLocale();

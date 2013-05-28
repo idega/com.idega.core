@@ -664,7 +664,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	public static User getUser(IWUserContext iwc) {
 		try {
-			return LoginBusinessBean.getLoginSessionBean().getUser();
+			return LoginBusinessBean.getLoginSessionBean().getUserEntity();
 		}
 		catch (NotLoggedOnException ex) {
 			return null;
@@ -696,7 +696,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public User getUser(HttpSession session) {
 		try {
-			return LoginBusinessBean.getLoginSessionBean().getUser();
+			return LoginBusinessBean.getLoginSessionBean().getUserEntity();
 		} catch (NotLoggedOnException ex) {
 			return null;
 		}
