@@ -277,4 +277,8 @@ public class WebUtil extends DefaultSpringBean {
     public boolean isValidJCaptchaText(String sessionId, String text) {
     	return web2.validateJCaptcha(sessionId, text);
     }
+
+    public int getCurrentYear() {
+    	return IWTimestamp.RightNow().getYear();
+    }
 }
