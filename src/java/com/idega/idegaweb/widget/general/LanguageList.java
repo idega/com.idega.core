@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.idegaweb.widget.general;
 
@@ -15,6 +15,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.ListItem;
 import com.idega.presentation.text.Lists;
+import com.idega.util.ListUtil;
 
 
 /**
@@ -22,7 +23,7 @@ import com.idega.presentation.text.Lists;
  * TODO laddi Describe Type LanguageList
  * </p>
  *  Last modified: $Date: 2008/06/19 08:53:30 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.1 $
  */
@@ -32,23 +33,21 @@ public class LanguageList extends Widget {
 		super();
 		setStyleClass("languageList");
 	}
-	
-	/* (non-Javadoc)
-	 * @see com.idega.idegaweb.widget.Widget#getWidget(com.idega.presentation.IWContext)
-	 */
+
 	@Override
 	protected PresentationObject getWidget(IWContext iwc) {
-		List locales = ICLocaleBusiness.listOfLocales(true);
-		
 		Lists list = new Lists();
-		Iterator iter = locales.iterator();
-		while (iter.hasNext()) {
-			ICLocale icLocale = (ICLocale) iter.next();
+		List<ICLocale> locales = ICLocaleBusiness.listOfLocales(true);
+		if (ListUtil.isEmpty(locales))
+			return list;
+
+		for (Iterator<ICLocale> iter = locales.iterator(); iter.hasNext();) {
+			ICLocale icLocale = iter.next();
 			Locale locale = icLocale.getLocaleObject();
-			
+
 			Link link = new Link(locale.getDisplayLanguage(locale));
 			link.setLocale(locale);
-			
+
 			ListItem item = new ListItem();
 			item.setStyleClass(locale.toString());
 			if (locale.equals(getLocale())) {
@@ -57,8 +56,7 @@ public class LanguageList extends Widget {
 			item.add(link);
 			list.add(item);
 		}
-		
-		
+
 		return list;
 	}
 }
