@@ -3,6 +3,7 @@
  */
 package com.idega.user.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -14,6 +15,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.contact.dao.ContactDAO;
 import com.idega.core.contact.data.bean.Email;
+import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.dao.UserDAO;
@@ -21,6 +23,7 @@ import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 @Repository("userDAO")
@@ -85,7 +88,8 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public Email getUsersMainEmail(User user) {
-		return contactDAO.findEmailForUserByType(user, contactDAO.getMainEmailType());
+		EmailType mainEmailType = contactDAO.getMainEmailType();
+		return contactDAO.findEmailForUserByType(user, mainEmailType);
 	}
 
 	@Override
@@ -93,14 +97,19 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		Email email = getUsersMainEmail(user);
 		if (email == null) {
 			email = contactDAO.createEmail(address, contactDAO.getMainEmailType());
-		}
-		else {
+			persist(email);
+		} else {
 			email.setAddress(address);
+			merge(email);
 		}
-		persist(email);
 
-		user.getEmails().add(email);
-		persist(user);
+		List<Email> emails = user.getEmails();
+		if (emails == null) {
+			emails = new ArrayList<Email>();
+		}
+		emails.add(email);
+		user.setEmails(emails);
+		merge(user);
 
 		return email;
 	}
@@ -128,5 +137,15 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			return null;
 
 		return getSingleResultByInlineQuery("from " + User.class.getName() + " u where u.sha1 = :sha1", User.class, new Param("sha1", sha1));
+	}
+
+	@Override
+	public User getByEmailAddress(String emailAddress) {
+		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
+		if (ListUtil.isEmpty(emails))
+			return null;
+
+		List<User> users = emails.get(0).getUsers();
+		return ListUtil.isEmpty(users) ? null : users.get(0);
 	}
 }
