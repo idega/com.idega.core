@@ -1,6 +1,7 @@
 package com.idega.core.localisation.business;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -10,10 +11,12 @@ import java.util.Map;
 
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.localisation.data.ICLocaleHome;
+import com.idega.core.location.data.bean.Country;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.ui.DropdownMenu;
 import com.idega.repository.data.MutableClass;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
@@ -29,10 +32,11 @@ import com.idega.util.datastructures.map.MapUtil;
  */
 
 public class ICLocaleBusiness  implements MutableClass {
-  private static Hashtable<String, ICLocale> LocaleHashByString = null, LocaleHashInUseByString = null;
-  private static Hashtable<Object, ICLocale> LocaleHashById = null, LocaleHashInUseById = null;
-  private static List<ICLocale> allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
-  private static IWTimestamp reloadStamp = null;
+
+	private static Hashtable<String, ICLocale> LocaleHashByString = null, LocaleHashInUseByString = null;
+	private static Hashtable<Object, ICLocale> LocaleHashById = null, LocaleHashInUseById = null;
+	private static List<ICLocale> allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
+	private static IWTimestamp reloadStamp = null;
 
 
   @SuppressWarnings("unchecked")
@@ -431,4 +435,21 @@ private static List<ICLocale> listOfICLocalesInUse(){
   		return isoLanguages;
 	}
 
+  	public static List<Locale> getLocalesForCountry(Country country) {
+  		if (country == null)
+  			return Collections.emptyList();
+
+  		Locale[] locales = Locale.getAvailableLocales();
+  		if (ArrayUtil.isEmpty(locales))
+  			return Collections.emptyList();
+
+  		List<Locale> countryLocales = new ArrayList<Locale>();
+  		String isoAbbreviation = country.getISOAbbreviation();
+  		for (Locale locale: locales) {
+  			if (locale.toString().endsWith(CoreConstants.UNDER.concat(isoAbbreviation))) {
+  				countryLocales.add(locale);
+  			}
+  		}
+  		return countryLocales;
+  	}
 }
