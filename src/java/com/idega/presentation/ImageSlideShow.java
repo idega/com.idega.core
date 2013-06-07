@@ -168,7 +168,7 @@ public class ImageSlideShow extends Block {
 
 	private Link getLink(String imageName, int step, PresentationObject object) {
 		Link link = new Link(object);
-		link.setURL("#");
+		link.setURL(CoreConstants.HASH);
 		link.setOnClick(getCallingScript(imageName, step));
 		return link;
 	}

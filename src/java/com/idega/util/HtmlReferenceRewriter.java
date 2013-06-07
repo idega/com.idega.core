@@ -1,9 +1,9 @@
 /*
- * $Id: HtmlReferenceRewriter.java,v 1.12 2007/10/17 15:09:36 valdas Exp $ 
+ * $Id: HtmlReferenceRewriter.java,v 1.12 2007/10/17 15:09:36 valdas Exp $
  * Created on 3.6.2004
- * 
+ *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -27,6 +27,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.idega.core.builder.data.ICPage;
 
 /**
@@ -35,7 +36,7 @@ import com.idega.core.builder.data.ICPage;
  * to be an abolute URL with http://[hostname]/[oldurl]
  * </p>
  * Last modified: $Date: 2007/10/17 15:09:36 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.12 $
  */
@@ -47,7 +48,7 @@ public class HtmlReferenceRewriter {
 	private List patterns;
 	private boolean rewriteOptionValues=false;
 	private static String SLASH="/";
-	
+
 	/**
 	 * @return Returns the rewriteOptionValues.
 	 */
@@ -103,7 +104,7 @@ public class HtmlReferenceRewriter {
 
 	public static void travelTest()throws Exception{
 		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
-		
+
 		String fromFile = "/Users/gimmi/Desktop/explore/ExploreIceland.html";
 		String toFile = "/Users/gimmi/Desktop/explore/expTest.html";
 		String urlPrefix = "http://www.exploreiceland.is/";
@@ -117,7 +118,7 @@ public class HtmlReferenceRewriter {
 		instance.process();
 	}
 
-	
+
 	public static void performReykjavikFileTest()throws Exception{
 		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
 		String fromFile = "/Users/tryggvil/Documents/Reykjavik/rrvk-dtemplate.html";
@@ -132,19 +133,19 @@ public class HtmlReferenceRewriter {
 		instance.setRewriteOptionValues(true);
 		instance.process();
 	}
-	
+
 	public static void performReykjavikNetworkTestToFile()throws Exception{
 		String sUrl = "http://nobel.idega.is/rvk/template.html";
 		URL url = new URL(sUrl);
 		InputStream iStream = url.openStream();
-		
+
 		InputStreamReader iReader = new InputStreamReader(iStream);
-		
+
 		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
-		
+
 		String toFile = "/Users/tryggvil/Documents/Reykjavik/rvktest2.html";
 		String urlPrefix = "http://www.rvk.is/";
-		
+
 		Reader input = new BufferedReader(iReader);
 		FileWriter output = new FileWriter(toFile);
 		instance.setInput(input);
@@ -152,38 +153,38 @@ public class HtmlReferenceRewriter {
 		instance.setUrlPrefix(urlPrefix);
 		instance.setRewriteOptionValues(true);
 		instance.process();
-	}	
-	
-	
+	}
+
+
 	public static void performReykjavikNetworkTestToIBPageTemplate()throws Exception{
 		String sUrl = "http://nobel.idega.is/rvk/template.html";
 		URL url = new URL(sUrl);
 		InputStream iStream = url.openStream();
-		
+
 		InputStreamReader iReader = new InputStreamReader(iStream);
-		
+
 		HtmlReferenceRewriter instance = new HtmlReferenceRewriter();
-		
+
 		String urlPrefix = "http://www.rvk.is/";
 		String pageKey = "101";
-		
+
 		//ServletContext application = null;
 		//IWApplicationContext iwac = IWMainApplication.getIWMainApplication(application).getIWApplicationContext();
 		//BuilderLogic.getInstance().getIBXMLPage(pageKey).
-		
+
 		ICPage ibpage = ((com.idega.core.builder.data.ICPageHome) com.idega.data.IDOLookup.getHome(ICPage.class)).findByPrimaryKey(new Integer(pageKey));
 		ibpage.setFormat("HTML");
 		OutputStream outStream = ibpage.getPageValueForWrite();
-		
-		
+
+
 		Reader input = new BufferedReader(iReader);
 		Writer output = new OutputStreamWriter(outStream);
-		
+
 		instance.setInput(input);
 		instance.setOutput(output);
 		instance.setUrlPrefix(urlPrefix);
 		instance.process();
-		
+
 		ibpage.store();
 		//PageCacher.flagPageInvalid(pageKey);
 		//PageCacher.flagAllPagesInvalid();
@@ -194,7 +195,7 @@ public class HtmlReferenceRewriter {
 	 * This method should be called last, after all set methods are called.
 	 */
 	public void process() {
-		
+
 		Reader reader = getInput();
 		StringBuffer sb = new StringBuffer();
 		int buffersize = 1000;
@@ -227,7 +228,7 @@ public class HtmlReferenceRewriter {
 				if(getIfRewriteURL(url)){
 					//if this is a relative url:
 					m.appendReplacement(outString,"$1"+getRewrittenURL(url)+"$3");
-				}				
+				}
 				else{
 					//Do not replace the url
 					m.appendReplacement(outString,"$0");
@@ -237,14 +238,14 @@ public class HtmlReferenceRewriter {
 			m.appendTail(outString);
 			replaceBuffer=new StringBuffer(outString.toString());
 		}
-		
+
 		String utfString;
 		try {
 			utfString = new String(outString.toString().getBytes(CoreConstants.ENCODING_UTF8),CoreConstants.ENCODING_UTF8);
 			StringReader sr = new StringReader(utfString);
 			System.out.println("[HTMLReferenceWriter] The final html string in unicode:\n"+utfString);
 			Writer out = getOutput();
-			
+
 			int bufferlength=1000;
 			char[] buf = new char[bufferlength];
 			int read = sr.read(buf);
@@ -261,9 +262,9 @@ public class HtmlReferenceRewriter {
 		catch (IOException e) {
 			e.printStackTrace();
 		}
-		
-		
-		
+
+
+
 	}
 	/**
 	 * Gets the rewritten URL. this can be overridden
@@ -277,7 +278,7 @@ public class HtmlReferenceRewriter {
 			return this.urlPrefix+relativeURL;
 		}
 	}
-	
+
 	/**
 	 * Gets if th URL is appropriate to be rewritten<br>
 	 * e.g. if it does not contain http:, javascript:,mailto: or # prefixes
@@ -286,9 +287,9 @@ public class HtmlReferenceRewriter {
 	 */
 	public boolean getIfRewriteURL(String url){
 		// not if it starts with these prefixes::
-		return !(url.startsWith("http:")||url.startsWith("javascript:")||url.startsWith("mailto:")||url.startsWith("#"));
+		return !(url.startsWith("http:")||url.startsWith("javascript:")||url.startsWith("mailto:")||url.startsWith(CoreConstants.HASH));
 	}
-	
+
 	/**
 	 * @return Returns the input.
 	 */

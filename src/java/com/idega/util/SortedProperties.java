@@ -1,7 +1,7 @@
 /*
  * Created on 20.2.2003
  *
- * To change this generated comment go to 
+ * To change this generated comment go to
  * Window>Preferences>Java>Code Generation>Code Template
  */
 package com.idega.util;
@@ -28,13 +28,13 @@ import java.util.Vector;
  * Copyright:  (C) 2002 idega software All Rights Reserved.
  * Company:      idega software
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0  
+ * @version 1.0
  */
 public class SortedProperties extends Properties //implements SortedMap
 {
 	private SortedMap internalSortedMap;
 	/**
-	 * 
+	 *
 	 */
 	public SortedProperties()
 	{
@@ -50,14 +50,14 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.SortedMap#comparator()
 	 */
-	 
+
 	 private SortedMap<Object, Object> getInternalSortedMap(){
 	 	if(this.internalSortedMap==null){
 			this.internalSortedMap=new TreeMap();
 	 	}
 	 	return this.internalSortedMap;
 	 }
-	 
+
 	public Comparator comparator()
 	{
 		return getInternalSortedMap().comparator();
@@ -97,10 +97,11 @@ public class SortedProperties extends Properties //implements SortedMap
 	{
 		return getInternalSortedMap().lastKey();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.util.Map#clear()
 	 */
+	@Override
 	public synchronized void clear()
 	{
 		getInternalSortedMap().clear();
@@ -109,6 +110,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Hashtable#contains(java.lang.Object)
 	 */
+	@Override
 	public synchronized boolean contains(Object value)
 	{
 		//return super.contains(value);
@@ -118,6 +120,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsKey(java.lang.Object)
 	 */
+	@Override
 	public synchronized boolean containsKey(Object key)
 	{
 		return getInternalSortedMap().containsKey(key);
@@ -126,6 +129,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Map#containsValue(java.lang.Object)
 	 */
+	@Override
 	public boolean containsValue(Object value)
 	{
 		return getInternalSortedMap().containsValue(value);
@@ -134,6 +138,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#elements()
 	 */
+	@Override
 	public synchronized Enumeration elements()
 	{
 		Vector v = new Vector(getInternalSortedMap().values());
@@ -144,6 +149,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Map#entrySet()
 	 */
+	@Override
 	public Set entrySet()
 	{
 		return getInternalSortedMap().entrySet();
@@ -152,18 +158,21 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
+	@Override
 	public synchronized boolean equals(Object o)
 	{
 		return getInternalSortedMap().equals(o);
 	}
 
+	@Override
 	public String getProperty(String key){
 		return (String)get(key);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#get(java.lang.Object)
 	 */
+	@Override
 	public synchronized Object get(Object key)
 	{
 		return getInternalSortedMap().get(key);
@@ -172,6 +181,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.lang.Object#hashCode()
 	 */
+	@Override
 	public synchronized int hashCode()
 	{
 		return getInternalSortedMap().hashCode();
@@ -180,6 +190,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#isEmpty()
 	 */
+	@Override
 	public boolean isEmpty()
 	{
 		return getInternalSortedMap().isEmpty();
@@ -188,6 +199,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#keys()
 	 */
+	@Override
 	public synchronized Enumeration keys()
 	{
 		Vector v = new Vector(keySet());
@@ -197,6 +209,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Map#keySet()
 	 */
+	@Override
 	public Set keySet()
 	{
 		return getInternalSortedMap().keySet();
@@ -205,6 +218,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#put(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public synchronized Object put(Object key, Object value)
 	{
 		return getInternalSortedMap().put(key, value);
@@ -213,6 +227,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Map#putAll(java.util.Map)
 	 */
+	@Override
 	public synchronized void putAll(Map t)
 	{
 		getInternalSortedMap().putAll(t);
@@ -221,6 +236,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Hashtable#rehash()
 	 */
+	@Override
 	protected void rehash()
 	{
 		//getInternalSortedMap().rehash();
@@ -229,6 +245,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#remove(java.lang.Object)
 	 */
+	@Override
 	public synchronized Object remove(Object key)
 	{
 		return getInternalSortedMap().remove(key);
@@ -237,6 +254,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Dictionary#size()
 	 */
+	@Override
 	public int size()
 	{
 		return getInternalSortedMap().size();
@@ -245,6 +263,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.lang.Object#toString()
 	 */
+	@Override
 	public synchronized String toString()
 	{
 		return getInternalSortedMap().toString();
@@ -253,21 +272,22 @@ public class SortedProperties extends Properties //implements SortedMap
 	/* (non-Javadoc)
 	 * @see java.util.Map#values()
 	 */
+	@Override
 	public Collection values()
 	{
 		return getInternalSortedMap().values();
 	}
 
-	
-	
-	
+
+
+
 	//BORROWED CODE FROM THE JDK LIBRARY java.util.Properties
 
 	private static final String specialSaveChars = "=: \t\r\n\f#!";
-	
+
 	private boolean addDateHeader=false;
-	
-	
+
+
 	/**
 	 * ATTENTION THIS METHOD NOW USES UTF-8 NOT ISO 8859-1 LIKE THE JAVADOC SAYS
 	 * <p>
@@ -317,6 +337,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	 * @exception  NullPointerException  if <code>out</code> is null.
 	 * @since 1.2
 	 */
+	@Override
 	public synchronized void store(OutputStream out, String header)
 	throws IOException
 	{
@@ -324,12 +345,12 @@ public class SortedProperties extends Properties //implements SortedMap
 		//awriter = new BufferedWriter(new OutputStreamWriter(out, "8859_1"));
 		//TODO change javadoc comment
 		awriter = new BufferedWriter(new OutputStreamWriter(out, CoreConstants.ENCODING_UTF8));
-		
+
 		if (header != null) {
-			writeln(awriter, "#" + header);
+			writeln(awriter, CoreConstants.HASH + header);
 		}
 		if(getAddDateHeader()) {
-			writeln(awriter, "#" + new Date().toString());
+			writeln(awriter, CoreConstants.HASH + new Date().toString());
 		}
 		for (Enumeration e = keys(); e.hasMoreElements();) {
 			String key = (String)e.nextElement();
@@ -344,7 +365,7 @@ public class SortedProperties extends Properties //implements SortedMap
 		}
 		awriter.flush();
 	}
-	
+
 	/**
 	 * Gets if to add the date header to the file in store().
 	 * Default value is false.
@@ -360,7 +381,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	public void setAddDateHeader(boolean addHeader){
 		this.addDateHeader=addHeader;
 	}
-	
+
 	private static void writeln(BufferedWriter bw, String s) throws IOException {
 		bw.write(s);
 		bw.newLine();
@@ -373,7 +394,7 @@ public class SortedProperties extends Properties //implements SortedMap
 	 */
 	private String saveConvert(String theString, boolean escapeSpace) {
 		if(theString == null) {theString="";}
-		
+
 		int len = theString.length();
 		StringBuffer outBuffer = new StringBuffer(len*2);
 
@@ -415,7 +436,7 @@ public class SortedProperties extends Properties //implements SortedMap
 		}
 		return outBuffer.toString();
 	}
-	
+
 	/**
 	 * Convert a nibble to a hex character
 	 * @param	nibble	the nibble to convert.
@@ -428,6 +449,6 @@ public class SortedProperties extends Properties //implements SortedMap
 	private static final char[] hexDigit = {
 	'0','1','2','3','4','5','6','7','8','9','A','B','C','D','E','F'
 	};
-	
-	
+
+
 }

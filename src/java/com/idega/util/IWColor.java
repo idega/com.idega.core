@@ -371,7 +371,7 @@ public class IWColor{
 
   public static String getHexColorString(int R, int G, int B) throws NumberFormatException {
 
-    String colorString = "#";
+    String colorString = CoreConstants.HASH;
 
     if ((R < 256 && R > -1) && (G < 256 && G > -1) && (B < 256 && B > -1)){
 
@@ -411,7 +411,7 @@ public class IWColor{
 
  public static IWColor getIWColorFromHex(String hex) {
 
-    hex = com.idega.util.text.TextSoap.findAndCut(hex,"#");
+    hex = com.idega.util.text.TextSoap.findAndCut(hex,CoreConstants.HASH);
 
     IWColor color = null;
 

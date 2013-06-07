@@ -26,6 +26,7 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.ui.Window;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringHandler;
 import com.idega.util.text.TextSoap;
 
@@ -39,7 +40,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	private StringBuffer _parameterString;
 	private boolean openInNewWindow = false;
 
-	public static final String HASH = "#";
+	public static final String HASH = CoreConstants.HASH;
 	public static final String TARGET_ATTRIBUTE = "target";
 	public static final String HREF_ATTRIBUTE = "href";
 
@@ -49,15 +50,15 @@ public class LinkContainer extends PresentationObjectContainer {
 	public static final String TARGET_PARENT_WINDOW = "_parent";
 	public static final String TARGET_TOP_WINDOW = "_top";
 
-	private static final  String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER; 
-	
+	private static final  String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
+
 	private boolean _addSessionId = true;
 
 	private String _windowWidth, _windowHeight, _windowName;
 	private boolean _toolbar, _location, _directories, _status, _menu, _title, _scroll, _resize, _fullscreen = false;
 	private ICFile _file;
 	//A BuilderPage to link to:
-	private int ibPage=0;	
+	private int ibPage=0;
 	/**
 	 *
 	 */
@@ -91,7 +92,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	public void addParameter(String parameterName, Class theClass) {
 		addParameter(parameterName, IWMainApplication.getEncryptedClassName(theClass));
 	}
-	
+
 	public void addParameters(Map parameterMap) {
 		if (parameterMap != null) {
 			Iterator parameters = parameterMap.entrySet().iterator();
@@ -296,6 +297,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	/**
 	 *
 	 */
+	@Override
 	public synchronized Object clone() {
 		LinkContainer linkObj = null;
 		try {
@@ -351,7 +353,7 @@ public class LinkContainer extends PresentationObjectContainer {
 			if (this._parameterString == null) {
 				this._parameterString = new StringBuffer();
 				if (this._addSessionId && (!iwc.isSearchEngine())) {
-					if (URL.equals("#")) {
+					if (URL.equals(CoreConstants.HASH)) {
 						return ("");
 					}
 					else
@@ -473,6 +475,7 @@ public class LinkContainer extends PresentationObjectContainer {
 	/**
 	 *
 	 */
+	@Override
 	public void print(IWContext iwc) throws Exception {
 
 		boolean addParameters = true;
@@ -511,7 +514,7 @@ public class LinkContainer extends PresentationObjectContainer {
 				else{
 					URL = URL + getParameterString(iwc, URL);
 				}
-				
+
 				if (this._windowName == null) {
 					this._windowName = "Popup";
 				}

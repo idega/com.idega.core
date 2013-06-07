@@ -12,6 +12,7 @@ package com.idega.presentation;
 
 import java.io.IOException;
 import java.util.Iterator;
+
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 
@@ -52,7 +53,7 @@ public ExpandContainer() {
 	 */
 	@Override
 	public void main(IWContext iwc) throws Exception {
-		
+
 		if(!this.initialized){
 			initialize(iwc);
 			this.initialized=true;
@@ -68,7 +69,7 @@ public ExpandContainer() {
 			add(outerLayer);
 			outerLayer.setStyleClass("exceptionwrapper");
 			UIComponent header = getHeader();
-			
+
 			//if (this._headerStyle != null) {
 			//	this._header.setStyleAttribute(this._headerStyle);
 			//}
@@ -76,7 +77,7 @@ public ExpandContainer() {
 				PresentationObject pHeader = (PresentationObject)header;
 				pHeader.setStyleAttribute(_headerStyle);
 			}
-			
+
 			//table.add(this._header, 3, 1);
 			Layer lHeader = new Layer();
 			lHeader.setStyleClass("header");
@@ -96,7 +97,7 @@ public ExpandContainer() {
 //			}
 			//table.add(layer, 3, 1);
 			outerLayer.add(layer);
-			
+
 			IWResourceBundle iwrb = getResourceBundle(iwc);
 			Image plusIcon = getPlusIcon();
 			Image minusIcon = getMinusIcon();
@@ -112,24 +113,24 @@ public ExpandContainer() {
 			//super.add(table);
 		}
 		*/
-		
+
 	}
-	
+
 	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		IWContext iwc = IWContext.getIWContext(context);
 		IWBundle iwb = IWContext.getInstance().getIWMainApplication().getCoreBundle();
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/expandcontainer.css"));
-		
+
 //		Script script = new Script();
 //		script.addFunction("expandMinimize", getJavascript());
 //		renderChild(context, script);
-		
+
 		context.getResponseWriter().startElement("div", this);
 		context.getResponseWriter().writeAttribute("class",getStyleClass(),null);
 		context.getResponseWriter().startElement("div", this);
 		context.getResponseWriter().writeAttribute("class", "info",null);
-		
+
 		UIComponent header = getHeader();
 		/*if (this._headerStyle != null) {
 			this._header.setStyleAttribute(this._headerStyle);
@@ -139,11 +140,11 @@ public ExpandContainer() {
 			pHeader.setStyleAttribute(this._headerStyle);
 		}
 		renderChild(context, header);
-		
+
 		context.getResponseWriter().endElement("div");
 
 		context.getResponseWriter().startElement("div", this);
-		//context.getResponseWriter().writeAttribute("href", "#",null);
+		//context.getResponseWriter().writeAttribute("href", CoreConstants.NUMBER_SIGN,null);
 		if(isExpanded()){
 			context.getResponseWriter().writeAttribute("class", "expander expanded",null);
 		}
@@ -151,8 +152,8 @@ public ExpandContainer() {
 			context.getResponseWriter().writeAttribute("class", "expander minimized",null);
 		}
 		context.getResponseWriter().writeAttribute("onClick", "expandMinimizeContents(this.parentNode);",null);
-		context.getResponseWriter().endElement("div");	
-		
+		context.getResponseWriter().endElement("div");
+
 		context.getResponseWriter().startElement("div", this);
 		if(isExpanded()){
 			context.getResponseWriter().writeAttribute("class", "contents expanded",null);
@@ -161,9 +162,9 @@ public ExpandContainer() {
 			context.getResponseWriter().writeAttribute("class", "contents minimized",null);
 		}
 		//context.getResponseWriter().writeAttribute("style", "display:none;",null);
-		
+
 	}
-	
+
 	@Override
 	public void encodeChildren(FacesContext context)throws IOException{
 		if(!goneThroughRenderPhase()){
@@ -171,7 +172,7 @@ public ExpandContainer() {
 			while (children.hasNext()) {
 				UIComponent element = (UIComponent) children.next();
 				renderChild(context,element);
-			}	
+			}
 		}
 	}
 
@@ -180,7 +181,7 @@ public ExpandContainer() {
 		context.getResponseWriter().endElement("div");
 		context.getResponseWriter().endElement("div");
 	}
-	
+
 	protected void initialize(IWContext iwc) {
 		//this._iwb = this.getBundle(iwc);
 //		try {
@@ -189,14 +190,14 @@ public ExpandContainer() {
 //				script = new Script();
 //				getParentPage().setAssociatedScript(script);
 //			}
-//			script.addFunction("expandMinimize", getJavascript());			
+//			script.addFunction("expandMinimize", getJavascript());
 //		}
 //		catch (Exception e) {
 //			e.printStackTrace(System.err);
 //			//this.addContent = false;
 //		}
 	}
-	
+
 	/*private String getJavascript() {
 		StringBuffer buffer = new StringBuffer();
 //		buffer.append("function showSection(image, error, openURL, closeURL) {").append("\n\t");
@@ -218,8 +219,8 @@ public ExpandContainer() {
 		buffer.append("}").append("}");
 		return buffer.toString();
 	}*/
-	
-  
+
+
   public void setHeader(UIComponent header) {
     //this._header = header;
 	  getFacets().put("header", header);
@@ -229,7 +230,7 @@ public ExpandContainer() {
 		UIComponent text = new Heading4(header);
 		setHeader(text);
 	}
-	
+
 	public UIComponent getHeader(){
 		return getFacets().get("header");
 	}
@@ -242,7 +243,7 @@ public ExpandContainer() {
 		this._objects.add(object);
 	}
 	*/
-	
+
 	/*
 	public Image getMinusIcon() {
 		return (Image) getFacet("minusicon");
@@ -252,7 +253,7 @@ public ExpandContainer() {
 		return (Image) getFacet("plusicon");
 	}
 
-	
+
 	/*
 	public void setMinusIcon(Image image) {
 		getFacets().put("minusicon", image);
@@ -265,9 +266,9 @@ public ExpandContainer() {
 	public void setHeaderStyle(String string) {
 		this._headerStyle = string;
 	}
-	
 
-	  
+
+
 	/**
 	 * @return the expanded
 	 */
@@ -275,14 +276,14 @@ public ExpandContainer() {
 		return this.expanded;
 	}
 
-	
+
 	/**
 	 * @param expanded the expanded to set
 	 */
 	void setExpanded(boolean expanded) {
 		this.expanded = expanded;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
@@ -293,7 +294,7 @@ public ExpandContainer() {
 		this._headerStyle=(String) values[1];
 		this.expanded = ((Boolean)values[2]).booleanValue();
 		this.initialized = ((Boolean)values[3]).booleanValue();
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)

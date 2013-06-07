@@ -25,7 +25,7 @@ public class CoreConstants {
 	public static final String SLASH = "/";
 	public static final String BACK_SLASH = "\\";
 	public static final String SPACE = " ";
-	public static final String NUMBER_SIGN = "#";
+	public static final String HASH = "#";
 	public static final String SEMICOLON = ";";
 	public static final String COMMA = ",";
 	public static final String DOT = ".";

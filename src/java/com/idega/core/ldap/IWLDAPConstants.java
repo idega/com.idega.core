@@ -3,12 +3,14 @@
  */
 package com.idega.core.ldap;
 
+import com.idega.util.CoreConstants;
+
 /**
  * Contains a list of supported LDAP attributes and schemas by the IdegaWeb
  * implementation.
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
- * 
+ *
  */
 public interface IWLDAPConstants {
 
@@ -71,7 +73,7 @@ public interface IWLDAPConstants {
 	 * passwordvalue = schemeprefix encryptedpassword schemeprefix = "{" scheme
 	 * "}" scheme = "crypt" / "md5" / "sha" / altscheme altscheme = "x-"
 	 * keystring encryptedpassword = encrypted password
-	 * 
+	 *
 	 * The encrypted password contains of a plaintext key hashed using the
 	 * algorithm scheme. userPassword values which do not adhere to this syntax
 	 * MUST NOT be used for authentication. The DUA MUST iterate through the
@@ -90,7 +92,7 @@ public interface IWLDAPConstants {
 	/**
 	 * Used to separate the users name and his personal id in a dn
 	 */
-	public static final String LDAP_USER_DIRECTORY_STRING_SEPARATOR = "#";
+	public static final String LDAP_USER_DIRECTORY_STRING_SEPARATOR = CoreConstants.HASH;
 	/**
 	 * Used for group names
 	 */
