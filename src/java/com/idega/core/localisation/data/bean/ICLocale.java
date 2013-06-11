@@ -4,6 +4,7 @@
 package com.idega.core.localisation.data.bean;
 
 import java.io.Serializable;
+import java.util.Locale;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -16,7 +17,10 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.location.data.bean.Country;
+import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 
 @Entity
 @Table(name = ICLocale.ENTITY_NAME)
@@ -86,6 +90,27 @@ public class ICLocale implements Serializable {
 	 */
 	public ICLanguage getLanguage() {
 		return this.language;
+	}
+
+	private String languageId;
+
+	public String getLanguageId() {
+		if (!StringUtil.isEmpty(languageId))
+			return languageId;
+
+		if (StringUtil.isEmpty(locale)) {
+			languageId = CoreConstants.EMPTY;
+			return languageId;
+		}
+
+		Locale localeObj = ICLocaleBusiness.getLocaleFromLocaleString(locale);
+		if (localeObj == null) {
+			languageId = CoreConstants.EMPTY;
+			return languageId;
+		}
+
+		languageId = localeObj.getLanguage();
+		return languageId;
 	}
 
 	/**
