@@ -84,6 +84,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	@Override
 	public List<Group> getParentGroups(Group group) {
 		List<Group> parentGroups = new ArrayList<Group>();
+		if (group == null)
+			return parentGroups;
 
 		Param param = new Param("relatedGroup", group);
 		List<GroupRelation> relations = getResultList("groupRelation.findByRelatedGroup", GroupRelation.class, param);
