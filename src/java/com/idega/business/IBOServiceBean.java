@@ -347,7 +347,7 @@ protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<
 	protected User getCurrentUser() {
 		try {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			return loginSession.getUser();
+			return loginSession.getUserEntity();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

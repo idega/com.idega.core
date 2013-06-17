@@ -164,7 +164,7 @@ public class IFrame extends InterfaceObject {
 					String externalParams = iwc.getParameter(EXTERNAL_PARAMETERS);
 					externalParams = URLDecoder.decode(externalParams, CoreConstants.ENCODING_UTF8);
 					if (!StringUtil.isEmpty(externalParams)) {
-						String[] parameters = externalParams.split(CoreConstants.NUMBER_SIGN);
+						String[] parameters = externalParams.split(CoreConstants.HASH);
 						params = new ArrayList<AdvancedProperty>();
 						for (String parameter: parameters) {
 							String[] keyAndValue = parameter.split(CoreConstants.AT);

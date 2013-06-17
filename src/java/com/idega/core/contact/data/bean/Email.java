@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.contact.data.bean;
 
@@ -32,6 +32,7 @@ import com.idega.user.data.bean.User;
 	@NamedQuery(name = "email.findAllByUser", query = "select e from Email e join e.users u where u.userID = :userID"),
 	@NamedQuery(name = "email.findByUserAndType", query = "select e from Email e join e.users u join e.emailType t where t.uniqueName = :uniqueName and u.userID = :userID"),
 	@NamedQuery(name = "email.findAllByGroup", query = "select e from Email e join e.groups g where g.groupID = :groupID"),
+	@NamedQuery(name = "email.findByAddress", query = "select e from Email e where e.address = :address"),
 	@NamedQuery(name = "email.findByGroupAndType", query = "select e from Email e join e.groups g join e.emailType t where t.uniqueName = :uniqueName and g.groupID = :groupID")
 })
 public class Email implements Serializable, EmailDataView {
@@ -47,20 +48,20 @@ public class Email implements Serializable, EmailDataView {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_EMAIL_ID)
 	private Integer emailID;
-	
+
 	@Column(name = COLUMN_ADDRESS)
 	private String address;
-	
+
 	@ManyToOne
 	@JoinColumn(name = COLUMN_EMAIL_TYPE_ID)
 	private EmailType emailType;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = User.class)
-	@JoinTable(name = "ic_user_email", joinColumns = { @JoinColumn(name = COLUMN_EMAIL_ID) }, inverseJoinColumns = { @JoinColumn(name = User.COLUMN_USER_ID) }) 
+	@JoinTable(name = "ic_user_email", joinColumns = { @JoinColumn(name = COLUMN_EMAIL_ID) }, inverseJoinColumns = { @JoinColumn(name = User.COLUMN_USER_ID) })
 	private List<User> users;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Group.class)
-	@JoinTable(name = "ic_group_email", joinColumns = { @JoinColumn(name = COLUMN_EMAIL_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.COLUMN_GROUP_ID) }) 
+	@JoinTable(name = "ic_group_email", joinColumns = { @JoinColumn(name = COLUMN_EMAIL_ID) }, inverseJoinColumns = { @JoinColumn(name = Group.COLUMN_GROUP_ID) })
 	private List<Group> groups;
 
 	/**
@@ -87,6 +88,7 @@ public class Email implements Serializable, EmailDataView {
 	/* (non-Javadoc)
 	 * @see com.idega.core.contact.data.EmailDataView#getEmailAddress()
 	 */
+	@Override
 	public String getEmailAddress() {
 		return getAddress();
 	}
@@ -111,14 +113,14 @@ public class Email implements Serializable, EmailDataView {
 	public void setEmailType(EmailType emailType) {
 		this.emailType = emailType;
 	}
-	
+
 	/**
 	 * @return the users
 	 */
 	public List<User> getUsers() {
 		return this.users;
 	}
-	
+
 	/**
 	 * @return the users
 	 */

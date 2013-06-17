@@ -1,6 +1,7 @@
 package com.idega.core.business;
 
 import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
@@ -10,6 +11,8 @@ import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.builder.business.AdvancedPropertyComparator;
@@ -35,6 +38,8 @@ import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -63,27 +68,22 @@ public abstract class DefaultSpringBean {
 		return LOGGER_;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionBeanClass) {
+	protected <B extends IBOSession> B getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionBeanClass) {
 		try {
-			return (T) IBOLookup.getSessionInstance(iwuc, sessionBeanClass);	//	Casting is needed to avoid stupid compilation error in Maven 2
+			return IBOLookup.getSessionInstance(iwuc, sessionBeanClass);	//	Casting is needed to avoid stupid compilation error in Maven 2
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting session instance: " + sessionBeanClass);
 		}
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <T extends IBOService> T getServiceInstance(Class<? extends IBOService> serviceBeanClass) {
-		//	Casting is needed to avoid stupid compilation error in Maven 2
-		return (T) getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), serviceBeanClass);
+	protected <B extends IBOService> B getServiceInstance(Class<? extends IBOService> serviceBeanClass) {
+		return getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), serviceBeanClass);
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <T extends IBOService> T getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> serviceBeanClass) {
+	protected <B extends IBOService> B getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> serviceBeanClass) {
 		try {
-			//	Casting is needed to avoid stupid compilation error in Maven 2
-			return (T) IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext(): iwac, serviceBeanClass);
+			return IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext(): iwac, serviceBeanClass);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting service instance: " + serviceBeanClass);
 		}
@@ -115,7 +115,7 @@ public abstract class DefaultSpringBean {
 		User user = null;
 		try {
 			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			user = loginSession.getUser();
+			user = loginSession.getUserEntity();
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error getting current user");
 		}
@@ -142,10 +142,11 @@ public abstract class DefaultSpringBean {
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
-	protected <T extends IDOHome> T getHomeForEntity(Class<? extends IDOEntity> entityClass) {
+	protected <H extends IDOHome> H getHomeForEntity(Class<? extends IDOEntity> entityClass) {
 		try {
-			return (T) IDOLookup.getHome(entityClass);
+			@SuppressWarnings("unchecked")
+			H home = (H) IDOLookup.getHome(entityClass);
+			return home;
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Som error occurred getting home interface for entity: " + entityClass, e);
 		}
@@ -243,7 +244,17 @@ public abstract class DefaultSpringBean {
     		domain = iwc.getDomain();
 
     	int port = domain.getServerPort();
-		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
+    	String protocol = domain.getServerProtocol();
+    	if (!StringUtil.isEmpty(protocol)) {
+    		protocol += "://";
+    	}
+    	String serverName = domain.getServerName();
+    	if (StringUtil.isEmpty(serverName)) {
+    		getLogger().warning("Server name is unknown for domain " + domain);
+    		return CoreConstants.EMPTY;
+    	}
+
+		String host = protocol + serverName;
 		if (port > 0)
 			host = host.concat(":").concat(String.valueOf(port));
 		return host;
@@ -271,5 +282,16 @@ public abstract class DefaultSpringBean {
 	 */
 	protected boolean isDevelopementState() {
 		return !DefaultIWBundle.isProductionEnvironment();
+	}
+
+	protected <T> Map<String, T> getBeansOfType(Class<T> type) {
+		Map<String, T> beans = WebApplicationContextUtils.getWebApplicationContext(getApplication().getServletContext()).getBeansOfType(type);
+		return beans;
+	}
+	protected <T> Collection<T> getBeans(Class<T> type) {
+		Map<String, T> beans = getBeansOfType(type);
+		if (MapUtil.isEmpty(beans))
+			return Collections.emptyList();
+		return beans.values();
 	}
 }

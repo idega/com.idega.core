@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.contact.data.bean;
 
@@ -20,8 +20,7 @@ import com.idega.core.data.bean.GenericType;
 @Table(name = EmailType.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "emailType.findAll", query = "select t from EmailType t"),
-	@NamedQuery(name = "emailType.findByUniqueType", query = "select t from EmailType t where t.uniqueName = :uniqueName"),
-	@NamedQuery(name = "emailType.findMainEmailType", query = "select t from EmailType t where t.uniqueName = " + EmailType.MAIN_EMAIL)
+	@NamedQuery(name = "emailType.findByUniqueType", query = "select t from EmailType t where t.uniqueName = :uniqueName")
 })
 public class EmailType extends GenericType implements Serializable {
 
@@ -36,11 +35,11 @@ public class EmailType extends GenericType implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_EMAIL_TYPE_ID)
 	private Integer id;
-  
+
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}

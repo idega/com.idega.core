@@ -474,4 +474,7 @@ public interface Web2Business extends IBOService {
 	public String getBundleUriToBootstrapMainStyleFile();
 	public String getBundleUriToBootstrapMainScriptFile(String version);
 	public String getBundleUriToBootstrapMainStyleFile(String version);
+
+	public String getBundleUriToLoadMaskScript();
+	public String getBundleUriToLoadMaskStyle();
 }

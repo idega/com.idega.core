@@ -104,4 +104,9 @@ public class Country implements Serializable {
 	public void setISOAbbreviation(String abbreviation) {
 		this.ISOAbbreviation = abbreviation;
 	}
+
+	@Override
+	public String toString() {
+		return getName();
+	}
 }

@@ -15,9 +15,9 @@ import com.idega.core.persistence.GenericDao;
 
 @SpringBeanName("icObjectDAO")
 public interface ICObjectDAO extends GenericDao {
-	
+
 	public ICObject findObject(Integer objectID);
-	
-	public ICObject findByClass(Class objectClass);
-	
+
+	public ICObject findByClass(Class<?> objectClass);
+
 }

@@ -356,7 +356,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	private boolean postponeBundleStarters = false;
 
 	public void loadBundles() {
-
 		postponeBundleStarters = true;
 
 		loadBundlesFromWorkspace();
@@ -367,11 +366,10 @@ public class IWMainApplication	extends Application  implements MutableClass {
 
         postponeBundleStarters = false;
 
-        this.setAttribute("bundles",getLoadedBundles());
+        this.setAttribute("bundles", getLoadedBundles());
 
         for (IWBundle bundle : getLoadedBundles().values()) {
-
-        	if(bundle.isPostponedBundleStartersRun()) {
+        	if (bundle.isPostponedBundleStartersRun()) {
         		bundle.setPostponedBundleStartersRun(false);
         		bundle.runBundleStarters();
         	}
@@ -1064,12 +1062,18 @@ public class IWMainApplication	extends Application  implements MutableClass {
 	            	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
 	            	loadBundle(bundle);
         		} catch (Exception e) {
-        			log.warning("Bundle " + bundleIdentifier + " does not exist");
+        			log.warning("Bundle " + bundleIdentifier + " does not exist in workspace");
         		}
-        	} else if (loadBundlesFromJars) {
-        		bundle = loadBundleFromJar(bundleIdentifier);
-        		loadBundle(bundle);
-        	} else if (loadBundlesLegacy) {
+        	}
+        	if (bundle == null && loadBundlesFromJars) {
+        		try {
+	        		bundle = loadBundleFromJar(bundleIdentifier);
+	        		loadBundle(bundle);
+        		} catch (Exception e) {
+        			log.warning("Bundle " + bundleIdentifier + " does not exist as JAR file");
+        		}
+        	}
+        	if (bundle == null && loadBundlesLegacy) {
             	bundle = loadBundleLegacy(bundleIdentifier, autoCreate);
             	loadBundle(bundle);
         	}

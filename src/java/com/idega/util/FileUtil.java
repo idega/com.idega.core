@@ -285,6 +285,10 @@ public static String getFileSeparator(){
 	      int bytesRead;
 	      byte[] buf = new byte[4 * 1024];
 	      while ((bytesRead = buffered.read(buf)) != -1) {
+//	    	  try {
+//	    		  // slow internet simulation
+//	    		  Thread.sleep(20);
+//	    	  } catch (Exception e) {}
 	    	  out.write(buf, 0, bytesRead);
 	      }
 

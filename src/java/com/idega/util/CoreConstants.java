@@ -25,7 +25,7 @@ public class CoreConstants {
 	public static final String SLASH = "/";
 	public static final String BACK_SLASH = "\\";
 	public static final String SPACE = " ";
-	public static final String NUMBER_SIGN = "#";
+	public static final String HASH = "#";
 	public static final String SEMICOLON = ";";
 	public static final String COMMA = ",";
 	public static final String DOT = ".";
@@ -77,10 +77,14 @@ public class CoreConstants {
 	/**
 	 * <p>Uses with {@link CoreConstants#DEVELOPEMENT_STATE_PROPERTY}
 	 * for problems with url.</p>
-	 *
+	 */
+	 public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
+
+	 /** <p>Application property for organization name, for example:
+	 * "fiskistofa", "golf", "vso".</p>
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
-	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
+	public static final String ORGANIZATION_NAME = "organization_name";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
 	public static final String BUILDER_PORPERTY_SETTER_STYLE_CLASS = "modulePropertySetter";
@@ -110,7 +114,7 @@ public class CoreConstants {
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
-	
+
 	public static final String PDF_ICON_LINK =  "idegaweb/bundles/org.jboss.jbpm.bundle/resources/images/pdf.gif";
 
 	public static final String UNDEFINED_VALUE = "-1";

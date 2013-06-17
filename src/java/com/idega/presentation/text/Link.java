@@ -69,7 +69,7 @@ public class Link extends Text {
 	private static String _sessionStorageName = IWMainApplication.windowOpenerParameter;
 	private static final String IB_PAGE_PARAMETER = ICBuilderConstants.IB_PAGE_PARAMETER;
 	private static final String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
-	public static final String HASH = "#";
+	public static final String HASH = CoreConstants.HASH;
 	public static final String JAVASCRIPT = "javascript:";
 	public static final String TARGET_ATTRIBUTE = "target";
 	public static final String HREF_ATTRIBUTE = "href";
@@ -81,7 +81,7 @@ public class Link extends Text {
 	public static final String TARGET_BLANK_WINDOW = "_blank";
 	public static final String TARGET_PARENT_WINDOW = "_parent";
 	public static final String TARGET_TOP_WINDOW = "_top";
-	
+
 	//Instance variables:
 	private PresentationObject _obj;
 	private Window _myWindow = null;
@@ -129,10 +129,10 @@ public class Link extends Text {
 	private Map<Locale, Object> _ImageLocalizationMap;
 	private Map<Locale, String> _toolTipLocalizationMap;
 	private boolean usePublicOjbectInstanciator = false;
-	
+
 	private String charEncoding = CoreConstants.ENCODING_UTF8;
 	private boolean forceToReplaceAfterEncoding;
-	
+
 	/**
 	 *
 	 */
@@ -217,7 +217,7 @@ public class Link extends Text {
 			e.printStackTrace();
 		}
 	}
-	
+
 	/**
 	 * Construct a link to a file with text
 	 */
@@ -225,7 +225,7 @@ public class Link extends Text {
 		this(icFileId);
 		setText(textOnLink);
 	}
-	
+
 		/**
 		 * Construct a link to a file on a presentation object
 		 */
@@ -298,7 +298,7 @@ public class Link extends Text {
 			setText(this._myWindow.getName());
 		}
 	}
-	
+
 	/**
 	 * sets the hostname in the links URL
 	 * @param hostname the hostname
@@ -306,9 +306,9 @@ public class Link extends Text {
 	public void setHostname(String hostname) {
 		this._hostname = hostname;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Gets the hostname of the URL
 	 * @return the hostname
 	 */
@@ -375,7 +375,7 @@ public class Link extends Text {
 				else if (this._onMouseOverImageId > 0) {
 					((Image) this._obj).setOverImage(new Image(this._onMouseOverImageId));
 				}
-				
+
 				if (this._onClickImage != null) {
 					((Image) this._obj).setOnClickImage(this._onClickImage);
 				}
@@ -428,7 +428,7 @@ public class Link extends Text {
 		if (this._obj != null) {
 			this._obj.main(iwc);
 		}
-		
+
 		try {
 			getInlineEditable().makeInlineEditable(iwc, this);
 		} catch(Exception e) {
@@ -443,7 +443,7 @@ public class Link extends Text {
 		if (StringUtil.isEmpty(url)) {
 			return;
 		}
-		
+
 		StringTokenizer urlplusprm = new StringTokenizer(url, "?");
 		String newUrl = urlplusprm.nextToken();
 		if (urlplusprm.hasMoreTokens()) {
@@ -565,16 +565,16 @@ public class Link extends Text {
 			}
 		}
 	}
-	
+
 	public void setParameter(String parameterName, String parameterValue) {
 		addParameter(parameterName, parameterValue);
 	}
-	
+
 	/**
 	 * adds a parameter name and its value at the beginning of the links parameter list
 	 * so the added parameter is written out after the '?' :
 	 * .../?p=s&... becomes .../?parameterName=parameterValue&p=s&...
-	 * @param parameterName 
+	 * @param parameterName
 	 * @param parameterValue
 	 */
 	public void addFirstParameter(String parameterName, String parameterValue) {
@@ -619,7 +619,7 @@ public class Link extends Text {
 			if (this._parameterString == null) {
 				this._parameterString = new StringBuffer();
 			}
-			
+
 			if (this._parameterString.toString().length() == 0) {
 				this._parameterString.append("?");
 			}
@@ -637,18 +637,18 @@ public class Link extends Text {
 			parameterValue = getEncodedValue(parameterValue);
 		}
 	}
-	
+
 	private String getEncodedValue(String value) {
 		try {
 			value = URLEncoder.encode(value, charEncoding);
 		} catch (UnsupportedEncodingException e) {
 			e.printStackTrace();
 		}
-		
+
 		if (forceToReplaceAfterEncoding) {
 			value = StringHandler.replace(value, "+", CoreConstants.SPACE);
 		}
-		
+
 		return value;
 	}
 
@@ -665,7 +665,7 @@ public class Link extends Text {
 	public void maintainParameter(String parameterName, IWContext iwc) {
 		if(parameterName == null)
 			return;
-		
+
 		String parameterValue = iwc.getParameter(parameterName);
 		if (parameterValue != null) {
 			addParameter(parameterName, parameterValue);
@@ -680,11 +680,11 @@ public class Link extends Text {
 			this.maintainedParameters.add(name);
 		}
 	}
-	
+
 	public void setToMaintainAllParameter(boolean value) {
 		this._maintainAllParameters = value;
 	}
-	
+
 	/**
 	 * Adds a collection of parameter names (String)
 	 * for the link to maintain from the request
@@ -1056,7 +1056,7 @@ public class Link extends Text {
 		this._objectType = OBJECT_TYPE_IMAGE;
 		getImageLocalizationMap().put(locale, new Integer(imageID));
 	}
-	
+
 	public void setLocalizedOverImage(String localeString, int overImageID) {
 		this._objectType = OBJECT_TYPE_IMAGE;
 		getOverImageLocalizationMap().put(ICLocaleBusiness.getLocaleFromLocaleString(localeString), new Integer(overImageID));
@@ -1068,7 +1068,7 @@ public class Link extends Text {
 		}
 		return this._ImageLocalizationMap;
 	}
-	
+
 	private Map<Locale, Object> getOverImageLocalizationMap() {
 		if (this._overImageLocalizationMap == null) {
 			this._overImageLocalizationMap = new HashMap<Locale, Object>();
@@ -1176,7 +1176,7 @@ public class Link extends Text {
 	public void setPage(ICPage page) {
 		setPage(new Integer(page.getPrimaryKey().toString()).intValue());
 	}
-	
+
 	public void setPage(int pageID) {
 		if (pageID != -1) {
 			this.ibPage = pageID;
@@ -1314,7 +1314,7 @@ public class Link extends Text {
 			if (this._ImageLocalizationMap != null) {
 				linkObj._ImageLocalizationMap = this._ImageLocalizationMap;
 			}
-			
+
 			if (this._overImageLocalizationMap != null) {
 				linkObj._overImageLocalizationMap = this._overImageLocalizationMap;
 			}
@@ -1455,7 +1455,7 @@ public class Link extends Text {
 			if (this._parameterString == null) {
 				this._parameterString = new StringBuffer();
 				if (this._addSessionId && (!iwc.isSearchEngine())) {
-					if (URL.equals("#")) {
+					if (URL.equals(CoreConstants.HASH)) {
 						return ("");
 					}
 					else if (URL.indexOf("://") == -1) { //does not include ://
@@ -1551,7 +1551,7 @@ public class Link extends Text {
 				//return (TextSoap.convertSpecialCharacters(_parameterString.toString()));
 			}
 		}
-		
+
 		String returner = this._parameterString.toString();
 		return TextSoap.forHTMLTag(returner);
 	}
@@ -1590,7 +1590,7 @@ public class Link extends Text {
 		String uri = iwc.getRequestURI();
 		return uri + getParameterString(iwc, uri);
 	}
-	
+
 	private void maintainParameters(IWContext iwc) {
 		Iterator<String> iter = this.maintainedParameters.iterator();
 		while (iter.hasNext()) {
@@ -1601,7 +1601,7 @@ public class Link extends Text {
 			}
 		}
 	}
-	
+
 	private void maintainAllParameters(IWContext iwc) {
 		Enumeration<String> pNames = iwc.getParameterNames();
 		if(pNames != null) {
@@ -1771,7 +1771,7 @@ public class Link extends Text {
 		setFinalUrl("javascript:void(0)");
 		setTarget(TARGET_SELF_WINDOW);
 	}
-	
+
 	public void setToOpenAlert(String message) {
 		setFinalUrl(JAVASCRIPT + "alert('" + TextSoap.cleanText(message) + "')");
 	}
@@ -1779,7 +1779,7 @@ public class Link extends Text {
 	public void setToFormSubmit(Form form, boolean useEvent) {
 		setToFormSubmit(form.getID(), useEvent);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -1798,10 +1798,10 @@ public class Link extends Text {
 		//setOnClick(action);
 		setFinalUrl(JAVASCRIPT + action);
 	}
-	
+
 	public void setFormToSubmit(Form form, boolean useFormValidation) {
 		Script script = form.getAssociatedFormScript();
-		
+
 		StringBuffer method = new StringBuffer();
 		method.append("function submitForm(formID) {").append("\n\t");
 		if (useFormValidation) {
@@ -1813,21 +1813,21 @@ public class Link extends Text {
 			method.append("findObj(formID).submit();").append("\n");
 		}
 		method.append("}");
-		
+
 		script.addMethod("submitForm", method.toString());
 		setFinalUrl(JAVASCRIPT + "submitForm('" + form.getID() + "')");
 	}
-	
+
 	public void setFormToSubmit(String formID) {
 		String action = ("document.forms['" + formID + "'].submit()");
 		setFinalUrl(JAVASCRIPT + action);
 	}
-	
+
 	public void setToFormReset(Form form) {
 		String action = ("document.forms['" + form.getID() + "'].reset();");
 		setFinalUrl(JAVASCRIPT + action);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -1835,12 +1835,12 @@ public class Link extends Text {
 		setOnClick("history.go(-" + backUpHowManyPages + ")");
 		setFinalUrl(HASH);
 	}
-	
+
 	public void setAsCloseLink() {
 		setOnClick("top.window.close()");
 		setFinalUrl(HASH);
 	}
-	
+
 	public void setAsPrintLink() {
 		setOnClick("javascript:window.print();");
 		setFinalUrl(HASH);
@@ -1881,7 +1881,7 @@ public class Link extends Text {
 	public void setEventListener(String encryptedClassName) {
 		addParameter(IWMainApplication.IdegaEventListenerClassParameter, encryptedClassName);
 	}
-	
+
 	/**
 	 *
 	 */
@@ -1889,7 +1889,7 @@ public class Link extends Text {
 		setTarget(IWConstants.IW_CONTROLLER_FRAME_NAME);
 	}
 
-	
+
 	public void setWindowToOpen(Class windowClass, String width, String height, boolean resizable, boolean scrollbar) {
 		try{
 			this._windowInstance = (Window)windowClass.newInstance();
@@ -1900,10 +1900,10 @@ public class Link extends Text {
 		}
 		catch(Exception e){
 		}
-		
+
 		setWindowToOpen(windowClass);
 	}
-	
+
 	public void setPublicWindowToOpen(Class windowClass) {
 		this._windowClass = windowClass;
 		this.usePublicWindow = true;
@@ -2056,7 +2056,7 @@ public void setWindowToOpen(String className) {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="https"
 	 */
 	public void setHttps(boolean useHttps) {
@@ -2160,7 +2160,7 @@ public void setWindowToOpen(String className) {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="classToInstanciate"
 	 */
 	public void setClassToInstanciate(Class<? extends UIComponent> presentationObjectClass) {
@@ -2171,7 +2171,7 @@ public void setWindowToOpen(String className) {
 		setClassToInstanciate(presentationObjectClass);
 		this.templateForObjectInstanciation = template;
 	}
-	
+
 	public void setClickConfirmation(String message) {
 		setOnClick("return confirm('"+message+"');");
 	}
@@ -2231,11 +2231,11 @@ public void setWindowToOpen(String className) {
   }
 
 	public void setOutgoing(boolean outgoing) {
-		this.isOutgoing = outgoing;	
+		this.isOutgoing = outgoing;
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="protocol"
 	 */
 	public void setProtocol(String protocol) {
@@ -2243,7 +2243,7 @@ public void setWindowToOpen(String className) {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="protocol"
 	 */
 	public String getProtocol() {
@@ -2257,7 +2257,7 @@ public void setWindowToOpen(String className) {
 			((Image) this._obj).setAlt(toolTip);
 		}
 	}
-	
+
 	public void setLocalizedToolTip(Locale locale, String toolTip) {
 		getToolTipLocalizationMap().put(locale, toolTip);
 		Image im = (Image) getImageLocalizationMap().get(locale);
@@ -2269,18 +2269,18 @@ public void setWindowToOpen(String className) {
 			im.setAlt(toolTip);
 		}
 	}
-	
+
 	private Map<Locale, String> getToolTipLocalizationMap() {
 		if (this._toolTipLocalizationMap == null) {
 			this._toolTipLocalizationMap = new HashMap<Locale, String>();
 		}
 		return this._toolTipLocalizationMap;
 	}
-	
+
 	public void setUsePublicObjectInstanciator(boolean use) {
 		this.usePublicOjbectInstanciator = use;
 	}
-	
+
 	/**
 	 * Sets the value of the given interface object when the link is clicked.
 	 * @param objectToChange	The interface object to change value of.
@@ -2298,7 +2298,7 @@ public void setWindowToOpen(String className) {
 	public void setValueOnClick(String objectToChangeName, String value) {
 		setOnClick("changeInputValue(findObj('" + objectToChangeName+ "'), '" + value + "');");
 	}
-	
+
 	/**
 	 * Sets the accesskey html attribute so you can activate this element (causes a "click" on it) with a keyboard command
 	 * @param accessKey
@@ -2306,15 +2306,15 @@ public void setWindowToOpen(String className) {
 	public void setAccessKey(String accessKey){
 		setMarkupAttribute("accesskey",accessKey);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return The access key that has been set for this element
 	 */
 	public String getAccessKey(){
 		return getMarkupAttribute("accesskey");
 	}
-	
+
 	public String getCharEncoding() {
 		return charEncoding;
 	}
@@ -2330,7 +2330,7 @@ public void setWindowToOpen(String className) {
 	public void setForceToReplaceAfterEncoding(boolean forceToReplaceAfterEncoding) {
 		this.forceToReplaceAfterEncoding = forceToReplaceAfterEncoding;
 	}
-	
+
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
@@ -2365,7 +2365,7 @@ public void setWindowToOpen(String className) {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-	
+
 		iFormToSubmit = ((Boolean) values[5]).booleanValue();
 		_windowClass = (Class) values[6];
 		try {
@@ -2383,7 +2383,7 @@ public void setWindowToOpen(String className) {
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
 		}
-	
+
 		icObjectInstanceIDForWindow = ((Integer) values[9]).intValue();
 		_parameterString = (StringBuffer) values[10];
 		_objectType = (String) values[11];
@@ -2417,8 +2417,8 @@ public void setWindowToOpen(String className) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		}		
-		
+		}
+
 		try {
 			String className = (String) values[29];
 			if (className != null) {
@@ -2433,7 +2433,7 @@ public void setWindowToOpen(String className) {
 			e.printStackTrace();
 		} catch (ClassNotFoundException e) {
 			e.printStackTrace();
-		}		
+		}
 		usePublicWindow = ((Boolean) values[31]).booleanValue();
 		classToInstanciate = (Class<? extends UIComponent>) values[32];
 		templateForObjectInstanciation = (String) values[33];
@@ -2519,9 +2519,9 @@ public void setWindowToOpen(String className) {
 		values[46] = Boolean.valueOf(forceToReplaceAfterEncoding);
 		return values;
 	}
-	
+
 	@Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
 		Collection<UIComponent> children = this.getChildren();
     	for(UIComponent child : children) {
     		if (child instanceof UIParameter) {
@@ -2529,7 +2529,7 @@ public void setWindowToOpen(String className) {
 				addParameter(param.getName(), String.valueOf(param.getValue()));
 			}
     	}
-    	
+
     	super.encodeBegin(context);
 	}
 }

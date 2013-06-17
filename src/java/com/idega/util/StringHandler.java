@@ -1166,8 +1166,8 @@ public class StringHandler {
 			return -1;	// Error
 		}
 		value = value.trim();
-		if (value.startsWith(CoreConstants.NUMBER_SIGN)) {
-			value = value.substring(value.indexOf(CoreConstants.NUMBER_SIGN));
+		if (value.startsWith(CoreConstants.HASH)) {
+			value = value.substring(value.indexOf(CoreConstants.HASH));
 		}
 		if (value.endsWith(CoreConstants.SEMICOLON)) {
 			value = value.substring(0, value.lastIndexOf(CoreConstants.SEMICOLON));

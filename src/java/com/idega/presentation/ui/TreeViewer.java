@@ -13,6 +13,7 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.ui.util.AbstractChooserBlock;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
 /**
@@ -51,7 +52,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	public static final String ONCLICK_FUNCTION_NAME = "treenodeselect";
 	public static final String ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME = "iw_node_id";
 	public static final String ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME = "iw_node_name";
-	
+
 	private boolean addPageNameAttribute = false;
 	private boolean addPageIdAtribute = false;
 
@@ -69,6 +70,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		return viewer;
 	}
 
+	@Override
 	protected void updateIconDimensions() {
 		super.updateIconDimensions();
 		for (int i = 0; i < this.folderAndFileIcons.length; i++) {
@@ -82,6 +84,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 	}
 
+	@Override
 	public void initIcons(IWContext iwc) {
 		super.initIcons(iwc);
 
@@ -101,6 +104,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		getParentPage().setAssociatedScript(script);
 	}
 
+	@Override
 	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodesOpen, boolean nodeHasChild, boolean isRootNode) {
 		boolean fromEditor = false;
 		if (iwc.isParameterSet("from_editor")) {
@@ -116,13 +120,13 @@ public class TreeViewer extends AbstractTreeViewer {
 		}
 		return null;
 	}
-	
+
 	public boolean getShortenedNodeName(String nodeName){
 		if (this._maxNodeNameLength > 0) {
 			if (nodeName.length() > this._maxNodeNameLength) {
 				nodeName = nodeName.substring(0,this._maxNodeNameLength-3) + "...";
 				return true;
-			} 
+			}
 		}
 		return false;
 	}
@@ -134,20 +138,20 @@ public class TreeViewer extends AbstractTreeViewer {
 		//	nodeName = ((PageTreeNode) node).getLocalizedNodeName(iwc);
 		//else
 			nodeName = node.getNodeName(iwc.getCurrentLocale(),iwc);
-			
+
 		titleName = nodeName;
 		if(!getShortenedNodeName(nodeName)) {
 			titleName = null;
-		/*	
+		/*
 		if (_maxNodeNameLength > 0) {
 			if (nodeName.length() > _maxNodeNameLength) {
 				titleName = nodeName;
 				nodeName = nodeName.substring(0,_maxNodeNameLength-3) + "...";
-			} 
+			}
 		}
 		*/
 		}
-		
+
 		Link l = getLinkPrototypeClone(nodeName);
 		if (titleName != null) {
 			l.setMarkupAttribute("title",titleName);
@@ -166,9 +170,9 @@ public class TreeViewer extends AbstractTreeViewer {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (this._usesOnClick) {
-			l.setURL("#");
+			l.setURL(CoreConstants.HASH);
 			if (fromEditor){
 				BuilderService bservice;
 				try
@@ -189,15 +193,15 @@ public class TreeViewer extends AbstractTreeViewer {
 			l.addParameter(this.nodeActionPrm, node.getId());
 		}
 		setLinkToMaintainOpenAndClosedNodes(l);
-		
+
 		if (isAddPageNameAttribute()) {
 			l.setMarkupAttribute(ICBuilderConstants.PAGE_NAME_ATTRIBUTE, nodeName);
 		}
-		
+
 		if (isAddPageIdAtribute()) {
 			l.setMarkupAttribute(ICBuilderConstants.PAGE_ID_ATTRIBUTE, node.getId());
 		}
-		
+
 		return l;
 	}
 
@@ -255,30 +259,30 @@ public class TreeViewer extends AbstractTreeViewer {
 		this._linkStyle = style;
 	}
 
-	/** Note: Do not forget to set the desired parameter 
+	/** Note: Do not forget to set the desired parameter
 	 * in  <code>addOpenCloseParameter(String,String)</code>.
 	 * Example:
 	 * Link myLink = new Link();
 	 * myLink.addParameter("hello", "world");
 	 * tree.setLinkPrototype(myLink);
-	 * tree.addOpenCloseParameter("hello", "world") 
+	 * tree.addOpenCloseParameter("hello", "world")
 	 */
 	// above comment added by Thomas
 	public void setLinkPrototype(Link link) {
 		this._linkPrototype = link;
 	}
-	
+
 	private Link getLinkOpenClosePrototype() {
 		if (this._linkOpenClosePrototype == null) {
 			this._linkOpenClosePrototype = new Link();
 		}
 		return (Link) this._linkOpenClosePrototype.clone();
 	}
-	
+
 	public void setLinkOpenClosePrototype(Link link) {
 			this._linkOpenClosePrototype = link;
 	}
-	
+
 	private Link getLinkPrototype() {
 		if (this._linkPrototype == null) {
 			this._linkPrototype = new Link();
@@ -327,19 +331,20 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setOnClick(String action) {
 		getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME, action);
 	}
-	
+
 	public void setOnNodeClickEvent(String event) {
 		this.onNodeClickEvent = event;
 	}
-	
+
 	public void setMaxNodeNameLength(int length) {
 		this._maxNodeNameLength = length;
 	}
-	
+
 	public int getMaxNodeNameLength() {
 		return this._maxNodeNameLength;
 	}
-	
+
+	@Override
 	public void setToMaintainParameter(String parameterName, IWContext iwc) {
 		getLinkOpenClosePrototype().maintainParameter(parameterName, iwc);
 		super.setToMaintainParameter(parameterName, iwc);
@@ -360,5 +365,5 @@ public class TreeViewer extends AbstractTreeViewer {
 	public void setAddPageNameAttribute(boolean addPageNameAttribute) {
 		this.addPageNameAttribute = addPageNameAttribute;
 	}
-	
+
 }

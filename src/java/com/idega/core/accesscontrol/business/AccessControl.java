@@ -1956,6 +1956,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public Collection<ICPermission> getAllRolesForGroup(Group group) {
+		if (group == null)
+			return Collections.emptyList();
+
 		Group permGroup = getGroupDAO().findGroup(group.getID());
 		Collection<ICPermission> groupPermissions = new ArrayList<ICPermission>(); //empty
 		Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(RoleHelperObject.getStaticInstance().toString(), permGroup);
@@ -1978,6 +1981,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public Collection<String> getAllRolesKeysForGroup(com.idega.user.data.Group group) {
+		if (group == null)
+			return Collections.emptyList();
+
 		Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
 		return getAllRolesKeysForGroup(g);
 	}
