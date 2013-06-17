@@ -194,7 +194,7 @@ public class MimeTypeUtil implements Singleton {
 		MIME_TYPES_MAPPING.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
 		MIME_TYPES_MAPPING.put("css", "text/css");
 		MIME_TYPES_MAPPING.put("js", "text/javascript");
-		MIME_TYPES_MAPPING.put("woff", "application/x-font-woff");
+		MIME_TYPES_MAPPING.put("woff", "application/font-woff");
 	}
 	
 	protected MimeTypeUtil() {
