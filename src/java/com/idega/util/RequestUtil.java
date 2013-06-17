@@ -33,11 +33,11 @@ public class RequestUtil {
 
 	private static String	SLASH = CoreConstants.SLASH,
 							IMAGEBUTTON_XPOS_SUFFIX = ".x",
-							HEADER_REFERER = "Referer",
-							HEADER_AUTHORIZATION = "Authorization";
+							HEADER_REFERER = "Referer";
 
 	public static final String	HEADER_ACCEPT_LANGUAGE = "Accept-Language",
-								HEADER_USER_AGENT = "User-agent";
+								HEADER_USER_AGENT = "User-agent",
+								HEADER_AUTHORIZATION = "Authorization";
 
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it

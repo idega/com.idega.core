@@ -39,6 +39,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.util.RequestUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.expression.ELUtil;
 
@@ -46,36 +47,37 @@ import com.idega.util.expression.ELUtil;
  * <p>
  * This Servlet filter sits by default in front of all (Axis) web services
  * and blocks unpriviliged access. <br/>
- * So access by clients that desire to use the services needs to be configured 
+ * So access by clients that desire to use the services needs to be configured
  * with the WS_DO_BASIC_AUTHENTICATION or WS_VALID_IP application properties.
  * </p>
  *  Last modified: $Date: 2007/01/22 08:16:56 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.2 $
  */
 public class WebServiceAuthorizationFilter implements Filter {
-	
-	private final String WEB_SERVICE_USER_ROLE = "web_service_user"; 
-	
+
+	private final String WEB_SERVICE_USER_ROLE = "web_service_user";
+
 	private final String DO_BASIC_AUTHENTICATION = "WS_DO_BASIC_AUTHENTICATION";
 
 	private final String VALID_IP = "WS_VALID_IP";
 
 	LoginBusinessBean loginBusiness = null;
 	UserBusiness userBusiness = null;
-	
+
 	BASE64Decoder myBase64Decoder = null;
 
 	@Autowired
 	UserLoginDAO userLoginDAO;
-	
+
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse,
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)myRequest;
@@ -92,7 +94,7 @@ public class WebServiceAuthorizationFilter implements Filter {
     				response.sendError(HttpServletResponse.SC_FORBIDDEN);
     				return;
     			}
-    		} else {    			
+    		} else {
 			boolean isValid = false;
     			try {
     				String validIP = mainApplication.getIWApplicationContext().getApplicationSettings().getProperty(this.VALID_IP, "");
@@ -106,18 +108,18 @@ public class WebServiceAuthorizationFilter implements Filter {
     			} catch (Exception e) {
     				isValid = false;
     			}
-    			
+
     			if (!isValid) {
     				//send a 403 error
     				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-    				return;    				
+    				return;
     			}
     		}
-    		
+
 		chain.doFilter(request, response);
 	}
-		
-		
+
+
 	private boolean requestIsValid(HttpServletRequest request) {
 		String decodedNamePassword = getDecodedNamePassword(request);
 		if (decodedNamePassword == null) {
@@ -137,7 +139,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 		}
 		return checkUserPasswordAndRole(request, name, password);
 	}
-	
+
 	private boolean checkUserPasswordAndRole(HttpServletRequest myRequest, String name, String password) {
 		ServletContext myServletContext = myRequest.getSession().getServletContext();
 
@@ -155,7 +157,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 			return false;
 		}
 	}
-	
+
 	private boolean hasRole(UserLogin userLogin, IWMainApplication iwMainApplication) {
 		User user = userLogin.getUser();
 		List groups = user.getUserRepresentative().getParentGroups();
@@ -171,9 +173,9 @@ public class WebServiceAuthorizationFilter implements Filter {
 		}
 		return false;
 	}
-	
+
 	private String getDecodedNamePassword(HttpServletRequest request) {
-		String basicNamePassword = request.getHeader("Authorization");
+		String basicNamePassword = request.getHeader(RequestUtil.HEADER_AUTHORIZATION);
 		if (basicNamePassword == null) {
 			return null;
 		}
@@ -196,17 +198,18 @@ public class WebServiceAuthorizationFilter implements Filter {
 			return null;
 		}
 	}
-    	
+
     private LoginBusinessBean getLoginBusiness(IWApplicationContext iwac) {
-    	if (this.loginBusiness == null) { 
+    	if (this.loginBusiness == null) {
         	this.loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwac);
     	}
     	return this.loginBusiness;
 	}
-		
+
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
+	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		this.myBase64Decoder = new BASE64Decoder();
 	}
@@ -214,10 +217,11 @@ public class WebServiceAuthorizationFilter implements Filter {
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 		// noting to destroy
 	}
-	
+
 	public UserLoginDAO getUserLoginDAO() {
 		if (this.userLoginDAO == null) {
 			ELUtil.getInstance().autowire(this);
