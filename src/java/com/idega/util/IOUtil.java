@@ -189,7 +189,7 @@ public class IOUtil {
 
 		Long requestSize = null;
 		try {
-			requestSize = Long.valueOf(request.getHeader("Content-Length"));
+			requestSize = Long.valueOf(request.getHeader(CoreConstants.PARAMETER_CONTENT_LENGTH));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
