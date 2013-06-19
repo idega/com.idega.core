@@ -89,7 +89,7 @@ import org.springframework.context.ApplicationEvent;
 import com.idega.user.data.User;
 
 /**
- * <p>TODO</p>
+ * <p>Event for notifying about new message creation.</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
@@ -98,9 +98,6 @@ import com.idega.user.data.User;
  */
 public class NewMessageEvent extends ApplicationEvent {
 
-	/**
-	 * <p>TODO</p>
-	 */
 	private static final long serialVersionUID = 1946882077744346278L;
 
 	private User sender = null;

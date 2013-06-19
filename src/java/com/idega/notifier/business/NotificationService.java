@@ -83,6 +83,7 @@
 package com.idega.notifier.business;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.context.ApplicationListener;
@@ -93,7 +94,8 @@ import com.idega.user.data.User;
 
 
 /**
- * <p>TODO</p>
+ * <p>Extend this service, when you need to add different type of 
+ * notification.</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
@@ -104,10 +106,12 @@ public interface NotificationService extends ApplicationListener{
 
 	/**
 	 * 
-	 * <p>TODO</p>
-	 * @param body
-	 * @param receivers
-	 * @return
+	 * <p>Creates notification with given criteria.</p>
+	 * @param body is message that notification should contain, 
+	 * not <code>null</code>;
+	 * @param receivers which should see this notification, not empty;
+	 * @return updated {@link NotificationEntity} or <code>null</code>
+	 * on failure;
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public NotificationEntity createNotification(String body,
@@ -115,20 +119,22 @@ public interface NotificationService extends ApplicationListener{
 	
 	/**
 	 * 
-	 * <p>TODO</p>
-	 * @param userId
-	 * @return
+	 * @param userId is {@link User#getPersonalID()} or 
+	 * {@link User#getPrimaryKey()}, not <code>null</code>;
+	 * @return notification for given {@link User} or 
+	 * {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public List<NotificationEntity> getNotificationEntities(String userId);
 	
 	/**
 	 * 
-	 * <p>TODO</p>
-	 * @param userId
-	 * @return
+	 * <p>Queries for notification receiver entity. With this entity it is 
+	 * possible to get notifications.</p>
+	 * @param userId to get notification entity for, not <code>null</code>;
+	 * @return {@link NotificationReceiverEntity} if found, <code>null</code>
+	 * on error;
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public NotificationReceiverEntity getNotificationReceiver(String userId);
-
 }

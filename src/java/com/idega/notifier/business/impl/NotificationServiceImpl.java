@@ -108,7 +108,7 @@ import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
- * <p>TODO</p>
+ * @see NotificationService
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
