@@ -922,7 +922,7 @@ public void setHomePageURL(String homePageURL)  {
 	}
 
 	@Override
-	public Collection getAddresses() {
+	public Collection<Address> getAddresses() {
 		try {
 		    Collection<Address> addresses = super.idoGetRelatedEntities(Address.class);
 
