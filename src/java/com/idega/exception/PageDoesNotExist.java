@@ -19,8 +19,10 @@ import com.idega.util.ExceptionHelper;
  */
  public class PageDoesNotExist extends Exception {
 
-  private static String key = "PageDoesNotExist";
-  private static ExceptionHelper e = new ExceptionHelper();
+	private static final long serialVersionUID = 3742640902289378197L;
+
+	private static String key = "PageDoesNotExist";
+	private static ExceptionHelper e = new ExceptionHelper();
 
   public PageDoesNotExist() {
     super(e.getExceptionText(key));

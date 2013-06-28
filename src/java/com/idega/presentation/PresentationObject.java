@@ -2505,7 +2505,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void log(String msg) {
-		 //System.out.println(string);
 		 getLogger().log(getDefaultLogLevel(),msg);
 	 }
 
@@ -2523,7 +2522,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void log(Level level,String msg) {
-		 //System.out.println(msg);
 		 getLogger().log(level,msg);
 	 }
 
@@ -2532,7 +2530,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void logError(String msg) {
-		 //System.err.println(msg);
 		 getLogger().log(getErrorLogLevel(),msg);
 	 }
 
@@ -2541,7 +2538,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void logDebug(String msg) {
-		 //System.err.println(msg);
 		 getLogger().log(getDebugLogLevel(),msg);
 	 }
 
@@ -2550,7 +2546,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void logSevere(String msg) {
-		 //System.err.println(msg);
 		 getLogger().log(Level.SEVERE,msg);
 	 }
 
@@ -2560,7 +2555,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void logWarning(String msg) {
-		 //System.err.println(msg);
 		 getLogger().log(Level.WARNING,msg);
 	 }
 
@@ -2569,7 +2563,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param msg The message to log out
 	  */
 	 protected void logConfig(String msg) {
-		 //System.err.println(msg);
 		 getLogger().log(Level.CONFIG,msg);
 	 }
 
