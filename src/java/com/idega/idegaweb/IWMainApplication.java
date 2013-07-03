@@ -172,7 +172,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public final static String IMAGE_SERVLET_URL = "/servlet/ImageServlet/";
     public final static String FILE_SERVLET_URL = "/servlet/FileServlet/";
 
-    private final static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
+    public final static String MEDIA_SERVLET_URL = "/servlet/MediaServlet/";
     private final static String BUILDER_SERVLET_URL = "/servlet/IBMainServlet/";
     private final static String _IFRAME_CONTENT_URL = "/servlet/IBIFrameServlet/";
     private final static String IDEGAWEB_APP_SERVLET_URI = "/servlet/idegaweb";
