@@ -68,6 +68,11 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 
 	@Override
 	public List<UserLogin> findAllLoginsForUser(User user) {
+		if (user == null) {
+			getLogger().warning("User is not provided");
+			return null;
+		}
+
 		Param param = new Param("user", user);
 		return getResultList("login.findAllByUser", UserLogin.class, param);
 	}
