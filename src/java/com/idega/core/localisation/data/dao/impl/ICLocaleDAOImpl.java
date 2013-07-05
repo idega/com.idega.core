@@ -12,6 +12,7 @@ import com.idega.core.localisation.data.bean.ICLocale;
 import com.idega.core.localisation.data.dao.ICLocaleDAO;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 @Repository(ICLocaleDAO.BEAN_NAME)
@@ -32,17 +33,18 @@ public class ICLocaleDAOImpl extends GenericDaoImpl implements ICLocaleDAO {
 		if (StringUtil.isEmpty(locale))
 			return null;
 
-		ICLocale icLocale = null;
+		List<ICLocale> locales = null;
 		try {
-			icLocale = getSingleResultByInlineQuery("from " + ICLocale.class.getName() + " l where l." + ICLocale.COLUMN_LOCALE + " = :localeParam",
-												ICLocale.class,
-												new Param("localeParam", locale)
+			locales = getResultListByInlineQuery(
+					"from " + ICLocale.class.getName() + " l where l." + ICLocale.COLUMN_LOCALE + " = :localeParam",
+					ICLocale.class,
+					new Param("localeParam", locale)
 			);
 		} catch (Exception e) {}
-		if (icLocale == null)
+		if (ListUtil.isEmpty(locales))
 			return doCreateLocale(locale);
 
-		return icLocale;
+		return locales.get(0);
 	}
 
 	@Override
