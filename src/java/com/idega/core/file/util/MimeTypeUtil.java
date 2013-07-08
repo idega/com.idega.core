@@ -64,6 +64,8 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_TEXT_PLAIN = "text/plain";
 	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
 	public static final String MIME_TYPE_CALENDAR = "text/calendar";
+	public static final String MIME_TYPE_ENCODED_URL = "application/x-www-form-urlencoded";
+	public static final String MIME_TYPE_JSON = "application/json";
 
 	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
 	

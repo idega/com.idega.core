@@ -24,6 +24,7 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.util.StringUtil;
 
 public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
@@ -82,6 +83,10 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	}
 
 	private String stripWhitespace(String strip) {
+		if (StringUtil.isEmpty(strip)) {
+			return null;
+		}
+		
 		String s = strip;
 		return s.replaceAll("\\s", "");
 	}

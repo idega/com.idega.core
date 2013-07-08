@@ -16,6 +16,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.TreeMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.EJBException;
@@ -25,6 +26,8 @@ import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
+import org.springframework.beans.factory.BeanCreationException;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBOLookupException;
@@ -57,8 +60,6 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.expression.ELUtil;
-
-import org.springframework.beans.factory.BeanCreationException;
 
 /**
  * <p>
@@ -1428,6 +1429,54 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	/**
+	 * 
+	 * <p>Method created for logging in users, created from external services,
+	 * which does not have personal id, username or password.</p>
+	 * @param iwc current application context, not <code>null</code>;
+	 * @param user to login, not <code>null</code>;
+	 * @return <code>true</code> when logged in, <code>false</code>
+	 * otherwise.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 * @deprecated method is hack and totally unsafe.
+	 */
+	@Deprecated
+	public boolean logInUser(IWContext iwc, User user) {
+		Collection<LoginTable> logins = null;
+		try {
+			logins = getLoginTableHome().findLoginsForUser(user);
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING, "Unable to find " + 
+					LoginTable.class +  " for user, cause of: ", e);
+		}
+
+		LoginTable lTable = null;
+		try {
+			lTable = chooseLoginRecord(iwc.getRequest(), logins, user);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Unable to find " + 
+					LoginTable.class +  " for user, cause of: ", e);
+		}
+		
+		try {
+			storeUserAndGroupInformationInSession(iwc.getRequest().getSession(), user);
+			LoginRecord loginRecord = LoginDBHandler.recordLogin(lTable, iwc.getRequest().getRemoteAddr());
+			storeLoggedOnInfoInSession(iwc.getRequest().getSession(), lTable, 
+					lTable != null ? lTable.getUserLogin() : null, user, 
+							loginRecord, lTable != null ? lTable.getLoginType() : null);
+
+			if (logIn(iwc.getRequest(), lTable)) {
+				onLoginSuccessful(iwc.getRequest());
+				return Boolean.TRUE;
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to log in user, cause of: ", e);
+		}
+		
+		return Boolean.FALSE;
+	}
+	
+	/**
 	 * <p>
 	 * Logs the user in by given personalId and specified loginType.
 	 * </p>
@@ -1437,7 +1486,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean logInByPersonalID(HttpServletRequest request, String personalId,String userName,String password,String loginType) throws Exception {
+	public boolean logInByPersonalID(HttpServletRequest request, String personalId, String userName, String password, String loginType) throws Exception {
 		boolean returner = false;
 		try {
 			IWApplicationContext iwac = getIWApplicationContext(request.getSession());
@@ -1450,6 +1499,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			else{
 				lTable = this.chooseLoginRecord(request, logins, user,loginType);
 			}
+
 			if (lTable != null) {
 				if(userName!=null){
 					if(!lTable.getUserLogin().equals(userName)){
@@ -1467,19 +1517,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 				if (returner) {
 					onLoginSuccessful(request);
 				}
-			}
-			else {
+			} else {
 				try {
 					throw new LoginCreateException("No matching login record found for user");
-				}
-				catch (LoginCreateException e1) {
+				} catch (LoginCreateException e1) {
 					e1.printStackTrace();
 				}
 			}
-		}
-		catch (EJBException e) {
+		} catch (EJBException e) {
 			returner = false;
 		}
+
 		return returner;
 	}
 
