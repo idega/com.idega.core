@@ -10,10 +10,12 @@
 package com.idega.core.accesscontrol.data;
 
 import java.util.Collection;
+
 import javax.ejb.FinderException;
-import com.idega.user.data.User;
+
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
+import com.idega.user.data.User;
 
 
 /**
@@ -46,7 +48,7 @@ public class LoginTableHomeImpl extends IDOFactory implements LoginTableHome {
 		return this.findByPrimaryKey(pk);
 	}
 
-	public Collection findLoginsForUser(User user) throws FinderException {
+	public Collection<LoginTable> findLoginsForUser(User user) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((LoginTableBMPBean) entity).ejbFindLoginsForUser(user);
 		this.idoCheckInPooledEntity(entity);

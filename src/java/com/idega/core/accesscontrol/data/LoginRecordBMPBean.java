@@ -3,7 +3,9 @@ package com.idega.core.accesscontrol.data;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDORelationshipException;
@@ -15,11 +17,13 @@ import com.idega.user.data.User;
 
 /**
  * Title: idegaclasses Description: Copyright: Copyright (c) 2001 Company:
- * 
+ *
  * @author <a href="mailto:aron@idega.is">aron@idega.is
  * @version 1.0
  */
 public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
+
+	private static final long serialVersionUID = 3736925060612179533L;
 
 	public static String getEntityTableName() {
 		return "IC_LOGIN_REC";
@@ -45,13 +49,14 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		return "USER_ID";
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(this.getIDColumnName());
 
 		addManyToOneRelationship(getColumnLoginId(), LoginTable.class);
 		addManyToOneRelationship(getColumnLoginAsUser(), User.class);
 		setNullable(getColumnLoginAsUser(), true);
-		
+
 		addAttribute(getColumnInStamp(), "Login Stamp", Timestamp.class);
 		addAttribute(getColumnOutStamp(), "Logout Stamp", Timestamp.class);
 		addAttribute(getColumnIPAddress(), "IP address", String.class, 41);
@@ -59,62 +64,77 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		addIndex("IDX_LOGIN_REC_1", getColumnLoginId());
 	}
 
+	@Override
 	public String getEntityName() {
 		return getEntityTableName();
 	}
 
+	@Override
 	public void setLoginId(int Id) {
 		setColumn(getColumnLoginId(), Id);
 	}
 
+	@Override
 	public void setLogin(LoginTable login) {
 		setColumn(getColumnLoginId(), login);
 	}
 
+	@Override
 	public int getLoginId() {
 		return getIntColumnValue(getColumnLoginId());
 	}
 
+	@Override
 	public LoginTable getLogin() {
 		return (LoginTable) getColumnValue(getColumnLoginId());
 	}
 
+	@Override
 	public Timestamp getLogInStamp() {
 		return (Timestamp) getColumnValue(getColumnInStamp());
 	}
 
+	@Override
 	public void setLogInStamp(Timestamp stamp) {
 		setColumn(getColumnInStamp(), stamp);
 	}
 
+	@Override
 	public Timestamp getLogOutStamp() {
 		return (Timestamp) getColumnValue(getColumnOutStamp());
 	}
 
+	@Override
 	public void setLogOutStamp(Timestamp stamp) {
 		setColumn(getColumnOutStamp(), stamp);
 	}
 
+	@Override
 	public String getIPAdress() {
 		return getStringColumnValue(getColumnIPAddress());
 	}
 
+	@Override
 	public void setIPAdress(String ip) {
 		setColumn(getColumnIPAddress(), ip);
 	}
 
+	@Override
 	public int getLoginAsUserID() {
 		return getIntColumnValue(getColumnLoginAsUser());
 	}
 
+	@Override
 	public void setLoginAsUserID(int userId) {
 		setColumn(getColumnLoginAsUser(), userId);
 	}
 
+	@Override
 	public User getLoginAsUser() {
 		return (User) getColumnValue(getColumnLoginAsUser());
 	}
 
+	@Override
 	public void setLoginAsUser(User user) {
 		setColumn(getColumnLoginAsUser(), user);
 	}
@@ -171,11 +191,11 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 			throw new FinderException(e.getMessage());
 		}
 	}
-	
+
 	public Object ejbFindLastLoginRecord(User user) throws FinderException {
 		Table table = new Table(this);
 		Table login = new Table(LoginTable.class);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table, getIDColumnName());
 		try {
@@ -186,18 +206,18 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		}
 		query.addCriteria(new MatchCriteria(login, "ic_user_id", MatchCriteria.EQUALS, user));
 		query.addOrder(new Order(table.getColumn(getColumnInStamp()), false));
-		
+
 		return idoFindOnePKByQuery(query);
 	}
-	
+
 	public Object ejbFindPreviousLoginRecord(LoginRecord record) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table, getIDColumnName());
 		query.addCriteria(new MatchCriteria(table, getColumnInStamp(), MatchCriteria.LESS, record.getLogInStamp()));
 		query.addOrder(new Order(table.getColumn(getColumnInStamp()), false));
-		
+
 		return idoFindOnePKByQuery(query);
 	}
 }

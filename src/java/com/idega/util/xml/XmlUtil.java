@@ -678,4 +678,44 @@ public class XmlUtil {
 		}
 		return ret;
 	}
+	
+	/**
+	 * 
+	 * <p>Converts whole {@link Document} to {@link String}</p>
+	 * @param document to convert, not <code>null</code>;
+	 * @return xml {@link Document} in {@link String} format or <code>null</code>
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public static String toString(Document document) {
+		if (document == null) {
+			return null;
+		}
+		
+		StringWriter sw = new StringWriter();
+        TransformerFactory tf = TransformerFactory.newInstance();
+
+        Transformer transformer = null;
+		try {
+			transformer = tf.newTransformer();
+		} catch (TransformerConfigurationException e) {
+			LOGGER.log(Level.WARNING, 
+					"Unable to creat new transformer cause of: ", e);
+			return null;
+		}
+
+        transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "no");
+        transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+        transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+        transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
+        
+        try {
+			transformer.transform(new DOMSource(document), new StreamResult(sw));
+		} catch (TransformerException e) {
+			LOGGER.log(Level.WARNING, 
+					"Failed to transform document cause of: ", e);
+		}
+        
+        return sw.toString();
+	}
 }

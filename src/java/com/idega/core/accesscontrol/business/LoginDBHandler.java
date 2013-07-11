@@ -22,12 +22,15 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import com.idega.business.IBORuntimeException;
+import com.idega.core.accesscontrol.dao.UserLoginDAO;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginInfoHome;
 import com.idega.core.accesscontrol.data.LoginRecord;
 import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
+import com.idega.core.accesscontrol.data.bean.UserLogin;
+import com.idega.core.persistence.Param;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -42,6 +45,8 @@ import com.idega.util.CoreConstants;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * @author 2000 - idega team - <a href="mailto:gummi@idega.is">Gu�mundur �g�st
@@ -522,6 +527,29 @@ public class LoginDBHandler {
 	public static LoginRecord recordLogin(LoginTable login, String IPAddress) {
 		return recordLogin(login, IPAddress, -1);
 	}
+	public static com.idega.core.accesscontrol.data.bean.LoginRecord recordLogin(UserLogin login, String IPAddress) {
+		if (login == null || StringUtil.isEmpty(IPAddress))
+			return null;
+
+		try {
+			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
+			LoginTable lTable = loginTableHome.findByPrimaryKey(login.getId());
+			LoginRecord lr = recordLogin(lTable, IPAddress, -1);
+			if (lr == null)
+				return null;
+
+			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean(UserLoginDAO.class);
+			com.idega.core.accesscontrol.data.bean.LoginRecord record = userLoginDAO.getSingleResultByInlineQuery(
+					"from " + com.idega.core.accesscontrol.data.bean.LoginRecord.class.getName() + " lr where lr.loginRecordID = :id",
+					com.idega.core.accesscontrol.data.bean.LoginRecord.class,
+					new Param("id", lr.getPrimaryKey())
+			);
+			return record;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
 
 	/**
 	 * Records a login record, returns true if succeeds
@@ -538,12 +566,9 @@ public class LoginDBHandler {
 			}
 			inRec.store();
 			return inRec;
-		}
-		catch (CreateException ce) {
+		} catch (CreateException ce) {
 			ce.printStackTrace();
-		}
-		catch (RemoteException ex) {
-		}
+		} catch (RemoteException ex) {}
 		return null;
 	}
 
@@ -552,13 +577,11 @@ public class LoginDBHandler {
 			LoginRecordHome lHome = (LoginRecordHome) com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
 			int numberOfLogins = lHome.getNumberOfLoginsByLoginID(iLoginID);
 			return numberOfLogins;
-		}
-		catch (IDOException ie) {
+		} catch (IDOException ie) {
 			ie.printStackTrace();
-			return (0);
-		}
-		catch (RemoteException ex) {
-			return (0);
+			return 0;
+		} catch (RemoteException ex) {
+			return 0;
 		}
 	}
 
@@ -583,8 +606,7 @@ public class LoginDBHandler {
 		try {
 			LoginTable login = getLoginTableHome().findByLogin(user);
 			return Encrypter.verifyOneWayEncrypted(login.getUserPassword(), password);
-		}
-		catch (FinderException fe) {
+		} catch (FinderException fe) {
 			fe.printStackTrace();
 		}
 		return false;
@@ -610,24 +632,17 @@ public class LoginDBHandler {
 			user = getUser(userID);
 			List<String> possibleLogins = getPossibleGeneratedUserLogins(user);
 			String generatedPassword = getGeneratedPasswordForUser(user);
-			// or (int i = 0; i < possibleLogins.length; i++)
-			// {
-			// String login = possibleLogins[i];
 			for (Iterator<String> iter = possibleLogins.iterator(); iter.hasNext();) {
 				String login = iter.next();
 				try {
 					return createLogin(userID, login, generatedPassword);
-				}
-				catch (UserHasLoginException e) {
+				} catch (UserHasLoginException e) {
 					throw e;
-				}
-				catch (LoginCreateException e) {
-					// e.printStackTrace();
+				} catch (LoginCreateException e) {
 					System.err.println("Error creating login for userID: " + user.getId() + " with login: " + login);
 				}
 			}
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			e.printStackTrace(System.err);
 			System.err.println("Error creating login for userID: " + userID + " cannot find user with ID");
 		}

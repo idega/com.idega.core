@@ -852,8 +852,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return LoginBusinessBean.USING_OLD_USER_SYSTEM;
 	}
 
-	protected void storeLoggedOnInfoInSession(HttpServletRequest request, HttpServletResponse response, HttpSession session, UserLogin userLogin, String login, User user,
-			LoginRecord loginRecord, String loginType) throws NotLoggedOnException, RemoteException {
+	protected void storeLoggedOnInfoInSession(
+			HttpServletRequest request,
+			HttpServletResponse response,
+			HttpSession session,
+			UserLogin userLogin,
+			String login,
+			User user,
+			LoginRecord loginRecord,
+			String loginType
+	) throws NotLoggedOnException, RemoteException {
 
 		LoggedOnInfo lInfo = createLoggedOnInfo();
 		lInfo.setUserLogin(userLogin);
@@ -1344,6 +1352,58 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	/**
+	 *
+	 * <p>Method created for logging in users, created from external services,
+	 * which does not have personal id, username or password.</p>
+	 * @param iwc current application context, not <code>null</code>;
+	 * @param user to login, not <code>null</code>;
+	 * @return <code>true</code> when logged in, <code>false</code>
+	 * otherwise.
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 * @deprecated method is hack and totally unsafe.
+	 */
+	@Deprecated
+	public boolean logInUser(IWContext iwc, User user) {
+		List<UserLogin> logins = null;
+		try {
+			logins = getUserLoginDAO().findAllLoginsForUser(user);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Unable to find logins for user " + user, e);
+		}
+
+		UserLogin login = null;
+		try {
+			login = chooseLoginRecord(iwc.getRequest(), logins, user);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Unable to find " + LoginTable.class +  " for user " + user, e);
+		}
+
+		try {
+			storeUserAndGroupInformationInSession(iwc.getRequest().getSession(), user);
+			LoginRecord loginRecord = LoginDBHandler.recordLogin(login, iwc.getRequest().getRemoteAddr());
+			storeLoggedOnInfoInSession(
+					iwc.getRequest(),
+					iwc.getResponse(),
+					iwc.getRequest().getSession(),
+					login,
+					login != null ? login.getUserLogin() : null,
+					user,
+					loginRecord,
+					login != null ? login.getLoginType() : null
+			);
+
+			if (logIn(iwc.getRequest(), login)) {
+				onLoginSuccessful(iwc.getRequest());
+				return Boolean.TRUE;
+			}
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Failed to log in user, cause of: ", e);
+		}
+
+		return Boolean.FALSE;
+	}
+
+	/**
 	 * <p>
 	 * Logs the user in by given personalId and specified loginType.
 	 * </p>
@@ -1353,27 +1413,33 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 * @throws Exception
 	 */
-	public boolean logInByPersonalID(HttpServletRequest request, String personalId,String userName,String password,String loginType) throws Exception {
+	public boolean logInByPersonalID(
+			HttpServletRequest request,
+			String personalId,
+			String userName,
+			String password,
+			String loginType
+	) throws Exception {
 		boolean returner = false;
 		try {
 			User user = getUserDAO().getUser(personalId);
 			List<UserLogin> logins = getUserLoginDAO().findAllLoginsForUser(user);
 			UserLogin userLogin;
-			if(loginType==null){
+			if (loginType==null) {
 				userLogin = this.chooseLoginRecord(request, logins, user);
-			}
-			else{
+			} else {
 				userLogin = this.chooseLoginRecord(request, logins, user,loginType);
 			}
+
 			if (userLogin != null) {
-				if(userName!=null){
-					if(!userLogin.getUserLogin().equals(userName)){
+				if (userName != null) {
+					if (!userLogin.getUserLogin().equals(userName)) {
 						return false;
 					}
 				}
 
-				if(password!=null){
-					if(!verifyPassword(userLogin,password)){
+				if (password != null) {
+					if (!verifyPassword(userLogin, password)) {
 						return false;
 					}
 				}
@@ -1382,19 +1448,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 				if (returner) {
 					onLoginSuccessful(request);
 				}
-			}
-			else {
+			} else {
 				try {
 					throw new LoginCreateException("No matching login record found for user");
-				}
-				catch (LoginCreateException e1) {
+				} catch (LoginCreateException e1) {
 					e1.printStackTrace();
 				}
 			}
-		}
-		catch (EJBException e) {
+		} catch (EJBException e) {
 			returner = false;
 		}
+
 		return returner;
 	}
 
@@ -1439,22 +1503,25 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 *          all login records for one user
 	 * @return LoginTable record to log on the system
 	 */
-	public UserLogin chooseLoginRecord(HttpServletRequest request, Collection<UserLogin> loginRecords, User user,String loginType) throws Exception {
+	public UserLogin chooseLoginRecord(
+			HttpServletRequest request,
+			Collection<UserLogin> loginRecords,
+			User user,
+			String loginType
+	) throws Exception {
 		UserLogin chosenRecord = null;
 		if (loginRecords != null) {
 			for (Iterator<UserLogin> iter = loginRecords.iterator(); iter.hasNext();) {
 				UserLogin login = iter.next();
 				String type = login.getLoginType();
-				//if (!(type != null && !type.equals(""))) {
-				if(loginType==null){
+				if (loginType == null) {
 					//searching for the default login where type is not set.
-					if (type == null || type.equals("")) {
+					if (StringUtil.isEmpty(type)) {
 						chosenRecord = login;
 						break;
 					}
-				}
-				else{
-					if(loginType.equals(type)) {
+				} else {
+					if (loginType.equals(type)) {
 						chosenRecord = login;
 						break;
 					}
@@ -1474,7 +1541,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return LoginTable record to log on the system
 	 */
 	public UserLogin chooseLoginRecord(HttpServletRequest request, Collection<UserLogin> loginRecords, User user) throws Exception {
-		return chooseLoginRecord(request,loginRecords,user,null);
+		return chooseLoginRecord(request, loginRecords, user, null);
 	}
 
 	public boolean isLoginExpired(UserLogin userLogin) {
