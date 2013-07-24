@@ -300,9 +300,9 @@ public class IWDatePicker extends TextInput {
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.core.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.theme.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.datepicker.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.10.3/themes/base", "ui.core.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.10.3/themes/base", "ui.theme.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.10.3/themes/base", "ui.datepicker.css"));
 	}
 
 	@Override
