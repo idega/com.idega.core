@@ -25,7 +25,7 @@ import sun.misc.BASE64Encoder;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.localisation.business.ICLocaleBusiness;
-import com.idega.data.GenericEntity;
+import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -282,12 +282,12 @@ public class CoreUtil {
 		return CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(iwc.getSessionAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE));
 	}
 
-	public static List<String> getIds(Collection<GenericEntity> entities) {
+	public static List<String> getIds(Collection<? extends IDOEntity> entities) {
 		if(ListUtil.isEmpty(entities)){
 			return Collections.emptyList();
 		}
 		List<String> ids = new ArrayList<String>(entities.size());
-		for(GenericEntity entity : entities){
+		for(IDOEntity entity : entities){
 			Object id = entity.getPrimaryKey();
 			if(id == null){
 				continue;
@@ -298,12 +298,12 @@ public class CoreUtil {
 		return ids;
 	}
 
-	public static List<Integer> getIdsAsIntegers(Collection<GenericEntity> entities) {
+	public static List<Integer> getIdsAsIntegers(Collection<? extends IDOEntity> entities) {
 		if(ListUtil.isEmpty(entities)){
 			return Collections.emptyList();
 		}
 		List<Integer> ids = new ArrayList<Integer>(entities.size());
-		for(GenericEntity entity : entities){
+		for(IDOEntity entity : entities){
 			Object id = entity.getPrimaryKey();
 			if(id == null){
 				continue;

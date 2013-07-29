@@ -585,7 +585,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
 	 */
-	public Collection getUserGroups(User aUser) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getUserGroups(User aUser) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
