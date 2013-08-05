@@ -128,7 +128,7 @@ public abstract class DefaultSpringBean {
 		return user;
 	}
 
-	protected com.idega.user.data.User getOldUser(User newUser) {
+	protected com.idega.user.data.User getLegacyUser(User newUser) {
 		if (newUser == null) {
 			return null;
 		}
