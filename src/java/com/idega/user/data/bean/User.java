@@ -43,8 +43,10 @@ import com.idega.core.location.data.bean.Address;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.user.dao.UserDAO;
 import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = User.ENTITY_NAME)
@@ -596,6 +598,17 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public void setSHA1(String sha1) {
 		this.sha1 = sha1;
+	}
+
+	public String getEmailAddress() {
+		try {
+			UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
+			Email mainEmail = userDAO.getUsersMainEmail(this);
+			return mainEmail == null ? null : mainEmail.getEmailAddress();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 	@Override
