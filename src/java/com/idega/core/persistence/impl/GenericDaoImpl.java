@@ -8,6 +8,7 @@ import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.orm.hibernate3.HibernateTemplate;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -170,5 +171,9 @@ public class GenericDaoImpl implements GenericDao {
 
 	protected DaoFunctions getDaoFunctions() {
 		return daoFunctions;
+	}
+
+	protected void initialize(Object object) {
+		new HibernateTemplate().initialize(object);
 	}
 }
