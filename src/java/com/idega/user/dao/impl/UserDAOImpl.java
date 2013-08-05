@@ -145,7 +145,14 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		if (ListUtil.isEmpty(emails))
 			return null;
 
-		List<User> users = emails.get(0).getUsers();
-		return ListUtil.isEmpty(users) ? null : users.get(0);
+		for (Email email: emails) {
+			List<User> users = email.getUsers();
+			initialize(users);
+			if (!ListUtil.isEmpty(users)) {
+				return users.get(0);
+			}
+		}
+
+		return null;
 	}
 }
