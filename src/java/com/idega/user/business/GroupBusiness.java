@@ -286,7 +286,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroups
 	 */
-	public Collection getGroups(String[] groupIDs) throws FinderException, RemoteException;
+	public Collection<Group> getGroups(String[] groupIDs) throws FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersForUserRepresentativeGroups

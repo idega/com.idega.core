@@ -10,11 +10,13 @@
 package com.idega.core.location.data;
 
 
-import java.util.Collection;
-import javax.ejb.CreateException;
-import com.idega.data.IDOHome;
-import javax.ejb.FinderException;
 import java.rmi.RemoteException;
+import java.util.Collection;
+
+import javax.ejb.CreateException;
+import javax.ejb.FinderException;
+
+import com.idega.data.IDOHome;
 
 public interface PostalCodeHome extends IDOHome {
 
@@ -24,7 +26,7 @@ public interface PostalCodeHome extends IDOHome {
 
 	public Collection findByCommune(Commune commune) throws FinderException;
 
-	public Collection findByPostalCode(Collection codes) throws FinderException;
+	public Collection<PostalCode> findByPostalCode(Collection codes) throws FinderException;
 
 	public PostalCode findByPostalCode(String code) throws FinderException;
 
