@@ -87,7 +87,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -129,17 +128,11 @@ public class NotificationEntityDAOImpl extends GenericDaoImpl implements
 		
 		if (notificationEntity.getId() == null) {
 			persist(notificationEntity);
-			getLogger().log(Level.INFO, notificationEntity.getClass() + 
-					" by ID: "  + notificationEntity.getId() + " created!");
 		} else {
 			merge(notificationEntity);
-			getLogger().log(Level.INFO, notificationEntity.getClass() + 
-					" by ID: "  + notificationEntity.getId() + " updated!");
 		}
 		
 		if (notificationEntity.getId() == null) {
-			getLogger().log(Level.WARNING, "Failed to persist " + 
-					notificationEntity.getClass());
 			return null;
 		}
 		
@@ -173,14 +166,11 @@ public class NotificationEntityDAOImpl extends GenericDaoImpl implements
 		
 		if (nte.getId() == null) {
 			persist(nte);
-			getLogger().info("Created entity: " + nte);
 		} else {
 			merge(nte);
-			getLogger().info("Updated entity: " + nte);
 		}
 		
 		if (nte.getId() == null) {
-			getLogger().warning("Failed to update: " + nte);
 			return null;
 		}
 		
