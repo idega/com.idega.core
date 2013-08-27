@@ -76,7 +76,6 @@ public class AdvancedProperty implements Serializable {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(id).append(CoreConstants.COLON).append(CoreConstants.SPACE).append(value).append(", name: ")
-				.append(getName()).toString();
+		return getId() + CoreConstants.COLON + CoreConstants.SPACE + getValue() + ", name: " + getName();
 	}
 }
