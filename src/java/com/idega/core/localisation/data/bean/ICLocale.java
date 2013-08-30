@@ -41,7 +41,7 @@ public class ICLocale implements Serializable {
 	@Column(name = COLUMN_LOCALE_ID)
 	private Integer localeID;
 
-	@Column(name = COLUMN_LOCALE, length = 20)
+	@Column(name = COLUMN_LOCALE, length = 100)
 	private String locale;
 
 	@ManyToOne(fetch = FetchType.LAZY)
