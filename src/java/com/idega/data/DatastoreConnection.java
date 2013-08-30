@@ -22,6 +22,7 @@ import java.sql.Statement;
 import java.sql.Struct;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.Executor;
 
 /**
  * 
@@ -966,4 +967,26 @@ public class DatastoreConnection implements Connection {
 	public <T> T unwrap(Class<T> iface) throws SQLException {
 		return null;
 	}
+	
+	public int getNetworkTimeout() throws SQLException {
+		return 0; // java7 support
+	}
+	
+	public  void setNetworkTimeout(Executor executor, int milliseconds) throws SQLException {
+		// java7 support
+	}
+	
+	public  void abort(Executor executor) throws SQLException {
+		// java7 support
+	}
+	
+	public String getSchema() throws SQLException {
+		return null; // java7 support
+	}
+
+	
+	public void setSchema(String schema) throws SQLException {
+		// java7 support
+	}
+
 }

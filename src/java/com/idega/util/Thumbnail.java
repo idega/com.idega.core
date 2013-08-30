@@ -13,11 +13,10 @@ import java.awt.image.BufferedImage;
 import java.io.BufferedOutputStream;
 import java.io.FileOutputStream;
 
+import javax.imageio.ImageIO;
+
 import com.idega.io.MemoryFileBuffer;
 import com.idega.io.MemoryOutputStream;
-import com.sun.image.codec.jpeg.JPEGCodec;
-import com.sun.image.codec.jpeg.JPEGEncodeParam;
-import com.sun.image.codec.jpeg.JPEGImageEncoder;
 
 public  class Thumbnail
 {
@@ -67,13 +66,15 @@ public  class Thumbnail
         graphics2D.setRenderingHint(RenderingHints.KEY_INTERPOLATION, RenderingHints.VALUE_INTERPOLATION_BILINEAR);
         graphics2D.drawImage(image, 0, 0, thumbWidth, thumbHeight, null);
         BufferedOutputStream out = new BufferedOutputStream(new FileOutputStream(thumbName));
-        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-        JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(thumbImage);
-        quality = Math.max(0, Math.min(quality, 100));
-        //param.setQuality()
-        param.setQuality((float)quality / 100, false);
-        encoder.setJPEGEncodeParam(param);
-        encoder.encode(thumbImage);
+        ImageIO.write(thumbImage, "jpeg", out);
+
+//        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//        JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(thumbImage);
+//        quality = Math.max(0, Math.min(quality, 100));
+//        //param.setQuality()
+//        param.setQuality((float)quality / 100, false);
+//        encoder.setJPEGEncodeParam(param);
+//        encoder.encode(thumbImage);
     }
 
     public static MemoryFileBuffer createMemoryJPEG(MemoryFileBuffer buf, int thumbWidth, int thumbHeight, int quality)
@@ -99,12 +100,13 @@ public  class Thumbnail
         graphics2D.drawImage(image, 0, 0, thumbWidth, thumbHeight, null);
         MemoryFileBuffer buffer = new MemoryFileBuffer();
         MemoryOutputStream out = new MemoryOutputStream(buffer);
-        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
-        JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(thumbImage);
-        quality = Math.max(0, Math.min(quality, 100));
-        param.setQuality((float)quality / 100, false);
-        encoder.setJPEGEncodeParam(param);
-        encoder.encode(thumbImage);
+        ImageIO.write(thumbImage, "jpeg", out);
+//        JPEGImageEncoder encoder = JPEGCodec.createJPEGEncoder(out);
+//        JPEGEncodeParam param = encoder.getDefaultJPEGEncodeParam(thumbImage);
+//        quality = Math.max(0, Math.min(quality, 100));
+//        param.setQuality((float)quality / 100, false);
+//        encoder.setJPEGEncodeParam(param);
+//        encoder.encode(thumbImage);
         return buffer;
     }
 }

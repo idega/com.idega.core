@@ -26,9 +26,8 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import sun.misc.BASE64Decoder;
 
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -66,7 +65,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 	LoginBusinessBean loginBusiness = null;
 	UserBusiness userBusiness = null;
 
-	BASE64Decoder myBase64Decoder = null;
+	Base64 myBase64Decoder = null;
 
 	@Autowired
 	UserLoginDAO userLoginDAO;
@@ -187,16 +186,11 @@ public class WebServiceAuthorizationFilter implements Filter {
 			return null;
 		}
 		String namePassword = basicNamePassword.substring(6);
-		try {
-			byte[] decodedNamePasswordArray = this.myBase64Decoder.decodeBuffer(namePassword);
-			ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer.wrap(decodedNamePasswordArray);
-			Charset charset = Charset.forName("ISO-8859-1");
-			CharBuffer buffer = charset.decode(wrappedDecodedNamePasswordArray);
-			return buffer.toString();
-		}
-		catch (IOException ex) {
-			return null;
-		}
+		byte[] decodedNamePasswordArray = this.myBase64Decoder.decode(namePassword.getBytes());
+		ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer.wrap(decodedNamePasswordArray);
+		Charset charset = Charset.forName("ISO-8859-1");
+		CharBuffer buffer = charset.decode(wrappedDecodedNamePasswordArray);
+		return buffer.toString();
 	}
 
     private LoginBusinessBean getLoginBusiness(IWApplicationContext iwac) {
@@ -211,7 +205,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 	 */
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		this.myBase64Decoder = new BASE64Decoder();
+		this.myBase64Decoder = new Base64();
 	}
 
 	/* (non-Javadoc)
