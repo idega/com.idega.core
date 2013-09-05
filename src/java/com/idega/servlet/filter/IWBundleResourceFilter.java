@@ -104,6 +104,12 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletResponse response = (HttpServletResponse) sres;
 		String requestUriWithoutContextPath = getURIMinusContextPath(request);
 		
+		/* Removing ;jessionid before checking in cache */
+		if (requestUriWithoutContextPath.toLowerCase().contains(CoreConstants.PARAMETER_SESSION_ID.toLowerCase())) {
+			requestUriWithoutContextPath = requestUriWithoutContextPath.substring(
+					0, requestUriWithoutContextPath.indexOf(
+							CoreConstants.PARAMETER_SESSION_ID.toLowerCase()) - 1);
+		}
 		
 		if(!flushedResources.contains(requestUriWithoutContextPath)){
 			IWMainApplication iwma = getIWMainApplication(request);
@@ -161,6 +167,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			if (requestUriWithoutContextPath.startsWith("http://")) {
 				return null;
 			}
+
 			requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, BUNDLES_STANDARD_DIR, CoreConstants.EMPTY);
 			int firstSlashIndex = requestUriWithoutContextPath.indexOf(CoreConstants.SLASH);
 			if (firstSlashIndex == -1) {
