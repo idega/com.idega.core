@@ -105,10 +105,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 		String requestUriWithoutContextPath = getURIMinusContextPath(request);
 		
 		/* Removing ;jessionid before checking in cache */
-		if (requestUriWithoutContextPath.toLowerCase().contains(CoreConstants.PARAMETER_SESSION_ID.toLowerCase())) {
+		if (requestUriWithoutContextPath.contains(CoreConstants.SEMICOLON)) {
 			requestUriWithoutContextPath = requestUriWithoutContextPath.substring(
-					0, requestUriWithoutContextPath.indexOf(
-							CoreConstants.PARAMETER_SESSION_ID.toLowerCase()) - 1);
+					0, requestUriWithoutContextPath.indexOf(CoreConstants.SEMICOLON));
 		}
 		
 		if(!flushedResources.contains(requestUriWithoutContextPath)){
@@ -249,8 +248,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 				webappFilePath = webappFilePath.replace(FileUtil.UNIX_FILE_SEPARATOR, FileUtil.WINDOWS_FILE_SEPARATOR);
 			}
 			
-			File webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			input = StringUtil.isEmpty(content) ? bundle.getResourceInputStream(pathWithinBundle) : StringHandler.getStreamFromString(content);
+			File webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			FileUtil.streamToFile(input, webappFile);
 			webappFile.setLastModified(lastModified);
 			return webappFile;
