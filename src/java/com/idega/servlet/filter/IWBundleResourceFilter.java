@@ -109,6 +109,12 @@ public class IWBundleResourceFilter extends BaseFilter {
 		HttpServletResponse response = (HttpServletResponse) sres;
 		String requestUriWithoutContextPath = getURIMinusContextPath(request);
 
+		/* Removing ;jessionid before checking in cache */
+		if (requestUriWithoutContextPath.contains(CoreConstants.SEMICOLON)) {
+			requestUriWithoutContextPath = requestUriWithoutContextPath.substring(
+					0, requestUriWithoutContextPath.indexOf(CoreConstants.SEMICOLON));
+		}
+
 		if (!flushedResources.containsKey(requestUriWithoutContextPath)) {
 			IWMainApplication iwma = getIWMainApplication(request);
 			String webappDir = iwma.getApplicationRealPath();
@@ -165,6 +171,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 			if (requestUriWithoutContextPath.startsWith("http://")) {
 				return null;
 			}
+
 			requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, BUNDLES_STANDARD_DIR, CoreConstants.EMPTY);
 			int firstSlashIndex = requestUriWithoutContextPath.indexOf(CoreConstants.SLASH);
 			if (firstSlashIndex == -1) {
@@ -259,8 +266,8 @@ public class IWBundleResourceFilter extends BaseFilter {
 				webappFilePath = webappFilePath.replace(FileUtil.UNIX_FILE_SEPARATOR, FileUtil.WINDOWS_FILE_SEPARATOR);
 			}
 
-			File webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			input = StringUtil.isEmpty(content) ? bundle.getResourceInputStream(pathWithinBundle) : StringHandler.getStreamFromString(content);
+			File webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
 			FileUtil.streamToFile(input, webappFile);
 			webappFile.setLastModified(lastModified);
 			return webappFile;
