@@ -140,7 +140,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 					//check if we have flushed the file from the jar before and then do nothing OR flush it and then do nothing
 					//THIS IS VERY SIMPLE CACHING that invalidates on restart
 					try {
-						File realFile = copyResourceFromJarToWebapp(iwma, requestUriWithoutContextPath);
+						File realFile = copyResourceFromJarOrCustomContentToWebapp(iwma, requestUriWithoutContextPath, null, true);
 						//old way without flushing to webapp
 						//String mimeType = getMimeType(pathWithinBundle);
 						//feedOutFile(request, response, mimeType, stream);
@@ -218,9 +218,18 @@ public class IWBundleResourceFilter extends BaseFilter {
 			String requestUriWithoutContextPath,
 			String fileContent
 	) {
+		return copyResourceFromJarOrCustomContentToWebapp(iwma, requestUriWithoutContextPath, fileContent, true);
+	}
+
+	private synchronized static File copyResourceFromJarOrCustomContentToWebapp(
+			IWMainApplication iwma,
+			String requestUriWithoutContextPath,
+			String fileContent,
+			boolean alwaysReturnFile
+	) {
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		if (StringUtil.isEmpty(bundleIdentifier)) {
-			LOGGER.warning("Unknown bundle identifier: " + requestUriWithoutContextPath);
+			LOGGER.warning("Unknown bundle identifier, can not return requested file: " + requestUriWithoutContextPath);
 			return null;
 		}
 
@@ -233,14 +242,23 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 		IWBundle bundle = iwma.getBundle(bundleIdentifier);
 		long bundleLastModified = bundle.getResourceTime(pathWithinBundle);
+
 		if (webappFile.exists()) {
 			long webappLastModified = webappFile.lastModified();
 			if (webappLastModified > bundleLastModified) {
+				if (alwaysReturnFile) {
+					return webappFile;
+				}
+
 				return null;
 			}
 		}
 
 		if (StringUtil.isEmpty(fileContent) && requestUriWithoutContextPath.indexOf(ResourcesAdder.OPTIMIZIED_RESOURCES) != -1) {
+			if (alwaysReturnFile) {
+				return webappFile;
+			}
+
 			return null;
 		}
 
@@ -547,11 +565,12 @@ public class IWBundleResourceFilter extends BaseFilter {
 			String webappDir = iwma.getApplicationRealPath();
 			String workspaceDir = bundlesProperty;
 			String pathToBundleFileInWorkspace = resourceURI;
-			copiedFile = IWBundleResourceFilter.copyWorkspaceFileToWebapp(workspaceDir, webappDir, pathToBundleFileInWorkspace);
+			copiedFile = copyWorkspaceFileToWebapp(workspaceDir, webappDir, pathToBundleFileInWorkspace);
 		}
 
 		if (copiedFile == null || IWMainApplication.loadBundlesFromJars) {
-			IWBundleResourceFilter.copyResourceFromJarToWebapp(iwma, resourceURI);
+			//	One more try to copy resource
+			copyResourceFromJarOrCustomContentToWebapp(iwma, resourceURI, null, true);
 		}
 	}
 
