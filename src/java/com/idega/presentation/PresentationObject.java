@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -169,35 +170,31 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	private boolean renderForLoggedOut = true;
 	private boolean renderForLoggedIn = true;
 
-
 	/**
 	 * Default constructor.
 	 * Should only be called by sublasses.
 	 */
-	protected PresentationObject()
-	{
-		//TODO: Change this as components get state aware:
+	protected PresentationObject() {
 		setTransient(true);
 	}
+
 	/**
 	 * @return The parent (subclass of PresentationObjectContainer) of the
 	 *         current object.
 	 * If the parent is not an instance of PresentationObject then this method will return null
 	 * to maintain backwards compatability.
 	 */
-	protected PresentationObject getParentObject()
-	{
+	protected PresentationObject getParentObject() {
 		try{
 			return (PresentationObject)getParent();
-		}
-		catch(ClassCastException e){
+		} catch(ClassCastException e){
 			//If the parent is not a PresentationObject then return null
 			//to maintain backwards compatability.
 			return null;
 		}
 	}
-	protected String generateID()
-	{
+
+	protected String generateID() {
 		String UUID = UUIDGenerator.getInstance().generateId();
 		return "iwid" + UUID.substring(UUID.lastIndexOf("-") + 1);
 	}
@@ -803,10 +800,8 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * Sets the associated (attached) script object to this object
 	 */
-	public void setAssociatedScript(Script myScript)
-	{
-		if (getRootParent() != null)
-		{
+	public void setAssociatedScript(Script myScript) {
+		if (getRootParent() != null) {
 			getRootParent().setAssociatedScript(myScript);
 		}
 	}
@@ -929,33 +924,17 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	 * @param askForPermission
 	 * @return
 	 */
-	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
-	{
+	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)	{
 		Object object = null;
-		if (iwc != null)
-		{
-			//this.setIWApplicationContext(iwc.getApplicationContext());
-			//this.setIWUserContext(iwc);
-		}
-		if (askForPermission || iwc != null)
-		{
-			if (iwc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this,iwc))
-			{
-				//return this.clone(iwc,askForPermission);
-				object =  this.clone();
-
-			}
-			else
-			{
+		if (askForPermission || iwc != null) {
+			if (iwc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this, iwc)) {
+				object = this.clone();
+			} else {
 				return NULL_CLONE_OBJECT;
 			}
-		}
-		else
-		{
+		} else {
 			object = this.clone();
 		}
-		//PresentationObject obj = (PresentationObject)object;
-		//cloneJSFObjects(obj,iwc,askForPermission);
 		return object;
 	}
 	/**
@@ -1533,15 +1512,13 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	/**
 	 * Parameter debugger
 	 */
-	public void debugParameters(IWContext iwc)
-	{
+	public void debugParameters(IWContext iwc) {
 		System.err.println("DEBUG: Parameter debugging : " + this.getClassName());
 		System.err.println("AT  :" + new java.util.Date(System.currentTimeMillis()).toString());
-		java.util.Enumeration enumer = iwc.getParameterNames();
+		Enumeration<String> enumer = iwc.getParameterNames();
 		String prm;
-		while (enumer.hasMoreElements())
-		{
-			prm = (String) enumer.nextElement();
+		while (enumer.hasMoreElements()) {
+			prm = enumer.nextElement();
 			String[] values = iwc.getParameterValues(prm);
 			for (int i = 0; i < values.length; i++)
 			{
@@ -2431,26 +2408,20 @@ implements Cloneable, PresentationObjectType{//,UIComponent{
 	public UIComponent getFacet(String name) {
 		return this.facetMap == null ? null : (UIComponent)this.facetMap.get(name);
 	}
-	/* (non-Javadoc)
-	 * @see javax.faces.component.UIComponent#getFacets()
-	 */
+
 	@Override
 	public Map<String, UIComponent> getFacets() {
-		if(this.facetMap==null){
+		if (this.facetMap == null) {
 			this.facetMap = new PresentationObjectComponentFacetMap(this);
 		}
 		return this.facetMap;
 	}
-	/* (non-Javadoc)
-	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
-	 */
+
 	@Override
 	public Iterator<UIComponent> getFacetsAndChildren() {
 		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
 		return new FacetsAndChildrenIterator(getFacets(), getChildren());
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildCount()

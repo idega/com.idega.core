@@ -878,16 +878,10 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		getFacets().put("page_associated_script", myScript);
 	}
 
-	/*
-	 *
-	 */
-	/**
-	 * Description of the Method
-	 */
 	private void initializeAssociatedScript() {
-		Script _theAssociatedScript = (Script) getFacets().get("page_associated_script");
-		if (_theAssociatedScript == null) {
-			_theAssociatedScript = new Script();
+		Object o = getFacets().get("page_associated_script");
+		if (o == null) {
+			Script _theAssociatedScript = new Script();
 			setAssociatedScript(_theAssociatedScript);
 		}
 	}
@@ -2383,6 +2377,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		return values;
 	}
 
+	@Override
 	public List<PropertyDescription> getPropertyDescriptions() {
 		List<PropertyDescription> list = new ArrayList<PropertyDescription>();
 		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1", File.class.getName(), FileObjectReader.class.getName(),
