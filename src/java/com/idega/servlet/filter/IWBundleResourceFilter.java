@@ -194,7 +194,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 			rest = URIWithoutBundlesURI.substring(index);
 		}
 
-		rest = rest.toLowerCase();
 		if (rest.indexOf(";jsessionid") != -1)
 			rest = rest.substring(0, rest.indexOf(";jsessionid"));
 
