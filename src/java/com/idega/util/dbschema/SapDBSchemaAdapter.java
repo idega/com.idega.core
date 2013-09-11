@@ -324,7 +324,7 @@ public class SapDBSchemaAdapter extends SQLSchemaAdapter {
 		 * return null;
 		 */
 	}
-	public boolean getSupportsSlide() {
+	public boolean getSupportsRepository() {
 		return false;
 	}	
 }

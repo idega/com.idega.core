@@ -232,7 +232,7 @@ public class McKoiSchemaAdapter extends SQLSchemaAdapter {
 		return " {d '"+(stamp.toSQLString())+"'} ";
 	}
 	
-	public boolean getSupportsSlide() {
+	public boolean getSupportsRepository() {
 		return false;
 	}
 }

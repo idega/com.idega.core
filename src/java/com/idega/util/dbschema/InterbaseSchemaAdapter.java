@@ -332,7 +332,7 @@ public class InterbaseSchemaAdapter extends SQLSchemaAdapter {
 
 	}
 
-	public boolean getSupportsSlide() {
+	public boolean getSupportsRepository() {
 		return false;
 	}
 

@@ -136,7 +136,7 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		addUniqueIDColumn();
 		addIndex(getUniqueIdColumnName());
 
-		addAttribute(WEBDAV_URI, "Webdav/Slide path", String.class);
+		addAttribute(WEBDAV_URI, "Repository path", String.class);
 
 		addIndex("idx_page_uri",PAGE_URI);
 

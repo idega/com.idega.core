@@ -156,7 +156,7 @@ public class InformixSchemaAdapter extends SQLSchemaAdapter {
 		return "alter table " + tableName + " add constraint primary key (";
 	}
 	
-	public boolean getSupportsSlide() {
+	public boolean getSupportsRepository() {
 		return false;
 	}
 

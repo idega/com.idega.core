@@ -78,7 +78,7 @@ public class TmpFilesManager {
 	 * @param resource
 	 *            - the same as with identifier
 	 * @param resolver
-	 * @return files uris. Might be local files, or stored in slide etc.
+	 * @return files uris. Might be local files, or stored in repository etc.
 	 */
 	public Collection<URI> getFilesUris(String identifier, Object resource, TmpFileResolver resolver) {
 		return resolver.resolveFilesUris(identifier, resource);

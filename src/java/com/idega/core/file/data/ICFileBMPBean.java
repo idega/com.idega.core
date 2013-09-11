@@ -666,7 +666,6 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<com.idega.user.data.User> getDownloadedBy() {
 		try {
 			return super.idoGetRelatedEntities(com.idega.user.data.User.class);

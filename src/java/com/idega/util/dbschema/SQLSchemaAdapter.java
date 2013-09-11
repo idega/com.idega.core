@@ -27,6 +27,7 @@ import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.IWTimestamp;
@@ -34,10 +35,10 @@ import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
 /**
- * 
- * 
+ *
+ *
  *  Last modified: $Date: 2006/05/31 10:51:36 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:aron@idega.com">aron</a>
  * @version $Revision: 1.12 $
  */
@@ -47,16 +48,16 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	private static Hashtable interfacesHashtable = null;
 	private static Map interfacesByDatasourcesMap = null;
 	public static boolean usePreparedStatement = DEFAULT_VALUE_USE_PREPARED_STATEMENT;
-	
+
 	protected boolean useTransactionsInSchemaCreation = true;
 	private boolean useIndexes = true;
-	private boolean supportsSlide = true;
+	private boolean supportsRepository = true;
 	protected SQLSchemaCreator _TableCreator;
 	protected DatabaseMetaData _databaseMetaData;
 	private String dataStoreType;
 	private String dataSourceName;
-	
-	
+
+
 	public final static String DBTYPE_ORACLE = "oracle";
 	public final static String DBTYPE_INTERBASE = "interbase";
 	public final static String DBTYPE_HSQL = "hsql";
@@ -70,24 +71,24 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public final static String DBTYPE_DERBY = "derby";
 	public final static String DBTYPE_H2 = "h2";
 
-	
+
 	public static void unload()	{
 		interfacesHashtable = null;
 		interfacesByDatasourcesMap = null;
 		usePreparedStatement = DEFAULT_VALUE_USE_PREPARED_STATEMENT;
 	}
-	
-	
+
+
 	public static SQLSchemaAdapter getInstance(String datastoreType) {
 		SQLSchemaAdapter theReturn = null;
-		
+
 		Class className = null;
 		if (interfacesHashtable == null) {
 			interfacesHashtable = new Hashtable(2);
 		}
 		theReturn = (SQLSchemaAdapter) interfacesHashtable.get(datastoreType);
 		if (theReturn == null) {
-				
+
 			if (datastoreType.equals(DBTYPE_ORACLE)) {
 				className = OracleSchemaAdapter.class;
 			}
@@ -125,7 +126,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				//className = "unimplemented DatastoreInterface";
 				throw new NoSchemaAdapter();
 			}
-			
+
 			try {
 				theReturn = (SQLSchemaAdapter) className.newInstance();
 				theReturn.dataStoreType = datastoreType;
@@ -135,18 +136,18 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				System.err.println("There was an error in com.idega.data.DatastoreInterface.getInstance(String className): " + ex.getMessage());
 			}
 		}
-	
+
 		return theReturn;
 	}
-	
+
 	public String getDataSourceName(){
 		return this.dataSourceName;
 	}
-	
+
 	protected void setDataSourceName(String dataSourceName){
 		this.dataSourceName = dataSourceName;
 	}
-	
+
 	public String getDataStoreType(){
 		return this.dataStoreType;
 	}
@@ -171,7 +172,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the default
 	 * datasource
-	 * 
+	 *
 	 * @return the instance of DatastoreInterface for the current application
 	 */
 	public static SQLSchemaAdapter getInstance() {
@@ -190,7 +191,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the
 	 * Connection connection
-	 * 
+	 *
 	 * @param connection
 	 *          the connection to get the DatastoreInterface implementation for
 	 * @return
@@ -199,13 +200,13 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		return getInstance(detectDataStoreType(connection));
 	}
 
-	
+
 
 	/**
-	 * 
+	 *
 	 * Returns the type of the underlying datastore - returns: "mysql",
 	 * "interbase", "oracle", "unimplemented"
-	 *  
+	 *
 	 */
 	public static String detectDataStoreType(Connection connection) {
 		String dataStoreType;
@@ -276,17 +277,17 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	public String getIDColumnType(Schema entity) {
 		return "INTEGER";
 	}
-	
+
 	public void executeBeforeSchemaCreation( Schema schema) throws Exception {
 	}
 
 	public void executeAfterSchemaCreation( Schema entityDefinition) throws Exception {
 	}
-	
+
 	public void removeSchema(Schema schema )throws Exception {
 		getTableCreator().removeSchema( schema);
 	}
-	
+
 	protected SQLSchemaCreator tableCreator;
 	public SQLSchemaCreator getTableCreator() {
 		if (this.tableCreator == null) {
@@ -294,19 +295,19 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		}
 		return this.tableCreator;
 	}
-	
+
 	public boolean createSchema(Schema schema) throws Exception{
 		return getTableCreator().generateSchema(schema);
 	}
 
-	
+
 	public abstract void createTrigger( Schema schema) throws Exception;
 
 
 	/**
 	 * Executes a query to the datasource and returns the first result
 	 * (ResultSet.getObject(1)). Returns null if there was no result.
-	 * 
+	 *
 	 * @param dataSourceName
 	 * @param SQLCommand
 	 * @return @throws
@@ -339,16 +340,16 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		}
 		return theReturn;
 	}
-	
+
 	protected Connection getConnection(){
 		return ConnectionBroker.getConnection(getDataSourceName());
 	}
-	
+
 	protected void freeConnection( Connection conn){
 		ConnectionBroker.freeConnection(getDataSourceName(),conn);
 	}
-	
-		
+
+
     public int executeUpdate( String SQLCommand)throws Exception{
 		Connection conn = null;
 		Statement Stmt = null;
@@ -373,70 +374,70 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/*
 	 * public void populateBlob(BlobWrapper blob){
-	 * 
+	 *
 	 * try{
-	 * 
+	 *
 	 * PreparedStatement myPreparedStatement =
 	 * blob.getConnection().prepareStatement("insert into
 	 * "+blob.getEntity().getTableName()+"("+blob.getTableColumnName()+")
 	 * values(?) where
 	 * "+blob.getEntity().getIDColumnName()+"='"+blob.getEntity().getID()+"'");
 	 *  // ByteArrayInputStream byteinstream = new ByteArrayInputStream(longbbuf);
-	 * 
+	 *
 	 * //InputStream byteinstream = new InputStream(longbbuf);
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * //OutputStream out = blob.getOutputStream();
-	 * 
+	 *
 	 * InputStream byteinstream = blob.getInputStreamForBlobWrite();
-	 * 
+	 *
 	 * //InputStream myInputStream = new InputStream();
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
+	 *
+	 *
 	 * //byte buffer[]= new byte[1024];
-	 * 
+	 *
 	 * //int noRead = 0;
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * //noRead = myInputStream.read( buffer, 0, 1023 );
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * //Write out the file to the browser
-	 * 
+	 *
 	 * //while ( noRead != -1 ){
 	 *  // output.write( buffer, 0, noRead );
 	 *  // noRead = myInputStream.read( buffer, 0, 1023 );
 	 *  //
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
+	 *
+	 *
 	 * myPreparedStatement.setBinaryStream(1, byteinstream,
 	 * byteinstream.available() );
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * myPreparedStatement.execute();
-	 * 
+	 *
 	 * myPreparedStatement.close();
 	 *  }
-	 * 
+	 *
 	 * catch(Exception ex){
-	 * 
+	 *
 	 * System.err.println("Exception in DatastoreInterface.populateBlob:
 	 * "+ex.getMessage());
-	 * 
+	 *
 	 * ex.printStackTrace(System.err);
 	 *  }
-	 * 
-	 * 
+	 *
+	 *
 	 *  }
 	 */
 	public boolean isConnectionOK(Connection conn) {
@@ -465,7 +466,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		return true;
 	}
 
-	
+
 
 	/*
 	 * public void insert(IDOLegacyEntity entity) throws Exception {
@@ -483,7 +484,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	 * statement.append(")"); if (isDebugActive()) debug(statement.toString());
 	 * Stmt = conn.prepareStatement(statement.toString());
 	 * setForPreparedStatement(STATEMENT_INSERT, Stmt, entity); Stmt.execute();
-	 * 
+	 *
 	 * if(updateNumberGeneratedValueAfterInsert()){
 	 * updateNumberGeneratedValue(entity,conn); }
 	 *  } finally { if (RS != null) { RS.close(); } if (Stmt != null) {
@@ -491,12 +492,12 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	 * this.executeAfterInsert(entity);
 	 * entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE); }
 	 */
-	
+
 
 	/**
-	 * 
+	 *
 	 * *Creates a unique ID for the ID column
-	 *  
+	 *
 	 */
 	public int createUniqueID( Schema schema) throws Exception {
 		int returnInt = -1;
@@ -571,7 +572,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		return interfacesByDatasourcesMap;
 	}
 
-	
+
 
 	/**
 	 * Override in subclasses
@@ -585,7 +586,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Queries given datasource for table existance
-	 * 
+	 *
 	 * @param dataSourceName
 	 * @param tableName
 	 * @return @throws
@@ -653,7 +654,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		return tableExists;
 	}
 
-	
+
 	/**
 	 * Queries given datasource for view existance
 	 * @param dataSourceName
@@ -671,12 +672,12 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		}
 		return false;
 	}
-	
-	
+
+
 	public boolean updateTriggers( Schema schema, boolean createIfNot) throws Exception {
 		return true;
 	}
-	
+
 	private String[] getColumnArrayFromMetaData(String tableName){
 
 		Connection conn = null;
@@ -744,7 +745,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	/**
 	 * Queries the given data source for table columns using database metadata by
 	 * default
-	 * 
+	 *
 	 * @param dataSourceName
 	 * @param tableName
 	 * @return
@@ -796,7 +797,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 				freeConnection(conn);
 			}
 		}
-		
+
 		Index[] defs = new Index[hm.size()];
 		Iterator iter = hm.entrySet().iterator();
 		int j = 0;
@@ -809,7 +810,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
             }
             defs[j++]=index;
         }
-		
+
 
 		return defs;
 		/*
@@ -821,7 +822,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	protected void handleIndexRS(ResultSet rs, HashMap hm) throws SQLException {
 		String prevIndexName = null;
 		Vector cols = null;
-		
+
 		while (rs.next()) {
 			String index = rs.getString("INDEX_NAME");
 			if (index == null) {
@@ -838,9 +839,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 			}
 			hm.put(index, cols.toArray(new String[]{}));
 		}
-		
-		
-		
+
+
+
 	}
 
 	/**
@@ -856,7 +857,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Logs out to the default log level (which is by default INFO)
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -868,7 +869,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	/**
 	 * Logs out to the error log level (which is by default WARNING) to the
 	 * default Logger
-	 * 
+	 *
 	 * @param e
 	 *          The Exception to log out
 	 */
@@ -878,7 +879,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Logs out to the specified log level to the default Logger
-	 * 
+	 *
 	 * @param level
 	 *          The log level
 	 * @param msg
@@ -894,7 +895,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	 * default Logger
 	 *  t FINER) to the default
 	 * Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -905,7 +906,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Logs out to the SEVERE log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -913,7 +914,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		//System.err.println(msg);
 		getLogger().log(Level.SEVERE, msg);
 	}
-	
+
 	protected void logError(String msg) {
 		//System.err.println(msg);
 		getLogger().log(Level.WARNING, msg);
@@ -921,7 +922,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Logs out to the WARNING log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -932,7 +933,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Logs out to the CONFIG log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -943,7 +944,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Logs out to the debug log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -955,7 +956,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	 * Gets the default Logger. By default it uses the package and the class name
 	 * to get the logger. <br>
 	 * This behaviour can be overridden in subclasses.
-	 * 
+	 *
 	 * @return the default Logger
 	 */
 	protected Logger getLogger() {
@@ -964,7 +965,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Gets the log level which messages are sent to when no log level is given.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getDefaultLogLevel() {
@@ -973,7 +974,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Gets the log level which debug messages are sent to.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getDebugLogLevel() {
@@ -982,7 +983,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 
 	/**
 	 * Gets the log level which error messages are sent to.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getErrorLogLevel() {
@@ -1016,7 +1017,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	protected boolean isDebugActive() {
 		return getIWMainApplication().getSettings().isDebugActive();
 	}
-	
+
 	public IWMainApplication getIWMainApplication(){
 		return IWMainApplication.getDefaultIWMainApplication();
 	}
@@ -1036,7 +1037,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	/**
 	 * Formats the date to a string for use as is in a SQL query quotes and
 	 * casting included
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -1048,7 +1049,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	/**
 	 * Formats the date to a string for use as is in a SQL query quotes and
 	 * casting included
-	 * 
+	 *
 	 * @param timestamp
 	 * @return
 	 */
@@ -1078,15 +1079,15 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		String SQLString = "alter table "+entityDef.getSQLName()+" add "+getColumnSQLDefinition(field,entityDef);
 		return SQLString;
 	}
-	
-	
-	
+
+
+
 	protected String getColumnSQLDefinition(SchemaColumn field,Schema definition){
 	    boolean isPrimaryKey = field.isPartOfPrimaryKey();
 	    boolean isCompositePK = definition.getPrimaryKey().isComposite();
 
 	    String type;
-	    
+
 	    if(isPrimaryKey && !isCompositePK && field.getDataTypeClass()==Integer.class){
 	      type = getIDColumnType(definition);
 	    }
@@ -1108,31 +1109,31 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	    }
 	    return returnString;
 	  }
-	
+
 	public boolean supportsUniqueConstraintInColumnDefinition(){
 		return true;
 	}
-	
+
 	public boolean isCabableOfRSScroll(){
 		return false;
 	}
-	
+
 	/**
 	 * returns the optimal or allowed fetch size when going to database to load IDOEntities using 'where primarikey_name in (list_of_priamrykeys)'
 	 */
 	public int getOptimalEJBLoadFetchSize(){
 		return 500;
 	}
-	
+
 	public Object executeGetProcedure(String dataSourceName, Procedure procedure, Object[] parameters) throws SQLException {
 		return executeProcedure(dataSourceName, procedure, parameters,false);
 	}
-	
+
 	public Collection executeFindProcedure(String dataSourceName, Procedure procedure, Object[] parameters) throws SQLException {
 		return (Collection)executeProcedure(dataSourceName, procedure, parameters,true);
 	}
 
-	
+
 	public Object executeProcedure(String dataSourceName, Procedure procedure, Object[] parameters,boolean returnCollection) throws SQLException {
 		Connection conn = null;
 		CallableStatement Stmt = null;
@@ -1151,7 +1152,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 			String sql = "{"+((!returnCollection)?" ? =":"")+" call "+procedure.getName()+prepareArgString+" }";
 			//System.out.println("[DatastorInterface]: "+sql);
 			Stmt = conn.prepareCall(sql);
-			
+
 			Class[] parameterTypes = procedure.getParameterTypes();
 			int length = Math.min(parameterTypes.length,parameters.length);
 			for (int i = 0; i < length; i++) {
@@ -1164,9 +1165,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 					throw new SQLException("IDOProcedure: " + procedure.getName() + "; parameter:  " + i + "; value:  " + parameters[i] + " - " + e.getMessage());
 				}
 			}
-			
+
 			theReturn = procedure.processResultSet(Stmt.executeQuery());
-			
+
 //			rs = Stmt.executeQuery();
 //			if(returnCollection){
 //				Collection c = new ArrayList();
@@ -1196,7 +1197,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		return theReturn;
 
 	}
-	
+
 	private void insertIntoCallableStatement(CallableStatement stmt, int index, Class type, Object parameter) throws SQLException{
 		if (type.equals(Integer.class)) {
 			stmt.setInt(index,((Integer)parameter).intValue());
@@ -1237,11 +1238,11 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 			stmt.setObject(index, parameter);
 		}
 	}
-	
+
 	public boolean allowsStoredProcedure(){
 		return true;
 	}
-	
+
 	public boolean hasStoredProcedure(String procedureName) throws SQLException{
 		if(!allowsStoredProcedure()){
 			return false;
@@ -1261,7 +1262,7 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		}
 		return toReturn;
 	}
-	
+
 	public boolean isUsingPreparedStatements(){
 	    return usePreparedStatement;
 	}
@@ -1280,9 +1281,9 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		}
 		sql.append(")");
 		return sql.toString();
-		
+
 	}
-	
+
 	/**
 	 * <p>
 	 * This method returns the max length of a column to be part of a (composite) primary key.<br>
@@ -1295,12 +1296,12 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 	}
 	/**
 	 * <p>
-	 * This methods returns true in the Adaptor supports the slide db table, false is it doesnt
+	 * This methods returns true in the Adaptor supports the repository db table, false is it doesnt
 	 * </p>
 	 * @return
 	 */
-	public boolean getSupportsSlide() {
-		return this.supportsSlide;
+	public boolean getSupportsRepository() {
+		return this.supportsRepository;
 	}
-	
+
 }

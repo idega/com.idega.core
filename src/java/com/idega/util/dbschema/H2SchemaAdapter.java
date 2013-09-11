@@ -184,7 +184,7 @@ public class H2SchemaAdapter extends SQLSchemaAdapter { //implements
 		return false;
 	}
 	
-	public boolean getSupportsSlide() {
+	public boolean getSupportsRepository() {
 		return false;
 	}
 
