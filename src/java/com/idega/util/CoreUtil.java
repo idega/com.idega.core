@@ -21,11 +21,16 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
+import com.idega.builder.business.BuilderLogicWrapper;
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.builder.data.ICDomain;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.data.IDOContainer;
 import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWCacheManager;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
@@ -35,6 +40,7 @@ import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.presentation.JSFUtil;
 
+@SuppressWarnings("deprecation")
 public class CoreUtil {
 
 	private static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
@@ -392,5 +398,22 @@ public class CoreUtil {
 		if (port > 0)
 			host = host.concat(":").concat(String.valueOf(port));
 		return host;
+	}
+
+	public static void clearAllCaches() {
+		try {
+			IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
+
+			BuilderLogicWrapper blw = ELUtil.getInstance().getBean(BuilderLogicWrapper.SPRING_BEAN_NAME_BUILDER_LOGIC_WRAPPER);
+			blw.getBuilderService(iwma.getIWApplicationContext()).clearAllCaches();
+			IBOLookup.clearAllCache();
+			IDOContainer.getInstance().flushAllBeanCache();
+			IDOContainer.getInstance().flushAllQueryCache();
+			IWCacheManager2 iwcm2 = IWCacheManager2.getInstance(iwma);
+			iwcm2.reset();
+			IWCacheManager.getInstance(iwma).clearAllCaches();
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error clearing all caches", e);
+		}
 	}
 }
