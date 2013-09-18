@@ -18,10 +18,8 @@ import java.util.logging.Logger;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import org.apache.commons.codec.binary.Base64;
 import org.springframework.web.context.support.WebApplicationContextUtils;
-
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.core.localisation.business.ICLocaleBusiness;
@@ -39,9 +37,6 @@ import com.idega.util.presentation.JSFUtil;
 public class CoreUtil {
 
 	private static final Logger LOGGER = Logger.getLogger(CoreUtil.class.getName());
-
-	private static final BASE64Encoder ENCODER_BASE64 = new BASE64Encoder();
-	private static final BASE64Decoder DECODER_BASE64 = new BASE64Decoder();
 
 	public static IWBundle getCoreBundle() {
 		return IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER);
@@ -94,19 +89,14 @@ public class CoreUtil {
 		if (originalValue == null) {
 			return null;
 		}
-		return ENCODER_BASE64.encode(originalValue.getBytes());
+		return new String(Base64.encodeBase64(originalValue.getBytes()));
 	}
 
 	public static String getDecodedValue(String encodedValue) {
 		if (encodedValue == null) {
 			return null;
 		}
-		try {
-			return new String(DECODER_BASE64.decodeBuffer(encodedValue));
-		} catch (IOException e) {
-			LOGGER.log(Level.WARNING, "Error decoding: " + encodedValue, e);
-		}
-		return null;
+		return new String(Base64.decodeBase64(encodedValue.getBytes()));
 	}
 
 	public static boolean isIE(HttpServletRequest request) {

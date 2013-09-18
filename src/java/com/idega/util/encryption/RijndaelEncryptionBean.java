@@ -10,8 +10,7 @@ import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
-import sun.misc.BASE64Decoder;
-import sun.misc.BASE64Encoder;
+import org.apache.commons.codec.binary.Base64;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
@@ -38,8 +37,6 @@ import com.idega.util.CoreConstants;
 public class RijndaelEncryptionBean {
 
 	private String secretKey = null;
-	protected BASE64Encoder base64Encoder = new BASE64Encoder();
-	protected BASE64Decoder base64Decoder = new BASE64Decoder();
 	private int keySize = 256;
 	private byte[] IV = new byte[] {0x43, 0x32, 0x11, 0x3a, 0x50, 0x37,  0x15, 0x74, 0x56, 0x63, 0x43, 0x56, 0x65, 0x64, 0x2a, 0x38 };
 
@@ -81,7 +78,7 @@ public class RijndaelEncryptionBean {
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 		byte[] results = cipher.doFinal(text.getBytes(CoreConstants.ENCODING_UTF8));
-		return this.base64Encoder.encode(results);
+		return new String(Base64.encodeBase64(results), CoreConstants.ENCODING_UTF8);
 	}
 
 	/**
@@ -116,7 +113,7 @@ public class RijndaelEncryptionBean {
 		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(getIV());
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-		byte[] results = cipher.doFinal(this.base64Decoder.decodeBuffer(text));
+		byte[] results = cipher.doFinal(Base64.decodeBase64(text.getBytes(CoreConstants.ENCODING_UTF8)));
 		return new String(results, CoreConstants.ENCODING_UTF8);
 	}
 

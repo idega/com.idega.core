@@ -15,6 +15,7 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.FinderException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -25,7 +26,9 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import sun.misc.BASE64Decoder;
+
+import org.apache.commons.codec.binary.Base64;
+
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
@@ -48,7 +51,7 @@ import com.idega.util.StringHandler;
  * with the WS_DO_BASIC_AUTHENTICATION or WS_VALID_IP application properties.
  * </p>
  * Last modified: $Date: 2007/01/22 08:16:56 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.2 $
  */
@@ -67,14 +70,13 @@ public class WebServiceAuthorizationFilter implements Filter {
 
 	UserBusiness userBusiness = null;
 
-	BASE64Decoder myBase64Decoder = null;
-
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
 	 * javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse,
 			FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
@@ -201,14 +203,12 @@ public class WebServiceAuthorizationFilter implements Filter {
 		}
 		String namePassword = basicNamePassword.substring(6);
 		try {
-			byte[] decodedNamePasswordArray = this.myBase64Decoder
-					.decodeBuffer(namePassword);
-			ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer
-					.wrap(decodedNamePasswordArray);
+			byte[] decodedNamePasswordArray = Base64.decodeBase64(namePassword.getBytes());
+			ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer.wrap(decodedNamePasswordArray);
 			Charset charset = Charset.forName("ISO-8859-1");
 			CharBuffer buffer = charset.decode(wrappedDecodedNamePasswordArray);
 			return buffer.toString();
-		} catch (IOException ex) {
+		} catch (Exception ex) {
 			return null;
 		}
 	}
@@ -232,22 +232,13 @@ public class WebServiceAuthorizationFilter implements Filter {
 		return this.loginTableHome;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	public void init(FilterConfig arg0) throws ServletException {
-		this.myBase64Decoder = new BASE64Decoder();
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * 
-	 * @see javax.servlet.Filter#destroy()
-	 */
+	@Override
 	public void destroy() {
 		// noting to destroy
+	}
+
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
 	}
 
 }
