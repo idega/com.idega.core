@@ -1103,7 +1103,7 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		}
 	}
 
-	private IWPropertyList getPropertyList() {
+	protected IWPropertyList getPropertyList() {
 		return this.propertyList;
 	}
 
