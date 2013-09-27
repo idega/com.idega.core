@@ -246,11 +246,11 @@ public class Link extends Text {
 		this.setClassToInstanciate(classToInstanciate);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Link(PresentationObject mo, String classToInstanciate, String template) {
 		this.setPresentationObject(mo);
 		try {
-			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), template);
+			Class<UIComponent> ui = RefactorClassRegistry.forName(classToInstanciate);
+			this.setClassToInstanciate(ui, template);
 		} catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());
 		}
@@ -279,11 +279,11 @@ public class Link extends Text {
 	 * Opens a new object of type classToInstanciate (has to be a PresentationObject)
 	 * in the same window with the template of name templateName
 	 */
-	@SuppressWarnings("unchecked")
 	public Link(String displayText, String classToInstanciate, String templateName) {
 		this.setText(displayText);
 		try {
-			this.setClassToInstanciate(RefactorClassRegistry.forName(classToInstanciate), templateName);
+			Class<UIComponent> ui = RefactorClassRegistry.forName(classToInstanciate);
+			this.setClassToInstanciate(ui, templateName);
 		} catch (Exception e) {
 			throw new RuntimeException(e.toString() + e.getMessage());
 		}
@@ -514,10 +514,7 @@ public class Link extends Text {
 		addParameter(parameter.getName(), parameter.getValueAsString());
 	}
 
-	/**
-	 *
-	 */
-	public void addParameter(String parameterName, Class theClass) {
+	public void addParameter(String parameterName, Class<? extends UIComponent> theClass) {
 		addParameter(parameterName, IWMainApplication.getEncryptedClassName(theClass));
 	}
 
@@ -1890,9 +1887,9 @@ public class Link extends Text {
 	}
 
 
-	public void setWindowToOpen(Class windowClass, String width, String height, boolean resizable, boolean scrollbar) {
+	public void setWindowToOpen(Class<? extends Window> windowClass, String width, String height, boolean resizable, boolean scrollbar) {
 		try{
-			this._windowInstance = (Window)windowClass.newInstance();
+			this._windowInstance = windowClass.newInstance();
 			this._windowInstance.setResizable(resizable);
 			this._windowInstance.setScrollbar(scrollbar);
 			this._windowInstance.setWidth(width);
@@ -1904,7 +1901,7 @@ public class Link extends Text {
 		setWindowToOpen(windowClass);
 	}
 
-	public void setPublicWindowToOpen(Class windowClass) {
+	public void setPublicWindowToOpen(Class<? extends UIComponent> windowClass) {
 		this._windowClass = windowClass;
 		this.usePublicWindow = true;
 		/**
@@ -1920,7 +1917,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
-	public void setWindowToOpen(Class windowClass) {
+	public void setWindowToOpen(Class<? extends UIComponent> windowClass) {
 		//_objectType=OBJECT_TYPE_WINDOW;
 		this._windowClass = windowClass;
 
@@ -1940,18 +1937,15 @@ public class Link extends Text {
 
 public void setWindowToOpen(String className) {
 	try {
-		setWindowToOpen(RefactorClassRegistry.forName(className));
+		Class<UIComponent> ui = RefactorClassRegistry.forName(className);
+		setWindowToOpen(ui);
 	}
 	catch (ClassNotFoundException e) {
 		e.printStackTrace();
 	}
 }
-	public void setWindowToOpen(Class windowClass, int instanceId) {
-		//_objectType=OBJECT_TYPE_WINDOW;
+	public void setWindowToOpen(Class<? extends UIComponent> windowClass, int instanceId) {
 		setWindowToOpen(windowClass);
-		//setURL(IWMainApplication.windowOpenerURL);
-		//addParameter(Page.IW_FRAME_CLASS_PARAMETER,windowClass);
-		//this.addParameter(IWMainApplication._PARAMETER_IC_OBJECT_INSTANCE_ID,instanceId);
 		this.icObjectInstanceIDForWindow = instanceId;
 	}
 
@@ -2137,12 +2131,15 @@ public void setWindowToOpen(String className) {
 			}
 		}
 		else {
-
-			this.windowOpenerJavascriptString = URLDecoder.decode(this.windowOpenerJavascriptString);
-			List between = TextSoap.FindAllBetween(this.windowOpenerJavascriptString, "iwOpenWindow('", "'");
+			try {
+				this.windowOpenerJavascriptString = URLDecoder.decode(this.windowOpenerJavascriptString, CoreConstants.ENCODING_UTF8);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			List<String> between = TextSoap.FindAllBetween(this.windowOpenerJavascriptString, "iwOpenWindow('", "'");
 			String theUrl = "";
 			if (between != null && between.size() > 0) {
-				theUrl = (String) between.get(0);
+				theUrl = between.get(0);
 			}
 
 			String paramString = this.getParameterString(iwc, this.getURL(iwc));
@@ -2252,7 +2249,7 @@ public void setWindowToOpen(String className) {
 
 	@Override
 	public void setToolTip(String toolTip) 	{
-		super.setToolTip(toolTip);
+		super.setTitle(toolTip);
 		if (this._objectType == OBJECT_TYPE_IMAGE) {
 			((Image) this._obj).setAlt(toolTip);
 		}
@@ -2331,6 +2328,7 @@ public void setWindowToOpen(String className) {
 		this.forceToReplaceAfterEncoding = forceToReplaceAfterEncoding;
 	}
 
+	@SuppressWarnings({ "unchecked", "rawtypes" })
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
@@ -2367,7 +2365,7 @@ public void setWindowToOpen(String className) {
 		}
 
 		iFormToSubmit = ((Boolean) values[5]).booleanValue();
-		_windowClass = (Class) values[6];
+		_windowClass = (Class<? extends UIComponent>) values[6];
 		try {
 			String className = (String) values[7];
 			if (className != null) {

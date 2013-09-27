@@ -5,13 +5,17 @@ package com.idega.util.text;
 
 import java.text.DecimalFormat;
 import java.text.DecimalFormatSymbols;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.StringTokenizer;
-import java.util.Vector;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import com.ibm.icu.text.Transliterator;
+import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 
 /**
  *  General class for text manipulation
@@ -25,30 +29,30 @@ public class TextSoap {
 	private static DecimalFormat singleDecimalFormat = new DecimalFormat("0.0");
 	private static DecimalFormatSymbols symbols = singleDecimalFormat.getDecimalFormatSymbols();
 	private static Transliterator transliterator = Transliterator.getInstance("Any-Hex");
-	
+
 	/**
 	 *  Function to cut out all the text between two tokens in a larger string and
-	 *  return the results as a Vector of strings
+	 *  return the results as a list of strings
 	 *
 	 *@param  inputString  Description of the Parameter
 	 *@param  begintoken   Description of the Parameter
 	 *@param  endtoken     Description of the Parameter
 	 *@return              Description of the Return Value
 	 */
-	public static Vector FindAllBetween(String inputString, String begintoken, String endtoken) {
+	public static List<String> FindAllBetween(String inputString, String begintoken, String endtoken) {
 		//int arraylength = 200;
 		int beginnum = 0;
 		int endnum = 0;
 		int counter = 0;
 		String newString;
 		String newSubstring;
-		Vector outVector;
+		List<String> results;
 
-		newSubstring = new String("");
-		newString = new String("");
-		outVector = new Vector(10);
+		newSubstring = CoreConstants.EMPTY;
+		newString = CoreConstants.EMPTY;
+		results = new ArrayList<String>();
 		newString = inputString;
-		String tempString = new String("");
+		String tempString = CoreConstants.EMPTY;
 
 		try {
 			while ((newString.indexOf(begintoken) != -1) && (newString.indexOf(endtoken) != -1)) {
@@ -59,39 +63,36 @@ public class TextSoap {
 				//cuts down the string from where occurence last fount
 				newString = tempString;
 				//removeCharacters(newSubstring);
-				outVector.addElement(removeCharacters(newSubstring));
+				results.add(removeCharacters(newSubstring));
 				counter++;
 			}
-		}
-		catch (Exception e) {
-			outVector.addElement("TextSoapError" + counter);
+		} catch (Exception e) {
+			results.add("TextSoapError" + counter);
 			e.printStackTrace(System.err);
 		}
-		outVector.trimToSize();
-		//System.out.print(outVector.size());
-		return outVector;
+		return results;
 	}
 
 	/**
 	 *  Function to cut out all the text between multiple instances of a token in
-	 *  a larger string and return the results a Vector of Strings
+	 *  a larger string and return the results a list of Strings
 	 *
 	 *@param  inputString       Description of the Parameter
 	 *@param  beginAndEndToken  Description of the Parameter
 	 *@return                   Description of the Return Value
 	 */
-	public static Vector FindAllBetween(String inputString, String beginAndEndToken) {
+	public static List<String> FindAllBetween(String inputString, String beginAndEndToken) {
 		//int arraylength = 200;
 		int beginnum = -1;
 		int endnum = -1;
 		int counter = 0;
 		String newString;
 		String newSubstring;
-		Vector outVector;
+		List<String> out;
 
-		newSubstring = new String("");
-		newString = new String("");
-		outVector = new Vector(10);
+		newSubstring = CoreConstants.EMPTY;
+		newString = CoreConstants.EMPTY;
+		out = new ArrayList<String>();
 		newString = inputString;
 
 		try {
@@ -109,17 +110,16 @@ public class TextSoap {
 
 					//cuts down the string from where occurence last found
 					newString = inputString.substring(endnum + beginAndEndToken.length());
-					outVector.addElement(removeCharacters(newSubstring));
+					out.add(removeCharacters(newSubstring));
 				}
 				counter++;
 			}
 		}
 		catch (Exception e) {
-			outVector.addElement("TextSoapError" + counter);
+			out.add("TextSoapError" + counter);
 		}
-		outVector.trimToSize();
 
-		return outVector;
+		return out;
 	}
 
 	/**
@@ -130,17 +130,17 @@ public class TextSoap {
 	 *@param  separatorString  Description of the Parameter
 	 *@return                  Description of the Return Value
 	 */
-	public static Vector FindAllWithSeparator(String inputString, String separatorString) {
+	public static List<String> FindAllWithSeparator(String inputString, String separatorString) {
 		int beginnum = -1;
 		int endnum = -1;
 		int counter = 0;
 		String newString;
 		String newSubstring;
-		Vector outVector;
+		List<String> out;
 
-		newSubstring = new String("");
-		newString = new String("");
-		outVector = new Vector(10);
+		newSubstring = CoreConstants.EMPTY;
+		newString = CoreConstants.EMPTY;
+		out = new ArrayList<String>();
 		newString = inputString;
 
 		try {
@@ -150,7 +150,7 @@ public class TextSoap {
 					endnum = inputString.indexOf(separatorString);
 					newString = inputString.substring(endnum + separatorString.length());
 					newSubstring = inputString.substring(0, endnum);
-					outVector.addElement(removeCharacters(newSubstring));
+					out.add(removeCharacters(newSubstring));
 				}
 				//second round
 				else {
@@ -158,20 +158,19 @@ public class TextSoap {
 					endnum = inputString.indexOf(separatorString, beginnum + separatorString.length());
 					//cuts down the string from where occurence last found
 					newSubstring = inputString.substring(beginnum + separatorString.length(), endnum);
-					outVector.addElement(removeCharacters(newSubstring));
+					out.add(removeCharacters(newSubstring));
 					newString = inputString.substring(endnum + separatorString.length());
 				}
 				counter++;
 			}
 			newSubstring = inputString.substring(endnum + separatorString.length());
-			outVector.addElement(removeCharacters(newSubstring));
+			out.add(removeCharacters(newSubstring));
 		}
 		catch (Exception e) {
-			outVector.addElement("TextSoapError" + counter);
+			out.add("TextSoapError" + counter);
 		}
-		outVector.trimToSize();
 
-		return outVector;
+		return out;
 	}
 
 	/**
@@ -265,17 +264,17 @@ public class TextSoap {
 	public static String findAndReplace(String text, String stringToFind, String stringToReplace) {
 		//Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT
-		
-		StringBuffer buf = new StringBuffer("");
+
+		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
 		if (stringToFind != null && !stringToFind.equals("")) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
-			
+
 			if (index == -1) {
 				return text;
 			}
-			
+
 			while (index != -1) {
 				buf.append(text.substring(index2, index)); //paste from last index or beginning
 				buf.append(stringToReplace);
@@ -369,9 +368,9 @@ public class TextSoap {
 		}
 		return returnString;
 	}
-	
-	
-	
+
+
+
 	public static String findAndReplace(String text, String stringToFind, String stringAfterFindString, String stringToReplaceIfstringAfterFindStringMatches, String stringToReplace) {
 		// Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT
@@ -453,9 +452,9 @@ public class TextSoap {
 	}
 
 	public static String stripHTMLandBodyTag(String html) {
-		Vector crappy = TextSoap.FindAllBetween(html, "<body", "</body>");
+		List<String> crappy = TextSoap.FindAllBetween(html, "<body", "</body>");
 		if (crappy.size() > 0) {
-			String crap = (String) crappy.elementAt(0);
+			String crap = crappy.get(0);
 			int rest = crap.indexOf(">");
 			if (rest != -1) {
 				html = crap.substring(rest + 1, crap.length());
@@ -464,7 +463,7 @@ public class TextSoap {
 		else {
 			crappy = TextSoap.FindAllBetween(html, "<BODY", "</BODY>");
 			if (crappy.size() > 0) {
-				String crap = (String) crappy.elementAt(0);
+				String crap = crappy.get(0);
 				int rest = crap.indexOf(">");
 				if (rest != -1) {
 					html = crap.substring(rest + 1, crap.length());
@@ -475,20 +474,20 @@ public class TextSoap {
 	}
 
 	public static String stripHTMLTagAndChangeBodyTagToTable(String html) {
-		Vector crappy = TextSoap.FindAllBetween(html, "<body", "</body>");
+		List<String> crappy = TextSoap.FindAllBetween(html, "<body", "</body>");
 		String prefix = "<tr><td>";
 		String suffix = "</td></tr></table>";
 		String tabletag = "<table cellpadding=\"0\" cellspacing=\"0\" ";
 		String crap = "";
 		int bracket = -1;
 		if (crappy.size() > 0) {
-			crap = (String) crappy.elementAt(0);
+			crap = crappy.get(0);
 			bracket = crap.indexOf(">");
 		}
 		else {
 			crappy = TextSoap.FindAllBetween(html, "<BODY", "</BODY>");
 			if (crappy.size() > 0) {
-				crap = (String) crappy.elementAt(0);
+				crap = crappy.get(0);
 				bracket = crap.indexOf(">");
 			}
 		}
@@ -602,9 +601,9 @@ public class TextSoap {
 		return text;
 	}
 
-	
+
 	 /**
-	   *  Note: Former method of the class TextFormatter, unchanged name. 
+	   *  Note: Former method of the class TextFormatter, unchanged name.
 	   *
 	   *@param  textBody       Description of the Parameter
 	   *@return                Description of the Return Value
@@ -614,9 +613,9 @@ public class TextSoap {
 		textBody = TextSoap.findAndReplaceOnPrefixCondition(textBody, "\n", ">","<br />",true);
 	  textBody = TextSoap.findAndReplace(textBody, "\t", "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;");
 	  return textBody;
-	}	
-	
-	
+	}
+
+
 	/**
 	 *  Note: Former name: "formatText"
 	 * 	Name was changed because method formatText of the class TextFormatter
@@ -647,9 +646,8 @@ public class TextSoap {
 	 *@param  text_body  Description of the Parameter
 	 *@return            Description of the Return Value
 	 */
-	public static Vector createTextLink(String text_body) {
-		Vector linkVector = TextSoap.FindAllBetween(text_body, "Link(", ")");
-		return linkVector;
+	public static List<String> createTextLink(String text_body) {
+		return TextSoap.FindAllBetween(text_body, "Link(", ")");
 	}
 
 	/**
@@ -660,10 +658,10 @@ public class TextSoap {
 	 *@exception  Exception  Description of the Exception
 	 */
 	public static String removeWhiteSpace(String string) {
-	    if (string == null || string.equals("")) {
-				return "";
-			}
-	    
+	    if (StringUtil.isEmpty(string)) {
+			return CoreConstants.EMPTY;
+		}
+
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
 		for (int i = 0; i < stringBuff.length(); i++) {
@@ -676,10 +674,10 @@ public class TextSoap {
 	}
 
 	public static String removeWhiteSpaceFromBeginningOfString(String string) {
-	    if (string == null || string.equals("")) {
-				return "";
-			}
-	    
+	    if (StringUtil.isEmpty(string)) {
+			return CoreConstants.EMPTY;
+		}
+
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
 		for (int i = 0; i < stringBuff.length()-1; i++) {
@@ -687,15 +685,16 @@ public class TextSoap {
 		    if (!(Character.isWhitespace(c) || Character.isSpaceChar(c) )) {
 		        resultBuff = new StringBuffer(stringBuff.substring(i,stringBuff.length()));
 		        break;
-		    } 
+		    }
 		}
 		return resultBuff.toString();
 	}
 
 	public static String removeWhiteSpaceFromEndOfString(String string) {
-	    if (string == null || string.equals("")) {
-				return "";
-			}
+		if (StringUtil.isEmpty(string)) {
+			return CoreConstants.EMPTY;
+		}
+
 	    StringBuffer stringBuff = new StringBuffer(string);
 	    StringBuffer resultBuff = new StringBuffer();
 		for (int i = stringBuff.length()-1; i > -1; i--) {
@@ -703,7 +702,7 @@ public class TextSoap {
 		    if (!(Character.isWhitespace(c) || Character.isSpaceChar(c) )) {
 		        resultBuff = new StringBuffer(stringBuff.substring(0,i+1));
 		        break;
-		    } 
+		    }
 		}
 		return resultBuff.toString();
 	}
@@ -826,10 +825,10 @@ public class TextSoap {
 	}
 
 	public static String findAndReplaceOnPrefixCondition(String text, String stringToFind, String prefix, String stringToReplace, boolean replaceOnMissingPrefix) {
-		StringBuffer buf = new StringBuffer("");
+		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
 		String returnString;
 		String replaceString;
-		if (stringToFind != null && !stringToFind.equals("")) {
+		if (stringToFind != null && !stringToFind.equals(CoreConstants.EMPTY)) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
@@ -863,7 +862,7 @@ public class TextSoap {
 			}
 		}
 		returnString = buf.toString();
-		if (returnString.equals("")) {
+		if (returnString.equals(CoreConstants.EMPTY)) {
 			returnString = text;
 		}
 		return returnString;
@@ -958,26 +957,26 @@ public class TextSoap {
 	  * query strings. (In JSTL, the c:url tag performs this task automatically.)
 	  */
 	  public static String forHTMLTag(String string){
-	  	Map replacements = new HashMap();
+	  	Map<String, String> replacements = new HashMap<String, String>();
 	  	replacements.put("<",  "&lt;");
 	  	replacements.put(">",  "&gt;");
 	  	replacements.put("\"", "&quot;");
 	  	replacements.put("\'", "&#039;");
 	  	replacements.put("\\", "&#092;");
 	  	replacements.put("&",  "&amp;");
-	  	 
+
 	  	Pattern p = Pattern.compile("[<>\"']|&(?!#)");
 	  	Matcher m = p.matcher(string);
 	  	StringBuffer buffer = new StringBuffer();
-	  	 
+
 	  	while (m.find()) {
 	  	    String specialChar = m.group();
-	  	    m.appendReplacement(buffer, (String) replacements.get(specialChar));
+	  	    m.appendReplacement(buffer, replacements.get(specialChar));
 	  	}
 	  	m.appendTail(buffer);
-	  	 
+
 	  	return buffer.toString();	  }
-	  
+
 	  /**
 	 * Changes all the special characters in the given string to their corresponding symbolic value.
 	 * For example: '& => &amp;', '< = &lt;'
@@ -990,7 +989,7 @@ public class TextSoap {
 		for (int i = 0; i < n; i++) {
 			char c = stringToConvert.charAt(i);
 			String unicode = transliterator.transliterate(String.valueOf(c));
-			
+
 			if (unicode.equalsIgnoreCase("\\u003C")) {
 				sb.append("&lt;");
 			}

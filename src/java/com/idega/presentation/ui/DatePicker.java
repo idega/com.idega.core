@@ -33,7 +33,7 @@ import com.idega.util.text.TextSoap;
  * hh:mm:ss:fffffffff where fffffffff are nanoseconds The default dateformat
  * style is DateFormat.SHORT A IWTimestamp object can be constructed from the
  * timestamp format value.
- * 
+ *
  * @author <a href="aron@idega.is">Aron Birkir </a>
  * @version 1.0
  */
@@ -49,7 +49,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     private String styleClass = null;
     private int length = -1;
     private boolean keepStatus = false;
-    
+
     private String textInputId = null;
     private String textInputOnchange = null;
     /**
@@ -58,11 +58,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     public DatePicker() {
         this(null);
     }
-    
+
     public DatePicker(String pickerName) {
         this(pickerName, null, null, null);
     }
-  
+
     public DatePicker(String pickerName, Locale locale) {
         this(pickerName, null, locale, null);
     }
@@ -118,7 +118,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         if (textInputOnchange != null) {
         	input.setOnChange(textInputOnchange);
         }
-        
+
         int inputLength = 10;
         if (this.length < 0) {
 	        switch (this.dateFormatStyle) {
@@ -159,21 +159,21 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         return input;
     }
 
-    
+
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.idega.presentation.ui.AbstractChooser#getChooserWindowClass()
      */
     @Override
-		public Class<?> getChooserWindowClass() {
+	public Class<DatePickerWindow> getChooserWindowClass() {
         return DatePickerWindow.class;
     }
 
     /**
      * Sets the chosen date andformats it according to the formatstyle set, and
      * the locale set, or default locale if none is set
-     * 
+     *
      * @param date
      */
     public void setDate(Date date) {
@@ -185,7 +185,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
             //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
         } else {
             display = new SimpleDateFormat(this.dateFormatPattern).format(date);
-            
+
             //DateFormat.getDateInstance(dateFormatStyle).format(date);
         }
         setChooserValue(display, value);
@@ -194,7 +194,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     /**
      * Sets the chosen date and formats it according to the formatstyle set and
      * locale.
-     * 
+     *
      * @param date
      * @param locale
      */
@@ -206,13 +206,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     /**
      * Sets the format style used by DateFormat to format the date chosen values
      * can be one of SHORT,MEDIUM,LONG,FULL in class DateFormat
-     * 
+     *
      * @param formatStyle
      */
     public void setDateFormatStyle(int formatStyle) {
         this.dateFormatStyle = formatStyle;
     }
-    
+
     /**
      * Sets the format pattern for date display ( see java.text.SimpleDateFormat)
      * @param pattern
@@ -223,11 +223,12 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String,
      *      java.lang.String, com.idega.presentation.IWContext)
      */
-    public PresentationObject getHandlerObject(String name, String value,
+    @Override
+	public PresentationObject getHandlerObject(String name, String value,
             IWContext iwc) {
         //setName(name);
         setChooserParameter(name);
@@ -252,11 +253,12 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.idega.business.InputHandler#getHandlerObject(java.lang.String,
      *      java.util.Collection, com.idega.presentation.IWContext)
      */
-    public PresentationObject getHandlerObject(String name, Collection values,
+    @Override
+	public PresentationObject getHandlerObject(String name, Collection values,
             IWContext iwc) {
         String value = (String) Collections.min(values);
         return getHandlerObject(name, value, iwc);
@@ -264,11 +266,12 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.idega.business.InputHandler#getResultingObject(java.lang.String[],
      *      com.idega.presentation.IWContext)
      */
-    public Object getResultingObject(String[] value, IWContext iwc)
+    @Override
+	public Object getResultingObject(String[] value, IWContext iwc)
             throws Exception {
         if (value != null && value.length > 0) {
             String dateString = value[0];
@@ -288,11 +291,12 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.idega.business.InputHandler#getDisplayForResultingObject(java.lang.Object,
      *      com.idega.presentation.IWContext)
      */
-    public String getDisplayForResultingObject(Object value, IWContext iwc) {
+    @Override
+	public String getDisplayForResultingObject(Object value, IWContext iwc) {
         Locale locale = iwc.getCurrentLocale();
         if (value != null) {
             return TextSoap.findAndCut((new IWTimestamp((java.sql.Date) value))
@@ -304,15 +308,16 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 
     /*
      * (non-Javadoc)
-     * 
+     *
      * @see com.idega.business.InputHandler#convertSingleResultingObjectToType(java.lang.Object,
      *      java.lang.String)
      */
-    public Object convertSingleResultingObjectToType(Object value,
+    @Override
+	public Object convertSingleResultingObjectToType(Object value,
             String className) {
         return value;
     }
-    
+
     private boolean useJSCalendar(IWBundle bundle){
         if(!this.useJSCalendar) {
 					return false;
@@ -331,7 +336,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         }
         return false;
     }
-    
+
     /* (non-Javadoc)
      * @see com.idega.presentation.ui.AbstractChooser#getTable(com.idega.presentation.IWContext, com.idega.idegaweb.IWBundle)
      */
@@ -341,34 +346,34 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         if(!useJSCalendar(bundle)) {
 					return super.getChooser(iwc, bundle);
 				}
-        
+
         Table table = new Table(3, 2);
 		table.setCellpadding(0);
 		table.setCellspacing(0);
-		
+
 		PresentationObject object = getPresentationObject(iwc);
 		Parameter value = new Parameter(getChooserParameter(), "");
 		if (getChooserValue() != null) {
 			value.setValue(getChooserValue());
 		}
-		
+
 		Image button = (bundle.getImage("date.png", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
 		button.setOnClick("return showCalendar('"+object.getID()+"', '"+this.dateFormatPattern+"','"+value.getID()+"');");
 //		Page parentPage = getParentPage();
 //		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendar.js"));
-		
-		
+
+
 		addRequiredJavascriptAndStylesheets(iwc, getParentPage());
-		
-		
-		
+
+
+
 		//String langScriptURI = "jscalendar/calendar-"+iwc.getCurrentLocale().getLanguage()+".js";
 		//String langScriptURI = "jscalendar/calendar_lang.js";
 		//checkOrCreateLanguageScript(iwc,iwrb,langScriptURI);
 		//parentPage.addJavascriptURL(iwrb.getImageURI(langScriptURI ));
 //		parentPage.addJavaScriptAfterJavaScriptURLs("calendar_lang",createCalendarLangScript(iwrb));
 //		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
-		
+
 //		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
 
 		Script s =  new Script();
@@ -380,11 +385,11 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		table.add(object, 1, 1);
 		table.setWidth(2, 2);
 		table.add(button,3,1);
-		
-		
+
+
 		return table;
     }
-    
+
    	public static void addRequiredJavascriptAndStylesheets(IWContext iwc, Page parentPage) {
 		IWMainApplication iwma = iwc.getApplicationContext().getIWMainApplication();
 		IWBundle bundle = iwma.getBundle(PresentationObject.CORE_IW_BUNDLE_IDENTIFIER);
@@ -394,7 +399,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		parentPage.addJavascriptURL(bundle.getImageURI("jscalendar/calendarHelper.js"));
 		parentPage.addStyleSheetURL(bundle.getImageURI("jscalendar/calendar-win2k-1.css"));
 	}
-    
+
     /*
     public void checkOrCreateLanguageScript(IWContext iwc,IWResourceBundle iwrb, String scriptBundleURI){
         if(langFiles==null)
@@ -403,23 +408,23 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 	        try {
 	            java.io.File jsFile = new java.io.File(iwc.getIWMainApplication().getRealPath(iwrb.getImageURI(scriptBundleURI)));
 	            if(!jsFile.exists()){
-	               
+
 	                jsFile.createNewFile();
 	                BufferedWriter writer = new BufferedWriter(new FileWriter(jsFile));
 	                writer.write(createCalendarLangScript(iwrb));
 	                writer.flush();
 	                writer.close();
-	                
+
 	            }
 	            langFiles.put(locale.getCountry(),"true");
 	        } catch (Exception e) {
 	            e.printStackTrace();
 	        }
-	       
+
         }
-   
+
     }*/
-    
+
     public String createCalendarLangScript(IWResourceBundle iwrb){
         Locale locale = iwrb.getLocale();
         IWCalendar cal = new IWCalendar();
@@ -435,7 +440,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		script.append("\"").append(cal.getDayName(7,locale,IWCalendar.LONG)).append("\",");
 		script.append("\"").append(cal.getDayName(1,locale,IWCalendar.LONG)).append("\"");
 		script.append(");\n");
-		
+
 		script.append("Calendar._MN = new Array(");
 		script.append("\"").append(cal.getMonthName(1,locale,IWCalendar.LONG)).append("\",");
 		script.append("\"").append(cal.getMonthName(2,locale,IWCalendar.LONG)).append("\",");
@@ -450,8 +455,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		script.append("\"").append(cal.getMonthName(11,locale,IWCalendar.LONG)).append("\",");
 		script.append("\"").append(cal.getMonthName(12,locale,IWCalendar.LONG)).append("\"");
 		script.append(");\n");
-		
-		
+
+
 		//Calendar._DN = new Array("Sunnudagur","Manudagur","Tridjudagur","Midvikudagur","Fimmtudagur","Fostudagur","Laugardagur","Sunnudagur");
 		//Calendar._MN = new Array("januar","februar","mars","april","mai","juni","juli","agust","september","oktober","november","desember");
 
@@ -477,15 +482,15 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		public void setStyleClass(String styleClass) {
     	this.styleClass = styleClass;
     }
-    
+
     public void keepStatusOnAction(boolean keepStatus) {
     	this.keepStatus = keepStatus;
     }
-    
+
     public void setLength(int length) {
     	this.length = length;
     }
-    
+
     public void setUseJSCalendar(boolean useJSCalendar) {
     	this.useJSCalendar = useJSCalendar;
     }

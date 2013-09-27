@@ -47,6 +47,7 @@ import com.idega.core.component.business.RegisterException;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.component.data.ICObjectBMPBean;
 import com.idega.core.component.data.ICObjectHome;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.Block;
@@ -233,15 +234,51 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		return propList;
 	}
 
+	private boolean isTypeOf(Class<?> theClass, Class<?> typeOf) {
+		if (theClass.getName().equals(typeOf.getName()))
+			return true;
+
+		Class<?>[] interfaces = theClass.getInterfaces();
+		if (!ArrayUtil.isEmpty(interfaces)) {
+			for (Class<?> theInterface: interfaces) {
+				if (isTypeOf(theInterface, typeOf)) {
+					return true;
+				}
+			}
+		}
+
+		Class<?>[] classes = theClass.getClasses();
+		if (!ArrayUtil.isEmpty(classes)) {
+			for (Class<?> theImplementedClass: classes) {
+				if (isTypeOf(theImplementedClass, typeOf)) {
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	@SuppressWarnings("unchecked")
 	private void createDataRecords() throws IDOLookupException, FinderException {
 		Collection<ICObject> entities = getDataObjects();
 		if (entities != null){
 			for (Iterator<ICObject> iter = entities.iterator(); iter.hasNext();) {
 				ICObject ico = iter.next();
 				try {
-					Class<? extends UIComponent> c = ico.getObjectClass();
-					IDOLookup.instanciateEntity(c);
-				} catch (ClassNotFoundException e) {
+					boolean instanciated = false;
+					Class<?> c = ico.getObjectClass();
+
+					if (isTypeOf(c, IDOEntity.class)) {
+						instanciated = IDOLookup.instanciateEntity((Class<IDOEntity>) c) != null;
+					} else if (isTypeOf(c, UIComponent.class)) {
+						instanciated = c.newInstance() != null;
+					}
+
+					if (!instanciated) {
+						throw new RuntimeException("Unable to instaciate IC object " + ico + " (ID: " + ico.getID() + "), object class: " + c.getName());
+					}
+				} catch (Exception e) {
 					LOGGER.warning("Loading bundle: " + this.getBundleIdentifier() + " : Class " + e.getMessage() + " not found");
 				}
 			}
@@ -268,16 +305,18 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 			((Block) o).registerPermissionKeys();
 	}
 
+	@SuppressWarnings("unchecked")
 	private void registerBlockPermisionKeys() throws IDOLookupException, FinderException {
 		ICObjectHome icObjectHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
-		@SuppressWarnings("unchecked")
 		Collection<ICObject> objects = icObjectHome.findAllBlocksByBundle(this.getBundleIdentifier());
 		if (objects != null) {
 			for (Iterator<ICObject> iter = objects.iterator(); iter.hasNext();) {
 				ICObject ico = iter.next();
 				try {
-					Class<? extends UIComponent> c = ico.getObjectClass();
-					registerBlockPermissionKeys(c);
+					Class<?> theClass = ico.getObjectClass();
+					if (isTypeOf(theClass, UIComponent.class)) {
+						registerBlockPermissionKeys((Class<UIComponent>) theClass);
+					}
 				} catch (ClassNotFoundException e) {
 					LOGGER.info("Class not found for Block: " + ico.getName());
 				} catch (InstantiationException e) {
@@ -1260,15 +1299,12 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 						}
 
 						// new register part
-						Class<?>[] implementedInterfaces = c.getInterfaces();
 						boolean isRegisterable = false;
-						for (int j = 0; j < implementedInterfaces.length; j++) {
-							if (BundleRegistrationListener.class.getName().equals(implementedInterfaces[j].getName())) {
-								isRegisterable = true;
-							}
+						if (isTypeOf(c, BundleRegistrationListener.class)) {
+							isRegisterable = true;
 						}
 						if (isRegisterable) {
-							BundleRegistrationListener regObj =(BundleRegistrationListener)c.newInstance();
+							BundleRegistrationListener regObj = (BundleRegistrationListener) c.newInstance();
 							regObj.registerInBundle(this, ico);
 						}
 					} catch (ClassNotFoundException e) {

@@ -5,6 +5,7 @@
  */
 package com.idega.presentation.ui;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
 import javax.faces.component.UIComponent;
@@ -58,15 +59,15 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private IWBundle _bundle;
 	private IWResourceBundle _iwrb;
 	private int _inputLength = -1;
-	
+
 	private String styleClassName;
 	private boolean isStyleClassSet = false;
 	private boolean usePublicWindowOpener = false;
-	
+
 	private boolean addSaveButton = true;
 	private boolean useOldLogic = true;
 	private boolean needsReload = true;
-	
+
 	private String hiddenInputAttribute = null;
 	private String instanceId = null;
 	private String method = null;
@@ -83,24 +84,24 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public void setInputLength(int length) {
 		this._inputLength = length;
 	}
-	
+
 	/**
 	 *
 	 */
 	public AbstractChooser() {
 		this(true);
 	}
-	
+
 	public AbstractChooser(boolean useOldLogic) {
 		this.useOldLogic = useOldLogic;
 	}
-	
+
 	public AbstractChooser(boolean needsReload, boolean useOldLogic, String actionAfterPropertySaved) {
 		this(useOldLogic);
 		this.needsReload = needsReload;
 		this.actionAfterPropertySaved = actionAfterPropertySaved;
 	}
-	
+
 	/**
 	 * @see UIComponentBase#setId(java.lang.String)
 	 */
@@ -113,7 +114,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	/**
 	 *
 	 */
-	public abstract Class<?> getChooserWindowClass();
+	public abstract Class<? extends UIComponent> getChooserWindowClass();
 
 	/**
 	 *
@@ -182,7 +183,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	@Override
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
-		
+
 		this._bundle = getBundle(iwc);
 		this._iwrb = getResourceBundle(iwc);
 		if (this._addForm) {
@@ -202,17 +203,17 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			}
 		}
 	}
-	
+
 	public abstract String getChooserHelperVarName();
-	
+
 	private GenericButton getSaveButton() {
 		GenericButton save = new GenericButton("save", _iwrb.getLocalizedString("save", "Save"));
-		
+
 		StringBuffer preAction = null;
 		if (actionAfterPropertySaved != null) {
 			preAction = new StringBuffer("var actionAfter = function() {").append(actionAfterPropertySaved).append("}; ");
 		}
-		
+
 		StringBuffer action = new StringBuffer();
 		if (preAction != null) {
 			action.append(preAction.toString());
@@ -239,7 +240,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			action.append("actionAfter");
 		}
 		action.append(");");
-		
+
 		save.setOnClick(action.toString());
 		return save;
 	}
@@ -297,7 +298,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 				 */
 				this.link.addParameter(SCRIPT_SUFFIX_PARAMETER, "value");
 				//}
-				
+
 				//this was object.getID() but the id could change if this object was kept in session but the form changed
 				//by using getName() the reference is not lost, however we might need to add extra steps for handling more than one
 				//chooser of the same type in the same form.
@@ -311,10 +312,10 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 						this.link.addParameter(FILTER_PARAMETER, this.filter);
 					}
 				}
-				
-				
+
+
 				addParametersToLink(this.link);
-				
+
 				table.add(this.link, 2, 1);
 			}
 
@@ -324,7 +325,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		}
 		else {	//	New chooser
 			Layer container = new Layer();
-			
+
 			String chooserObject = getChooserHelperVarName();
 			if (chooserObject == null) {
 				chooserObject = AbstractChooserBlock.GLOBAL_HELPER_NAME;
@@ -333,15 +334,15 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 				add(PresentationUtil.getJavaScriptAction(PresentationUtil.getJavaScriptLinesLoadedLazily(CoreUtil.getResourcesForChooser(iwc),
 					new StringBuilder("if (!").append(chooserObject).append(") var ").append(chooserObject).append(" = new ChooserHelper();").toString())));
 			}
-			
+
 			PresentationObject object = getPresentationObject(iwc);
 			container.add(object);
-			
+
 			Image chooser = getChooser(bundle);
 			chooser.setStyleClass("chooserStyle");
-			
+
 			chooser.setMarkupAttribute("choosername", chooserObject);
-			
+
 			//	OnClick action
 			StringBuffer action = new StringBuffer("addChooserObject('").append(chooser.getId()).append("', '");
 			action.append(getChooserWindowClass().getName());
@@ -356,9 +357,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			.append(_stringValue == null ? "null" : new StringBuilder("'").append(_stringValue).append("'").toString()).append(", ")
 			.append(_stringDisplay == null ? "null" : new StringBuilder("'").append(_stringDisplay).append("'").toString()).append(");");
 			chooser.setOnClick(action.toString());
-			
+
 			container.add(chooser);
-			
+
 			return container;
 		}
 	}
@@ -386,11 +387,11 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 			TextInput input = new TextInput(this.displayInputName+"_chooser");
 			input.setDisabled(this.disabled);
 			input.setId(input.getName());
-			
+
 			if (this._buttonImage != null) {
 				this._buttonImage.setMarkupAttribute(ICBuilderConstants.CHOOSER_VALUE_VIEWER_ID_ATTRIBUTE, input.getId());
 			}
-			
+
 			if (this._inputLength > 0) {
 				input.setLength(this._inputLength);
 			}
@@ -441,7 +442,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public void setInputStyle(String style) {
 		this._style = style;
 	}
-	
+
 	public void setStyleClassName(String styleClassName) {
 		this.styleClassName = styleClassName;
 		this.isStyleClassSet = true;
@@ -457,13 +458,17 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
 	public void setParameterValue(String attributeName, String attributeValue) {
 		this._attributeName = attributeName;
-		this._attributeValue = URLEncoder.encode(attributeValue);
+		try {
+			this._attributeValue = URLEncoder.encode(attributeValue, CoreConstants.ENCODING_UTF8);
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+		}
 	}
 
 	public void addParameterToChooserLink(String param, String value) {
 		getLink(null).addParameter(param, value);
 	}
-	
+
 	private Image getChooser(IWBundle bundle) {
 		if (this._buttonImage == null) {
 			setChooseButtonImage(bundle.getImage("open.gif", "Choose"));
@@ -501,7 +506,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	protected IWResourceBundle getResourceBundle() {
 		return this._iwrb;
 	}
-	
+
 	protected boolean getUsePublicWindowOpener() {
 		return this.usePublicWindowOpener;
 	}
@@ -513,7 +518,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public void setAddSaveButton(boolean addSaveButton) {
 		this.addSaveButton = addSaveButton;
 	}
-	
+
 	public String getHiddenInputAttribute() {
 		return hiddenInputAttribute;
 	}
@@ -545,5 +550,5 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	public void setMethod(String method) {
 		this.method = method;
 	}
-	
+
 }

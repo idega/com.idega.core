@@ -15,7 +15,7 @@ import java.util.ListIterator;
  * @version 2.0
  */
 
-public class IDOEntityList implements List {
+public class IDOEntityList<T> implements List<T> {
 
   private IDOPrimaryKeyList _pkLists;
 
@@ -23,63 +23,80 @@ public class IDOEntityList implements List {
 	private IDOEntityList(){
   }
 
-  public IDOEntityList(Collection idoPrimaryKeyList) {
+  public IDOEntityList(Collection<?> idoPrimaryKeyList) {
     this._pkLists = (IDOPrimaryKeyList)idoPrimaryKeyList;
   }
 
-
+  @Override
   public int size() {
     return this._pkLists.size();
   }
+  @Override
   public boolean isEmpty() {
     return this._pkLists.isEmpty();
   }
-  public Iterator iterator() {
+  @Override
+  public Iterator<T> iterator() {
     return new IDOEntityIterator(this);
   }
 
+  @Override
   public void clear() {
     this._pkLists.clear();
   }
+
   @Override
 	public boolean equals(Object o) {
     if(o instanceof IDOEntityList){
-      return this._pkLists.equals(((IDOEntityList)o)._pkLists);
+      return this._pkLists.equals(((IDOEntityList) o)._pkLists);
     }
     return false;
   }
 
-  public List subList(int fromIndex, int toIndex){
-    return new IDOEntityList(this._pkLists.subList(fromIndex,toIndex));
+  @Override
+  public List<T> subList(int fromIndex, int toIndex){
+    return new IDOEntityList<T>(this._pkLists.subList(fromIndex,toIndex));
   }
 
-  public Object get(int index) {
-      return this._pkLists.getIDOEntity(index);
+  @Override
+  public T get(int index) {
+      Object o = this._pkLists.getIDOEntity(index);
+      return (T) o;
   }
 
-  public Object remove(int index) {
-    return this._pkLists.remove(index);
+  @Override
+  public T remove(int index) {
+    Object o = this._pkLists.remove(index);
+    return (T) o;
   }
-  public ListIterator listIterator() {
+
+  @Override
+  public ListIterator<T> listIterator() {
     return new IDOEntityIterator(this);
   }
-  public ListIterator listIterator(int index) {
+  @Override
+public ListIterator<T> listIterator(int index) {
     return new IDOEntityIterator(this);
   }
 
-  public boolean contains(Object o) {
+  @Override
+public boolean contains(Object o) {
   	return this._pkLists.containsIDOEntity(o);
   }
 
-  public Object[] toArray() {
+  @Override
+public Object[] toArray() {
   	return this._pkLists.toIDOEntityArray();
   }
-  
+
+  @Override
   public Object[] toArray(Object[] a) {
-  	return this._pkLists.toIDOEntityArray(a);
+  	Object[] array = this._pkLists.toIDOEntityArray(a);
+  	return array;
   }
-  
-  public boolean add(Object o) {
+
+  @Override
+public boolean add(Object o) {
   	if (o instanceof IDOEntity) {
 			return this._pkLists.add(o);
 		}
@@ -89,40 +106,49 @@ public class IDOEntityList implements List {
 
   }
 
-  public boolean remove(Object o) {
+  @Override
+public boolean remove(Object o) {
   	return this._pkLists.remove(o);
   }
 
-  public boolean containsAll(Collection c) {
+  @Override
+public boolean containsAll(Collection c) {
   	return this._pkLists.containsAll(c);
   }
 
-  public boolean addAll(Collection c) {
+  @Override
+public boolean addAll(Collection c) {
   	return this._pkLists.addAll(c);
   }
 
-  public boolean addAll(int index, Collection c) {
+  @Override
+public boolean addAll(int index, Collection c) {
   	return this._pkLists.addAll(index,c);
   }
-  
-  public boolean removeAll(Collection c) {
+
+  @Override
+public boolean removeAll(Collection c) {
   	return this._pkLists.removeAll(c);
   }
-  
-  public boolean retainAll(Collection c) {
+
+  @Override
+public boolean retainAll(Collection c) {
   	return this._pkLists.retainAll(c);
   }
-  
-  public Object set(int index, Object element) {
+
+  @Override
+public T set(int index, Object element) {
   	if (element instanceof IDOEntity) {
-			return this._pkLists.set(index, element);
+			Object o = this._pkLists.set(index, element);
+			return (T) o;
 		}
 		else {
 			throw new RuntimeException(this.getClass()+": element is not IDOEntity");
 		}
   }
 
-  public void add(int index, Object element) {
+  @Override
+public void add(int index, Object element) {
   	if (element instanceof IDOEntity) {
 			this._pkLists.add(index, element);
 		}
@@ -131,7 +157,8 @@ public class IDOEntityList implements List {
 		}
   }
 
-  public int indexOf(Object o) {
+  @Override
+public int indexOf(Object o) {
 	 	if (o instanceof IDOEntity) {
 			return this._pkLists.indexOf(o);
 		}
@@ -140,7 +167,8 @@ public class IDOEntityList implements List {
 		}
   }
 
-  public int lastIndexOf(Object o) {
+  @Override
+public int lastIndexOf(Object o) {
   	if (o instanceof IDOEntity) {
 			return this._pkLists.lastIndexOf(o);
 		}
@@ -148,8 +176,8 @@ public class IDOEntityList implements List {
 			throw new RuntimeException(this.getClass()+": element is not IDOEntity");
 		}
   }
-  
-  
+
+
   public static Collection merge(Collection c1, Collection c2) throws IDOFinderException {
   	if(c1 instanceof IDOEntityList && c2 instanceof IDOEntityList && IDOPrimaryKeyList.areMergeable(((IDOEntityList)c1)._pkLists,((IDOEntityList)c2)._pkLists)){
   		return new IDOEntityList(IDOPrimaryKeyList.merge(((IDOEntityList)c1)._pkLists,((IDOEntityList)c2)._pkLists));
@@ -160,12 +188,10 @@ public class IDOEntityList implements List {
   		return l;
   	}
   }
-  
-  
-  
-  public class IDOEntityIterator implements ListIterator {
 
-    private IDOEntityList _list;
+  public class IDOEntityIterator implements ListIterator<T> {
+
+    private IDOEntityList<T> _list;
 	private int _index=0;
 	private boolean _hasPrevious=false;
 
@@ -173,13 +199,14 @@ public class IDOEntityList implements List {
 		private IDOEntityIterator() {
     }
 
-    public IDOEntityIterator( IDOEntityList entities) {
+    public IDOEntityIterator(IDOEntityList<T> entities) {
     	this._list = entities;
     }
 
 	/**
 	 * @see java.util.Iterator#hasNext()
 	 */
+	@Override
 	public boolean hasNext() {
 		return this._list.size()>this._index;
 	}
@@ -187,6 +214,7 @@ public class IDOEntityList implements List {
 	/**
 	 * @see java.util.ListIterator#hasPrevious()
 	 */
+	@Override
 	public boolean hasPrevious() {
 		return this._hasPrevious;
 	}
@@ -194,8 +222,9 @@ public class IDOEntityList implements List {
 	/**
 	 * @see java.util.Iterator#next()
 	 */
-	public Object next() {
-		Object o =  this._list.get(nextIndex());
+	@Override
+	public T next() {
+		T o = this._list.get(nextIndex());
 		this._index++;
 		this._hasPrevious=true;
 		return o;
@@ -204,6 +233,7 @@ public class IDOEntityList implements List {
 	/**
 	 * @see java.util.ListIterator#nextIndex()
 	 */
+	@Override
 	public int nextIndex() {
 		return this._index;
 	}
@@ -211,8 +241,9 @@ public class IDOEntityList implements List {
 	/**
 	 * @see java.util.ListIterator#previous()
 	 */
-	public Object previous() {
-		Object o = this._list.get(previousIndex());
+	@Override
+	public T previous() {
+		T o = this._list.get(previousIndex());
 		this._index=this._index-1;
 		if(this._index==0){
 			this._hasPrevious=false;
@@ -223,6 +254,7 @@ public class IDOEntityList implements List {
 	/**
 	 * @see java.util.ListIterator#previousIndex()
 	 */
+	@Override
 	public int previousIndex() {
 		return this._index-1;
 	}
@@ -230,11 +262,13 @@ public class IDOEntityList implements List {
 	/**
 	 * @see java.util.Iterator#remove()
 	 */
+	@Override
 	public void remove() {
 		this._list.remove(previousIndex());
 	}
 
-    public void set(Object o) {
+    @Override
+	public void set(Object o) {
     		if (o instanceof IDOEntity) {
 					this._list.set(this._index-1,o);
 				}
@@ -242,7 +276,8 @@ public class IDOEntityList implements List {
 					throw new RuntimeException(this.getClass()+": element is not IDOEntity");
 				}
     }
-    public void add(Object o) {
+    @Override
+	public void add(Object o) {
     		if (o instanceof IDOEntity) {
 					this._list.add(this._index,o);
 				}
@@ -252,5 +287,5 @@ public class IDOEntityList implements List {
     }
 
   }
-  
+
 }

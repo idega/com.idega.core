@@ -1,7 +1,7 @@
 /*
  * $Id: IWCacheManager.java,v 1.38 2007/05/10 22:34:28 thomas Exp $
  * Created in 2001 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
  *
  * This software is the proprietary information of Idega hf.
@@ -41,11 +41,12 @@ import com.idega.util.text.TextSoap;
  * </p>
  * Copyright: Copyright (c) 2001-2005 idega software<br/>
  * Last modified: $Date: 2007/05/10 22:34:28 $ by $Author: thomas $
- *  
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @deprecated Replaced with IWCacheManager2
  * @version $Revision: 1.38 $
  */
+@Deprecated
 public class IWCacheManager implements Singleton {
 
   private static final String IW_CACHEMANAGER_KEY = "iw_cachemanager";
@@ -59,9 +60,9 @@ public class IWCacheManager implements Singleton {
   private Map entityMaps;
   private Map entityMapsKeys;
   private Map _keysMap;
-  
+
   private IWCacheManagerEventClient iwCacheManagerEventClient = null;
-  
+
   private static final long CACHE_NEVER_EXPIRES = -1;
 
   private IWCacheManager() {
@@ -76,7 +77,7 @@ public class IWCacheManager implements Singleton {
     }
     return iwcm;
   }
- 
+
   /*public static IWCacheManager getInstance(){
     if(instance==null){
       instance = new IWCacheManager();
@@ -118,7 +119,7 @@ public class IWCacheManager implements Singleton {
 	iwCacheManagerEventClient.invalidateCache(key);
     removeCache(key, null);
   }
-  
+
   public void invalidateCacheWithPartialKey(String key, String partialKey) {
 	iwCacheManagerEventClient.invalidateCacheWithPartialKey(key, partialKey);
   	removeCache(key, partialKey);
@@ -249,7 +250,7 @@ public class IWCacheManager implements Singleton {
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
 	  return getCachedBlobObject(entityClassString, id, iwma, null);
   }
-	  
+
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma, String datasource){
     //check if this blob has already been cached
     Cache cache = (Cache) getObject(entityClassString+id+datasource);
@@ -258,7 +259,7 @@ public class IWCacheManager implements Singleton {
     }
     return cache;
   }
-  
+
   /**
    * Checks if the blob object is really cached on disk
  * @param cache
@@ -273,17 +274,19 @@ private boolean isBlobCached(Cache cache){
     InputStream input = null;
     Cache cacheObject = null;
     try{
-    	IDOHome home = IDOLookup.getHome(RefactorClassRegistry.forName(entityClassString));
+    	Class<? extends IDOEntity> entityClass = RefactorClassRegistry.forName(entityClassString);
+    	IDOHome home = IDOLookup.getHome(entityClass);
     	if (datasource != null) {
-    		home = IDOLookup.getHome(RefactorClassRegistry.forName(entityClassString), datasource);
+    		entityClass = RefactorClassRegistry.forName(entityClassString);
+    		home = IDOLookup.getHome(entityClass, datasource);
     	}
     	GenericEntity ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
-    	
+
     	input = ent.getInputStreamColumnValue(ent.getLobColumnName());
     	String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
     	String appVPath = iwma.getApplicationContextURI();
 
-      
+
       String virtualPath;
       if( appVPath.endsWith("/")) {
 				virtualPath = appVPath +IW_ROOT_CACHE_DIRECTORY;
@@ -291,8 +294,8 @@ private boolean isBlobCached(Cache cache){
 			else {
 				virtualPath = appVPath +"/"+IW_ROOT_CACHE_DIRECTORY;
 			}
-      
-      
+
+
       String fileName = ent.getID()+"_"+ent.getName();
       fileName = TextSoap.findAndCut(fileName," ");//remove spaces
 
@@ -503,7 +506,7 @@ private boolean isBlobCached(Cache cache){
   private Class getCorrectClassForEntity(Class entityBeanOrInterfaceClass){
       return com.idega.data.IDOLookup.getInterfaceClassFor(entityBeanOrInterfaceClass);
   }
-  
+
   /**
    * Clears all caching in for all objects
    */
@@ -517,7 +520,7 @@ private boolean isBlobCached(Cache cache){
   	this.objectsMap=null;
   	this.timesMap=null;
   }
-  
+
   /**
    * Unloads the instance from the application (typically called on shutdown)
    */
@@ -525,9 +528,9 @@ private boolean isBlobCached(Cache cache){
   	iwma.removeAttribute(IW_CACHEMANAGER_KEY);
   	clearAllCaches();
   }
-  
+
   public Map getCacheMap(){
 	  return getObjectsMap();
   }
-  
+
 }

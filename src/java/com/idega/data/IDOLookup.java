@@ -1,12 +1,17 @@
 package com.idega.data;
 
+import java.sql.SQLException;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
-import com.idega.business.IBOLookup;
-import com.idega.repository.data.Singleton;
 
+import com.idega.business.IBOHome;
+import com.idega.business.IBOLookup;
+import com.idega.business.IBOService;
+import com.idega.business.IBOServiceBean;
+import com.idega.repository.data.Singleton;
 
 /**
  * Title:        idegaclasses
@@ -18,20 +23,20 @@ import com.idega.repository.data.Singleton;
  * Company:      idega
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
+ * @param <E>
  */
 
-//TODO remove throwing of IDOLookupException where not needed and change IDOLookupException to inherit from Exception and not RemoteException
-public class IDOLookup extends IBOLookup implements Singleton {
+public class IDOLookup<E extends IDOEntity, EB extends IDOEntity> extends IBOLookup<IDOEntity, IDOEntity, IDOHome, E, EB> implements Singleton {
 
-  private static IDOLookup idoInstance;
+  private static IDOLookup<IDOEntity, IDOEntity> idoInstance;
 
-  private static synchronized IDOLookup getIDOLookupInstance(){
+  private static synchronized IDOLookup<IDOEntity, IDOEntity> getIDOLookupInstance(){
     if(idoInstance==null){
-      idoInstance = new IDOLookup();
+      idoInstance = new IDOLookup<IDOEntity, IDOEntity>();
     }
     return idoInstance;
   }
-  
+
 	/**
 	 * Unload the previously loaded instance and all its resources
 	 */
@@ -40,6 +45,8 @@ public class IDOLookup extends IBOLookup implements Singleton {
 	}
 
   private final String BMP_BEAN_SUFFIX = "BMPBean";
+
+  @Override
   protected String getBeanSuffix(){
     return this.BMP_BEAN_SUFFIX;
   }
@@ -47,174 +54,150 @@ public class IDOLookup extends IBOLookup implements Singleton {
   private IDOLookup() {
   }
 
+  /**
+   * Gets an instance of the implementation of the Home interface for the data bean.
+   * <br>The object returned can then needs to be casted to the specific home interface for the bean.
+   * @param entityInterfaceClass i the interface of the data bean.
+   */
+  public static <E extends IDOEntity> IDOHome getHome(Class<E> entityInterfaceClass) throws IDOLookupException{
+	 return IDOLookup.getHome(entityInterfaceClass, GenericEntity.DEFAULT_DATASOURCE);
+  }
 
   /**
    * Gets an instance of the implementation of the Home interface for the data bean.
    * <br>The object retured can then needs to be casted to the specific home interface for the bean.
    * @param entityInterfaceClass i the interface of the data bean.
    */
-  public static IDOHome getHome(Class entityInterfaceClass)throws IDOLookupException{
-	 return IDOLookup.getHome(entityInterfaceClass, GenericEntity.DEFAULT_DATASOURCE); 
-  }
-  /**
-   * Gets an instance of the implementation of the Home interface for the data bean.
-   * <br>The object retured can then needs to be casted to the specific home interface for the bean.
-   * @param entityInterfaceClass i the interface of the data bean.
-   */
-  public static IDOHome getHome(Class entityInterfaceClass, String datasource)throws IDOLookupException{
+  public static <E extends IDOEntity> IDOHome getHome(Class<E> entityInterfaceClass, String datasource) throws IDOLookupException{
 		IDOHome home = null;
-		
+
 		try {
-			Class interf = entityInterfaceClass;
+			Class<E> interf = entityInterfaceClass;
 			if (!entityInterfaceClass.isInterface()) {
 				interf = getInterfaceClassFor(entityInterfaceClass);
 			}
 			if (datasource != null && !datasource.equals(GenericEntity.DEFAULT_DATASOURCE)) {
-//				System.out.println("[IDOLookup] getting home for class \""+interf.getName()+"\" for datasource = "+datasource);
-				home = (IDOHome)IDOLookup.getIDOLookupInstance().homesMapLookup(interf, datasource);
+				home = IDOLookup.getIDOLookupInstance().homesMapLookup((Class<IDOEntity>) interf, datasource);
 				if (home == null) {
-					home = (IDOHome)IDOLookup.getIDOLookupInstance().getEJBHomeInstance(interf, datasource);
+					home = IDOLookup.getIDOLookupInstance().getEJBHomeInstance((Class<IDOEntity>) interf, datasource);
 					home.setDatasource(datasource, false);
 				}
 			} else {
-				home = (IDOHome)IDOLookup.getIDOLookupInstance().getEJBHomeInstance(interf);
+				home = IDOLookup.getIDOLookupInstance().getEJBHomeInstance((Class<IDOEntity>) interf);
 			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
 			throw new IDOLookupException(e);
 		}
-		
+
 		return home;
-    
-  
-  
   }
 
-
-
-
-  public static IDOHome getHomeLegacy(Class entityInterfaceClass) {
-  	try{
+  public static <E extends IDOEntity> IDOHome getHomeLegacy(Class<E> entityInterfaceClass) {
+  	try {
       return getHome(entityInterfaceClass);
-  	}
-  	catch(IDOLookupException e){
+  	} catch(IDOLookupException e){
   		System.err.println(e.getMessage());
   	}
-		return null;
+	return null;
   }
 
   /**
    * Gets the Class object for the interface of a data bean.
    * @param entityBeanOrInterfaceClass can be either the BMP bean class or the interface class itself.
    */
-  public static Class getInterfaceClassFor(Class entityBeanOrInterfaceClass){
-    return getIDOLookupInstance().getInterfaceClassForNonStatic(entityBeanOrInterfaceClass);
+  public static <E extends IDOEntity> Class<E> getInterfaceClassFor(Class<E> entityBeanOrInterfaceClass) {
+    return (Class<E>) getIDOLookupInstance().getInterfaceClassForNonStatic((Class<IDOEntity>) entityBeanOrInterfaceClass);
   }
 
     /**
    * Gets the Class object for the (BMP) bean class of a data bean.
-   * @param entityInterfaceClass i theinterface of the data bean.
+   * @param entityInterfaceClass i the interface of the data bean.
    */
-  public static Class getBeanClassFor(Class entityInterfaceClass){
-    return getIDOLookupInstance().getBeanClassForNonStatic(entityInterfaceClass);
+  public static <E extends IDOEntity> Class<E> getBeanClassFor(Class<E> entityInterfaceClass) {
+    Class<E> beanClass = (Class<E>) getIDOLookupInstance().getBeanClassForNonStatic((Class<IDOEntity>) entityInterfaceClass);
+    return beanClass;
   }
 
-
-
-
-  public static IDOEntity create(Class entityInterfaceClass)throws IDOLookupException, CreateException{
+  public static <E extends IDOEntity> E create(Class<E> entityInterfaceClass) throws IDOLookupException, CreateException {
     return getHome(entityInterfaceClass).createIDO();
   }
 
-  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,int id)throws IDOLookupException, FinderException{
-			return getHome(entityInterfaceClass).findByPrimaryKeyIDO(new Integer(id));
+  public static <E extends IDOEntity> E findByPrimaryKey(Class<E> entityInterfaceClass, int id)throws IDOLookupException, FinderException {
+	return getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
   }
 
-  public static IDOEntity findByPrimaryKey(Class entityInterfaceClass,Integer id)throws IDOLookupException,FinderException{
-			return getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
+  public static <E extends IDOEntity> E findByPrimaryKey(Class<E> entityInterfaceClass, Integer id)throws IDOLookupException,FinderException {
+	return getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
   }
 
-
-   public static IDOLegacyEntity createOld(Class entityInterfaceOrBeanClass){
-      //return createNew(entityInterfaceClass);
-      if(entityInterfaceOrBeanClass.isInterface()){
-        return createLegacy(getBeanClassFor(entityInterfaceOrBeanClass));
-      }
-      else{
-        try{
-          return (IDOLegacyEntity)entityInterfaceOrBeanClass.newInstance();
-        }
-        catch(Exception e){
+   public static <L extends IDOLegacyEntity> L createOld(Class<L> entityInterfaceOrBeanClass) {
+      if (entityInterfaceOrBeanClass.isInterface()) {
+    	  Class<L> beanClass = getBeanClassFor(entityInterfaceOrBeanClass);
+    	  return createLegacy(beanClass);
+      } else {
+        try {
+          return entityInterfaceOrBeanClass.newInstance();
+        } catch(Exception e) {
           e.printStackTrace();
           throw new RuntimeException(e.getMessage());
         }
       }
    }
 
-  public static IDOLegacyEntity createLegacy(Class entityInterfaceClass){
-    try{
-      return (IDOLegacyEntity)getHome(entityInterfaceClass).createIDO();
-    }
-    catch(Exception e){
+  public static <L extends IDOLegacyEntity> L createLegacy(Class<L> entityInterfaceClass){
+    try {
+      return getHome(entityInterfaceClass).createIDO();
+    } catch(Exception e){
       throw new RuntimeException(e.getMessage());
     }
   }
 
-
-  public static IDOLegacyEntity findByPrimaryKeyLegacyOld(Class entityInterfaceOrBeanClass,int id)throws java.sql.SQLException{
-    //return findByPrimaryKeyNew(entityInterfaceOrBeanClass,id);
+  public static <L extends IDOLegacyEntity> L findByPrimaryKeyLegacyOld(Class<L> entityInterfaceOrBeanClass,int id) throws SQLException {
     try{
-      IDOLegacyEntity entity = createLegacy(entityInterfaceOrBeanClass);
+      L entity = createLegacy(entityInterfaceOrBeanClass);
       entity.findByPrimaryKey(id);
       return entity;
-    }
-    catch(Exception e){
+    } catch(Exception e) {
       throw new java.sql.SQLException(e.getMessage());
     }
   }
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id)throws java.sql.SQLException{
+  public static <L extends IDOLegacyEntity> L findByPrimaryKeyLegacy(Class<L> entityInterfaceClass,int id)throws SQLException{
     try{
-      return (IDOLegacyEntity)getHome(entityInterfaceClass).findByPrimaryKeyIDO(new Integer(id));
+      return getHome(entityInterfaceClass).findByPrimaryKeyIDO(new Integer(id));
     }
     catch(Exception e){
       throw new java.sql.SQLException(e.getMessage());
     }
   }
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,int id,String dataSourceName)throws java.sql.SQLException{
+  public static <L extends IDOLegacyEntity> L findByPrimaryKeyLegacy(Class<L> entityInterfaceClass,int id,String dataSourceName)throws SQLException{
     return findByPrimaryKeyLegacy(entityInterfaceClass,new Integer(id),dataSourceName);
   }
 
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id,String dataSourceName)throws java.sql.SQLException{
+  public static <L extends IDOLegacyEntity> L findByPrimaryKeyLegacy(Class<L> entityInterfaceClass,Integer id,String dataSourceName)throws SQLException{
     try{
       IDOHome home = getHome(entityInterfaceClass);
-      IDOLegacyEntity entity = (IDOLegacyEntity)IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,id,null,home,dataSourceName);
-      /*IDOLegacyEntity entity = (IDOLegacyEntity)getHome(entityInterfaceClass).createIDO();
-      entity.setDatasource(datasource);
-      ((IDOEntityBean)entity).ejbFindByPrimaryKey(id);
-      ((IDOEntityBean)entity).ejbLoad();*/
+      L entity = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,id,null,home,dataSourceName);
       return entity;
-      //return (IDOLegacyEntity)getHome(entityInterfaceClass).idoFindByPrimaryKey(new Integer(id));
     }
     catch(Exception e){
       throw new java.sql.SQLException(e.getMessage());
     }
   }
 
-
-  public static IDOLegacyEntity findByPrimaryKeyLegacy(Class entityInterfaceClass,Integer id)throws java.sql.SQLException{
+  public static <L extends IDOLegacyEntity> L findByPrimaryKeyLegacy(Class<L> entityInterfaceClass,Integer id)throws java.sql.SQLException{
     try{
-      return (IDOLegacyEntity)getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
+      return getHome(entityInterfaceClass).findByPrimaryKeyIDO(id);
     }
     catch(Exception e){
       throw new java.sql.SQLException(e.getMessage());
     }
   }
 
-
-  public static IDOEntityDefinition getEntityDefinitionForClass(Class entityInterfaceClass) throws IDOLookupException{
+  public static <E extends IDOEntity> IDOEntityDefinition getEntityDefinitionForClass(Class<E> entityInterfaceClass) throws IDOLookupException{
     return GenericEntity.getStaticInstanceIDO(entityInterfaceClass).getEntityDefinition();
   }
 
@@ -224,24 +207,24 @@ public class IDOLookup extends IBOLookup implements Singleton {
    * @param entityBeanOrInterfaceClass
    * @return
    */
-  public static IDOEntity instanciateEntity(Class entityBeanOrInterfaceClass){
-	return IDOLookup.instanciateEntity(entityBeanOrInterfaceClass, GenericEntity.DEFAULT_DATASOURCE);  
+  public static <T extends IDOEntity> T instanciateEntity(Class<T> entityBeanOrInterfaceClass){
+	return IDOLookup.instanciateEntity(entityBeanOrInterfaceClass, GenericEntity.DEFAULT_DATASOURCE);
   }
+
   /**
    * Sould only be used for LegacyEntities
    */
-  public static IDOEntity instanciateEntity(Class entityBeanOrInterfaceClass, String datasource){
+  public static <T extends IDOEntity> T instanciateEntity(Class<T> entityBeanOrInterfaceClass, String datasource) {
     try{
-      Class beanClass = entityBeanOrInterfaceClass;
-      if(beanClass.isInterface()){
+      Class<T> beanClass = entityBeanOrInterfaceClass;
+      if (beanClass.isInterface()) {
         beanClass = getBeanClassFor(entityBeanOrInterfaceClass);
       }
-      IDOEntity instance = (IDOEntity)beanClass.newInstance();
+      T instance = beanClass.newInstance();
       instance.setDatasource(datasource);
       try{
-      ((IDOEntityBean)instance).setEJBLocalHome(getHome(entityBeanOrInterfaceClass, datasource));
-      }
-      catch(Exception e){
+    	  ((IDOEntityBean) instance).setEJBLocalHome(getHome(entityBeanOrInterfaceClass, datasource));
+      }  catch(Exception e){
       	//do nothing
       }
       return instance;
@@ -252,27 +235,30 @@ public class IDOLookup extends IBOLookup implements Singleton {
       throw new EJBException(e.getMessage());
     }
   }
-  
-  protected IBOLookup getIBOLookup(){
+
+  protected IBOLookup<IBOService, IBOServiceBean, IBOHome, IBOService, IBOServiceBean> getIBOLookup(){
   	return IBOLookup.getInstance();
   }
   /**
    * Overrided from IBOLookup to hold the same map between IDOLookup and IBOLookup
    */
-  public Map getBeanClassesMap(){
+  @Override
+public Map getBeanClassesMap(){
   	return getIBOLookup().getBeanClassesMap();
   }
   /**
    * Overrided from IBOLookup to hold the same map between IDOLookup and IBOLookup
    */
-  public Map getInterfaceClassesMap(){
+  @Override
+public Map getInterfaceClassesMap(){
   	return getIBOLookup().getInterfaceClassesMap();
   }
-  
+
   /**
    * Overrided from IBOLookup to hold the same map between IDOLookup and IBOLookup
    */
-  public Map getHomesMap(){
+  @Override
+public Map getHomesMap(){
   	return getIBOLookup().getHomesMap();
   }
 

@@ -33,7 +33,9 @@ import com.idega.core.version.data.ICVersionableHome;
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		1.0
  */
-public abstract class IDOEntityWrapper implements IDOEntityBean { 
+public abstract class IDOEntityWrapper implements IDOEntityBean {
+
+	private static final long serialVersionUID = 1493736860412136280L;
 
 	private ICLocale _locale = null;
 	private Object _mainPrimaryKey = null;
@@ -54,7 +56,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	private EJBLocalHome _ejbHome;
 
 	private ICItem _mainEntityItem = null;
-	
+
 	public IDOEntityWrapper(Object primaryKey) throws IDOLookupException, FinderException {
 		construct(primaryKey, null, null, null);
 	}
@@ -66,37 +68,36 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	private void construct(Object primaryKey, ICLocale locale, ICVersion version, String versionName) throws IDOLookupException, FinderException {
 		this._mainPrimaryKey = primaryKey;
 		this._locale = locale;
-		
+
 		if(version != null){
 		} else if(versionName != null){
-//			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
-//			_selectedVersion = versionHome.
 		}
-		
+
 		initialize();
 	}
 
-	protected abstract Class getMainClass();
+	protected abstract <E extends IDOEntity> Class<E> getMainClass();
 
 	protected abstract boolean useVersions();
 	protected abstract boolean useTranslations();
-	protected Class getTranslationClass() {
-		return null;
+
+	protected <T extends IDOEntity> Class<T> getTranslationClass() {
+		return _translationClass;
 	}
-	protected Class getVersionClass() {
-		return null;
+	protected <V extends IDOEntity> Class<V> getVersionClass() {
+		return _versionClass;
 	}
 
 	protected void initialize() throws IDOLookupException, FinderException {
 		this._mainClass = getMainClass();
-		this._mainEntityHome = IDOLookup.getHome(this._mainClass);
+		this._mainEntityHome = IDOLookup.getHome(getMainClass());
 		if (this._mainPrimaryKey != null) {
 			this._mainEntity = this._mainEntityHome.findByPrimaryKeyIDO(this._mainPrimaryKey);
 		}
 
 		if (useTranslations()) {
 			this._translationClass = getTranslationClass();
-			this._translationEntityHome = IDOLookup.getHome(this._translationClass);
+			this._translationEntityHome = IDOLookup.getHome(getTranslationClass());
 		}
 
 		if (useVersions()) {
@@ -108,7 +109,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 			}
 
 			this._versionClass = getVersionClass();
-			this._versionEntityHome = IDOLookup.getHome(this._versionClass);
+			this._versionEntityHome = IDOLookup.getHome(getVersionClass());
 
 			if (!(this._versionEntityHome instanceof ICVersionableHome)) {
 				throw new UnsupportedOperationException("if useVersions() is true, then the Home-Interface must extend " + ICVersionableHome.class);
@@ -124,9 +125,9 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		}
 
 		if (useVersions()) {
-			Object itemPK = ((ICVersionableEntity)this._mainEntity).getItemPrimaryKey();
+			Object itemPK = ((ICVersionableEntity) this._mainEntity).getItemPrimaryKey();
 			if (itemPK != null) {
-				this._mainEntityItem = ((ICItemHome)IDOLookup.getHome(ICItemHome.class)).findByPrimaryKey(itemPK);
+				this._mainEntityItem = ((ICItemHome)IDOLookup.getHome(ICItem.class)).findByPrimaryKey(itemPK);
 				try {
 					this._currentOpenVersionEntity = ((ICVersionableHome)this._versionEntityHome).findEntityOfSpecificVersion(this._mainEntityItem.getCurrentOpenVersion());
 					//TODO find currentVersionInProgress
@@ -198,6 +199,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	//////IDOEntityBean	//////
+	@Override
 	public Object ejbCreate() throws CreateException {
 		if (this._mainEntity != null) {
 			if (useVersions()) {
@@ -211,19 +213,22 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		return this;
 	}
 
+	@Override
 	public Object ejbFindByPrimaryKey(Object pk) throws FinderException {
 		this._mainEntity = this._mainEntityHome.findByPrimaryKeyIDO(pk);
 		this._mainPrimaryKey = pk;
 		return this._mainPrimaryKey;
 	}
 
+	@Override
 	public void setEJBLocalHome(javax.ejb.EJBLocalHome ejbHome) {
 		this._ejbHome = ejbHome;
 	}
 	/**
 	 * Meant to be overrided in subclasses, returns default Integer.class
 	 */
-	public Class getPrimaryKeyClass() {
+	@Override
+	public Class<Integer> getPrimaryKeyClass() {
 		return Integer.class;
 	}
 
@@ -242,16 +247,19 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		}
 	}
 
-	public java.util.Collection getAttributes() {
+	@Override
+	public Collection getAttributes() {
 		//	TODO - implement
 		throw new UnsupportedOperationException("Not yet implemented");
 	}
 	//////IDOEntityBean ends //////
 
 	//////EntityBean //////
+	@Override
 	public void ejbActivate() throws EJBException, RemoteException {
 	}
 
+	@Override
 	public void ejbLoad() throws EJBException, RemoteException {
 		((IDOEntityBean)this._mainEntity).ejbLoad();
 
@@ -263,6 +271,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 		}
 	}
 
+	@Override
 	public void ejbPassivate() throws EJBException, RemoteException {
 		this._locale = null;
 
@@ -280,16 +289,20 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 
 	}
 
+	@Override
 	public void ejbRemove() throws javax.ejb.RemoveException, EJBException, RemoteException {
 		this.remove();
 	}
 
+	@Override
 	public void ejbStore() throws EJBException, RemoteException {
 		this.store();
 	}
 
+	@Override
 	public void setEntityContext(javax.ejb.EntityContext ctx) throws EJBException, RemoteException {
 	}
+	@Override
 	public void unsetEntityContext() throws EJBException, RemoteException {
 	}
 
@@ -324,12 +337,12 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 
 	////////
 
-	public javax.ejb.EJBLocalHome getEJBLocalHome() {
+	public EJBLocalHome getEJBLocalHome() {
 		if (this._ejbHome == null) {
 			try {
-				this._ejbHome = IDOLookup.getHome(this.getClass());
+				this._ejbHome = IDOLookup.getHome(getMainClass());
 			} catch (Exception e) {
-				throw new EJBException("Lookup for home for: " + this.getClass().getName() + " failed. Errormessage was: " + e.getMessage());
+				throw new EJBException("Lookup for home for: " + this.getClass().getName() + " failed. Error message was: " + e.getMessage());
 			}
 		}
 		return this._ejbHome;
@@ -405,17 +418,18 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	public void updateMetaData() throws SQLException {
 		((MetaDataCapable)this.getCurrentOpenVersionEntity()).updateMetaData();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityBean#setDatasource(java.lang.String)
 	 */
+	@Override
 	public void setDatasource(String dataSource) {
 		((IDOEntityBean)this.getCurrentOpenVersionEntity()).setDatasource(dataSource);
 		((IDOEntityBean)this.getMainEntity()).setDatasource(dataSource);
 		((IDOEntityBean)this.getTranslationEntity()).setDatasource(dataSource);
 		((IDOEntityBean)this.getVersionInProgress()).setDatasource(dataSource);
 	}
-	
+
 	/**
 	* Decodes a String into a primaryKey Object.
 	* Recognises strings of the same format as com.idega.data.GenericEntity#toString() returns.
@@ -424,7 +438,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	public Object decode(String pkString){
 		return Integer.decode(pkString);
 	}
-	
+
 	/**
 	* Decodes a String into a primaryKey Object.
 	* Recognises strings of the same format as com.idega.data.GenericEntity#toString() returns.
