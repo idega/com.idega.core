@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -44,13 +45,13 @@ import com.idega.util.logging.LoggingHelper;
 
 /**
  * A class to serve as an abstraction of the underlying datastore
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.3
  */
 public abstract class DatastoreInterface implements MutableClass {
 
-	private static final boolean DEFAULT_USE_PREPARED_STATEMENT = true; 
+	private static final boolean DEFAULT_USE_PREPARED_STATEMENT = true;
 	public static boolean usePreparedStatement = DEFAULT_USE_PREPARED_STATEMENT;
 	final static int STATEMENT_INSERT = 1;
 	final static int STATEMENT_UPDATE = 2;
@@ -58,8 +59,8 @@ public abstract class DatastoreInterface implements MutableClass {
 	private boolean useIndexes = true;
 	protected IDOTableCreator _TableCreator;
 	protected DatabaseMetaData _databaseMetaData;
-	
-	
+
+
 	public final static String DBTYPE_ORACLE = "oracle";
 	public final static String DBTYPE_INTERBASE = "interbase";
 	public final static String DBTYPE_HSQL = "hsql";
@@ -72,7 +73,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	public final static String DBTYPE_UNIMPLEMENTED = "unimplemented";
 	public final static String DBTYPE_DERBY = "derby";
 	public final static String DBTYPE_H2 = "h2";
-	
+
 	public static void unload()	{
 		usePreparedStatement = DEFAULT_USE_PREPARED_STATEMENT;
 	}
@@ -153,7 +154,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the default
 	 * datasource
-	 * 
+	 *
 	 * @return the instance of DatastoreInterface for the current application
 	 */
 	public static DatastoreInterface getInstance() {
@@ -172,7 +173,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the
 	 * Connection connection
-	 * 
+	 *
 	 * @param connection
 	 *          the connection to get the DatastoreInterface implementation for
 	 * @return
@@ -187,7 +188,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the
 	 * GenericEntity method
-	 * 
+	 *
 	 * @param entity
 	 *          the bean instance to get the DatastoreInterface implementation for
 	 * @return
@@ -229,7 +230,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * This method gets the correct instance of DatastoreInterface for the
 	 * GenericEntity method
-	 * 
+	 *
 	 * @param procedure
 	 *          the bean instance to get the DatastoreInterface implementation for
 	 * @return
@@ -263,12 +264,12 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		//return getInstance(datastoreType);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * Returns the type of the underlying datastore - returns: "mysql",
 	 * "interbase", "oracle", "unimplemented"
-	 *  
+	 *
 	 */
 	public static String getDataStoreType(Connection connection) {
 		String dataStoreType;
@@ -387,11 +388,11 @@ public abstract class DatastoreInterface implements MutableClass {
 			}
 		}
 	}
-	
+
 	/**
 	 * Executes a query to the entity's set datasource and returns the first
 	 * result (ResultSet.getObject(1)). Returns null if there was no result.
-	 * 
+	 *
 	 * @param entity
 	 *          an entity instance for the datasource to query to.
 	 * @param a
@@ -404,7 +405,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Executes a query to the datasource and returns the first result
 	 * (ResultSet.getObject(1)). Returns null if there was no result.
-	 * 
+	 *
 	 * @param dataSourceName
 	 * @param SQLCommand
 	 * @return @throws
@@ -441,7 +442,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	protected int executeUpdate(GenericEntity entity, String SQLCommand) throws Exception {
 		return executeUpdate(entity, SQLCommand, null);
 	}
-	
+
 	private int executeUpdate(GenericEntity entity, String SQLCommand, Connection conn) throws Exception {
 		Statement Stmt = null;
 		int theReturn = 0;
@@ -467,70 +468,70 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/*
 	 * public void populateBlob(BlobWrapper blob){
-	 * 
+	 *
 	 * try{
-	 * 
+	 *
 	 * PreparedStatement myPreparedStatement =
 	 * blob.getConnection().prepareStatement("insert into
 	 * "+blob.getEntity().getTableName()+"("+blob.getTableColumnName()+")
 	 * values(?) where
 	 * "+blob.getEntity().getIDColumnName()+"='"+blob.getEntity().getID()+"'");
 	 *  // ByteArrayInputStream byteinstream = new ByteArrayInputStream(longbbuf);
-	 * 
+	 *
 	 * //InputStream byteinstream = new InputStream(longbbuf);
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * //OutputStream out = blob.getOutputStream();
-	 * 
+	 *
 	 * InputStream byteinstream = blob.getInputStreamForBlobWrite();
-	 * 
+	 *
 	 * //InputStream myInputStream = new InputStream();
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
+	 *
+	 *
 	 * //byte buffer[]= new byte[1024];
-	 * 
+	 *
 	 * //int noRead = 0;
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * //noRead = myInputStream.read( buffer, 0, 1023 );
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * //Write out the file to the browser
-	 * 
+	 *
 	 * //while ( noRead != -1 ){
 	 *  // output.write( buffer, 0, noRead );
 	 *  // noRead = myInputStream.read( buffer, 0, 1023 );
 	 *  //
-	 * 
-	 * 
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
+	 *
+	 *
 	 * myPreparedStatement.setBinaryStream(1, byteinstream,
 	 * byteinstream.available() );
-	 * 
-	 * 
-	 * 
+	 *
+	 *
+	 *
 	 * myPreparedStatement.execute();
-	 * 
+	 *
 	 * myPreparedStatement.close();
 	 *  }
-	 * 
+	 *
 	 * catch(Exception ex){
-	 * 
+	 *
 	 * System.err.println("Exception in DatastoreInterface.populateBlob:
 	 * "+ex.getMessage());
-	 * 
+	 *
 	 * ex.printStackTrace(System.err);
 	 *  }
-	 * 
-	 * 
+	 *
+	 *
 	 *  }
 	 */
 	public boolean isConnectionOK(Connection conn) {
@@ -588,7 +589,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	 * statement.append(")"); if (isDebugActive()) debug(statement.toString());
 	 * Stmt = conn.prepareStatement(statement.toString());
 	 * setForPreparedStatement(STATEMENT_INSERT, Stmt, entity); Stmt.execute();
-	 * 
+	 *
 	 * if(updateNumberGeneratedValueAfterInsert()){
 	 * updateNumberGeneratedValue(entity,conn); }
 	 *  } finally { if (RS != null) { RS.close(); } if (Stmt != null) {
@@ -612,9 +613,9 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * *Creates a unique ID for the ID column
-	 *  
+	 *
 	 */
 	public int createUniqueID(GenericEntity entity) throws Exception {
 		int returnInt = -1;
@@ -647,11 +648,11 @@ public abstract class DatastoreInterface implements MutableClass {
 	public void createIndex(GenericEntity entity, String name, String[] fields) throws Exception {
 		createIndex(entity, entity.getTableName(), name, fields);
 	}
-	
+
 	public void createIndex(String tableName, String name, String[] fields) throws Exception {
 		createIndex(null, tableName, name, fields);
 	}
-	
+
 	private void createIndex(GenericEntity entity, String tableName, String name, String[] fields) throws Exception {
 		if (useIndexes()) {
 			StringBuffer sql = new StringBuffer("CREATE INDEX ").append(name).append(" ON ").append(entity == null ? tableName : entity.getTableName())
@@ -710,21 +711,20 @@ public abstract class DatastoreInterface implements MutableClass {
 				t.begin();
 				int length;
 				MetaData data;
-				Map metadata = entity.getMetaDataAttributes();
-				Hashtable ids = entity.getMetaDataIds();
-				Map types = entity.getMetaDataTypes();
-//				Map ordering = entity.getMetaDataOrdering();
-				
-				Vector insert = entity.getMetaDataInsertVector();
-				Vector delete = entity.getMetaDataDeleteVector();
-				Vector update = entity.getMetaDataUpdateVector();
+				Map<String, String> metadata = entity.getMetaDataAttributes();
+				Hashtable<String, Integer> ids = entity.getMetaDataIds();
+				Map<String, String> types = entity.getMetaDataTypes();
+
+				List<String> insert = entity.getMetaDataInsert();
+				List<String> delete = entity.getMetaDataDelete();
+				List<String> update = entity.getMetaDataUpdate();
 				if (insert != null) {
 					length = insert.size();
 					for (int i = 0; i < length; i++) {
 						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
-						data.setMetaDataNameAndValue((String) insert.elementAt(i), (String) metadata.get(insert.elementAt(i)));
-						if (types != null && types.containsKey(insert.elementAt(i))) {
-							data.setMetaDataType((String) types.get(insert.elementAt(i)));
+						data.setMetaDataNameAndValue(insert.get(i), metadata.get(insert.get(i)));
+						if (types != null && types.containsKey(insert.get(i))) {
+							data.setMetaDataType(types.get(insert.get(i)));
 						}
 						else {
 							data.setMetaDataType("java.lang.String");
@@ -743,12 +743,12 @@ public abstract class DatastoreInterface implements MutableClass {
 							System.out.println("ids is null");
 						}
 						else {
-							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.elementAt(i)));
+							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.get(i)));
 							//do not construct with id to avoid database access
 							//System.out.println("ID: "+data.getID());
-							data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get(update.elementAt(i)));
-							if (types != null && types.containsKey(update.elementAt(i))) {
-								data.setMetaDataType((String) types.get(update.elementAt(i)));
+							data.setMetaDataNameAndValue(update.get(i), metadata.get(update.get(i)));
+							if (types != null && types.containsKey(update.get(i))) {
+								data.setMetaDataType(types.get(update.get(i)));
 							}
 							else {
 								data.setMetaDataType("java.lang.String");
@@ -761,7 +761,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				if (delete != null) {
 					length = delete.size();
 					for (int i = 0; i < length; i++) {
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.elementAt(i)));
+						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.get(i)));
 						//data.setID();
 						entity.idoRemoveFrom(data);
 						data.remove();
@@ -863,7 +863,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity)throws SQLException{
 	    return setForPreparedStatement(insertOrUpdate,statement,entity,entity.getEntityDefinition().getPrimaryKeyDefinition().getFields());
 	}
-	
+
 	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity,IDOEntityField[] fields) throws SQLException {
 		String returnString = "";
 		String[] names = entity.getColumnNames();
@@ -942,13 +942,13 @@ public abstract class DatastoreInterface implements MutableClass {
     	executeAfterInsert(entity);
     	entity.setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
     }
-    
+
     protected void insertIntoPreparedStatement(java.util.List values,PreparedStatement statement, int startIndex)throws SQLException{
         for (int i = 0; i < values.size(); i++) {
             insertIntoPreparedStatement(values.get(i),statement,i+startIndex);
         }
     }
-    
+
     protected void insertIntoPreparedStatement(Object value, PreparedStatement statement, int index) throws SQLException{
         String storageClassName = value.getClass().getName();
 		if (storageClassName.equals("java.lang.Integer")) {
@@ -1049,7 +1049,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			throw new SQLException("Entity: " + entity.getEntityName() + "; Column:  " + columnName + " - " + ex.getMessage());
 		}
 	}
-	
+
 	public String[] getColumnNames(String tableName, String dataSource) throws SQLException {
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -1078,7 +1078,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				// Get the name of the column's table name
 //				String tableName = rsMetaData.getTableName(i);
 //				System.out.println("column name=" + columnName + " table=" + tableName + "");
-				returner[i-1] = columnName; 
+				returner[i-1] = columnName;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -1154,7 +1154,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			statement.append(getAllColumnsAndQuestionMarks(entity));
 			IDOEntityField[] fields = entity.getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
 			appendPrimaryKeyWhereClauseWithQuestionMarks(fields,statement);
-			
+
 			//appendPrimaryKeyWhereClause(entity, statement);
 			String sql = statement.toString();
 			logSQL(sql);
@@ -1230,7 +1230,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			MetaData metadata = (MetaData) com.idega.data.GenericEntity.getStaticInstance(MetaData.class);
 			Stmt = conn.createStatement();
 			String middletable = entity.getNameOfMiddleTable(metadata, entity);
-			
+
 			String metadataIdColumn = metadata.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 			String metadataname = metadata.getEntityDefinition().getSQLTableName();
 			//get all the id's of the metadata
@@ -1315,9 +1315,9 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	/**
-	 * 
+	 *
 	 * Used to generate the ?,? mark list for preparedstatement
-	 *  
+	 *
 	 */
 	protected String getQuestionmarksForColumns(GenericEntity entity) {
 		String returnString = "";
@@ -1387,7 +1387,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Meant to be overrided in subclasses
-	 * 
+	 *
 	 * @param entity
 	 * @param columnName
 	 * @return the columnName if there is nothing specific about the select
@@ -1399,7 +1399,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Constructs the SQL for the select of an entity i.e. select name,id from
 	 * employee
-	 * 
+	 *
 	 * @param entity
 	 * @return the SQL query string
 	 */
@@ -1429,7 +1429,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Returns a string with all the columns in the enti, which are valid for
 	 * insert (e.g. not null) , comma separated
-	 * 
+	 *
 	 * @param entity
 	 * @return String
 	 */
@@ -1525,10 +1525,10 @@ public abstract class DatastoreInterface implements MutableClass {
 	public void createSequence(String tableName, int startNumber) throws Exception {
 		createSequence(null, tableName, startNumber);
 	}
-	
+
 	protected void createSequence(GenericEntity entity, String tableName, int startNumber) throws Exception {
 		tableName = entity == null ? tableName : entity.getTableName();
-		
+
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
@@ -1549,7 +1549,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			}
 		}
 	}
-	
+
 	protected void createForeignKey(GenericEntity entity, String baseTableName, String columnName, String refrencingTableName, String referencingColumnName) throws Exception {
 		String SQLCommand = "ALTER TABLE " + baseTableName + " ADD FOREIGN KEY (" + columnName + ") REFERENCES " + refrencingTableName + "(" + referencingColumnName + ")";
 		executeUpdate(entity, SQLCommand);
@@ -1685,7 +1685,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		appendPrimaryKeyWhereClause(entity, statement);
 		return statement.toString();
 	}
-	
+
 	void appendPrimaryKeyWhereClauseWithQuestionMarks(IDOEntityField[] fields,StringBuffer bufferToAppendTo){
 		bufferToAppendTo.append(" where ");
 		for (int i = 0; i < fields.length; i++) {
@@ -1701,7 +1701,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			}
 		}
 	}
-	
+
 	void setForPreparedStatementPrimaryKeyQuestionValues(GenericEntity entity,IDOEntityField[] fields,PreparedStatement statement,int startIndex)throws SQLException{
 	    for (int i = 0; i < fields.length; i++) {
 		    insertIntoPreparedStatement(fields[i].getSQLFieldName(),statement,i+startIndex,entity);
@@ -1744,7 +1744,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	/**
-	 * This is a callback method and is called by the idegaWeb ConnectionPool (PoolManager) 
+	 * This is a callback method and is called by the idegaWeb ConnectionPool (PoolManager)
 	 * whenever a new database connection is created.<br>
 	 * This does nothing here but can be overrided in concrete subclasses.
 	 */
@@ -1754,7 +1754,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		 * catch(SQLException sqle){ }
 		 */
 	}
-	
+
 	/**
 	 * This is a callback method and is called by the idegaWeb when it starts up and connects to the database first<br>.
 	 * This does nothing here but can be overrided in concrete subclasses.
@@ -1765,7 +1765,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Queries given datasource for table existance
-	 * 
+	 *
 	 * @param dataSourceName
 	 * @param tableName
 	 * @return @throws
@@ -1833,7 +1833,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		return tableExists;
 	}
 
-	
+
 	/**
 	 * Queries given datasource for view existance
 	 * @param dataSourceName
@@ -1851,11 +1851,11 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		return false;
 	}
-	
+
 	public boolean updateTriggers(GenericEntity entity, boolean createIfNot) throws Exception {
 		return true;
 	}
-	
+
 	private String[] getColumnArrayFromMetaData(String dataSourceName,String tableName){
 
 		Connection conn = null;
@@ -1942,7 +1942,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Queries the given data source for table columns using database metadata by
 	 * default
-	 * 
+	 *
 	 * @param dataSourceName
 	 * @param tableName
 	 * @return
@@ -2021,7 +2021,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			}
 			hm.put(index, cols.toArray(new String[]{}));
 		}
-		
+
 	}
 
 	/**
@@ -2037,7 +2037,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Logs out to the default log level (which is by default INFO)
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2049,7 +2049,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Logs out to the error log level (which is by default WARNING) to the
 	 * default Logger
-	 * 
+	 *
 	 * @param e
 	 *          The Exception to log out
 	 */
@@ -2059,7 +2059,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Logs out to the specified log level to the default Logger
-	 * 
+	 *
 	 * @param level
 	 *          The log level
 	 * @param msg
@@ -2073,7 +2073,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Logs out to the error log level (which is by default WARNING) to the
 	 * default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2085,7 +2085,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Logs out to the debug log level (which is by default FINER) to the default
 	 * Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2096,7 +2096,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Logs out to the SEVERE log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2107,7 +2107,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Logs out to the WARNING log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2118,7 +2118,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Logs out to the CONFIG log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2129,7 +2129,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Logs out to the debug log level to the default Logger
-	 * 
+	 *
 	 * @param msg
 	 *          The message to log out
 	 */
@@ -2141,7 +2141,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	 * Gets the default Logger. By default it uses the package and the class name
 	 * to get the logger. <br>
 	 * This behaviour can be overridden in subclasses.
-	 * 
+	 *
 	 * @return the default Logger
 	 */
 	protected Logger getLogger() {
@@ -2150,7 +2150,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Gets the log level which messages are sent to when no log level is given.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getDefaultLogLevel() {
@@ -2159,7 +2159,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Gets the log level which debug messages are sent to.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getDebugLogLevel() {
@@ -2168,7 +2168,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	/**
 	 * Gets the log level which error messages are sent to.
-	 * 
+	 *
 	 * @return the Level
 	 */
 	protected Level getErrorLogLevel() {
@@ -2202,7 +2202,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	protected boolean isDebugActive() {
 		return getIWMainApplication().getSettings().isDebugActive();
 	}
-	
+
 	public IWMainApplication getIWMainApplication(){
 		return IWMainApplication.getDefaultIWMainApplication();
 	}
@@ -2236,7 +2236,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Formats the date to a string for use as is in a SQL query quotes and
 	 * casting included
-	 * 
+	 *
 	 * @param date
 	 * @return
 	 */
@@ -2248,7 +2248,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	/**
 	 * Formats the date to a string for use as is in a SQL query quotes and
 	 * casting included
-	 * 
+	 *
 	 * @param timestamp
 	 * @return
 	 */
@@ -2278,13 +2278,13 @@ public abstract class DatastoreInterface implements MutableClass {
 		String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
 		return SQLString;
 	}
-	
+
 	protected String getColumnSQLDefinition(String columnName,GenericEntity entity){
 	    boolean isPrimaryKey = entity.isPrimaryKey(columnName);
 	    boolean isCompositePK = entity.getEntityDefinition().getPrimaryKeyDefinition().isComposite();
 
 	    String type;
-	    
+
 	    if(isPrimaryKey && !isCompositePK &&entity.getStorageClassType(columnName)==EntityAttribute.TYPE_JAVA_LANG_INTEGER){
 	      type = getIDColumnType(entity);
 	    }
@@ -2304,10 +2304,10 @@ public abstract class DatastoreInterface implements MutableClass {
 	    returnString = addUniqueConstraint(returnString, columnName, entity);
 	    return returnString;
 	  }
-	
+
 	/**
 	 * DerbyDatastoreInterface is overwriting this method
-	 * 
+	 *
 	 */
 	protected String addUniqueConstraint(String columnDefintion, String columnName,GenericEntity entity) {
 	    if (entity.getIfUnique(columnName)&&supportsUniqueConstraintInColumnDefinition()){
@@ -2315,31 +2315,31 @@ public abstract class DatastoreInterface implements MutableClass {
 	    }
 		return columnDefintion;
 	}
-	
+
 	public boolean supportsUniqueConstraintInColumnDefinition(){
 		return true;
 	}
-	
+
 	public boolean isCabableOfRSScroll(){
 		return false;
 	}
-	
+
 	/**
 	 * returns the optimal or allowed fetch size when going to database to load IDOEntities using 'where primarikey_name in (list_of_priamrykeys)'
 	 */
 	public int getOptimalEJBLoadFetchSize(){
 		return 500;
 	}
-	
+
 	public Object executeGetProcedure(String dataSourceName, IDOProcedure procedure, Object[] parameters) throws SQLException {
 		return executeProcedure(dataSourceName, procedure, parameters,false);
 	}
-	
+
 	public Collection executeFindProcedure(String dataSourceName, IDOProcedure procedure, Object[] parameters) throws SQLException {
 		return (Collection)executeProcedure(dataSourceName, procedure, parameters,true);
 	}
 
-	
+
 	public Object executeProcedure(String dataSourceName, IDOProcedure procedure, Object[] parameters,boolean returnCollection) throws SQLException {
 		Connection conn = null;
 		CallableStatement Stmt = null;
@@ -2358,7 +2358,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			String sql = "{"+((!returnCollection)?" ? =":"")+" call "+procedure.getName()+prepareArgString+" }";
 			//System.out.println("[DatastorInterface]: "+sql);
 			Stmt = conn.prepareCall(sql);
-			
+
 			Class[] parameterTypes = procedure.getParameterTypes();
 			int length = Math.min(parameterTypes.length,parameters.length);
 			for (int i = 0; i < length; i++) {
@@ -2371,9 +2371,9 @@ public abstract class DatastoreInterface implements MutableClass {
 					throw new SQLException("IDOProcedure: " + procedure.getName() + "; parameter:  " + i + "; value:  " + parameters[i] + " - " + e.getMessage());
 				}
 			}
-			
+
 			theReturn = procedure.processResultSet(Stmt.executeQuery());
-			
+
 //			rs = Stmt.executeQuery();
 //			if(returnCollection){
 //				Collection c = new ArrayList();
@@ -2403,7 +2403,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		return theReturn;
 
 	}
-	
+
 	private void insertIntoCallableStatement(CallableStatement stmt, int index, Class type, Object parameter) throws SQLException{
 		if (type.equals(Integer.class)) {
 			stmt.setInt(index,((Integer)parameter).intValue());
@@ -2444,11 +2444,11 @@ public abstract class DatastoreInterface implements MutableClass {
 			stmt.setObject(index, parameter);
 		}
 	}
-	
+
 	public boolean allowsStoredProcedure(){
 		return true;
 	}
-	
+
 	public boolean hasStoredProcedure(String procedureName) throws SQLException{
 		if(!allowsStoredProcedure()){
 			return false;
@@ -2468,17 +2468,17 @@ public abstract class DatastoreInterface implements MutableClass {
 		}
 		return toReturn;
 	}
-	
+
 	public boolean isUsingPreparedStatements(){
 	    return usePreparedStatement;
 	}
-	
+
 	protected static IDOContainer getIDOContainer(){
 		return IDOContainer.getInstance();
 	}
-	
+
 	protected static DatastoreInterfaceManager getDatastoreInterfaceManager(){
 		return getIDOContainer().getDatastoreInterfaceManager();
 	}
-	
+
 }

@@ -23,24 +23,14 @@ public final class ICFileSystemFactory
 	private ICFileSystemFactory()
 	{
 	}
-	
+
 	/**
 	 * This method fetches the instance of ICFileSystem for the current working application
 	 * @param iwac The ApplicationContext for the working application
 	 * @return the ICFileSystem instance
 	 */
-	public static ICFileSystem getFileSystem(IWApplicationContext iwac)throws RemoteException{
-		/*Class serviceClass=null;
-		try
-		{
-			//TODO: Remove hardcoding of serviceclass:
-			serviceClass = Class.forName("com.idega.block.media.business.MediaFileSystem");
-		}
-		catch (ClassNotFoundException e)
-		{
-			throw new RemoteException("ICFileSystemFactory.getFileSystem:"+e.getClass()+":"+e.getMessage());
-		}*/
-		return (ICFileSystem)IBOLookup.getServiceInstance(iwac,ICFileSystem.class);
+	public static ICFileSystem getFileSystem(IWApplicationContext iwac) throws RemoteException {
+		return IBOLookup.getServiceInstance(iwac, ICFileSystem.class);
 	}
-	
+
 }

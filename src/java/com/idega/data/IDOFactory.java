@@ -2,6 +2,7 @@ package com.idega.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Set;
 
@@ -21,21 +22,26 @@ import javax.ejb.HomeHandle;
  */
 
 public abstract class IDOFactory implements IDOHome,java.io.Serializable{
-	
+
+	private static final long serialVersionUID = 463763865403762367L;
+
 	protected String dataSource = GenericEntity.DEFAULT_DATASOURCE;
-	
+
   protected IDOFactory(){
   }
 
-  public String getDatasource() {
+  @Override
+public String getDatasource() {
 	  return ((GenericEntity)this.idoCheckOutPooledEntity()).getDatasource();
   }
-  
-  public void setDatasource(String dataSource) {
+
+  @Override
+public void setDatasource(String dataSource) {
 	  setDatasource(dataSource, true);
   }
-  
-  public void setDatasource(String dataSource, boolean reloadEntity) {
+
+  @Override
+public void setDatasource(String dataSource, boolean reloadEntity) {
 	  if (dataSource != null) {
 		 this.dataSource = dataSource;
 		 GenericEntity ent = ((GenericEntity) this.idoCheckOutPooledEntity());
@@ -43,21 +49,20 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 		 this.idoCheckInPooledEntity(ent);
 	  }
   }
-  
-  public IDOEntity idoCreate(Class entityInterfaceClass)throws javax.ejb.CreateException{
-    //Class beanClass = IDOLookup.getBeanClassFor(entityInterfaceClass);
+
+  public <T extends IDOEntity> T idoCreate(Class<T> entityInterfaceClass) throws CreateException {
     try{
-      IDOEntityBean entity = null;
+      T entity = null;
       try{
-        entity = (IDOEntityBean)IDOContainer.getInstance().createEntity(entityInterfaceClass);
+        entity = IDOContainer.getInstance().createEntity(entityInterfaceClass);
       }
       catch(Error e){
         System.err.println("Error creating bean for : "+this.getClass().getName());
         e.printStackTrace();
       }
-      entity.setEJBLocalHome(this);
+      ((IDOEntityBean) entity).setEJBLocalHome(this);
 	  entity.setDatasource(this.dataSource);
-      return (IDOEntity)entity;
+      return entity;
       //return (IDOEntity)beanClass.newInstance();
     }
     catch(Exception e){
@@ -66,89 +71,80 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
     }
   }
 
-  public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,int id)throws javax.ejb.FinderException{
+  public <T extends IDOEntity> T idoFindByPrimaryKey(Class<T> entityInterfaceClass,int id)throws javax.ejb.FinderException{
     return this.idoFindByPrimaryKey(entityInterfaceClass,new Integer(id));
-    /*try{
-      IDOEntity theReturn = idoCreate(entityInterfaceClass);
-      ((IDOLegacyEntity)theReturn).findByPrimaryKey(id);
+  }
+
+  public <T extends IDOEntity> T idoFindByPrimaryKey(Class<T> entityInterfaceClass,Integer id)throws javax.ejb.FinderException{
+    return idoFindByPrimaryKey(entityInterfaceClass,(Object)id);
+  }
+
+  public <T extends IDOEntity> T idoFindByPrimaryKey(Class<T> entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
+      T theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk,this, this.dataSource);
       return theReturn;
-    }
-    catch(Exception e){
-      throw new javax.ejb.FinderException(e.getMessage());
-    }*/
   }
 
-  public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Integer id)throws javax.ejb.FinderException{
-    //return idoFindByPrimaryKey(entityInterfaceClass,id.intValue());
-        return idoFindByPrimaryKey(entityInterfaceClass,(Object)id);
+  @Override
+  public <T extends IDOEntity> T createIDO() throws CreateException {
+	  Class<T> interfaceClass = getEntityInterfaceClass();
+	  return idoCreate(interfaceClass);
   }
 
-  public IDOEntity idoFindByPrimaryKey(Class entityInterfaceClass,Object pk)throws javax.ejb.FinderException{
-      IDOEntity theReturn = IDOContainer.getInstance().findByPrimaryKey(entityInterfaceClass,pk,this, this.dataSource);
-      return theReturn;
-
-    /*if(pk instanceof Integer){
-      return idoFindByPrimaryKey(entityInterfaceClass,(Integer)pk);
-    }
-    else{
-      throw new IDOFinderException("[idoFactory] : Primarykey other than type Integer not supported");
-    }*/
-  }
-
-  public IDOEntity createIDO() throws CreateException{
-    return idoCreate(getEntityInterfaceClass());
-  }
-  
-  @SuppressWarnings("unchecked")
-  public <T extends IDOEntity> T createEntity() throws CreateException{
-    return (T) idoCreate(getEntityInterfaceClass());
+  public <T extends IDOEntity> T createEntity() throws CreateException {
+	  Class<T> interfaceClass = getEntityInterfaceClass();
+	  return idoCreate(interfaceClass);
   }
 
   /**
    * @deprecated
    */
   @Deprecated
-public IDOEntity idoCreate() throws CreateException{
+  public <T extends IDOEntity> T idoCreate() throws CreateException{
     return createIDO();
   }
 
-  public IDOEntity idoFindByPrimaryKey(int primaryKey) throws FinderException{
-    return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
+  public <T extends IDOEntity> T idoFindByPrimaryKey(int primaryKey) throws FinderException {
+	  Class<T> interfaceClass = getEntityInterfaceClass();
+	  return idoFindByPrimaryKey(interfaceClass, primaryKey);
   }
 
-  public IDOEntity idoFindByPrimaryKey(Integer primaryKey) throws FinderException{
-    return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
+  public <T extends IDOEntity> T idoFindByPrimaryKey(Integer primaryKey) throws FinderException {
+	  Class<T> interfaceClass = getEntityInterfaceClass();
+	  return idoFindByPrimaryKey(interfaceClass, primaryKey);
   }
 
   /**
    * @deprecated
    */
   @Deprecated
-public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
+public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     return findByPrimaryKeyIDO(primaryKey);
   }
 
-  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
+  @Override
+public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
     Object realPK = primaryKey;
     if(primaryKey instanceof IDOEntity){
     	try{
-				throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
+    		throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
     	}
     	catch(FinderException fe){
     		fe.printStackTrace(System.err);
     	}
     	realPK = ((IDOEntity)primaryKey).getPrimaryKey();
     }
-    return (T) idoFindByPrimaryKey(getEntityInterfaceClass(),realPK);
+    Class<T> interfaceClass = getEntityInterfaceClass();
+    return idoFindByPrimaryKey(interfaceClass, realPK);
   }
 
   public IDOEntity findByPrimaryKeyIDO(int primaryKey) throws FinderException{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
   }
-  
-  public java.util.Collection findByPrimaryKeyCollection(java.util.Collection p0)throws javax.ejb.FinderException{
+
+  @Override
+public <T extends IDOEntity> Collection<T> findByPrimaryKeyCollection(Collection<?> p0) throws FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-	java.util.Collection ids = ((GenericEntity)entity).ejbFindByPrimaryKeyCollection(p0);
+	Collection<?> ids = ((GenericEntity)entity).ejbFindByPrimaryKeyCollection(p0);
 	this.idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
@@ -175,7 +171,8 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
    */
   public void remove(Handle handle){}
 
-  public void remove(Object primaryKey){
+  @Override
+public void remove(Object primaryKey){
     try{
       IDOEntity entity = idoFindByPrimaryKey(primaryKey);
       entity.remove();
@@ -185,12 +182,12 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
     }
   }
 
-  protected abstract Class<? extends IDOEntity> getEntityInterfaceClass();
+  protected abstract <T extends IDOEntity> Class<T> getEntityInterfaceClass();
 
-  protected Class getEntityBeanClass(){
-    return IDOLookup.getBeanClassFor(getEntityInterfaceClass());
+  protected <T extends IDOEntity> Class<T> getEntityBeanClass() {
+	  Class<T> interfaceClass = getEntityInterfaceClass();
+	  return IDOLookup.getBeanClassFor(interfaceClass);
   }
-
 
   /**
    *
@@ -198,12 +195,11 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
    * @return Set of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  protected Set getEntitySetForPrimaryKeys(Set setOfPrimaryKeys)throws FinderException{
-    Set theReturn = new java.util.HashSet();
-    Iterator iter = setOfPrimaryKeys.iterator();
-    while (iter.hasNext()) {
+  protected <T extends IDOEntity> Set<T> getEntitySetForPrimaryKeys(Set<?> setOfPrimaryKeys)throws FinderException{
+    Set<T> theReturn = new HashSet<T>();
+    for (Iterator<?> iter = setOfPrimaryKeys.iterator(); iter.hasNext();) {
       Object pk = iter.next();
-      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
+      T entityObject = this.idoFindByPrimaryKey(pk);
       theReturn.add(entityObject);
     }
     return theReturn;
@@ -215,7 +211,8 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException {
+  @Override
+public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException {
   	if (collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
   		return getIDOEntityListForPrimaryKeys(collectionOfPrimaryKeys);
   	} else {
@@ -225,8 +222,8 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
 		      if(pk instanceof IDOEntity){
 		      	theReturn.add((T) pk);
 		      } else {
-			      IDOEntity entityObject = this.findByPrimaryKeyIDO(pk);
-			      theReturn.add((T) entityObject);
+			      T entityObject = this.findByPrimaryKeyIDO(pk);
+			      theReturn.add(entityObject);
 		      }
 		    }
 	    }
@@ -240,14 +237,8 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
    * @return Collection of IDOEntity objects for this Factory
    * @throws FinderException
    */
-  private Collection getIDOEntityListForPrimaryKeys(Collection collectionOfPrimaryKeys)throws FinderException{
-    Collection theReturn = new IDOEntityList(collectionOfPrimaryKeys);
-//    Iterator iter = collectionOfPrimaryKeys.iterator();
-//    while (iter.hasNext()) {
-//      Object pk = iter.next();
-//      IDOEntity entityObject = this.idoFindByPrimaryKey(pk);
-//      theReturn.add(entityObject);
-//    }
+  private <T extends IDOEntity> Collection<T> getIDOEntityListForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException{
+    Collection<T> theReturn = new IDOEntityList<T>(collectionOfPrimaryKeys);
     return theReturn;
   }
 
@@ -266,15 +257,17 @@ public IDOEntity idoFindByPrimaryKey(Object primaryKey) throws FinderException{
      * @todo: implement
      */
   }
-  
+
+	@Override
 	public Object decode(String pkString){
 		IDOEntity theReturn = this.idoCheckOutPooledEntity();
-		return theReturn.decode(pkString);	
+		return theReturn.decode(pkString);
 	}
-	
-	public Collection decode(String[] pkString){
+
+	@Override
+	public Collection<?> decode(String[] pkString){
 		IDOEntity theReturn = this.idoCheckOutPooledEntity();
-		return theReturn.decode(pkString);	
+		return theReturn.decode(pkString);
 	}
 
 }
