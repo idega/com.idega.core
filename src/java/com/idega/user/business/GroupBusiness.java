@@ -81,7 +81,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllGroups
 	 */
-	public Collection getAllGroups() throws java.rmi.RemoteException;
+	public Collection<Group> getAllGroups() throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllNonPermissionOrGeneralGroups
@@ -291,7 +291,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersForUserRepresentativeGroups
 	 */
-	public Collection getUsersForUserRepresentativeGroups(Collection groups) throws FinderException, RemoteException;
+	public Collection<User> getUsersForUserRepresentativeGroups(Collection<Group> groups) throws FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateUsersInGroup
