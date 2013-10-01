@@ -1,9 +1,9 @@
 /*
  * $Id: StringHandler.java,v 1.51 2009/05/20 14:19:05 valdas Exp $ Created on
  * 14.9.2004
- * 
+ *
  * Copyright (C) 2001-2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -37,7 +37,7 @@ import com.idega.presentation.IWContext;
 /**
  * This class has utility methods to work with strings. <br>
  * Last modified: $Date: 2009/05/20 14:19:05 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>, <a
  *         href="mailto:gummi@idega.is">Gudmundur Saemundsson </a>
  * @version $Revision: 1.51 $
@@ -88,18 +88,18 @@ public class StringHandler {
 			{ 254 }, // th
 			{ 255 }, // y
 			// Latin Extended-A
-			{ 0x0100, 0x0102, 0x0104 }, // A 
+			{ 0x0100, 0x0102, 0x0104 }, // A
 			{ 0x0101, 0x0103, 0x0105 }, // a
-			{ 0x0106, 0x0108, 0x010A, 0x010C }, // C 
-			{ 0x0107, 0x0109, 0x010B, 0x010D }, // c 
-			{ 0x010E, 0x0110 }, // D 
-			{ 0x010F, 0x0111 }, // d 
-			{ 0x0112, 0x0114, 0x0116, 0x0118, 0x011A }, // E 
-			{ 0x0113, 0x0115, 0x0117, 0x0119, 0x011B }, // e 
+			{ 0x0106, 0x0108, 0x010A, 0x010C }, // C
+			{ 0x0107, 0x0109, 0x010B, 0x010D }, // c
+			{ 0x010E, 0x0110 }, // D
+			{ 0x010F, 0x0111 }, // d
+			{ 0x0112, 0x0114, 0x0116, 0x0118, 0x011A }, // E
+			{ 0x0113, 0x0115, 0x0117, 0x0119, 0x011B }, // e
 			{ 0x011C, 0x011E, 0x0120, 0x0122 }, // G
-			{ 0x011D, 0x011F, 0x0121, 0x0123 }, // g 
+			{ 0x011D, 0x011F, 0x0121, 0x0123 }, // g
 			{ 0x0124, 0x0126 }, // H
-			{ 0x0125, 0x0127 }, // h 
+			{ 0x0125, 0x0127 }, // h
 			{ 0x0128, 0x012A, 0x012C, 0x012E, 0x0130 }, // I
 			{ 0x0129, 0x012B, 0x012D, 0x012F, 0x0131 }, // i
 			{ 0x0132 }, // IJ
@@ -112,17 +112,17 @@ public class StringHandler {
 			{ 0x0139, 0x013B, 0x013D, 0x013F, 0x0141 }, // L
 			{ 0x013A, 0x013C, 0x013E, 0x0140, 0x0142 }, // l
 			{ 0x0143, 0x0145, 0x0147 }, // N
-			{ 0x0144, 0x0146, 0x0148, 0x0149 }, // n 
+			{ 0x0144, 0x0146, 0x0148, 0x0149 }, // n
 			{ 0x014A }, // ENG
 			{ 0x014B }, // eng
-			{ 0x014C, 0x014E, 0x0150 }, // O 
+			{ 0x014C, 0x014E, 0x0150 }, // O
 			{ 0x014D, 0x014F, 0x0151 }, // o
 			{ 0x0152 }, // OE
 			{ 0x0153 }, // oe
-			{ 0x0154, 0x0156, 0x0158 }, // R 
+			{ 0x0154, 0x0156, 0x0158 }, // R
 			{ 0x0155, 0x0157, 0x0159 }, // r
 			{ 0x015A, 0x015C, 0x015E, 0x0160 }, // S
-			{ 0x015B, 0x015D, 0x015F, 0x0161 }, // s 
+			{ 0x015B, 0x015D, 0x015F, 0x0161 }, // s
 			{ 0x0162, 0x0164, 0x0166 }, // T
 			{ 0x0163, 0x0165, 0x0167 }, // t
 			{ 0x0168, 0x016A, 0x016C, 0x016E, 0x0170, 0x0172 }, // U
@@ -135,7 +135,7 @@ public class StringHandler {
 			{ 0x017A, 0x017C, 0x017E }, // z
 			{ 0x017F }, // s
 		};
-	
+
 	private static final int SUBSTITUTED_MIN = 192;
 	private static final int SUBSTITUTED_MAX = 0x017F;
 
@@ -146,9 +146,9 @@ public class StringHandler {
 			"Y", "Th", "ss", "a", "ae", "c", "e", "i", "d", "n", "o", NO_LETTER_SUBSTITUTION, "o", "u", "y", "th", "y",
 			"A", "a", "C", "c", "D", "d", "E", "e", "G", "g", "H", "h", "I", "i", "IJ", "ij", "J", "j",
 			"K", "k", "kra", "L", "l", "N", "n", "ENG", "eng", "O", "o", "OE", "oe", "R", "r", "S", "s",
-			"T", "t", "U", "u", "W", "w", "Y", "y", "Z", "z", "s", 
+			"T", "t", "U", "u", "W", "w", "Y", "y", "Z", "z", "s",
 			};
-	
+
 	public static String alfabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
 
 	// Alphabet+Numbers without ambigous characters such as 0 O and I l and 1
@@ -161,11 +161,11 @@ public class StringHandler {
 	public static final String SLASH = "/";
 
 	public static final String NEWLINE = "\n";
-	
+
 	public static final String SPACE = " ";
-	
+
 	public static final String SEMICOLON = ";";
-	
+
 	public static final String COLON = ":";
 
 	public StringHandler() {
@@ -236,6 +236,7 @@ public class StringHandler {
 
 			private boolean hasNext = true;
 
+			@Override
 			public Object next() throws NoSuchElementException {
 				String theReturn = null;
 				try {
@@ -272,6 +273,7 @@ public class StringHandler {
 				return theReturn;
 			}
 
+			@Override
 			public boolean hasNext() {
 				if (this.theString != null) {
 					if (this.theString.length() > 0) {
@@ -297,11 +299,12 @@ public class StringHandler {
 				return this.hasNext;
 			}
 
+			@Override
 			public void remove() {
 				/**
-				 * 
+				 *
 				 * Does Nothing
-				 * 
+				 *
 				 */
 			}
 		};
@@ -319,7 +322,7 @@ public class StringHandler {
 	public static String stripNonRomanCharacters(String inputString) {
 		return stripNonRomanCharacters(inputString,empty_char_array);
 	}
-	
+
 	/**
 	 * Strips the string of all non-roman characters such as special
 	 * Icelandic,Swedish,German etc. characters. <br>
@@ -348,8 +351,8 @@ public class StringHandler {
 	public static boolean isEmpty(Object element) {
 		return ! isNotEmpty(element);
 	}
-	
-	
+
+
 	/**
 	 * Returns true if the specified object returns a non empty string when the
 	 * toString() method is invoked else false.
@@ -381,11 +384,11 @@ public class StringHandler {
 		return true;
 	}
 
-	
+
 	/**
-	 * 
+	 *
 	 * <p>
-	 * Returns only the first token corresponding to the specified 
+	 * Returns only the first token corresponding to the specified
 	 * delimiters.
 	 * </p>
 	 * <p>
@@ -402,19 +405,19 @@ public class StringHandler {
 		for (int i = 0; i < str.length(); i++) {
 			char c = str.charAt(i);
 			if (Arrays.binarySearch(delimChars, c) >= 0) {
-				// found 
+				// found
 				return str.substring(0, i);
 			}
 		}
 		return str;
 	}
-	
-	
+
+
 	/**
 	 * Returns the package name and the name of the specified className.
 	 * Example: "com.idega.util.StringHandler" returns {"com.idega.util",
 	 * "StringHandler"} "StringHandler" returns {"", "StringHandler"}
-	 * 
+	 *
 	 * @param className
 	 * @return array containing the package name and the class name without
 	 *         package name
@@ -439,7 +442,7 @@ public class StringHandler {
 	 * starts with a dot character. Example: cutExtension("tomcat.gif") returns
 	 * "tomcat"; cutExtension("tomcat") returns "tomcat";
 	 * cutExtension(".systemFile") returns ".systemFile";
-	 * 
+	 *
 	 * @param fileName
 	 * @return name without extension
 	 */
@@ -497,7 +500,7 @@ public class StringHandler {
 	 * with the specified replace, ignores case. Example: replaceIgnoreCase("A
 	 * CAT is not a caterpillar", "ca", "hu") returns "A hut is not a
 	 * huterpillar"
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @param replace
@@ -522,26 +525,26 @@ public class StringHandler {
 	/**
 	 * Returns the replacement if the specified string is empty else the
 	 * specified string
-	 * 
+	 *
 	 * @param aString
 	 * @param replacement
 	 * @return
 	 */
-	
+
 	public static String replaceIfEmpty(String aString, String replacement) {
 		if (aString == null || aString.length() == 0) {
 			return replacement;
 		}
 		return aString;
 	}
-	
-	
-	
+
+
+
 	/**
 	 * Replaces all occurences of the specified pattern in the specified string
 	 * with the specified replace Example: replace("A cat is not a caterpillar",
 	 * "ca", "hu") returns "A hut is not a huterpillar"
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @param replace
@@ -565,7 +568,7 @@ public class StringHandler {
 	 * Removes all occurences of the specified pattern from the specified
 	 * string. Example: replace("A cat is not a caterpillar", "ca") returns "A t
 	 * is not a terpillar"
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @return modified (new) string
@@ -587,7 +590,7 @@ public class StringHandler {
 	 * Removes all occurences of white spaces from the specified string.
 	 * Example: replace("A cat is not a caterpillar") returns
 	 * "Acatisnotacaterpillar"
-	 * 
+	 *
 	 * @param str
 	 * @param pattern
 	 * @return modified (new) string
@@ -603,7 +606,7 @@ public class StringHandler {
 	 * ist returned. Ignores case and returns only words in upper case. Example:
 	 * list = "(" ")" "or" "xor" "A" "B" getElements("A OR(B xor C)", list,
 	 * false) returns "(" "A" "OR" "(" "B" "XOR" "C" ")"
-	 * 
+	 *
 	 * @param str
 	 * @param allowedWords
 	 * @param list
@@ -632,7 +635,7 @@ public class StringHandler {
 	 * "") returns "caterpillar" substring("caterpillar","a", "l") returns
 	 * "terpil" substring("","","") returns "" substring(null, "cat", "we")
 	 * returns null substring("caterpillar", null, "we") returns null
-	 * 
+	 *
 	 * @param string
 	 * @param start
 	 * @param end
@@ -667,7 +670,7 @@ public class StringHandler {
 	 * "fileName_1", "fileName_3") returns "fileName"
 	 * addOrIncreaseCounterIfNecessary("fileName", "_", null ) returns
 	 * "fileName"
-	 * 
+	 *
 	 * @param string
 	 * @param token
 	 * @param collection
@@ -707,7 +710,7 @@ public class StringHandler {
 	 * returns "1" addOrIncreaseCounter("fileName_13", "") returns
 	 * "fileName_131" addOrIncreaseCounter("fileName_13", null) returns
 	 * "fileName_131"
-	 * 
+	 *
 	 * @param string
 	 * @param token
 	 * @return string with added or increased counter.
@@ -739,13 +742,27 @@ public class StringHandler {
 		return buffer.toString();
 	}
 
+	public static boolean isNumeric(String string) {
+		if (StringUtil.isEmpty(string))
+			return false;
+
+		for (int i = 0; i < string.length(); i++) {
+			char theChar = string.charAt(i);
+			if (!Character.isDigit(theChar)) {
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	/**
 	 * Returns true if the specified string is a natural number. Zero is
 	 * considered as a natural number. Examples: isNaturalNumber("-12") returns
 	 * false isNaturalNumber("0") returns true; isNaturalNumber("12") returns
 	 * true; isNaturalNumber("f1") returns false; isNaturalNumber("+12") returns
 	 * false isNaturalNumber(null) returns false;
-	 * 
+	 *
 	 * @param string
 	 * @return true if the specified string is a natural number else false
 	 * @author thomas
@@ -772,7 +789,7 @@ public class StringHandler {
 	 * allowed words. If the string contains a non allowed word an empty list
 	 * ist returned. Example: list = "(" ")" "or" "xor" "A" "B" getElements("A
 	 * or(B xor C)", list, true) returns "(" "A" "or" "(" "B" "xor" "C" ")"
-	 * 
+	 *
 	 * @param str
 	 * @param allowedWords
 	 * @param list
@@ -784,6 +801,7 @@ public class StringHandler {
 		// order of conditions
 		SortedSet orderedWords = new TreeSet(new Comparator() {
 
+			@Override
 			public int compare(Object first, Object second) {
 				int firstLength = ((String) first).length();
 				int secondLength = ((String) second).length();
@@ -822,7 +840,7 @@ public class StringHandler {
 	/**
 	 * Compares two versions strings like "000.003.001" and "0.0044" in a fast
 	 * way.
-	 * 
+	 *
 	 * @param version1
 	 * @param version2
 	 * @return Zero if the versions are the same, a value less than zero if the
@@ -921,7 +939,7 @@ public class StringHandler {
 	/**
 	 * Checks if the specified string contains the specified pattern. Example:
 	 * replace("A cat is not a caterpillar", "ca") returns true
-	 * 
+	 *
 	 * @param string
 	 * @param pattern
 	 * @return true if the string contains the specified pattern else false.
@@ -932,7 +950,7 @@ public class StringHandler {
 	}
 
 	public static String[] TRANSLATED;
-	
+
 	static {
 		TRANSLATED = new String[SUBSTITUTED_MAX - SUBSTITUTED_MIN + 1];
 		Arrays.fill(TRANSLATED, NO_LETTER_SUBSTITUTION);
@@ -957,7 +975,7 @@ public class StringHandler {
 		if (('A' <= value && value <= 'Z') || ('a' <= value && value <= 'z') || (Arrays.binarySearch(exceptions,c) >= 0)){
 			return String.valueOf(c);
 		}
-		
+
 		if ((value >= SUBSTITUTED_MIN) && (value <= SUBSTITUTED_MAX)) {
 			return TRANSLATED[value - SUBSTITUTED_MIN];
 		}
@@ -977,7 +995,7 @@ public class StringHandler {
 	 * Returns a string or dash if there is no string. If the string is either
 	 * null or an empty string a dash (-) is returned else it returns the input
 	 * string str.
-	 * 
+	 *
 	 * @param str
 	 *            String to check
 	 * @return String which is either a dash or the input str.
@@ -997,7 +1015,7 @@ public class StringHandler {
 	 * <br>
 	 * For instance it breaks down the URL "/component/78909" to
 	 * {"component","78909"}
-	 * 
+	 *
 	 * @return
 	 */
 	public static String[] breakDownURL(String urlString) {
@@ -1074,15 +1092,15 @@ public class StringHandler {
 	public static String firstCharacterToUpperCaseRestToLowerCase(String string) {
 		return StringHandler.firstCharacterToUpperCase(string.toLowerCase());
 	}
-	
-	
+
+
 	private static char[] allowedcharacters={'-','0','1','2','3','4','5','6','7','8','9'};
 	/**
 	 * Parses the inputString so that it has a "URL friendly" format. i.e. only
 	 * latin characters in lowercase without special characters. <br>
 	 * e.g. the inputString "Fr&eacute;ttir &aacute; Fors&iacute;&eth;u" becomes
 	 * "frettiraforsidu"
-	 * 
+	 *
 	 * @param complexString
 	 * @return
 	 */
@@ -1092,7 +1110,7 @@ public class StringHandler {
 		String lowercase = nonLatin.toLowerCase();
 		return lowercase;
 	}
-	
+
 	/**
 	 * Parses the passed inputString so that it removes all occurences of the slash ('/') character
 	 * where it is twice or more in a row in a string.<br>
@@ -1125,10 +1143,10 @@ public class StringHandler {
 		}
 		return ret.toString();
 	}
-	
-	
-	
-	
+
+
+
+
 	/**
 	 * Uses a regular expression to remove all html tags from the string. Code found at http://www.tivocommunity.com/tivo-vb/archive/index.php/t-229458.html
 	 * @param htmlString
@@ -1137,7 +1155,7 @@ public class StringHandler {
 	public static String removeHtmlTagsFromString(String htmlString){
 		return htmlString.replaceAll("\\<.*?\\>","");
 	}
-	
+
 	/**
 	 * Checks if value is represented in hexidecimal notation
 	 * @param value
@@ -1149,7 +1167,7 @@ public class StringHandler {
 		}
 		return false;
 	}
-	
+
 	/**
 	 * Returns the first index of not hexidecimal letter in provided String
 	 * @param value
@@ -1178,7 +1196,7 @@ public class StringHandler {
 		}
 		return -1;	// Error
 	}
-	
+
 	public static String removeCharacters(String value, String whatToRemove, String whatToPlace) {
 		if (value == null || whatToRemove == null || whatToPlace == null) {
 			return null;
@@ -1189,23 +1207,23 @@ public class StringHandler {
 		}
 		return value;
 	}
-	
-	/** 
-	 * Converts a wildcard expression to a regular expression, that is 
+
+	/**
+	 * Converts a wildcard expression to a regular expression, that is
 	 * "*" is replaced by ".*" and
 	 * "?" is replaced by "."
 	 * Protects existing dots in the wildcard expressions.
-	 * 
+	 *
 	 * If the specified wildcardExpression is null or empty the specified wildcardExpression is simply returned.
-	 * 
+	 *
 	 * Examples: "hello.c?s*" returns "hello\.c.s.*"
-	 * 
+	 *
 	 * Typical invocation sequence:
 	 * String regex = StringHandler.convertWildcardExpressionToRegularExpression("H?llo W*");
 	 * Pattern pattern = Pattern.compile(regex);
 	 * Matcher matcher = pattern.matches("Hello world");
 	 * boolean b = matcher.matches();
-	 * 
+	 *
 	 * @param wildcardExpression
 	 * @return regular expression
 	 */
@@ -1223,14 +1241,14 @@ public class StringHandler {
 		if (text == null) {
 			return null;
 		}
-		
+
 		StringBuffer replaceBuffer = new StringBuffer(text);
 		List<Pattern> patterns = new ArrayList<Pattern>();
 		Pattern p1 = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)", Pattern.CASE_INSENSITIVE);
 		Pattern p2 = Pattern.compile("(<img[^>]+src=\")([^#][^\"]+)([^>]+>)", Pattern.CASE_INSENSITIVE);
 		patterns.add(p1);
 		patterns.add(p2);
-		
+
 		StringBuffer outString = null;
 
 		IWContext iwc = CoreUtil.getIWContext();
@@ -1241,7 +1259,7 @@ public class StringHandler {
 		if (serverName == null) {
 			return text;
 		}
-		
+
 		for (int i = 0; i < patterns.size(); i++) {
 			Pattern p = patterns.get(i);
 			Matcher m = p.matcher(replaceBuffer);
@@ -1263,7 +1281,7 @@ public class StringHandler {
 		text = replaceBuffer.toString();
 		return text;
 	}
-	
+
 	public static String removeAbsoluteReference(String serverName, String link) {
 		if (link == null) {
 			return null;
@@ -1274,16 +1292,16 @@ public class StringHandler {
 		if (link.indexOf(serverName) == -1) {
 			return link;
 		}
-		
+
 		link = link.toLowerCase();
-		
+
 		//	Throwing away server name from link
 		int serverNameStart = link.indexOf(serverName);
 		if (serverNameStart > 0) {
 			int serverNameEnd = serverNameStart + serverName.length();
 			link = link.substring(serverNameEnd);
 		}
-		
+
 		//	Throwing away port number from link
 		if (link.startsWith(":")) {
 			link = link.substring(1);
@@ -1296,10 +1314,10 @@ public class StringHandler {
 				portNumber = false;
 			}
 		}
-		
+
 		return link;
 	}
-	
+
 	public static String getContentFromStream(InputStream stream) {
 		try {
 			return getContentFromInputStream(stream);
@@ -1308,12 +1326,12 @@ public class StringHandler {
 		}
 		return null;
 	}
-	
+
 	public static String getContentFromInputStream(InputStream stream) throws Exception {
 		if (stream == null) {
 			return null;
 		}
-		
+
 		BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.forName(CoreConstants.ENCODING_UTF8)));
 		try {
 			return getContentFromReader(br);
@@ -1321,19 +1339,19 @@ public class StringHandler {
 			IOUtil.close(stream);
 		}
 	}
-	
+
 	public static String getContentFromReader(Reader reader) throws Exception {
 		if (reader == null) {
 			return null;
 		}
-		
+
 		BufferedReader bReader = null;
 		if (reader instanceof BufferedReader) {
 			bReader = (BufferedReader) reader;
 		} else {
 			bReader = new BufferedReader(reader);
 		}
-		
+
 		StringBuffer sb = new StringBuffer();
 		String line = null;
 
@@ -1348,10 +1366,10 @@ public class StringHandler {
 			IOUtil.closeReader(reader);
 			IOUtil.closeReader(bReader);
 		}
-		
+
 		return sb.toString();
 	}
-	
+
 	/**
 	 * Returns UTF-8 encoded stream
 	 * @param content
@@ -1362,8 +1380,8 @@ public class StringHandler {
 		if (content == null) {
 			return null;
 		}
-		
+
 		return new BufferedInputStream(new ByteArrayInputStream(content.getBytes(CoreConstants.ENCODING_UTF8)));
 	}
-	
+
 }
