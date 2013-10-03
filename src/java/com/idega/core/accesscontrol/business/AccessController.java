@@ -14,6 +14,7 @@ package com.idega.core.accesscontrol.business;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+
 import javax.ejb.FinderException;
 import javax.servlet.http.HttpServletRequest;
 
@@ -23,11 +24,11 @@ import com.idega.core.accesscontrol.data.PermissionGroup;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.component.data.ICObject;
 import com.idega.core.file.data.ICFile;
-import com.idega.user.data.User;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.Group;
+import com.idega.user.data.User;
 
 /**
  * <p>
@@ -142,6 +143,17 @@ public static final String CATEGORY_STRING_GROUP_ID = "ic_group_id";
   public boolean hasRole(String roleKey, IWUserContext iwuc);
   public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
   public boolean hasRole(User user, String roleKey);
+  
+  /**
+   * 
+   * @param user to check access for, not <code>null</code>;
+   * @param roleKeys is {@link ICRole}s of {@link Group}s, which should be 
+   * checked for, not <code>null</code>;
+   * @return <code>true</code> if user has at least one of these roles,
+   * <code>false</code> otherwise;
+   * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+   */
+  public boolean hasRole(User user, Collection<String> roleKeys);
   public boolean isRoleMaster(IWUserContext iwuc);
   public void addGroupAsRoleMaster(Group group, IWApplicationContext iwac);
   public void addRoleToGroup(String roleKey, Group group, IWApplicationContext iwac                  );

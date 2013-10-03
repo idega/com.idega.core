@@ -390,7 +390,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsers
 	 */
-	public Collection getUsers(String[] userIDs) throws EJBException, RemoteException;
+	public Collection<User> getUsers(String[] userIDs) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsers

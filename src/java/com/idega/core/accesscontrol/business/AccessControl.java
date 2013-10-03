@@ -2881,6 +2881,30 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return allUserRoles.contains(roleKey);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.accesscontrol.business.AccessController#hasRole(com.idega.user.data.User, java.util.Collection)
+	 */
+	@Override
+	public boolean hasRole(User user, Collection<String> roleKeys) {
+		if (user == null || ListUtil.isEmpty(roleKeys)) {
+			return Boolean.FALSE;
+		}
+
+		Set<String> allUserRoles = getAllRolesForUser(user);
+		if (ListUtil.isEmpty(allUserRoles)) {
+			return Boolean.FALSE;
+		}
+
+		for (String roleKey: roleKeys) {
+			if (allUserRoles.contains(roleKey)) {
+				return Boolean.TRUE;
+			}
+		}
+
+		return Boolean.FALSE;
+	}
+
 	/**
 	 * Gets all the role permissions the group has and also role-permission key roles.
 	 */

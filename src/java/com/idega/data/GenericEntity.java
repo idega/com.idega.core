@@ -52,7 +52,10 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
@@ -2956,6 +2959,29 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		removeFrom((IDOEntity) entityToRemoveFrom);
 	}
 
+	/**
+	 * 
+	 * <p>Removes all records from related entity, where records are related
+	 * to current instance of entity.</p>
+	 * @param relatedTableName is table name to remove from, 
+	 * not <code>null</code>;
+	 * @return <code>true</code> when successfully removed, <code>false</code> 
+	 * otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean removeFrom(String relatedTableName) {
+		if (StringUtil.isEmpty(relatedTableName)) {
+			return Boolean.FALSE;
+		}
+
+		/* Creating query */
+		StringBuilder query = new StringBuilder();
+		query.append("DELETE FROM ").append(relatedTableName).append(CoreConstants.SPACE)
+		.append("WHERE ").append(getIDColumnName()).append(CoreConstants.EQ).append(getPrimaryKeyValueSQLString());
+
+		return executeUpdate(query.toString());
+	}
+	
 	private void removeFrom(IDOEntity entityToRemoveFrom, String middleTableName) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -4853,6 +4879,19 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 	}
 
+	/**
+	 * 
+	 * <p>Removes all records from SQL table, which are related to this
+	 * instance of entity object.</p>
+	 * @param relatedTableName is table name of related entity, not <code>null</code>;
+	 * @return <code>true</code> if successfully removed, <code>false</code>
+	 * otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean idoRemoveFrom(String relatedTableName) {
+		return removeFrom(relatedTableName);
+	}
+
 	protected void idoRemoveFrom(IDOEntity entity, String middleTableName) throws IDORemoveRelationshipException {
 		try {
 			removeFrom(entity, middleTableName);
@@ -4903,6 +4942,100 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		catch (Exception e) {
 			throw new IDOAddRelationshipException(e, this);
 		}
+	}
+
+	/**
+	 * 
+	 * <p>Gracefully executes {@link Statement#executeUpdate(String)} with
+	 * default {@link Connection}</p>
+	 * @param sqlQuery to execute. UPDATE, DELETE, INSERT statements only, 
+	 * not <code>null</code>;
+	 * @return <code>true</code> if executed, <code>false</code> otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean executeUpdate(String sqlQuery) {
+		if (StringUtil.isEmpty(sqlQuery)) {
+			return Boolean.FALSE;
+		}
+
+		Connection connection = null;
+		Statement statement = null;
+
+		/* Opening connection */
+		try {
+			connection = getConnection();
+			statement = connection.createStatement();
+		} catch (SQLException e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to create connection cause of:", e);
+			return Boolean.FALSE;
+		}
+	
+		logSQL(sqlQuery);
+		
+		/* Executing query */
+		boolean result = Boolean.FALSE;
+		try {
+			statement.executeUpdate(sqlQuery);
+			result = Boolean.TRUE;
+		} catch (SQLException e) {
+			getLogger().log(Level.WARNING, "Failed to perform update cause of:", e);
+		}
+
+		/* Closing */
+		try {
+			statement.close();
+		} catch (SQLException e) {
+			getLogger().log(Level.WARNING, "Failed to close connection, cause of: ", e);
+		}
+	
+		freeConnection(connection);
+
+		return result;
+	}
+	
+	/**
+	 * 
+	 * <p>Inserts given primary keys of entities into required relation table.</p>
+	 * @param entities to add, not <code>null</code>;
+	 * @param relatedTableName is name of relation table with this entity, 
+	 * not <code>null</code>;
+	 * @return <code>true</code> if successfully updated, <code>false</code>
+	 * otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean idoAddTo(Collection<? extends IDOEntity> entities,
+			String relatedTableName) {
+		if (StringUtil.isEmpty(relatedTableName) || ListUtil.isEmpty(entities)) {
+			return Boolean.FALSE;
+		}
+
+		/* Creating query */
+		StringBuilder query = new StringBuilder();
+		try {
+			query.append("INSERT INTO ").append(relatedTableName).append(CoreConstants.SPACE)
+			.append(CoreConstants.BRACKET_LEFT)
+			.append(getIDColumnName()).append(CoreConstants.COMMA).append(entities.iterator().next().getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName())
+			.append(CoreConstants.BRACKET_RIGHT).append(CoreConstants.SPACE)
+			.append("VALUES ");
+		} catch (IDOCompositePrimaryKeyException e1) {
+			getLogger().log(Level.WARNING, 
+					"Failed to get primary key of insertable entity, cause of: ", e1);
+			return Boolean.FALSE;
+		}
+
+		for (Iterator<? extends IDOEntity> iterator = entities.iterator(); iterator.hasNext();) {
+			query.append(CoreConstants.BRACKET_LEFT)
+			.append(getPrimaryKeyValueSQLString()).append(CoreConstants.COMMA)
+			.append(iterator.next().getPrimaryKey().toString())
+			.append(CoreConstants.BRACKET_RIGHT);
+
+			if (iterator.hasNext()) {
+				query.append(CoreConstants.COMMA).append(CoreConstants.SPACE);
+			}
+		}
+
+		return executeUpdate(query.toString());
 	}
 
 	/**
