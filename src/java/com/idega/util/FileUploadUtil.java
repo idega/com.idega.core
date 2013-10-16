@@ -44,10 +44,10 @@ public class FileUploadUtil {
 	 * @throws IllegalArgumentException
 	 * @return Map<String,com.idega.io.UploadFile>
 	 */
-	public static Map getAllUploadedFiles(IWContext iwc){
+	public static Map<String, UploadFile> getAllUploadedFiles(IWContext iwc){
 		
 		HttpServletRequest request = iwc.getRequest();
-		Map fileList = new HashMap();
+		Map fileList = new HashMap<String, UploadFile>();
 		
 		if (request instanceof HttpServletRequestWrapper) {
 			
