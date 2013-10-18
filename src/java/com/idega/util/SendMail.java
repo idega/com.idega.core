@@ -26,6 +26,7 @@ import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.messaging.SMTPAuthenticator;
+import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.sun.mail.smtp.SMTPTransport;
@@ -115,11 +116,11 @@ public class SendMail {
 	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
 			List<AdvancedProperty> headers, final boolean useThread, final boolean deleteFiles, final File... attachedFiles) throws MessagingException {
 
-//		if (!DefaultIWBundle.isProductionEnvironment()) {
-//			LOGGER.log(Level.INFO, "to: " + to + " mail: " + text);
-//			return null;
-//		}
-		
+		if (!DefaultIWBundle.isProductionEnvironment()) {
+			LOGGER.log(Level.INFO, "to: " + to + " mail: " + text);
+			return null;
+		}
+
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
