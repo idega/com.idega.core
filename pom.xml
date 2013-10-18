@@ -9,17 +9,6 @@
   <artifactId>com.idega.core</artifactId>
   <name>idegaWeb Core</name>
   
-  <scm>
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
-    <tag>com_idega_block_platform-4_1_3</tag>
-  </scm>
-  <!--
-  <scm>
-    <connection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</connection>
-    <developerConnection>scm:cvs:ext:idegaweb@code.idega.com:/idega/cvs:com.idega.block.platform/com.idega.core/</developerConnection>
-  </scm>
-  -->
 	<developers>
 		<developer>
 		<name>Tryggvi Larusson</name>
@@ -119,11 +108,23 @@
       <version>1.2.9</version>
       <type>jar</type>
     </dependency>
-   <dependency>
+    <dependency>
+     	<groupId>commons-codec</groupId>
+     	<artifactId>commons-codec</artifactId>
+     	<version>${commons-codec-commons-codec-version}</version>
+     	<type>jar</type>
+    </dependency>
+    <dependency>
       <groupId>org.apache.myfaces.tomahawk</groupId>
       <artifactId>tomahawk12</artifactId>
       <version>1.1.9</version>
       <type>jar</type>
+      <exclusions>
+      	<exclusion>
+          <groupId>commons-codec</groupId>
+          <artifactId>commons-codec</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>informix_jdbc</groupId>
