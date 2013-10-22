@@ -86,6 +86,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
+import javax.ejb.EJBLocalObject;
+
 import com.idega.core.persistence.GenericDao;
 import com.idega.notifier.data.NotificationEntity;
 import com.idega.notifier.data.NotificationReceiverEntity;
@@ -192,9 +194,10 @@ public interface NotificationEntityDAO extends GenericDao {
 
 	/**
 	 * 
-	 * <p>TODO</p>
-	 * @param notificationTargetEntityId
-	 * @return
+	 * @param notificationTargetEntityId is {@link NotificationReceiverEntity#getId()}, 
+	 * not <code>null</code>;
+	 * @return {@link NotificationReceiverEntity} in data source or 
+	 * <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public NotificationReceiverEntity getNotificationReceiver(
@@ -202,11 +205,35 @@ public interface NotificationEntityDAO extends GenericDao {
 
 	/**
 	 * 
-	 * <p>TODO</p>
-	 * @param user
-	 * @return
+	 * @param user to get entity for, not <code>null</code>;
+	 * @return entity if exists;
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public NotificationReceiverEntity getNotificationReceiver(
 			User user);
+
+	/**
+	 * 
+	 * <p>Creates/Updates entity in data source.</p>
+	 * @param nte is entity to update/create, not <code>null</code>;
+	 * @return created or updated entity or <code>null</code> on failure;s
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public NotificationReceiverEntity update(NotificationReceiverEntity nte);
+
+	/**
+	 * 
+	 * <p>Creates/Updates entity in data source.</p>
+	 * @param id is {@link NotificationReceiverEntity#getId()}, new entity
+	 * created when <code>null</code>; 
+	 * @param receiverId is {@link EJBLocalObject#getPrimaryKey()} of entity
+	 * to notified about. Not <code>null</code> when creating new one;
+	 * @param receiverClass is instance of {@link EJBLocalObject#getClass()},
+	 * not <code>null</code> when creating new one;
+	 * @param read is notification was read, skipped if <code>null</code>;
+	 * @return created or updated entity or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
+	 */
+	public NotificationReceiverEntity update(Long id, String receiverId,
+			Class<? extends EJBLocalObject> receiverClass, Boolean read);
 }

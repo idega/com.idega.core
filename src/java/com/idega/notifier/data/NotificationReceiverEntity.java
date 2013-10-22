@@ -84,6 +84,7 @@ package com.idega.notifier.data;
 
 import java.io.Serializable;
 
+import javax.ejb.EJBLocalObject;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -95,8 +96,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
-
-import org.apache.poi.hssf.record.formula.functions.T;
 
 import com.idega.util.CoreConstants;
 
@@ -163,7 +162,7 @@ public class NotificationReceiverEntity implements Serializable{
 	
     public NotificationReceiverEntity() {}
     
-    public <P> NotificationReceiverEntity(String id, Class<P> targetClass) {
+    public <P> NotificationReceiverEntity(String id, Class<? extends EJBLocalObject> targetClass) {
     	if (id == null || targetClass == null) {
     		return;
     	}
@@ -208,7 +207,7 @@ public class NotificationReceiverEntity implements Serializable{
 		return receiverClass;
 	}
 
-	public void setReceiverClass(Class<T> target) {
+	public void setReceiverClass(Class<? extends EJBLocalObject> target) {
 		this.receiverClass = target.toString();
 	}
 }
