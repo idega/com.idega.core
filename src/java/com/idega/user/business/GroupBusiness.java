@@ -11,6 +11,7 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import com.idega.business.IBOService;
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
@@ -710,5 +712,25 @@ public interface GroupBusiness extends IBOService {
 	 */
 	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount);
 
-
+	/**
+	 * 
+	 * @param groupId is {@link Group#getPrimaryKey()}. Group will be 
+	 * selected by it, if not <code>null</code>;
+	 * @param name is {@link Group#getName()}, not <code>null</code> if
+	 * group id not provided;
+	 * @param description is {@link Group#getDescription()}, 
+	 * skipped if <code>null</code>;
+	 * @param city is {@link Address#getCity()} of {@link Group}, skipped
+	 * if <code>null</code>;
+	 * @param roles is {@link Collection} of {@link ICRole}s to add for
+	 * {@link Group}. Skipped if <code>null</code>;
+	 * @return updated {@link Group}s or one {@link Group}s in {@link List}
+	 * if new created or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public List<Group> update(
+			String groupId, 
+			String name,
+			String description,
+			String city, Collection<String> roles);
 }

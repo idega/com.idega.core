@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
@@ -55,6 +56,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -2862,6 +2864,131 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.GroupBusiness#update(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.util.Collection)
+	 */
+	@Override
+	public List<Group> update(String groupId, String name, String description,
+			String city, Collection<String> roles) {
+		List<Group> groups = new ArrayList<Group>();
+
+		/* Trying by id... */
+		if (!StringUtil.isEmpty(groupId)) {
+			Group group = null;
+			try {
+				group = getGroupByGroupID(Integer.valueOf(groupId));
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Failed to find group by id: " + 
+						groupId + " cause of:  ", e);
+			}
+
+			if (group != null) {
+				groups.add(group);
+			}
+		}
+
+		/* Won't create group, if no group name provided */
+		if (StringUtil.isEmpty(name) && ListUtil.isEmpty(groups)) {
+			getLogger().log(Level.WARNING, "No group name was provided. " +
+					"No futher actions will be taken.");
+			return Collections.emptyList();
+		}
+
+		/* Checking by name... */
+		if (ListUtil.isEmpty(groups)) {
+			Collection<Group> groupsInDatasource = null;
+			try {
+				groupsInDatasource = getGroupsByGroupName(name);
+			} catch (RemoteException e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to get groups by name: " + name + 
+						" cause of: ", e);
+			}
+
+			if (!ListUtil.isEmpty(groupsInDatasource)) {
+				groups.addAll(groupsInDatasource);
+			} 
+		}
+
+		/* Creating new one if not found */
+		if (ListUtil.isEmpty(groups)) {
+			try {
+				groups.add(createGroup(name));
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to create group by name: " + name + 
+						" cause of: ", e);
+			}
+		}
+
+		/* Getting access controller for assigning roles */
+		AccessController accessController = getAccessController();
+		if (accessController == null) {
+			return Collections.emptyList();
+		}
+
+		for (Group group : groups) {
+			if (!StringUtil.isEmpty(city)) {
+				
+				/* Searching for existing addresses of group */
+				Collection<Address> addresses = null;
+				try {
+					addresses = group.getAddresses(null);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, 
+							"Failed to get addresses for group: " + 
+							group.getName() + "cause of: ", e);
+				}
+
+				Address address = null;
+				/* Will take the first one, the main */
+				if (!ListUtil.isEmpty(addresses)) {
+					address = addresses.iterator().next();
+				} 
+
+				/* Creating new one if not exist */
+				if (address == null) {
+					try {
+						address = getAddressHome().create();
+					} catch (CreateException e) {
+						getLogger().log(Level.WARNING, 
+								"Failed to create address for group cause of: ", 
+								e);
+					}
+				}
+
+				address.setCity(city);
+				address.store();
+
+				/* Adding new address if not existed yet */
+				if (ListUtil.isEmpty(addresses)) {
+					try {
+						group.addAddress(address);
+					} catch (IDOAddRelationshipException e) {
+						getLogger().log(Level.WARNING, 
+								"Failed to append address to group cause of:", e);
+					}
+				}
+			}
+
+			/* Setting up description */
+			if (!StringUtil.isEmpty(description)) {
+				group.setDescription(description);
+			}
+
+			group.store();
+
+			/* Setting up roles */
+			if (!ListUtil.isEmpty(roles)) {
+				for (String role : roles) {
+					accessController.addRoleToGroup(role, group, getIWApplicationContext());
+				}
+			}
+		}
+
+		return groups;
+	}
 
 } // Class
 

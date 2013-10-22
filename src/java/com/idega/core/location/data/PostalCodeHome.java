@@ -12,6 +12,8 @@ package com.idega.core.location.data;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -22,11 +24,30 @@ public interface PostalCodeHome extends IDOHome {
 
 	public PostalCode create() throws CreateException;
 
+	/**
+	 * 
+	 * @param primaryKey is {@link PostalCode#getPrimaryKey()};
+	 * @param postalCode is {@link PostalCode#getPostalCode()};
+	 * @return created or found {@link PostalCode}s by given 
+	 * {@link PostalCode#getPostalCode()} or {@link Collections#emptyList()}
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public List<PostalCode> update(Object primaryKey, String postalCode);
+
 	public PostalCode findByPrimaryKey(Object pk) throws FinderException;
 
 	public Collection findByCommune(Commune commune) throws FinderException;
 
-	public Collection<PostalCode> findByPostalCode(Collection codes) throws FinderException;
+	/**
+	 * 
+	 * @param codes is {@link Collection} of {@link PostalCode#getPostalCode()},
+	 * not <code>null</code>;
+	 * @return {@link PostalCode}s from data source or {@link Collections#emptyList()}
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<PostalCode> findByPostalCode(Collection<String> codes);
 
 	public PostalCode findByPostalCode(String code) throws FinderException;
 

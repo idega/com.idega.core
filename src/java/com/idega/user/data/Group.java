@@ -15,10 +15,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
@@ -494,7 +496,7 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAddresses
 	 */
-	public Collection getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException,
+	public Collection<Address> getAddresses(AddressType addressType) throws IDOLookupException, IDOCompositePrimaryKeyException,
 			IDORelationshipException;
 
 	/**
