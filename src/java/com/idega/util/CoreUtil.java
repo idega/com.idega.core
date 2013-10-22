@@ -19,6 +19,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.core.accesscontrol.business.LoginSession;
@@ -371,4 +373,19 @@ public class CoreUtil {
 		String realPath = getRealPathToRepository(pathInRepository);
 		return new File(realPath);
 	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getUnProxied(Object bean) {
+		if (bean instanceof Advised && AopUtils.isAopProxy(bean)) {
+			try {
+				bean = ((Advised) bean).getTargetSource().getTarget();
+				return getUnProxied(bean);
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error while unproxying " + bean + " (" + bean.getClass().getName() + ")", e);
+			}
+		}
+
+		return (T) bean;
+	}
+
 }
