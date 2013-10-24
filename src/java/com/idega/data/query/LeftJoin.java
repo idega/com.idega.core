@@ -11,22 +11,23 @@ package com.idega.data.query;
 
 import java.util.HashSet;
 import java.util.Set;
+
 import com.idega.data.query.output.Output;
 import com.idega.data.query.output.Outputable;
 import com.idega.data.query.output.ToStringer;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2006/04/09 12:13:12 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:gummi@idega.com">Gudmundur Agust Saemundsson</a>
  * @version $Revision: 1.2 $
  */
 public class LeftJoin implements Outputable {
 
     private Column left, right;
-    
+
 
     public LeftJoin(Column left, Column right) {
         this.left = left;
@@ -42,7 +43,8 @@ public class LeftJoin implements Outputable {
         return this.right;
     }
 
-    public void write(Output out) {
+    @Override
+	public void write(Output out) {
 		out.print(this.left.getTable())
 		.print(" left join ")
 		.print(this.right.getTable())
@@ -50,18 +52,19 @@ public class LeftJoin implements Outputable {
 		.print(this.left)
 	    	.print(" = ")
 		.print(this.right);
-        
+
     }
-    
-    public Set getTables(){
-		Set s = new HashSet();
+
+    public Set<Table> getTables(){
+		Set<Table> s = new HashSet<Table>();
 		s.add(this.left.getTable());
 		s.add(this.right.getTable());
-		return s; 
+		return s;
     }
-    
-    public String toString() {
+
+    @Override
+	public String toString() {
         return ToStringer.toString(this);
     }
-    
+
 }

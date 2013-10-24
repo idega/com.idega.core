@@ -14,9 +14,9 @@ import java.util.List;
 /**
  *  PlaceHolder interface defines methods for PlaceHolder object used
  *  for parameter values in PreparedStatement
- * 
+ *
  *  Last modified: $Date: 2004/09/10 17:25:07 $ by $Author: aron $
- * 
+ *
  * @author <a href="mailto:aron@idega.com">aron</a>
  * @version $Revision: 1.2 $
  */
@@ -25,5 +25,5 @@ public interface PlaceHolder {
      * Returns placeholder value
      * @return
      */
-    public List getValues();
+    public <T> List<T> getValues();
 }

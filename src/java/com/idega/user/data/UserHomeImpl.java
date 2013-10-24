@@ -20,10 +20,12 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return User.class;
 	}
 
+	@Override
 	public User create() throws javax.ejb.CreateException {
 		return (User) super.createIDO();
 	}
 
+	@Override
 	public User findByPersonalID(java.lang.String p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -32,6 +34,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public User findByDateOfBirthAndName(java.sql.Date p0, java.lang.String p1)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -40,6 +43,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Collection findByDateOfBirth(java.sql.Date p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -48,6 +52,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public User findUserByUniqueId(String uniqueIdString)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -57,6 +62,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public User findByFirstSixLettersOfPersonalIDAndFirstNameAndLastName(
 			java.lang.String p0, java.lang.String p1, java.lang.String p2)
 			throws javax.ejb.FinderException {
@@ -68,6 +74,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public User findUserForUserGroup(int p0) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((UserBMPBean) entity).ejbFindUserForUserGroup(p0);
@@ -75,6 +82,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Collection findUsersByMetaData(String key, String value)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -84,6 +92,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersInQuery(com.idega.data.IDOQuery query)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -93,6 +102,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllUsers() throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids = ((UserBMPBean) entity).ejbFindAllUsers();
@@ -101,6 +111,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findNewestUsers(int returningNumberOfRecords,
 			int startingRecord) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -110,16 +121,18 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<User> findByNames(java.lang.String p0,
 			java.lang.String p1, java.lang.String p2, boolean useLoweredValues)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Collection ids = ((UserBMPBean) entity).ejbFindByNames(p0, p1, p2,
+		Collection<Integer> ids = ((UserBMPBean) entity).ejbFindByNames(p0, p1, p2,
 				useLoweredValues);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<User> ejbFindBySearchRequest(String request, int groupId,
 			int maxAmount, int startingEntry) {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -135,6 +148,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		}
 	}
 
+	@Override
 	public Collection<User> ejbFindBySearchRequest(Collection<String> requests,
 			int groupId, int maxAmount, int startingEntry) {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -150,6 +164,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		}
 	}
 
+	@Override
 	public Collection<User> ejbAutocompleteRequest(String request, int groupId,
 			int maxAmount, int startingEntry) {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -165,12 +180,14 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		}
 	}
 
+	@Override
 	public Collection<User> findByNames(java.lang.String p0,
 			java.lang.String p1, java.lang.String p2)
 			throws javax.ejb.FinderException {
 		return findByNames(p0, p1, p2, false);
 	}
 
+	@Override
 	public Collection findUsersForUserRepresentativeGroups(Collection p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -182,6 +199,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 
 	}
 
+	@Override
 	public User findUserForUserRepresentativeGroup(com.idega.user.data.Group p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -191,6 +209,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Collection findUsersInPrimaryGroup(com.idega.user.data.Group p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -200,6 +219,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersBySearchCondition(java.lang.String p0, boolean p1)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -210,6 +230,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersBySearchConditionAndAge(java.lang.String p0,
 			boolean p1, int endAge) throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -220,6 +241,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersByYearOfBirth(int minYear, int maxYear)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -230,6 +252,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersBySearchCondition(String condition,
 			String[] userIds, boolean p2) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -240,6 +263,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersByConditions(String userName, String personalId,
 			String streetName, String groupName, int gender, int statusId,
 			int startAge, int endAge, String[] allowedGroups,
@@ -255,6 +279,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findUsersByConditions(String firstName,
 			String middleName, String lastName, String personalId,
 			String streetName, String groupName, int gender, int statusId,
@@ -271,6 +296,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public User findUserForUserGroup(com.idega.user.data.Group p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -279,6 +305,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public User findUserFromEmail(java.lang.String p0)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -287,11 +314,13 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Collection<User> findUsersByEmail(java.lang.String email)
 			throws javax.ejb.FinderException {
 		return findUsersByEmail(email, false, false);
 	}
 
+	@Override
 	public Collection<User> findUsersByEmail(String email,
 			boolean useLoweredValue, boolean useLikeExpression)
 			throws FinderException {
@@ -305,6 +334,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return usrs;
 	}
 
+	@Override
 	public Collection findUsers(java.lang.String[] userIDs)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -314,6 +344,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllUsersOrderedByFirstName()
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -324,10 +355,12 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public User findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
 		return (User) super.findByPrimaryKeyIDO(pk);
 	}
 
+	@Override
 	public int getUserCount() throws com.idega.data.IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		int theReturn = ((UserBMPBean) entity).ejbHomeGetUserCount();
@@ -335,6 +368,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return theReturn;
 	}
 
+	@Override
 	public int getCountByBirthYearAndCommune(int fromYear, int toYear,
 			Commune commune) throws com.idega.data.IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -344,6 +378,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return theReturn;
 	}
 
+	@Override
 	public java.lang.String getGroupType() {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.lang.String theReturn = ((UserBMPBean) entity)
@@ -352,6 +387,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return theReturn;
 	}
 
+	@Override
 	public Collection findUsersByCreationTime(IWTimestamp firstCreationTime,
 			IWTimestamp lastCreationTime) throws FinderException,
 			IDOLookupException {
@@ -365,12 +401,13 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.user.data.UserHome#
 	 * findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(java.sql.Date,
 	 * java.sql.Date, com.idega.user.data.Group, java.sql.Timestamp,
 	 * java.sql.Timestamp, java.lang.String[])
 	 */
+	@Override
 	public Collection findByDateOfBirthAndGroupRelationInitiationTimeAndStatus(
 			Date firstBirthDateInPeriode, Date lastBirthDateInPeriode,
 			Group relatedGroup, Timestamp firstInitiationDateInPeriode,
@@ -387,6 +424,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findByGroupRelationInitiationTimeAndStatus(
 			Group relatedGroup, Timestamp firstInitiationDateInPeriode,
 			Timestamp lastInitiationDateInPeriode, String[] relationStatus)
@@ -401,6 +439,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(
 			Collection groups, Collection userStatuses,
 			Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender)
@@ -415,6 +454,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllUsersWithDuplicatedEmails() throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids = ((UserBMPBean) entity)
@@ -423,6 +463,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllUsersWithDuplicatedPhones(String phoneType)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -432,6 +473,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<User> findByDisplayName(String displayName,
 			boolean useLoweredValue) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -441,6 +483,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<User> findByPhoneNumber(String phoneNumber)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -450,6 +493,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<User> findAllByPersonalID(String personalId)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

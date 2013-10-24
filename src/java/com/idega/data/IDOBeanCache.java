@@ -48,7 +48,7 @@ public class IDOBeanCache {
 		maxCachedBeans = definition.getMaxCachedBeans();
 	}
 
-	private Map<String, Collection<?>> getFindQueryCacheMap() {
+	private <T> Map<String, Collection<T>> getFindQueryCacheMap() {
 		return getCacheMap(getFindQueryCacheName());
 	}
 
@@ -123,12 +123,14 @@ public class IDOBeanCache {
 		return cache.values();
 	}
 
-	void putCachedFindQuery(String querySQL, Collection<?> pkColl) {
-		getFindQueryCacheMap().put(querySQL, pkColl);
+	<T> void putCachedFindQuery(String querySQL, Collection<T> pkColl) {
+		Map<String, Collection<T>> cache = getFindQueryCacheMap();
+		cache.put(querySQL, pkColl);
 	}
 
-	Collection<?> getCachedFindQuery(String querySQL) {
-		return getFindQueryCacheMap().get(querySQL);
+	<T> Collection<T> getCachedFindQuery(String querySQL) {
+		Map<String, Collection<T>> cache = getFindQueryCacheMap();
+		return cache.get(querySQL);
 	}
 
 	boolean isFindQueryCached(String queryString) {

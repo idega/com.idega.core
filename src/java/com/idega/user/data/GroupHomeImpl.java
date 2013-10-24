@@ -21,6 +21,7 @@ import javax.ejb.FinderException;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
+import com.idega.util.ArrayUtil;
 
 
 /**
@@ -35,7 +36,8 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	private static final long serialVersionUID = -2368235582273397196L;
 
 
-	public Collection <Integer> getParentGroups(int groupId) {
+	@Override
+	public Collection<Integer> getParentGroups(int groupId) {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection <Integer> ids = null;
 		try{
@@ -53,14 +55,17 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return Group.class;
 	}
 
+	@Override
 	public Group create() throws javax.ejb.CreateException {
 		return (Group) super.createIDO();
 	}
 
+	@Override
 	public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
 		return (Group) super.findByPrimaryKeyIDO(pk);
 	}
 
+	@Override
 	public Group createGroup() throws CreateException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbCreateGroup();
@@ -77,42 +82,48 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		}
 	}
 
-	public Collection findGroupsByName(String name) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsByName(String name) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByName(name);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByName(name);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByNameAndGroupTypes(name, groupTypes, onlyReturnTypesInCollection);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByNameAndGroupTypes(name, groupTypes, onlyReturnTypesInCollection);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByGroupTypeAndLikeName(groupType,
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByGroupTypeAndLikeName(groupType,
 				partOfGroupName);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsByAbbreviation(String abbreviation) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsByAbbreviation(String abbreviation) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByAbbreviation(abbreviation);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByAbbreviation(abbreviation);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsByNameAndDescription(String name, String description) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsByNameAndDescription(String name, String description) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByNameAndDescription(name, description);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByNameAndDescription(name, description);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Group findGroupByPrimaryKey(Object primaryKey) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbFindGroupByPrimaryKey(primaryKey);
@@ -120,38 +131,43 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.findByPrimaryKey(pk);
 	}
 
-	public Collection findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
+	@Override
+	public Collection<Group> findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsContainedTemp(containingGroup, groupTypes,
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsContainedTemp(containingGroup, groupTypes,
 				returnTypes);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
+	@Override
+	public Collection<Group> findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypes,
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypes,
 				returnTypes);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsContainedIDs(Group containingGroup, Collection groupTypes, boolean returnTypes)
+	@Override
+	public Collection<Integer> findGroupsContainedIDs(Group containingGroup, Collection groupTypes, boolean returnTypes)
 		throws FinderException {
 	    com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	    Collection ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypes, returnTypes);
 	    return ids;
 }
 
-	public Collection findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypeProxy);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypeProxy);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public int getNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException, IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -161,6 +177,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return theReturn;
 	}
 
+	@Override
 	public int getNumberOfVisibleGroupsContained(Group containingGroup) throws FinderException, IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		int theReturn = ((GroupBMPBean) entity).ejbHomeGetNumberOfVisibleGroupsContained(containingGroup);
@@ -168,15 +185,17 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return theReturn;
 	}
 
-	public Collection findTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
+	@Override
+	public Collection<Group> findTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindTopNodeGroupsContained(containingDomain, groupTypes,
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindTopNodeGroupsContained(containingDomain, groupTypes,
 				returnTypes);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public int getNumberOfTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
 			throws FinderException, IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -186,6 +205,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return theReturn;
 	}
 
+	@Override
 	public int getNumberOfTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException, IDOException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		int theReturn = ((GroupBMPBean) entity).ejbHomeGetNumberOfTopNodeVisibleGroupsContained(containingDomain);
@@ -193,27 +213,31 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return theReturn;
 	}
 
-	public Collection findTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException {
+	@Override
+	public Collection<Group> findTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindTopNodeVisibleGroupsContained(containingDomain);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindTopNodeVisibleGroupsContained(containingDomain);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException {
+	@Override
+	public Collection<Group> findAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindAllGroups(groupTypes, returnSepcifiedGroupTypes);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindAllGroups(groupTypes, returnSepcifiedGroupTypes);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findAll() throws FinderException {
+	@Override
+	public Collection<Group> findAll() throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindAll();
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindAll();
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public String getGroupType() {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		String theReturn = ((GroupBMPBean) entity).ejbHomeGetGroupType();
@@ -221,6 +245,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return theReturn;
 	}
 
+	@Override
 	public String getRelationTypeGroupParent() {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		String theReturn = ((GroupBMPBean) entity).ejbHomeGetRelationTypeGroupParent();
@@ -228,27 +253,36 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return theReturn;
 	}
 
-	public Collection findGroups(String[] groupIDs) throws FinderException {
+	@Override
+	public Collection<Group> findGroups(String[] groupIDs) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroups(groupIDs);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroups(groupIDs);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsByType(String type) throws FinderException {
+	@Override
+	public Collection<Group> findGroups(Collection<String> groupIDs) throws FinderException {
+		return findGroups(ArrayUtil.convertListToArray(groupIDs));
+	}
+
+	@Override
+	public Collection<Group> findGroupsByType(String type) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByType(type);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByType(type);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findGroupsByMetaData(String key, String value) throws FinderException {
+	@Override
+	public Collection<Group> findGroupsByMetaData(String key, String value) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsByMetaData(key, value);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsByMetaData(key, value);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Group findSystemUsersGroup() throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbFindSystemUsersGroup();
@@ -256,22 +290,25 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.findByPrimaryKey(pk);
 	}
 
-	public Collection findGroupsRelationshipsByRelatedGroup(int groupID, String relationType, String orRelationType)
+	@Override
+	public Collection<GroupRelation> findGroupsRelationshipsByRelatedGroup(int groupID, String relationType, String orRelationType)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindGroupsRelationshipsByRelatedGroup(groupID,
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsRelationshipsByRelatedGroup(groupID,
 				relationType, orRelationType);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findParentGroups(int groupID) throws FinderException {
+	@Override
+	public Collection<Group> findParentGroups(int groupID) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((GroupBMPBean) entity).ejbFindParentGroups(groupID);
+		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindParentGroups(groupID);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Group findByHomePageID(int pageID) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbFindByHomePageID(pageID);
@@ -279,6 +316,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Group findGroupByUniqueId(String uniqueIdString) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbFindGroupByUniqueId(uniqueIdString);
@@ -286,6 +324,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Group findBoardGroupByClubIDAndLeagueID(Integer clubID, Integer leagueID) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((GroupBMPBean) entity).ejbFindBoardGroupByClubIDAndLeagueID(clubID, leagueID);
@@ -293,6 +332,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.findByPrimaryKey(pk);
 	}
 
+	@Override
 	public Collection<Group> findAllByNamePhrase(String phrase, Locale locale) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection ids  = ((GroupBMPBean) entity).ejbFindAllByNamePhrase(phrase, locale);
@@ -300,6 +340,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<Group> getMostPopularGroups(Collection<String> types,
 			int amount) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -308,6 +349,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<Group> getGroups(Collection<String> types, int amount)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -316,6 +358,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection<Group> getGroupsBySearchRequest(String request,
 			Collection<String> types, int amount) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -323,4 +366,5 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+
 }

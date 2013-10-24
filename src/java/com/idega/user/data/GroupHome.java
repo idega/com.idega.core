@@ -43,27 +43,27 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByName
 	 */
-	public Collection findGroupsByName(String name) throws FinderException;
+	public Collection<Group> findGroupsByName(String name) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByNameAndGroupType
 	 */
-	public Collection findGroupsByNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws FinderException;
+	public Collection<Group> findGroupsByNameAndGroupTypes(String name, Collection<?> groupTypes, boolean onlyReturnTypesInCollection) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByGroupTypeAndLikeName
 	 */
-	public Collection findGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException;
+	public Collection<Group> findGroupsByGroupTypeAndLikeName(String groupType, String partOfGroupName) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByAbbreviation
 	 */
-	public Collection findGroupsByAbbreviation(String abbreviation) throws FinderException;
+	public Collection<Group> findGroupsByAbbreviation(String abbreviation) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByNameAndDescription
 	 */
-	public Collection findGroupsByNameAndDescription(String name, String description) throws FinderException;
+	public Collection<Group> findGroupsByNameAndDescription(String name, String description) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupByPrimaryKey
@@ -73,25 +73,25 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContainedTemp
 	 */
-	public Collection findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
+	public Collection<Group> findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
 	 */
-	public Collection findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
+	public Collection<Group> findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContainedIDs
 	 */
-	public Collection findGroupsContainedIDs(Group containingGroup, Collection groupTypes, boolean returnTypes)
+	public Collection<Integer> findGroupsContainedIDs(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
 	 */
-	public Collection findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException;
+	public Collection<Group> findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetNumberOfGroupsContained
@@ -107,7 +107,7 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindTopNodeGroupsContained
 	 */
-	public Collection findTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
+	public Collection<Group> findTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes)
 			throws FinderException;
 
 	/**
@@ -124,17 +124,17 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindTopNodeVisibleGroupsContained
 	 */
-	public Collection findTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException;
+	public Collection<Group> findTopNodeVisibleGroupsContained(ICDomain containingDomain) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindAllGroups
 	 */
-	public Collection findAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException;
+	public Collection<Group> findAllGroups(String[] groupTypes, boolean returnSepcifiedGroupTypes) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindAll
 	 */
-	public Collection findAll() throws FinderException;
+	public Collection<Group> findAll() throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetGroupType
@@ -149,17 +149,18 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroups
 	 */
-	public Collection findGroups(String[] groupIDs) throws FinderException;
+	public Collection<Group> findGroups(String[] groupIDs) throws FinderException;
+	public Collection<Group> findGroups(Collection<String> groupIDs) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByType
 	 */
-	public Collection findGroupsByType(String type) throws FinderException;
+	public Collection<Group> findGroupsByType(String type) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByMetaData
 	 */
-	public Collection findGroupsByMetaData(String key, String value) throws FinderException;
+	public Collection<Group> findGroupsByMetaData(String key, String value) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindSystemUsersGroup
@@ -169,13 +170,13 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsRelationshipsByRelatedGroup
 	 */
-	public Collection findGroupsRelationshipsByRelatedGroup(int groupID, String relationType, String orRelationType)
+	public Collection<GroupRelation> findGroupsRelationshipsByRelatedGroup(int groupID, String relationType, String orRelationType)
 			throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindParentGroups
 	 */
-	public Collection findParentGroups(int groupID) throws FinderException;
+	public Collection<Group> findParentGroups(int groupID) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindByHomePageID

@@ -338,7 +338,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		try {
-			return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			return com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -632,9 +632,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	private Collection<Group> getParentGroupsAndPermissionControllingParentGroups(String permissionKey, User user) throws RemoteException {
 		//must be slow optimize
-		Map<?, ?> cachedParents = new HashMap<Object, Object>();
-		Map<?, ?> cachedGroups = new HashMap<Object, Object>();
-		@SuppressWarnings("unchecked")
+		Map<String, Collection<Integer>> cachedParents = new HashMap<String, Collection<Integer>>();
+		Map<String, Group> cachedGroups = new HashMap<String, Group>();
 		Collection<Group> groups = getGroupBusiness(IWMainApplication.getDefaultIWApplicationContext())
 				.getParentGroups(user, cachedParents, cachedGroups);
 

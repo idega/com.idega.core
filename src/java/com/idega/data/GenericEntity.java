@@ -1836,23 +1836,24 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
-	Object getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
+	<PK> PK getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
 		IDOEntityField[] fields = getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
-		Class primaryKeyClass = getPrimaryKeyClass();
+		Class<PK> primaryKeyClass = getPrimaryKeyClass();
 		return getPrimaryKeyFromResultSet(primaryKeyClass, fields, rs);
 	}
 
-	Object getPrimaryKeyFromResultSet(Class primaryKeyClass, IDOEntityField[] primaryKeyFields, ResultSet rs) throws SQLException {
+	@SuppressWarnings("unchecked")
+	<PK> PK getPrimaryKeyFromResultSet(Class<PK> primaryKeyClass, IDOEntityField[] primaryKeyFields, ResultSet rs) throws SQLException {
 		IDOEntityField[] fields = primaryKeyFields;
-		Class pkClass = primaryKeyClass;
-		Object theReturn = null;
+		Class<PK> pkClass = primaryKeyClass;
+		PK theReturn = null;
 
 		if (pkClass == Integer.class) {
-			theReturn = new Integer(rs.getInt(this.getIDColumnName()));
+			theReturn = (PK) new Integer(rs.getInt(this.getIDColumnName()));
 		}
 		else {
 			try {
-				theReturn = getPrimaryKeyClass().newInstance();
+				theReturn = (PK) getPrimaryKeyClass().newInstance();
 			}
 			catch (InstantiationException e1) {
 				e1.printStackTrace();
@@ -1862,7 +1863,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 
 			if (theReturn instanceof String) {
-				theReturn = rs.getString(getIDColumnName());
+				theReturn = (PK) rs.getString(getIDColumnName());
 			}
 			else {
 				if (theReturn instanceof IDOPrimaryKey) {
@@ -1871,7 +1872,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 						Object value = rs.getObject(fields[i].getSQLFieldName());
 						primaryKey.setPrimaryKeyValue(fields[i].getSQLFieldName(), value);
 					}
-					return primaryKey;
+					return (PK) primaryKey;
 				}
 			}
 		}
@@ -2207,6 +2208,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Finds all instances of the current object in the otherEntity
 	 */
+	@SuppressWarnings("deprecation")
 	public IDOLegacyEntity[] findAssociated(IDOLegacyEntity otherEntity) throws SQLException {
 		return otherEntity.findAll("select * from " + otherEntity.getEntityName() + " where " + this.getIDColumnName() + "= " + getPrimaryKeyValueSQLString());
 	}
@@ -2960,12 +2962,12 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Removes all records from related entity, where records are related
 	 * to current instance of entity.</p>
-	 * @param relatedTableName is table name to remove from, 
+	 * @param relatedTableName is table name to remove from,
 	 * not <code>null</code>;
-	 * @return <code>true</code> when successfully removed, <code>false</code> 
+	 * @return <code>true</code> when successfully removed, <code>false</code>
 	 * otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -2981,7 +2983,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 		return executeUpdate(query.toString());
 	}
-	
+
 	private void removeFrom(IDOEntity entityToRemoveFrom, String middleTableName) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
@@ -3312,7 +3314,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			return getStaticInstanceIDO(IDOLookup.getBeanClassFor(entityClass));
 		}
 
-		IDOEntity theReturn = (IDOEntity) getIDOContainer().getEntityStaticInstances().get(entityClass + datasource);
+		IDOEntity theReturn = getIDOContainer().getEntityStaticInstances().get(entityClass + datasource);
 
 		if (theReturn == null) {
 			try {
@@ -3323,12 +3325,12 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				// the _allStaticInstances map.
 				// !!!!!!This instance should not be replaced!!!!
 				// Therefore get the "right" instance.
-				IDOEntity correctInstance = (GenericEntity) getIDOContainer().getEntityStaticInstances().get(entityClass);
+				IDOEntity correctInstance = getIDOContainer().getEntityStaticInstances().get(entityClass);
 				if (correctInstance != null) {
 					theReturn = correctInstance;
 				}
 				else {
-					getIDOContainer().getEntityStaticInstances().put(entityClass + datasource, theReturn);
+					getIDOContainer().getEntityStaticInstances().put(entityClass, theReturn);
 				}
 
 			}
@@ -3771,22 +3773,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		this._ejbHomes.put(this.getClass().getName() + getDatasource(), ejbHome);
 	}
 
-	/*
-	 * public void setEJBHome(javax.ejb.EJBHome ejbHome) { _ejbHome = ejbHome; }
-	 *
-	 * public javax.ejb.EJBHome getEJBHome() { if(_ejbHome==null){ try{ _ejbHome =
-	 * IDOLookup.getHome(this.getClass()); } catch(Exception e){ throw new
-	 * EJBException("Lookup for home for: "+this.getClass().getName()+" failed.
-	 * Errormessage was: "+e.getMessage()); } } return _ejbHome; }
-	 *
-	 * public EJBLocalHome getEJBLocalHome() { return (EJBLocalHome)
-	 * this.getEJBHome(); }
-	 *
-	 *
-	 * public javax.ejb.EJBHome getEJBHome() { return
-	 * (javax.ejb.EJBHome)getEJBLocalHome(); }
-	 *
-	 */
 	@Override
 	public javax.ejb.EJBLocalHome getEJBLocalHome() {
 		return getEJBLocalHome(getDatasource());
@@ -3992,12 +3978,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	public void ejbPostCreate() {
 	}
 
-	/*
-	 * public Object ejbCreate(Object
-	 * primaryKey){this.setPrimaryKey(primaryKey);return primaryKey;}
-	 *
-	 * public Object ejbPostCreate(Object primaryKey){return primaryKey;}
-	 */
 	@Override
 	public Object ejbFindByPrimaryKey(Object pk) throws FinderException {
 		this.setPrimaryKey(pk);
@@ -4062,7 +4042,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 	private static GenericEntity instanciateEntity(Class entityInterfaceOrBeanClass, String datasource) {
 		try {
-			// return IDOLookup.createLegacy(entityInterfaceOrBeanClass);
 			return (GenericEntity) IDOLookup.instanciateEntity(entityInterfaceOrBeanClass, datasource);
 		}
 		catch (Exception e1) {
@@ -4090,18 +4069,13 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @deprecated replacced with idoFindPKsBySQL
 	 */
 	@Deprecated
-	protected Collection idoFindIDsBySQL(String sqlQuery) throws FinderException {
+	protected <PK> Collection<PK> idoFindIDsBySQL(String sqlQuery) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery);
 	}
 
-	protected Collection idoFindPKsBySQL(String sqlQuery) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsBySQL(String sqlQuery) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, -1, -1);
 	}
-
-	// protected Collection idoFindPKsByQueryUsingLoadBalance(String sqlQuery, int
-	// prefetchSize) throws FinderException {
-	// return idoFindPKsByQueryUsingLoadBalance(idoQuery(sqlQuery),prefetchSize);
-	// }
 
 	/**
 	 * Fetches the primarykey resultset and then loads the beans with data(the
@@ -4173,7 +4147,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		return idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumber, startingEntry, null);
 	}
 
-	protected Collection<?> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query) throws FinderException {
 		logSQL(sqlQuery);
 
 		if (startingEntry < 0) {
@@ -4186,7 +4160,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		Connection conn = null;
 		ResultHelper rsh = null;
 
-		Collection results = new ArrayList();
+		Collection<PK> results = new ArrayList<PK>();
 		try {
 			conn = getConnection(getDatasource());
 			rsh = prepareResultSet(conn, sqlQuery, query);
@@ -4205,7 +4179,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 					}
 
 					if (addEntity) {
-						Object pk = this.getPrimaryKeyFromResultSet(rsh.rs);
+						PK pk = this.getPrimaryKeyFromResultSet(rsh.rs);
 						if (pk != null) {
 							results.add(pk);
 						}
@@ -4284,66 +4258,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
 		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass, getDatasource());
 		return idoGetRelatedEntitiesBySQL(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
-		/*
-		 * try { //return
-		 * EntityFinder.getInstance().findRelated((IDOLegacyEntity)this,
-		 * returningEntityInterfaceClass);
-		 *
-		 * IDOEntity returningEntity =
-		 * IDOLookup.instanciateEntity(returningEntityInterfaceClass);
-		 *
-		 * String tableToSelectFrom =
-		 * EntityControl.getNameOfMiddleTable(returningEntity, this); StringBuffer
-		 * buffer = new StringBuffer(); buffer.append("select * from ");
-		 * buffer.append(tableToSelectFrom); buffer.append(" where ");
-		 * buffer.append(this.getIDColumnName()); buffer.append("=");
-		 * buffer.append(GenericEntity.getKeyValueSQLString(this.getPrimaryKeyValue()));
-		 * //buffer.append(" order by ");
-		 * //buffer.append(fromEntity.getIDColumnName()); String SQLString =
-		 * buffer.toString();
-		 *  //
-		 *
-		 * Connection conn = null; Statement Stmt = null; //Vector vector = new
-		 * Vector(); Vector vector = null;
-		 */
-		/*
-		 * String tableToSelectFrom = ""; if
-		 * (returningEntity.getTableName().endsWith("_")){ tableToSelectFrom =
-		 * returningEntity.getTableName()+fromEntity.getTableName(); } else{
-		 * tableToSelectFrom =
-		 * returningEntity.getTableName()+"_"+fromEntity.getTableName(); }
-		 */
-		/*
-		 * try { conn = this.getConnection(); Stmt = conn.createStatement();
-		 * ResultSet RS = Stmt.executeQuery(SQLString); while (RS != null &&
-		 * RS.next()) {
-		 *
-		 * IDOEntity tempobj = null; try { tempobj =
-		 * (IDOEntity)Class.forName(returningEntity.getClass().getName()).newInstance();
-		 *
-		 * Object pkObj =
-		 * RS.getObject(returningEntity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
-		 * ((IDOEntityBean)tempobj).setDatasource(this.getDatasource()); tempobj =
-		 * ((IDOHome)IDOLookup.getHome(returningEntity.getClass())).findByPrimaryKeyIDO(pkObj); }
-		 * catch (Exception ex) {
-		 *
-		 * System.err.println("There was an error in
-		 * com.idega.data.GenericEntity#idoGetRelatedEntities(Class
-		 * returningEntityInterfaceClass)\n returningEntityInterfaceClass=" +
-		 * returningEntity.getClass() + " : " + ex.getMessage());
-		 * ex.printStackTrace();
-		 *  } if (vector == null) { vector = new Vector(); }
-		 * vector.addElement(tempobj);
-		 *  } RS.close();
-		 *  } finally { if (Stmt != null) { Stmt.close(); } if (conn != null) {
-		 * this.freeConnection(conn); } }
-		 *
-		 * if (vector != null) { vector.trimToSize(); //return (IDOLegacyEntity[])
-		 * vector.toArray((Object[])java.lang.reflect.Array.newInstance(returningEntity.getClass(),0));
-		 * //return vector.toArray(new IDOLegacyEntity[0]); return vector; } else {
-		 * return null; } } catch (Exception e) { throw new
-		 * IDORelationshipException(e, this); }
-		 */
 	}
 
 	/**
@@ -4403,8 +4317,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 	}
 
-	protected Collection idoGetRelatedEntitiesBySQL(Class returningEntityInterfaceClass, String sqlQuery) throws IDORelationshipException {
-		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntitiesBySQL(Class<T> returningEntityInterfaceClass, String sqlQuery) throws IDORelationshipException {
+		T returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		return idoGetRelatedEntitiesBySQL(returningEntity, sqlQuery);
 	}
 
@@ -4415,14 +4329,14 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	private <T extends IDOEntity> Collection<T> idoGetRelatedEntitiesBySQL(T returningEntity, String sqlQuery) throws IDORelationshipException {
+	private <PK, T extends IDOEntity> Collection<T> idoGetRelatedEntitiesBySQL(T returningEntity, String sqlQuery) throws IDORelationshipException {
 		Collection<T> results = new ArrayList<T>();
-		Collection<?> ids = idoGetRelatedEntityPKs(returningEntity, sqlQuery);
+		Collection<PK> ids = idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 		try {
 			IDOHome home = IDOLookup.getHome(returningEntity.getClass(), getDatasource());
-			for (Iterator<?> iter = ids.iterator(); iter.hasNext();) {
+			for (Iterator<PK> iter = ids.iterator(); iter.hasNext();) {
 				try {
-					Object pk = iter.next();
+					PK pk = iter.next();
 					T entityToAdd = home.findByPrimaryKeyIDO(pk);
 					results.add(entityToAdd);
 				} catch (Exception e) {
@@ -4435,13 +4349,13 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		return results;
 	}
 
-	protected <T extends IDOEntity> Collection idoGetRelatedEntityPKs(Class<T> returningEntityInterfaceClass) throws IDORelationshipException {
+	protected <PK, T extends IDOEntity> Collection<PK> idoGetRelatedEntityPKs(Class<T> returningEntityInterfaceClass) throws IDORelationshipException {
 		T returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		String sqlQuery = this.getFindRelatedSQLQuery(returningEntity, "", "");
 		return idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 	}
 
-	protected Collection idoGetRelatedEntityPKs(Class returningEntityInterfaceClass, String sqlQuery) throws IDORelationshipException {
+	protected <PK, T extends IDOEntity> Collection<PK> idoGetRelatedEntityPKs(Class<T> returningEntityInterfaceClass, String sqlQuery) throws IDORelationshipException {
 		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		return idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 	}
@@ -4453,7 +4367,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	protected Collection idoGetRelatedEntityPKs(IDOEntity returningEntity) throws IDORelationshipException {
+	protected <PK> Collection<PK> idoGetRelatedEntityPKs(IDOEntity returningEntity) throws IDORelationshipException {
 		String sqlQuery = this.getFindRelatedSQLQuery(returningEntity, "", "");
 		return idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 	}
@@ -4461,7 +4375,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns a collection of returningEntity primary keys
 	 */
-	private Collection<?> idoGetRelatedEntityPKs(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
+	private <PK> Collection<PK> idoGetRelatedEntityPKs(IDOEntity returningEntity, String sqlQuery) throws IDORelationshipException {
 		Connection conn = null;
 		Statement Stmt = null;
 		Collection results = new ArrayList();
@@ -4471,7 +4385,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			logSQL(sqlQuery);
 			ResultSet rs = Stmt.executeQuery(sqlQuery);
 			while (rs.next()) {
-				Object pk = ((GenericEntity) returningEntity).getPrimaryKeyFromResultSet(rs);
+				PK pk = ((GenericEntity) returningEntity).getPrimaryKeyFromResultSet(rs);
 				results.add(pk);
 			}
 			rs.close();
@@ -4493,11 +4407,11 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		return results;
 	}
 
-	protected Collection idoFindAllIDsOrderedBySQL(String oderByColumnName) throws FinderException {
+	protected <PK> Collection<PK> idoFindAllIDsOrderedBySQL(String oderByColumnName) throws FinderException {
 		return this.idoFindIDsBySQL("select * from " + getTableName() + " order by " + oderByColumnName);
 	}
 
-	protected Collection idoFindAllIDsBySQL() throws FinderException {
+	protected <PK> Collection<PK> idoFindAllIDsBySQL() throws FinderException {
 		return this.idoFindIDsBySQL("select * from " + getTableName());
 	}
 
@@ -4511,10 +4425,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Finds one primary key by an SQL query
 	 */
-	private Object idoFindOnePKBySQL(String sqlQuery, SelectQuery selectQuery) throws FinderException {
-		Collection coll = idoFindPKsBySQL(sqlQuery, 1, -1, selectQuery);
+	private <PK> PK idoFindOnePKBySQL(String sqlQuery, SelectQuery selectQuery) throws FinderException {
+		Collection<PK> coll = idoFindPKsBySQL(sqlQuery, 1, -1, selectQuery);
 		try {
-			if (!coll.isEmpty()) {
+			if (!ListUtil.isEmpty(coll)) {
 				return coll.iterator().next();
 			}
 		}
@@ -4527,26 +4441,27 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
-	protected Collection idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, returningNumberOfRecords, -1);
 	}
 
-	protected Collection<?> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(sqlQuery, returningNumberOfRecords, startingEntry, null);
 	}
 
 	/**
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
-	protected Collection<?> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry, SelectQuery selectQuery) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry, SelectQuery selectQuery) throws FinderException {
 		boolean measureSQL = CoreUtil.isSQLMeasurementOn();
 		long start = measureSQL ? System.currentTimeMillis() : 0;
 		try {
-			Collection<?> pkColl = null;
+			Collection<PK> pkColl = null;
 			Class interfaceClass = this.getInterfaceClass();
 			boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
 			if (queryCachingActive) {
-				pkColl = IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).getCachedFindQuery(sqlQuery);
+				IDOBeanCache cache = IDOContainer.getInstance().getBeanCache(getDatasource(), interfaceClass);
+				pkColl = cache.getCachedFindQuery(sqlQuery);
 			}
 			if (pkColl == null) {
 				pkColl = this.idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumberOfRecords, startingEntry, selectQuery);
@@ -4582,14 +4497,14 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
-	 * Finds one entity that has this exact column value
+	 * Finds PK of one entity that has this exact column value
 	 */
 	protected Object idoFindOnePKByColumnBySQL(String columnName, String toFind) throws FinderException {
 		return idoFindOnePKBySQL("select " + getIDColumnName() + " from " + getTableName() + " where " + columnName + "='" + toFind + "'");
 	}
 
 	/**
-	 * Finds all entities by a metadata key or metadata key and value
+	 * Finds PKs of all entities by a metadata key or metadata key and value
 	 *
 	 * @param key,
 	 *          the metadata name cannot be null
@@ -4880,7 +4795,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Removes all records from SQL table, which are related to this
 	 * instance of entity object.</p>
 	 * @param relatedTableName is table name of related entity, not <code>null</code>;
@@ -4945,10 +4860,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Gracefully executes {@link Statement#executeUpdate(String)} with
 	 * default {@link Connection}</p>
-	 * @param sqlQuery to execute. UPDATE, DELETE, INSERT statements only, 
+	 * @param sqlQuery to execute. UPDATE, DELETE, INSERT statements only,
 	 * not <code>null</code>;
 	 * @return <code>true</code> if executed, <code>false</code> otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -4966,13 +4881,13 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			connection = getConnection();
 			statement = connection.createStatement();
 		} catch (SQLException e) {
-			getLogger().log(Level.WARNING, 
+			getLogger().log(Level.WARNING,
 					"Failed to create connection cause of:", e);
 			return Boolean.FALSE;
 		}
-	
+
 		logSQL(sqlQuery);
-		
+
 		/* Executing query */
 		boolean result = Boolean.FALSE;
 		try {
@@ -4988,17 +4903,17 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		} catch (SQLException e) {
 			getLogger().log(Level.WARNING, "Failed to close connection, cause of: ", e);
 		}
-	
+
 		freeConnection(connection);
 
 		return result;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Inserts given primary keys of entities into required relation table.</p>
 	 * @param entities to add, not <code>null</code>;
-	 * @param relatedTableName is name of relation table with this entity, 
+	 * @param relatedTableName is name of relation table with this entity,
 	 * not <code>null</code>;
 	 * @return <code>true</code> if successfully updated, <code>false</code>
 	 * otherwise;
@@ -5019,7 +4934,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			.append(CoreConstants.BRACKET_RIGHT).append(CoreConstants.SPACE)
 			.append("VALUES ");
 		} catch (IDOCompositePrimaryKeyException e1) {
-			getLogger().log(Level.WARNING, 
+			getLogger().log(Level.WARNING,
 					"Failed to get primary key of insertable entity, cause of: ", e1);
 			return Boolean.FALSE;
 		}
@@ -5316,7 +5231,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(IDOQuery query) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsByQuery(IDOQuery query) throws FinderException {
 		return idoFindPKsByQuery(query, -1, -1);
 	}
 
@@ -5329,12 +5244,11 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(SelectQuery query) throws FinderException {
-		if(getEntityDefinition().isUseFinderCollectionPrefetch()){
+	protected <PK> Collection<PK> idoFindPKsByQuery(SelectQuery query) throws FinderException {
+		if (getEntityDefinition().isUseFinderCollectionPrefetch()) {
 			int prefetchSize = getEntityDefinition().getFinderCollectionPrefetchSize();
 			return idoFindPKsByQueryUsingLoadBalance(query, prefetchSize);
-		}
-		else{
+		} else {
 			return idoFindPKsByQuery(query, -1, -1);
 		}
 	}
@@ -5348,7 +5262,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities) throws FinderException {
 		return idoFindPKsByQuery(query, returningNumberOfEntities, -1);
 	}
 
@@ -5361,7 +5275,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities) throws FinderException {
 		return idoFindPKsByQuery(query, returningNumberOfEntities, -1);
 	}
 
@@ -5374,7 +5288,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsByQuery(IDOQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry, null);
 	}
 
@@ -5387,7 +5301,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if there is an error with the query.
 	 */
-	protected Collection idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
+	protected <PK> Collection<PK> idoFindPKsByQuery(SelectQuery query, int returningNumberOfEntities, int startingEntry) throws FinderException {
 		return idoFindPKsBySQL(query.toString(), returningNumberOfEntities, startingEntry, query);
 	}
 
@@ -5401,7 +5315,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 *           if nothing found or there is an error with the query.
 	 */
-	protected Object idoFindOnePKByQuery(IDOQuery query) throws FinderException {
+	protected <PK> PK idoFindOnePKByQuery(IDOQuery query) throws FinderException {
 		return idoFindOnePKBySQL(query.toString(), null);
 	}
 
