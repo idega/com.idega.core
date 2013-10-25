@@ -386,17 +386,26 @@ public class CoreUtil {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			domain = IWMainApplication.getDefaultIWApplicationContext().getDomain();
-		} else
+		} else {
 			domain = iwc.getDomain();
+		}
 		if (domain == null) {
 			LOGGER.warning("Domain is unknown!");
 			return CoreConstants.EMPTY;
 		}
 
+		String host = null;
+		String protocol = domain.getServerProtocol();
+		String name = domain.getServerName();
+		if (StringUtil.isEmpty(protocol) || StringUtil.isEmpty(name)) {
+			return CoreConstants.EMPTY;
+		} else {
+			host = protocol.concat("://").concat(name);
+		}
 		int port = domain.getServerPort();
-		String host = domain.getServerProtocol().concat("://").concat(domain.getServerName());
-		if (port > 0)
-			host = host.concat(":").concat(String.valueOf(port));
+		if (port > 0) {
+			host = host.concat(CoreConstants.COLON).concat(String.valueOf(port));
+		}
 		return host;
 	}
 

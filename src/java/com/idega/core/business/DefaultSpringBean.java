@@ -20,7 +20,6 @@ import com.idega.business.IBOLookup;
 import com.idega.business.IBOService;
 import com.idega.business.IBOSession;
 import com.idega.core.accesscontrol.business.LoginSession;
-import com.idega.core.builder.data.ICDomain;
 import com.idega.core.cache.IWCacheManager2;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -38,7 +37,6 @@ import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
-import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -236,28 +234,7 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected String getHost() {
-    	ICDomain domain = null;
-		IWContext iwc = CoreUtil.getIWContext();
-    	if (iwc == null) {
-    		domain = IWMainApplication.getDefaultIWApplicationContext().getDomain();
-    	} else
-    		domain = iwc.getDomain();
-
-    	int port = domain.getServerPort();
-    	String protocol = domain.getServerProtocol();
-    	if (!StringUtil.isEmpty(protocol)) {
-    		protocol += "://";
-    	}
-    	String serverName = domain.getServerName();
-    	if (StringUtil.isEmpty(serverName)) {
-    		getLogger().warning("Server name is unknown for domain " + domain);
-    		return CoreConstants.EMPTY;
-    	}
-
-		String host = protocol + serverName;
-		if (port > 0)
-			host = host.concat(":").concat(String.valueOf(port));
-		return host;
+    	return CoreUtil.getHost();
     }
 
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {
