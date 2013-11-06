@@ -33,7 +33,7 @@ import com.idega.util.URIUtil;
  * Component to render out an "iframe" or Inline Frame element.
  * </p>
  *  Last modified: $Date: 2009/04/17 10:43:33 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.22 $
  */
@@ -54,7 +54,7 @@ public class IFrame extends InterfaceObject {
 	public static final String CLASS_TO_INSTANCIATE_PARAMETER = "classToInstanciateParameter",
 								PARAMETER_NOT_WORKSPACE_WINDOW = "not_workpace",
 								EXTERNAL_PARAMETERS = "externalParameters";
-	
+
 	//instance variables:
 	private boolean transparent = false;
 	private int ibPageId = 0;
@@ -85,7 +85,7 @@ public class IFrame extends InterfaceObject {
 		this.classToInstanciate = (Class<? extends UIComponent>) values[4];
 		this.addLanguageParameter = ((Boolean) values[5]).booleanValue();
 	}
-	
+
 	public IFrame() {
 		this("untitled");
 	}
@@ -145,7 +145,7 @@ public class IFrame extends InterfaceObject {
 	public void setParameters(Map<String, String> parameters) {
 		this.parameters = parameters;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private void setClassToInstanciateAsSource(IWContext iwc) {
 		if (iwc.isParameterSet(CLASS_TO_INSTANCIATE_PARAMETER)) {
@@ -155,15 +155,15 @@ public class IFrame extends InterfaceObject {
 				e.printStackTrace();
 			}
 		}
-		
+
 		if (this.classToInstanciate != null) {
 			String src = null;
 			try {
 				List<AdvancedProperty> params = null;
 				try {
 					String externalParams = iwc.getParameter(EXTERNAL_PARAMETERS);
-					externalParams = URLDecoder.decode(externalParams, CoreConstants.ENCODING_UTF8);
 					if (!StringUtil.isEmpty(externalParams)) {
+						externalParams = URLDecoder.decode(externalParams, CoreConstants.ENCODING_UTF8);
 						String[] parameters = externalParams.split(CoreConstants.HASH);
 						params = new ArrayList<AdvancedProperty>();
 						for (String parameter: parameters) {
@@ -175,7 +175,7 @@ public class IFrame extends InterfaceObject {
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
-				
+
 				src = Boolean.TRUE.toString().equals(iwc.getParameter(PARAMETER_NOT_WORKSPACE_WINDOW)) ?
 						getBuilderService(iwc).getUriToObject(classToInstanciate, params) :
 						iwc.getIWMainApplication().getObjectInstanciatorURI(this.classToInstanciate);
@@ -265,13 +265,13 @@ public class IFrame extends InterfaceObject {
 					uri.setParameter(parameterKey, parameters.get(parameterKey));
 				}
 			}
-			
+
 			if (Boolean.TRUE.toString().equals(iwc.getParameter(CoreConstants.PARAMETER_CHECK_HTML_HEAD_AND_BODY)))
 				uri.setParameter(CoreConstants.PARAMETER_CHECK_HTML_HEAD_AND_BODY, Boolean.TRUE.toString());
-			
+
 			setMarkupAttribute("src", uri.getUri());
 		}
-		
+
 		String height = iwc.getParameter("heightPercent");
 		if (!StringUtil.isEmpty(height))
 			setHeight(height.concat(CoreConstants.PERCENT));
@@ -279,7 +279,7 @@ public class IFrame extends InterfaceObject {
 		String width = iwc.getParameter("widthPercent");
 		if (!StringUtil.isEmpty(width))
 			setWidth(width.concat(CoreConstants.PERCENT));
-		
+
 		if (this.transparent) {
 			setMarkupAttribute("ALLOWTRANSPARENCY", "true");
 		}
@@ -295,7 +295,7 @@ public class IFrame extends InterfaceObject {
 				print(content);
 			}
 			println("</iframe>\n");
-			
+
 			if (getFrameMarginTop() != null && getFrameMarginBottom() != null) {
 				println("<script type=\"text/javascript\">");
 				String frameId = this.getID();
@@ -304,14 +304,14 @@ public class IFrame extends InterfaceObject {
 				println("window.onresize = function() { setIframeHeight('"+frameId+"',"+getFrameMarginTop()+","+getFrameMarginBottom()+")}");
 				println("</script>");
 			}
-			
+
 		}
 	}
 
 	public void addLanguageParameter(boolean add) {
 		this.addLanguageParameter = add;
 	}
-	
+
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
@@ -326,11 +326,11 @@ public class IFrame extends InterfaceObject {
 	public boolean isContainer() {
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * <p>
-	 * This method is for creating an iframe with 'floating' height, i.e. that the frame with take 
+	 * This method is for creating an iframe with 'floating' height, i.e. that the frame with take
 	 * the height of the window minus the top and bottom margins specified in this function. This is
 	 * implemented by an added javascript call.
 	 * </p>
@@ -341,7 +341,7 @@ public class IFrame extends InterfaceObject {
 		setFrameMarginTop(new Integer(marginTop));
 		setFrameMarginBottom(new Integer(marginBottom));
 	}
-	
+
 	/**
 	 * @return Returns the frameMarginBottom.
 	 */
@@ -349,7 +349,7 @@ public class IFrame extends InterfaceObject {
 		return (Integer)getAttributes().get("iframeMarginBottom");
 	}
 
-	
+
 	/**
 	 * @param frameMarginBottom The frameMarginBottom to set.
 	 */
@@ -357,7 +357,7 @@ public class IFrame extends InterfaceObject {
 		getAttributes().put("iframeMarginBottom",frameMarginBottom);
 	}
 
-	
+
 	/**
 	 * @return Returns the frameMarginTop.
 	 */
@@ -365,7 +365,7 @@ public class IFrame extends InterfaceObject {
 		return (Integer)getAttributes().get("iframeMarginTop");
 	}
 
-	
+
 	/**
 	 * @param frameMarginTop The frameMarginTop to set.
 	 */
