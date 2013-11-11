@@ -1482,12 +1482,12 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		IWMainApplicationSettings applicationSettings = iwma.getSettings();
 
 		if (applicationSettings.getIfUseSessionPolling()) {
+			String idlePeriod = applicationSettings.getProperty("iw.core.polling_interval", "1200000");
 			PresentationUtil.addJavaScriptActionToBody(iwc, new StringBuilder("registerEvent(window, 'load', function() {IWCORE.activeSessionPolling(")
-				.append(applicationSettings.getProperty("iw.core.polling_interval", "1200000")).append(", true);});").toString());
+				.append(idlePeriod).append(", true);});").toString());
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	protected void addNotifications(IWContext iwc) {
 		Map<String, ? extends Notifier> notifiers = WebApplicationContextUtils.getWebApplicationContext(iwc.getServletContext()).getBeansOfType(Notifier.class);
 		if (notifiers == null || notifiers.isEmpty()) {
