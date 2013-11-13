@@ -1456,7 +1456,7 @@ public void delete(int userId) throws SQLException {
 		return column;
 	}
 
-	public Collection ejbFindByNames(String first, String middle, String last, boolean useLoweredValues) throws FinderException {
+	public Collection<Integer> ejbFindByNames(String first, String middle, String last, boolean useLoweredValues) throws FinderException {
 	    SelectQuery query = idoSelectQuery();
 	    Table users = new Table(this);
 		if (first != null || middle != null || last != null) {

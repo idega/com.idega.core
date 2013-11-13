@@ -369,7 +369,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwac) {
 		try {
-			return (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
+			return com.idega.business.IBOLookup.getServiceInstance(iwac, GroupBusiness.class);
 		}
 		catch (RemoteException e) {
 			e.printStackTrace();
@@ -663,21 +663,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	} // method hasPermission
 
 	private Collection<Group> getParentGroupsAndPermissionControllingParentGroups(String permissionKey, User user) throws RemoteException {
-		Collection<Group> groups;
-		//must be slow optimize
-		groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
+		Collection<Group> groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
 
 		List<Group> groupsToCheckForPermissions = new ArrayList<Group>();
-		for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
-			Group parent = iter.next();
-			Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
-			if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
-				groupsToCheckForPermissions.add(permissionControllingParentGroup);
+		if (!ListUtil.isEmpty(groups)) {
+			for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
+				Group parent = iter.next();
+				Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
+				if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
+					groupsToCheckForPermissions.add(permissionControllingParentGroup);
+				}
 			}
 		}
 
-		if (groups != null)
+		if (groups != null && groupsToCheckForPermissions != null) {
 			groups.addAll(groupsToCheckForPermissions);
+		}
 
 		return groups;
 	}
@@ -2124,6 +2125,30 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		return oldPermissions;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.accesscontrol.business.AccessController#hasRole(com.idega.user.data.User, java.util.Collection)
+	 */
+	@Override
+	public boolean hasRole(User user, Collection<String> roleKeys) {
+		if (user == null || ListUtil.isEmpty(roleKeys)) {
+			return Boolean.FALSE;
+		}
+
+		Set<String> allUserRoles = getAllRolesForUser(user);
+		if (ListUtil.isEmpty(allUserRoles)) {
+			return Boolean.FALSE;
+		}
+
+		for (String roleKey: roleKeys) {
+			if (allUserRoles.contains(roleKey)) {
+				return Boolean.TRUE;
+			}
+		}
+
+		return Boolean.FALSE;
 	}
 
 	/**

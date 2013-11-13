@@ -1,6 +1,11 @@
 /*
  * $Id: IWMainApplicationSettings.java,v 1.61 2009/03/18 14:36:51 laddi Exp $
  * Created in 2001 by Tryggvi Larusson
+<<<<<<< HEAD
+=======
+ *
+ * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
+>>>>>>> e985a190b3270919ad15d235fc793501e7d9a683
  *
  * Copyright (C) 2001-2005 Idega software hf. All Rights Reserved.
  *
@@ -67,7 +72,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	public static boolean CREATE_STRINGS = true;
 	public static boolean CREATE_PROPERTIES = true;
 
-	private static String DEFAULT_CHARACTER_ENCODING; // = "ISO-8859-1";
+	private static String DEFAULT_CHARACTER_ENCODING; //= "ISO-8859-1";
 
 	private static String DEFAULT_TEMPLATE_NAME;
 	private static String DEFAULT_TEMPLATE_CLASS;
@@ -124,7 +129,7 @@ public class IWMainApplicationSettings implements MutableClass {
 		_SERVICE_CLASSES_KEY = "iw_service_class_key";
 	}
 
-	// instance variables:
+	//instance variables:
 	private IWMainApplication application = null;
 	private Locale cachedDefaultLocale = null;
 
@@ -151,15 +156,7 @@ public class IWMainApplicationSettings implements MutableClass {
 	private void preloadCache() {
 		if (!this.preloadedCache) {
 			try {
-
-				/*
-				 * @SuppressWarnings("unchecked") Set<String> keys =
-				 * getApplicationBindingBusiness().keySet();
-				 *
-				 * for (String key : keys) { //cache if(key!=null){} }
-				 */
-
-				this.preloadedCache = true;
+				this.preloadedCache=true;
 			}
 			catch (Exception e) {
 				e.printStackTrace();
@@ -178,8 +175,9 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * Returns the corresponding value of the specified key. If there is no entry
-	 * the specified defaultReturnValue is stored and returned.
+	 * Returns the corresponding value of the specified key.
+	 * If there is no entry the specified defaultReturnValue is stored and
+	 * returned.
 	 *
 	 * @param key
 	 * @param defaultReturnValue
@@ -315,10 +313,17 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	/**
 	 *
+<<<<<<< HEAD
 	 * Special method that is called by IWMainApplicationStarter. The value is not
 	 * used at the moment, returns therefore null. Keep in mind that during the
 	 * call the database is not initialized yet. The value is always fetched from
 	 * idegaweb.pxml file.
+=======
+	 * Special method that is called by IWMainApplicationStarter.
+	 * The value is not used at the moment, returns therefore null.
+	 * Keep in mind that during the call the database is not initialized yet.
+	 * The value is always fetched from idegaweb.pxml file.
+>>>>>>> e985a190b3270919ad15d235fc793501e7d9a683
 	 *
 	 * @return
 	 */
@@ -328,10 +333,17 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	/**
 	 *
+<<<<<<< HEAD
 	 * Special method that is called by IWMainApplication. The value is not used
 	 * at the moment, returns therefore null. Keep in mind that during the call
 	 * the database is not initialized yet. The value is always fetched from
 	 * idegaweb.pxml file.
+=======
+	 * Special method that is called by IWMainApplication.
+	 * The value is not used at the moment, returns therefore null.
+	 * Keep in mind that during the call the database is not initialized yet.
+	 * The value is always fetched from idegaweb.pxml file.
+>>>>>>> e985a190b3270919ad15d235fc793501e7d9a683
 	 *
 	 * @return
 	 */
@@ -341,10 +353,17 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	/**
 	 *
+<<<<<<< HEAD
 	 * Special method that is called by IWMainApplicationStarter. The value is not
 	 * used at the moment, returns therefore null. Keep in mind that during the
 	 * call the database is not initialized yet. The value is always fetched from
 	 * idegaweb.pxml file.
+=======
+	 * Special method that is called by IWMainApplicationStarter.
+	 * The value is not used at the moment, returns therefore null.
+	 * Keep in mind that during the call the database is not initialized yet.
+	 * The value is always fetched from idegaweb.pxml file.
+>>>>>>> e985a190b3270919ad15d235fc793501e7d9a683
 	 *
 	 * @return
 	 */
@@ -374,8 +393,12 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
+<<<<<<< HEAD
 	 * Gets the default locale which is assigned to all users if they have not
 	 * chosen a locale.
+=======
+	 * Gets the default locale which is assigned to all users if they have not chosen a locale.
+>>>>>>> e985a190b3270919ad15d235fc793501e7d9a683
 	 *
 	 * @return The set application default locale. If not set it returns the
 	 *         english locale.
@@ -433,7 +456,20 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 *
+	 * Returns a list of Class objects corresponding to the IWService Classes
+	 */
+	public boolean removeIWService(Class serviceClass) {
+		return false;
+	}
+
+	/**
+	 * Returns false if the class is wrong or it fails
+	 */
+	public boolean addIWService(Class serviceClass) {
+		return false;
+	}
+
+	/**
 	 * Returns a list of Class objects corresponding to the IWService Classes
 	 */
 	public List<Class<? extends IWService>> getServiceClasses() {
@@ -446,7 +482,6 @@ public class IWMainApplicationSettings implements MutableClass {
 				IWProperty item = iter.next();
 				String serviceClass = item.getValue();
 				try {
-					@SuppressWarnings("unchecked")
 					Class<? extends IWService> theClass = RefactorClassRegistry.forName(serviceClass);
 					l.add(theClass);
 				} catch (Exception ex) {
@@ -689,9 +724,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 *
 	 * Gets if the application should automatically write down bundle property
-	 * files (.pxml) fiiles on shutdown. This defaults to true;
+	 * files (.pxml) files on shutdown. This defaults to true;
 	 */
 	public boolean getWriteBundleFilesOnShutdown() {
 		String value = getFromApplicationBinding("write_bundle_files_on_shudown");
@@ -702,9 +736,8 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 *
 	 * Sets if the application should automatically write down bundle property
-	 * files (.pxml) fiiles on shutdown. This defaults to true, but can be
+	 * files (.pxml) files on shutdown. This defaults to true, but can be
 	 * specified on startup with setting the variable
 	 * write_bundle_files_on_shudown=false in idegaweb.pxml
 	 */
@@ -831,16 +864,16 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-	 * @deprecated Use setProperty(String, String), getProperty(String),
-	 *             getBoolean(String), getProperty(String, String)
+	 * @deprecated
 	 *
-	 *             DO NOT USE this method. Will be removed pretty soon. It is a
-	 *             temporary method. Only used by IBColorChooserWindow that is
-	 *             storing a color list.
+	 * Use setProperty(String, String), getProperty(String), getBoolean(String), getProperty(String, String)
 	 *
-	 *             !!!!!!!!!!!!!! Note: caller should store the list immediately,
-	 *             store method is not called anywhere !!!!!!!!!!!!!!!!!!!!!!!! In
-	 *             the past store was called during shutdown of the application.
+	 * DO NOT USE this method. Will be removed pretty soon.
+	 * It is a temporary method.
+	 * Only used by IBColorChooserWindow that is storing a color list.
+	 *
+	 * !!!!!!!!!!!!!! Note: caller should store the list immediately, store method is not called anywhere !!!!!!!!!!!!!!!!!!!!!!!!
+	 * In the past store was called during shutdown of the application.
 	 *
 	 * @param key
 	 * @return

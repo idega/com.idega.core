@@ -26,6 +26,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Map;
 import java.util.Vector;
 import java.util.logging.Level;
@@ -711,21 +712,20 @@ public abstract class DatastoreInterface implements MutableClass {
 				t.begin();
 				int length;
 				MetaData data;
-				Map metadata = entity.getMetaDataAttributes();
-				Hashtable ids = entity.getMetaDataIds();
-				Map types = entity.getMetaDataTypes();
-//				Map ordering = entity.getMetaDataOrdering();
+				Map<String, String> metadata = entity.getMetaDataAttributes();
+				Hashtable<String, Integer> ids = entity.getMetaDataIds();
+				Map<String, String> types = entity.getMetaDataTypes();
 
-				Vector insert = entity.getMetaDataInsertVector();
-				Vector delete = entity.getMetaDataDeleteVector();
-				Vector update = entity.getMetaDataUpdateVector();
+				List<String> insert = entity.getMetaDataInsert();
+				List<String> delete = entity.getMetaDataDelete();
+				List<String> update = entity.getMetaDataUpdate();
 				if (insert != null) {
 					length = insert.size();
 					for (int i = 0; i < length; i++) {
 						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).createLegacy();
-						data.setMetaDataNameAndValue((String) insert.elementAt(i), (String) metadata.get(insert.elementAt(i)));
-						if (types != null && types.containsKey(insert.elementAt(i))) {
-							data.setMetaDataType((String) types.get(insert.elementAt(i)));
+						data.setMetaDataNameAndValue(insert.get(i), metadata.get(insert.get(i)));
+						if (types != null && types.containsKey(insert.get(i))) {
+							data.setMetaDataType(types.get(insert.get(i)));
 						}
 						else {
 							data.setMetaDataType("java.lang.String");
@@ -744,12 +744,12 @@ public abstract class DatastoreInterface implements MutableClass {
 							System.out.println("ids is null");
 						}
 						else {
-							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.elementAt(i)));
+							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(update.get(i)));
 							//do not construct with id to avoid database access
 							//System.out.println("ID: "+data.getID());
-							data.setMetaDataNameAndValue((String) update.elementAt(i), (String) metadata.get(update.elementAt(i)));
-							if (types != null && types.containsKey(update.elementAt(i))) {
-								data.setMetaDataType((String) types.get(update.elementAt(i)));
+							data.setMetaDataNameAndValue(update.get(i), metadata.get(update.get(i)));
+							if (types != null && types.containsKey(update.get(i))) {
+								data.setMetaDataType(types.get(update.get(i)));
 							}
 							else {
 								data.setMetaDataType("java.lang.String");
@@ -762,7 +762,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				if (delete != null) {
 					length = delete.size();
 					for (int i = 0; i < length; i++) {
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.elementAt(i)));
+						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.get(i)));
 						//data.setID();
 						entity.idoRemoveFrom(data);
 						data.remove();

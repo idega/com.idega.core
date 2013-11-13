@@ -18,6 +18,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PresentationUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -68,6 +69,8 @@ public class IWDatePicker extends TextInput {
 	private static final String SHOW_TIME_PROPERTY = "showTime";
 	private static final String USE_CURRENT_PROPERTY = "useCurrent";
 	private static final String YEAR_RANGE_PROPERTY = "yearRange";
+
+	private String version;
 
 	/**
 	 * Constructs a new <code>TextInput</code> with the name "untitled".
@@ -296,16 +299,20 @@ public class IWDatePicker extends TextInput {
 		JQuery jQuery = getJQuery();
 		scripts.add(jQuery.getBundleURIToJQueryLib());
 		scripts.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_CORE));
-		scripts.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_DATEPICKER));
+		if (StringUtil.isEmpty(getVersion())) {
+			scripts.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_DATEPICKER));
+		} else {
+			scripts.add(jQuery.getBundleURIToJQueryUILib(getVersion(), "ui.datepicker.js"));
+		}
 
 		if (language != null) {
 			scripts.add(jQuery.getBundleURIToJQueryUILib("1.8.17/i18n", "ui.datepicker-" + language + ".js"));
 		}
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.core.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.theme.css"));
-		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.8.17/themes/base", "ui.datepicker.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.10.3/themes/base", "ui.core.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.10.3/themes/base", "ui.theme.css"));
+		PresentationUtil.addStyleSheetToHeader(iwc, jQuery.getBundleURIToJQueryUILib("1.10.3/themes/base", "ui.datepicker.css"));
 	}
 
 	@Override
@@ -439,4 +446,13 @@ public class IWDatePicker extends TextInput {
 	public void setImageURI(String imageURI) {
 		this.imageURI = imageURI;
 	}
+
+	public String getVersion() {
+		return version;
+	}
+
+	public void setVersion(String version) {
+		this.version = version;
+	}
+
 }

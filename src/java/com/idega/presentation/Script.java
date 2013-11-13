@@ -79,7 +79,8 @@ public class Script extends PresentationObject {
 	public String getScriptCode(IWContext iwc) {
 		StringBuffer returnString = new StringBuffer();
 		for (Iterator<String> iter = getScriptCode().keySet().iterator(); iter.hasNext();) {
-			String functionCode = getScriptCode().get(iter.next());
+			String function = iter.next();
+			String functionCode = getScriptCode().get(function);
 			returnString.append(functionCode + "\n");
 		}
 		return returnString.toString();
@@ -201,6 +202,10 @@ public class Script extends PresentationObject {
 				  "l.setAttribute('src', '"+jsString+"'); "+
 				  "l.setAttribute('type', 'text/javascript'); "+
 				  "document.getElementsByTagName('head')[0].appendChild(l); \n");
+
+
+			// document.write("<scr"+"ipt
+			// src=/js/curtain_menu/menumaker.jsp><"+"/script>")
 		}
 	}
 
@@ -273,6 +278,7 @@ public class Script extends PresentationObject {
 			obj.scriptType = this.scriptType;
 			if (this.scriptCode != null) {
 				obj.scriptCode = MapUtil.deepCopy(scriptCode);
+//				obj.scriptCode = (Map<String, String>) ((LinkedHashMap<String, String>) this.scriptCode).clone();
 			}
 		}
 		catch (Exception ex) {
@@ -282,6 +288,12 @@ public class Script extends PresentationObject {
 	}
 
 	@SuppressWarnings("unchecked")
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext,
+	 *      java.lang.Object)
+	 */
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[]) state;
@@ -293,6 +305,11 @@ public class Script extends PresentationObject {
 		this.scriptLines = (String)values[5];
 	}
 
+	/*
+	 * (non-Javadoc)
+	 *
+	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
+	 */
 	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[6];

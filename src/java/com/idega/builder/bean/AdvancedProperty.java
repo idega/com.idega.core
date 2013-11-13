@@ -28,6 +28,11 @@ public class AdvancedProperty implements Serializable {
 		this.value = value;
 	}
 
+	public AdvancedProperty(String id, Long value) {
+		this(id);
+		this.value = String.valueOf(value);
+	}
+
 	public AdvancedProperty(String id, String value, String name) {
 		this(id, value);
 
@@ -76,6 +81,6 @@ public class AdvancedProperty implements Serializable {
 
 	@Override
 	public String toString() {
-		return CoreConstants.EMPTY + getId() + ": " + getValue() + ", name: " + getName();
+		return getId() + CoreConstants.COLON + CoreConstants.SPACE + getValue() + ", name: " + getName();
 	}
 }

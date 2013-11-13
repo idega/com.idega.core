@@ -17,11 +17,13 @@ import javax.faces.component.UIComponent;
  * A subclass of BuilderPageFacetMap specifically used by HtmlPage
  * </p>
  *  Last modified: $Date: 2005/05/31 09:45:09 $ by $Author: palli $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
  */
 public class HtmlPageRegionFacetMap extends BuilderPageFacetMap {
+
+	private static final long serialVersionUID = -1529359742683000814L;
 
 	/**
 	 * @param component
@@ -29,11 +31,12 @@ public class HtmlPageRegionFacetMap extends BuilderPageFacetMap {
 	public HtmlPageRegionFacetMap(UIComponent component) {
 		super(component);
 	}
-	
+
 	/**
 	 * @param key
 	 * @return
 	 */
+	@Override
 	protected UIComponent findRegionComponent(String key) {
 		/*Page page = (Page) this.getComponent();
 		UIComponent component = page;
@@ -41,7 +44,8 @@ public class HtmlPageRegionFacetMap extends BuilderPageFacetMap {
 		return component;*/
 		return super.findRegionComponent(key);
 	}
-	
+
+	@Override
 	protected UIComponent findRegionComponentRecursive(UIComponent component, String key) {
 		/*for (Iterator iter = component.getFacetsAndChildren(); iter.hasNext();) {
 			UIComponent child = (UIComponent) iter.next();

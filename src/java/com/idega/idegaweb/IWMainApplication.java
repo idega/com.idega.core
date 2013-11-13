@@ -542,11 +542,11 @@ public class IWMainApplication	extends Application  implements MutableClass {
     }
 
     public String getObjectInstanciatorURI(String className) {
-		if(useNewURLScheme){
+		if (useNewURLScheme) {
 			try {
-				return this.getWindowOpenerURI(RefactorClassRegistry.forName(className));
+				Class<UIComponent> ui = RefactorClassRegistry.forName(className);
+				return this.getWindowOpenerURI(ui);
 			} catch (ClassNotFoundException e) {
-				// TODO Auto-generated catch block
 				e.printStackTrace();
 				throw new RuntimeException(e);
 			}
@@ -1481,13 +1481,16 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return debug;
     }
 
-    public void startFileSystem() {
+    public boolean startFileSystem(boolean logError) {
         try {
-            ICFileSystem fs = ICFileSystemFactory.getFileSystem(this.getIWApplicationContext());
-            fs.initialize();
+        	ICFileSystem system = ICFileSystemFactory.getFileSystem(this.getIWApplicationContext());
+        	system.initialize();
+        	return true;
         } catch (Exception e) {
-            log.warning("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
+        	if (logError)
+        		log.warning("IWMainApplication.startFileSystem() : There was an error, most likely the media bundle is not installed");
         }
+        return false;
     }
 
     /**
@@ -1506,8 +1509,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         } else {
             appContext = SLASH;
         }
-        //checkedAppContext = true;
-    		getIWApplicationContext().getDomain().setServerContextPath(appContext);
+    	getIWApplicationContext().getDomain().setServerContextPath(appContext);
     }
 
     /**

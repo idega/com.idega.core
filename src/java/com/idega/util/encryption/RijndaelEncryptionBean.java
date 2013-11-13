@@ -37,7 +37,7 @@ import com.idega.util.CoreConstants;
 public class RijndaelEncryptionBean {
 
 	private String secretKey = null;
-	protected Base64 base64 = new Base64();
+
 	private int keySize = 256;
 	private byte[] IV = new byte[] {0x43, 0x32, 0x11, 0x3a, 0x50, 0x37,  0x15, 0x74, 0x56, 0x63, 0x43, 0x56, 0x65, 0x64, 0x2a, 0x38 };
 
@@ -79,7 +79,7 @@ public class RijndaelEncryptionBean {
 		IvParameterSpec ivSpec = new IvParameterSpec(iv);
 		cipher.init(Cipher.ENCRYPT_MODE, keySpec, ivSpec);
 		byte[] results = cipher.doFinal(text.getBytes(CoreConstants.ENCODING_UTF8));
-		return new String(this.base64.encode(results));
+		return new String(Base64.encodeBase64(results), CoreConstants.ENCODING_UTF8);
 	}
 
 	/**
@@ -114,7 +114,7 @@ public class RijndaelEncryptionBean {
 		SecretKeySpec keySpec = new SecretKeySpec(keyBytes, "AES");
 		IvParameterSpec ivSpec = new IvParameterSpec(getIV());
 		cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
-		byte[] results = cipher.doFinal(this.base64.decode(text.getBytes()));
+		byte[] results = cipher.doFinal(Base64.decodeBase64(text.getBytes(CoreConstants.ENCODING_UTF8)));
 		return new String(results, CoreConstants.ENCODING_UTF8);
 	}
 

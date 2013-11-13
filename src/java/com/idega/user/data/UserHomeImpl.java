@@ -126,7 +126,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 			java.lang.String p1, java.lang.String p2, boolean useLoweredValues)
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		Collection ids = ((UserBMPBean) entity).ejbFindByNames(p0, p1, p2,
+		Collection<Integer> ids = ((UserBMPBean) entity).ejbFindByNames(p0, p1, p2,
 				useLoweredValues);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);

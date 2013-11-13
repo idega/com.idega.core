@@ -1,20 +1,20 @@
 /*
  * $Id: IDOContainer.java,v 1.28 2009/04/22 12:50:56 valdas Exp $
  * Created in 2002 by Tryggvi Larusson
- * 
+ *
  * Copyright (C) 2002-2006 Idega software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.data;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -33,7 +33,7 @@ import com.idega.util.datastructures.HashtableDoubleKeyed;
  * getting access to other component of the persistence engine.
  * </p>
  * Last modified: $Date: 2009/04/22 12:50:56 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.28 $
  */
@@ -51,12 +51,12 @@ public class IDOContainer implements Singleton {
 	// entities
 	private boolean beanCachingActiveByDefault = false;
 	private boolean queryCachingActive = false;
-	private Map emptyBeanInstances;
-	private Map beanCacheMap;
-	private Map isBeanCacheActive;
+	private Map<Class<?>, List<?>> emptyBeanInstances;
+	private Map<String, Map<Class<?>, IDOBeanCache>> beanCacheMap;
+	private Map<Class<?>, Boolean> isBeanCacheActive;
 	// These variables were moved from GenericEntity:
-	private Map entityAttributes;
-	private Map entityStaticInstances;
+	private Map<Class<?>, IDOEntityDefinition> entityAttributes;
+	private Map<Class<?>, IDOEntity> entityStaticInstances;
 	private HashtableDoubleKeyed<String, EntityRelationship> relationshipTables = new HashtableDoubleKeyed<String, EntityRelationship>();
 
 	protected IDOContainer() {
@@ -67,9 +67,9 @@ public class IDOContainer implements Singleton {
 		return (IDOContainer) SingletonRepository.getRepository().getInstance(IDOContainer.class, instantiator);
 	}
 
-	protected Map getBeanMap() {
+	protected Map<Class<?>, List<?>> getBeanMap() {
 		if (this.emptyBeanInstances == null) {
-			this.emptyBeanInstances = new HashMap();
+			this.emptyBeanInstances = new HashMap<Class<?>, List<?>>();
 		}
 		return this.emptyBeanInstances;
 	}
@@ -79,12 +79,12 @@ public class IDOContainer implements Singleton {
 	 * Map with all datasources and hashmaps for beancache for each datasource.<br/>
 	 * Keys are datasourceNames and values are Maps for each datasource.
 	 * </p>
-	 * 
+	 *
 	 * @return
 	 */
-	protected Map getDatasourcesBeanCacheMaps() {
+	protected Map<String, Map<Class<?>, IDOBeanCache>> getDatasourcesBeanCacheMaps() {
 		if (this.beanCacheMap == null) {
-			this.beanCacheMap = new HashMap();
+			this.beanCacheMap = new HashMap<String, Map<Class<?>, IDOBeanCache>>();
 		}
 		return this.beanCacheMap;
 	}
@@ -94,29 +94,29 @@ public class IDOContainer implements Singleton {
 	 * Gets a BeanCacheMap for each datasource, where the key is a
 	 * entityInterfacesClass (Class) and value is a IDOBeanCache instance.
 	 * </p>
-	 * 
+	 *
 	 * @param dataSource
 	 * @return
 	 */
-	protected Map getBeanCacheMap(String dataSource) {
-		Map bCacheMap = getDatasourcesBeanCacheMaps();
-		Map dataSourceMap = (Map) bCacheMap.get(dataSource);
+	protected Map<Class<?>, IDOBeanCache> getBeanCacheMap(String dataSource) {
+		Map<String, Map<Class<?>, IDOBeanCache>> bCacheMap = getDatasourcesBeanCacheMaps();
+		Map<Class<?>, IDOBeanCache> dataSourceMap = bCacheMap.get(dataSource);
 		if (dataSourceMap == null) {
-			dataSourceMap = new HashMap();
+			dataSourceMap = new HashMap<Class<?>, IDOBeanCache>();
 			bCacheMap.put(dataSource, dataSourceMap);
 		}
 		return dataSourceMap;
 	}
 
-	protected Map getIsBeanCachActiveMap() {
+	protected Map<Class<?>, Boolean> getIsBeanCachActiveMap() {
 		if (this.isBeanCacheActive == null) {
-			this.isBeanCacheActive = new HashMap();
+			this.isBeanCacheActive = new HashMap<Class<?>, Boolean>();
 		}
 		return this.isBeanCacheActive;
 	}
 
-	protected IDOBeanCache getBeanCache(String datasource, Class entityInterfaceClass) {
-		IDOBeanCache idobc = (IDOBeanCache) getBeanCacheMap(datasource).get(entityInterfaceClass);
+	protected IDOBeanCache getBeanCache(String datasource, Class<? extends IDOEntity> entityInterfaceClass) {
+		IDOBeanCache idobc = getBeanCacheMap(datasource).get(entityInterfaceClass);
 		if (idobc == null) {
 			idobc = new IDOBeanCache(entityInterfaceClass, datasource);
 			getBeanCacheMap(datasource).put(entityInterfaceClass, idobc);
@@ -124,17 +124,17 @@ public class IDOContainer implements Singleton {
 		return idobc;
 	}
 
-	protected List getFreeBeansList(Class entityInterfaceClass) {
-		List l = (List) getBeanMap().get(entityInterfaceClass);
+	protected List<?> getFreeBeansList(Class<? extends IDOEntity> entityInterfaceClass) {
+		List<?> l = getBeanMap().get(entityInterfaceClass);
 		if (l == null) {
-			l = new Vector();
+			l = new ArrayList<Object>();
 		}
 		getBeanMap().put(entityInterfaceClass, l);
 		return l;
 	}
 
-	protected IDOEntity getFreeBeanInstance(Class entityInterfaceClass) throws Exception {
-		IDOEntity entity = null;
+	protected <T extends IDOEntity> T getFreeBeanInstance(Class<T> entityInterfaceClass) throws Exception {
+		T entity = null;
 		/*
 		 * List l = getFreeBeansList(entityInterfaceClass); if(!l.isEmpty()){
 		 * entity= (IDOEntity)l.get(0); }
@@ -145,9 +145,9 @@ public class IDOContainer implements Singleton {
 		return entity;
 	}
 
-	public IDOEntity createEntity(Class entityInterfaceClass) throws javax.ejb.CreateException {
+	public <T extends IDOEntity> T createEntity(Class<T> entityInterfaceClass) throws javax.ejb.CreateException {
 		try {
-			IDOEntity entity = null;
+			T entity = null;
 			try {
 				entity = getFreeBeanInstance(entityInterfaceClass);
 			}
@@ -165,9 +165,9 @@ public class IDOContainer implements Singleton {
 		}
 	}
 
-	protected IDOEntity instanciateBean(Class entityInterfaceClass) throws Exception {
-		Class beanClass = null;
-		IDOEntity entity = null;
+	protected <T extends IDOEntity> T instanciateBean(Class<T> entityInterfaceClass) throws Exception {
+		Class<T> beanClass = null;
+		T entity = null;
 		try {
 			beanClass = IDOLookup.getBeanClassFor(entityInterfaceClass);
 		}
@@ -176,7 +176,7 @@ public class IDOContainer implements Singleton {
 			t.printStackTrace();
 		}
 		try {
-			entity = (IDOEntity) beanClass.newInstance();
+			entity = beanClass.newInstance();
 		}
 		catch (Error t) {
 			System.err.println("Error instanciating bean class for bean: " + entityInterfaceClass.getName());
@@ -189,8 +189,7 @@ public class IDOContainer implements Singleton {
 	 * To find the data by a primary key (cached if appropriate), usually called
 	 * by HomeImpl classes
 	 */
-	public IDOEntity findByPrimaryKey(Class entityInterfaceClass, Object pk, IDOHome home)
-			throws javax.ejb.FinderException {
+	public <T extends IDOEntity> T findByPrimaryKey(Class<T> entityInterfaceClass, Object pk, IDOHome home) throws javax.ejb.FinderException {
 		return findByPrimaryKey(entityInterfaceClass, pk, null, home);
 	}
 
@@ -198,29 +197,31 @@ public class IDOContainer implements Singleton {
 	 * To find the data by a primary key (cached if appropriate), usually called
 	 * by HomeImpl classes
 	 */
-	IDOEntity findByPrimaryKey(Class entityInterfaceClass, Object pk, IDOHome home, String dataSourceName)
-			throws javax.ejb.FinderException {
+	<T extends IDOEntity> T findByPrimaryKey(Class<T> entityInterfaceClass, Object pk, IDOHome home, String dataSourceName) throws javax.ejb.FinderException {
 		return findByPrimaryKey(entityInterfaceClass, pk, null, home, dataSourceName);
 	}
 
 	/**
 	 * Workaround to speed up finders where the ResultSet is already created
 	 */
-	IDOEntity findByPrimaryKey(Class entityInterfaceClass, Object pk, java.sql.ResultSet rs, IDOHome home)
-			throws javax.ejb.FinderException {
+	<T extends IDOEntity> T findByPrimaryKey(Class<T> entityInterfaceClass, Object pk, java.sql.ResultSet rs, IDOHome home) throws javax.ejb.FinderException {
 		return findByPrimaryKey(entityInterfaceClass, pk, rs, home, null);
 	}
 
 	/**
 	 * Workaround to speed up finders where the ResultSet is already created
 	 */
-	IDOEntity findByPrimaryKey(Class entityInterfaceClass, Object pk, java.sql.ResultSet rs, IDOHome home,
-			String dataSourceName) throws javax.ejb.FinderException {
+	<T extends IDOEntity> T findByPrimaryKey(
+			Class<T> entityInterfaceClass,
+			Object pk,
+			java.sql.ResultSet rs,
+			IDOHome home,
+			String dataSourceName
+	) throws javax.ejb.FinderException {
 		try {
-			IDOEntity entity = null;
+			T entity = null;
 			IDOBeanCache cache = null;
-			// boolean useBeanCaching = (dataSourceName==null) &&
-			// beanCachingActive(entityInterfaceClass);
+
 			boolean useBeanCaching = beanCachingActive(entityInterfaceClass);
 			if (useBeanCaching) {
 				cache = this.getBeanCache(dataSourceName, entityInterfaceClass);
@@ -263,7 +264,7 @@ public class IDOContainer implements Singleton {
 	 * <p>
 	 * Sets if the beanCaching is active by default for all entities
 	 * </p>
-	 * 
+	 *
 	 * @param onOrOff
 	 */
 	public synchronized void setBeanCachingActiveByDefault(boolean active) {
@@ -274,13 +275,13 @@ public class IDOContainer implements Singleton {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param entityInterfaceClass
 	 * @return returns true if bean cashing is active for all entities or if it
 	 *         is active for this entityInterfaceClass
 	 */
-	protected boolean beanCachingActive(Class entityInterfaceClass) {
-		Boolean isActive = (Boolean) getIsBeanCachActiveMap().get(entityInterfaceClass);
+	protected <T extends IDOEntity> boolean beanCachingActive(Class<T> entityInterfaceClass) {
+		Boolean isActive = getIsBeanCachActiveMap().get(entityInterfaceClass);
 		if (isActive == null) {
 			try {
 				IDOEntityDefinition def = IDOLookup.getEntityDefinitionForClass(entityInterfaceClass);
@@ -307,11 +308,11 @@ public class IDOContainer implements Singleton {
 		this.queryCachingActive = onOrOff;
 	}
 
-	protected boolean queryCachingActive(Class entityInterfaceClass) {
+	protected <T extends IDOEntity> boolean queryCachingActive(Class<T> entityInterfaceClass) {
 		return this.queryCachingActive;
 	}
 
-	IDOEntity getPooledInstance(Class entityInterfaceClass) {
+	<T extends IDOEntity> T getPooledInstance(Class<T> entityInterfaceClass) {
 		return null;
 	}
 
@@ -321,12 +322,13 @@ public class IDOContainer implements Singleton {
 	}
 
 	public synchronized void flushAllBeanCache() {
-		Iterator dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
+		Iterator<String> dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
 		while (dsIterator.hasNext()) {
-			String dataSource = (String) dsIterator.next();
-			Iterator iter = getBeanCacheMap(dataSource).keySet().iterator();
+			String dataSource = dsIterator.next();
+			Iterator<Class<?>> iter = getBeanCacheMap(dataSource).keySet().iterator();
 			while (iter.hasNext()) {
-				Class interfaceClass = (Class) iter.next();
+				@SuppressWarnings("unchecked")
+				Class<IDOEntity> interfaceClass = (Class<IDOEntity>) iter.next();
 				this.getBeanCache(dataSource, interfaceClass).flushAllBeanCache();
 			}
 		}
@@ -335,12 +337,13 @@ public class IDOContainer implements Singleton {
 
 	public synchronized void flushAllQueryCache() {
 		if (this.queryCachingActive) {
-			Iterator dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
+			Iterator<String> dsIterator = getDatasourcesBeanCacheMaps().keySet().iterator();
 			while (dsIterator.hasNext()) {
-				String dataSource = (String) dsIterator.next();
-				Iterator iter = getBeanCacheMap(dataSource).keySet().iterator();
+				String dataSource = dsIterator.next();
+				Iterator<Class<?>> iter = getBeanCacheMap(dataSource).keySet().iterator();
 				while (iter.hasNext()) {
-					Class interfaceClass = (Class) iter.next();
+					@SuppressWarnings("unchecked")
+					Class<IDOEntity> interfaceClass = (Class<IDOEntity>) iter.next();
 					this.getBeanCache(dataSource, interfaceClass).flushAllQueryCache();
 				}
 			}
@@ -352,12 +355,12 @@ public class IDOContainer implements Singleton {
 	 * Map Used by the IDO Framework and stores a static instance of a
 	 * IDOEntityDefinition. This map has as a key a Class instance and a value a
 	 * IDOEntityDefinition instance.
-	 * 
+	 *
 	 * @return Returns the entityAttributes.
 	 */
-	Map getEntityDefinitions() {
+	Map<Class<?>, IDOEntityDefinition> getEntityDefinitions() {
 		if (this.entityAttributes == null) {
-			this.entityAttributes = new HashMap();
+			this.entityAttributes = new HashMap<Class<?>, IDOEntityDefinition>();
 		}
 		return this.entityAttributes;
 	}
@@ -367,9 +370,9 @@ public class IDOContainer implements Singleton {
 	 * IDOEntity. This map has as a key a Class instance and a value a IDOEntity
 	 * instance.
 	 */
-	Map getEntityStaticInstances() {
+	Map<Class<?>, IDOEntity> getEntityStaticInstances() {
 		if (this.entityStaticInstances == null) {
-			this.entityStaticInstances = new HashMap();
+			this.entityStaticInstances = new HashMap<Class<?>, IDOEntity>();
 		}
 		return this.entityStaticInstances;
 	}
@@ -379,7 +382,7 @@ public class IDOContainer implements Singleton {
 	 * The keys here are two Strings (the EntityNames or TableNames for the
 	 * Entity beans that have the relationship) and as a value an instance of
 	 * EntityRelationship.
-	 * 
+	 *
 	 * @return the relationship Map
 	 */
 	HashtableDoubleKeyed<String, EntityRelationship> getRelationshipTableMap() {

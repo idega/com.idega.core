@@ -22,6 +22,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWApplicationContext;
@@ -181,27 +182,24 @@ public IWApplicationContext getIWApplicationContext(){
   	return CoreConstants.CORE_IW_BUNDLE_IDENTIFIER;
   }
 
-
   /**
    * Get an instance of the service bean specified by serviceClass
    */
-  @SuppressWarnings("unchecked")
-protected <T extends IBOService> T getServiceInstance(Class<? extends IBOService> serviceClass) throws IBOLookupException {
-    return (T) IBOLookup.getServiceInstance(this.getIWApplicationContext(), serviceClass);
+  protected <T extends IBOService> T getServiceInstance(Class<? extends T> serviceClass) throws IBOLookupException {
+    return IBOLookup.getServiceInstance(this.getIWApplicationContext(), serviceClass);
   }
 
   /**
    * Get an instance of the session bean specified by serviceClass
    */
-  @SuppressWarnings("unchecked")
-protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionClass) throws IBOLookupException {
-    return (T) IBOLookup.getSessionInstance(iwuc, sessionClass);
+  protected <T extends IBOSession> T getSessionInstance(IWUserContext iwuc, Class<T> sessionClass) throws IBOLookupException {
+    return IBOLookup.getSessionInstance(iwuc, sessionClass);
   }
 
   /**
    * Get an instance of the home interface for the IDO bean specified identified by beanClass
    */
-    protected IDOHome getIDOHome(Class<?> beanClass)throws RemoteException{
+    protected <E extends IDOEntity> IDOHome getIDOHome(Class<E> beanClass)throws RemoteException{
     	return IDOLookup.getHome(beanClass);
   }
 

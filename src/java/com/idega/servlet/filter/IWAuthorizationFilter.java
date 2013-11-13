@@ -71,7 +71,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 			}
 			else{
 				if (isLoggedOn) {
-					response.sendError(HttpServletResponse.SC_FORBIDDEN);
+					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
 				

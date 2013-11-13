@@ -1,12 +1,12 @@
 package com.idega.data.query;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntityDefinition;
@@ -24,23 +24,23 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 	private Table baseTable;
 
-	private Vector columns;
-	private Vector leftJoins;
-	private Vector criteria;
-	private Vector order;
-	private Vector groupBy;
+	private List<Column> columns;
+	private List<LeftJoin> leftJoins;
+	private List<Criteria> criteria;
+	private List<Order> order;
+	private List<Column> groupBy;
 	private boolean _countQuery = false;
     private boolean _distinct =false;
     private boolean flag = false;
-    
+
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
-		this.columns = new Vector();
-		this.leftJoins = new Vector();
-		this.criteria = new Vector();
-		this.order = new Vector();
-		this.groupBy = new Vector();
+		this.columns = new ArrayList<Column>();
+		this.leftJoins = new ArrayList<LeftJoin>();
+		this.criteria = new ArrayList<Criteria>();
+		this.order = new ArrayList<Order>();
+		this.groupBy = new ArrayList<Column>();
 	}
 
 	public Table getBaseTable() {
@@ -83,7 +83,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public void removeColumn(Column column) {
 		this.columns.remove(column);
 	}
-	
+
 	public void removeAllColumns() {
 		this.columns.clear();
 	}
@@ -91,16 +91,16 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public void removeGroupByColumn(Column column) {
 		this.groupBy.remove(column);
 	}
-	
+
 	public void removeAllGroupByColumns() {
 		this.groupBy.clear();
 	}
 
-	public List listColumns() {
+	public List<Column> listColumns() {
 		return Collections.unmodifiableList(this.columns);
 	}
 
-	public List listGroupByColumns() {
+	public List<Column> listGroupByColumns() {
 		return Collections.unmodifiableList(this.groupBy);
 	}
 
@@ -111,12 +111,12 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public void removeCriteria(Criteria criteria) {
 		this.criteria.remove(criteria);
 	}
-	
+
 	public void removeAllCriteria(){
 		this.criteria.clear();
 	}
 
-	public List listCriteria() {
+	public List<Criteria> listCriteria() {
 		return Collections.unmodifiableList(this.criteria);
 	}
 
@@ -180,7 +180,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public void addManyToManyJoin(Table srcTable, Table destTable) throws IDORelationshipException {
 		addManyToManyJoin(srcTable, destTable, null);
 	}
-	
+
 	public void addManyToManyJoin(Table srcTable, Table destTable, String alias) throws IDORelationshipException {
 		if (srcTable.hasEntityDefinition() && destTable.hasEntityDefinition()) {
 			IDOEntityDefinition source = srcTable.getEntityDefinition();
@@ -194,9 +194,9 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 						try {
 							String middleTableName = source.getMiddleTableNameForRelation(destination.getSQLTableName());
 							if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables " + srcTable.getName().toUpperCase() + " and " + destTable.getName().toUpperCase()); }
-	
+
 							Table middleTable = new Table(middleTableName, alias);
-	
+
 							addCriteria(new JoinCriteria(srcTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), middleTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
 							addCriteria(new JoinCriteria(middleTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase()), destTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase())));
 						}
@@ -230,18 +230,18 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		this.order.clear();
 	}
 
-	public List listOrder() {
+	public List<Order> listOrder() {
 		return Collections.unmodifiableList(this.order);
 	}
 
+	@Override
 	public String toString() {
-		//return ToStringer.toString(this);
 	    Output out = new Output("    ");
 	    out.flag(isFlagged());
         this.write(out);
         return out.toString();
 	}
-	
+
 	public String toString(boolean flag){
 	    Output out =new Output("");
 	    out.flag(flag);
@@ -249,15 +249,16 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	    return out.toString();
 	}
 
+	@Override
 	public void write(Output out) {
 
 		out.println("SELECT");
-		
+
 		 if (this._countQuery) {
         	out.indent();
         	out.println("COUNT(");
         }
-        
+
         if(this._distinct){
         	out.indent();
         	out.print(" distinct ");
@@ -267,7 +268,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		out.indent();
 		appendList(out, this.columns, ",");
 		out.unindent();
-		
+
 		if (this._countQuery) {
         	out.println(")");
         	out.unindent();
@@ -281,10 +282,10 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		if(this.leftJoins.isEmpty()){
 			appendList(out,findAllUsedTables(), ",");
 		} else {
-			Vector v = new Vector();
-			v.addAll( findAllUsedTables());
-			for (Iterator iter = this.leftJoins.iterator(); iter.hasNext();) {
-				LeftJoin join = (LeftJoin) iter.next();
+			List<Outputable> v = new ArrayList<Outputable>();
+			v.addAll(findAllUsedTables());
+			for (Iterator<LeftJoin> iter = this.leftJoins.iterator(); iter.hasNext();) {
+				LeftJoin join = iter.next();
 				v.removeAll(join.getTables());
 				v.add(join);
 			}
@@ -299,7 +300,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			appendList(out, this.criteria, "AND");
 			out.unindent();
 		}
-		
+
 		// Add group by
 		if (this.groupBy.size() > 0) {
 			out.println("GROUP BY");
@@ -307,7 +308,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			appendList(out, this.groupBy, ",");
 			out.unindent();
 		}
-		
+
 		// Add order
 		if (this.order.size() > 0) {
 			out.println("ORDER BY");
@@ -317,19 +318,20 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 		}
 
 	}
-	
+
 	/**
 	 * Recurse through criterias and get the correct order of placement values
 	 * @return
 	 */
-	public List getValues(){
-	    Vector list = new Vector();
-	    for (Iterator iter = this.criteria.iterator(); iter.hasNext();) {
-            Criteria crit = (Criteria) iter.next();
-            if(crit instanceof PlaceHolder) {
-							list.addAll(((PlaceHolder)crit).getValues());
-						}
-            
+	@Override
+	public <T> List<T> getValues(){
+	    List<T> list = new ArrayList<T>();
+	    for (Iterator<Criteria> iter = this.criteria.iterator(); iter.hasNext();) {
+            Criteria crit = iter.next();
+            if (crit instanceof PlaceHolder) {
+            	List<T> critValues = ((PlaceHolder) crit).getValues();
+				list.addAll(critValues);
+            }
         }
 	    return list;
 	}
@@ -339,12 +341,12 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	 * Iterate through a Collection and append all entries (using .toString()) to
 	 * a StringBuffer.
 	 */
-	private void appendList(Output out, Collection collection, String seperator) {
-		Iterator i = collection.iterator();
+	private void appendList(Output out, Collection<? extends Outputable> collection, String seperator) {
+		Iterator<? extends Outputable> i = collection.iterator();
 		boolean hasNext = i.hasNext();
 
 		while (hasNext) {
-			Outputable curr = (Outputable) i.next();
+			Outputable curr = i.next();
 			hasNext = i.hasNext();
 			if (curr != null) {
 				curr.write(out);
@@ -359,124 +361,98 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 	/**
 	 * Find all the tables used in the query (from columns, criteria and order).
-	 * 
+	 *
 	 * @return List of {@link com.truemesh.squiggle.Table}s
 	 */
-	private Set findAllUsedTables() {
-
-		Set allTables = new HashSet();
+	private Set<Table> findAllUsedTables() {
+		Set<Table> allTables = new HashSet<Table>();
 		allTables.add(this.baseTable);
 
-		{ // Get all tables used by columns
-			Iterator i = this.columns.iterator();
-			while (i.hasNext()) {
-				Table curr = ((Column) i.next()).getTable();
-				if (curr != null && !curr.getName().equals("")) {
-					allTables.add(curr);
-				}
+		// Get all tables used by columns
+		Iterator<Column> i = this.columns.iterator();
+		while (i.hasNext()) {
+			Table curr = i.next().getTable();
+			if (curr != null && !curr.getName().equals("")) {
+				allTables.add(curr);
 			}
 		}
 
-		{ // Get all tables used by criteria
-			Iterator i = this.criteria.iterator();
-			while (i.hasNext()) {
-				Criteria curr = (Criteria) i.next();
-				if (curr.getTables() != null) {
-					allTables.addAll(curr.getTables());
-				}
+		// Get all tables used by criteria
+		Iterator<Criteria> critIter = this.criteria.iterator();
+		while (critIter.hasNext()) {
+			Criteria curr = critIter.next();
+			if (curr.getTables() != null) {
+				allTables.addAll(curr.getTables());
 			}
 		}
 
-		{ // Get all tables used by columns
-			Iterator i = this.order.iterator();
-			while (i.hasNext()) {
-				Order curr = (Order) i.next();
-				Table c = curr.getColumn().getTable();
-				if (c != null) {
-					allTables.add(c);
-				}
+		// Get all tables used by columns
+		Iterator<Order> orderIter = this.order.iterator();
+		while (orderIter.hasNext()) {
+			Order curr = orderIter.next();
+			Table c = curr.getColumn().getTable();
+			if (c != null) {
+				allTables.add(c);
 			}
 		}
 
 		return allTables;
 	}
-	
+
 	/**
 	 * @param countQuery The countQuery to set.
 	 */
 	public void setAsCountQuery(boolean countQuery) {
 		this._countQuery = countQuery;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @param distinct The distinct to set
 	 */
 	public void setAsDistinct(boolean distinct){
 		this._distinct = distinct;
 	}
-	
+
+	@Override
 	public Object clone(){
 		SelectQuery obj = null;
-		
+
 		try {
-			obj = (SelectQuery) super.clone();		
-			
+			obj = (SelectQuery) super.clone();
+
 			obj.baseTable = this.baseTable;
-			
-			//obj.columns = (Vector)columns.clone();
-			//obj.criteria = (Vector)criteria.clone();
-			//obj.order = (Vector)order.clone();
-			//obj.groupBy = (Vector)groupBy.clone();
-			
-			obj.columns = new Vector();
-			if(this.columns.size()>0){
-				obj.columns.setSize(this.columns.size());
-				Collections.copy(obj.columns,this.columns);
-			}
-			obj.leftJoins = new Vector();
-			if(this.leftJoins.size()>0){
-				obj.leftJoins.setSize(this.leftJoins.size());
-				Collections.copy(obj.leftJoins,this.leftJoins);
-			}
-			obj.criteria = new Vector();
-			if(this.criteria.size()>0){
-				obj.criteria.setSize(this.criteria.size());
-				Collections.copy(obj.criteria,this.criteria);
-			}
-			obj.order = new Vector();
-			if(this.order.size()>0){
-				obj.order.setSize(this.order.size());
-				Collections.copy(obj.order,this.order);
-			}
-			obj.groupBy = new Vector();
-			if(this.groupBy.size()>0){
-				obj.groupBy.setSize(this.groupBy.size());
-				Collections.copy(obj.groupBy,this.groupBy);
-			}
-			
+
+			obj.columns = new ArrayList<Column>(this.columns);
+			obj.leftJoins = new ArrayList<LeftJoin>(this.leftJoins);
+			obj.criteria = new ArrayList<Criteria>(this.criteria);
+			obj.order = new ArrayList<Order>(this.order);
+			obj.groupBy = new ArrayList<Column>(this.groupBy);
+
 			obj._countQuery = this._countQuery;
 			obj._distinct = this._distinct;
 
 		} catch (CloneNotSupportedException e) {
 			e.printStackTrace();
 		}
-		
+
 		return obj;
 	}
-	
-	public Collection getCriteria(){
+
+	public Collection<Criteria> getCriteria(){
 		return this.criteria;
 	}
-	
-	public Collection getOrder(){
+
+	public Collection<Order> getOrder(){
 		return this.order;
 	}
-	
-    public void flag(boolean flag) {
+
+    @Override
+	public void flag(boolean flag) {
         this.flag = flag;
     }
-    public boolean isFlagged() {
+    @Override
+	public boolean isFlagged() {
         return this.flag;
     }
 

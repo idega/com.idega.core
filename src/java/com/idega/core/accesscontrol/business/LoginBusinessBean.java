@@ -60,8 +60,10 @@ import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -270,11 +272,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return True if logOut was succesful, false if it failed
 	 */
-	protected boolean logOutUser(HttpServletRequest request) {
+	protected boolean logOutUser(HttpServletRequest request, String userName) {
 		try {
-			logOut(request);
-			// internalSetState(iwc, "loggedoff");
-			// internalSetState(iwc, STATE_LOGGED_OUT);
+			logOut(request, userName);
 			internalSetState(request, LoginState.LoggedOut);
 			return true;
 		}
@@ -284,9 +284,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public boolean logOutUser(IWContext iwc) {
-		return logOutUser(iwc.getRequest());
+		LoggedOnInfo loggedOnInfo = getLoggedOnInfo(iwc);
+		return logOutUser(iwc.getRequest(), loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin());
 	}
-
 
 	/**
 	 * Used for the LoggedOnInfo object to be able to log off users when their
@@ -296,7 +296,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean logOutUserOnSessionTimeout(HttpSession session, LoggedOnInfo logOnInfo) {
 		try {
-			Map<?, ?> m = getLoggedOnInfoMap(session);
+			Map<String, Object> m = getLoggedOnInfoMap(session);
 			LoggedOnInfo _logOnInfo = (LoggedOnInfo) m.remove(logOnInfo.getLogin());
 			if (_logOnInfo != null) {
 				getUserLoginDAO().createLogoutRecord(_logOnInfo.getLoginRecord());
@@ -320,7 +320,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	// protected void onLoginFailed(IWContext iwc, int loginState, String
 	// username) {
 	protected void onLoginFailed(HttpServletRequest request, LoginState loginState, String username) {
-		logOutUser(request);
+		logOutUser(request, username);
 		internalSetState(request, loginState);
 		try {
 			LoginBusinessBean.getLoginSessionBean().setUserLoginName(username);
@@ -416,11 +416,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * out the user depending on the request parameters.
 	 */
 	public boolean processRequest(HttpServletRequest request) throws IWException {
+		String username = null;
 		try {
 			if (isLoggedOn(request)) {
 				if (isLogOffAction(request)) {
-					// logOut(iwc);
-					// internalSetState(iwc,"loggedoff");
 					HttpSession session = request.getSession();
 					LoggedOnInfo info = getLoggedOnInfo(session);
 					if (LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())) {
@@ -428,7 +427,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 						onLoginSuccessful(request);
 					}
 					else {
-						logOutUser(request);
+						logOutUser(request, info.getLogin());
 					}
 				}
 			}
@@ -436,7 +435,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				if (isLogOnAction(request)) {
 					// int canLogin = STATE_LOGGED_OUT;
 					LoginState canLogin = LoginState.LoggedOut;
-					String username = getLoginUserName(request);
+					username = getLoginUserName(request);
 					String password = getLoginPassword(request);
 					if ((username != null) && (password != null)) {
 						canLogin = verifyPasswordAndLogin(request, username, password);
@@ -480,7 +479,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		} catch (Exception ex) {
 			try {
-				logOut(request);
+				logOut(request, username);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
@@ -526,8 +525,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
-				int seperator = unencodedNamePassword.indexOf(CoreConstants.COLON);
+				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
+				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
 					String[] toReturn = new String[2];
 					toReturn[0] = unencodedNamePassword.substring(0, seperator);
@@ -546,8 +546,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-//				sun.misc.BASE64Decoder dec = new sun.misc.BASE64Decoder();
-				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
+				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
 				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
 					return unencodedNamePassword.substring(0, seperator);
@@ -564,8 +564,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
-				int seperator = unencodedNamePassword.indexOf(CoreConstants.COLON);
+				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
+				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
 					return unencodedNamePassword.substring(seperator + 1);
 				}
@@ -581,15 +582,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean authenticateBasicAuthenticationRequest(HttpServletRequest request) {
 		String sAuthorizationHeader = RequestUtil.getAuthorizationHeader(request);
+		String username = null;
 		try {
 			if (sAuthorizationHeader != null) {
 				HttpSession session = request.getSession();
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				String unencodedNamePassword = new String(Base64.decodeBase64(encodedNamePassword.getBytes()));
+				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
 
 				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
-					String username = unencodedNamePassword.substring(0, seperator);
+					username = unencodedNamePassword.substring(0, seperator);
 					String password = unencodedNamePassword.substring(seperator + 1);
 
 					LoginState canLogin = LoginState.LoggedOut;
@@ -620,8 +623,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		} catch (Exception ex) {
 			try {
-				logOut(request);
-			} catch (Exception e) {
+				logOut(request, username);
+			}
+			catch (Exception e) {
 				e.printStackTrace();
 			}
 
@@ -662,7 +666,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	public static User getUser(IWUserContext iwc) {
+	public static com.idega.user.data.bean.User getUser(IWUserContext iwc) {
 		try {
 			return LoginBusinessBean.getLoginSessionBean().getUserEntity();
 		}
@@ -803,7 +807,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
 			if (userGroups != null) {
 				groups = new ArrayList<Group>();
-				for (com.idega.user.data.Group group : userGroups) {
+				for (com.idega.user.data.Group group: userGroups) {
 					groups.add(getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString())));
 				}
 
@@ -990,14 +994,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	protected void logOut(IWContext iwc) throws Exception {
 		HttpServletRequest request = iwc.getRequest();
-		logOut(request);
+		LoggedOnInfo loggedOnInfo = getLoggedOnInfo(iwc);
+		logOut(request, loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin());
 	}
 
-	protected void logOut(HttpServletRequest request) throws Exception {
-		// if (iwc.getSessionAttribute(LoginAttributeParameter) != null) {
+	protected void logOut(HttpServletRequest request, String userName) throws Exception {
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("test_logout_stack", false) && !"root".equals(userName)) {
+			try {
+				throw new RuntimeException("Logging out user '" + userName + "'. Rquest URI: " + request.getRequestURI());
+			} catch (Exception e) {
+				String message = "Testing logout stack";
+				LOGGER.log(Level.WARNING, message, e);
+				CoreUtil.sendExceptionNotification(message, e);
+			}
+		}
+
 		HttpSession session = request.getSession();
 		if (LoginBusinessBean.getLoginSessionBean() != null) {
-			// this.getLoggedOnInfoList(iwc).remove(this.getLoggedOnInfo(iwc));
 			LoggedOnInfo info = getLoggedOnInfo(session);
 			if (info != null) {
 				Map<String, Object> lm = getLoggedOnInfoMap(session);
@@ -1007,7 +1020,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (properties != null) {
 				properties.store();
 			}
-			// iwc.removeSessionAttribute(LoginAttributeParameter);
 			removeLoginSession(session);
 		}
 		session.invalidate();
@@ -1339,8 +1351,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
 			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
 			Collection<LoginTable> logins = loginTableHome.findLoginsForUser(user);
-
-			if (logins == null || logins.isEmpty()) {
+			if (ListUtil.isEmpty(logins)) {
 				return false;
 			}
 
@@ -1375,7 +1386,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		try {
 			login = chooseLoginRecord(iwc.getRequest(), logins, user);
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Unable to find " + LoginTable.class +  " for user " + user, e);
+			LOGGER.log(Level.WARNING, "Unable to find " + LoginTable.class.getName() +  " for user " + user, e);
 		}
 
 		try {
@@ -1397,7 +1408,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				return Boolean.TRUE;
 			}
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Failed to log in user, cause of: ", e);
+			LOGGER.log(Level.WARNING, "Failed to log in user " + user, e);
 		}
 
 		return Boolean.FALSE;
@@ -1550,7 +1561,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	protected com.idega.user.business.UserBusiness getUserBusiness(IWApplicationContext iwac) throws RemoteException {
-		return (com.idega.user.business.UserBusiness) IBOLookup.getServiceInstance(iwac, com.idega.user.business.UserBusiness.class);
+		return IBOLookup.getServiceInstance(iwac, com.idega.user.business.UserBusiness.class);
 	}
 
 	protected LoggedOnInfo createLoggedOnInfo() {

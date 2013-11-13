@@ -12,7 +12,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Logger;
 
 import com.idega.util.CoreUtil;
@@ -92,12 +91,12 @@ public class SimpleQuerier {
         try {
             Stmt= conn.createStatement();
             ResultSet RS= Stmt.executeQuery(sqlQuery);
-            Vector<String> vector= new Vector<String>();
+            List<String> results = new ArrayList<String>();
             while (RS.next()) {
-                vector.add(RS.getString(1));
+            	results.add(RS.getString(1));
             }
             RS.close();
-            theReturn= (String[]) vector.toArray(new String[0]);
+            theReturn = results.toArray(new String[0]);
         }
         finally {
             if (Stmt != null) {
@@ -106,18 +105,18 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
-    
+
     public static List<Serializable[]> executeQuery(String sqlQuery, int columns) throws Exception {
         Statement stmt = null;
         Connection conn = null;
-        
+
         long start = System.currentTimeMillis();
         List<Serializable[]> objects = null;
         try {
         	conn = getConnection();
         	stmt = conn.createStatement();
             ResultSet results = stmt.executeQuery(sqlQuery);
-            
+
             objects = new ArrayList<Serializable[]>();
             while (results.next()) {
                 Serializable[] data = new Serializable[columns];
@@ -134,16 +133,16 @@ public class SimpleQuerier {
             if (conn != null) {
             	conn.close();
             }
-            
+
             long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
             	Logger.getLogger(SimpleQuerier.class.getName()).info("Query '" + sqlQuery + "' was executed in " + (end - start) + " ms.");
             }
         }
-        
+
         return objects;
     }
-    
+
     /**
      * Gets and returns the first int in the resultset from column 'columnInResultSet'
      * @param sqlQuery
@@ -164,7 +163,7 @@ public class SimpleQuerier {
 	        }
 	    }
     }
-    
+
     /**
      * Gets and returns the first int in the resultset from column 'columnInResultSet'
      * @param sqlQuery
@@ -192,7 +191,7 @@ public class SimpleQuerier {
         return theReturn;
     }
 
-    
+
     public static int executeIntQuery(String sqlQuery, Connection conn) throws Exception {
         Statement Stmt= null;
         int theReturn= -1;
@@ -211,7 +210,7 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
-    
+
     public static int executeIntQuery(String sqlQuery) throws Exception{
         Connection conn= null;
         try {
@@ -224,7 +223,7 @@ public class SimpleQuerier {
             }
         }
     }
-    
+
     /**
      * @deprecated Replaced with idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity or executeUpdate()
      */
@@ -232,7 +231,7 @@ public class SimpleQuerier {
 	public static boolean execute(String sqlString) throws Exception {
         return execute(sqlString, true);
     }
-    
+
     /**
      * @deprecated Replaced with executeUpdate() or idoExecuteTableUpdate/idoExecuteGlobalUpdate in GenericEntity
      */
@@ -259,7 +258,7 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
-    
+
     /**
      * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if there was an update
      *  @returns true if there was an update, false if there was no update
@@ -268,7 +267,7 @@ public class SimpleQuerier {
     protected static boolean executeUpdate(String sqlString, String dataSource) throws SQLException {
         return executeUpdate(sqlString, dataSource, true);
     }
-    
+
     /**
      * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if there was an update
      *  @returns true if there was an update, false if there was no update
@@ -277,7 +276,7 @@ public class SimpleQuerier {
     public static boolean executeUpdate(String sqlString, boolean flushCache) throws SQLException {
     	return executeUpdate(sqlString, getDatasource(), flushCache);
     }
-    
+
     /**
      * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if flushCache==true
      *  @returns true if there was an update, false if there was no update

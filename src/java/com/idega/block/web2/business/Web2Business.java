@@ -470,6 +470,8 @@ public interface Web2Business extends IBOService {
 	public Collection<String> getBundleUrisToBlueimpFileUploadStyleFiles(String version);
 
 	public String getBundleUriToBootstrapFolder();
+	public Collection<String> getBundleUrisToBlueimpFileUploadBasicScriptFiles();
+
 	public String getBundleUriToBootstrapMainScriptFile();
 	public String getBundleUriToBootstrapMainStyleFile();
 	public String getBundleUriToBootstrapMainScriptFile(String version);

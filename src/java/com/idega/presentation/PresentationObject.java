@@ -13,6 +13,7 @@ import java.io.PrintWriter;
 import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
+import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -177,6 +178,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	protected PresentationObject() {
 		setTransient(true);
 	}
+
 	/**
 	 * @return The parent (subclass of PresentationObjectContainer) of the
 	 *         current object.
@@ -780,10 +782,8 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	/**
 	 * Sets the associated (attached) script object to this object
 	 */
-	public void setAssociatedScript(Script myScript)
-	{
-		if (getRootParent() != null)
-		{
+	public void setAssociatedScript(Script myScript) {
+		if (getRootParent() != null) {
 			getRootParent().setAssociatedScript(myScript);
 		}
 	}
@@ -906,33 +906,17 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * @param askForPermission
 	 * @return
 	 */
-	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
-	{
+	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)	{
 		Object object = null;
-		if (iwc != null)
-		{
-			//this.setIWApplicationContext(iwc.getApplicationContext());
-			//this.setIWUserContext(iwc);
-		}
-		if (askForPermission || iwc != null)
-		{
-			if (iwc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this,iwc))
-			{
-				//return this.clone(iwc,askForPermission);
-				object =  this.clone();
-
-			}
-			else
-			{
+		if (askForPermission || iwc != null) {
+			if (iwc.getApplicationContext().getIWMainApplication().getAccessController().hasViewPermission(this, iwc)) {
+				object = this.clone();
+			} else {
 				return NULL_CLONE_OBJECT;
 			}
-		}
-		else
-		{
+		} else {
 			object = this.clone();
 		}
-		//PresentationObject obj = (PresentationObject)object;
-		//cloneJSFObjects(obj,iwc,askForPermission);
 		return object;
 	}
 	/**
@@ -1505,15 +1489,13 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	/**
 	 * Parameter debugger
 	 */
-	public void debugParameters(IWContext iwc)
-	{
+	public void debugParameters(IWContext iwc) {
 		System.err.println("DEBUG: Parameter debugging : " + this.getClassName());
 		System.err.println("AT  :" + new java.util.Date(System.currentTimeMillis()).toString());
-		java.util.Enumeration enumer = iwc.getParameterNames();
+		Enumeration<String> enumer = iwc.getParameterNames();
 		String prm;
-		while (enumer.hasMoreElements())
-		{
-			prm = (String) enumer.nextElement();
+		while (enumer.hasMoreElements()) {
+			prm = enumer.nextElement();
 			String[] values = iwc.getParameterValues(prm);
 			for (int i = 0; i < values.length; i++)
 			{
@@ -1663,7 +1645,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 			try
 			{
 				//<<<<<<< PresentationObject.java
-				IWEventMachine machine = (IWEventMachine) IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
+				IWEventMachine machine = IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
 				//        System.out.println();
 				//=======
 				//	IWEventMachine machine =
@@ -1742,7 +1724,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		{
 			try
 			{
-				IWEventMachine machine = (IWEventMachine) IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
+				IWEventMachine machine = IBOLookup.getSessionInstance(iwuc, IWEventMachine.class);
 				if (IWMainApplication.useNewURLScheme) {
 					// register the machine as ApplicationEventListener using the helper bridge
 					iwuc.getApplicationContext().getIWMainApplication().addApplicationEventListener(OldEventSystemHelperBridge.class);
@@ -1983,7 +1965,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 			try {
 				Class<?> stateClass = ((StatefullPresentation) this)
 					.getPresentationStateClass();
-				IWStateMachine stateMachine = (IWStateMachine) IBOLookup
+				IWStateMachine stateMachine = IBOLookup
 					.getSessionInstance(iwuc, IWStateMachine.class);
 				IWPresentationState state = stateMachine.getStateFor(
 					this.formerCompoundId,
@@ -2430,26 +2412,20 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	public UIComponent getFacet(String name) {
 		return this.facetMap == null ? null : (UIComponent)this.facetMap.get(name);
 	}
-	/* (non-Javadoc)
-	 * @see javax.faces.component.UIComponent#getFacets()
-	 */
+
 	@Override
 	public Map<String, UIComponent> getFacets() {
-		if(this.facetMap==null){
+		if (this.facetMap == null) {
 			this.facetMap = new PresentationObjectComponentFacetMap(this);
 		}
 		return this.facetMap;
 	}
-	/* (non-Javadoc)
-	 * @see javax.faces.component.UIComponent#getFacetsAndChildren()
-	 */
+
 	@Override
 	public Iterator<UIComponent> getFacetsAndChildren() {
 		//Overridded because Myfaces getFacetsAndChildren() doesn't call getFacets() and getChildren() properly
 		return new FacetsAndChildrenIterator(getFacets(), getChildren());
 	}
-
-
 
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#getChildCount()

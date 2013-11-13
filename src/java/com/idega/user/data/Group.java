@@ -261,7 +261,7 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
 	 */
-	public List<Group> getParentGroups(Map<String, Collection<Group>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
+	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups

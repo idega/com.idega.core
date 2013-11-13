@@ -19,6 +19,8 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.springframework.aop.framework.Advised;
+import org.springframework.aop.support.AopUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.builder.business.BuilderLogicWrapper;
@@ -285,8 +287,9 @@ public class CoreUtil {
 	}
 
 	public static List<String> getIds(Collection<? extends IDOEntity> entities) {
-		if (ListUtil.isEmpty(entities))
+		if (ListUtil.isEmpty(entities)) {
 			return Collections.emptyList();
+		}
 
 		List<String> ids = new ArrayList<String>(entities.size());
 		for (IDOEntity entity : entities) {
@@ -300,8 +303,9 @@ public class CoreUtil {
 	}
 
 	public static List<Integer> getIdsAsIntegers(Collection<? extends IDOEntity> entities) {
-		if (ListUtil.isEmpty(entities))
+		if (ListUtil.isEmpty(entities)) {
 			return Collections.emptyList();
+		}
 
 		List<Integer> ids = new ArrayList<Integer>(entities.size());
 		for (IDOEntity entity : entities) {
@@ -425,4 +429,19 @@ public class CoreUtil {
 			LOGGER.log(Level.WARNING, "Error clearing all caches", e);
 		}
 	}
+
+	@SuppressWarnings("unchecked")
+	public static <T> T getUnProxied(Object bean) {
+		if (bean instanceof Advised && AopUtils.isAopProxy(bean)) {
+			try {
+				bean = ((Advised) bean).getTargetSource().getTarget();
+				return getUnProxied(bean);
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error while unproxying " + bean + " (" + bean.getClass().getName() + ")", e);
+			}
+		}
+
+		return (T) bean;
+	}
+
 }

@@ -31,8 +31,6 @@ import javax.servlet.ServletContext;
 import javax.servlet.ServletContextEvent;
 import javax.servlet.ServletContextListener;
 
-import com.idega.business.IBOLookup;
-import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.appserver.AppServer;
 import com.idega.core.appserver.AppServerDetector;
 import com.idega.core.builder.data.ICDomain;
@@ -356,10 +354,10 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 
 		try {
 			addToClassPath();
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			log.log(Level.WARNING, "Error adding libs to classpath", e);
 		}
+
 		// reset singletons
 		IWMainApplication.shutdownApplicationServices();
 		// enable singletons
@@ -377,47 +375,37 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// now set some properties
 		this.iwma.getSettings().setProperty("last_startup", com.idega.util.IWTimestamp.RightNow().toString());
 
-		/*IWStyleManager iwStyleManager = IWStyleManager.getInstance();
-		iwStyleManager.getStyleSheet(this.iwma);
-		if(iwStyleManager.shouldWriteDownFile()){
-			sendStartMessage("Starting IWStyleManager");
-		}
-		else{
-			sendStartMessage("Starting IWStyleManager - writing down style.css is disabled");
-		}
-		*/
 		// cleaning, maintaining, updating
 		if(!this.iwma.isInDatabaseLessMode()){
 			log.fine("Cleaning and updating database...");
-			//updateClassReferencesInDatabase();
 			updateStartDataInDatabase();
-			//cleanEmailData();
 			log.fine("...cleaning and updating database done");
 		}
 		startTemporaryBundleStarters();
 
 		startComponentRegistry();
 
-		if(!this.iwma.isInDatabaseLessMode()){
+		boolean fileSystemStarted = false;
+		if (!this.iwma.isInDatabaseLessMode()) {
 			this.iwma.startAccessController();
+
+			fileSystemStarted = this.iwma.startFileSystem(false);
 		}
 
-		if(!this.iwma.isInDatabaseLessMode()){
-			this.iwma.startFileSystem(); //added by Eiki to ensure that ic_file is created before ib_page
+		try {
+			log.fine("Loading the ViewManager...");
+			this.iwma.loadViewManager();
+			log.fine("...loading ViewManager done");
+		} catch(Exception e){
+			log.log(Level.SEVERE, "Error loading the ViewManager", e);
 		}
-		//if(IWMainApplication.USE_JSF){
-			try{
-				log.fine("Loading the ViewManager...");
-				this.iwma.loadViewManager();
-				log.fine("...loading ViewManager done");
-			}
-			catch(Exception e){
-				log.log(Level.SEVERE, "Error loading the ViewManager", e);
-			}
-		//}
 
-		if(!this.iwma.isInDatabaseLessMode()){
+		if (!this.iwma.isInDatabaseLessMode()) {
 			this.iwma.loadBundles();
+
+			if (!fileSystemStarted) {
+				this.iwma.startFileSystem(true); //added by Eiki to ensure that ic_file is created before ib_page
+			}
 		}
 
 		executeServices(this.iwma);
@@ -430,6 +418,11 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		log.info("Completed in " + time + " seconds");
 	}
 
+	/**
+	 * <p>
+	 * TODO tryggvil describe method startComponentRegistry
+	 * </p>
+	 */
 	private void startComponentRegistry() {
 		ComponentRegistry.loadRegistry(this.iwma,this.context);
 	}
@@ -494,9 +487,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		String userSystem = this.iwma.getSettings().getProperty("IW_USER_SYSTEM");
 		if(userSystem!=null){
 			if(userSystem.equalsIgnoreCase("OLD")){
-				log.fine("Using Old idegaWeb User System");
-				LoginBusinessBean.USING_OLD_USER_SYSTEM=true;
-				IBOLookup.registerImplementationForBean(User.class,OldUserBMPBean.class);
+				throw new RuntimeException("Unable to register implemantation of " + User.class.getName() +
+						" to old user system: " + OldUserBMPBean.class.getName());
 			}
 		}
 		String accControlType = this.iwma.getSettings().getProperty(IWMainApplication.IW_ACCESSCONTROL_TYPE_PROPERTY);
@@ -799,7 +791,6 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		ClassLoader currentClassLoader = getClass().getClassLoader();
 		try {
 			SortedSet<String> classNames = new TreeSet<String>();
-			@SuppressWarnings("unchecked")
 			Collection<ICObject> allICObjects = home.findAll();
 			for (Iterator<ICObject> iterator = allICObjects.iterator(); iterator.hasNext();) {
 				ICObject object = iterator.next();
@@ -819,7 +810,8 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 				log.warning("Class " + className + " could not be found but is referenced as ICObject");
 			}
 
-		} catch (FinderException ex) {
+		}
+		catch (FinderException ex) {
 			log.fine("Could not find any ICObjects");
 		}
 	}

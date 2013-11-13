@@ -25,16 +25,17 @@ import javax.ejb.FinderException;
  */
 public interface IDOHome extends EJBLocalHome {
 
-  public IDOEntity createIDO() throws CreateException;
+  public <T extends IDOEntity> T createIDO() throws CreateException;
 
   public String getDatasource();
   public void setDatasource(String dataSource);
   public void setDatasource(String dataSource, boolean reloadEntity);
 
   public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
-  public Collection findByPrimaryKeyCollection(Collection<Object> primaryKeys) throws FinderException;
+  public <T extends IDOEntity> Collection<T> findByPrimaryKeyCollection(Collection<?> primaryKey) throws FinderException;
   public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys)throws FinderException;
 
   public Object decode(String pkString);
-  public Collection decode(String[] primaryKeys);
+  public Collection<?> decode(String[] primaryKeys);
+
 }

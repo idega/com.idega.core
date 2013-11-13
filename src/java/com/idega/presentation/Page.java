@@ -882,19 +882,13 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		getFacets().put(PAGE_ASSOCIATED_SCRIPT, myScript);
 	}
 
-	/*
-	 *
-	 */
-	/**
-	 * Description of the Method
-	 */
 	private void initializeAssociatedScript() {
-		UIComponent component = getFacets().get(PAGE_ASSOCIATED_SCRIPT);
-		if (component instanceof Script) {
-			Script _theAssociatedScript = (Script) component;
-			setAssociatedScript(_theAssociatedScript);
-		} else
+		Object script = getFacets().get(PAGE_ASSOCIATED_SCRIPT);
+		if (script instanceof Script) {
+			setAssociatedScript((Script) script);
+		} else {
 			setAssociatedScript(new Script());
+		}
 	}
 
 	/**
@@ -1831,7 +1825,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			/**
 			 * @todo EJB create
 			 */
-			IWFrameBusiness fb = (IWFrameBusiness) IBOLookup.getSessionInstance(iwc, IWFrameBusiness.class);
+			IWFrameBusiness fb = IBOLookup.getSessionInstance(iwc, IWFrameBusiness.class);
 			Page pg = fb.getFrame(framePathKey, frameNameKey);
 			if (pg != null) {
 				return pg;

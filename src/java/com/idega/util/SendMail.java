@@ -16,7 +16,6 @@ import javax.mail.Message;
 import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
-import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
@@ -35,6 +34,7 @@ import com.idega.core.messaging.SMTPAuthenticator;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.sun.mail.smtp.SMTPTransport;
 
 /**
  * <p>
@@ -292,7 +292,7 @@ public class SendMail {
 			@Override
 			public void run() {
 				try {
-					Transport.send(mail);
+					SMTPTransport.send(mail);
 				} catch (Exception e) {
 					StringBuilder filesNames = new StringBuilder();
 					if (!ArrayUtil.isEmpty(attachedFiles)) {

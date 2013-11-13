@@ -65,8 +65,6 @@ public class WebServiceAuthorizationFilter implements Filter {
 	LoginBusinessBean loginBusiness = null;
 	UserBusiness userBusiness = null;
 
-	Base64 myBase64Decoder = null;
-
 	@Autowired
 	UserLoginDAO userLoginDAO;
 
@@ -159,12 +157,11 @@ public class WebServiceAuthorizationFilter implements Filter {
 
 	private boolean hasRole(UserLogin userLogin, IWMainApplication iwMainApplication) {
 		User user = userLogin.getUser();
-		List groups = user.getUserRepresentative().getParentGroups();
+		List<Group> groups = user.getUserRepresentative().getParentGroups();
 		if (groups != null) {
-			Iterator groupIterator = groups.iterator();
 			AccessController accessController = iwMainApplication.getAccessController();
-			while (groupIterator.hasNext()) {
-				Group group = (Group) groupIterator.next();
+			for (Iterator<Group> groupIterator = groups.iterator(); groupIterator.hasNext();) {
+				Group group = groupIterator.next();
 				if (accessController.hasRole(this.WEB_SERVICE_USER_ROLE, group, null)) {
 					return true;
 				}
@@ -186,31 +183,24 @@ public class WebServiceAuthorizationFilter implements Filter {
 			return null;
 		}
 		String namePassword = basicNamePassword.substring(6);
-		byte[] decodedNamePasswordArray = this.myBase64Decoder.decode(namePassword.getBytes());
-		ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer.wrap(decodedNamePasswordArray);
-		Charset charset = Charset.forName("ISO-8859-1");
-		CharBuffer buffer = charset.decode(wrappedDecodedNamePasswordArray);
-		return buffer.toString();
+		try {
+			byte[] decodedNamePasswordArray = Base64.decodeBase64(namePassword.getBytes());
+			ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer.wrap(decodedNamePasswordArray);
+			Charset charset = Charset.forName("ISO-8859-1");
+			CharBuffer buffer = charset.decode(wrappedDecodedNamePasswordArray);
+			return buffer.toString();
+		} catch (Exception ex) {
+			return null;
+		}
 	}
 
-    private LoginBusinessBean getLoginBusiness(IWApplicationContext iwac) {
-    	if (this.loginBusiness == null) {
-        	this.loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwac);
-    	}
-    	return this.loginBusiness;
+	private LoginBusinessBean getLoginBusiness(IWApplicationContext iwac) {
+		if (this.loginBusiness == null) {
+			this.loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwac);
+		}
+		return this.loginBusiness;
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
-	@Override
-	public void init(FilterConfig arg0) throws ServletException {
-		this.myBase64Decoder = new Base64();
-	}
-
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#destroy()
-	 */
 	@Override
 	public void destroy() {
 		// noting to destroy
@@ -222,4 +212,9 @@ public class WebServiceAuthorizationFilter implements Filter {
 		}
 		return userLoginDAO;
 	}
+
+	@Override
+	public void init(FilterConfig filterConfig) throws ServletException {
+	}
+
 }

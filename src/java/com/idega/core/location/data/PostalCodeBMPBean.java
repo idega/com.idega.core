@@ -5,8 +5,10 @@ package com.idega.core.location.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.Vector;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
@@ -24,6 +26,7 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
@@ -175,7 +178,20 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		return idoFindPKsByQuery(query);
 	}
 
-	public Collection ejbFindByPostalCode(Collection codes) throws FinderException {
+	/**
+	 * 
+	 * <p>Finds primary keys by given postal codes.</p>
+	 * @param codes is {@link Collection} of {@link PostalCode#getPostalCode()},
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link PostalCode#getPrimaryKey()} or
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindByPostalCode(Collection<String> codes) {
+		if (ListUtil.isEmpty(codes)) {
+			return Collections.emptyList();
+		}
+		
 		Table table = new Table(this);
 
 		SelectQuery query = new SelectQuery(table);
@@ -183,7 +199,15 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		query.addCriteria(new InCriteria(table.getColumn(COLUMN_POSTAL_CODE), codes));
 		query.addOrder(table, COLUMN_POSTAL_CODE, true);
 
-		return idoFindPKsByQuery(query);
+		try {
+			return idoFindPKsByQuery(query);
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to find primary keys by query: " + query + 
+					" cause of: ", e);
+		}
+
+		return Collections.emptyList();
 	}
 
 	public Object ejbFindByPostalCode(String code) throws FinderException {

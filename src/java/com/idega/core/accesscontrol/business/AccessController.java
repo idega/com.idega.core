@@ -158,6 +158,17 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public boolean hasRole(String roleKey, IWUserContext iwuc);
   public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
   public boolean hasRole(User user, String roleKey);
+
+  /**
+   *
+   * @param user to check access for, not <code>null</code>;
+   * @param roleKeys is {@link ICRole}s of {@link Group}s, which should be
+   * checked for, not <code>null</code>;
+   * @return <code>true</code> if user has at least one of these roles,
+   * <code>false</code> otherwise;
+   * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+   */
+  public boolean hasRole(User user, Collection<String> roleKeys);
   public boolean isRoleMaster(IWUserContext iwuc);
 
   @Deprecated

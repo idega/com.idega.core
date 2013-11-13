@@ -469,8 +469,7 @@ public class HtmlPage extends Page {
 					if (!StringUtil.isEmpty(action)) {
 						addJavaScriptAction(action);
 					}
-				}
-				else {
+				} else {
 					String sourceUri = source.getValue();
 					if (StringUtil.isEmpty(sourceUri)) {
 						break;

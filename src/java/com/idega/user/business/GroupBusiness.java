@@ -11,6 +11,7 @@ package com.idega.user.business;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -20,6 +21,7 @@ import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import com.idega.business.IBOService;
+import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
@@ -31,6 +33,7 @@ import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
 import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
 import com.idega.idegaweb.IWUserContext;
@@ -81,63 +84,63 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllGroups
 	 */
-	public Collection getAllGroups() throws java.rmi.RemoteException;
+	public Collection<Group> getAllGroups() throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllNonPermissionOrGeneralGroups
 	 */
-	public Collection getAllNonPermissionOrGeneralGroups() throws java.rmi.RemoteException;
+	public Collection<Group> getAllNonPermissionOrGeneralGroups() throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroups
 	 */
-	public Collection getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception,
+	public Collection<Group> getGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws Exception,
 			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
 	 */
-	public Collection getParentGroups(int uGroupId) throws EJBException, FinderException, java.rmi.RemoteException;
+	public Collection<Group> getParentGroups(int uGroupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
 	 */
-	public Collection getParentGroups(Group group) throws java.rmi.RemoteException;
+	public Collection<Group> getParentGroups(Group group) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
 	 */
-	public Collection getParentGroups(Group group, Map cachedParents, Map cachedGroups) throws java.rmi.RemoteException;
+	public Collection<Group> getParentGroups(Group group, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNonParentGroups
 	 */
-	public Collection getNonParentGroups(int uGroupId) throws java.rmi.RemoteException;
+	public Collection<Group> getNonParentGroups(int uGroupId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNonParentGroupsNonPermissionNonGeneral
 	 */
-	public Collection getNonParentGroupsNonPermissionNonGeneral(int uGroupId) throws java.rmi.RemoteException;
+	public Collection<Group> getNonParentGroupsNonPermissionNonGeneral(int uGroupId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsInDirect
 	 */
-	public Collection getParentGroupsInDirect(int uGroupId) throws java.rmi.RemoteException;
+	public Collection<Group> getParentGroupsInDirect(int uGroupId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection getParentGroupsRecursive(int uGroupId) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getParentGroupsRecursive(int uGroupId) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getParentGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup, Map cachedParents, Map cachedGroups) throws EJBException,
+	public Collection<Group> getParentGroupsRecursive(Group aGroup, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException,
 			java.rmi.RemoteException;
 
 	/**
@@ -148,150 +151,151 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+	public Collection<Group> getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
 			throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsers
 	 */
-	public Collection getUsers(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
+	public Collection<User> getUsers(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersDirectlyRelated
 	 */
-	public Collection getUsersDirectlyRelated(int groupId) throws EJBException, FinderException,
+	public Collection<User> getUsersDirectlyRelated(int groupId) throws EJBException, FinderException,
 			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersNotDirectlyRelated
 	 */
-	public Collection getUsersNotDirectlyRelated(int groupId) throws EJBException, FinderException,
+	public Collection<User> getUsersNotDirectlyRelated(int groupId) throws EJBException, FinderException,
 			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
 	 */
-	public Collection getChildGroupsRecursive(int groupId) throws EJBException, FinderException,
+	public Collection<Group> getChildGroupsRecursive(int groupId) throws EJBException, FinderException,
 			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
 	 */
-	public Collection getChildGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getChildGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursive
 	 */
-	public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+	public Collection<Group> getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
 			throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsers
 	 */
-	public Collection getUsers(Group group) throws FinderException, java.rmi.RemoteException;
+	public Collection<User> getUsers(Group group) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersRecursive
 	 */
-	public Collection getUsersRecursive(Group group) throws FinderException, java.rmi.RemoteException;
+	public Collection<User> getUsersRecursive(Group group) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersRecursive
 	 */
-	public Collection getUsersRecursive(int groupId) throws FinderException, java.rmi.RemoteException;
+	public Collection<User> getUsersRecursive(int groupId) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
 	 */
-	public Collection getChildGroups(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
+	public Collection<Group> getChildGroups(int groupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsResultFiltered
 	 */
-	public Collection getChildGroupsResultFiltered(Group parentGroup, String groupName, Collection groupTypes, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
+	public Collection<Group> getChildGroupsResultFiltered(Group parentGroup, String groupName, Collection<String> groupTypes, boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(int groupId, Collection groupTypesAsString,
+	public Collection<Group> getChildGroupsRecursiveResultFiltered(int groupId, Collection<String> groupTypesAsString,
 			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
+	public Collection<Group> getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString,
 			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
+	public Collection <Group>getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString,
 			boolean onlyReturnTypesInCollection, boolean includeAliases) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsRecursiveResultFiltered
 	 */
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString,
+	public Collection<Group> getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString,
 			boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
 	 */
-	public Collection getUsersFromGroupRecursive(Group group) throws java.rmi.RemoteException;
+	public Collection<User> getUsersFromGroupRecursive(Group group) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersFromGroupRecursive
 	 */
-	public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString,
+	public Collection<User> getUsersFromGroupRecursive(Group group, Collection<String> groupTypesAsString,
 			boolean onlyReturnTypesInCollection) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
 	 */
-	public Collection getChildGroups(Group aGroup) throws java.rmi.RemoteException;
+	public Collection<Group> getChildGroups(Group aGroup) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
 	 */
-	public Collection getChildGroups(Group aGroup, Collection groupTypes, boolean returnSpecifiedGroupTypes)
+	public Collection<Group> getChildGroups(Group aGroup, Collection<String> groupTypes, boolean returnSpecifiedGroupTypes)
 			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroups
 	 */
-	public Collection getChildGroups(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+	public Collection<Group> getChildGroups(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
 			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersDirectlyRelated
 	 */
-	public Collection getUsersDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException;
+	public Collection<Group> getUsersDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsInDirect
 	 */
-	public Collection getChildGroupsInDirect(int groupId) throws EJBException, FinderException,
+	public Collection<Group> getChildGroupsInDirect(int groupId) throws EJBException, FinderException,
 			java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getChildGroupsInDirect
 	 */
-	public Collection getChildGroupsInDirect(Group group) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getChildGroupsInDirect(Group group) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersNotDirectlyRelated
 	 */
-	public Collection getUsersNotDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException;
+	public Collection<User> getUsersNotDirectlyRelated(Group group) throws EJBException, RemoteException, FinderException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroups
 	 */
-	public Collection getGroups(String[] groupIDs) throws FinderException, RemoteException;
+	public Collection<Group> getGroups(String[] groupIDs) throws FinderException, RemoteException;
+	public Collection<Group> getGroups(Collection<String> groupIDs) throws FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsersForUserRepresentativeGroups
 	 */
-	public Collection getUsersForUserRepresentativeGroups(Collection groups) throws FinderException, RemoteException;
+	public Collection<User> getUsersForUserRepresentativeGroups(Collection<Group> groups) throws FinderException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#updateUsersInGroup
@@ -307,23 +311,23 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupName
 	 */
-	public Collection getGroupsByGroupName(String name) throws RemoteException;
+	public Collection<Group> getGroupsByGroupName(String name) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupNameAndTypes
 	 */
-	public Collection getGroupsByGroupNameAndGroupTypes(String name, Collection groupTypes, boolean onlyReturnTypesInCollection) throws RemoteException;
+	public Collection<Group> getGroupsByGroupNameAndGroupTypes(String name, Collection<?> groupTypes, boolean onlyReturnTypesInCollection) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByGroupTypeAndFirstPartOfName
 	 */
-	public Collection getGroupsByGroupTypeAndFirstPartOfName(String groupType, String groupNameStartsWith)
+	public Collection<Group> getGroupsByGroupTypeAndFirstPartOfName(String groupType, String groupNameStartsWith)
 			throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByAbbreviation
 	 */
-	public Collection getGroupsByAbbreviation(String abbreviation) throws RemoteException;
+	public Collection<Group> getGroupsByAbbreviation(String abbreviation) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserByID
@@ -414,24 +418,24 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllAllowedGroupTypesForChildren
 	 */
-	public Collection getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)
+	public Collection<GroupType> getAllAllowedGroupTypesForChildren(int groupId, IWUserContext iwuc)
 			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getAllAllowedGroupTypesForChildren
 	 */
-	public Collection getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc)
+	public Collection<GroupType> getAllAllowedGroupTypesForChildren(Group group, IWUserContext iwuc)
 			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#addGroupTypeChildren
 	 */
-	public void addGroupTypeChildren(List list, GroupType groupType) throws java.rmi.RemoteException;
+	public void addGroupTypeChildren(List<GroupType> list, GroupType groupType) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupType
 	 */
-	public String getGroupType(Class groupClass) throws RemoteException;
+	public String getGroupType(Class<? extends IDOEntity> groupClass) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupTypeFromString
@@ -544,7 +548,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
 	 */
-	public String getNameOfGroupWithParentName(Group group, Collection parentGroups) throws java.rmi.RemoteException;
+	public String getNameOfGroupWithParentName(Group group, Collection<Group> parentGroups) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
@@ -554,7 +558,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getNameOfGroupWithParentName
 	 */
-	public String getNameOfGroupWithParentName(Group group, Map cachedParents, Map cachedGroups)
+	public String getNameOfGroupWithParentName(Group group, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups)
 			throws java.rmi.RemoteException;
 
 	/**
@@ -620,12 +624,12 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getOwnerUsersForGroup
 	 */
-	public Collection getOwnerUsersForGroup(Group group) throws RemoteException;
+	public Collection<User> getOwnerUsersForGroup(Group group) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupsByMetaDataKeyAndValue
 	 */
-	public Collection getGroupsByMetaDataKeyAndValue(String key, String value) throws java.rmi.RemoteException;
+	public Collection<Group> getGroupsByMetaDataKeyAndValue(String key, String value) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getLastGroupTreeSnapShot
@@ -710,5 +714,25 @@ public interface GroupBusiness extends IBOService {
 	 */
 	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount);
 
-
+	/**
+	 *
+	 * @param groupId is {@link Group#getPrimaryKey()}. Group will be
+	 * selected by it, if not <code>null</code>;
+	 * @param name is {@link Group#getName()}, not <code>null</code> if
+	 * group id not provided;
+	 * @param description is {@link Group#getDescription()},
+	 * skipped if <code>null</code>;
+	 * @param city is {@link Address#getCity()} of {@link Group}, skipped
+	 * if <code>null</code>;
+	 * @param roles is {@link Collection} of {@link ICRole}s to add for
+	 * {@link Group}. Skipped if <code>null</code>;
+	 * @return updated {@link Group}s or one {@link Group}s in {@link List}
+	 * if new created or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public List<Group> update(
+			String groupId,
+			String name,
+			String description,
+			String city, Collection<String> roles);
 }

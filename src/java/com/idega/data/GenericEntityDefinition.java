@@ -37,11 +37,11 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	private boolean allRecordsCached=false;
 	private boolean useFinderCollectionPrefetch=false;
 	private int finderCollectionPrefetchSize=1000;
-	
+
 	Logger logger = Logger.getLogger(this.getClass().getName());
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public GenericEntityDefinition() {
 		super();
@@ -70,7 +70,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	}
 
 	public void addFieldEntity(IDOEntityField eField) {
-		
+
 		try {
 			EntityAttribute field = (EntityAttribute)eField;
 			if(field.isPartOfPrimaryKey()){
@@ -102,7 +102,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		}
 		return false;
 	}
-	
+
 	public void setFieldAsPartOfPrimaryKey(IDOEntityField field){
 		this._pkDefinition.addFieldEntity(field);
 	}
@@ -114,8 +114,9 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	public void setSQLTableName(String name) {
 		this._sqlTableName = name;
 	}
-	
-	
+
+
+	@Override
 	public HashMap getIndexes() throws NoIndexException{
 		if (this._indexes == null) {
 			throw new NoIndexException("No Indexes");
@@ -126,11 +127,11 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	public void addIndex(String field) {
 		addIndex(field+"_index", field);
 	}
-	
+
 	public void addIndex(String name, String field) {
 		addIndex(name, new String[] {field});
 	}
-	
+
 	public void addIndex(String name, String[] fields) {
 		if (name != null && !name.equals("") && fields != null && fields.length > 0) {
 			if (this._indexes == null) {
@@ -141,8 +142,8 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 			throw new IllegalArgumentException("Name must and fields must bet be set");
 		}
 	}
-	
-	
+
+
 	public EntityAttribute getEntityAttribute(String attributeName){
 		for (int i = 0; i < this._fields.length; i++) {
 			if (this._fields[i].getSQLFieldName().equals(attributeName)) {
@@ -151,7 +152,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		}
 		return null;
 	}
-	
+
 	public Collection getEntityFieldsCollection(){
 		Vector coll = new Vector(this._fields.length);
 		for (int i = 0; i < this._fields.length; i++) {
@@ -159,18 +160,19 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		}
 		return coll;
 	}
-	
-	
+
+
 	public void setInterfaceClass(Class interfaceClass){
 		this._interfaceClass = interfaceClass;
 	}
-	
+
 
 	// IDOEntityDefinition begins //
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getUniqueEntityName()
 	 */
+	@Override
 	public String getUniqueEntityName() {
 		return this._uniqueEntityName;
 	}
@@ -178,6 +180,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getSQLTableName()
 	 */
+	@Override
 	public String getSQLTableName() {
 		return this._sqlTableName;
 	}
@@ -185,6 +188,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getManyToManyRelatedEntities()
 	 */
+	@Override
 	public IDOEntityDefinition[] getManyToManyRelatedEntities() {
 		return this._manyToManyRelatedEntities;
 	}
@@ -192,6 +196,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getFields()
 	 */
+	@Override
 	public IDOEntityField[] getFields() {
 		return this._fields;
 	}
@@ -200,6 +205,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	 * @see com.idega.data.IDOEntityDefinition#getPrimaryKeyClass()
 	 */
 
+	@Override
 	public IDOPrimaryKeyDefinition getPrimaryKeyDefinition() {
 		return this._pkDefinition;
 	}
@@ -207,26 +213,28 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#getInterfaceClass()
 	 */
+	@Override
 	public Class getInterfaceClass() {
 		return this._interfaceClass;
 	}
-	
+
 	public Class getBeanClass() {
 		if(this._beanClass == null){
 			this._beanClass = IDOLookup.getBeanClassFor(this._interfaceClass);
 		}
 		return this._beanClass;
 	}
-	
+
+	@Override
 	public IDOEntityField[] findFieldByRelation(Class interfaceClass){
-		ArrayList list = new ArrayList();
+		ArrayList<IDOEntityField> list = new ArrayList<IDOEntityField>();
 		for (int i = 0; i < this._fields.length; i++) {
 			if(this._fields[i].getRelationShipClass().equals(interfaceClass)){
 				list.add(this._fields[i]);
 			}
 		}
 		if(list.size() > 0) {
-			return (IDOEntityField[])list.toArray(new IDOEntityField[list.size()]);
+			return list.toArray(new IDOEntityField[list.size()]);
 		}
 		else {
 			return new IDOEntityField[0];
@@ -235,6 +243,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 
 	// IDOEntityDefinition ends //
 
+	@Override
 	public IDOEntityField findFieldByUniqueName(String name){
 		for (int i = 0; i < this._fields.length; i++) {
 			if(this._fields[i].getUniqueFieldName().equalsIgnoreCase(name)){
@@ -243,7 +252,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		}
 		return null;
 	}
-	
+
 	public boolean hasField(String uniqueName){
 		IDOEntityField field = findFieldByUniqueName(uniqueName);
 		if(field!=null){
@@ -253,8 +262,8 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 			return false;
 		}
 	}
-	
-	/* 
+
+	/*
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	@Override
@@ -265,10 +274,11 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		}
 		return false;
 	}
-	
-	/* 
+
+	/*
 	 * @see com.idega.data.IDOEntityDefinition#getMiddleTableNameForRelation(java.lang.String)
 	 */
+	@Override
 	public String getMiddleTableNameForRelation(String relatedTable) {
 		EntityRelationship rel = EntityControl.getManyToManyRelationShip(this._sqlTableName, relatedTable);
 		if (rel != null) {
@@ -280,12 +290,14 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/**
 	 * @return Returns the _hasAutoIncrementColumn.
 	 */
+	@Override
 	public boolean hasAutoIncrementColumn() {
 		return this._hasAutoIncrementColumn;
 	}
 	/**
 	 * @param autoIncrementColumn The _hasAutoIncrementColumn to set.
 	 */
+	@Override
 	public void setHasAutoIncrementColumn(boolean autoIncrementColumn) {
 		this._hasAutoIncrementColumn = autoIncrementColumn;
 	}
@@ -293,35 +305,41 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/**
 	 * @return Boolean.TRUE if active by default, Boolean.FALSE if inactive by default, null if system-default
 	 */
+	@Override
 	public Boolean isBeanCachingActive() {
 		return this._isBeanCachingActive;
 	}
-	
+
+	@Override
 	public void setBeanCachingActiveByDefault(boolean value){
 		setBeanCachingActiveByDefault(value,200);
 	}
-	
+
+	@Override
 	public void setBeanCachingActiveByDefault(boolean value, int maxBeanCachedEntities){
 		this._isBeanCachingActive = ((value)?Boolean.TRUE:Boolean.FALSE);
 		this.maxBeanCachedEntities=maxBeanCachedEntities;
 	}
-	
+
+	@Override
 	public int getMaxCachedBeans(){
 		return this.maxBeanCachedEntities;
 	}
 
-	
+
 	/**
 	 * @return the allRecordsCached
 	 */
+	@Override
 	public boolean isAllRecordsCached() {
 		return this.allRecordsCached;
 	}
 
-	
+
 	/**
 	 * @param allRecordsCached the allRecordsCached to set
 	 */
+	@Override
 	public void setAllRecordsCached(boolean allRecordsCached) {
 		this.allRecordsCached = allRecordsCached;
 	}
@@ -329,6 +347,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOEntityDefinition#setBeanCachingActiveByDefault(boolean, boolean)
 	 */
+	@Override
 	public void setBeanCachingActiveByDefault(boolean beanCachingEnabled, boolean allRecordsCached) {
 		this.setBeanCachingActiveByDefault(beanCachingEnabled);
 		if(beanCachingEnabled&&allRecordsCached){
@@ -338,7 +357,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		}
 	}
 
-	
+
 	/**
 	 * @return the maxBeanCachedEntities
 	 */
@@ -346,7 +365,7 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		return this.maxBeanCachedEntities;
 	}
 
-	
+
 	/**
 	 * @param maxBeanCachedEntities the maxBeanCachedEntities to set
 	 */
@@ -354,34 +373,38 @@ public class GenericEntityDefinition implements IDOEntityDefinition {
 		this.maxBeanCachedEntities = maxBeanCachedEntities;
 	}
 
-	
+
 	/**
 	 * @return the finderCollectionPrefetchSize
 	 */
+	@Override
 	public int getFinderCollectionPrefetchSize() {
 		return this.finderCollectionPrefetchSize;
 	}
 
-	
+
 	/**
 	 * @param finderCollectionPrefetchSize the finderCollectionPrefetchSize to set
 	 */
+	@Override
 	public void setFinderCollectionPrefetchSize(int finderCollectionPrefetchSize) {
 		this.finderCollectionPrefetchSize = finderCollectionPrefetchSize;
 	}
 
-	
+
 	/**
 	 * @return the useFinderCollectionPrefetch
 	 */
+	@Override
 	public boolean isUseFinderCollectionPrefetch() {
 		return this.useFinderCollectionPrefetch;
 	}
 
-	
+
 	/**
 	 * @param useFinderCollectionPrefetch the useFinderCollectionPrefetch to set
 	 */
+	@Override
 	public void setUseFinderCollectionPrefetch(boolean useFinderCollectionPrefetch) {
 		this.useFinderCollectionPrefetch = useFinderCollectionPrefetch;
 	}

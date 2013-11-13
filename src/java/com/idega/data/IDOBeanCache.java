@@ -36,7 +36,6 @@ public class IDOBeanCache {
 	private boolean isEternal = false;
 	private int maxCachedBeans = -1;
 
-
 	IDOBeanCache(Class<? extends IDOEntity> entityInterfaceClass,String datasource) {
 		initialize(entityInterfaceClass, datasource);
 	}
@@ -49,7 +48,7 @@ public class IDOBeanCache {
 		maxCachedBeans = definition.getMaxCachedBeans();
 	}
 
-	private <T extends Object> Map<String, Collection<T>> getFindQueryCacheMap() {
+	private <T> Map<String, Collection<T>> getFindQueryCacheMap() {
 		return getCacheMap(getFindQueryCacheName());
 	}
 
@@ -65,23 +64,11 @@ public class IDOBeanCache {
 	 *
 	 * @return
 	 */
-	protected Map<Serializable, IDOEntity> getCacheMap() {
+	protected <E extends IDOEntity> Map<Serializable, E> getCacheMap() {
 		return getCacheMap(getCacheName());
 	}
 
 	private <K extends Serializable, V> Map<K, V> getCacheMap(String nameOfCache) {
-		/*
-		 * if(this.cacheMap==null){ //cacheMap=new HashMap(); int maxCachedBeans =
-		 * 200; IDOEntityDefinition entityDef; try { entityDef =
-		 * (IDOEntityDefinition)
-		 * IDOLookup.getEntityDefinitionForClass(entityInterfaceClass);
-		 * if(entityDef!=null){ maxCachedBeans=entityDef.getMaxCachedBeans(); }
-		 * //if(this.entityInterfaceClass.equals(ICObject.class)){ //
-		 * maxCachedBeans = 10000; //} this.cacheMap = new
-		 * CacheMap(maxCachedBeans); } catch (IDOLookupException e) { // TODO
-		 * Auto-generated catch block e.printStackTrace(); } } return
-		 * this.cacheMap;
-		 */
 		return getCacheManger().getCache(nameOfCache, maxCachedBeans, true, isEternal);
 	}
 
@@ -110,8 +97,9 @@ public class IDOBeanCache {
 		return IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
 	}
 
-	IDOEntity getCachedEntity(Object pk) {
-		return getCacheMap().get(pk);
+	<T extends IDOEntity> T getCachedEntity(Object pk) {
+		Map<?, T> cache = getCacheMap();
+		return cache.get(pk);
 	}
 
 	void putCachedEntity(Object pk, IDOEntity entity) {
@@ -130,16 +118,19 @@ public class IDOBeanCache {
 	 *
 	 * @return
 	 */
-	protected Collection<IDOEntity> getCachedEntities() {
-		return getCacheMap().values();
+	protected <E extends IDOEntity> Collection<E> getCachedEntities() {
+		Map<?, E> cache = getCacheMap();
+		return cache.values();
 	}
 
-	void putCachedFindQuery(String querySQL, Collection<Object> pkColl) {
-		getFindQueryCacheMap().put(querySQL, pkColl);
+	<T> void putCachedFindQuery(String querySQL, Collection<T> pkColl) {
+		Map<String, Collection<T>> cache = getFindQueryCacheMap();
+		cache.put(querySQL, pkColl);
 	}
 
-	Collection<Object> getCachedFindQuery(String querySQL) {
-		return getFindQueryCacheMap().get(querySQL);
+	<T> Collection<T> getCachedFindQuery(String querySQL) {
+		Map<String, Collection<T>> cache = getFindQueryCacheMap();
+		return cache.get(querySQL);
 	}
 
 	boolean isFindQueryCached(String queryString) {

@@ -88,6 +88,8 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
+import javax.ejb.EJBLocalObject;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -117,7 +119,8 @@ import com.idega.util.StringUtil;
 public class NotificationEntityDAOImpl extends GenericDaoImpl implements
 		NotificationEntityDAO {
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.idega.egov.hub.data.dao.NotificationEntityDAO#update(com.idega.egov.hub.data.NotificationEntity)
 	 */
 	@Override
@@ -147,6 +150,10 @@ public class NotificationEntityDAOImpl extends GenericDaoImpl implements
 		return notificationEntity;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.notifier.data.dao.NotificationEntityDAO#getNotificationReceiver(java.lang.Long)
+	 */
 	@Override
 	public NotificationReceiverEntity getNotificationReceiver(Long notificationTargetEntityId) {
 		if (notificationTargetEntityId == null) {
@@ -159,7 +166,39 @@ public class NotificationEntityDAOImpl extends GenericDaoImpl implements
 				new Param(NotificationReceiverEntity.idProp, notificationTargetEntityId));
 	}
 
-	protected NotificationReceiverEntity update(NotificationReceiverEntity nte) {
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.notifier.data.dao.NotificationEntityDAO#update(java.lang.Long, java.lang.String, java.lang.Class, java.lang.Boolean)
+	 */
+	@Override
+	public NotificationReceiverEntity update(
+			Long id,
+			String receiverId,
+			Class<? extends EJBLocalObject> receiverClass,
+			Boolean read) {
+		NotificationReceiverEntity nte = getNotificationReceiver(id);
+		if (nte == null) {
+			nte = new NotificationReceiverEntity();
+		}
+
+		if (read != null) {
+			nte.setRead(read);
+		}
+
+		if (!StringUtil.isEmpty(receiverId) && receiverClass != null) {
+			nte.setReceiverId(receiverId);
+			nte.setReceiverClass(receiverClass);
+		}
+
+		return update(nte);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.notifier.data.dao.NotificationEntityDAO#update(com.idega.notifier.data.NotificationReceiverEntity)
+	 */
+	@Override
+	public NotificationReceiverEntity update(NotificationReceiverEntity nte) {
 		if (nte == null) {
 			return null;
 		}
@@ -177,7 +216,8 @@ public class NotificationEntityDAOImpl extends GenericDaoImpl implements
 		return nte;
 	}
 
-	/* (non-Javadoc)
+	/*
+	 * (non-Javadoc)
 	 * @see com.idega.egov.hub.data.dao.NotificationEntityDAO#update(java.lang.Long, java.lang.Long)
 	 */
 	@Override

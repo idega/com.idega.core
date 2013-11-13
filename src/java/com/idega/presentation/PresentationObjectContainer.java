@@ -703,21 +703,30 @@ public class PresentationObjectContainer extends PresentationObject
 		}
 	}
 
-	protected void cloneJSFFacets(PresentationObject obj,IWUserContext iwc,boolean askForPermission){
+	protected void cloneJSFFacets(PresentationObject obj, IWUserContext iwc,boolean askForPermission){
 		//First clone the facet Map:
-		if(this.facetMap!=null){
-			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
-			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
+		if (this.facetMap != null) {
+			obj.facetMap = (Map) ((PresentationObjectComponentFacetMap) this.facetMap).clone();
+			((PresentationObjectComponentFacetMap) obj.facetMap).setComponent(obj);
 
 			//Iterate over the children to clone each child:
 			for (Iterator<String> iter = getFacets().keySet().iterator(); iter.hasNext();) {
 				String key = iter.next();
 				UIComponent component = getFacet(key);
-				if(component instanceof PresentationObject){
-					PresentationObject newObject = (PresentationObject)((PresentationObject)component).clonePermissionChecked(iwc,askForPermission);
+				PresentationObject newObject = null;
+				if (component instanceof Script) {
+					Object clone = ((Script) component).clone();
+					if (clone instanceof Script) {
+						newObject = (Script) clone;
+					}
+				} else if (component instanceof PresentationObject) {
+					PresentationObject po = (PresentationObject) component;
+					newObject = (PresentationObject) po.clonePermissionChecked(iwc, askForPermission);
+				}
+				if (newObject != null) {
 					newObject.setParentObject(obj);
 					newObject.setLocation(this.getLocation());
-					obj.getFacets().put(key,newObject);
+					obj.getFacets().put(key, newObject);
 				}
 			}
 		}

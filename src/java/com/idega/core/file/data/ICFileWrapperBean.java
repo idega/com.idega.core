@@ -89,6 +89,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getCreationDate()
 	 */
+	@Override
 	public Timestamp getCreationDate() {
 		return ((ICFile)this.getMainEntity()).getCreationDate();
 	}
@@ -96,6 +97,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getDeleted()
 	 */
+	@Override
 	public boolean getDeleted() {
 		return ((ICFile)this.getMainEntity()).getDeleted();
 	}
@@ -103,6 +105,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getDeletedByUserId()
 	 */
+	@Override
 	public int getDeletedByUserId() {
 		return ((ICFile)this.getMainEntity()).getDeletedByUserId();
 	}
@@ -110,6 +113,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getDeletedWhen()
 	 */
+	@Override
 	public Timestamp getDeletedWhen() {
 		return ((ICFile)this.getMainEntity()).getDeletedWhen();
 	}
@@ -117,6 +121,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getDescription()
 	 */
+	@Override
 	public String getDescription() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getDescription();
@@ -128,6 +133,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getFileSize()
 	 */
+	@Override
 	public Integer getFileSize() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getFileSize();
@@ -139,6 +145,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getFileValue()
 	 */
+	@Override
 	public InputStream getFileValue() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getFileValue();
@@ -150,6 +157,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getFileValueForWrite()
 	 */
+	@Override
 	public OutputStream getFileValueForWrite() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getFileValueForWrite();
@@ -161,6 +169,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getICLocale()
 	 */
+	@Override
 	public Locale getLocale() {
 		return ((ICFile)this.getMainEntity()).getLocale();
 	}
@@ -168,6 +177,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getLanguage()
 	 */
+	@Override
 	public int getLanguage() {
 		return ((ICFile)this.getMainEntity()).getLanguage();
 
@@ -176,6 +186,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getLocaleId()
 	 */
+	@Override
 	public int getLocaleId() {
 		return ((ICFile)this.getMainEntity()).getLocaleId();
 	}
@@ -183,6 +194,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getMimeType()
 	 */
+	@Override
 	public String getMimeType() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getMimeType();
@@ -194,6 +206,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getModificationDate()
 	 */
+	@Override
 	public Timestamp getModificationDate() {
 		return ((ICFile)this.getMainEntity()).getModificationDate();
 	}
@@ -201,6 +214,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#getName()
 	 */
+	@Override
 	public String getName() {
 		if (useVersions()) {
 			return ((ICFile)this.getMainEntity()).getName();
@@ -220,6 +234,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setCreationDate(java.sql.Timestamp)
 	 */
+	@Override
 	public void setCreationDate(Timestamp p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setCreationDate(p0);
@@ -231,6 +246,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setDeleted(boolean)
 	 */
+	@Override
 	public void setDeleted(boolean p0) {
 		((ICFile)this.getMainEntity()).setDeleted(p0);
 	}
@@ -238,6 +254,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setDescription(java.lang.String)
 	 */
+	@Override
 	public void setDescription(String p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setDescription(p0);
@@ -249,6 +266,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setFileSize(java.lang.Integer)
 	 */
+	@Override
 	public void setFileSize(Integer p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setFileSize(p0);
@@ -260,6 +278,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setFileSize(int)
 	 */
+	@Override
 	public void setFileSize(int p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setFileSize(p0);
@@ -272,6 +291,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setFileValue(java.io.InputStream)
 	 */
+	@Override
 	public void setFileValue(InputStream p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setFileValue(p0);
@@ -284,6 +304,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setLanguage(int)
 	 */
+	@Override
 	public void setLanguage(int p0) {
 		((ICFile)this.getMainEntity()).setLanguage(p0);
 	}
@@ -291,6 +312,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setLocale()
 	 */
+	@Override
 	public void setLocale() {
 		((ICFile)this.getMainEntity()).setLocale();
 	}
@@ -298,6 +320,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setMimeType(java.lang.String)
 	 */
+	@Override
 	public void setMimeType(String p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setMimeType(p0);
@@ -309,6 +332,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setModificationDate(java.sql.Timestamp)
 	 */
+	@Override
 	public void setModificationDate(Timestamp p0) {
 		((ICFile)this.getMainEntity()).setModificationDate(p0);
 	}
@@ -316,6 +340,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#setName(java.lang.String)
 	 */
+	@Override
 	public void setName(String p0) {
 		if (useVersions()) {
 			((ICFile)this.getMainEntity()).setName(p0);
@@ -327,6 +352,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#superDelete()
 	 */
+	@Override
 	public void superDelete() throws SQLException {
 		throw new UnsupportedOperationException("method superDelete() not supported in ICFileWrapper");
 	}
@@ -334,6 +360,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#unDelete(boolean)
 	 */
+	@Override
 	public void unDelete(boolean p0) throws SQLException {
 		throw new UnsupportedOperationException("method unDelete() not supported in ICFileWrapper");
 	}
@@ -341,14 +368,16 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#initializeAttributes()
 	 */
+	@Override
 	public void initializeAttributes() {
 		// do nothing
-		//((ICFile)this.getMainEntity()).initializeAttributes();		
+		//((ICFile)this.getMainEntity()).initializeAttributes();
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#delete()
 	 */
+	@Override
 	public void delete() throws SQLException {
 		((ICFile)this.getMainEntity()).delete();
 	}
@@ -370,11 +399,13 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.data.ICFile#isFolder()
 	 */
+	@Override
 	public boolean isFolder()
 	{
 		return ((ICFile)this.getMainEntity()).isFolder();
 	}
 
+	@Override
 	public int compareTo(IDOEntity entity) {
 		try {
 			Collator coll = null;
@@ -384,7 +415,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 			else {
 				coll = Collator.getInstance();
 			}
-			
+
 			return coll.compare(this.getPrimaryKey(), entity.getPrimaryKey());
 		}
 		catch (ClassCastException e) {
@@ -395,6 +426,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.data.TreeableEntity#leafsFirst()
 	 */
+	@Override
 	public boolean leafsFirst() {
 		// TODO Auto-generated method stub
 		return false;
@@ -403,6 +435,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.data.TreeableEntity#sortLeafs()
 	 */
+	@Override
 	public boolean sortLeafs() {
 		// TODO Auto-generated method stub
 		return false;
@@ -411,22 +444,25 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.data.TreeableEntity#setLeafsFirst(boolean)
 	 */
+	@Override
 	public void setLeafsFirst(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.data.TreeableEntity#setToSortLeafs(boolean)
 	 */
+	@Override
 	public void setToSortLeafs(boolean b) {
 		// TODO Auto-generated method stub
-		
+
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.file.data.ICFile#getLocalizationKey()
 	 */
+	@Override
 	public String getLocalizationKey() {
 		return ((ICFile)this.getMainEntity()).getLocalizationKey();
 	}
@@ -434,60 +470,74 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	/* (non-Javadoc)
 	 * @see com.idega.core.file.data.ICFile#setLocalizationKey(java.lang.String)
 	 */
+	@Override
 	public void setLocalizationKey(String key) {
 		((ICFile)this.getMainEntity()).setLocalizationKey(key);
 	}
-	
+
+	@Override
 	public boolean isEmpty() {
 		return ((ICFile)this.getMainEntity()).isEmpty();
 	}
-	
+
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName) {
 		((ICFile) this.getMainEntity()).renameMetaData(oldKeyName, newKeyName);
 	}
-	
+
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		((ICFile) this.getMainEntity()).renameMetaData(oldKeyName, newKeyName, value);
 	}
 
+	@Override
 	public String getDatasource() {
 		return ((ICFile) this.getMainEntity()).getDatasource();
 	}
-	
+
+	@Override
 	public void setFileUri(String uri) {
 		((ICFile) this.getMainEntity()).setFileUri(uri);
 	}
-	
+
+	@Override
 	public String getFileUri() {
 		return ((ICFile) this.getMainEntity()).getFileUri();
 	}
 
 	// implements Storable
+	@Override
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
 		return writer.write(this, iwc);
 	}
 
 	// implements Storable
+	@Override
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
 		return reader.read(this, iwc);
 	}
 
+	@Override
 	public void addDownloadedBy(User downloader) throws IDOAddRelationshipException {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
 	}
 
+	@Override
 	public Collection<User> getDownloadedBy() {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
 	}
 
+	@Override
 	public void removeDownloadedBy(User downloader) throws IDORemoveRelationshipException {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
 	}
 
+	@Override
 	public Integer getHash() {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
 	}
 
+	@Override
 	public void setHash(Integer hash) {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
 	}

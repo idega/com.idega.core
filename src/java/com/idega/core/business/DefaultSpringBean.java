@@ -66,7 +66,7 @@ public abstract class DefaultSpringBean {
 		return LOGGER_;
 	}
 
-	protected <B extends IBOSession> B getSessionInstance(IWUserContext iwuc, Class<? extends IBOSession> sessionBeanClass) {
+	protected <B extends IBOSession> B getSessionInstance(IWUserContext iwuc, Class<B> sessionBeanClass) {
 		try {
 			return IBOLookup.getSessionInstance(iwuc, sessionBeanClass);	//	Casting is needed to avoid stupid compilation error in Maven 2
 		} catch (Exception e) {
@@ -75,11 +75,11 @@ public abstract class DefaultSpringBean {
 		return null;
 	}
 
-	protected <B extends IBOService> B getServiceInstance(Class<? extends IBOService> serviceBeanClass) {
+	protected <B extends IBOService> B getServiceInstance(Class<B> serviceBeanClass) {
 		return getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), serviceBeanClass);
 	}
 
-	protected <B extends IBOService> B getServiceInstance(IWApplicationContext iwac, Class<? extends IBOService> serviceBeanClass) {
+	protected <B extends IBOService> B getServiceInstance(IWApplicationContext iwac, Class<B> serviceBeanClass) {
 		try {
 			return IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext(): iwac, serviceBeanClass);
 		} catch (Exception e) {
