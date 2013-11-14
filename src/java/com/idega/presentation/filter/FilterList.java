@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.TreeMap;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
@@ -12,7 +13,6 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-import com.idega.presentation.CSSSpacer;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
 import com.idega.presentation.Span;
@@ -66,20 +66,26 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 		}
 
 		if (!ListUtil.isEmpty(getEntities())) {
+			TreeMap<String, Layer> componentMap = new TreeMap<String, Layer>();
 			for (T entity: getEntities()) {
 				Layer entityEntry = new Layer();
-				container.add(entityEntry);
-				container.add(new CSSSpacer());
 
 				String id = entity.getPrimaryKey().toString();
 				String name = getRepresentation(entity, getRepresentationMethodName());
 
+				componentMap.put(name, entityEntry);
 				entityEntry.add(getCheckBox(iwc, id));
 
 				Span spanName = new Span(new Text(name));
 				entityEntry.add(spanName);
+				spanName.setStyleClass("company-name");
+			}
+			for(String key : componentMap.keySet()){
+				container.add(componentMap.get(key));
 			}
 		}
+		
+		
 
 		return;
 	}
