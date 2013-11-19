@@ -38,6 +38,9 @@
       		<include method="getLastDayOfCurrentMonth" />
       		<include method="isValidJCaptchaText" />
       		<include method="getClientIP" />
+      		<include method="getParsedDate"/>
+      		<include method="getParsedDates"/>
+      		<include method="getTimeDifferenceBetweenDates"/>
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />

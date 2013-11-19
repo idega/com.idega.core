@@ -3,8 +3,12 @@ package com.idega.util;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
@@ -23,6 +27,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.handlers.IWDatePickerHandler;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 
@@ -280,5 +285,40 @@ public class WebUtil extends DefaultSpringBean {
 
     public int getCurrentYear() {
     	return IWTimestamp.RightNow().getYear();
+    }
+
+    public Date getParsedDate(String date) {
+    	return IWDatePickerHandler.getParsedDate(date);
+    }
+    public Map<String, Date> getParsedDates(List<String> dates) {
+    	if (ListUtil.isEmpty(dates)) {
+    		return Collections.emptyMap();
+    	}
+
+    	Map<String, Date> parsed = new HashMap<String, Date>();
+    	for (String date: dates) {
+    		Date parsedDate = getParsedDate(date);
+    		if (parsedDate != null) {
+    			parsed.put(date, parsedDate);
+    		}
+    	}
+    	return parsed;
+    }
+
+    public int getTimeDifferenceBetweenDates(String from, String to) {
+    	if (StringUtil.isEmpty(from) || StringUtil.isEmpty(to)) {
+    		return -1;
+    	}
+
+    	Date dateFrom = getParsedDate(from);
+    	if (dateFrom == null) {
+    		return -1;
+    	}
+    	Date dateTo = getParsedDate(to);
+    	if (dateTo == null) {
+    		return -1;
+    	}
+
+    	return IWTimestamp.getDaysBetween(new IWTimestamp(dateFrom), new IWTimestamp(dateTo));
     }
 }
