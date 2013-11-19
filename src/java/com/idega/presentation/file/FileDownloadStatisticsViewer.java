@@ -116,7 +116,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				row.createCell().add(StringUtil.isEmpty(emailAddress) ?
 					new Text(CoreConstants.MINUS) :
 					new Link(emailAddress, new StringBuilder("mailto:").append(emailAddress).toString()));
-				if(showCompany){
+				if (showCompany && getGeneralCompanyBusiness() != null) {
 					Collection<GeneralCompany> companies = getGeneralCompanyBusiness().getJBPMCompaniesForUser(downloader);
 					String companyName;
 					if(ListUtil.isEmpty(companies)){
