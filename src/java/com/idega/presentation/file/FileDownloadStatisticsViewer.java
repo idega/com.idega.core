@@ -45,45 +45,52 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	public static final String PARAMETER_FILE_ID = "fileId";
 	public static final String PARAMETER_FILE_HASH = "fileHash";
 	public static final String SHOW_COMPANY = "show-company";
-	
+
 	private AdvancedProperty file;
 	private ICFile realFile;
-	
+
 	private String fileHolderIdentifier;
-	
+
 	private Boolean showCompany = null;
-	
-	@Autowired
+
+	@Autowired(required = false)
 	private GeneralCompanyBusiness generalCompanyBusiness;
-	
+
+	private GeneralCompanyBusiness getGeneralCompanyBusiness() {
+		if (generalCompanyBusiness == null) {
+			generalCompanyBusiness = ELUtil.getInstance().getBean(GeneralCompanyBusiness.BEAN_NAME);
+		}
+		return generalCompanyBusiness;
+	}
+
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		ELUtil.getInstance().autowire(this);
-		
+
 		IWResourceBundle iwrb = getResourceBundle(iwc);
-	
+
 		boolean showCompany = isShowCompany(iwc);
 		Layer container = new Layer();
 		add(container);
 		container.setStyleClass("fileDownloadStatisticsViewerStyle");
-		
+
 		if (!hasRights(iwc)) {
 			container.add(new Heading1(iwrb.getLocalizedString("download_stats.no_rights", "Sorry, you do not have rights to view statistics")));
 			return;
 		}
-		
+
 		AdvancedProperty file = getFile(iwc);
 		ICFile realFile = getRealFile(iwc);
-		
+
 		Collection<User> downloaders = realFile == null ? null : realFile.getDownloadedBy();
-		
+
 		if (file != null) {
 			container.add(new Heading3(new StringBuilder(iwrb.getLocalizedString("download_stats.downloads_statistics_for", "Download statistics for"))
 				.append(": ").append(URLDecoder.decode(file.getValue(), CoreConstants.ENCODING_UTF8)).toString()));
-			
+
 			container.add(new Break());
 		}
-		
+
 		if (!ListUtil.isEmpty(downloaders)) {
 			Table2 table = new Table2();
 			container.add(table);
@@ -96,12 +103,12 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 			if(showCompany){
 				row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.company", "Company")));
 			}
-			
+
 			int index = 0;
 			TableBodyRowGroup bodyRows = table.createBodyRowGroup();
 			for (User downloader: downloaders) {
 				row = bodyRows.createRow();
-				
+
 				row.createCell().add(new Text(new StringBuilder().append(index + 1).append(CoreConstants.DOT).toString()));
 				row.createCell().add(new Text(downloader.getName()));
 				row.createCell().add(new Text(downloader.getPersonalID()));
@@ -110,7 +117,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 					new Text(CoreConstants.MINUS) :
 					new Link(emailAddress, new StringBuilder("mailto:").append(emailAddress).toString()));
 				if(showCompany){
-					Collection<GeneralCompany> companies = generalCompanyBusiness.getJBPMCompaniesForUser(downloader);
+					Collection<GeneralCompany> companies = getGeneralCompanyBusiness().getJBPMCompaniesForUser(downloader);
 					String companyName;
 					if(ListUtil.isEmpty(companies)){
 						companyName = CoreConstants.MINUS;
@@ -122,14 +129,14 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 					}
 					row.createCell().add(new Text(companyName));
 				}
-				
+
 				index++;
 			}
 		}
-		
+
 		addNotifier(iwc, container, file, downloaders);
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public Collection<User> getPotentialDownloaders(IWContext iwc) {
 		Map<String, ? extends FileStatisticsProvider> beans = WebApplicationContextUtils.getWebApplicationContext(iwc.getServletContext())
@@ -137,7 +144,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		if (beans == null || beans.isEmpty()) {
 			return null;
 		}
-		
+
 		Collection<User> allDownloaders = new ArrayList<User>();
 		for (FileStatisticsProvider statisticsProvider: beans.values()) {
 			Collection<User> downloaders = statisticsProvider.getPotentialDownloaders(getFileHolderIdentifier());
@@ -149,10 +156,10 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				}
 			}
 		}
-		
+
 		return allDownloaders;
 	}
-	
+
 	public void addNotifier(IWContext iwc, Layer container, AdvancedProperty file, Collection<User> downloaders) {
 		Collection<User> usersToInform = getUsersToInform(iwc, downloaders);
 		if (ListUtil.isEmpty(usersToInform) && ListUtil.isEmpty(downloaders)) {
@@ -161,40 +168,40 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 			noReaders.add(new Heading3(getMessageNobodyIsInterested(iwc)));
 			return;
 		}
-		
+
 		if (!ListUtil.isEmpty(usersToInform)) {
 			container.add(getNotifierButton(iwc, file, usersToInform));
 		}
 	}
-	
+
 	public abstract String getMessageNobodyIsInterested(IWContext iwc);
-	
+
 	protected UIComponent getNotifierButton(IWContext iwc, AdvancedProperty file, Collection<User> usersToInform) {
 		Layer notificationContainer = new Layer();
 		notificationContainer.setStyleClass("fileDownloadStatisticsNotificationContainer");
-		
+
 		GenericButton notify = new GenericButton("sendNotifications",
 				getResourceBundle(iwc).getLocalizedString("download_stats.send_remind", "Remind readers to download this document"));
-		
+
 		String action = getNotifierAction(iwc, file, usersToInform);
 		if (StringUtil.isEmpty(action)) {
 			return notificationContainer;
 		}
-		
+
 		notificationContainer.add(notify);
 		notify.setOnClick(action);
-		
+
 		return notificationContainer;
 	}
-	
+
 	public abstract String getNotifierAction(IWContext iwc, AdvancedProperty file, Collection<User> usersToInform);
-	
+
 	public Collection<User> getUsersToInform(IWContext iwc, Collection<User> downloaders) {
 		Collection<User> potentialDownloaders = getPotentialDownloaders(iwc);
 		if (ListUtil.isEmpty(potentialDownloaders)) {
 			return null;
 		}
-		
+
 		Collection<User> usersToInform = null;
 		if (ListUtil.isEmpty(downloaders)) {
 			usersToInform = potentialDownloaders;
@@ -206,10 +213,10 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				}
 			}
 		}
-		
+
 		return usersToInform;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	private String getEmailAddress(IWContext iwc, User user) {
 		Collection<Email> mails = user.getEmails();
@@ -218,13 +225,13 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		}
 		return mails.iterator().next().getEmailAddress();
 	}
-	
+
 	protected ICFile getRealFile(IWContext iwc) {
 		ICFile file = getRealFile();
 		if (file != null) {
 			return file;
 		}
-		
+
 		ICFileHome fileHome = null;
 		try {
 			fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
@@ -234,7 +241,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		if (fileHome == null) {
 			return null;
 		}
-		
+
 		if (iwc.isParameterSet(PARAMETER_FILE_ID)) {
 			try {
 				file = fileHome.findByPrimaryKey(iwc.getParameter(PARAMETER_FILE_ID));
@@ -242,7 +249,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				Logger.getLogger(FileDownloadStatisticsViewer.class.getName()).warning("File was not found by id: " + iwc.getParameter(PARAMETER_FILE_ID));
 			}
 		}
-		
+
 		if (file == null && iwc.isParameterSet(PARAMETER_FILE_HASH)) {
 			try {
 				file = fileHome.findByHash(Integer.valueOf(iwc.getParameter(PARAMETER_FILE_HASH)));
@@ -250,25 +257,25 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				Logger.getLogger(FileDownloadStatisticsViewer.class.getName()).warning("File was not found by hash: " + iwc.getParameter(PARAMETER_FILE_HASH));
 			}
 		}
-		
+
 		if (file != null) {
 			setRealFile(file);
 		}
-		
+
 		return file;
 	}
-	
+
 	protected AdvancedProperty getFile(IWContext iwc) {
 		ICFile icFile = getRealFile(iwc);
 		if (icFile == null) {
 			return null;
 		}
-		
+
 		AdvancedProperty file = new AdvancedProperty(icFile.getId(), icFile.getName());
 		setFile(file);
 		return file;
 	}
-	
+
 	public AdvancedProperty getFile() {
 		return file;
 	}
@@ -278,7 +285,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	}
 
 	public abstract boolean hasRights(IWContext iwc);
-	
+
 	@Override
 	public String getBundleIdentifier() {
 		return CoreConstants.CORE_IW_BUNDLE_IDENTIFIER;
@@ -310,5 +317,5 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	public void setShowCompany(boolean showCompany) {
 		this.showCompany = showCompany;
 	}
-	
+
 }
