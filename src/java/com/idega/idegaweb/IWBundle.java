@@ -11,6 +11,7 @@ package com.idega.idegaweb;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.Collection;
 import java.util.List;
 import java.util.Locale;
@@ -371,6 +372,7 @@ public interface IWBundle extends IWModule, Comparable<IWBundle> {
 	 * @throws IOException
 	 */
 	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException;
+	public OutputStream getResourceOutputStream(String pathWithinBundle) throws IOException;
 
 	/**
 	 * <p>

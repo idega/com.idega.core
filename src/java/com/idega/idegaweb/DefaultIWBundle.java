@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
+import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -1759,20 +1760,16 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		this.reloadBundle();
 	}
 
-	/**
-	 * Returns input stream for a file inside the bundle real path.
-	 * @param pathWithinBundle
-	 * @return FileInputStream
-	 */
-	@Override
-	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
+	private File getResource(String pathWithinBundle) throws IOException {
 		String workspaceDir = System.getProperty(DefaultIWBundle.SYSTEM_BUNDLES_RESOURCE_DIR);
 		String bundleInWorkspace;
 
 		if (workspaceDir != null) {
-			bundleInWorkspace = new StringBuilder(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier()).append(CoreConstants.SLASH).toString();
-		} else
+			bundleInWorkspace = new StringBuilder(workspaceDir).append(CoreConstants.SLASH).append(getBundleIdentifier())
+					.append(CoreConstants.SLASH).toString();
+		} else {
 			bundleInWorkspace = getBundleBaseRealPath();
+		}
 
 		String doubledSlash = CoreConstants.SLASH + CoreConstants.SLASH;
 		bundleInWorkspace = StringHandler.replace(bundleInWorkspace, doubledSlash, CoreConstants.SLASH);
@@ -1781,8 +1778,24 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		File file = new File(bundleInWorkspace, pathWithinBundle);
 		if (!file.exists())
 			throw new FileNotFoundException("File not found within bundle " + bundleInWorkspace + ": " + pathWithinBundle);
+		return file;
+	}
 
-		return new FileInputStream(file);
+	@Override
+	public OutputStream getResourceOutputStream(String pathWithinBundle) throws IOException {
+		File file = getResource(pathWithinBundle);
+		return file == null ? null : new FileOutputStream(file);
+	}
+
+	/**
+	 * Returns input stream for a file inside the bundle real path.
+	 * @param pathWithinBundle
+	 * @return FileInputStream
+	 */
+	@Override
+	public InputStream getResourceInputStream(String pathWithinBundle) throws IOException {
+		File file = getResource(pathWithinBundle);
+		return file == null ? null : new FileInputStream(file);
 	}
 
 	/**
