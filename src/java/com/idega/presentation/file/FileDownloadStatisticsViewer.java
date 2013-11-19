@@ -58,7 +58,11 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 
 	private GeneralCompanyBusiness getGeneralCompanyBusiness() {
 		if (generalCompanyBusiness == null) {
-			generalCompanyBusiness = ELUtil.getInstance().getBean(GeneralCompanyBusiness.BEAN_NAME);
+			try {
+				generalCompanyBusiness = ELUtil.getInstance().getBean(GeneralCompanyBusiness.BEAN_NAME);
+			} catch (Exception e) {
+				getLogger().warning("There is no implementation for " + GeneralCompanyBusiness.class.getName());
+			}
 		}
 		return generalCompanyBusiness;
 	}
