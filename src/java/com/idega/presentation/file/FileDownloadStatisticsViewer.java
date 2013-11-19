@@ -9,10 +9,13 @@ import java.util.logging.Logger;
 import javax.ejb.FinderException;
 import javax.faces.component.UIComponent;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.file.FileStatisticsProvider;
+import com.idega.core.business.GeneralCompanyBusiness;
+import com.idega.core.company.bean.GeneralCompany;
 import com.idega.core.contact.data.Email;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
@@ -41,11 +44,17 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 
 	public static final String PARAMETER_FILE_ID = "fileId";
 	public static final String PARAMETER_FILE_HASH = "fileHash";
+	public static final String SHOW_COMPANY = "show-company";
 	
 	private AdvancedProperty file;
 	private ICFile realFile;
 	
 	private String fileHolderIdentifier;
+	
+	private Boolean showCompany = null;
+	
+	@Autowired
+	private GeneralCompanyBusiness generalCompanyBusiness;
 	
 	@Override
 	public void main(IWContext iwc) throws Exception {
@@ -53,6 +62,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 	
+		boolean showCompany = isShowCompany(iwc);
 		Layer container = new Layer();
 		add(container);
 		container.setStyleClass("fileDownloadStatisticsViewerStyle");
@@ -83,6 +93,9 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.name", "Name")));
 			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.personal_id", "Personal ID")));
 			row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.email", "E-mail")));
+			if(showCompany){
+				row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.company", "Company")));
+			}
 			
 			int index = 0;
 			TableBodyRowGroup bodyRows = table.createBodyRowGroup();
@@ -96,6 +109,19 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				row.createCell().add(StringUtil.isEmpty(emailAddress) ?
 					new Text(CoreConstants.MINUS) :
 					new Link(emailAddress, new StringBuilder("mailto:").append(emailAddress).toString()));
+				if(showCompany){
+					Collection<GeneralCompany> companies = generalCompanyBusiness.getJBPMCompaniesForUser(downloader);
+					String companyName;
+					if(ListUtil.isEmpty(companies)){
+						companyName = CoreConstants.MINUS;
+					}else{
+						companyName = companies.iterator().next().getName();
+						if(StringUtil.isEmpty(companyName)){
+							companyName = CoreConstants.MINUS;
+						}
+					}
+					row.createCell().add(new Text(companyName));
+				}
 				
 				index++;
 			}
@@ -272,6 +298,17 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 
 	public void setRealFile(ICFile realFile) {
 		this.realFile = realFile;
+	}
+
+	public boolean isShowCompany(IWContext iwc) {
+		if(showCompany == null){
+			showCompany = "y".equals(iwc.getParameter(SHOW_COMPANY));
+		}
+		return showCompany;
+	}
+
+	public void setShowCompany(boolean showCompany) {
+		this.showCompany = showCompany;
 	}
 	
 }

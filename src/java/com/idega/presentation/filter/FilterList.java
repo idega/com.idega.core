@@ -3,11 +3,13 @@ package com.idega.presentation.filter;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.TreeMap;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponentBase;
 
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -15,6 +17,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Span;
 import com.idega.presentation.text.Heading3;
 import com.idega.presentation.text.Text;
@@ -48,6 +51,30 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 
 	private String parameterName = null;
 
+	protected PresentationObjectContainer getCell(){
+		Span span = new Span();
+		span.setStyleClass(getEntityCellClass());
+		return span;
+	}
+	
+	protected Collection<UIComponentBase> getEntityFields(T entity){
+		ArrayList<UIComponentBase> components = new ArrayList<UIComponentBase>();
+		
+		String name = getRepresentation(entity);
+		PresentationObjectContainer spanName = getCell();
+		spanName.add(new Text(name));
+		components.add(spanName);
+		
+		return components;
+	}
+	
+	protected String getRepresentation(T entity){
+		return getRepresentation(entity, getRepresentationMethodName());
+	}
+	
+	protected String getEntityCellClass(){
+		return "filtered-span";
+	}
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		PresentationUtil.addStyleSheetToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("style/filter.css"));
@@ -71,22 +98,39 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 				Layer entityEntry = new Layer();
 
 				String id = entity.getPrimaryKey().toString();
-				String name = getRepresentation(entity, getRepresentationMethodName());
+				String name = getRepresentation(entity);
 
 				componentMap.put(name, entityEntry);
-				entityEntry.add(getCheckBox(iwc, id));
-
-				Span spanName = new Span(new Text(name));
-				entityEntry.add(spanName);
-				spanName.setStyleClass("company-name");
+				
+				PresentationObjectContainer checkBoxSpan = getCell();
+				entityEntry.add(checkBoxSpan);
+				checkBoxSpan.add(getCheckBox(iwc, id));
+				
+				Collection<UIComponentBase> elements = getEntityFields(entity);
+				for(UIComponentBase element : elements){
+					entityEntry.add(element);
+				}
+				
 			}
 			for(String key : componentMap.keySet()){
 				container.add(componentMap.get(key));
 			}
 		}
 		
-		
-
+		Layer script = new Layer();
+		add(script);
+		StringBuilder js = new StringBuilder("<script>jQuery(document).ready(function(){")
+				.append("\tjQuery('#").append(container.getId()).append("').children().each(function(){")
+				.append("\n\t\tvar element = jQuery(this);")
+				.append("\n\t\tvar top = jQuery('<span class=\"action-layer\"/>');")
+				.append("\n\t\telement.append(top);")
+				.append("\n\t\ttop.click(function(){")
+				.append("\n\t\t\tvar checkBox = jQuery(this).parent().find('input[type=\"checkbox\"]');")
+				.append("\n\t\t\tcheckBox.prop('checked', !checkBox.is(':checked'));")
+				.append("\n\t\t});")
+				.append("\n\t});")
+				.append("\n});</script>");
+		script.add(js.toString());
 		return;
 	}
 
