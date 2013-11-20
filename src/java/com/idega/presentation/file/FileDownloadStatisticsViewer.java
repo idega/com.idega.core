@@ -121,7 +121,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 					new Text(CoreConstants.MINUS) :
 					new Link(emailAddress, new StringBuilder("mailto:").append(emailAddress).toString()));
 				if (showCompany && getGeneralCompanyBusiness() != null) {
-					Collection<GeneralCompany> companies = getGeneralCompanyBusiness().getJBPMCompaniesForUser(downloader);
+					Collection<GeneralCompany> companies = getGeneralCompanyBusiness().getCompaniesForUser(downloader);
 					String companyName;
 					if(ListUtil.isEmpty(companies)){
 						companyName = CoreConstants.MINUS;

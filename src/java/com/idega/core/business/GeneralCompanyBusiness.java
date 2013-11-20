@@ -7,5 +7,5 @@ import com.idega.user.data.User;
 
 public interface GeneralCompanyBusiness{
 	public static final String BEAN_NAME = "jBPMCompanyBusinessImpl";
-	public Collection<GeneralCompany> getJBPMCompaniesForUser(User user);
+	public Collection<GeneralCompany> getCompaniesForUser(User user);
 }
