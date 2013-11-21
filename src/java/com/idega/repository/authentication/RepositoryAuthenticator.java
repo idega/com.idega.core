@@ -96,6 +96,9 @@ public class RepositoryAuthenticator extends BaseFilter {
 		try {
 			if (loginBusiness.isLoggedOn(req)) {
 				LoggedOnInfo lInfo = loginBusiness.getLoggedOnInfo(session);
+				if (lInfo == null) {
+					throw new RuntimeException("Unable to get logged on info for session " + session);
+				}
 				req = setAsAuthenticatedInRepository(req, lInfo.getLogin(), lInfo);
 			} else {
 				String[] loginAndPassword = loginBusiness.getLoginNameAndPasswordFromBasicAuthenticationRequest(req);
