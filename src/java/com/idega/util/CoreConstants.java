@@ -48,6 +48,7 @@ public class CoreConstants {
 	public static final String QOUTE_MARK = "\"";
 	public static final String QOUTE_SINGLE_MARK = "'";
 	public static final String GRAVE_ACCENT_MARK = "`";
+	public static final String TAB = "\t";
 
 	public static final String JS_STR_PARAM_SEPARATOR = "','";
 	public static final String JS_STR_PARAM_END = "');";
