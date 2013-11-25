@@ -10,8 +10,10 @@
 package com.idega.core.location.data;
 
 import java.util.Collection;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLookupException;
 
@@ -37,7 +39,7 @@ public interface CommuneHome extends IDOHome {
 	/**
 	 * @see com.idega.core.location.data.CommuneBMPBean#ejbFindAllCommunes
 	 */
-	public Collection findAllCommunes() throws FinderException;
+	public Collection<Commune> findAllCommunes() throws FinderException;
 
 	/**
 	 * @see com.idega.core.location.data.CommuneBMPBean#ejbFindByCommuneName
