@@ -48,7 +48,9 @@ import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.ICRoleHome;
+import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.PasswordNotKnown;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -113,6 +115,7 @@ import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.LocaleUtil;
+import com.idega.util.SendMail;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.Timer;
@@ -836,7 +839,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	public void updateUserPhone(User user, int phoneTypeId, String phoneNumber) throws EJBException {
 		try {
-			Phone phone = getUserPhone(((Integer) user.getPrimaryKey()).intValue(), phoneTypeId);
+			Phone phone = getUserPhone(Integer.valueOf(user.getPrimaryKey().toString()), phoneTypeId);
 			boolean insert = false;
 			if (phone == null) {
 				phone = this.getPhoneHome().create();
@@ -4138,4 +4141,188 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return users;
 	}
 
+	/**
+	 * <p>Creates new {@link User} with {@link LoginInfo} and sends mail
+	 * to given {@link Email}. Method does not check for existing {@link User}s
+	 * is so, it just creates new one. 
+	 * Use {@link UserBusiness#update(String, String, String, String)}
+	 * for correct user creation.</p>
+	 * @param fullName is {@link User#getName()}, not <code>null</code>;
+	 * @param email is {@link Email#getEmailAddress()} for {@link User}, 
+	 * not <code>null</code>;
+	 * @return created {@link User} or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected User create(String fullName, String email) {
+		if (StringUtil.isEmpty(fullName) || StringUtil.isEmpty(email)) {
+			return null;
+		}
+
+		User user = null;
+		try {
+			user = createUser(null, null, null, fullName, null, null, null, 
+					null, null, fullName);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to create user cause of: ", e);
+		}
+
+		if (user == null) {
+			return null;
+		}
+
+		LoginTable loginTable = null;
+		try {
+			loginTable = generateUserLogin(user);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to create " + LoginTable.class.getName() + 
+					" for user: " + user +
+					" cause of: ", e);
+		}
+
+		if (loginTable == null) {
+			return null;
+		}
+		
+		LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+		if (loginInfo != null) {
+			loginInfo.setChangeNextTime(Boolean.TRUE);
+			loginInfo.setAccountEnabled(Boolean.TRUE);
+			loginInfo.store();
+		}
+
+		IWContext iwc = CoreUtil.getIWContext();
+		IWBundle iwrb = getUserBundle(iwc);
+		if (iwrb != null) {
+			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
+			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
+			String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
+			StringBuilder text = null;
+			try {
+				text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
+						.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(loginTable.getUserLogin()).append(", ")
+						.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(loginTable.getUnencryptedUserPassword()).append(". ")
+						.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
+				sendEmail(email, subject, text.toString());
+			} catch (PasswordNotKnown e) {
+				getLogger().log(Level.WARNING, 
+						"Password for " + User.class.getName() + 
+						" was lost, cause of: ", e);
+			}
+		}
+
+		getLogger().info(User.class.getName() + 
+				" by primary key: " + user.getPrimaryKey().toString() + 
+				" successfully created!");
+		return user;
+	}
+	
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#update(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public User update(String primaryKey, String name, String email, String phone) {
+		User user = null;
+		if (!StringUtil.isEmpty(primaryKey)) {
+			/* Searching for existing one by primary key */
+			try {
+				user = getUserHome().findByPrimaryKey(primaryKey);
+			} catch (FinderException e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to get " + User.class.getName() + 
+						" by primary key: " + primaryKey);
+			}
+		} else {
+			/* Searching for existing one by email and name */
+			Collection<User> users = getUserHome().findAllByNameAndEmail(
+					name, email);
+			if (!ListUtil.isEmpty(users)) {
+				user = users.iterator().next();
+				if (users.size() > 1) {
+					getLogger().log(Level.WARNING, 
+							"Not unique " + User.class.getName() + 
+							"'s found by name: '" + name + 
+							"' and  email: '" + email + "'");
+				}
+			} else {
+				user = create(name, email);
+			}
+		}		
+
+		if (user == null) {
+			return null;
+		}
+
+		/* Storing user... */
+		try {
+			user.store();
+		} catch (IDOStoreException e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to store user cause of: ", e);
+			return null;
+		}
+
+		/* Updating phone, if given */
+		if (!StringUtil.isEmpty(phone)) {
+			updateUserHomePhone(user, phone);
+		}
+
+		/* Updating email if given */
+		if (!StringUtil.isEmpty(email)) {
+			try {
+				updateUserMail(user, email);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to create or update email: '" + email + 
+						"' for user: '" + user + "' cause of: ", e);
+			}
+		}
+
+		getLogger().info(User.class.getName() + 
+				" by primary key: " + user.getPrimaryKey().toString() + 
+				" successfully updated!");
+		return user;
+	}
+
+	protected boolean sendEmail(
+			String emailTo, 
+			String subject, 
+			String text) {
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		if (settings == null) {
+			return false;
+		}
+
+		String from = settings.getProperty(CoreConstants.PROP_SYSTEM_MAIL_FROM_ADDRESS);
+		String host = settings.getProperty(CoreConstants.PROP_SYSTEM_SMTP_MAILSERVER);
+		if (StringUtil.isEmpty(from) || StringUtil.isEmpty(host)) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, "Cann't send email from: " + from + 
+					" via: " + host + ". Set properties for application!");
+			return false;
+		}
+
+		try {
+			SendMail.send(from, emailTo, null, null, host, subject, text);
+		} catch (Exception e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, "Error sending mail!", e);
+			return false;
+		}
+
+		return true;
+	}
+
+	protected IWBundle getUserBundle(IWContext iwc) {
+		if (iwc != null) {
+			return iwc.getIWMainApplication().getBundle(
+					CoreConstants.IW_USER_BUNDLE_IDENTIFIER
+					);
+		}
+		
+		return null;
+	}
+	
 } // Class UserBusiness

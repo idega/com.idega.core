@@ -936,4 +936,17 @@ public interface UserBusiness extends IBOService {
 
 	public boolean hasValidPersonalId(User user);
 	public boolean hasValidPersonalId(User user, Locale locale);
+
+	/**
+	 * 
+	 * <p>Creates or updates {@link User} with login.</p>
+	 * @param primaryKey is {@link User#getPrimaryKey()}, new entity will be 
+	 * created if <code>null</code>;
+	 * @param name is {@link User#getName()}, not <code>null</code>;
+	 * @param email is {@link Email#getEmailAddress()}, not <code>null</code>;
+	 * @param phone is {@link Phone#getNumber()}, skipped if <code>null</code>;
+	 * @return updated/created {@link User} or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public User update(String primaryKey, String name, String email, String phone);
 }
