@@ -7,10 +7,15 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Vector;
+
 import com.idega.repository.data.MutableClass;
+import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.text.TextSoap;
 //import com.idega.util.datastructures.HashtableMultivalued;
@@ -804,22 +809,102 @@ public class EntityControl implements MutableClass {
 	public static List getNToOneRelatedClasses(Class entityClass) {
 		return getNToOneRelatedClasses(GenericEntity.getStaticInstanceIDO(entityClass));
 	}
+	
 	/**
-	 * Returns a list of IDOLegacyEntity Class objects that have N:1 relationship with entity
+	 * 
+	 * @param entity to get relations for, not <code>null</code>;
+	 * @return classes which are related to this entity or {@link Collections#emptyList()}
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public static List getNToOneRelatedClasses(IDOEntity entity) {
-		List theReturn = new java.util.Vector();
-		IDOEntityBean bean = (IDOEntityBean)entity;
-		Collection attributes = bean.getAttributes();
-		java.util.Iterator iter = attributes.iterator();
+	public static List<Class<? extends IDOEntity>> getNToOneRelatedClasses(IDOEntity entity) {
+		Collection<EntityAttribute> attributes = getNToOneRelations(entity);
+		if (ListUtil.isEmpty(attributes)) {
+			return Collections.emptyList();
+		}
+
+		List<Class<? extends IDOEntity>> theReturn = new ArrayList<Class<? extends IDOEntity>>();
+		Iterator<EntityAttribute> iter = attributes.iterator();
 		while (iter.hasNext()) {
-			EntityAttribute item = (EntityAttribute)iter.next();
+			EntityAttribute item = iter.next();
 			if (item.isOneToNRelationship()) {
 				theReturn.add(item.getRelationShipClass());
 			}
 		}
 		return theReturn;
 	}
+
+	/**
+	 * 
+	 * @param entity is {@link IDOEntityBean} to get 
+	 * {@link IDOEntityBean#getAttributes()} from, not <code>null</code>;
+	 * @return existing attributes or {@link Collections#emptyList()} on
+	 * failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static Collection<EntityAttribute> getNToOneRelations(IDOEntity entity) {
+		IDOEntityBean bean = null;
+		if (entity instanceof IDOEntityBean) {
+			bean = (IDOEntityBean) entity;
+		} else {
+			return Collections.emptyList();
+		}
+		
+		return bean.getAttributes();
+	}
+
+	/**
+	 * 
+	 * @param entity is {@link IDOEntityBean} to get
+	 * {@link IDOEntityBean#getAttributes()} from, not <code>null</code>;
+	 * @param relatedEntity is {@link IDOEntity}, which should be 
+	 * found in {@link IDOEntityBean#getAttributes()} list, not <code>null</code>;
+	 * @return attribute, which defines relation between two given entities or
+	 * <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static EntityAttribute getNToOneRelation(
+			IDOEntity entity, 
+			IDOEntity relatedEntity) {
+		if (relatedEntity == null) {
+			return null;
+		}
+		
+		Collection<EntityAttribute> relations = getNToOneRelations(entity);
+		if (ListUtil.isEmpty(relations)) {
+			return null;
+		}
+
+		for (EntityAttribute relation : relations) {
+			Class<? extends IDOEntity> relationshipClass = relation.getRelationShipClass();
+			if (relationshipClass == null) {
+				continue;
+			}
+
+			if (relationshipClass.isInstance(relatedEntity)) {
+				return relation;
+			}
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * <p>Searches for inverted relation between entities.</p>
+	 * @param entityToSelect is {@link IDOEntity}, which should be 
+	 * found in {@link IDOEntityBean#getAttributes()} list, not <code>null</code>;
+	 * @param relatedEntity is {@link IDOEntityBean} to get
+	 * {@link IDOEntityBean#getAttributes()} from, not <code>null</code>;
+	 * @return attribute, which defines relation between two given entities or
+	 * <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static EntityAttribute getOneToNRelation(IDOEntity entityToSelect,
+			IDOEntity relatedEntity) {
+		return getNToOneRelation(relatedEntity, entityToSelect);
+	}
+	
 	protected static String getTableNameShortenedToThirtyCharacters(String originalTableName) {
 		try {
 			String theReturn = originalTableName.substring(0, Math.min(30, originalTableName.length()));
@@ -833,14 +918,11 @@ public class EntityControl implements MutableClass {
 		String relatingEntityName2 = relatingEntity2.getEntityDefinition().getSQLTableName();
 		return getManyToManyRelationShip(relatingEntityName1, relatingEntityName2);
 	}
-	protected static EntityRelationship getManyToManyRelationShip(String relatingEntityName1, String relatingEntityName2) {
-		EntityRelationship rel = getIDOContainer().getRelationshipTableMap().get(relatingEntityName1, relatingEntityName2);
-		if (rel == null) {
-			return null;
-		} else {
-			return rel;
-		}
-		//return (String)relationshipTables.get(relatingEntityClassName1,relatingEntityClassName2);
+
+	protected static EntityRelationship getManyToManyRelationShip(
+			String relatingEntityName1, 
+			String relatingEntityName2) {
+		return getIDOContainer().getRelationshipTableMap().get(relatingEntityName1, relatingEntityName2);
 	}
 	
 	public static IDOContainer getIDOContainer(){
