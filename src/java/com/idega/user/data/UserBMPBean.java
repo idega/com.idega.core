@@ -1876,10 +1876,16 @@ public void delete(int userId) throws SQLException {
 	protected Group getGeneralGroup() {
 		if (this._group == null) {
 			try {
-				Integer groupID;
+				Integer groupID = null;
 				Integer userGroupID = this.getIntegerColumnValue(_COLUMNNAME_USER_GROUP_ID);
 				if (userGroupID == null) {
-					groupID = (Integer) this.getPrimaryKey();
+					try {
+						groupID = Integer.valueOf(this.getPrimaryKey().toString());
+					} catch (NumberFormatException e) {
+						getLogger().warning(
+								"Failed to convert: '" + this.getPrimaryKey().toString() + 
+								"' to " + Integer.class.getName());
+					}
 				}
 				else {
 					groupID = userGroupID;

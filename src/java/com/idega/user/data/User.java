@@ -45,9 +45,9 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public void setDateOfBirth(java.sql.Date p0);
  //public java.lang.String getNameLastFirst();
  public void setHomePageID(int p0);
- public java.util.Collection getEmails();
+ public java.util.Collection<Email> getEmails();
  public com.idega.core.builder.data.ICPage getHomePage();
- public java.util.Collection getPhones();
+ public java.util.Collection<Phone> getPhones();
  public java.util.Collection getPhones(String phoneTypeID);
  public void setGender(java.lang.Integer p0);
  public void addUser(com.idega.user.data.User p0);
