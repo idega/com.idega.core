@@ -11,6 +11,8 @@ package com.idega.core.contact.data;
 
 
 
+
+
 /**
  * 
  *  Last modified: $Date: 2006/10/14 22:38:26 $ by $Author: sigtryggur $
@@ -18,7 +20,7 @@ package com.idega.core.contact.data;
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.4 $
  */
-public interface Email extends com.idega.data.IDOLegacyEntity, EmailDataView, Contact {
+public interface Email extends EmailDataView, Contact {
 
 	/**
 	 * @see com.idega.core.contact.data.EmailBMPBean#setEmailAddress
