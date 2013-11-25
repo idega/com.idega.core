@@ -115,7 +115,7 @@ public class IDOLookup<E extends IDOEntity, EB extends IDOEntity> extends IBOLoo
    * Gets the Class object for the (BMP) bean class of a data bean.
    * @param entityInterfaceClass i the interface of the data bean.
    */
-  public static <E extends IDOEntity> Class<E> getBeanClassFor(Class<E> entityInterfaceClass) {
+  public static <E extends IDOEntity> Class<E> getBeanClassFor(Class<? extends IDOEntity> entityInterfaceClass) {
     Class<E> beanClass = (Class<E>) getIDOLookupInstance().getBeanClassForNonStatic((Class<IDOEntity>) entityInterfaceClass);
     return beanClass;
   }
