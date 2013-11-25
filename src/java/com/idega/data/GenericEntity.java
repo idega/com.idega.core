@@ -3374,7 +3374,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 	}
 
-	public void addManyToManyRelationShip(Class relatingEntityClass) {
+	public void addManyToManyRelationShip(
+			Class<? extends IDOEntity> relatingEntityClass) {
 		addManyToManyRelationShip(relatingEntityClass.getName());
 	}
 
@@ -4255,7 +4256,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass) throws IDORelationshipException {
+	protected Collection idoGetRelatedEntities(Class<? extends IDOEntity> returningEntityInterfaceClass) throws IDORelationshipException {
 		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass, getDatasource());
 		return idoGetRelatedEntitiesBySQL(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
 	}
