@@ -1,9 +1,11 @@
 package com.idega.user.data;
 
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.ejb.FinderException;
 
+import com.idega.core.contact.data.Email;
 import com.idega.core.location.data.Commune;
 import com.idega.data.IDOLookupException;
 import com.idega.util.IWTimestamp;
@@ -62,4 +64,13 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection <User> ejbFindBySearchRequest(Collection <String> requests, int groupId, int maxAmount, int startingEntry);
  public Collection <User> ejbAutocompleteRequest(String request, int groupId, int maxAmount, int startingEntry);
 
+	/**
+	 * 
+	 * @param name is {@link User#getName()}, not <code>null</code>;
+	 * @param email is {@link Email#getEmailAddress()}, not <code>null</code>;
+	 * @return {@link User}s in data source by given criteria or
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<User> findAllByNameAndEmail(String name, String email);
 }

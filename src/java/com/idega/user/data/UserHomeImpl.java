@@ -2,14 +2,19 @@ package com.idega.user.data;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
 import com.idega.core.location.data.Commune;
 import com.idega.data.IDOLookupException;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome {
 
@@ -501,5 +506,56 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 				.ejbFindAllByPersonalId(personalId);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.UserHome#findAllByNameAndEmail(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Collection<User> findAllByNameAndEmail(String name, String email) {
+		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(email)) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to get " + User.class.getName() + 
+					" because user name or email was not provided!");
+			return null;
+		}
+
+		ArrayList<User> users = null;
+
+		/* Expecting to be unique */
+		Collection<User> usersByEmail = null;
+		try {
+			usersByEmail = findUsersByEmail(email);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to get " + getEntityInterfaceClass().getName() + 
+					"'s by email: '" + email + "'");
+		}
+
+		
+		if (ListUtil.isEmpty(usersByEmail)) {
+			return Collections.emptyList();
+		}
+
+		/* Filtering users by name */
+		users = new ArrayList<User>(usersByEmail.size());
+		for (User user : usersByEmail) {
+			boolean nameMatches = Boolean.TRUE;
+			
+			for (String namePart : name.split(CoreConstants.SPACE)) {
+				if (!user.getName().contains(namePart)) {
+					nameMatches = Boolean.FALSE;
+				}
+			}
+
+			if (nameMatches) {
+				users.add(user);
+			}
+		}
+
+		return users;
 	}
 }
