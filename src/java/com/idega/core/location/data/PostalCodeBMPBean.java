@@ -31,6 +31,8 @@ import com.idega.util.StringUtil;
 
 public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
+	private static final long serialVersionUID = 1106307465807244618L;
+
 	static final String TABLE_NAME = "IC_POSTAL_CODE";
 
 	static final String COLUMN_POSTAL_CODE_ID = "IC_POSTAL_CODE_ID";
@@ -132,15 +134,18 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	 * All names are stored in uppercase, uses String.toUpperCase();
 	 */
 	public void setName(String name) {
-		setColumn(COLUMN_NAME, name.toUpperCase());
+		if (!StringUtil.isEmpty(name)) {
+			setColumn(COLUMN_NAME, name.toUpperCase());
 
-		String code = getPostalCode();
-		StringBuffer buffer = new StringBuffer();
-		if (code != null) {
-			buffer.append(code).append(" ");
+			String code = getPostalCode();
+			StringBuffer buffer = new StringBuffer();
+			if (code != null) {
+				buffer.append(code).append(" ");
+			}
+
+			buffer.append(name);
+			setColumn(COLUMN_POSTAL_ADDRESS, buffer.toString());
 		}
-		buffer.append(name);
-		setColumn(COLUMN_POSTAL_ADDRESS, buffer.toString());
 	}
 
 	public String getName() {

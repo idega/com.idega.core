@@ -27,13 +27,14 @@ public interface PostalCodeHome extends IDOHome {
 	/**
 	 * 
 	 * @param primaryKey is {@link PostalCode#getPrimaryKey()};
-	 * @param postalCode is {@link PostalCode#getPostalCode()};
+	 * @param postalCode is {@link PostalCode#getPostalCode()}, not <code>null</code>;
+	 * @param name is {@link PostalCode#getName()}, what is city of that postal code;
 	 * @return created or found {@link PostalCode}s by given 
 	 * {@link PostalCode#getPostalCode()} or {@link Collections#emptyList()}
 	 * on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public List<PostalCode> update(Object primaryKey, String postalCode);
+	public List<PostalCode> update(Object primaryKey, String postalCode, String name);
 
 	public PostalCode findByPrimaryKey(Object pk) throws FinderException;
 
