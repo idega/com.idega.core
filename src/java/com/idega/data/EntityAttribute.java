@@ -288,7 +288,7 @@ public class EntityAttribute implements IDOEntityField, IDOReportableField {
 	/**
 	 * Returns null if relationshipClass is not set
 	 */
-	public Class getRelationShipClass() {
+	public Class<? extends IDOEntity> getRelationShipClass() {
 		return this.relationShipClass;
 	}
 
