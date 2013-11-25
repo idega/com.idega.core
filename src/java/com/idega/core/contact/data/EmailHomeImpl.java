@@ -10,14 +10,21 @@
 package com.idega.core.contact.data;
 
 import java.rmi.RemoteException;
+import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Level;
 
+import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOFactory;
+import com.idega.data.IDOStoreException;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 
 /**
@@ -40,21 +47,32 @@ public class EmailHomeImpl extends IDOFactory implements EmailHome {
 		return (Email) super.createIDO();
 	}
 
-	public Email findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
-		return (Email) super.findByPrimaryKeyIDO(pk);
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.data.EmailHome#findByPrimaryKey(java.lang.Object)
+	 */
+	@Override
+	public Email findByPrimaryKey(Object pk) {
+		try {
+			return (Email) super.findByPrimaryKeyIDO(pk);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to find email by primary key: " + pk);
+		}
+
+		return null;
 	}
 
-	public Collection findEmailsForUser(com.idega.user.data.User user) throws FinderException, RemoteException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((EmailBMPBean) entity).ejbFindEmailsForUser(user);
-		this.idoCheckInPooledEntity(entity);
+	public Collection<Email> findEmailsForUser(com.idega.user.data.User user) throws FinderException, RemoteException {
+		EmailBMPBean entity = (EmailBMPBean) idoCheckOutPooledEntity();
+		java.util.Collection<Object> ids = entity.ejbFindEmailsForUser(user);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findEmailsForUser(int iUserId) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection ids = ((EmailBMPBean) entity).ejbFindEmailsForUser(iUserId);
-		this.idoCheckInPooledEntity(entity);
+	public Collection<Email> findEmailsForUser(int iUserId) throws FinderException {
+		EmailBMPBean entity = (EmailBMPBean) idoCheckOutPooledEntity();
+		java.util.Collection<Object> ids = entity.ejbFindEmailsForUser(iUserId);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
@@ -88,7 +106,6 @@ public class EmailHomeImpl extends IDOFactory implements EmailHome {
 	public Email findMainEmailForGroup(Group group) throws FinderException, RemoteException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((EmailBMPBean) entity).ejbFindMainEmailForGroup(group);
-		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
 	
@@ -119,8 +136,95 @@ public class EmailHomeImpl extends IDOFactory implements EmailHome {
 	public Collection<Email> findMainEmailsForUsers(Collection<User> users) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection<Integer> ids = ((EmailBMPBean) entity).ejbFindMainEmailsForUsers(users);
-		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKeyCollection(ids);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.data.EmailHome#findByEmailAddress(java.util.Collection)
+	 */
+	@Override
+	public Collection<Email> findByEmailAddress(Collection<String> emailAddress) {
+		EmailBMPBean entity = (EmailBMPBean) idoCheckOutPooledEntity();
+		Collection<Object> ids = entity.ejbFindByEmailAddress(emailAddress);
+		try {
+			return getEntityCollectionForPrimaryKeys(ids);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to get " + this.getClass().getName() + 
+					"'s by id's: " + ids);
+		}
+
+		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.data.EmailHome#findByEmailAddressPart(java.lang.String)
+	 */
+	@Override
+	public Collection<Email> findByEmailAddressPart(String emailAddress) {
+		if (StringUtil.isEmpty(emailAddress)) {
+			return Collections.emptyList();
+		}
+
+		EmailBMPBean entity = (EmailBMPBean) idoCheckOutPooledEntity();
+		Collection<Object> ids = entity.ejbFindByEmailAddressPart(emailAddress);
+		try {
+			return getEntityCollectionForPrimaryKeys(ids);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to get " + this.getClass().getName() + 
+					"'s by id's: " + ids);
+		}
+
+		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.data.EmailHome#update(java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Email update(String primaryKey, String emailAddress) {
+		Email email = null;
+		if (!StringUtil.isEmpty(primaryKey)) {
+			email = findByPrimaryKey(primaryKey);
+		}
+
+		if (!StringUtil.isEmpty(emailAddress)) {
+			if (email == null) {
+				Collection<Email> emails = findByEmailAddress(Arrays.asList(emailAddress));
+				if (!ListUtil.isEmpty(emails)) {
+					email = emails.iterator().next();
+				} else {
+					try {
+						email = createEntity();
+					} catch (CreateException e) {
+						java.util.logging.Logger.getLogger(getClass().getName()).log(
+								Level.WARNING, 
+								"Failed to create " + getEntityBeanClass().getName() + 
+								" cause of: ", e);
+						return null;
+					}
+				}
+			}
+
+			email.setEmailAddress(emailAddress);
+		}
+
+		try {
+			email.store();
+			return email;
+		} catch (IDOStoreException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to store " + getEntityBeanClass().getName() + 
+					" cause of: ", e);
+		}
+
+		return null;
+	}
 }
