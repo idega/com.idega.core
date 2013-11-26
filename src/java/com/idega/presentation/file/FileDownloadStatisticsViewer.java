@@ -1,9 +1,11 @@
 package com.idega.presentation.file;
 
 import java.net.URLDecoder;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Map;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
@@ -14,12 +16,15 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.business.file.FileStatisticsProvider;
+import com.idega.core.accesscontrol.data.LoginRecord;
+import com.idega.core.accesscontrol.data.LoginRecordHome;
 import com.idega.core.business.GeneralCompanyBusiness;
 import com.idega.core.company.bean.GeneralCompany;
 import com.idega.core.contact.data.Email;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
@@ -45,6 +50,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	public static final String PARAMETER_FILE_ID = "fileId";
 	public static final String PARAMETER_FILE_HASH = "fileHash";
 	public static final String SHOW_COMPANY = "show-company";
+	public static final String SHOW_LAST_LOGIN_DATE = "show-lld";
 
 	private AdvancedProperty file;
 	private ICFile realFile;
@@ -52,6 +58,8 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	private String fileHolderIdentifier;
 
 	private Boolean showCompany = null;
+	
+	private Boolean showLastLoginDate = null;
 
 	@Autowired(required = false)
 	private GeneralCompanyBusiness generalCompanyBusiness;
@@ -74,6 +82,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 
 		boolean showCompany = isShowCompany(iwc);
+		boolean showLastLoginDate = isShowLastLoginDate(iwc);
 		Layer container = new Layer();
 		add(container);
 		container.setStyleClass("fileDownloadStatisticsViewerStyle");
@@ -107,9 +116,22 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 			if(showCompany){
 				row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.company", "Company")));
 			}
+			if(showLastLoginDate){
+				row.createCell().add(new Text(iwrb.getLocalizedString("download_stats.last_login", "Last login")));
+			}
 
 			int index = 0;
 			TableBodyRowGroup bodyRows = table.createBodyRowGroup();
+			SimpleDateFormat dateFormat = null;
+			LoginRecordHome loginrecorshoHome = null;
+			if(showLastLoginDate){
+				dateFormat = new SimpleDateFormat("dd.mm.yy HH:mm");
+				try {
+					loginrecorshoHome = (LoginRecordHome) IDOLookup.getHome(LoginRecord.class);
+				} catch (IDOLookupException e) {
+					getLogger().log(Level.WARNING, "Failed getting loginrecordhome", e);
+				}
+			}
 			for (User downloader: downloaders) {
 				row = bodyRows.createRow();
 
@@ -132,6 +154,15 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 						}
 					}
 					row.createCell().add(new Text(companyName));
+				}
+				if(showLastLoginDate){
+					try {
+						LoginRecord loginRecord = loginrecorshoHome.findLastLoginRecord(downloader);
+						String date = dateFormat.format(loginRecord.getLogInStamp());
+						row.createCell().add(new Text(date));
+					} catch (FinderException e) {
+						getLogger().log(Level.WARNING, "Failed getting login record of user "+downloader.getId(), e);
+					}
 				}
 
 				index++;
@@ -321,5 +352,17 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	public void setShowCompany(boolean showCompany) {
 		this.showCompany = showCompany;
 	}
+
+	public boolean isShowLastLoginDate(IWContext iwc) {
+		if(showLastLoginDate == null){
+			showLastLoginDate = "y".equals(iwc.getParameter(SHOW_LAST_LOGIN_DATE));
+		}
+		return showLastLoginDate;
+	}
+
+	public void setShowLastLoginDate(Boolean showLastLoginDate) {
+		this.showLastLoginDate = showLastLoginDate;
+	}
+	
 
 }
