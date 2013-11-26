@@ -9,13 +9,17 @@ package com.idega.data;
  */
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
+import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
 public class IDOUtil implements Singleton {
 	private static final String COMMA_AND_SPACE = ", ";
 	private static final String SINGLE_QUOTE = "'";
@@ -230,44 +234,44 @@ public class IDOUtil implements Singleton {
 	}
 	
 	/**
-	 * Used to convert a Collection (list) of IDOEntities to a list of their primarykeys.
-	 * @param entities
-	 * @return
+	 * 
+	 * @param entities to get primary keys for;
+	 * @return {@link List} of {@link IDOEntity#getPrimaryKey()} or 
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public List convertIDOEntityCollectionToListOfPrimaryKeys(Collection entities){
-		if( entities!=null && !entities.isEmpty()){
-			List returnList = new ArrayList();
-			
-			Iterator iter = entities.iterator();
-			while (iter.hasNext()) {
-				IDOEntity entity = (IDOEntity) iter.next();
-				returnList.add(entity.getPrimaryKey());
+	public List<String> getPrimaryKeys(Collection<? extends IDOEntity> entities){
+		if(!ListUtil.isEmpty(entities)){
+			List<String> returnList = new ArrayList<String>(entities.size());
+			for (Iterator<? extends IDOEntity> iter = entities.iterator(); iter.hasNext();) {
+				returnList.add(iter.next().getPrimaryKey().toString());
 			}
-			
+
 			return returnList;
 		}
 		else {
-			return null;
+			return Collections.emptyList();
 		}
 	}
 
-
-	public String convertListToCommaseparatedString(Collection coll, boolean whithSimpleQuoteMarks) {
+	/**
+	 * 
+	 * @param coll to convert, not <code>null</code>; 
+	 * @param whithSimpleQuoteMarks tells if each element should have quotes 
+	 * or not;
+	 * @return {@link String} of {@link Collection} of 
+	 * {@link IDOEntity#getPrimaryKey()} separated by quotes or {@link CoreConstants#EMPTY}
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public String convertListToCommaseparatedString(
+			Collection<? extends IDOEntity> coll, 
+			boolean whithSimpleQuoteMarks) {
 		StringBuffer sList = new StringBuffer();
-		if (coll != null && !coll.isEmpty()) {
-			//String sGroupList = "";
-			Iterator iter = coll.iterator();
-			for (int g = 0; iter.hasNext(); g++) {
-				IDOEntity item = (IDOEntity) iter.next();
-				if (g > 0) {
-					sList.append(COMMA_AND_SPACE);
-				}
-				
-				Object sPK = null;
-				if(item!=null) {
-					sPK = item.getPrimaryKey();
-				}
-				
+		if (!ListUtil.isEmpty(coll)) {
+			Iterator<? extends IDOEntity> iter = coll.iterator();
+			while (iter.hasNext()) {
+				Object sPK = iter.next().getPrimaryKey();
 				if (sPK != null) {
 					if (whithSimpleQuoteMarks) {
 						sList.append(SINGLE_QUOTE).append(sPK).append(SINGLE_QUOTE);
@@ -275,8 +279,13 @@ public class IDOUtil implements Singleton {
 						sList.append(sPK);
 					}
 				}
+
+				if (iter.hasNext()) {
+					sList.append(COMMA_AND_SPACE);
+				}
 			}
 		}
+
 		return sList.toString();
 	}
 	
