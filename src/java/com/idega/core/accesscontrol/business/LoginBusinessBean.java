@@ -1182,10 +1182,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	/**
 	 * added for cookie login - calling this may be unsafe ( Aron )
-<<<<<<< HEAD
-=======
 	 * </p>
->>>>>>> caedf7bba3f629e1f49cde7e8a02f7404adcf01e
 	 *
 	 * @param request
 	 * @param login
