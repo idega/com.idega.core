@@ -1440,6 +1440,24 @@ function changeWindowLocationHref(newHref) {
 }
 	
 function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) {
+	if (newHref.indexOf('login_state=logoff') != -1) {
+		showLoadingMessage('');
+		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
+			WebUtil.logOut({
+				callback: function(result) {
+					var redirectUriIndex = newHref.indexOf('logoff_redirect_uri=');
+					if (redirectUriIndex == -1) {
+						window.location.href = '/pages';
+					} else {
+						window.location.href = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
+					}
+					closeAllLoadingMessages();
+				}
+			});
+		}, null);
+		return false;
+	}
+	
 	var oldLocation = '' + window.location.href;
 	
 	if (oldLocation.indexOf('#') != -1) {
