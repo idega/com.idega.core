@@ -21,7 +21,7 @@ public class JoinCriteria extends Criteria {
         this.source = source;
         this.dest = dest;
     }
-    
+
     public JoinCriteria(Table srcTable, Table destTable) throws IDORelationshipException {
 		if (srcTable.hasEntityDefinition() && destTable.hasEntityDefinition()) {
 			IDOEntityDefinition source = srcTable.getEntityDefinition();
@@ -50,9 +50,9 @@ public class JoinCriteria extends Criteria {
 							try {
 								String middleTableName = source.getMiddleTableNameForRelation(destination.getSQLTableName());
 								if (middleTableName == null) { throw new IDORelationshipException("Middle table not found for tables."); }
-		
+
 								this.middleTable = new Table(middleTableName);
-		
+
 								this.source = srcTable.getColumn(source.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase());
 								this.dest =  destTable.getColumn(destination.getPrimaryKeyDefinition().getField().getSQLFieldName().toLowerCase());
 							}
@@ -68,7 +68,7 @@ public class JoinCriteria extends Criteria {
 		}
 		throw new IDORelationshipException("No relation found between tables!");
     }
-    
+
     public Column getSource() {
         return this.source;
     }
@@ -77,7 +77,8 @@ public class JoinCriteria extends Criteria {
         return this.dest;
     }
 
-    public void write(Output out) {
+    @Override
+	public void write(Output out) {
     	if (this.middleTable == null) {
     		out.print(this.source)
             .print(" = ")
@@ -93,27 +94,29 @@ public class JoinCriteria extends Criteria {
         	.print(this.dest);
         }
     }
-    
-    public Set getTables(){
-		Set s = new HashSet();
+
+    @Override
+	public Set<Table> getTables(){
+		Set<Table> s = new HashSet<Table>();
 		s.add(this.source.getTable());
 		s.add(this.dest.getTable());
 		if (this.middleTable != null) {
 			s.add(this.middleTable);
 		}
-		return s; 
+		return s;
     }
-    
-    public Object clone(){
+
+    @Override
+	public Object clone(){
 		JoinCriteria obj = (JoinCriteria)super.clone();
 		if(this.source!=null){
 			obj.source = (Column) this.source.clone();
 		}
-		
+
 		if(this.dest!=null){
 			obj.dest = (Column) this.dest.clone();
 		}
-		
+
 		if(this.middleTable!=null){
 			obj.middleTable = (Table) this.middleTable.clone();
 		}

@@ -2,10 +2,10 @@ package com.idega.data.query;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
@@ -38,7 +38,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
 	 * NULL...)
-	 * 
+	 *
 	 * @param column
 	 */
 	public MatchCriteria(Column column) {
@@ -50,7 +50,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
 	 * NULL...)
-	 * 
+	 *
 	 * @param column
 	 */
 	public MatchCriteria(Column column, boolean notNull) {
@@ -82,7 +82,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		}
 
 	}
-	
+
 	public MatchCriteria(Column column, String matchType, String value) {
 		this(column, matchType, false, value);
 	}
@@ -239,8 +239,8 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	@Override
-	public Set getTables() {
-		Set s = new HashSet();
+	public Set<Table> getTables() {
+		Set<Table> s = new HashSet<Table>();
 		s.add(this.column.getTable());
 		return s;
 	}
@@ -252,8 +252,9 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		return this.placeHolderValue;
 	}
 
-	public List getValues() {
-		Vector v = new Vector(1);
+	@Override
+	public List<Object> getValues() {
+		List<Object> v = new ArrayList<Object>(1);
 		if (this.placeHolderValue != null) {
 			v.add(this.placeHolderValue);
 		}

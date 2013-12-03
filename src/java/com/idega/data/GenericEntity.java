@@ -4256,15 +4256,15 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	protected Collection idoGetRelatedEntities(Class<? extends IDOEntity> returningEntityInterfaceClass) throws IDORelationshipException {
-		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass, getDatasource());
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(Class<T> returningEntityInterfaceClass) throws IDORelationshipException {
+		T returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass, getDatasource());
 		return idoGetRelatedEntitiesBySQL(returningEntity, getFindRelatedSQLQuery(returningEntity, "", ""));
 	}
 
 	/**
 	 * Returns a collection of returningEntity instances
 	 */
-	protected Collection idoGetRelatedEntities(IDOEntity returningEntity, String columnName, String entityColumnValue) throws IDOException {
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(T returningEntity, String columnName, String entityColumnValue) throws IDOException {
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
 		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
 	}
@@ -4272,8 +4272,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns a collection of returningEntity instances
 	 */
-	protected Collection idoGetRelatedEntities(Class returningEntityInterfaceClass, String columnName, String entityColumnValue) throws IDOException {
-		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(Class<T> returningEntityInterfaceClass, String columnName, String entityColumnValue) throws IDOException {
+		T returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
 		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
 	}
@@ -4281,8 +4281,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns a collection of returningEntity instances
 	 */
-	protected Collection idoGetRelatedEntitiesOrderedByColumn(Class returningEntityInterfaceClass, String columnName) throws IDOException {
-		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntitiesOrderedByColumn(Class<T> returningEntityInterfaceClass, String columnName) throws IDOException {
+		T returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, null, null, columnName);
 		return this.idoGetRelatedEntitiesBySQL(returningEntityInterfaceClass, SQLString);
 	}
@@ -4294,7 +4294,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	protected Collection idoGetRelatedEntities(IDOEntity returningEntity) throws IDORelationshipException {
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(T returningEntity) throws IDORelationshipException {
 		String sqlQuery = this.getFindRelatedSQLQuery(returningEntity, "", "");
 
 		logSQL(sqlQuery);
