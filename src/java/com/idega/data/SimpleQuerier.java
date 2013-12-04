@@ -278,35 +278,33 @@ public class SimpleQuerier {
     }
 
     /**
-     * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if flushCache==true
+     * Executes an SQL update command specified by sqlString to the data store specified and flushes all cache if flushCache==true
      *  @returns true if there was an update, false if there was no update
      *  @throws SQLException if there was an error
      */
-    protected static boolean executeUpdate(String sqlString, String dataSource, boolean flushCache)
-        throws SQLException {
-        Connection conn= null;
-        Statement Stmt= null;
-        boolean theReturn= false;
+    protected static boolean executeUpdate(String sqlString, String dataSource, boolean flushCache) throws SQLException {
+        Connection conn = null;
+        Statement stmt = null;
+        boolean result = false;
         int count= 0;
         try {
-            conn= getConnection(dataSource);
-            Stmt= conn.createStatement();
-            count= Stmt.executeUpdate(sqlString);
+            conn = getConnection(dataSource);
+            stmt = conn.createStatement();
+            count = stmt.executeUpdate(sqlString);
             if (count > 0) {
-                theReturn= true;
+            	result = true;
             }
-        }
-        finally {
-            if (Stmt != null) {
-                Stmt.close();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
             }
             if (conn != null) {
                 freeConnection(dataSource, conn);
             }
         }
-        if (flushCache && theReturn) {
+        if (flushCache && result) {
             IDOContainer.getInstance().flushAllCache();
         }
-        return theReturn;
+        return result;
     }
 }
