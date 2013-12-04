@@ -1,10 +1,15 @@
 package com.idega.presentation.file;
 
 import java.net.URLDecoder;
-import java.text.SimpleDateFormat;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -41,6 +46,7 @@ import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.GenericButton;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -96,6 +102,25 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		ICFile realFile = getRealFile(iwc);
 
 		Collection<User> downloaders = realFile == null ? null : realFile.getDownloadedBy();
+		if(!ListUtil.isEmpty(downloaders)){
+			final Locale locale = iwc.getCurrentLocale();
+			Comparator<User> comparator = new Comparator<User>() {
+				private Collator collator = Collator.getInstance(locale);
+				@Override
+				public int compare(User user1, User user2) {
+					String user1Name = user1.getName().toUpperCase();
+					String user2Name = user2.getName().toUpperCase();
+		 
+					//ascending order
+					return collator.compare(user1Name, user2Name);
+				}
+			};
+			List<User> userList = (List<User>) (downloaders instanceof List ? downloaders : new ArrayList<User>(downloaders));
+			TreeMap<String, User> userMap = new TreeMap<String, User>();
+			Collections.sort(userList,comparator);
+			downloaders = userList;
+		}
+		Locale locale = iwc.getCurrentLocale();
 
 		if (file != null) {
 			container.add(new Heading3(new StringBuilder(iwrb.getLocalizedString("download_stats.downloads_statistics_for", "Download statistics for"))
@@ -122,10 +147,8 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 
 			int index = 0;
 			TableBodyRowGroup bodyRows = table.createBodyRowGroup();
-			SimpleDateFormat dateFormat = null;
 			LoginRecordHome loginrecorshoHome = null;
 			if(showLastLoginDate){
-				dateFormat = new SimpleDateFormat("dd.mm.yy HH:mm");
 				try {
 					loginrecorshoHome = (LoginRecordHome) IDOLookup.getHome(LoginRecord.class);
 				} catch (IDOLookupException e) {
@@ -158,7 +181,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				if(showLastLoginDate){
 					try {
 						LoginRecord loginRecord = loginrecorshoHome.findLastLoginRecord(downloader);
-						String date = dateFormat.format(loginRecord.getLogInStamp());
+						String date = new IWTimestamp(loginRecord.getLogInStamp()).getLocaleDateAndTime(locale);
 						row.createCell().add(new Text(date));
 					} catch (FinderException e) {
 						getLogger().log(Level.WARNING, "Failed getting login record of user "+downloader.getId(), e);
@@ -252,7 +275,6 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		return usersToInform;
 	}
 
-	@SuppressWarnings("unchecked")
 	private String getEmailAddress(IWContext iwc, User user) {
 		Collection<Email> mails = user.getEmails();
 		if (ListUtil.isEmpty(mails)) {
