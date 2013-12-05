@@ -293,19 +293,18 @@ private static List<ICLocale> listOfICLocalesInUse(){
 		  return null;
 	  }
 
-    if(localeString.length() == 2){
-      return new Locale(localeString, CoreConstants.EMPTY);
-    }
-    else if(localeString.length()==5 && localeString.indexOf(CoreConstants.UNDER)==2){
-      return new Locale(localeString.substring(0,2),localeString.substring(3,5));
-    }
-    else if(localeString.length() > 5 && localeString.indexOf(CoreConstants.UNDER)==2 && localeString.indexOf(CoreConstants.UNDER,3)== 5){
-      return new Locale(localeString.substring(0,2),localeString.substring(3,5),localeString.substring(6,localeString.length()));
-    }
-		else {
-			return null;
-      //return Locale.getDefault();
-		}
+	  if (localeString.length() == 2) {
+	      return new Locale(localeString, CoreConstants.EMPTY);
+
+	  } else if (localeString.length() == 5 && localeString.indexOf(CoreConstants.UNDER) == 2) {
+	      return new Locale(localeString.substring(0, 2), localeString.substring(3, 5).toUpperCase());
+
+	  } else if (localeString.length() > 5 && localeString.indexOf(CoreConstants.UNDER) == 2 && localeString.indexOf(CoreConstants.UNDER, 3) == 5) {
+	      return new Locale(localeString.substring(0, 2), localeString.substring(3, 5).toUpperCase(), localeString.substring(6, localeString.length()));
+
+	  }
+
+	  return null;
   }
 
   public static Locale getLocaleReturnIcelandicLocaleIfNotFound(int iLocaleId) {
