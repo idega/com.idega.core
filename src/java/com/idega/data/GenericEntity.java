@@ -4851,6 +4851,38 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 	}
 
+	/**
+	 * 
+	 * <p>Adds realtions between current entity and given ones.</p>
+	 * @param entities to add, not <code>null</code>;
+	 * @return <code>true</code> if all entities added, 
+	 * <code>false</code> otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean idoAddTo(Collection<? extends IDOEntity> entities) {
+		if (ListUtil.isEmpty(entities)) {
+			return false;
+		}
+		
+		for (IDOEntity entity: entities) {
+			try {
+				idoAddTo(entity);
+				getLogger().info("Relation between " + 
+						getClass().getName() + " by id: '" + getPrimaryKey() + "' and " + 
+						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() + "' added!");
+			} catch (IDOAddRelationshipException e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to add relation between " + getClass().getName() +
+						" by id: '" + getPrimaryKey() + "' and " + 
+						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() + 
+						"' cause of: ", e);
+				return false;
+			}
+		}
+
+		return true;
+	}
+
 	protected void idoAddTo(IDOEntity entity, String middleTableName) throws IDOAddRelationshipException {
 		try {
 			idoAddTo(middleTableName, entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName(), entity.getPrimaryKey());
