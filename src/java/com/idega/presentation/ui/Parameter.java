@@ -10,6 +10,7 @@
 package com.idega.presentation.ui;
 
 import com.idega.presentation.IWContext;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -53,7 +54,9 @@ public class Parameter extends GenericInput {
 	 */
 	public void handleKeepStatus(IWContext iwc) {
 		if (iwc.getParameter(getName()) != null) {
-			setContent(iwc.getParameter(getName()));
+			if(StringUtil.isEmpty(getContent())){
+				setContent(iwc.getParameter(getName()));
+			}
 		}
 	}
 	
