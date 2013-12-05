@@ -2,10 +2,13 @@ package com.idega.presentation.filter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.Collator;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
@@ -83,7 +86,8 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 		container.setStyleClass("filterListStyle");
 		add(container);
 
-		if (ListUtil.isEmpty(getEntities())) {
+		List<T> entities = getEntities();
+		if (ListUtil.isEmpty(entities)) {
 			container.add(
 					new Heading3(getResourceBundle(iwc).getLocalizedString(
 							"filter.nothing_found", "Nothing found"
@@ -92,28 +96,20 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 			return;
 		}
 
-		if (!ListUtil.isEmpty(getEntities())) {
-			TreeMap<String, Layer> componentMap = new TreeMap<String, Layer>();
-			for (T entity: getEntities()) {
-				Layer entityEntry = new Layer();
-
-				String id = entity.getPrimaryKey().toString();
-				String name = getRepresentation(entity);
-
-				componentMap.put(name, entityEntry);
-				
-				PresentationObjectContainer checkBoxSpan = getCell();
-				entityEntry.add(checkBoxSpan);
-				checkBoxSpan.add(getCheckBox(iwc, id));
-				
-				Collection<UIComponentBase> elements = getEntityFields(entity);
-				for(UIComponentBase element : elements){
-					entityEntry.add(element);
-				}
-				
-			}
-			for(String key : componentMap.keySet()){
-				container.add(componentMap.get(key));
+		Comparator<T> comparator = new Entitycomparator(this, iwc.getCurrentLocale());
+		Collections.sort(entities, comparator);
+		for (T entity: entities) {
+			Layer entityEntry = new Layer();
+			container.add(entityEntry);
+			String id = entity.getPrimaryKey().toString();
+			
+			PresentationObjectContainer checkBoxSpan = getCell();
+			entityEntry.add(checkBoxSpan);
+			checkBoxSpan.add(getCheckBox(iwc, id));
+			
+			Collection<UIComponentBase> elements = getEntityFields(entity);
+			for(UIComponentBase element : elements){
+				entityEntry.add(element);
 			}
 		}
 		
@@ -441,4 +437,21 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 	public void setParameterName(String parameterName) {
 		this.parameterName = parameterName;
 	}
+	
+	private class Entitycomparator implements Comparator<T>{
+		private FilterList<T> component = null;
+		private Collator collator = null;
+		public Entitycomparator(FilterList<T> component,Locale locale){
+			this.component = component;
+			this.collator = Collator.getInstance(locale);
+		}
+		@Override
+		public int compare(T en1, T en2) {
+			String name1 = component.getRepresentation(en1).toUpperCase();
+			String name2 = component.getRepresentation(en2).toUpperCase();
+ 
+			//ascending order
+			return collator.compare(name1, name2);
+		}
+	};
 }

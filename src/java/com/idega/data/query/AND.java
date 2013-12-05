@@ -13,7 +13,7 @@ package com.idega.data.query;
  * select.addCriteria(new AND(a, b));
  * // ( table.col1 = 1 AND table.col2 = 2 )
  * </pre>
- * 
+ *
  * @author <a href="mailto:joe@truemesh.com">Joe Walnes</a>
  */
 public class AND extends BaseLogicGroup {

@@ -1,11 +1,12 @@
 package com.idega.data.query;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
+
 import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
 
@@ -19,13 +20,13 @@ public class InCriteria extends Criteria implements PlaceHolder {
 	private SelectQuery subSelect;
 	private boolean notInCr = false;
 
-	public InCriteria(Column column, Collection values) {
+	public <T extends Object> InCriteria(Column column, Collection<T> values) {
 		this.column = column;
 		StringBuffer v = new StringBuffer();
-		Iterator i = values.iterator();
+		Iterator<T> i = values.iterator();
 		boolean hasNext = i.hasNext();
 		while (hasNext) {
-			Object curr = i.next();
+			T curr = i.next();
 			hasNext = i.hasNext();
 			if (curr instanceof Number) {
 				v.append(curr);
@@ -49,7 +50,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		this.value = v.toString();
 	}
 
-	public InCriteria(Column column, Object[] values) {
+	public <T extends Object> InCriteria(Column column, T[] values) {
 		this.column = column;
 		StringBuffer v = new StringBuffer();
 		for (int i = 0; i < values.length; i++) {
@@ -112,7 +113,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		}
 		this.value = v.toString();
 	}
-	
+
 	public InCriteria(Column column, char[] values) {
 		this.column = column;
 		StringBuffer v = new StringBuffer();
@@ -135,7 +136,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		this.value = subSelect;
 	}
 
-	public InCriteria(Table table, String columnname, Collection values) {
+	public <T extends Object> InCriteria(Table table, String columnname, Collection<T> values) {
 		this(table.getColumn(columnname), values);
 	}
 
@@ -155,7 +156,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		this(table.getColumn(columnname), subSelect);
 	}
 
-	public InCriteria(Table table, String columnname, Object[] values) {
+	public <T extends Object> InCriteria(Table table, String columnname, T[] values) {
 		this(table.getColumn(columnname), values);
 	}
 
@@ -163,8 +164,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		this(table.getColumn(columnname), values);
 	}
 
-	// /////////
-	public InCriteria(Column column, Collection values, boolean notIn) {
+	public <T extends Object> InCriteria(Column column, Collection<T> values, boolean notIn) {
 		this(column, values);
 		setAsNotInCriteria(notIn);
 	}
@@ -194,7 +194,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		setAsNotInCriteria(notIn);
 	}
 
-	public InCriteria(Table table, String columnname, Collection values, boolean notIn) {
+	public <T extends Object> InCriteria(Table table, String columnname, Collection<T> values, boolean notIn) {
 		this(table, columnname, values);
 		setAsNotInCriteria(notIn);
 	}
@@ -219,7 +219,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		setAsNotInCriteria(notIn);
 	}
 
-	public InCriteria(Table table, String columnname, Object[] values, boolean notIn) {
+	public <T extends Object> InCriteria(Table table, String columnname, T[] values, boolean notIn) {
 		this(table, columnname, values);
 		setAsNotInCriteria(notIn);
 	}
@@ -229,7 +229,6 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		setAsNotInCriteria(notIn);
 	}
 
-	// ////////
 	public void setAsNotInCriteria(boolean value) {
 		this.notInCr = value;
 	}
@@ -242,6 +241,7 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		return this.column;
 	}
 
+	@Override
 	public void write(Output out) {
 		out.print(this.column);
 		if (this.notInCr) {
@@ -262,26 +262,29 @@ public class InCriteria extends Criteria implements PlaceHolder {
 		out.print(")");
 	}
 
-	public Set getTables() {
-		Set s = new HashSet();
+	@Override
+	public Set<Table> getTables() {
+		Set<Table> s = new HashSet<Table>();
 		s.add(this.column.getTable());
 		return s;
 	}
 
-	public List getValues() {
-		Vector l = new Vector();
+	@Override
+	public List<Object> getValues() {
+		List<Object> l = new ArrayList<Object>();
 		if (this.subSelect != null) {
 			l.addAll(this.subSelect.getValues());
 		}
 		return l;
 	}
-	
-    public Object clone(){
+
+    @Override
+	public Object clone(){
 		InCriteria obj = (InCriteria)super.clone();
 		if(this.column!=null){
 			obj.column = (Column) this.column.clone();
 		}
-		
+
 		if(this.subSelect!=null){
 			obj.subSelect = (SelectQuery) this.subSelect.clone();
 		}
