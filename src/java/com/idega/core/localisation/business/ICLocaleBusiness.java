@@ -9,8 +9,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.localisation.data.ICLocaleHome;
+import com.idega.core.localisation.data.dao.ICLocaleDAO;
 import com.idega.core.location.data.bean.Country;
 import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
@@ -19,8 +21,10 @@ import com.idega.repository.data.MutableClass;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * Title:
@@ -31,16 +35,15 @@ import com.idega.util.datastructures.map.MapUtil;
  * @version 1.1
  */
 
-public class ICLocaleBusiness  implements MutableClass {
+public class ICLocaleBusiness implements MutableClass {
 
 	private static Hashtable<String, ICLocale> LocaleHashByString = null, LocaleHashInUseByString = null;
 	private static Hashtable<Object, ICLocale> LocaleHashById = null, LocaleHashInUseById = null;
 	private static List<ICLocale> allIcLocales = null,usedIcLocales = null,notUsedIcLocales = null;
 	private static IWTimestamp reloadStamp = null;
 
-
   @SuppressWarnings("unchecked")
-private static List<ICLocale> listOfAllICLocales(){
+  private static List<ICLocale> listOfAllICLocales(){
     try {
       return new ArrayList<ICLocale>(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAll());
     }
@@ -50,7 +53,7 @@ private static List<ICLocale> listOfAllICLocales(){
   }
 
   @SuppressWarnings("unchecked")
-private static List<ICLocale> listOfICLocalesInUse(){
+  private static List<ICLocale> listOfICLocalesInUse(){
     try {
      return new ArrayList<ICLocale>(((ICLocaleHome)IDOLookup.getHome(ICLocale.class)).findAllInUse());
     }
@@ -450,5 +453,41 @@ private static List<ICLocale> listOfICLocalesInUse(){
   			}
   		}
   		return countryLocales;
+  	}
+
+  	public static List<Locale> getLocalesForLanguage(String language) {
+  		if (StringUtil.isEmpty(language)) {
+  			return Collections.emptyList();
+  		}
+
+  		Map<String, List<Locale>> localesByLanguageCache = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication()).getCache(
+  				"localesByLanguageCache", 500, Boolean.TRUE, Boolean.FALSE, 604800);
+
+  		List<Locale> localesByLanguage = localesByLanguageCache.get(language);
+  		if (!ListUtil.isEmpty(localesByLanguage)) {
+  			return localesByLanguage;
+  		}
+
+  		if (localesByLanguage == null) {
+  			localesByLanguage = new ArrayList<Locale>();
+  			localesByLanguageCache.put(language, localesByLanguage);
+  		}
+
+  		ICLocaleDAO localeDAO = ELUtil.getInstance().getBean(ICLocaleDAO.class);
+  		List<com.idega.core.localisation.data.bean.ICLocale> icLocales = localeDAO.doFindLocalesByLanguage(language + CoreConstants.PERCENT);
+		if (!ListUtil.isEmpty(icLocales)) {
+			for (com.idega.core.localisation.data.bean.ICLocale icLocale: icLocales) {
+				String localeValue = icLocale.getLocale();
+				if (!language.equals(localeValue)) {
+					Locale locale = getLocaleFromLocaleString(localeValue);
+					if (locale != null && !localesByLanguage.contains(locale)) {
+						localesByLanguage.add(locale);
+					}
+				}
+			}
+		}
+
+		localesByLanguageCache.put(language, localesByLanguage);
+		return localesByLanguage;
   	}
 }
