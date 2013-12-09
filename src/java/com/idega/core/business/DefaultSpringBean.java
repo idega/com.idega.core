@@ -33,6 +33,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.RequestResponseProvider;
+import com.idega.user.dao.UserDAO;
 import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
@@ -126,6 +127,14 @@ public abstract class DefaultSpringBean {
 		return user;
 	}
 
+	protected User getUser(com.idega.user.data.User legacyUser) {
+		if (legacyUser == null) {
+			return null;
+		}
+
+		UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
+		return userDAO.getUser(Integer.valueOf(legacyUser.getId()));
+	}
 	protected com.idega.user.data.User getLegacyUser() {
 		return getLegacyUser(getCurrentUser());
 	}
