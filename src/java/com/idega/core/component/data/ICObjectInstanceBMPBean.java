@@ -17,6 +17,7 @@ import com.idega.core.component.business.ICObjectBusiness;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.query.Column;
 import com.idega.data.query.CountColumn;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
@@ -193,6 +194,15 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		query.addCriteria(new MatchCriteria(thisTable, COLUMN_OBJECT_ID, MatchCriteria.EQUALS, ico));
 
 		return idoGetNumberOfRecords(query);
+	}
+
+	public Collection<?> ejbFindByICObject(ICObject ico) throws FinderException {
+		Table thisTable = new Table(this);
+
+		SelectQuery query = new SelectQuery(thisTable);
+		query.addColumn(new Column(thisTable, getIDColumnName()));
+		query.addCriteria(new MatchCriteria(new Column(thisTable, COLUMN_OBJECT_ID), MatchCriteria.EQUALS, ico));
+		return idoFindPKsByQuery(query);
 	}
 
 	public Collection<?> ejbFindByClassName(Class<? extends UIComponent> className) throws FinderException {

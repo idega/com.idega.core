@@ -32,5 +32,7 @@ public interface ICObjectInstanceHome extends IDOHome {
 
 	public int getCountByICObject(ICObject ico) throws IDOException;
 
+	public Collection<ICObjectInstance> getByICObject(ICObject ico) throws FinderException;
+
 	public Collection<ICObjectInstance> getByClassName(Class<? extends UIComponent> className) throws FinderException;
 }

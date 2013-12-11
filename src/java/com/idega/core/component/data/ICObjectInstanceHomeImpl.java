@@ -93,4 +93,13 @@ public class ICObjectInstanceHomeImpl extends IDOFactory implements ICObjectInst
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
+
+	@Override
+	public Collection<ICObjectInstance> getByICObject(ICObject ico) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<?> ids = ((ICObjectInstanceBMPBean) entity).ejbFindByICObject(ico);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
 }
