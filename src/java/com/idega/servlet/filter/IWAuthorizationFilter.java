@@ -1,9 +1,9 @@
 /*
  * $Id: IWAuthorizationFilter.java,v 1.16 2008/12/18 13:55:08 valdas Exp $ Created on 31.7.2004
  * in project com.idega.core
- * 
+ *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -31,13 +31,13 @@ import com.idega.util.StringUtil;
 
 /**
  * <p>
- * This servletFilter is by default mapped early in the filter chain in idegaWeb and 
- * checks if the user as sufficient access to a resource and blocks it if the user hasn't 
+ * This servletFilter is by default mapped early in the filter chain in idegaWeb and
+ * checks if the user as sufficient access to a resource and blocks it if the user hasn't
  * sufficent priviliges.<br/>
  * In some instances (when accessing the workspace) it redirects the user to the login page.
  * </p>
  * Last modified: $Date: 2008/12/18 13:55:08 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.16 $
  */
@@ -46,6 +46,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
+	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 		// TODO Auto-generated method stub
 
@@ -54,6 +55,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest)srequest;
 		HttpServletResponse response = (HttpServletResponse)sresponse;
@@ -61,20 +63,18 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
 		boolean hasPermission = getIfUserHasPermission(request);
-		if(!hasPermission){
-			if(getIfSendToLoginPage(request,response,isLoggedOn)){
-				
+		if (!hasPermission) {
+			if (getIfSendToLoginPage(request,response,isLoggedOn)) {
 				String requestedUri = request.getRequestURI();
-				
+
 				String newUrl = getNewLoginUri(request,requestedUri);
 				response.sendRedirect(newUrl);
-			}
-			else{
+			} else {
 				if (isLoggedOn) {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
-				
+
 				String redirectUri = RequestUtil.getRedirectUriByApplicationProperty(request, HttpServletResponse.SC_FORBIDDEN);
 				if (StringUtil.isEmpty(redirectUri)) {
 					//by default send a 403 error
@@ -85,35 +85,31 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 					response.sendRedirect(redirectUri);
 				}
 			}
-		}
-		else{
+		} else {
 			boolean viewNodeExists = true;
-			try{
+			try {
 				ViewManager.getInstance(getIWMainApplication(request)).getViewNodeForRequest(request);
-				viewNodeExists=true;
-			}
-			catch(Exception e){
+				viewNodeExists = true;
+			} catch (Exception e) {
 				e.printStackTrace();
 				viewNodeExists=false;
 			}
-			
-			if(!viewNodeExists){
+
+			if (!viewNodeExists) {
 				String redirectUri = RequestUtil.getRedirectUriByApplicationProperty(request, HttpServletResponse.SC_NOT_FOUND);
 				if (StringUtil.isEmpty(redirectUri)) {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
-				
+
 				Logger.getLogger(this.getClass().getName()).warning("Found default page for error 404, redirecting to: " + redirectUri);
 				response.sendRedirect(redirectUri);
 				return;
 			}
 			chain.doFilter(srequest,sresponse);
 		}
-		//chain.doFilter(srequest,sresponse);
-
 	}
-	
+
 	protected boolean getIfUserHasPermission(HttpServletRequest request){
 		//HttpServletRequest request = iwc.getRequest();
 		/*HttpServletResponse response = iwc.getResponse();*/
@@ -127,7 +123,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				ViewManager vManager = ViewManager.getInstance(getIWMainApplication(request));
 				ViewNode node = vManager.getViewNodeForRequest(request);
 				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
-				
+
 				if(vManager.hasUserAccess(node,iwuc)){
 					return true;
 				}
@@ -142,7 +138,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 		}
 		return true;
 	}
-	
+
 	/**
 	 * Gets if it should redirect to the login page or send a 403 error
 	 * @param request
@@ -164,6 +160,7 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 	/* (non-Javadoc)
 	 * @see javax.servlet.Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 		// TODO Auto-generated method stub
 
