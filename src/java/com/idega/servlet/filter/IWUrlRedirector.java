@@ -41,9 +41,9 @@ import com.idega.util.StringUtil;
 /**
  *  Filter that detects incoming urls and redirects to another url. <br>
  *  Now used for mapping old idegaWeb urls to the new appropriate ones.<br><br>
- * 
+ *
  *  Last modified: $Date: 2009/04/20 09:47:56 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.26 $
  */
@@ -51,68 +51,65 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(IWUrlRedirector.class.getName());
 
+	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 	}
 
-	public void doFilter(ServletRequest srequest, ServletResponse sresponse,
-			FilterChain chain) throws IOException, ServletException {
-		
-		HttpServletRequest request = (HttpServletRequest)srequest;
-		HttpServletResponse response = (HttpServletResponse)sresponse;
-		
+	@Override
+	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) srequest;
+		HttpServletResponse response = (HttpServletResponse) sresponse;
+
 		setApplicationContext(request);
-		
-		try{
+
+		try {
 			boolean doRedirect = getIfDoRedirect(request);
-			if(doRedirect){
+			if (doRedirect) {
 				String newUrl = getNewRedirectURL(request);
 				response.sendRedirect(newUrl);
-			}
-			else if(isCorrectPath(request)) {
+			} else if (isCorrectPath(request)) {
 				chain.doFilter(srequest,sresponse);
 			} else {
 				String newUrl = getFixedSlashURL(request);
 				response.sendRedirect(newUrl);
 			}
-		}
-		catch(BuilderPageException pe){
-			if(pe.getCode().equals(BuilderPageException.CODE_NOT_FOUND)){
+		} catch (BuilderPageException pe) {
+			if (pe.getCode().equals(BuilderPageException.CODE_NOT_FOUND)) {
 				String redirectUri = RequestUtil.getRedirectUriByApplicationProperty(request, HttpServletResponse.SC_NOT_FOUND);
 				if (StringUtil.isEmpty(redirectUri)) {
 					response.sendError(HttpServletResponse.SC_NOT_FOUND);
 					return;
 				}
-				
+
 				LOGGER.warning("Found default page for error 404, redirecting to: " + redirectUri);
 				response.sendRedirect(redirectUri);
 				return;
-			}
-			else{
+			} else {
 				throw pe;
 			}
 		}
-		
+
 		removeApplicationContext(request);
 	}
-	
+
 	String getFixedSlashURL(HttpServletRequest request) {
 		String queryString = request.getQueryString();
 		if(queryString!=null){
 			return request.getRequestURI() + "/?"+queryString;
 		}
 		else{
-			return request.getRequestURI() + "/";
+			return request.getRequestURI() + CoreConstants.SLASH;
 		}
 	}
-	
+
 	boolean isCorrectPath(HttpServletRequest request) {
 		String requestUri = getURIMinusContextPath(request);
 		if(requestUri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH) || requestUri.startsWith(PAGES_URI_MINUSSLASH)) {
-			int lastSlashIndex = requestUri.lastIndexOf("/");
+			int lastSlashIndex = requestUri.lastIndexOf(CoreConstants.SLASH);
 			if(lastSlashIndex == requestUri.length() - 1) {
 				return true;
 			}
-			int lastDotIndex = requestUri.lastIndexOf(".");
+			int lastDotIndex = requestUri.lastIndexOf(CoreConstants.DOT);
 			if(lastSlashIndex < lastDotIndex) {
 				return true;
 			} else {
@@ -126,7 +123,6 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 	 * @param request
 	 * @return
 	 */
-	@SuppressWarnings("unchecked")
 	String getNewRedirectURL(HttpServletRequest request) {
 		//TODO: Make this logic support regular expressions
 		String requestUri = getURIMinusContextPath(request);
@@ -143,10 +139,10 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 					pageId=bs.getRootPageKey();
 				}
 				String newPageUri = bs.getPageURI(pageId);
-				Map pMap = request.getParameterMap();
+				Map<?, ?> pMap = request.getParameterMap();
 				StringBuffer newUri = new StringBuffer(newPageUri);
 				if (pMap != null) {
-					Iterator keys = pMap.keySet().iterator();
+					Iterator<?> keys = pMap.keySet().iterator();
 					boolean first = true;
 					while (keys.hasNext()) {
 						String key = (String) keys.next();
@@ -194,14 +190,14 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			} catch (Exception e) {
 				LOGGER.warning(classParam + " is not class name or such class can not be found!");
 			}
-			
+
 			if (classToInstanciate != null) {
 				try {
 					Class<? extends UIComponent> uiComponentToInstanciate = classToInstanciate.asSubclass(UIComponent.class);
-					Map pMap = request.getParameterMap();
+					Map<?, ?> pMap = request.getParameterMap();
 					StringBuffer newUri = new StringBuffer(getIWMainApplication(request).getPublicObjectInstanciatorURI(uiComponentToInstanciate));
 					if (pMap != null) {
-						Iterator keys = pMap.keySet().iterator();
+						Iterator<?> keys = pMap.keySet().iterator();
 						boolean first = true;
 						while (keys.hasNext()) {
 							String key = (String) keys.next();
@@ -238,7 +234,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 			} catch (RemoteException e) {
 				LOGGER.log(Level.WARNING, "Error getting " + BuilderService.class.getSimpleName(), e);
 			}
-			
+
 			if (builder.isFirstBuilderRun()) {
 				return new StringBuffer(NEW_WORKSPACE_URI).append(CoreConstants.CONTENT_VIEW_MANAGER_ID).toString();
 			}
@@ -261,7 +257,6 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		String referer = request.getHeader("Referer");
 		System.err.println("[IWUrlRedirector] Referer = "+referer);
 		System.err.println("Error handling redirect Url");
-//		throw new RuntimeException("Error handling redirect Url");
 		return getIWMainApplication(request).getPublicObjectInstanciatorURI(DefaultErrorHandlingUriWindow.class);
 	}
 
@@ -273,7 +268,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		if(IWMainApplication.useNewURLScheme){
 			String requestUri = getURIMinusContextPath(request);
 			String oldIdegaWebUriWithSlash = OLD_IDEGAWEB_LOGIN_WITHSLASH;
-			
+
 			ViewManager viewManager = ViewManager.getInstance(getIWMainApplication(request));
 			ViewNode node = viewManager.getViewNodeForRequest(request);
 			if(node!=null){
@@ -281,7 +276,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 					return true;
 				}
 			}
-			
+
 			if(getIWMainApplication(request).isInSetupMode()){
 				String fullRequestUri = request.getRequestURI();
 				//this is a small hack to force the bundles load:
@@ -293,7 +288,7 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 					return true;
 				}
 			}
-			
+
 			if(requestUri.startsWith(OLD_BUILDER_SERVLET_URI)){
 				return true;
 			}
@@ -325,10 +320,8 @@ public class IWUrlRedirector extends BaseFilter implements Filter {
 		return false;
 	}
 
+	@Override
 	public void destroy() {
-		// TODO Auto-generated method stub
-
 	}
-		
-}
 
+}

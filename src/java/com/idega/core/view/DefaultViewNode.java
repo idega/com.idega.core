@@ -26,9 +26,9 @@ import com.idega.util.StringHandler;
 
 /**
  * The default implementation of the ViewNode interface.<br>
- * 
+ *
  *  Last modified: $Date: 2008/02/20 18:18:15 $ by $Author: eiki $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.20 $
  */
@@ -47,36 +47,37 @@ public class DefaultViewNode implements ViewNode {
 	private String name;
 	private KeyboardShortcut keyboardShortcut;
 	private boolean redirectsToResourceUri=false;
-	
+
 	private ViewNodeBase viewNodeBase = ViewNodeBase.UNSPECIFIED;
-	
+
 	/**
 	 * @param viewId the ViewId of this node (must be unique under its parent)
 	 */
 	public DefaultViewNode(String viewId) {
 		setViewId(viewId);
-	}	
-	
+	}
+
 	/**
 	 * @param viewId the ViewId of this node (must be unique under its parent)
 	 * @param parent the Parent of this node. This node will be added as a child under its parent implicitly by this constructor
 	 */
 	public DefaultViewNode(String viewId,ViewNode parent) {
 		this(viewId);
-		setParent(parent);	
-	}	
-	
+		setParent(parent);
+	}
+
 	/**
 	 * @param iwma the IWMainApplication instance to register to this ViewNode
 	 */
 	public DefaultViewNode(IWMainApplication iwma) {
 		this.setIWMainApplication(iwma);
 	}
-	
+
+	@Override
 	public String getViewId() {
 		return this.viewId;
 	}
-	
+
 	public void setViewId(String viewId){
 		this.viewId=viewId;
 	}
@@ -87,13 +88,14 @@ public class DefaultViewNode implements ViewNode {
 		}
 		return this.children;
 	}
-	
+
 	/**
 	 * Returns the primary URI up the tree hierarchy and does NOT include the webapplications context path if any.
 	 */
+	@Override
 	public String getURI(){
 		StringBuffer path = new StringBuffer(NODE_SEPARATOR);
-		
+
 		ViewNode view = this;
 		while(view!=null){
 			String viewId = view.getViewId();
@@ -109,6 +111,7 @@ public class DefaultViewNode implements ViewNode {
 	/**
 	 * Returns the primary URI up the tree hierarchy and includes the webapplications context path if any.
 	 */
+	@Override
 	public String getURIWithContextPath(){
 		StringBuffer path = new StringBuffer(getURI());
 		String contextURI = getIWMainApplication().getApplicationContextURI();
@@ -117,13 +120,14 @@ public class DefaultViewNode implements ViewNode {
 				path.insert(0,contextURI);
 			}
 		}
-		
+
 		return path.toString();
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#addChildViewNode(com.idega.faces.view.ViewNode)
 	 */
+	@Override
 	public void addChildViewNode(ViewNode node) {
 		getChildrenMap().put(node.getViewId(),node);
 		//node.setParent(this);
@@ -132,6 +136,7 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getChildren()
 	 */
+	@Override
 	public Collection<ViewNode> getChildren() {
 		return getChildrenMap().values();
 	}
@@ -144,24 +149,24 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	protected ViewNode getDirectChild(String realChildId){
 		ViewNode theReturn = getChildrenMap().get(realChildId);
-		if(theReturn==null){
+		if (theReturn == null) {
 			theReturn = loadChild(realChildId);
-			if(theReturn!=null){
-				getChildrenMap().put(realChildId,theReturn);	
+			if (theReturn != null) {
+				getChildrenMap().put(realChildId,theReturn);
 				return theReturn;
 			}
-		}
-		else{
+		} else {
 			return theReturn;
 		}
 		return null;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getChild(java.lang.String)
 	 */
+	@Override
 	public ViewNode getChild(String childViewId) {
-		
+
 		if(childViewId!=null){
 			String realChildId=childViewId;
 			String childrenOfChildId = null;
@@ -183,21 +188,21 @@ public class DefaultViewNode implements ViewNode {
 					return directChild;
 				}
 			}
-			
+
 		}
 		return this;
 	}
-	
-	
+
+
 	/**
 	 * This method is called if a node instance is not found in the map.
-	 * This can be overrided in suclasses and can be a relatively expensive operation, 
+	 * This can be overrided in suclasses and can be a relatively expensive operation,
 	 * therefore is only called the first time (lazy-loading) when getting the child and after that accessed from the map instance variable.
 	 */
 	protected ViewNode loadChild(String childId){
 		return null;
 	}
-	
+
 	/**
 	 * This method parses the childViewId with the first separating slash found.<br>
 	 * This method should return either an array of size 1 or 2 depending on if the '/' is in the middle of the string or in the beginning.
@@ -205,8 +210,8 @@ public class DefaultViewNode implements ViewNode {
 	 * @return
 	 */
 	protected String[] parseChildren(String childViewId){
-		
-		
+
+
 		if(childViewId!=null){
 			int slashIndex = childViewId.indexOf(StringHandler.SLASH);
 			//if(childViewId.equals(StringHandler.SLASH)){
@@ -245,12 +250,12 @@ public class DefaultViewNode implements ViewNode {
 					else{
 						split= childViewId.split(StringHandler.SLASH,2);
 					}
-					
+
 					//int length = split.length;
-					
-					
+
+
 					return split;
-					
+
 					/*
 					if(length==2){
 						//In this case the '/' character must have been somewhere in the middle of the string
@@ -264,7 +269,7 @@ public class DefaultViewNode implements ViewNode {
 						//else{
 						//	return child.getChild(rest);
 						//}
-						
+
 						return prefix;
 					}
 					else if(length==1){
@@ -274,7 +279,7 @@ public class DefaultViewNode implements ViewNode {
 						//if(theReturn==null){
 						//	//Instead of returning null we return this if no chid is found
 						//	theReturn = this;
-						//	
+						//
 						//}
 						//return theReturn;
 						return prefix;
@@ -282,15 +287,16 @@ public class DefaultViewNode implements ViewNode {
 			}
 		}
 		return null;
-		
+
 	}
 
 	/**
-	 * If no special Viewhandler is set then this method returns 
+	 * If no special Viewhandler is set then this method returns
 	 * the ViewHandler from the parent ViewNode
 	 */
+	@Override
 	public ViewHandler getViewHandler() {
-		
+
 		if(this.viewHandler==null){
 			ViewNode parent = getParent();
 			if(parent!=null){
@@ -303,18 +309,20 @@ public class DefaultViewNode implements ViewNode {
 	public void setViewHandler(ViewHandler viewHandler) {
 		this.viewHandler=viewHandler;
 	}
-	
+
+	@Override
 	public ViewNodeBase getViewNodeBase() {
 		return viewNodeBase;
 	}
-	
+
 	public void setViewNodeBase(ViewNodeBase view_node_base) {
 		this.viewNodeBase = view_node_base;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#isCBP()
 	 */
+	@Override
 	public boolean isComponentBased() {
 		return getViewNodeBase() == ViewNodeBase.COMPONENT;
 	}
@@ -322,6 +330,7 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getJSPURI()
 	 */
+	@Override
 	public String getResourceURI() {
 		return resourceUri;
 	}
@@ -329,15 +338,17 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getComponentClass()
 	 */
+	@Override
 	public UIComponent createComponent(FacesContext context) {
 		throw new UnsupportedOperationException("DefaultViewNode.createComponent() not implemented");
 	}
 
 
 	/**
-	 * If no special roles are set then this method returns 
+	 * If no special roles are set then this method returns
 	 * the roles from the parent ViewNode
 	 */
+	@Override
 	public Collection<String> getAuthorizedRoles() {
 		if(this.roles==null){
 			ViewNode parent = getParent();
@@ -347,7 +358,7 @@ public class DefaultViewNode implements ViewNode {
 		}
 		return this.roles;
 	}
-	
+
 	public void setAuthorizedRoles(Collection<String> coll){
 		this.roles=coll;
 	}
@@ -355,6 +366,7 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getIcon()
 	 */
+	@Override
 	public Icon getIcon() {
 		// TODO Auto-generated method stub
 		return null;
@@ -363,12 +375,14 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getLocalizedName(java.util.Locale)
 	 */
+	@Override
 	public String getLocalizedName(Locale locale) {
 		return this.getViewId();
 	}
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getName()
 	 */
+	@Override
 	public String getName() {
 		if(this.name==null){
 			return StringHandler.firstCharacterToUpperCase(getViewId());
@@ -390,11 +404,12 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getKeyboardShortcut()
 	 */
+	@Override
 	public KeyboardShortcut getKeyboardShortcut() {
 		return this.keyboardShortcut;
 	}
-	
-	
+
+
 	/**
 	 * @param keyboardShortcut The keyboardShortcut to set.
 	 */
@@ -405,6 +420,7 @@ public class DefaultViewNode implements ViewNode {
 	/* (non-Javadoc)
 	 * @see com.idega.faces.view.ViewNode#getToolTip(java.util.Locale)
 	 */
+	@Override
 	public ToolTip getToolTip(Locale locale) {
 		// TODO Auto-generated method stub
 		return null;
@@ -416,7 +432,7 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	@Deprecated
 	public void setComponentBased(boolean isCBP) {
-		
+
 		if(isCBP)
 			viewNodeBase = ViewNodeBase.COMPONENT;
 	}
@@ -426,7 +442,7 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	@Deprecated
 	public void setResourceBased(boolean isJSP) {
-		
+
 		if(isJSP)
 			viewNodeBase = ViewNodeBase.JSP;
 	}
@@ -437,7 +453,7 @@ public class DefaultViewNode implements ViewNode {
 		setViewNodeBase(ViewNodeBase.JSP);
 		resourceUri = jspUri;
 	}
-	
+
 	public void setFaceletUri(String faceletUri) {
 		setViewNodeBase(ViewNodeBase.FACELET);
 		resourceUri = faceletUri;
@@ -445,18 +461,20 @@ public class DefaultViewNode implements ViewNode {
 	/**
 	 * @return Returns the parent.
 	 */
+	@Override
 	public ViewNode getParent() {
 		return this.parent;
 	}
 	/**
 	 * @param parent The parent to set.
 	 */
+	@Override
 	public void setParent(ViewNode parent) {
 		parent.addChildViewNode(this);
 		this.parent = parent;
 	}
 	/**
-	 * If no special IWMainApplication instance is set then this method returns 
+	 * If no special IWMainApplication instance is set then this method returns
 	 * the IWMainApplication from the parent ViewNode
 	 */
 	public IWMainApplication getIWMainApplication() {
@@ -477,6 +495,7 @@ public class DefaultViewNode implements ViewNode {
 	/**
 	 * @return Returns the isRendered.
 	 */
+	@Override
 	public boolean isVisibleInMenus() {
 		return this.isRendered;
 	}
@@ -487,14 +506,15 @@ public class DefaultViewNode implements ViewNode {
 		this.isRendered = isRendered;
 	}
 
-	
+
 	/**
 	 * @return Returns the redirectsToResourceUri.
 	 */
+	@Override
 	public boolean getRedirectsToResourceUri() {
 		return this.redirectsToResourceUri;
 	}
-	
+
 	/**
 	 * @param redirectsToResourceUri The redirectsToResourceUri to set.
 	 */
@@ -505,6 +525,7 @@ public class DefaultViewNode implements ViewNode {
 	/**
 	 * Override this method to do your own access control for viewnodes, throws NotImplementedException by default
 	 */
+	@Override
 	public boolean hasUserAccess(IWUserContext iwuc) {
 		throw new UnsupportedOperationException();
 	}
