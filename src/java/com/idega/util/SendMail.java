@@ -118,7 +118,7 @@ public class SendMail {
 
 		if (!DefaultIWBundle.isProductionEnvironment()) {
 			LOGGER.log(Level.INFO, "to: " + to + " mail: " + text);
-//			return null;
+			return null;
 		}
 
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
