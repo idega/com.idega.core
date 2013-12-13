@@ -22,7 +22,6 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
-//import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.util.StringUtil;
@@ -42,9 +41,10 @@ public class CountryDropdownMenu extends DropdownMenu {
 	private Country selectedCountry = null;
 	public static final String IW_COUNTRY_MENU_PARAM_NAME="iw_country_id";
 	private static Map countries = null;
+	private String label = null;
+	private String name = IW_COUNTRY_MENU_PARAM_NAME;
 	
 	public CountryDropdownMenu(){
-		super(IW_COUNTRY_MENU_PARAM_NAME); 
 	}
 	
 	public CountryDropdownMenu(String parameterName){
@@ -80,10 +80,12 @@ public class CountryDropdownMenu extends DropdownMenu {
 		}
 	}
 	
+	@Override
 	public void main(IWContext iwc) throws Exception{
 		//TODO eiki cache countries 
 		// some caching made by aron
 		super.main(iwc);
+		setName(getName());
 		//System.out.println( "country dropdown main start "+ com.idega.util.IWTimestamp.RightNow().toString());
 		List localeCountries = Arrays.asList(Locale.getISOCountries());
 		
@@ -124,7 +126,10 @@ public class CountryDropdownMenu extends DropdownMenu {
 			}
 		}
 		Collections.sort(smallCountries);
-		
+		String label = getLabel();
+		if(label != null){
+			addMenuElement(-1, label);
+		}
 		for (Iterator iterator = smallCountries.iterator(); iterator.hasNext();) {
 			SmallCountry sCountry = (SmallCountry) iterator.next();
 			// we dont want the ISO code into the list
@@ -169,7 +174,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 
 
 	private AddressBusiness getAddressBusiness(IWApplicationContext iwc) throws RemoteException{
-		return (AddressBusiness) IBOLookup.getServiceInstance(iwc,AddressBusiness.class);
+		return IBOLookup.getServiceInstance(iwc,AddressBusiness.class);
 	}
 	
 	private class SmallCountry implements Comparable{
@@ -191,6 +196,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
+		@Override
 		public int compareTo(Object o) {
 			// TODO Auto-generated method stub
 			Collator coll = Collator.getInstance(this.locale);
@@ -212,6 +218,26 @@ public class CountryDropdownMenu extends DropdownMenu {
 			return this.name;
 		}
 
+	}
+
+	@Override
+	public String getLabel() {
+		return label;
+	}
+
+	@Override
+	public void setLabel(String label) {
+		this.label = label;
+	}
+
+	@Override
+	public String getName() {
+		return name;
+	}
+
+	@Override
+	public void setName(String name) {
+		this.name = name;
 	}
 	
 }
