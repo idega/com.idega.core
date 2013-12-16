@@ -31,7 +31,7 @@ import com.idega.servlet.filter.IWAuthenticator;
  */
 public class RequestUtil {
 
-	private static String SLASH = "/";
+	private static String SLASH = CoreConstants.SLASH;
 	private static final String IMAGEBUTTON_XPOS_SUFFIX = ".x";
 	public static final String HEADER_USER_AGENT = "User-agent";
 	private static final String HEADER_REFERER = "Referer";
@@ -75,21 +75,14 @@ public class RequestUtil {
 		String scheme = request.getScheme();
 		buf.append(scheme);
 		buf.append("://");
-		/*
-		 * if(request.isSecure()){ buf.append("https://"); } else{
-		 * buf.append("http://"); }
-		 */
 		buf.append(request.getServerName());
-		if (request.getServerPort() == 80) {
+		int port = request.getServerPort();
+		if (port == 80 || port == 443) {
 			//do not add port to url
+		} else {
+			buf.append(CoreConstants.COLON).append(port);
 		}
-		else if (request.getServerPort() == 443) {
-			//do not add port to url
-		}
-		else{
-			buf.append(":").append(request.getServerPort());
-		}
-		buf.append("/");
+		buf.append(CoreConstants.SLASH);
 		return buf.toString();
 	}
 
@@ -209,7 +202,7 @@ public class RequestUtil {
 
 	public static String getRedirectUriByApplicationProperty(HttpServletRequest request, int code) {
 		String requestedPage = request.getRequestURI();
-		if (!requestedPage.startsWith("/pages/")) {
+		if (!requestedPage.startsWith(CoreConstants.PAGES_URI_PREFIX + CoreConstants.SLASH)) {
 			return null;
 		}
 
@@ -231,12 +224,13 @@ public class RequestUtil {
 				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_403_HANDLER_PORPERTY);
 				addLoginRedirectParameter = true;
 				String parameters = getParametersStringFromRequest(request);
-				loginRedirectString = new StringBuilder().append("?").append(IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON).append('=').append(requestedPage).append("&").append(parameters).toString();
+				loginRedirectString = new StringBuilder(CoreConstants.QMARK).append(IWAuthenticator.PARAMETER_REDIRECT_URI_ONLOGON)
+										.append(CoreConstants.EQ).append(requestedPage).append(CoreConstants.AMP).append(parameters).toString();
 
 				break;
 			}
 			case HttpServletResponse.SC_NOT_FOUND : {
-				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_404_HANDLER_PORPERTY);
+				redirectUri = settings.getProperty(CoreConstants.PAGE_ERROR_404_HANDLER_PORPERTY, CoreConstants.PAGES_URI_PREFIX);
 
 				break;
 			}
@@ -244,8 +238,6 @@ public class RequestUtil {
 		if (StringUtil.isEmpty(redirectUri)) {
 			return null;
 		}
-
-
 
 		return new StringBuilder(redirectUri).append(addLoginRedirectParameter ? loginRedirectString : CoreConstants.EMPTY).toString();
 	}
@@ -276,27 +268,23 @@ public class RequestUtil {
 					String[] values = request.getParameterValues(key);
 					if (values != null && values.length > 0) {
 						for (int j = 0; j < values.length; j++) {
-							parametersString.append('&').append(key).append('=').append(values[j]);
+							parametersString.append(CoreConstants.AMP).append(key).append(CoreConstants.EQ).append(values[j]);
 						}
 					}
 				}
 			}
 		}
 
-		if(parametersString.length()>0){
+		if (parametersString.length() > 0) {
 			//just to remove the first &
 			return parametersString.substring(1);
-		}
-		else{
-			return "";
+		} else{
+			return CoreConstants.EMPTY;
 		}
 	}
 
 	public static String getRequestParametersAsString(HttpServletRequest request){
-
-
-
-		return "";
+		return CoreConstants.EMPTY;
 	}
 
 }

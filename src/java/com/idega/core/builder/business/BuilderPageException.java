@@ -15,23 +15,24 @@ package com.idega.core.builder.business;
  * Exception thrown on internal errors with Builder Pages.
  * </p>
  *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
  */
 public class BuilderPageException extends RuntimeException {
 
+	private static final long serialVersionUID = 8203950762076556192L;
+
 	public static final String CODE_NOT_FOUND="NOT_FOUND";
-	
+
 	private String code;
 	private String pageUri;
-	
+
 	/**
-	 * 
+	 *
 	 */
 	public BuilderPageException() {
 		super();
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -39,7 +40,6 @@ public class BuilderPageException extends RuntimeException {
 	 */
 	public BuilderPageException(String arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -48,7 +48,6 @@ public class BuilderPageException extends RuntimeException {
 	 */
 	public BuilderPageException(String arg0, Throwable arg1) {
 		super(arg0, arg1);
-		// TODO Auto-generated constructor stub
 	}
 
 	/**
@@ -56,10 +55,9 @@ public class BuilderPageException extends RuntimeException {
 	 */
 	public BuilderPageException(Throwable arg0) {
 		super(arg0);
-		// TODO Auto-generated constructor stub
 	}
 
-	
+
 	/**
 	 * @return Returns the code.
 	 */
@@ -67,7 +65,7 @@ public class BuilderPageException extends RuntimeException {
 		return this.code;
 	}
 
-	
+
 	/**
 	 * @param code The code to set.
 	 */
@@ -75,7 +73,7 @@ public class BuilderPageException extends RuntimeException {
 		this.code = code;
 	}
 
-	
+
 	/**
 	 * @return Returns the pageUri.
 	 */
@@ -83,7 +81,7 @@ public class BuilderPageException extends RuntimeException {
 		return this.pageUri;
 	}
 
-	
+
 	/**
 	 * @param pageUri The pageUri to set.
 	 */
