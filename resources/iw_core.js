@@ -1451,9 +1451,9 @@ function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) 
 					
 					var redirectUriIndex = newHref.indexOf('logoff_redirect_uri=');
 					if (redirectUriIndex == -1) {
-						window.location.pathname = '/pages';
+						window.location.href = '/pages';
 					} else {
-						window.location.pathname = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
+						window.location.href = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
 					}
 					closeAllLoadingMessages();
 				}
