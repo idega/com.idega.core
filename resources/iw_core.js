@@ -1445,11 +1445,15 @@ function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) 
 		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
 			WebUtil.logOut({
 				callback: function(result) {
+					if (jQuery != null) {
+						jQuery('input[name="login_state"]').remove();
+					}
+					
 					var redirectUriIndex = newHref.indexOf('logoff_redirect_uri=');
 					if (redirectUriIndex == -1) {
-						window.location.href = '/pages';
+						window.location.pathname = '/pages';
 					} else {
-						window.location.href = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
+						window.location.pathname = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
 					}
 					closeAllLoadingMessages();
 				}
