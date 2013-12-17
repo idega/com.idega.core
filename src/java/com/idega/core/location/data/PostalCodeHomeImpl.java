@@ -199,4 +199,33 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 
 		return postalCodes;
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.location.data.PostalCodeHome#findUpdatedByPostalCode(java.util.Collection)
+	 */
+	@Override
+	public List<PostalCode> findUpdatedByPostalCode(Collection<String> codes) {
+		if (ListUtil.isEmpty(codes)) {
+			return Collections.emptyList();
+		}
+
+		/* Collections are mutable, so better copy it */
+		ArrayList<String> zipCodes = new ArrayList<String>(codes);
+
+		/* Getting existing postal codes */
+		Collection<PostalCode> postalCodeEntities = findByPostalCode(codes);
+
+		/* Removing found postal codes */
+		for (PostalCode code : postalCodeEntities) {
+			zipCodes.remove(code.getPostalCode());
+		}
+
+		/* Creating postal codes, which not existed */
+		for (String zipCode: zipCodes) {
+			postalCodeEntities.addAll(update(null, zipCode, null));
+		}
+
+		return new ArrayList<PostalCode>(postalCodeEntities);
+	}
 }

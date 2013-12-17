@@ -50,6 +50,18 @@ public interface PostalCodeHome extends IDOHome {
 	 */
 	public Collection<PostalCode> findByPostalCode(Collection<String> codes);
 
+	/**
+	 * 
+	 * <p>Finds all {@link PostalCode}s, by given postal codes and creates new
+	 * one's if some of them are missing.</p>
+	 * @param codes is {@link PostalCode#getPostalCode()} of codes to find or 
+	 * update, not <code>null</code>;
+	 * @return found/updated postalCodes or {@link Collections#emptyList()} 
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public List<PostalCode> findUpdatedByPostalCode(Collection<String> codes);
+
 	public PostalCode findByPostalCode(String code) throws FinderException;
 
 	public PostalCode findByPostalCodeAndCountryId(String code, int countryId) throws FinderException;
