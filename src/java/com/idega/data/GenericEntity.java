@@ -818,7 +818,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	public Object getColumnValue(String columnName) {
 		Object returnObj = null;
 		Object value = getValue(columnName);
-		Class relationClass = this.getRelationShipClass(columnName);
+		Class<? extends IDOEntity> relationClass = this.getRelationShipClass(columnName);
 		if (value instanceof com.idega.data.IDOEntity) {
 			returnObj = value;
 		}
@@ -1066,8 +1066,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns null if the specified column does have a relationship Class
 	 */
-	public Class getRelationShipClass(String columnName) {
-		EntityAttribute column = getColumn(columnName);
+	public Class<? extends IDOEntity> getRelationShipClass(String columnName) {
+		EntityAttribute column = getAttribute(columnName);
 		if (column != null) {
 			return column.getRelationShipClass();
 		}
