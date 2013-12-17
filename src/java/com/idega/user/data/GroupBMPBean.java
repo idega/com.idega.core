@@ -1779,11 +1779,23 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	protected int getGroupIDFromGroup(Group group) {
-		Integer groupID = ((Integer) group.getPrimaryKey());
+		if (group == null || group.getPrimaryKey() == null) {
+			return -1;
+		}
+
+		Integer groupID = null;
+		String primaryKey = group.getPrimaryKey().toString();
+		try {
+			groupID = Integer.valueOf(primaryKey);
+		} catch (NumberFormatException e) {
+			getLogger().warning(
+					"Failed to convert " + primaryKey + 
+					" to " + Integer.class.getSimpleName());
+		}
+
 		if (groupID != null) {
 			return groupID.intValue();
-		}
-		else {
+		} else {
 			return -1;
 		}
 	}
@@ -1794,19 +1806,18 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	@Override
-	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries, Timestamp time) throws EJBException {
+	public void removeGroup(int relatedGroupId, User currentUser, 
+			boolean allEntries, Timestamp time) throws EJBException {
 		try {
-			Collection rels = null;
-			if (AllEntries) {
-				rels = this.getGroupRelationHome().findGroupsRelationshipsUnder(this);
+			Collection<GroupRelation> rels = null;
+			if (allEntries) {
+				rels = getGroupRelationHome().findGroupsRelationshipsUnder(this);
+			} else {
+				rels = getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relatedGroupId);
 			}
-			else {
-				rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relatedGroupId);
-			}
-			Iterator iter = rels.iterator();
-			while (iter.hasNext()) {
-				GroupRelation item = (GroupRelation) iter.next();
-				item.removeBy(currentUser, time);
+
+			for (Iterator<GroupRelation> iter = rels.iterator(); iter.hasNext();) {
+				iter.next().removeBy(currentUser, time);
 			}
 		}
 		catch (Exception e) {
