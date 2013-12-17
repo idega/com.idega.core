@@ -734,5 +734,6 @@ public interface GroupBusiness extends IBOService {
 			String groupId,
 			String name,
 			String description,
-			String city, Collection<String> roles);
+			String city,
+			Collection<String> roles);
 }
