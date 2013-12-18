@@ -5,39 +5,41 @@
 
 package com.idega.data;
 
-import java.sql.SQLException;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.sql.Statement;
 import java.sql.ResultSetMetaData;
-import java.util.List;
-import java.util.Vector;
-import java.util.HashMap;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.Vector;
+
+import javax.ejb.FinderException;
+
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.util.ListUtil;
-import javax.ejb.FinderException;
 
 /**
  * This class is deprecated in the IDO Framework. <br>All finders should be
  * inside ejbFind... methods in appropriate BMPBean class.
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
 public class EntityFinder implements Singleton {
 
-	private static Instantiator instantiator = new Instantiator() { 
-		
+	private static Instantiator instantiator = new Instantiator() {
+
 		@Override
-		public Object getInstance() { 
+		public Object getInstance() {
 			return new EntityFinder();
 		}
-		
+
 		@Override
 		public void unload() {
 			debug = DEBUG_DEFAULT_VALUE;
@@ -51,7 +53,7 @@ public class EntityFinder implements Singleton {
 	public static EntityFinder getInstance() {
 		return (EntityFinder) SingletonRepository.getRepository().getInstance(EntityFinder.class, instantiator);
 	}
-	
+
 	private static final boolean DEBUG_DEFAULT_VALUE = false;
 	public static boolean debug = DEBUG_DEFAULT_VALUE;
 
@@ -987,7 +989,7 @@ public class EntityFinder implements Singleton {
 			return null;
 		}
 	}
-	
+
 	/**
 	 * Returns an sql query like: 'select * from PO_POLL_IC_OBJECT_INSTANCE where IC_OBJECT_INSTANCE_ID=3565'
 	 * @param fromEntity
@@ -1078,7 +1080,7 @@ public class EntityFinder implements Singleton {
 	 * Finds all instances of the returningEntityClass where it is associated
 	 * with the fromEntity, returns empty List if no match
 	 */
-	public List findRelated(IDOLegacyEntity fromEntity, Class returningEntityClass) throws IDOFinderException {
+	public <T extends IDOEntity> List<T> findRelated(IDOLegacyEntity fromEntity, Class<T> returningEntityClass) throws IDOFinderException {
 		try {
 			List theReturn = findRelated(fromEntity, com.idega.data.GenericEntity.getStaticInstance(returningEntityClass));
 			if (theReturn == null) {
@@ -1200,8 +1202,8 @@ public class EntityFinder implements Singleton {
 		IDOLegacyEntity fromEntity,
 		Class returningEntityClass,
 		String returningEntityColumnToOrderBy,
-		boolean ascending)
-		throws IDOFinderException {
+		boolean ascending
+	) throws IDOFinderException {
 		try {
 			List theReturn =
 				findRelatedOrdered(
@@ -1300,7 +1302,7 @@ public class EntityFinder implements Singleton {
 	/**
 	 * Returns a Map of Entity values keyed by string presentation of specified
 	 * columnname values,returns null if collection is null or empty
-	 *  
+	 *
 	 */
 	public Map getMapOfEntity(Collection c, String keyColumnName) {
 		if (c != null) {
