@@ -11,7 +11,6 @@ import java.io.File;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -57,7 +56,6 @@ import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
@@ -883,12 +881,11 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	private void initializeAssociatedScript() {
-		Object script = getFacets().get(PAGE_ASSOCIATED_SCRIPT);
-		if (script instanceof Script) {
-			setAssociatedScript((Script) script);
-		} else {
-			setAssociatedScript(new Script());
-		}
+		Object o = getFacets().get("page_associated_script");
+		if (o == null) {
+			Script _theAssociatedScript = new Script();
+			setAssociatedScript(_theAssociatedScript);
+        }
 	}
 
 	/**
@@ -2090,16 +2087,14 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 *          The feature to be added to the ScriptSource attribute
 	 */
 	public void addScriptSource(String jsString) {
-		if (StringUtil.isEmpty(jsString))
+		if (StringUtil.isEmpty(jsString)) {
 			return;
+		}
 
 		String[] sources = jsString.split(CoreConstants.COMMA);
-		IWContext iwc = CoreUtil.getIWContext();
-		if (iwc == null) {
-			for (String source: sources)
-				getAssociatedScript().addScriptSource(source);
-		} else
-			PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, Arrays.asList(sources));
+		for (String source: sources) {
+			getAssociatedScript().addScriptSource(source);
+		}
 	}
 
 	/**
