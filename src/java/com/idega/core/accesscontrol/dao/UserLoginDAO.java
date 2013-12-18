@@ -43,4 +43,8 @@ public interface UserLoginDAO extends GenericDao {
 	public void updateFailedLoginAttempts(LoginInfo info, int attempts);
 	
 	public void setAccountValidity(LoginInfo info, boolean enabled);
+	
+	public UserLogin getDefaultLoginByUUId(String UUId);
+	
+	public void enableUserLogin(String UUId);
 }

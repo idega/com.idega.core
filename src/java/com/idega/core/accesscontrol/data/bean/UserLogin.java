@@ -40,7 +40,9 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "login.findByLogin", query = "select l from UserLogin l where l.userLogin = :userLogin"),
 	@NamedQuery(name = "login.findByUserAndLogin", query = "select l from UserLogin l where l.user = :user and l.userLogin = :userLogin"),
 	@NamedQuery(name = "login.findByUserAndType", query = "select l from UserLogin l where l.user = :user and l.loginType = :loginType"),
-	@NamedQuery(name = "login.findDefaultLoginForUser", query = "select l from UserLogin l where l.user = :user and l.loginType is null")
+	@NamedQuery(name = "login.findDefaultLoginForUser", query = "select l from UserLogin l where l.user = :user and l.loginType is null"),
+	@NamedQuery(name = UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, query = "SELECT l FROM UserLogin l JOIN l.user u WHERE (u.uniqueId = :"
+		+User.PROP_UNIQUE_ID+") AND l.loginType IS null")
 })
 public class UserLogin implements Serializable {
 
@@ -56,6 +58,7 @@ public class UserLogin implements Serializable {
 	private static final String COLUMN_CHANGED_BY_GROUP = "changed_by_group_id";
 	private static final String COLUMN_LOGIN_TYPE = "login_type";
 
+	public static final String QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_LOGIN_ID)

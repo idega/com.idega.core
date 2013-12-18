@@ -139,4 +139,18 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		info.setAccountEnabled(enabled);
 		persist(info);
 	}
+	
+	@Override
+	public UserLogin getDefaultLoginByUUId(String UUId){
+		UserLogin login = getSingleResult(UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, UserLogin.class, new Param(User.PROP_UNIQUE_ID, UUId));
+		return login;
+	}
+	
+	@Override
+	@Transactional
+	public void enableUserLogin(String UUId){
+		UserLogin userLogin = getDefaultLoginByUUId(UUId);
+		userLogin.getLoginInfo().setAccountEnabled(true);
+		persist(userLogin);
+	}
 }

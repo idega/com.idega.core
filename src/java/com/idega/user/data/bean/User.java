@@ -101,6 +101,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@PrimaryKeyJoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private UserGroupRepresentative group;
 
+	public static final String PROP_UNIQUE_ID = ENTITY_NAME + "_" + COLUMN_UNIQUE_ID;
 	@Column(name = COLUMN_UNIQUE_ID, length = 36, nullable = false, unique = true)
 	private String uniqueId;
 

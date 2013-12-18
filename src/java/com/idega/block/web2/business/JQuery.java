@@ -8,6 +8,8 @@ import java.util.List;
  */
 public interface JQuery {
 	
+	public static final String BEAN_NAME = "jQuery";
+	
 	public abstract String getBundleURIToJQueryLib();
 	
 	public abstract String getBundleURIToJQueryLib(String jqueryLibraryVersion);

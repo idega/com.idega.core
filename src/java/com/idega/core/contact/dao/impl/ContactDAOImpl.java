@@ -49,4 +49,5 @@ public class ContactDAOImpl extends GenericDaoImpl implements ContactDAO {
 	public EmailType getMainEmailType() {
 		return getSingleResult("emailType.findByUniqueType", EmailType.class, new Param("uniqueName", EmailType.MAIN_EMAIL));
 	}
+	
 }
