@@ -1639,7 +1639,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		catch (NotLoggedOnException noex) {
 			// TODO: Change this, this is a workaround till a better not logged
 			// on error page is created:
-			IWContext iwc = castToIWContext(context);
+			IWContext iwc = IWContext.getIWContext(context);
 			String notLoggedOnString = getResourceBundle(iwc).getLocalizedString("error_not_logged_on", "You are not logged on, please go to login page and log in.");
 			println("<h2>" + notLoggedOnString + "</h2>");
 		}

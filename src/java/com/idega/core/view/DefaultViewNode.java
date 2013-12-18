@@ -440,9 +440,9 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	@Deprecated
 	public void setComponentBased(boolean isCBP) {
-
-		if(isCBP)
+		if (isCBP) {
 			viewNodeBase = ViewNodeBase.COMPONENT;
+		}
 	}
 	/**
 	 * @param isJSP The isJSP to set.

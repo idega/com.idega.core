@@ -25,7 +25,7 @@ import com.idega.presentation.Script;
  * similar purpose and is recommended to use/extend in newer pure JSF applications.
  * </p>
  *  Last modified: $Date: 2007/05/16 14:15:17 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.42 $
  */
@@ -41,7 +41,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	private boolean _inFocus = false;
 	private boolean _changeValue = false;
 	private boolean _selectValues = false;
-	
+
 	public static final String ACTION_ON_BLUR = "onblur";
 	public static final String ACTION_ON_CHANGE = "onchange";
 	public static final String ACTION_ON_CLICK = "onclick";
@@ -60,7 +60,8 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public static final String KEEP_STATUS_PROPERTY = "keepStatus";
 	public static final String DISABLED_PROPERTY = "disabled";
 	private static final String REQUIRED_PROPERTY = "required";
-	
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[9];
 		values[0] = super.saveState(ctx);
@@ -74,6 +75,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		values[8] = new Integer(this.index);
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -88,7 +90,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(KEEP_STATUS_PROPERTY);
     	if (ve != null) {
 	    	boolean keepStatusOnAction = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
@@ -99,47 +101,47 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
     	if (ve != null) {
 	    	String name = (String) ve.getValue(context.getELContext());
 	    	setName(name);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(CONTENT_PROPERTY);
     	if (ve != null) {
 	    	String content = (String) ve.getValue(context.getELContext());
     		setContent(content);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(STYLE_CLASS_PROPERTY);
     	if (ve != null) {
 	    	String styleClass = (String) ve.getValue(context.getELContext());
     		setStyleClass(styleClass);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(ID_PROPERTY);
     	if (ve != null) {
 	    	String id = (String) ve.getValue(context.getELContext());
     		setID(id);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(INDEX_PROPERTY);
     	if (ve != null) {
 	    	int index = Integer.parseInt(ve.getValue(context.getELContext()).toString());
     		setIndex(index);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(DISABLED_PROPERTY);
     	if (ve != null) {
 	    	boolean disabled = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setDisabled(disabled);
     	}
-    	
+
 		ve = getValueExpression(REQUIRED_PROPERTY);
     	if (ve != null) {
 	    	boolean required = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setRequired(required);
     	}
-    	
+
     	super.encodeBegin(context);
     }
-    
+
 	public InterfaceObject() {
 		super();
 		setID();
@@ -213,6 +215,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * Sets the action to perform when the interface object is on clicked.
 	 * @param action	The action to perform.
 	 */
+	@Override
 	public void setOnClick(String action) {
 		setOnAction(ACTION_ON_CLICK, action);
 	}
@@ -365,7 +368,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	/**
-	 * Sets the given interface object(s) to be checked/unchecked when this object is 
+	 * Sets the given interface object(s) to be checked/unchecked when this object is
 	 * clicked on.
 	 * @param action	The action to perform on.
 	 * @param objectToCheck	The interface object(s) to check.
@@ -384,10 +387,10 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setToCheckOnClick(String objectName, boolean check) {
 		setToCheckOnAction(ACTION_ON_CLICK, objectName, check, true);
 	}
-	
+
 	/**
 		 * Sets the interface object(s) with the given name to be checked/unchecked when this
-		 * object is clicked on. Convenient when using javascript function or property to provide the 
+		 * object is clicked on. Convenient when using javascript function or property to provide the
 		 * boolean value ( checkvalue)
 		 * @param objectName	The name of the interface object(s) to check.
 		 * @param check	Checks if boolean is true, unchecks otherwise.
@@ -397,7 +400,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		}
 
 	/**
-	 * Sets the given interface object(s) to be checked/unchecked when this object is 
+	 * Sets the given interface object(s) to be checked/unchecked when this object is
 	 * clicked on.
 	 * @param objectToCheck	The interface object(s) to check.
 	 * @param check	Checks if boolean is true, unchecks otherwise.
@@ -405,18 +408,18 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setToCheckOnClick(InterfaceObject objectToCheck, boolean check) {
 		setToCheckOnAction(ACTION_ON_CLICK, objectToCheck.getName(), check, true);
 	}
-	
+
 	/**
-		 * Sets the given interface object(s) to be checked/unchecked when this object is 
-		 * clicked on. Convenient when using javascript function or property to provide the 
+		 * Sets the given interface object(s) to be checked/unchecked when this object is
+		 * clicked on. Convenient when using javascript function or property to provide the
 		 * boolean value ( checkvalue)
 		 * @param objectToCheck	The interface object(s) to check.
-		 * @param checkValue	Checks if checkvalue is true, unchecks otherwise. 
+		 * @param checkValue	Checks if checkvalue is true, unchecks otherwise.
 		 */
 	public void setToCheckOnClick(InterfaceObject objectToCheck, String checkValue) {
 		setToCheckOnAction(ACTION_ON_CLICK, objectToCheck.getName(), checkValue, true);
-	}	
-	
+	}
+
 
 	/**
 	 * Sets the interface object(s) with the given name to be checked/unchecked when this
@@ -429,7 +432,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setToCheckOnAction(String action, String objectName, boolean check, boolean checkDisabled) {
 		this.setToCheckOnAction(action,objectName,String.valueOf(check),checkDisabled);
 	}
-	
+
 	/**
 		 * Sets the interface object(s) with the given name to be checked/unchecked when this
 		 * object receives the action specified.
@@ -461,7 +464,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	/**
-	 * Sets the given interface object(s) to be checked/unchecked when this object is 
+	 * Sets the given interface object(s) to be checked/unchecked when this object is
 	 * clicked on.
 	 * @param objectToCheck	The interface object(s) to check.
 	 * @param check	Checks if boolean is true, unchecks otherwise.
@@ -490,7 +493,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	/**
-	 * Sets the interface object(s) with the given name to be enabled when this object is 
+	 * Sets the interface object(s) with the given name to be enabled when this object is
 	 * clicked on.
 	 * @param objectToEnable	The name of the interface object(s) to enable.
 	 * @param enable	Set to true to disable, false will enable.
@@ -520,7 +523,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	/**
-	 * Sets the interface object(s) with the given name to be enabled when this object is 
+	 * Sets the interface object(s) with the given name to be enabled when this object is
 	 * clicked on.
 	 * @param objectToEnable	The name of the interface object(s) to enable.
 	 * @param enable	Set to true to disable, false will enable.
@@ -539,7 +542,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	}
 
 	/**
-	 * Sets the value of the given interface object when this object receives the action 
+	 * Sets the value of the given interface object when this object receives the action
 	 * specified.
 	 * @param action	The action to perform on.
 	 * @param objectToChange	The interface object to change value of.
@@ -548,10 +551,10 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setValueOnAction(String action, InterfaceObject objectToChange, String value) {
 		setValueOnAction(action, objectToChange.getName(), value);
 	}
-	
+
 	/**
-	 * Sets the value of the interface object with the given namewhen this object receives 
-	 * the action specified. Adds the specified script. 
+	 * Sets the value of the interface object with the given namewhen this object receives
+	 * the action specified. Adds the specified script.
 	 * @param action	The action to perform on.
 	 * @param objectName	The name of the interface object to change value of.
 	 * @param value	The new value to set.
@@ -563,9 +566,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		buffer.append(objectName).append("'],'").append(value).append("');").append(script);
 		setOnAction(action, buffer.toString());
 	}
-	
+
 	/**
-	 * Sets the value of the interface object with the given namewhen this object receives 
+	 * Sets the value of the interface object with the given namewhen this object receives
 	 * the action specified.
 	 * @param action	The action to perform on.
 	 * @param objectName	The name of the interface object to change value of.
@@ -575,7 +578,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		this._changeValue = true;
 		setOnAction(action, "changeValue(this.form['"+objectName+"'],'"+value+"');");
 	}
-	
+
 	/**
 	 * Sets the value of the given interface object when this object is clicked.
 	 * @param objectToChange	The interface object to change value of.
@@ -584,7 +587,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setValueOnClick(InterfaceObject objectToChange, String value) {
 		setValueOnAction(ACTION_ON_CLICK, objectToChange.getName(), value);
 	}
-	
+
 	/**
 	 * Sets the value of the interface object with the given name when this object is clicked.
 	 * Adds the specified script at the end.
@@ -595,7 +598,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setValueOnClickFollowedByScript(String objectName, String value, String script) {
 		setValueOnActionFollowedByScript(ACTION_ON_CLICK, objectName, value, script);
 	}
-	
+
 	/**
 	 * Sets the value of the interface object with the given name when this object is clicked.
 	 * @param objectName	The name of the interface object to change value of.
@@ -604,7 +607,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setValueOnClick(String objectName, String value) {
 		setValueOnAction(ACTION_ON_CLICK, objectName, value);
 	}
-	
+
 	/**
 	 * Sets the value of the given interface object when this object changes value.
 	 * @param objectToChange	The interface object to change value of.
@@ -613,7 +616,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setValueOnChange(InterfaceObject objectToChange, String value) {
 		setValueOnAction(ACTION_ON_CHANGE, objectToChange.getName(), value);
 	}
-	
+
 	/**
 	 * Sets the value of the interface object with the given name when this object changes value.
 	 * @param objectName	The name of the interface object to change value of.
@@ -622,9 +625,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setValueOnChange(String objectName, String value) {
 		setValueOnAction(ACTION_ON_CHANGE, objectName, value);
 	}
-	
+
 	/**
-	 * Sets the given interface object as selected when this object receives the action 
+	 * Sets the given interface object as selected when this object receives the action
 	 * specified.
 	 * @param action	The action to perform on.
 	 * @param objectToChange	The interface object to set selected value of.
@@ -633,9 +636,9 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setSelectedOnAction(String action, InterfaceObject objectToChange, boolean selected) {
 		setSelectedOnAction(action, objectToChange.getName(), selected);
 	}
-	
+
 	/**
-	 * Sets the interface object with the given name as selected when this object receives 
+	 * Sets the interface object with the given name as selected when this object receives
 	 * the action specified.
 	 * @param action	The action to perform on.
 	 * @param objectName	The name of the interface object to set selected value of.
@@ -645,7 +648,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		this._selectValues = true;
 		setOnAction(action, "selectValues(this.form['"+objectName+"'],'"+selected+"');");
 	}
-	
+
 	/**
 	 * Sets the interface object in focus on page load.
 	 * @param inFocus	Set to true to set focus on object, false otherwise.
@@ -674,7 +677,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			this.removeMarkupAttribute("disabled");
 		}
 	}
-	
+
 	/**
 	 * Returns the disabled status of the interface object.
 	 * @return boolean	True if object is disabled, false otherwise.
@@ -683,7 +686,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (isMarkupAttributeSet("disabled")) {
 			return true;
 		}
-		return false;	
+		return false;
 	}
 
 	/**
@@ -732,7 +735,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setIndex(int index) {
 		this.index = index;
 	}
-	
+
 	/**
 	 * Sets to keep the status on the interface object when an action is performed.
 	 * @param boolean	True if interface object is to keep status, false otherwise.
@@ -740,7 +743,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void keepStatusOnAction(boolean keepStatus) {
 		this.keepStatus = keepStatus;
 	}
-	
+
 	public void setKeepStatus(boolean keepStatus) {
 		keepStatusOnAction(keepStatus);
 	}
@@ -766,15 +769,17 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		keepStatusOnAction(true);
 	}
 
+	@Override
 	protected void callPrint(FacesContext fc)throws IOException{
 		//Overridden here to call the same methods as _print():
-		IWContext iwc = castToIWContext(fc);
+		IWContext iwc = IWContext.getIWContext(fc);
 		if (statusKeptOnAction()) {
 			handleKeepStatus(iwc);
 		}
 		super.callPrint(fc);
 	}
-		
+
+	@Override
 	public void _print(IWContext iwc) throws Exception {
 		if (statusKeptOnAction()) {
 			handleKeepStatus(iwc);
@@ -782,6 +787,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		super._print(iwc);
 	}
 
+	@Override
 	public Object clone() {
 		InterfaceObject obj = null;
 		try {
@@ -794,6 +800,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		return obj;
 	}
 
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);
 		if (isEnclosedByForm()) {
@@ -837,7 +844,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Returns the enclosing form, returns null if no form present.
 	 * @return Form	The form enclosing the interface object.
@@ -850,6 +857,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * Sets the width of the interface object with a style tag.
 	 * @param width	The width to set.
 	 */
+	@Override
 	public void setWidth(String width) {
 		setWidthStyle(width);
 	}
@@ -858,6 +866,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * Sets the height of the interface object with a style tag.
 	 * @param height	The height to set.
 	 */
+	@Override
 	public void setHeight(String height) {
 		setHeightStyle(height);
 	}
@@ -870,7 +879,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	public void setTabIndex(int index) {
 		setMarkupAttribute("tabindex", String.valueOf(index));
 	}
-	
+
 	/**
 	 * Returns the tab index set for the interface object.  Returns -1 if no value is set.
 	 * @return int
@@ -894,7 +903,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			removeMarkupAttribute("readonly");
 		}
 	}
-	
+
 	/**
 	 * Returns true if interface object is set as read only, false otherwise.
 	 * @return boolean
@@ -903,7 +912,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (isMarkupAttributeSet("readonly")) {
 			return true;
 		}
-		return false;	
+		return false;
 	}
 
 	protected void setCheckSubmit() {
@@ -911,7 +920,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			getScript().addFunction("checkSubmit", "function checkSubmit"+getForm().getId()+"(inputs){\n\n}");
 		}
 	}
-	
+
 	/**
 	 * Sets a function to perform on submit of the parent form.  If the function returns
 	 * false the form will not submit.
@@ -937,11 +946,11 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	protected void setOnSubmitFunction(String functionName, String function, String value) {
 		setOnSubmitFunction(functionName, function, value, null);
 	}
-	
+
 	public void setMaximumChecked(int maximumChecked, String exceedsMaximumErrorMessage) {
 		setOnSubmitFunction("warnIfExceedsMaximum", "function warnIfExceedsMaximum (inputs,warnMsg) {\n\tvar maximum = 0;\n\n\tfor(var i=0;i<inputs.length;i++) {\n	\t\tif(inputs[i].checked == true)\n\t\tmaximum++;\n\t}\n\n\tif (maximum <= "+maximumChecked+")\n\t\treturn true;\n\telse {\n\t\talert(warnMsg);\n\t\treturn false;\n\t}\n}", exceedsMaximumErrorMessage);
 	}
-	
+
 	/**
 	 * Sets a function to perform on submit of the parent form.  If the function returns
 	 * false the form will not submit.
@@ -954,7 +963,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (getForm() != null) {
 			getParentForm().setOnSubmit("return checkSubmit"+getForm().getId()+"(this)");
 			setCheckSubmit();
-			
+
 			StringBuffer script = new StringBuffer("if (!").append(functionName).append(" (document.getElementById('").append(getId()).append("'),'").append(value1);
 			if (value2 != null) {
 				script.append("', '").append(value2);
@@ -964,12 +973,13 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 			getScript().addFunction(functionName, function);
 		}
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public abstract boolean isContainer();
-	
+
 	/**
 	 * Sets whether the interface object is required or not.
 	 * @param required	The status to set.

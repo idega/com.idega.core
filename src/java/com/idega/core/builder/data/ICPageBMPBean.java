@@ -49,9 +49,7 @@ import com.idega.util.IWTimestamp;
  * @version 1.3
  */
 public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.builder.data.ICPage, Storable, Resource, UniqueIDCapable {
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+
 	private static final long serialVersionUID = 5624201999388048294L;
 	private final static String ENTITY_NAME = "IB_PAGE";
 	private final static String FILE_COLUMN = "FILE_ID";
@@ -88,11 +86,12 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 
 	public final static String DELETED = CoreConstants.Y;
 	public final static String NOT_DELETED = "N";
-	private static final String FORMAT_IBXML = "IBXML";
-	private static final String FORMAT_IBXML2 = "IBXML2";
-	private static final String FORMAT_HTML = "HTML";
-	private static final String FORMAT_JSP_1_2 = "JSP_1_2";
-	private static final String FORMAT_FACELET = "FACELET";
+
+	public static final String	FORMAT_IBXML = "IBXML",
+								FORMAT_IBXML2 = "IBXML2",
+								FORMAT_HTML = "HTML",
+								FORMAT_JSP_1_2 = "JSP_1_2",
+								FORMAT_FACELET = "FACELET";
 
 	/**
 	 *

@@ -77,6 +77,7 @@ import com.idega.util.ListUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.logging.LoggingHelper;
 import com.idega.util.reflect.Property;
@@ -612,20 +613,18 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 			getPrintWriter().println(string);
 		}
 	}
-	public void renderComponent(IWContext iwc) throws Exception
-	{
-		//this.out = iwc.getWriter();
-		//_print(iwc);
+	public void renderComponent(IWContext iwc) throws Exception {
 	    renderChild(iwc,this);
 	}
-	public void _print(IWContext iwc) throws Exception
-	{
-		if(!this.goneThroughRenderPhase()){
+
+	public void _print(IWContext iwc) throws Exception {
+		if (!this.goneThroughRenderPhase()) {
 			initVariables(iwc);
 			print(iwc);
 			cleanVariables(iwc);
 		}
 	}
+
 	/**
 	 * The default implementation for the print function
 	 *
@@ -635,39 +634,28 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * Override this function where it is needed to print out the specified
 	 * content. This function should only be overrided in idegaWeb Elements.
 	 */
-	public void print(IWContext iwc) throws Exception
-	{
-		if (iwc.getMarkupLanguage().equals("WML"))
-		{
+	public void print(IWContext iwc) throws Exception {
+		if (iwc.getMarkupLanguage().equals("WML")) {
 			iwc.setContentType("text/vnd.wap.wml");
 		}
 	}
+
 	/**
 	 * This method is only used for old idegaWeb style rendering
 	 * @return The esponse object for the page
 	 */
-	protected HttpServletRequest getRequest()
-	{
-		/*if(this._request!=null){
-			return this._request;
-		}
-		else{*/
-			return IWContext.getInstance().getRequest();
-		/*}*/
+	protected HttpServletRequest getRequest() {
+		return IWContext.getInstance().getRequest();
 	}
+
 	/**
 	 * This method is only used for old idegaWeb style rendering
 	 * @return The esponse object for the page
 	 */
-	protected HttpServletResponse getResponse()
-	{
-		/*if(this._response!=null){
-			return this._response;
-		}
-		else{*/
-			return IWContext.getInstance().getResponse();
-		/*}*/
+	protected HttpServletResponse getResponse() {
+		return IWContext.getInstance().getResponse();
 	}
+
 	/**
 	 * @deprecated Replaced with getMarkupLanguage().
 	 * Only preserved for backwards compatability.
@@ -744,36 +732,30 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * This method is deprecated and only used for old style (pre-JSF) style rendering.
 	 * Get the printWriter for the current render response.
 	 */
-	protected PrintWriter getPrintWriter()
-	{
-		/*if(this.out!=null){
-			return this.out;
+	protected PrintWriter getPrintWriter() {
+		try {
+			return IWContext.getInstance().getWriter();
 		}
-		else{*/
-			try {
-				return IWContext.getInstance().getWriter();
-			}
-			catch (UnavailableIWContext e) {
-				e.printStackTrace();
-			}
-			catch (IOException e) {
-				e.printStackTrace();
-			}
-			return null;
-		/*}*/
+		catch (UnavailableIWContext e) {
+			e.printStackTrace();
+		}
+		catch (IOException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
+
 	/**
 	 * @return The Class name of the Object
 	 */
-	public String getClassName()
-	{
+	public String getClassName() {
 		return this.getClass().getName();
 	}
+
 	/**
 	 * Encodes a string to call special request such as pop-up windows in HTML
 	 */
-	public String encodeSpecialRequestString(String RequestType, String RequestName, IWContext iwc)
-	{
+	public String encodeSpecialRequestString(String RequestType, String RequestName, IWContext iwc)	{
 		String theOutput = "";
 		theOutput = iwc.getRequestURI();
 		theOutput = theOutput + "?idegaspecialrequesttype=" + RequestType + "&idegaspecialrequestname=" + RequestName;
@@ -933,34 +915,26 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * The default clone implementation
 	 */
 	@Override
-	public Object clone()
-	{
+	public Object clone() {
 		PresentationObject obj = null;
-		/*
-		 * System.err.println("--"); System.err.println("Cloning class of type: "+
-		 * this.getClassName()); System.err.println("--");
-		 */
-		try
-		{
-			//This is forbidden in clone i.e. "new":
-			//obj =
-			// (PresentationObject)Class.forName(this.getClassName()).newInstance();
+		try {
 			obj = (PresentationObject) super.clone();
 			Map<String, String> markupAttributes = getMarkupAttributes();
-			if (markupAttributes != null)
-			{
-				if(markupAttributes instanceof Hashtable){
-					obj.attributes = ((Hashtable) ((Hashtable) markupAttributes).clone());
-				}
-				else{
+			if (markupAttributes != null) {
+				if (markupAttributes instanceof Hashtable) {
+					obj.attributes = MapUtil.deepCopy(markupAttributes);
+				} else {
 					for (Iterator<String> iter = markupAttributes.keySet().iterator(); iter.hasNext();) {
 						String key = iter.next();
+						if ("class".equals(key)) {
+							continue;
+						}
+
 						String value = markupAttributes.get(key);
-						obj.getAttributes().put(key,value);
+						obj.getAttributes().put(key, value);
 					}
 				}
 			}
-
 
 			//TODO: Resolve this:
 			//Copying the attributes probably doesn't work like this:
@@ -2071,6 +2045,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
@@ -2198,29 +2173,21 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		doParseBindings(fc);
 
 		try {
-			//if(!goneThroughRenderPhase()){
-				IWContext iwc = castToIWContext(fc);
-				//This should only happen when the component is restored and before main is called the first time on the (restored)component
-				if(isRestoredFromState()){
-					if(!this.goneThroughMain&&resetGoneThroughMainInRestore()){
-						resetBeforeMain(fc);
-					}
+			IWContext iwc = IWContext.getIWContext(fc);
+			//This should only happen when the component is restored and before main is called the first time on the (restored)component
+			if (isRestoredFromState()) {
+				if (!this.goneThroughMain&&resetGoneThroughMainInRestore()) {
+					resetBeforeMain(fc);
 				}
-				//initVariables(iwc);
-				//if(this instanceof AbstractTreeViewer){
-				//	boolean check=true;
-				//}
-				if(mayGoThroughMain()){
-					this._main(iwc);
-				}
-				setGoneThroughMain();
-			//}
-		}
-		catch(NotLoggedOnException noex){
+			}
+			if (mayGoThroughMain()) {
+				this._main(iwc);
+			}
+			setGoneThroughMain();
+		} catch(NotLoggedOnException noex){
 			//handle this exception specially and re-throw it
 			throw noex;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			//e.printStackTrace();
 			if(e instanceof IOException){
 				throw (IOException)e;
@@ -2250,26 +2217,20 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * @param fc
 	 * @throws IOException
 	 */
-	protected void callPrint(FacesContext fc)throws IOException{
+	protected void callPrint(FacesContext fc) throws IOException {
 		try {
-			//if(!goneThroughRenderPhase()){
-				IWContext iwc = castToIWContext(fc);
-				initVariables(iwc);
-				this.print(iwc);
-			//}
-		}
-		catch(NotLoggedOnException noex){
+			IWContext iwc = IWContext.getIWContext(fc);
+			initVariables(iwc);
+			this.print(iwc);
+		} catch(NotLoggedOnException noex){
 			//handle this exception specially and re-throw it
 			throw noex;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			if(e instanceof IOException){
-				throw (IOException)e;
-			}
-			else{
+			if (e instanceof IOException) {
+				throw (IOException) e;
+			} else {
 				e.printStackTrace();
-				//throw new IOException(e.getMessage());
 			}
 		}
 	}
@@ -2309,7 +2270,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 
 	@Override
 	public boolean isRendered() {
-		IWContext iwc = castToIWContext(getFacesContext());
+		IWContext iwc = IWContext.getIWContext(getFacesContext());
 		boolean loggedIn = iwc.isLoggedOn();
 		if ((renderForLoggedIn && renderForLoggedOut) || (renderForLoggedIn && loggedIn) || (renderForLoggedOut && !loggedIn)) {
 			return super.isRendered();
@@ -2361,9 +2322,9 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 				RenderUtils.renderChild(context,child);
 			}
 			else{
-				IWContext iwc = this.castToIWContext(context);
+				IWContext iwc = IWContext.getIWContext(context);
 				try {
-					((PresentationObject)child)._print(iwc);
+					((PresentationObject) child)._print(iwc);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -2379,10 +2340,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		super.encodeEnd(arg0);
 		this.setRenderedPhaseDone();
 		resetGoneThroughMain();
-	}
-
-	protected IWContext castToIWContext(FacesContext fc){
-		return IWContext.getIWContext(fc);
 	}
 
 	@Override
@@ -2581,35 +2538,21 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		 return Level.WARNING;
 	 }
 
-	///**
-	// * This method outputs the outputString to System.out if the Application
-	//  * property "debug" is set to "TRUE"
-	// */
-	//public void debug(String outputString)
-	//{
-	//	 if (IWMainApplicationSettings.isDebugActive())
-	//	 {
-	//		 System.out.println("[DEBUG] \"" + outputString + "\" : " + this.getClassName());
-	//	 }
-	// }
-
 	 public boolean isContainer() {
 	 	return false;
 	 }
 
-	 private List getReflectionProperties(){
-
+	 private List<Property> getReflectionProperties(){
 		 int icObjectInstanceId = getICObjectInstanceID();
-		 String cacheKey=null;
-		 if(icObjectInstanceId!=-1){
+		 String cacheKey = null;
+		 if (icObjectInstanceId != -1) {
 			 cacheKey = Integer.toString(icObjectInstanceId);
-		 }
-		 else{
+		 } else{
 			 cacheKey = getId();
 		 }
 
-		 if(cacheKey!=null){
-			 List l = PropertyCache.getInstance().getPropertyList(cacheKey);
+		 if (cacheKey != null) {
+			 List<Property> l = PropertyCache.getInstance().getPropertyList(cacheKey);
 			 if (l != null && l.isEmpty()) {
 				 l = PropertyCache.getInstance().getPropertyList(getId());
 			 }
@@ -2620,13 +2563,10 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 }
 
 	 protected void restoreFromReflectionProperties(){
- 		/*if(this.getClass().getName().indexOf("Navigation")!=-1){
- 			boolean check=true;
- 		}*/
-	 	List properties = getReflectionProperties();
-	 	if(properties!=null){
-		 	for (Iterator iter = properties.iterator(); iter.hasNext();) {
-				Property property = (Property) iter.next();
+	 	List<Property> properties = getReflectionProperties();
+	 	if (properties!=null){
+		 	for (Iterator<Property> iter = properties.iterator(); iter.hasNext();) {
+				Property property = iter.next();
 				try{
 					property.setPropertyOnInstance(this);
 				}
@@ -2637,7 +2577,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 	}
 	 }
 
-
 	 /**
 	  * Ancient way of setting property, handlers should now register properties with methodinvocation!
 	  * Also if you are calling this method in code just use getAttributes().put(key,values); where values is preferably a List.
@@ -2647,8 +2586,8 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	  * @param values
 	  */
 	 @Deprecated
-	public void setProperty(String key, String[] values){
-		getAttributes().put(key,ListUtil.convertStringArrayToList(values));
+	 public void setProperty(String key, String[] values) {
+		getAttributes().put(key, ListUtil.convertStringArrayToList(values));
 	 }
 
 	 /**
@@ -2708,10 +2647,8 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	/**
 	 * Removes the children of this component
 	 */
-	public void empty()
-	{
+	public void empty() {
 		getChildren().clear();
-		//theObjects.removeAll(theObjects);
 	}
 
 /**
@@ -2719,8 +2656,6 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 * @return
 	 */
 	protected String getSetApplicationMarkupLanguage(){
-		//changed by Sigtryggur 13.6.2005 IWContext.getInstance() returned null in some instances
-		//return IWContext.getInstance().getApplicationSettings().getProperty(MARKUP_LANGUAGE, HTML);
 	    return IWMainApplication.getDefaultIWMainApplication().getSettings().getDefaultMarkupLanguage();
 	}
 
@@ -2732,12 +2667,10 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 */
 	protected boolean isXhtmlSet(){
 		String markup = getSetApplicationMarkupLanguage();
-		if(markup.equals(Page.XHTML)){
+		if (markup.equals(Page.XHTML) || markup.equals(Page.XHTML1_1)) {
 			return true;
 		}
-		else if(markup.equals(Page.XHTML1_1)){
-			return true;
-		}
+
 		return false;
 	}
 
@@ -2766,7 +2699,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	protected void cloneJSFFacets(PresentationObject obj){
 		//First clone the facet Map:
 		if(this.facetMap!=null){
-			obj.facetMap=(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
+			obj.facetMap=MapUtil.deepCopy(this.facetMap);//(Map) ((PresentationObjectComponentFacetMap)this.facetMap).clone();
 			((PresentationObjectComponentFacetMap)obj.facetMap).setComponent(obj);
 
 			//Iterate over the children to clone each child:
@@ -2783,16 +2716,12 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		}
 	}
 
+	@SuppressWarnings("deprecation")
 	protected Object getValueBindingByAttributeExp(FacesContext ctx, String attributeName) {
-
 		ValueBinding vb = getValueBinding(attributeName);
-
-		if(vb != null) {
-
+		if (vb != null) {
 			String exp = vb.getExpressionString();
-
-			if(exp != null) {
-
+			if (exp != null) {
 				return ctx.getApplication().createValueBinding(exp).getValue(ctx);
 			}
 		}

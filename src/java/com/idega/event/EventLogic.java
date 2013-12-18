@@ -2,11 +2,12 @@
  * Created on 29.7.2003 by  tryggvil in project com.project
  */
 package com.idega.event;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.StringTokenizer;
-import java.util.Vector;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.text.Link;
@@ -69,7 +70,7 @@ public class EventLogic
 		}
 		if (coordinates != null && coordinates.length > 0)
 		{
-			List l = new Vector();
+			List<PresentationObject> l = new ArrayList<PresentationObject>();
 			for (int i = 0; i < coordinates.length; i++)
 			{
 				String crdnts = coordinates[i];
@@ -87,7 +88,7 @@ public class EventLogic
 					}
 				}
 			}
-			PresentationObject[] toReturn = (PresentationObject[]) l.toArray(new PresentationObject[0]);
+			PresentationObject[] toReturn = l.toArray(new PresentationObject[0]);
 			if (toReturn.length > 0)
 			{
 				/*
@@ -148,23 +149,23 @@ public class EventLogic
 	/**
 	 *
 	 */
-	public static Map getCashedObjectInstancesForPage(int pageId)
+	public static Map<String, PresentationObject> getCashedObjectInstancesForPage(int pageId)
 	{
 		return ObjectInstanceCacher.getObjectInstancesCachedForPage(pageId);
 	}
 	/**
 	 *
 	 */
-	public static Map getCashedObjectInstancesForPage(String pageKey)
+	public static Map<String, PresentationObject> getCashedObjectInstancesForPage(String pageKey)
 	{
 		return ObjectInstanceCacher.getObjectInstancesCachedForPage(pageKey);
 	}
 	/**
 	 *
 	 */
-	public static Set getInstanceIdsOnPage(String pageKey)
+	public static Set<String> getInstanceIdsOnPage(String pageKey)
 	{
-		Map m = ObjectInstanceCacher.getObjectInstancesCachedForPage(pageKey);
+		Map<String, PresentationObject> m = ObjectInstanceCacher.getObjectInstancesCachedForPage(pageKey);
 		if (m != null)
 		{
 			return m.keySet();
@@ -177,9 +178,9 @@ public class EventLogic
 	/**
 	 *
 	 */
-	public static Set getInstanceIdsOnPage(int pageKey)
+	public static Set<String> getInstanceIdsOnPage(int pageKey)
 	{
-		Map m = ObjectInstanceCacher.getObjectInstancesCachedForPage(pageKey);
+		Map<String, PresentationObject> m = ObjectInstanceCacher.getObjectInstancesCachedForPage(pageKey);
 		if (m != null)
 		{
 			return m.keySet();

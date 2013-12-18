@@ -32,6 +32,7 @@ import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.text.AttributeParser;
 import com.idega.util.xml.XmlUtil;
 
@@ -99,7 +100,7 @@ public class HtmlPage extends Page {
 	 * Returns null if none is found.
 	 * @return
 	 */
-	public String getDefaultRegion(){
+	public String getDefaultRegion() {
 		for (Iterator<String> iter = getRegionIdsMap().keySet().iterator(); iter.hasNext();) {
 			String key = iter.next();
 			Integer value = getRegionIdsMap().get(key);
@@ -110,17 +111,11 @@ public class HtmlPage extends Page {
 		return null;
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	public List<UIComponent> getChildren() {
 		return super.getChildren();
 	}
 
-	/**
-	 *
-	 */
 	@Override
 	protected void setChildren(List<UIComponent> newChildren) {
 		super.setChildren(newChildren);
@@ -132,7 +127,7 @@ public class HtmlPage extends Page {
 		}
 		else{
 			Integer index = getRegionIdsMap().get(regionKey);
-			if(index!=null){
+			if(index!=null) {
 				Object o = getChildren().get(index.intValue());
 				UIComponent child = (UIComponent) o;
 				return child;
@@ -143,7 +138,7 @@ public class HtmlPage extends Page {
 		}
 	}
 
-	public void setRegion(String regionKey, UIComponent region){
+	public void setRegion(String regionKey, UIComponent region) {
 		if (this.regionAsFacet) {
 			if (regionKey != null) {
 				getFacets().put(regionKey,region);
@@ -165,7 +160,7 @@ public class HtmlPage extends Page {
 	}
 
 	@Override
-	public void add(UIComponent comp){
+	public void add(UIComponent comp) {
 		add(comp, getDefaultRegion());
 	}
 
@@ -191,11 +186,11 @@ public class HtmlPage extends Page {
 	 * Returns all the regionIds as Strings
 	 * @return
 	 */
-	public Set<String> getRegionIds(){
+	public Set<String> getRegionIds() {
 		return getRegionIdsMap().keySet();
 	}
 
-	private void findOutRegions(){
+	private void findOutRegions() {
 		String template = getHtml();
 		if (template == null) {
 			LOGGER.info("There is no template for this page");
@@ -227,27 +222,17 @@ public class HtmlPage extends Page {
 		}
 	}
 
-	/**
-	 * Overrided from Page
-	 */
 	@Override
 	public void encodeBegin(FacesContext context)throws IOException{
 		//Does nothing here
 	}
 
-	/**
-	 * Overrided from Page
-	 * @throws IOException
-	 */
 	@Override
 	public void encodeChildren(FacesContext context) throws IOException{
 		//Does just call the print(iwc) method below:
 		callPrint(context);
 	}
 
-	/**
-	 * Overrided from Page
-	 */
 	@Override
 	public void encodeEnd(FacesContext context)throws IOException{
 		//Does nothing here
@@ -318,16 +303,14 @@ public class HtmlPage extends Page {
 			out.write("</title>");
 			//	Print out all after the TITLE tag in the HEAD
 			out.write(postTitleHead);
-		}
-		catch (ArrayIndexOutOfBoundsException ae) {
+		} catch (ArrayIndexOutOfBoundsException ae) {
 			//	If there is an error (title not found) then just write out the whole head contents + idegaWeb Title
 			out.write(headContent);
 			String locTitle = this.getLocalizedTitle(ctx);
 			out.write("<title>");
 			if (StringUtil.isEmpty(locTitle)) {
 				out.write(htmlTitle);
-			}
-			else {
+			} else {
 				out.write(locTitle);
 			}
 			out.write("</title>");
@@ -351,8 +334,7 @@ public class HtmlPage extends Page {
 			}
 			if (attribute.equals("onunload")) {
 				this.setMarkupAttributeMultivalued("onunload", value);
-			}
-			else {
+			} else {
 				if (!isMarkupAttributeSet(attribute)) {
 					setMarkupAttribute(attribute, value);
 				}
@@ -403,9 +385,6 @@ public class HtmlPage extends Page {
 		out.close();
 	}
 
-	/**
-	 * @see javax.faces.component.UIPanel#saveState(javax.faces.context.FacesContext)
-	 */
 	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[4];
@@ -416,9 +395,6 @@ public class HtmlPage extends Page {
 		return values;
 	}
 
-	/**
-	 * @see javax.faces.component.UIPanel#restoreState(javax.faces.context.FacesContext, java.lang.Object)
-	 */
 	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext ctx, Object state) {
@@ -429,16 +405,10 @@ public class HtmlPage extends Page {
 		this.regionAsFacet = ((Boolean)values[3]).booleanValue();
 	}
 
-	/**
-	 * @return
-	 */
 	public String getHtml() {
 		return this.html;
 	}
 
-	/**
-	 * @param string
-	 */
 	public void setHtml(String string) {
 		this.html = string;
 		findOutRegions();
@@ -513,12 +483,11 @@ public class HtmlPage extends Page {
 		}
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public Object clone(IWUserContext iwc, boolean askForPermission){
-		HtmlPage newPage = (HtmlPage) super.clone(iwc,askForPermission);
+	public Object clone(IWUserContext iwc, boolean askForPermission) {
+		HtmlPage newPage = (HtmlPage) super.clone(iwc, askForPermission);
 		if (this.regionMap != null) {
-			newPage.regionMap = (Map<String, Integer>) ((HashMap<String, Integer>) this.regionMap).clone();
+			newPage.regionMap = MapUtil.deepCopy(this.regionMap);// (Map<String, Integer>) ((HashMap<String, Integer>) this.regionMap).clone();
 		}
 		return newPage;
 	}
@@ -528,9 +497,6 @@ public class HtmlPage extends Page {
 		super.main(iwc);
 	}
 
-	/* (non-Javadoc)
-	 * @see com.idega.presentation.PresentationObject#_main(com.idega.presentation.IWContext)
-	 */
 	@Override
 	public void _main(IWContext iwc) throws Exception {
 		super._main(iwc);

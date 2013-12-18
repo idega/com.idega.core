@@ -194,8 +194,9 @@ public class MapUtil {
 	 */
 	@SuppressWarnings("unchecked")
 	public static <K extends Serializable, V, T> Map<K, V> deepCopy(Map<K, V> original) {
-		if (MapUtil.isEmpty(original))
+		if (isEmpty(original)) {
 			return new HashMap<K, V>();
+		}
 
 		Map<K, V> copy = new HashMap<K, V>();
 

@@ -36,9 +36,9 @@ import com.idega.presentation.text.Text;
  * Subclasses of this class should not render themselves out (with the print method), and it is presumed that
  * their functionality is done with the main() method in old style idegaWeb.
  * This class has functionality regarding caching and how the main method is processed in JSF.
- * 
+ *
  * Last modified: $Date: 2008/06/18 12:59:28 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.81 $
  */
@@ -49,7 +49,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public final static String IW_BLOCK_CACHE_KEY = "iw_not_cached";
 	public static boolean usingNewAcessControlSystem = true;
 	static final String newline = "\n";
-	
+
 	//Instance variables:
 	private String cacheKey = null;
 	private String derivedCacheKey = null;
@@ -61,16 +61,17 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	private boolean debugParameters = false;
 	private String blockWidth = null;
 	private long iSystemTime = 0;
-	
+
 	public Block() {
 		setDefaultWidth();
 		setTransient(false);
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_CORE_BUNDLE_IDENTIFIER;
 	}
-	
+
 
 	/**
 	 * Override to add styles (names) to stylesheet.  Add name (String) as key and style (String) as value.
@@ -81,7 +82,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="cacheKey"
 	 */
 	public String getCacheKey() {
@@ -89,10 +90,12 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 
+	@Override
 	public String getLocalizedNameKey() {
 		return "block";
 	}
 
+	@Override
 	public String getLocalizedNameValue() {
 		return "Block";
 	}
@@ -136,6 +139,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		this.debugParameters = debugPrm;
 	}
 
+	@Override
 	public boolean deleteBlock(int ICObjectInstanceId) {
 		System.err.println("method deleteBlock(int ICObjectInstanceId) not implemented in class " + this.getClass().getName());
 		return true;
@@ -214,7 +218,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="permissionKeyMap"
 	 */
 	private Map getPermissionKeyMap() {
@@ -250,7 +254,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	private static long twentyMinutes = 60 * 1000 * 20;
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="manager"
 	 * @uml.associationEnd multiplicity="(0 1)"
 	 */
@@ -277,7 +281,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 		iwc.setCacheWriter(writer);
 	}
-	
+
 	public void endCacheing(IWContext iwc, StringBuffer buffer) {
 		iwc.setCacheing(false);
 		IWCacheManager.getInstance(iwc.getIWMainApplication()).setObject(getOriginalCacheKey(), getDerivedCacheKey(), buffer, this.cacheInterval);
@@ -287,6 +291,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return this.editPermission;
 	}
 
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		//this.editPermission = iwc.hasEditPermission(this);
 		this.manager = IWStyleManager.getInstance();
@@ -332,6 +337,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 	}
 
+	@Override
 	public void encodeBegin(FacesContext fc)throws IOException{
 		this.iSystemTime = System.currentTimeMillis();
 		super.encodeBegin(fc);
@@ -340,13 +346,14 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	/* (non-Javadoc)
 	 * @see javax.faces.component.UIComponent#encodeEnd(javax.faces.context.FacesContext)
 	 */
-	public void encodeEnd(FacesContext arg0) throws IOException {
+	@Override
+	public void encodeEnd(FacesContext fc) throws IOException {
 		long endTime = System.currentTimeMillis();
 		String renderingText = (endTime - this.iSystemTime) + " ms";
-		castToIWContext(arg0).getResponseWriter().writeComment(renderingText);
-		super.encodeEnd(arg0);
+		IWContext.getIWContext(fc).getResponseWriter().writeComment(renderingText);
+		super.encodeEnd(fc);
 	}
-	 
+
 	/**
 	 * <p>
 	 * The default implementation for the print function for Blocks. This method
@@ -355,6 +362,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	 * This implementation is final and therefore can not be overridden.
 	 * </p>
 	 */
+	@Override
 	public final void print(IWContext iwc) throws Exception {
 		if (isCacheable(iwc)) {
 			if (isCacheValid(iwc)) {
@@ -371,7 +379,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 						endCacheing(iwc, buffer);
 					}
 					else{
-						//the second thread and all after that 
+						//the second thread and all after that
 						//should just print out the cached content.
 						printPreCachedContent(iwc);
 					}
@@ -395,27 +403,27 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		//iwc.getWriter().print(buffer.toString());
 		print(buffer.toString());
 	}
-	
+
 	public Text getStyleText(String text, String styleName) {
-		return getStyleText(new Text(text),styleName);	
+		return getStyleText(new Text(text),styleName);
 	}
-	
+
 	public Text getStyleText(Text text, String styleName) {
-		return (Text) setStyle(text,styleName);	
+		return (Text) setStyle(text,styleName);
 	}
-	
+
 	public Link getStyleLink(String link, String styleName) {
-		return getStyleLink(new Link(link),styleName);	
+		return getStyleLink(new Link(link),styleName);
 	}
-	
+
 	public Link getStyleLink(Link link, String styleName) {
-		return (Link) setStyle(link,styleName);	
+		return (Link) setStyle(link,styleName);
 	}
-	
+
 	public PresentationObject getStyleObject(PresentationObject object, String styleName) {
 		return setStyle(object, styleName);
 	}
-	
+
 	/**
 	 * Gets a prefixed stylename to use for objects, with prefix specific for the bundle used by this block
 	 * if the block is in the core bundle, no prefix is added
@@ -438,7 +446,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 				this.manager.setStyle(styleName + ":hover", "");
 			}
 		}
-					
+
 		return styleName;
 	}
 
@@ -451,7 +459,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	public String getStyleName(String styleName){
 		return getStyleName(styleName, false);
 	}
-	
+
 	private PresentationObject setStyle(PresentationObject obj, String styleName, boolean isLink) {
 		obj.setStyleClass(getStyleName(styleName, isLink));
 		return obj;
@@ -473,7 +481,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="derivedCacheKey"
 	 */
 	protected String getDerivedCacheKey() {
@@ -511,7 +519,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 			}
 			addPerm = permissions.toString();
 		}
-		
+
 		return (instanceID + locale + edit + isSecure+addPerm);
 	}
 
@@ -532,7 +540,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="cacheable"
 	 */
 	public void setCacheable(boolean cacheable) {
@@ -582,6 +590,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		return obj;
 	}
 
+	@Override
 	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission) {
 		if (iwc != null) {
 			//this.setIWApplicationContext(iwc.getApplicationContext());
@@ -600,6 +609,7 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 	}
 
+	@Override
 	public Object clone() {
 		Block obj = (Block) super.clone();
 
@@ -614,26 +624,29 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		}
 		return obj;
 	}
-	
+
 	protected boolean autoCreateGlobalHoverStyles() {
 		return false;
 	}
-	
+
 	/*
 	 * Begin Overrided methods from JSF's UIComponent:
-	 */	
-	
+	 */
+
+	@Override
 	public String getComponentType(){
 		return ICObjectBMPBean.COMPONENT_TYPE_BLOCK;
 	}
-	
+
+	@Override
 	public void decode(FacesContext fc){
 		super.decode(fc);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#restoreState(javax.faces.context.FacesContext, java.lang.Object)
 	 */
+	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
@@ -646,11 +659,12 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		this.editPermission = ((Boolean)values[7]).booleanValue();
 		this.debugParameters = ((Boolean)values[8]).booleanValue();
 		this.blockWidth = (String)values[9];
-		
+
 	}
 	/* (non-Javadoc)
 	 * @see javax.faces.component.StateHolder#saveState(javax.faces.context.FacesContext)
 	 */
+	@Override
 	public Object saveState(FacesContext context) {
 		Object values[] = new Object[10];
 		values[0] = super.saveState(context);
@@ -665,35 +679,39 @@ public class Block extends PresentationObjectContainer implements Builderaware {
 		values[9] = this.blockWidth;
 		return values;
 	}
-	
+
 	/*
 	 * End Overrided methods from JSF's UIComponent:
-	 */		
-	
-	
+	 */
+
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
-	
+
+	@Override
 	public void setWidth(String width) {
 		this.blockWidth = width;
 	}
-	
+
+	@Override
 	public String getWidth() {
 		return this.blockWidth;
 	}
-	
+
 	protected void setDefaultWidth() {
 		this.blockWidth = Table.HUNDRED_PERCENT;
 	}
-	
-	
+
+
 	/**
 	** Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
 	**/
+	@Override
 	protected boolean resetGoneThroughMainInRestore(){
 		return true;
 	}

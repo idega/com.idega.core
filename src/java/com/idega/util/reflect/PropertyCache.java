@@ -14,68 +14,66 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
 
 
 /**
  * This class holds a cache of lists of Property object keyed by an id (ICObjectInstanceId).
- * 
+ *
  *  Last modified: $Date: 2006/04/09 12:13:19 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.5 $
  */
 public class PropertyCache implements Singleton {
-	
-	//private PropertyCache instance¾
-	private Map propertyListCache;
+
+	private Map<String, List<Property>> propertyListCache;
 	private static String appKey =  "IW_PROPERTYCACHE";
-	
+
 	private PropertyCache(){}
-	
+
 	public static synchronized PropertyCache getInstance(){
 		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
-		PropertyCache cache = (PropertyCache)iwma.getAttribute(appKey);
-		if(cache==null){
+		PropertyCache cache = (PropertyCache) iwma.getAttribute(appKey);
+		if (cache == null) {
 			cache = new PropertyCache();
 			iwma.setAttribute(appKey,cache);
 		}
 		return cache;
-		//PropertyCache cache = iwma.get
 	}
-	
-	private Map getPropertyListCache(){
-		if(this.propertyListCache==null){
-			this.propertyListCache=new HashMap();
+
+	private Map<String, List<Property>> getPropertyListCache(){
+		if (this.propertyListCache == null) {
+			this.propertyListCache = new HashMap<String, List<Property>>();
 		}
 		return this.propertyListCache;
 	}
-	
-	public List getPropertyList(String key){
-		List l = (List)getPropertyListCache().get(key);
+
+	public List<Property> getPropertyList(String key){
+		List<Property> l = getPropertyListCache().get(key);
 		if(l==null){
-			l = new ArrayList();
+			l = new ArrayList<Property>();
 			getPropertyListCache().put(key,l);
 		}
 		return l;
 	}
-	
-	public void setAllCachedPropertiesOnInstance(String key, Object instance){
-		List props = getPropertyList(key);
-		for (Iterator iter = props.iterator(); iter.hasNext();) {
-			Property prop = (Property) iter.next();
+
+	public void setAllCachedPropertiesOnInstance(String key, Object instance) {
+		List<Property> props = getPropertyList(key);
+		for (Iterator<Property> iter = props.iterator(); iter.hasNext();) {
+			Property prop = iter.next();
 			prop.setPropertyOnInstance(instance);
 		}
 	}
-	
-	public void addProperty(String key,Property property){
+
+	public void addProperty(String key, Property property) {
 		getPropertyList(key).add(property);
 	}
-	
-	public void clearPropertiesForKey(String key){
+
+	public void clearPropertiesForKey(String key) {
 		getPropertyListCache().remove(key);
 	}
-	
-	
+
 }

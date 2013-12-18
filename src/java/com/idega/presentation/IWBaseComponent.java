@@ -107,24 +107,21 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		CoreUtil.doEnsureScopeIsSet(context);
 
 		UIComponentCacher cacher = getCacher(context);
-		if(cacher.existsInCache(this,context)){
+		if (cacher.existsInCache(this,context)) {
 			// do nothing:
-		}
-		else{
-			if(cacher.isCacheEnbled(this,context)){
+		} else {
+			if (cacher.isCacheEnbled(this,context)) {
 				cacher.beginCache(this,context);
 			}
 
 			this.iSystemTime = System.currentTimeMillis();
-			if(!isInitialized()){
+			if (!isInitialized()){
 				initializeComponent(context);
-				//TODO: Remove call to older method:
-				initializeContent();
 				setInitialized();
-			}
-			else{
+			} else{
 				updateComponent(context);
 			}
+
 			super.encodeBegin(context);
 		}
 	}
@@ -134,29 +131,13 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 */
 	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
-		/*if(getRendersChildren()){
-			Iterator children = this.getChildren().iterator();
-			while (children.hasNext()) {
-				UIComponent element = (UIComponent) children.next();
-				renderChild(context,element);
-			}
-		}*/
-		/*Iterator children = this.getChildren().iterator();
-			while (children.hasNext()) {
-				UIComponent element = (UIComponent) children.next();
-				renderChild(context,element);
-			}*/
-
 		UIComponentCacher cacher = getCacher(context);
-		if(cacher.existsInCache(this,context)){
+		if (cacher.existsInCache(this,context)) {
 			// do nothing:
-		}
-		else{
+		} else {
 			super.encodeChildren(context);
 		}
-
 	}
-
 
 	/**
 	 * <p>
@@ -176,25 +157,20 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 */
 	@Override
 	public void encodeEnd(FacesContext context) throws IOException {
-
-
 		UIComponentCacher cacher = getCacher(context);
-		if(cacher.existsInCache(this,context)){
+		if (cacher.existsInCache(this,context)) {
 			// encode the cached version:
 			cacher.encodeCached(this,context);
-		}
-		else{
-
+		} else {
 			long endTime = System.currentTimeMillis();
 			String renderingText = (endTime - this.iSystemTime) + " ms";
 			context.getResponseWriter().writeComment(renderingText);
 			super.encodeEnd(context);
 
-			if(cacher.isCacheEnbled(this,context)){
+			if (cacher.isCacheEnbled(this,context)) {
 				cacher.endCache(this,context);
 			}
 		}
-
 	}
 
 	@Override
@@ -217,7 +193,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		}
 		this._styler.parseStyleString(style);
 		this.styleAttribute = style;
-		//this.set("style", _styler.getStyleString());
 
 	}
 
@@ -243,16 +218,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	@Override
 	public String getFamily() {
 		return "idegaweb";
-	}
-	/**
-	 * <p>
-	 * This method was refactored and replaced with initializeComponent
-	 * </p>
-	 * @deprecated Replaced with initializeComponent
-	 */
-	@Deprecated
-	protected void initializeContent() {
-		//does nothing by default
 	}
 
 	/**
@@ -358,14 +323,13 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * @param bundleIdentifier
 	 * @return
 	 */
-	protected static IWResourceBundle getIWResourceBundle(FacesContext context,String bundleIdentifier){
-		IWBundle bundle = getIWBundle(context,bundleIdentifier);
+	protected static IWResourceBundle getIWResourceBundle(FacesContext context, String bundleIdentifier) {
+		IWBundle bundle = getIWBundle(context, bundleIdentifier);
 		Locale locale = null;
 		UIViewRoot viewRoot = context.getViewRoot();
-		if(viewRoot!=null){
+		if (viewRoot != null) {
 			locale = viewRoot.getLocale();
-		}
-		else{
+		} else {
 			locale = context.getExternalContext().getRequestLocale();
 		}
 		return bundle.getResourceBundle(locale);
@@ -395,12 +359,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		getChildren().add(component);
 	}
 
-	//@Override
-	//public Map<Object, UIComponent> getFacets() {
-	//	Map<Object, UIComponent> facets = super.getFacets();
-	//	return facets;
-	//}
-
 	/**
 	 * <p>
 	 * A method to check if the passed String is a valuebinding expression,
@@ -409,16 +367,15 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	 * @param any String
 	 * @return
 	 */
-    public boolean isValueBinding(String value)
-    {
+    public boolean isValueBinding(String value) {
         if (value == null) {
-					return false;
-				}
+			return false;
+		}
 
         int start = value.indexOf(EXPRESSION_BEGIN);
         if (start < 0) {
-					return false;
-				}
+			return false;
+		}
 
         int end = value.lastIndexOf(EXPRESSION_END);
         return (end >=0 && start < end);
@@ -441,7 +398,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
     @SuppressWarnings("unchecked")
     protected <T>T getExpressionValue(FacesContext ctx, String expression) {
-
     	ValueExpression vexp = getValueExpression(expression);
     	return vexp != null ? (T)vexp.getValue(ctx.getELContext()) : null;
     }
@@ -458,10 +414,11 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	    FacesContext context = FacesContext.getCurrentInstance();
 
 	    String expr;
-	    if (isValueBinding(beanId))
+	    if (isValueBinding(beanId)) {
 	    	expr = beanId;
-	    else
+	    } else {
 	    	expr = getExpression(beanId);
+	    }
 
 	    ELContext elContext = context.getELContext();
 	    ValueExpression ve = context.getApplication().getExpressionFactory().createValueExpression(elContext, expr, Object.class);

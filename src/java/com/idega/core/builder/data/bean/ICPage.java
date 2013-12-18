@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.builder.data.bean;
 
@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.data.ICPageBMPBean;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.idgenerator.business.IdGenerator;
@@ -58,7 +59,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 
 	public static final String ENTITY_NAME = "ib_page";
 	public static final String COLUMN_PAGE_ID = "ib_page_id";
-	
+
 	private static final String COLUMN_UNIQUE_ID = "unique_id";
 	private static final String COLUMN_FILE = "file_id";
 	private static final String COLUMN_NAME = "name";
@@ -88,12 +89,12 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	public static final String SUBTYPE_SIMPLE_TEMPLATE = "SIMPLE_TEMPLATE";
 	public static final String SUBTYPE_SIMPLE_TEMPLATE_PAGE = "SIMPLE_TEMPLATE_PAGE";
 
-	public static final String FORMAT_IBXML = "IBXML";
-	public static final String FORMAT_IBXML2 = "IBXML2";
-	public static final String FORMAT_HTML = "HTML";
-	public static final String FORMAT_JSP_1_2 = "JSP_1_2";
-	public static final String FORMAT_FACELET = "FACELET";
-	
+	public static final String FORMAT_IBXML = ICPageBMPBean.FORMAT_IBXML;
+	public static final String FORMAT_IBXML2 = ICPageBMPBean.FORMAT_IBXML2;
+	public static final String FORMAT_HTML = ICPageBMPBean.FORMAT_HTML;
+	public static final String FORMAT_JSP_1_2 = ICPageBMPBean.FORMAT_JSP_1_2;
+	public static final String FORMAT_FACELET = ICPageBMPBean.FORMAT_FACELET;
+
 	public static final String SQL_RELATION_PAGE_TREE = "ib_page_tree";
 	public static final String SQL_RELATION_PROTOCOL = "ib_page_ic_protocol";
 
@@ -503,80 +504,97 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.data.UniqueIDCapable#getUniqueId()
 	 */
+	@Override
 	public String getUniqueId() {
 		return uniqueID;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.data.UniqueIDCapable#setUniqueId(java.lang.String)
 	 */
+	@Override
 	public void setUniqueId(String uniqueID) {
 		this.uniqueID = uniqueID;
 	}
 
 	/* Storable implementation */
+	@Override
 	public Object write(ObjectWriter writer, IWContext iwc) throws RemoteException {
 		return BuilderServiceFactory.getBuilderPageWriterService(iwc).write(null, writer, iwc);
 	}
-	
+
+	@Override
 	public Object read(ObjectReader reader, IWContext iwc) throws RemoteException {
 		return reader.read((XMLData) null, iwc);
 	}
-	
+
 	/* ICTreeNode implementation */
+	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
-	
+
+	@Override
 	public ICTreeNode getChildAtIndex(int index) {
 		return children.get(index);
 	}
-	
+
+	@Override
 	public int getChildCount() {
 		return children.size();
 	}
-	
+
+	@Override
 	public Collection getChildren() {
 		return children;
 	}
-	
+
+	@Override
 	public Iterator getChildrenIterator() {
 		return children.iterator();
 	}
-	
+
+	@Override
 	public String getId() {
 		return getID().toString();
 	}
 
+	@Override
 	public int getIndex(ICTreeNode node) {
 		return Integer.parseInt(node.getId());
 	}
-	
+
+	@Override
 	public int getNodeID() {
 		return getID().intValue();
 	}
-	
+
+	@Override
 	public String getNodeName() {
 		return getName();
 	}
 
+	@Override
 	public String getNodeName(Locale locale) {
 		return getNodeName();
 	}
 
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return getNodeName(locale);
 	}
-	
+
+	@Override
 	public ICTreeNode getParentNode() {
 		return parent;
 	}
-	
+
+	@Override
 	public int getSiblingCount() {
 		ICTreeNode parent = getParentNode();
 		if (parent != null) {
@@ -585,6 +603,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 		return 0;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return children == null || children.isEmpty();
 	}
