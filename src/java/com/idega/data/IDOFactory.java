@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
 
 import javax.ejb.CreateException;
@@ -11,6 +12,9 @@ import javax.ejb.EJBMetaData;
 import javax.ejb.FinderException;
 import javax.ejb.Handle;
 import javax.ejb.HomeHandle;
+
+import com.idega.repository.data.ImplementorRepository;
+import com.idega.util.ListUtil;
 
 /**
  * Title:        idegaclasses
@@ -122,7 +126,7 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
   }
 
   @Override
-public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
     Object realPK = primaryKey;
     if(primaryKey instanceof IDOEntity){
     	try{
@@ -135,6 +139,39 @@ public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws Fin
     }
     Class<T> interfaceClass = getEntityInterfaceClass();
     return idoFindByPrimaryKey(interfaceClass, realPK);
+  }
+
+  public <T extends IDOEntity> T findSubTypeByPrimaryKeyIDO(Object primaryKey) throws FinderException {
+	  if (primaryKey == null) {
+		  return null;
+	  }
+	  Class<T> interfaceClass = getEntityInterfaceClass();
+	  if (interfaceClass == null) {
+		  return null;
+	  }
+
+	  //	Checking original entity
+	  try {
+		  return findByPrimaryKeyIDO(primaryKey);
+	  } catch (Exception e) {}
+
+	  try {
+		  List<Class<T>> subTypes = ImplementorRepository.getInstance().getValidImplementorClasses(interfaceClass, getClass());
+		  if (ListUtil.isEmpty(subTypes)) {
+			  return null;
+		  }
+
+		  for (Class<T> subType: subTypes) {
+			  IDOHome subTypeHome = IDOLookup.getHome(subType);
+			  try {
+				  return subTypeHome.findByPrimaryKeyIDO(primaryKey);
+			  } catch (FinderException e) {}
+		  }
+	  } catch (Exception e) {
+		  e.printStackTrace();
+	  }
+
+	  return null;
   }
 
   public IDOEntity findByPrimaryKeyIDO(int primaryKey) throws FinderException{
