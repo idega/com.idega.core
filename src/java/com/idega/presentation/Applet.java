@@ -1,7 +1,9 @@
 package com.idega.presentation;
 
 import java.io.IOException;
-public class Applet extends PresentationObject {
+
+import com.idega.builder.presentation.InvisibleInBuilder;
+public class Applet extends PresentationObject implements InvisibleInBuilder {
 	private StringBuffer params = new StringBuffer();
 	public Applet() {
 		setName(this.getID());
@@ -57,8 +59,8 @@ public class Applet extends PresentationObject {
 		setHeight(height);
 		setCodebase(codeBase);
 	}
-	
-	
+
+
 	public void setParam(String name, String value) {
 		this.params.append("<param name=\"");
 		this.params.append(name);
@@ -72,18 +74,22 @@ public class Applet extends PresentationObject {
 	public void setWidth(int width) {
 		setWidth(Integer.toString(width));
 	}
+	@Override
 	public void setWidth(String width) {
 		setMarkupAttribute("width", width);
 	}
+	@Override
 	public String getWidth() {
 		return getMarkupAttribute("width");
 	}
 	public void setHeight(int height) {
 		setHeight(Integer.toString(height));
 	}
+	@Override
 	public void setHeight(String height) {
 		setMarkupAttribute("height", height);
 	}
+	@Override
 	public String getHeight() {
 		return getMarkupAttribute("height");
 	}
@@ -138,6 +144,7 @@ public class Applet extends PresentationObject {
 	public String getAlt() {
 		return getMarkupAttribute("alt");
 	}
+	@Override
 	public void print(IWContext iwc) throws IOException {
 		if (doPrint(iwc)) {
 			if (getMarkupLanguage().equals("HTML")) {

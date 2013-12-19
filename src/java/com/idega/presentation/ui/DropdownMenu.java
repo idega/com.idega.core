@@ -12,6 +12,7 @@ package com.idega.presentation.ui;
 import java.util.Collection;
 
 import com.idega.builder.bean.AdvancedProperty;
+import com.idega.builder.presentation.InvisibleInBuilder;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.util.expression.ELUtil;
@@ -20,7 +21,7 @@ import com.idega.util.expression.ELUtil;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.2
  */
-public class DropdownMenu extends GenericSelect {
+public class DropdownMenu extends GenericSelect implements InvisibleInBuilder {
 	private final static String untitled = "untitled";
 
 	public DropdownMenu() {
@@ -31,11 +32,11 @@ public class DropdownMenu extends GenericSelect {
 		super(name);
 	}
 
-	public DropdownMenu(Collection entityList) {
+	public DropdownMenu(Collection<?> entityList) {
 		this(entityList,untitled);
 	}
 
-	public DropdownMenu(Collection entityList, String Name) {
+	public DropdownMenu(Collection<?> entityList, String Name) {
 		this(Name);
 		addMenuElements(entityList);
 	}
@@ -74,7 +75,7 @@ public class DropdownMenu extends GenericSelect {
 	public void addMenuElement(int value, String displayString) {
 		addOption(new SelectOption(displayString, value));
 	}
-	
+
 	public void addMenuElement(char value, String displayString) {
 		addOption(new SelectOption(displayString, value));
 	}
@@ -111,19 +112,19 @@ public class DropdownMenu extends GenericSelect {
 		setOptionName(value, displayString);
 	}
 
-	/**	
+	/**
 	* Add menu elements from an Collection of IDOLegacyEntity Objects
 	*/
 	public void addMenuElements(Collection<?> entityList) {
 		if (entityList == null) {
 			return;
 		}
-		
+
 		for (Object obj: entityList) {
 			if (obj instanceof IDOEntity) {
 				IDOEntity entity = (IDOEntity) obj;
 				addMenuElement(entity.getPrimaryKey().toString(), entity.toString());
-				
+
 				if (getName().equals(untitled) && entity != null) {
 					setName(entity.getEntityDefinition().getUniqueEntityName());
 				}
@@ -147,7 +148,7 @@ public class DropdownMenu extends GenericSelect {
 	public void setSelectedElement(int elementValue) {
 		setSelectedElement(Integer.toString(elementValue));
 	}
-	
+
 	/**
 	 * Sets the element by value elementValue as selected if it is found in this menu
 	 **/
@@ -161,15 +162,15 @@ public class DropdownMenu extends GenericSelect {
 	public String getSelectedElementValue() {
 		return getSelectedValue();
 	}
-	
+
 	public SelectOption getMenuElement(String elementValue) {
 		return getOption(elementValue);
 	}
-	
+
 	public void setAttributeToElement(String ElementValue, String AttributeName, String AttributeValue) {
 		getMenuElement(ElementValue).setMarkupAttribute(AttributeName, AttributeValue);
 	}
-	
+
 	@Override
 	public void setValue(String value) {
 		Collection<?> entities = null;

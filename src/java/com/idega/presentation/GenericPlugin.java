@@ -3,8 +3,10 @@ package com.idega.presentation;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.Map;
+
+import com.idega.builder.presentation.InvisibleInBuilder;
 import com.idega.core.file.data.ICFile;
-public class GenericPlugin extends PresentationObject 
+public class GenericPlugin extends PresentationObject implements InvisibleInBuilder
 {
 	private Map params;
 	private String classId;
@@ -91,10 +93,12 @@ public class GenericPlugin extends PresentationObject
 	{
 		setWidth(Integer.toString(width));
 	}
+	@Override
 	public void setWidth(String width)
 	{
 		setParamAndAttribute("width", width);
 	}
+	@Override
 	public String getWidth()
 	{
 		return getMarkupAttribute("width");
@@ -103,10 +107,12 @@ public class GenericPlugin extends PresentationObject
 	{
 		setHeight(Integer.toString(height));
 	}
+	@Override
 	public void setHeight(String height)
 	{
 		setParamAndAttribute("height", height);
 	}
+	@Override
 	public String getHeight()
 	{
 		return getMarkupAttribute("height");
@@ -151,6 +157,7 @@ public class GenericPlugin extends PresentationObject
 	{
 		return pluginspace;
 	}
+	@Override
 	public void print(IWContext iwc) throws Exception
 	{
 		if (doPrint(iwc))
@@ -198,6 +205,7 @@ public class GenericPlugin extends PresentationObject
 	{
 		this.file = file;
 	}
+	@Override
 	public synchronized Object clone()
 	{
 		GenericPlugin obj = null;
