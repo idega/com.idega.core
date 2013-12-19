@@ -7,10 +7,7 @@ import java.util.Iterator;
 import java.util.Set;
 
 import javax.ejb.CreateException;
-import javax.ejb.EJBMetaData;
 import javax.ejb.FinderException;
-import javax.ejb.Handle;
-import javax.ejb.HomeHandle;
 
 /**
  * Title:        idegaclasses
@@ -31,22 +28,22 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
 
   @Override
-public String getDatasource() {
+  public String getDatasource() {
 	  return ((GenericEntity)this.idoCheckOutPooledEntity()).getDatasource();
   }
 
   @Override
-public void setDatasource(String dataSource) {
+  public void setDatasource(String dataSource) {
 	  setDatasource(dataSource, true);
   }
 
   @Override
-public void setDatasource(String dataSource, boolean reloadEntity) {
+  public void setDatasource(String dataSource, boolean reloadEntity) {
 	  if (dataSource != null) {
 		 this.dataSource = dataSource;
 		 GenericEntity ent = ((GenericEntity) this.idoCheckOutPooledEntity());
 		 ent.setDatasource(dataSource, reloadEntity);
-		 this.idoCheckInPooledEntity(ent);
+		 idoCheckInPooledEntity(ent);
 	  }
   }
 
@@ -145,36 +142,14 @@ public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws Fin
 public <T extends IDOEntity> Collection<T> findByPrimaryKeyCollection(Collection<?> p0) throws FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	Collection<?> ids = ((GenericEntity)entity).ejbFindByPrimaryKeyCollection(p0);
-	this.idoCheckInPooledEntity(entity);
+	idoCheckInPooledEntity(entity);
 	return this.getEntityCollectionForPrimaryKeys(ids);
 }
-
-
-  /**
-   * @todo: implement
-   */
-  public EJBMetaData getEJBMetaData(){
-      /**@todo: Implement this javax.ejb.EJBHome method*/
-    throw new java.lang.UnsupportedOperationException("Method getEJBMetaData() not yet implemented.");
-  }
-
-  /**
-   * @todo: implement
-   */
-  public HomeHandle getHomeHandle(){
-      /**@todo: Implement this javax.ejb.EJBHome method*/
-    throw new java.lang.UnsupportedOperationException("Method getHomeHandle() not yet implemented.");
-  }
-
-  /**
-   * @todo: implement
-   */
-  public void remove(Handle handle){}
 
   @Override
 public void remove(Object primaryKey){
     try{
-      IDOEntity entity = idoFindByPrimaryKey(primaryKey);
+      IDOEntity entity = findByPrimaryKeyIDO(primaryKey);
       entity.remove();
     }
     catch(Exception e){
