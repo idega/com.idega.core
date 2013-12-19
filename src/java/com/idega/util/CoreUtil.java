@@ -9,9 +9,11 @@ import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +21,7 @@ import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.commons.codec.binary.Base64;
+import org.reflections.Reflections;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -388,4 +391,26 @@ public class CoreUtil {
 		return (T) bean;
 	}
 
+	public static <T> Set<Class<? extends T>> getSubTypesOf(Class<T> theClass) {
+		return getSubTypesOf(theClass, false);
+	}
+	public static <T> Set<Class<? extends T>> getSubTypesOf(Class<T> theClass, boolean onlyInterfaces) {
+		if (theClass == null) {
+			return null;
+		}
+
+		Reflections reflections = new Reflections("com.idega", "is.idega", "sv.idega");
+		Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(theClass);
+		if (!onlyInterfaces || ListUtil.isEmpty(subTypes)) {
+			return subTypes;
+		}
+
+		Set<Class<? extends T>> subInterfaces = new HashSet<Class<? extends T>>();
+		for (Class<? extends T> subType: subTypes) {
+			if (subType.isInterface()) {
+				subInterfaces.add(subType);
+			}
+		}
+		return subInterfaces;
+	}
 }
