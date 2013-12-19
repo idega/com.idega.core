@@ -27,6 +27,7 @@ import org.springframework.aop.support.AopUtils;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.IDOEntity;
 import com.idega.idegaweb.IWBundle;
@@ -399,9 +400,21 @@ public class CoreUtil {
 			return null;
 		}
 
+		Map<String, Set<Class<? extends T>>> cache = IWCacheManager2.getInstance(
+				IWMainApplication.getDefaultIWMainApplication()).getCache("iwSubTypesCache", 1000, true, false, 604800);
+		String key = theClass.getName() + onlyInterfaces;
+		Set<Class<? extends T>> cachedSubTypes = cache.get(key);
+		if (cachedSubTypes != null) {
+			return cachedSubTypes;
+		}
+
 		Reflections reflections = new Reflections("com.idega", "is.idega", "sv.idega");
 		Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(theClass);
-		if (!onlyInterfaces || ListUtil.isEmpty(subTypes)) {
+		if (subTypes == null) {
+			subTypes = new HashSet<Class<? extends T>>();
+		}
+		if (!onlyInterfaces) {
+			cache.put(key, subTypes);
 			return subTypes;
 		}
 
@@ -411,6 +424,7 @@ public class CoreUtil {
 				subInterfaces.add(subType);
 			}
 		}
+		cache.put(key, subInterfaces);
 		return subInterfaces;
 	}
 }
