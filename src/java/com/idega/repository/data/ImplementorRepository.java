@@ -18,8 +18,12 @@ import com.idega.util.datastructures.HashMatrix;
  */
 public class ImplementorRepository implements Singleton {
 
-	private static Instantiator instantiator = new Instantiator() { @Override
-	public Object getInstance() { return new ImplementorRepository();}};
+	private static Instantiator instantiator = new Instantiator() {
+		@Override
+		public Object getInstance() {
+			return new ImplementorRepository();
+		}
+	};
 
 	private static final String GENERAL = "general";
 
@@ -141,7 +145,7 @@ public class ImplementorRepository implements Singleton {
 		return implementors;
 	}
 
-	private <T, I extends T, C> List<Class<I>> getValidImplementorClasses(Class<T> interfaceClass, Class<C> callerClass) {
+	public <T, I extends T, C> List<Class<I>> getValidImplementorClasses(Class<T> interfaceClass, Class<C> callerClass) {
 		List<String> names = getImplementorNames(interfaceClass, callerClass);
 		if (names == null) {
 			return null;
