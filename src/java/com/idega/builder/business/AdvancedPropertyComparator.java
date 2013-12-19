@@ -12,6 +12,7 @@ import com.idega.util.CoreUtil;
 public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> {
 
 	private boolean sortById, descending;
+	private Boolean sortByName;
 	private Locale locale = null;
 	private Collator collator;
 
@@ -36,6 +37,11 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 		this.locale = locale;
 	}
 
+	public AdvancedPropertyComparator(Boolean sortByName, Locale locale) {
+		this(locale);
+		this.sortByName = sortByName;
+	}
+
 	public AdvancedPropertyComparator(boolean sortById, Locale locale) {
 		this(locale);
 		this.sortById = sortById;
@@ -46,11 +52,14 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 		this.descending = descending;
 	}
 
+	@Override
 	public int compare(AdvancedProperty prop1, AdvancedProperty prop2) {
 		int result = 0;
 
-		String value1 = prop1.getValue();
-		String value2 = prop2.getValue();
+
+		String value1 = null, value2 = null;;
+		value1 = prop1.getValue();
+		value2 = prop2.getValue();
 
 		if (sortById) {
 			value1 = prop1.getId();
@@ -70,6 +79,9 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 			}
 
 			return result;
+		} else if (sortByName != null && sortByName) {
+			value1 = prop1.getName();
+			value2 = prop2.getName();
 		}
 
 		result = getCollator().compare(value1, value2);
