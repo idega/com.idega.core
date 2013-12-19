@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -495,6 +496,37 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 				.ejbFindByPhoneNumber(phoneNumber);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.UserHome#findByFirstPersonalIDLetters(java.lang.String)
+	 */
+	@Override
+	public Collection<User> findByFirstPersonalIDLetters(String personalID) {
+		if (StringUtil.isEmpty(personalID)) {
+			return Collections.emptyList();
+		}
+
+		UserBMPBean entity = (UserBMPBean) idoCheckOutPooledEntity();
+		if (entity == null) {
+			return Collections.emptyList();
+		}
+
+		Collection<Object> primaryKeys = entity.ejbFindByFirstPersonalIDLetters(personalID);
+		if (ListUtil.isEmpty(primaryKeys)) {
+			return Collections.emptyList();
+		}
+
+		try {
+			return getEntityCollectionForPrimaryKeys(primaryKeys);
+		} catch (FinderException e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					"Failed to get " + this.getClass().getSimpleName() + 
+					" by primary keys: '" + primaryKeys + "'");
+		}
+
+		return Collections.emptyList();
 	}
 
 	@Override

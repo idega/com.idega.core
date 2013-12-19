@@ -1445,6 +1445,36 @@ public void delete(int userId) throws SQLException {
 		return idoFindPKsByQuery(query);
 	}
 
+	/**
+	 * 
+	 * @param personalID is part of {@link User#getPersonalID()} to search for,
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link User#getPrimaryKey()} or 
+	 * {@link Collections#emptyList()};
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindByFirstPersonalIDLetters(String personalID) {
+		if (StringUtil.isEmpty(personalID)) {
+			return Collections.emptyList();
+		}
+
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this);
+		query.appendWhere(getColumnNamePersonalID());
+		query.appendLike().appendQuoted(personalID + CoreConstants.PERCENT);
+		query.appendOrderBy(getColumnNameFirstName());
+
+		try {
+			return idoFindPKsByQuery(query);
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING, 
+					"Failed to get primary keys for " + User.class.getSimpleName() + 
+					" by query: '" + query.toString() + "'", e);
+		}
+
+		return Collections.emptyList();
+	}
+
 	public Collection ejbFindUsersByEmail(String emailAddress, boolean useLoweredValue, boolean useLikeExpression) throws FinderException {
 		String sql = getUsersByEmailSqlQuery(emailAddress, useLoweredValue, useLikeExpression);
  		return idoFindPKsBySQL(sql);

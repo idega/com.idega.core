@@ -73,4 +73,14 @@ public interface UserHome extends com.idega.data.IDOHome
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<User> findAllByNameAndEmail(String name, String email);
+
+	/**
+	 * 
+	 * <p>Best for autocomplete</p>
+	 * @param personalID is part of {@link User#getPersonalID()} to search by,
+	 * not <code>null</code>;
+	 * @return
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	Collection<User> findByFirstPersonalIDLetters(String personalID);
 }
