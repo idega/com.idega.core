@@ -4,13 +4,12 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.List;
 import java.util.Set;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
-import com.idega.repository.data.ImplementorRepository;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 
 /**
@@ -153,12 +152,12 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 	  } catch (Exception e) {}
 
 	  try {
-		  List<Class<T>> subTypes = ImplementorRepository.getInstance().getValidImplementorClasses(interfaceClass, getClass());
+		  Collection<Class<? extends T>> subTypes = CoreUtil.getSubTypesOf(interfaceClass, true);
 		  if (ListUtil.isEmpty(subTypes)) {
 			  return null;
 		  }
 
-		  for (Class<T> subType: subTypes) {
+		  for (Class<? extends T> subType: subTypes) {
 			  IDOHome subTypeHome = IDOLookup.getHome(subType);
 			  try {
 				  return subTypeHome.findByPrimaryKeyIDO(primaryKey);
