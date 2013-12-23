@@ -32,6 +32,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.core.accesscontrol.data.bean.ICRole;
+import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.Phone;
@@ -93,6 +94,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String ADMINISTRATOR_DEFAULT_NAME = "Administrator";
 
+	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
 	private Integer userID;
@@ -197,6 +199,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
     @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
     private String sha1;
+    
+    @OneToMany(mappedBy="user")
+    private List<UserLogin> logins;
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -615,5 +620,13 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@Override
 	public String toString() {
 		return getName();
+	}
+
+	public List<UserLogin> getLogins() {
+		return logins;
+	}
+
+	public void setLogins(List<UserLogin> logins) {
+		this.logins = logins;
 	}
 }
