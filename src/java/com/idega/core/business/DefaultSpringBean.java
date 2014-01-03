@@ -86,18 +86,8 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected Locale getCurrentLocale() {
-		Locale locale = null;
-		try {
-			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
-			locale = loginSession.getCurrentLocale();
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting current locale");
-		}
-
-		if (locale == null) {
-			IWContext iwc = CoreUtil.getIWContext();
-			locale = iwc == null ? null : iwc.getCurrentLocale();
-		}
+		IWContext iwc = CoreUtil.getIWContext();
+		Locale locale = iwc == null ? null : iwc.getCurrentLocale();
 
 		if (locale == null) {
 			locale = IWMainApplication.getDefaultIWMainApplication().getDefaultLocale();
