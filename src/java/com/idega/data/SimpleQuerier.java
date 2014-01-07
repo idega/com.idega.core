@@ -103,7 +103,7 @@ public class SimpleQuerier {
             theReturn = results.toArray(new String[0]);
         }
         finally {
-            if (Stmt != null) {
+            if (Stmt != null && !Stmt.isClosed()) {
                 Stmt.close();
             }
         }
@@ -129,13 +129,16 @@ public class SimpleQuerier {
                 }
             	objects.add(data);
             }
-            results.close();
+
+            if (!results.isClosed()) {
+            	results.close();
+            }
         } finally {
-            if (stmt != null) {
+            if (stmt != null && !stmt.isClosed()) {
                 stmt.close();
             }
             if (conn != null) {
-            	conn.close();
+            	freeConnection(conn);
             }
 
             long end = System.currentTimeMillis();
@@ -188,7 +191,7 @@ public class SimpleQuerier {
             RS.close();
         }
         finally {
-            if (Stmt != null) {
+            if (Stmt != null && !Stmt.isClosed()) {
                 Stmt.close();
             }
         }
@@ -208,7 +211,7 @@ public class SimpleQuerier {
             RS.close();
         }
         finally {
-            if (Stmt != null) {
+            if (Stmt != null && !Stmt.isClosed()) {
                 Stmt.close();
             }
         }
@@ -250,7 +253,7 @@ public class SimpleQuerier {
             theReturn= Stmt.execute(sqlString);
         }
         finally {
-            if (Stmt != null) {
+            if (Stmt != null && !Stmt.isClosed()) {
                 Stmt.close();
             }
             if (conn != null) {
@@ -301,7 +304,7 @@ public class SimpleQuerier {
             }
         }
         finally {
-            if (Stmt != null) {
+            if (Stmt != null && !Stmt.isClosed()) {
                 Stmt.close();
             }
             if (conn != null) {
@@ -350,7 +353,7 @@ public class SimpleQuerier {
                 stmt.close();
             }
             if (conn != null) {
-            	conn.close();
+            	freeConnection(conn);
             }
             IOUtil.close(chrInstream);
 
