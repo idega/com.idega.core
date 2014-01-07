@@ -103,7 +103,7 @@ public class SimpleQuerier {
             theReturn = results.toArray(new String[0]);
         }
         finally {
-            if (Stmt != null && !Stmt.isClosed()) {
+            if (Stmt != null) {
                 Stmt.close();
             }
         }
@@ -130,11 +130,9 @@ public class SimpleQuerier {
             	objects.add(data);
             }
 
-            if (!results.isClosed()) {
-            	results.close();
-            }
+            results.close();
         } finally {
-            if (stmt != null && !stmt.isClosed()) {
+            if (stmt != null) {
                 stmt.close();
             }
             if (conn != null) {
@@ -191,7 +189,7 @@ public class SimpleQuerier {
             RS.close();
         }
         finally {
-            if (Stmt != null && !Stmt.isClosed()) {
+            if (Stmt != null) {
                 Stmt.close();
             }
         }
@@ -211,7 +209,7 @@ public class SimpleQuerier {
             RS.close();
         }
         finally {
-            if (Stmt != null && !Stmt.isClosed()) {
+            if (Stmt != null) {
                 Stmt.close();
             }
         }
@@ -253,7 +251,7 @@ public class SimpleQuerier {
             theReturn= Stmt.execute(sqlString);
         }
         finally {
-            if (Stmt != null && !Stmt.isClosed()) {
+            if (Stmt != null) {
                 Stmt.close();
             }
             if (conn != null) {
@@ -304,7 +302,7 @@ public class SimpleQuerier {
             }
         }
         finally {
-            if (Stmt != null && !Stmt.isClosed()) {
+            if (Stmt != null) {
                 Stmt.close();
             }
             if (conn != null) {
