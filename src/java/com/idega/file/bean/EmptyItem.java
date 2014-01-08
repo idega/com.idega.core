@@ -2,6 +2,7 @@ package com.idega.file.bean;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.List;
 
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.StringHandler;
@@ -9,7 +10,8 @@ import com.idega.util.StringHandler;
 public class EmptyItem implements RepositoryItem {
 
 	private String explanation = "This directory has no files";
-	
+
+	@Override
 	public InputStream getInputStream() throws IOException {
 		try {
 			return StringHandler.getStreamFromString(explanation);
@@ -19,15 +21,29 @@ public class EmptyItem implements RepositoryItem {
 		return null;
 	}
 
+	@Override
 	public String getName() {
 		return "README.txt";
 	}
 
+	@Override
 	public long getLength() {
 		return explanation.length();
 	}
 
+	@Override
 	public boolean delete() throws IOException {
 		return true;
 	}
+
+	@Override
+	public boolean isDirectory() {
+		return false;
+	}
+
+	@Override
+	public List<EmptyItem> getChildren() {
+		return null;
+	}
+
 }

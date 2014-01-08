@@ -882,6 +882,9 @@ public static String getFileSeparator(){
 	  return getZippedFiles(filesToZip, "Archive.zip");
   }
   public static final File getZippedFiles(Collection<File> filesToZip, String fileName) throws IOException {
+	  return getZippedFiles(filesToZip, fileName, Boolean.TRUE);
+  }
+  public static final File getZippedFiles(Collection<File> filesToZip, String fileName, Boolean deleteZippedFiles) throws IOException {
 	  if (ListUtil.isEmpty(filesToZip) || StringUtil.isEmpty(fileName)) {
 		  return null;
 	  }
@@ -890,7 +893,7 @@ public static String getFileSeparator(){
 	  for (File file: filesToZip) {
 		  files.add(new FileItem(file));
 	  }
-	  return getZippedFiles(files, fileName, true);
+	  return getZippedFiles(files, fileName, deleteZippedFiles);
   }
 
   public static final File getZippedItems(Collection<RepositoryItem> itemsToZip, String fileName) throws IOException {
@@ -901,7 +904,12 @@ public static String getFileSeparator(){
 	  return getZippedFiles(filesToZip, fileName, deleteZippedFiles, false);
   }
 
-  public static final File getZippedFiles(Collection<RepositoryItem> filesToZip, String fileName, boolean deleteZippedFiles, boolean handleEmptyDir) throws IOException {
+  public static final File getZippedFiles(
+		  Collection<RepositoryItem> filesToZip,
+		  String fileName,
+		  boolean deleteZippedFiles,
+		  boolean handleEmptyDir
+  ) throws IOException {
 	  if (StringUtil.isEmpty(fileName)) {
 		  return null;
 	  }
@@ -920,40 +928,89 @@ public static String getFileSeparator(){
 
 	  ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zippedFile));
 
-	  int bytesRead;
+	  Integer bytesRead = 0;
 	  CRC32 crc = new CRC32();
 	  byte[] buffer = new byte[1024];
-	  for (RepositoryItem item: filesToZip) {
-		  InputStream bis = new BufferedInputStream(item.getInputStream());
-		  crc.reset();
-		  while ((bytesRead = bis.read(buffer)) != -1) {
-              crc.update(buffer, 0, bytesRead);
-          }
-          bis.close();
 
-          //	Adding new entry
-          long itemSize = item.getLength();
-          itemSize = itemSize < 0 ? 0 : itemSize > 0xFFFFFFFFL ? Long.MAX_VALUE : itemSize;
-          bis = new BufferedInputStream(item.getInputStream());
-          ZipEntry entry = new ZipEntry(item.getName());
-          entry.setMethod(ZipEntry.STORED);
-          entry.setCompressedSize(itemSize);
-          entry.setSize(itemSize);
-          entry.setCrc(crc.getValue());
-          zos.putNextEntry(entry);
-          while ((bytesRead = bis.read(buffer)) > 0) {
-              zos.write(buffer, 0, bytesRead);
-          }
-          bis.close();
-
-          if (deleteZippedFiles) {
-        	  item.delete();
-          }
-	  }
+	  doAddZipEntries(CoreConstants.EMPTY, filesToZip, crc, bytesRead, buffer, zos, deleteZippedFiles);
 
 	  zos.close();
 
 	  return zippedFile;
+  }
+
+  private static void doAddZipEntries(
+		  String namePrefix,
+		  Collection<RepositoryItem> filesToZip,
+		  CRC32 crc,
+		  Integer bytesRead,
+		  byte[] buffer,
+		  ZipOutputStream zos,
+		  boolean deleteZippedFiles
+  ) throws IOException {
+	  if (ListUtil.isEmpty(filesToZip)) {
+		  return;
+	  }
+
+	  for (RepositoryItem item: filesToZip) {
+		  if (item.isDirectory()) {
+			  @SuppressWarnings("unchecked")
+			  Collection<RepositoryItem> children = (Collection<RepositoryItem>) item.getChildren();
+			  doAddZipEntries(
+					  StringUtil.isEmpty(namePrefix) ? item.getName() : namePrefix + File.separator + item.getName(),
+					  children,
+					  crc,
+					  bytesRead,
+					  buffer,
+					  zos,
+					  deleteZippedFiles
+			  );
+		  } else {
+			  doAddZipEntry(namePrefix, item, crc, bytesRead, buffer, zos, deleteZippedFiles);
+		  }
+	  }
+  }
+
+  private static void doAddZipEntry(
+		  String namePrefix,
+		  RepositoryItem item,
+		  CRC32 crc,
+		  Integer bytesRead,
+		  byte[] buffer,
+		  ZipOutputStream zos,
+		  boolean deleteZippedFiles
+  ) throws IOException {
+	  InputStream bis = new BufferedInputStream(item.getInputStream());
+	  crc.reset();
+	  while ((bytesRead = bis.read(buffer)) != -1) {
+          crc.update(buffer, 0, bytesRead);
+      }
+      bis.close();
+
+      //	Adding new entry
+      long itemSize = item.getLength();
+      itemSize = itemSize < 0 ? 0 : itemSize > 0xFFFFFFFFL ? Long.MAX_VALUE : itemSize;
+      bis = new BufferedInputStream(item.getInputStream());
+
+      String name = item.getName();
+      if (!StringUtil.isEmpty(namePrefix)) {
+    	  name = namePrefix + File.separator + name;
+      }
+      ZipEntry entry = new ZipEntry(name);
+
+      entry.setMethod(ZipEntry.STORED);
+      entry.setCompressedSize(itemSize);
+      entry.setSize(itemSize);
+      entry.setCrc(crc.getValue());
+      zos.putNextEntry(entry);
+      while ((bytesRead = bis.read(buffer)) > 0) {
+          zos.write(buffer, 0, bytesRead);
+      }
+      bis.close();
+
+      if (deleteZippedFiles) {
+    	  item.delete();
+      }
   }
 
   public static final File getZippedICFiles(Collection<ICFile> filesToZip, String fileName) throws IOException {
