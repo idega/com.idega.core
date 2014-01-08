@@ -918,7 +918,10 @@ public static String getFileSeparator(){
 		  return null;
 	  }
 
-	  File zippedFile = new File(fileName);
+	  File zippedFile = new File(System.getProperty("java.io.tmpdir") + File.separator + fileName);
+	  if (!zippedFile.exists()) {
+		  zippedFile.createNewFile();
+	  }
 	  if (filesToZip == null) {
 		  filesToZip = new ArrayList<RepositoryItem>(1);
 	  }
