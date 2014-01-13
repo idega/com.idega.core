@@ -2,10 +2,10 @@ package com.idega.data;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -76,18 +76,18 @@ public class IDOQuery implements Cloneable {
 	public static final String ENTITY_TO_SELECT = "selected_entity";
 	public static final String MIDDLE_ENTITY = "middle_entity_";
 	public static final String RELATED_ENTITY = "related_entity_";
-	
+
 
 	private DatastoreInterface dataStore = null;
-	private Vector objectValues = new Vector();
+	private List<Object> objectValues = new ArrayList<Object>();
 
 	private IDOEntity entityToSelect = null;
-	
+
 	private int joinNumber = 0;
-	
+
 	protected IDOEntity getEntityToSelect() {
 		if (this.entityToSelect == null) {
-			Logger.getLogger(IDOQuery.class.getName()).info(
+			Logger.getLogger(IDOQuery.class.getName()).warning(
 					"Use IDOQuery.appendSelect...(IDOEntity entity, ...) to use this!");
 		}
 
@@ -99,7 +99,7 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param entity to get column name for, not <code>null</code>;
 	 * @return primary key column name of {@link IDOEntity} or <code>null</code>
 	 * if composite primary key or failure;
@@ -136,16 +136,20 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Constructs JOIN ON... part for related EJB entities</p>
 	 * @param entities to search by, should be only one type, not <code>null</code>;
 	 * @return query for filtering required entity by these given entities;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public IDOQuery appendJoinOn(Collection<? extends IDOEntity> entities) {
-		if (
-				ListUtil.isEmpty(entities) || 
-				getEntityToSelect() == null) {
+		if (ListUtil.isEmpty(entities) || getEntityToSelect() == null) {
+			return this;
+		}
+
+		/* Related table info */
+		IDOEntity relatedEntity = entities.iterator().next();
+		if (relatedEntity == null) {
 			return this;
 		}
 
@@ -156,12 +160,6 @@ public class IDOQuery implements Cloneable {
 				.append(currentTablePrimaryKeySqlName)
 				.append(CoreConstants.SPACE)
 				.toString();
-		
-		/* Related table info */
-		IDOEntity relatedEntity = entities.iterator().next();
-		if (relatedEntity == null) {
-			return this;
-		}
 
 		String relatedTableName = relatedEntity.getEntityDefinition().getSQLTableName();
 		String relatedTablePrimaryKeySqlName = getColumnNameForPrimaryKey(relatedEntity);
@@ -172,20 +170,19 @@ public class IDOQuery implements Cloneable {
 				.append(relatedTablePrimaryKeySqlName)
 				.append(CoreConstants.SPACE)
 				.toString();
-		
+
 		/*
 		 * This for marking if correct relation given
 		 */
 		boolean relationFound = Boolean.FALSE;
 
-		/* 
-		 * Case of many to many relation 
+		/*
+		 * Case of many to many relation
 		 */
-		EntityRelationship relation = EntityControl.getManyToManyRelationShip(
-				relatedEntity, getEntityToSelect());
+		EntityRelationship relation = EntityControl.getManyToManyRelationShip(relatedEntity, getEntityToSelect());
 		if (relation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
-			
+
 			/* Middle table info */
 			String middleName = MIDDLE_ENTITY + joinNumber;
 			String middleTableName = relation.getTableName() + CoreConstants.SPACE;
@@ -205,7 +202,7 @@ public class IDOQuery implements Cloneable {
 			append(AS).append(middleName).append(CoreConstants.SPACE);
 			append(ON).appendEquals(currentTableKeyColumn, middleTableCurrentKeyColumn);
 			append(CoreConstants.SPACE);
-		
+
 			/* Joining related entity */
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
@@ -216,8 +213,7 @@ public class IDOQuery implements Cloneable {
 		/*
 		 * In case of many to one relation or one to one
 		 */
-		EntityAttribute manyToOneRelation = EntityControl.getNToOneRelation(
-				getEntityToSelect(), relatedEntity);
+		EntityAttribute manyToOneRelation = EntityControl.getNToOneRelation(getEntityToSelect(), relatedEntity);
 		if (manyToOneRelation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
 
@@ -226,7 +222,7 @@ public class IDOQuery implements Cloneable {
 					.append(manyToOneRelation.getColumnName())
 					.append(CoreConstants.SPACE)
 					.toString();
-			
+
 			/* Joining related entity */
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
@@ -237,8 +233,7 @@ public class IDOQuery implements Cloneable {
 		/*
 		 * In case of one to many or one to one relation
 		 */
-		EntityAttribute oneToManyRelation = EntityControl.getOneToNRelation(
-				getEntityToSelect(), relatedEntity);
+		EntityAttribute oneToManyRelation = EntityControl.getOneToNRelation(getEntityToSelect(), relatedEntity);
 		if (oneToManyRelation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
 
@@ -248,7 +243,7 @@ public class IDOQuery implements Cloneable {
 					.append(oneToManyRelation.getColumnName())
 					.append(CoreConstants.SPACE)
 					.toString();
-			
+
 			/* Joining related entity */
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
@@ -263,24 +258,24 @@ public class IDOQuery implements Cloneable {
 			appendAnd();
 			append(relatedTableKeyColumn);
 			appendInCollectionWithSingleQuotes(entities);
-			joinNumber++; 
+			joinNumber++;
 		}
 
 		return this;
 	}
-	
+
 	public static IDOQuery getStaticInstance() {
 		IDOQuery query = new IDOQuery();
 		return query;
 	}
-	
+
 	/**
 	 * @see com.idega.data.GenericEntity.idoQuery()
 	 */
 	protected IDOQuery() {
 		this._buffer = new StringBuffer();
 	}
-	
+
 
 	protected IDOQuery(int length) {
 		this._buffer = new StringBuffer(length);
@@ -364,11 +359,11 @@ public class IDOQuery implements Cloneable {
 		this._buffer.append(str);
 		return this;
 	}
-	
+
 	/**
 	 * Appends quoted string like 'anObject'
 	 * @param string
-	 * @return 
+	 * @return
 	 */
 	public IDOQuery appendQuoted(Object anObject) {
 		this._buffer.append(QUOTATION_MARK);
@@ -376,11 +371,11 @@ public class IDOQuery implements Cloneable {
 		this._buffer.append(QUOTATION_MARK);
 		return this;
 	}
-	
+
 	public IDOQuery append(IDOEntityField field){
 		return this.append(field.getSQLFieldName());
 	}
-	
+
 
 	public IDOQuery append(Date date) {
 		//IWTimestamp stamp = new IWTimestamp(date);
@@ -395,7 +390,7 @@ public class IDOQuery implements Cloneable {
 		this.append(getDatastore().format(timestamp));
 		return this;
 	}
-	
+
 	public IDOQuery append(IWTimestamp timestamp) {
 		return this.append(timestamp.getTimestamp());
 	}
@@ -443,6 +438,7 @@ public class IDOQuery implements Cloneable {
 		this._buffer.ensureCapacity(minimumCapacity);
 	}
 
+	@Override
 	public boolean equals(Object obj) {
 		return this._buffer.equals(obj);
 	}
@@ -453,6 +449,7 @@ public class IDOQuery implements Cloneable {
 		this._buffer.getChars(srcBegin, srcEnd, dst, dstBegin);
 	}
 
+	@Override
 	public int hashCode() {
 		return this._buffer.hashCode();
 	}
@@ -569,6 +566,7 @@ public class IDOQuery implements Cloneable {
 	/**
 	 * @see java.lang.StringBuffer#toString()
 	 */
+	@Override
 	public String toString() {
 		return this._buffer.toString();
 	}
@@ -591,9 +589,8 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 
-	public IDOQuery appendCommaDelimited(Collection<Object> collection) {
-		Iterator<Object> iter = collection.iterator();
-		while (iter.hasNext()) {
+	public IDOQuery appendCommaDelimited(Collection<?> collection) {
+		for (Iterator<?> iter = collection.iterator(); iter.hasNext();) {
 			Object item = iter.next();
 			if (item instanceof IDOEntity) {
 				this.append(((IDOEntity)item).getPrimaryKey());
@@ -617,10 +614,10 @@ public class IDOQuery implements Cloneable {
 		}
 		return this;
 	}
-	public IDOQuery appendCommaDelimitedWithinSingleQuotes(Collection collection) {
-		Iterator iter = collection.iterator();
+
+	public IDOQuery appendCommaDelimitedWithinSingleQuotes(Collection<?> collection) {
 		boolean first = true;
-		while (iter.hasNext()) {
+		for (Iterator<?> iter = collection.iterator(); iter.hasNext();) {
 			Object item = iter.next();
 			if (!first) {
 				this.append(COMMA);
@@ -645,10 +642,10 @@ public class IDOQuery implements Cloneable {
 		}
 		return this;
 	}
-	public IDOQuery appendCommaDelimitedWithinDoubleQuotes(Collection collection) {
-		Iterator iter = collection.iterator();
+
+	public IDOQuery appendCommaDelimitedWithinDoubleQuotes(Collection<?> collection) {
 		boolean first = true;
-		while (iter.hasNext()) {
+		for (Iterator<?> iter = collection.iterator(); iter.hasNext();) {
 			Object item = iter.next();
 			if (!first) {
 				this.append(COMMA);
@@ -713,11 +710,13 @@ public class IDOQuery implements Cloneable {
 		return this.append(SELECT_ALL_FROM);
 	}
 	public IDOQuery appendSelectAllFrom(IDOEntity entity) {
-		setEntityToSelect(entity);
-		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
-		appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
-		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
-		return this;
+//		setEntityToSelect(entity);
+//		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
+//		appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
+//		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+//		return this;
+		//	TODO: restored
+		return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
 	}
 	public IDOQuery appendSelectAllFrom(String entityName) {
 		this.append(SELECT_ALL_FROM);
@@ -726,32 +725,37 @@ public class IDOQuery implements Cloneable {
 	}
 
 	public IDOQuery appendSelectIDColumnFrom(IDOEntity entity) throws IDOCompositePrimaryKeyException {
-		setEntityToSelect(entity);
-		appendSelect();
-		append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
-		appendFrom();
-		append(entity.getEntityDefinition().getSQLTableName());
-		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		//	TODO: restored
+		this.appendSelect();
+		this.append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
+		this.appendFrom();
+		this.append(entity.getEntityDefinition().getSQLTableName());
+//		setEntityToSelect(entity);
+//		appendSelect();
+//		append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
+//		appendFrom();
+//		append(entity.getEntityDefinition().getSQLTableName());
+//		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
 
 		return this;
-
-		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
-		//return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
 	}
 
 	public IDOQuery appendSelectCountFrom() {
 		return this.append(SELECT_COUNT_FROM);
 	}
-	
+
 	public IDOQuery appendSelectCount() {
 		return this.append(SELECT_COUNT);
 	}
-	
+
 	public IDOQuery appendSelectCountFrom(IDOEntity entity) {
-		setEntityToSelect(entity);
-		appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
-		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
-		return this;
+		//	TODO: restored
+		return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
+
+//		setEntityToSelect(entity);
+//		appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
+//		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+//		return this;
 	}
 	public IDOQuery appendSelectCountFrom(String entityName) {
 		this.append(SELECT_COUNT_FROM);
@@ -762,7 +766,7 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn) {
 	    return appendSelectCountIDFrom(entityName, idColumn, null);
 	}
-	
+
 	public IDOQuery appendSelectCountIDFrom(String entityName, String idColumn, String tableAlias) {
 	    return appendSelectCountIDFrom(entityName, idColumn, tableAlias, false);
 	}
@@ -790,7 +794,7 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendSelectSumFrom(String columnName, String entityName) {
 		return this.appendSelect().appendSum(columnName).appendFrom().append(entityName);
 	}
-	
+
 	public IDOQuery appendSelectSumFrom(String columnName, IDOEntity entity) {
 		return this.appendSelectSumFrom(columnName, entity.getEntityDefinition().getSQLTableName());
 	}
@@ -804,11 +808,11 @@ public class IDOQuery implements Cloneable {
 		String tableName = entity.getEntityDefinition().getSQLTableName();
 		return append(UPDATE).append(tableName).append(WHITE_SPACE).append(SET);
 	}
-	
+
 	public IDOQuery appendFrom() {
 			return this.append(FROM);
 	}
-	
+
 	public IDOQuery appendFrom(String tableName) {
 		return this.append(FROM).append(" ").append(tableName);
 }
@@ -823,17 +827,17 @@ public class IDOQuery implements Cloneable {
 				this.append(tableNames[i]);
 				this.append(" ");
 				this.append(prmNames[i]);
-			}	
+			}
 		} else {
 			this.append(FROM);
 		}
 		return this;
 	}
-	
+
 	public IDOQuery appendWhiteSpace() {
 		return this.append(WHITE_SPACE);
 	}
-	
+
 	public IDOQuery appendDelete() {
 		return this.append(DELETE);
 	}
@@ -841,7 +845,7 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendStar() {
 		return this.append(STAR);
 	}
-	
+
 	public IDOQuery appendDistinct() {
 		return this.append(DISTINCT);
 	}
@@ -859,18 +863,18 @@ public class IDOQuery implements Cloneable {
 		this.append(columnName);
 		return this;
 	}
-	
+
 	public IDOQuery appendGroupBy(String columnName) {
 		this.append(GROUP_BY);
 		this.append(columnName);
 		return this;
 	}
-	
+
 	public IDOQuery appendHaving(){
 		this.append(HAVING);
 		return this;
 	}
-	
+
 	public IDOQuery appendCount(String columnName){
 	    return appendCount(columnName, null);
 	}
@@ -993,7 +997,7 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendWhereEquals(String columnName, int columnValue) {
 		return appendWhereEquals(columnName, Integer.toString(columnValue));
 	}
-	
+
 
 	/**
 	 * Appends a where (where columnName=columnValue) without quotemarks
@@ -1082,7 +1086,7 @@ public class IDOQuery implements Cloneable {
 		this.append(columnValue);
 		return this;
 	}
-	
+
 	public IDOQuery appendAndEquals(String columnName, Integer columnValue) {
 		appendAndEquals(columnName,columnValue.intValue());
 		return this;
@@ -1103,16 +1107,16 @@ public class IDOQuery implements Cloneable {
 		this.append(columnValue);
 		return this;
 	}
-	
+
 	public IDOQuery appendAndEqualsTrue(String columnName) {
 		appendAnd();
 		append(columnName);
 		this.appendEqualSign();
 		this.append(true);
 		return this;
-	}	
-	
-	/** Handles all values different from true ('Y') as false. 
+	}
+
+	/** Handles all values different from true ('Y') as false.
 	 */
 
 	public IDOQuery appendAndNotEqualsTrue(String columnName) {
@@ -1121,7 +1125,7 @@ public class IDOQuery implements Cloneable {
 		this.appendNOTEqual();
 		this.append(true);
 		return this;
-	}		
+	}
 
 	public IDOQuery appendAndEquals(String columnName, Object columnValue) {
 		appendAnd();
@@ -1262,8 +1266,8 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendNOTEqual() {
 		return this.append(NOT_EQUAL_SIGN);
 	}
-	
-	
+
+
 	public IDOQuery appendNOTLike() {
 		return this.append(NOT_LIKE);
 	}
@@ -1291,18 +1295,18 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendInArrayWithSingleQuotes(String[] array) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertArrayToCommaseparatedString(array, true));
 	}
-	
-	public IDOQuery appendInCollection(Collection coll) {
+
+	public IDOQuery appendInCollection(Collection<?> coll) {
 		return this.appendIn().append(PARENTHESIS_LEFT).appendCommaDelimited(coll).append(PARENTHESIS_RIGHT);
 		//return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll));
 	}
-	
-	public IDOQuery appendNotInCollection(Collection coll) {
+
+	public IDOQuery appendNotInCollection(Collection<?> coll) {
 		return this.appendNotIn().append(PARENTHESIS_LEFT).appendCommaDelimited(coll).append(PARENTHESIS_RIGHT);
 	}
 
 	/**
-	 * 
+	 *
 	 * @param coll to append, not <code>null</code>;
 	 * @return appended {@link IDOQuery} or same {@link IDOQuery} on failure;
 	 */
@@ -1311,24 +1315,24 @@ public class IDOQuery implements Cloneable {
 				IDOUtil.getInstance().convertListToCommaseparatedString(coll, true)
 				);
 	}
-	
-	public IDOQuery appendNotInCollectionWithSingleQuotes(Collection coll) {
+
+	public IDOQuery appendNotInCollectionWithSingleQuotes(Collection<? extends IDOEntity> coll) {
 		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertListToCommaseparatedString(coll,true));
 	}
-	
-	public IDOQuery appendInForStringCollectionWithSingleQuotes(Collection coll) {
+
+	public IDOQuery appendInForStringCollectionWithSingleQuotes(Collection<String> coll) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfStringsToCommaseparatedString(coll));
 	}
-	
-	public IDOQuery appendInForIntegerCollectionWithSingleQuotes(Collection coll) {
+
+	public IDOQuery appendInForIntegerCollectionWithSingleQuotes(Collection<Integer> coll) {
 		return this.appendIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(coll));
 	}
-	
-	public IDOQuery appendNotInForStringCollectionWithSingleQuotes(Collection coll) {
+
+	public IDOQuery appendNotInForStringCollectionWithSingleQuotes(Collection<String> coll) {
 		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfStringsToCommaseparatedString(coll));
 	}
-	
-	public IDOQuery appendNotInForIntegerCollectionWithSingleQuotes(Collection coll) {
+
+	public IDOQuery appendNotInForIntegerCollectionWithSingleQuotes(Collection<Integer> coll) {
 		return this.appendNotIn().appendWithinParentheses(IDOUtil.getInstance().convertCollectionOfIntegersToCommaseparatedString(coll));
 	}
 
@@ -1360,12 +1364,12 @@ public class IDOQuery implements Cloneable {
 		this.append(IS_NULL);
 		return this;
 	}
-	
+
 	public IDOQuery appendIsNull() {
 		this.append(IS_NULL);
 		return this;
 	}
-	
+
 	public IDOQuery appendAndIsNotNull(String columnName) {
 		this.appendAnd();
 		this.append(columnName);
@@ -1379,13 +1383,13 @@ public class IDOQuery implements Cloneable {
 		this.append(IS_NOT_NULL);
 		return this;
 	}
-	
+
 	public IDOQuery appendIsNotNull() {
 		this.append(IS_NOT_NULL);
 		return this;
 	}
-	
-	
+
+
 	/**
 	 * Appends a condition where date column specified is between the provided dates
 	 * exluding the provided dates (see appendWithinDates for included dates)
@@ -1399,7 +1403,7 @@ public class IDOQuery implements Cloneable {
 		this.appendAnd().append(dateColumnName).appendLessThanSign().append(toDate);
 		return this;
 	}
-	
+
 	/**
 	 * Appends a condition where timestamp column specified is within the provided timestamps
 	 * including the provided timestamps (see appendWithinStamps for included dates)
@@ -1445,11 +1449,11 @@ public class IDOQuery implements Cloneable {
 		this.append(stamp);
 		return this;
 	}
-	
+
 	/**
 	 * Append condition for periods columns overlapping provided start and end date
 	 * where the following criterions on a entry period are used:
-	 * 
+	 *
 	 * 1. Starts before start date and ends befor end date
 	 *	2. Starts before start date and ends after end date
 	 *	3. Starts after start date and ends before end date
@@ -1469,7 +1473,7 @@ public class IDOQuery implements Cloneable {
 		 	2) start  before selected period, but end afterwards
 		 	3) starts and end within selected period
 		 	4) starts witin selected period, but end afterwards
-		 		 
+
 		 		 validFrom <= start && validTo <= end
 		 		 or
 		 		 validFrom <= start && validTo >= end
@@ -1477,12 +1481,12 @@ public class IDOQuery implements Cloneable {
 		 		 validFrom >= start && validTo <= end
 		 		 or
 		 		 validFrom >= start && validTo >= end
-		 		 
+
 		 		 // refined version by aron 24.02.04
 		 		 validTo >= start && validTo <= end
 		 		 or
 		 		 validFrom >= start && validFrom <= end
-		 		 or 
+		 		 or
 		 		 validFrom <= start && validTo >= end
 		 */
 	/*
@@ -1510,7 +1514,7 @@ public class IDOQuery implements Cloneable {
 				appendAnd();
 				append(validToColumnName).append(after).append(end);
 			append(")");
-		append(")");	 
+		append(")");
 		*/
 		append("(");
 			append("(");
@@ -1530,10 +1534,10 @@ public class IDOQuery implements Cloneable {
 				appendAnd();
 				append(validToColumnName).append(after).append(end);
 			append(")");
-		append(")");	 
+		append(")");
 		return this;
 	}
-	
+
 	public IDOQuery setToCount() {
 		if (this._buffer != null) {
 			String queryInUpperCase = this._buffer.toString().toUpperCase();
@@ -1546,45 +1550,44 @@ public class IDOQuery implements Cloneable {
 
 			queryInUpperCase = this._buffer.toString();
 			int index2 = queryInUpperCase.indexOf(" ORDER BY ");
-			
+
 			if (index2 >0) {
 				this._buffer = this._buffer.replace(index2,this._buffer.length(),"");
 			}
-			
+
 		}
 		return this;
 	}
-	
+
 	public String setInPlaceHolder(Object value){
-	    if(value!=null) {
-				this.objectValues.add(value);
-			}
+	    if (value != null) {
+			this.objectValues.add(value);
+		}
 	    return QUESTIONMARK;
 	}
-	
+
 	public IDOQuery appendPlaceHolder(Object value){
 	    this.append(QUESTIONMARK);
 	    this.objectValues.add(value);
 	    return this;
 	}
-	
-	protected List getObjectValues(){
+
+	protected List<Object> getObjectValues(){
 	    return this.objectValues;
 	}
-	
-	
-	
+
 	protected void setDataStore(DatastoreInterface datastore){
 		this.dataStore = datastore;
 	}
-	
+
 	protected DatastoreInterface getDatastore(){
 		if(this.dataStore==null) {
 			this.dataStore = DatastoreInterface.getInstance();
 		}
 		return this.dataStore;
 	}
-	
+
+	@Override
 	public Object clone() {
 		IDOQuery clone = null;
 		try {
@@ -1592,10 +1595,9 @@ public class IDOQuery implements Cloneable {
 			clone._buffer = new StringBuffer(this.toString());
 			clone.dataStore = this.dataStore;
 		} catch (CloneNotSupportedException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		
-		return clone;		
+
+		return clone;
 	}
 }
