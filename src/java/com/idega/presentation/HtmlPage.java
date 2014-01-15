@@ -24,14 +24,17 @@ import org.jdom.Attribute;
 import org.jdom.Document;
 import org.jdom.Element;
 import org.jdom.Namespace;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.util.RenderUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.text.AttributeParser;
 import com.idega.util.xml.XmlUtil;
 
@@ -291,7 +294,7 @@ public class HtmlPage extends Page {
 		renderChild(ctx,associatedScript);
 
 		//	Then printout the head contents from the HTML page find out where the title is in the head:
-		String htmlTitle = CoreConstants.EMPTY;
+		String htmlTitle = CoreConstants.EMPTY, writtenTitle = null;
 		try {
 			//	Try to find where the TITLE tag is in the HEAD:
 			Pattern titlePattern = Pattern.compile("<title>", Pattern.CASE_INSENSITIVE);
@@ -310,26 +313,25 @@ public class HtmlPage extends Page {
 			String locTitle = this.getLocalizedTitle(ctx);
 			out.write("<title>");
 			if (StringUtil.isEmpty(locTitle)) {
-				out.write(htmlTitle);
+				writtenTitle = htmlTitle;
+			} else {
+				writtenTitle = locTitle;
 			}
-			else {
-				out.write(locTitle);
-			}
+			out.write(writtenTitle);
 			out.write("</title>");
 			//	Print out all after the TITLE tag in the HEAD
 			out.write(postTitleHead);
-		}
-		catch (ArrayIndexOutOfBoundsException ae) {
+		} catch (ArrayIndexOutOfBoundsException ae) {
 			//	If there is an error (title not found) then just write out the whole head contents + idegaWeb Title
 			out.write(headContent);
 			String locTitle = this.getLocalizedTitle(ctx);
 			out.write("<title>");
 			if (StringUtil.isEmpty(locTitle)) {
-				out.write(htmlTitle);
+				writtenTitle = htmlTitle;
+			} else {
+				writtenTitle = locTitle;
 			}
-			else {
-				out.write(locTitle);
-			}
+			out.write(writtenTitle);
 			out.write("</title>");
 		}
 		out.write("</head>");
@@ -397,6 +399,16 @@ public class HtmlPage extends Page {
 		for (UIComponent child: getChildren()) {
 			if (!(child instanceof HtmlPageRegion)) {
 				renderChild(ctx, child);
+			}
+		}
+
+		Map<?, ?> renderUtils = WebApplicationContextUtils.getWebApplicationContext(iwc.getServletContext()).getBeansOfType(RenderUtil.class);
+		if (!MapUtil.isEmpty(renderUtils)) {
+			String newTitle = getLocalizedTitle(iwc);
+			for (Object renderUtil: renderUtils.values()) {
+				if (renderUtil instanceof RenderUtil) {
+					((RenderUtil) renderUtil).doRemoveNeedlessContentAndSetRealPageTitle(out, newTitle, writtenTitle);
+				}
 			}
 		}
 
