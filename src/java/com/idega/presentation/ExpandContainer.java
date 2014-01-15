@@ -168,9 +168,9 @@ public ExpandContainer() {
 	@Override
 	public void encodeChildren(FacesContext context)throws IOException{
 		if(!goneThroughRenderPhase()){
-			Iterator children = this.getChildren().iterator();
+			Iterator<UIComponent> children = this.getChildren().iterator();
 			while (children.hasNext()) {
-				UIComponent element = (UIComponent) children.next();
+				UIComponent element = children.next();
 				renderChild(context,element);
 			}
 		}
