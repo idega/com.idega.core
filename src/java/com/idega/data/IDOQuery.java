@@ -710,13 +710,11 @@ public class IDOQuery implements Cloneable {
 		return this.append(SELECT_ALL_FROM);
 	}
 	public IDOQuery appendSelectAllFrom(IDOEntity entity) {
-//		setEntityToSelect(entity);
-//		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
-//		appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
-//		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
-//		return this;
-		//	TODO: restored
-		return this.appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
+		setEntityToSelect(entity);
+		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
+		appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
+		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		return this;
 	}
 	public IDOQuery appendSelectAllFrom(String entityName) {
 		this.append(SELECT_ALL_FROM);
@@ -725,17 +723,12 @@ public class IDOQuery implements Cloneable {
 	}
 
 	public IDOQuery appendSelectIDColumnFrom(IDOEntity entity) throws IDOCompositePrimaryKeyException {
-		//	TODO: restored
-		this.appendSelect();
-		this.append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
-		this.appendFrom();
-		this.append(entity.getEntityDefinition().getSQLTableName());
-//		setEntityToSelect(entity);
-//		appendSelect();
-//		append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
-//		appendFrom();
-//		append(entity.getEntityDefinition().getSQLTableName());
-//		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		setEntityToSelect(entity);
+		appendSelect();
+		append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
+		appendFrom();
+		append(entity.getEntityDefinition().getSQLTableName());
+		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
 
 		return this;
 	}
@@ -749,13 +742,10 @@ public class IDOQuery implements Cloneable {
 	}
 
 	public IDOQuery appendSelectCountFrom(IDOEntity entity) {
-		//	TODO: restored
-		return this.appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
-
-//		setEntityToSelect(entity);
-//		appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
-//		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
-//		return this;
+		setEntityToSelect(entity);
+		appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
+		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		return this;
 	}
 	public IDOQuery appendSelectCountFrom(String entityName) {
 		this.append(SELECT_COUNT_FROM);
