@@ -15,6 +15,7 @@ import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+import javax.el.ValueExpression;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.location.business.AddressBusiness;
@@ -43,6 +44,7 @@ public class CountryDropdownMenu extends DropdownMenu {
 	private static Map countries = null;
 	private String label = null;
 	private String name = IW_COUNTRY_MENU_PARAM_NAME;
+	private Integer selectedCountryId = null;
 	
 	public CountryDropdownMenu(){
 	}
@@ -159,6 +161,10 @@ public class CountryDropdownMenu extends DropdownMenu {
 		
 		if(this.selectedCountry!=null){
 			setSelectedElement(((Integer)this.selectedCountry.getPrimaryKey()).intValue());
+		}else{
+			if(selectedCountryId != null){
+				setSelectedElement(selectedCountryId);
+			}
 		}
 		//System.out.println( "country dropdown main end "+ com.idega.util.IWTimestamp.RightNow().toString());
 	}
@@ -238,6 +244,27 @@ public class CountryDropdownMenu extends DropdownMenu {
 	@Override
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public Integer getSelectedCountryId() {
+		if(selectedCountryId != null){
+			return selectedCountryId;
+		}
+		selectedCountryId = (Integer) getValue("selectedCountryId");
+		return selectedCountryId;
+	}
+	
+	private Object getValue(String attribute){
+		ValueExpression valueExpression = getValueExpression(attribute);
+		if(valueExpression == null){
+			return null;
+		}
+		Object value = valueExpression.getValue(getFacesContext().getELContext());
+		return value;
+	}
+
+	public void setSelectedCountryId(Integer selectedCountryId) {
+		this.selectedCountryId = selectedCountryId;
 	}
 	
 }
