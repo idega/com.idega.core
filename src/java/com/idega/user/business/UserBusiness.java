@@ -949,4 +949,15 @@ public interface UserBusiness extends IBOService {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public User update(String primaryKey, String name, String email, String phone);
+
+	/**
+	 * 
+	 * <p>Updates existing password of {@link User}</p>
+	 * @param user to change password, not <code>null</code>;
+	 * @param newPassword to update, not <code>null</code>;
+	 * @return <code>true</code> if updated, <code>false</code>
+	 * otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	boolean changeUserPassword(User user, String newPassword);
 }

@@ -4067,28 +4067,71 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
-	public String changeUserPassword(String newPassword) {
-		try {
-			IWContext iwc = CoreUtil.getIWContext();
-			User currentUser = iwc.getCurrentUser();
-
-			LoginTable loginTable = LoginDBHandler.getUserLogin(currentUser);
-			// encrypted new password
-			String encryptedPassword = Encrypter.encryptOneWay(newPassword);
-			// store new password
-			loginTable.setUserPassword(encryptedPassword, newPassword);
-			loginTable.store();
-
-			Boolean accountEnabled = Boolean.TRUE;
-			Boolean passwordNeverExpires = Boolean.FALSE;
-			Boolean userAllowedToChangePassword = Boolean.TRUE;
-			Boolean mustChangePasswordNextTime = Boolean.FALSE;
-			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, IWTimestamp.RightNow(), 5000, passwordNeverExpires, userAllowedToChangePassword, mustChangePasswordNextTime, null);
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#changeUserPassword(java.lang.String)
+	 */
+	@Override
+	public String changeUserPassword(String newPassword) {	
+		IWContext iwc = CoreUtil.getIWContext();
+		if(changeUserPassword(iwc.getCurrentUser(), newPassword)) {
 			return "success";
-		} catch(Exception ex) {
-			ex.printStackTrace();
+		} else {
 			return "failure";
 		}
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#changeUserPassword(com.idega.user.data.User, java.lang.String)
+	 */
+	@Override
+	public boolean changeUserPassword(User user, String newPassword) {
+		if (user == null || StringUtil.isEmpty(newPassword)) {
+			return Boolean.FALSE;
+		}
+
+		LoginTable loginTable = LoginDBHandler.getUserLogin(user);
+		if (loginTable == null) {
+			getLogger().warning("Login table not found for: " + user.getName());
+			return Boolean.FALSE;
+		}
+
+		// encrypt new password
+		String encryptedPassword = Encrypter.encryptOneWay(newPassword);
+		if (StringUtil.isEmpty(encryptedPassword)) {
+			getLogger().warning("Failed to encrypt password for user " + user.getName());
+			return Boolean.FALSE;
+		}
+
+		// store new password
+		loginTable.setUserPassword(encryptedPassword, newPassword);
+		try {
+			loginTable.store();
+		} catch (IDOStoreException e) {
+			getLogger().warning("Failed to store password for user " + user.getName());
+			return Boolean.FALSE;
+		}
+
+		boolean accountEnabled = Boolean.TRUE;
+		boolean passwordNeverExpires = Boolean.FALSE;
+		boolean userAllowedToChangePassword = Boolean.TRUE;
+		boolean mustChangePasswordNextTime = Boolean.FALSE;
+
+		try {
+			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled, 
+					IWTimestamp.RightNow(), 5000, passwordNeverExpires, 
+					userAllowedToChangePassword, mustChangePasswordNextTime, 
+					null);
+			getLogger().info("Password for user " + user.getName() + " has been changed");
+			return Boolean.TRUE;
+		} catch(Exception ex) {
+			getLogger().log(Level.WARNING, 
+					"Failed to update login info for user: " + 
+							user.getName() + " cause of: ", ex);
+		}
+
+		return Boolean.FALSE;
 	}
 
 	public Collection<User> getUsersByNameAndEmailAndPhone(
