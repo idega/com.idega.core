@@ -330,6 +330,7 @@ public class SimpleQuerier {
         	conn = getConnection();
         	stmt = conn.createStatement();
             ResultSet results = stmt.executeQuery(sql);
+            results.next();
             Clob clob = results.getClob(1);
 
 			if (clob == null) {
