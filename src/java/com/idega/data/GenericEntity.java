@@ -4796,6 +4796,52 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
+	 * 
+	 * <p>Removes all relations between this {@link IDOEntity} and 
+	 * entity given as parameter.</p>
+	 * @param entityInterfaceClass
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected void idoRemoveRelationsTo(Class<? extends IDOEntity> entityInterfaceClass) {
+		try {
+			idoRemoveFrom(entityInterfaceClass);
+			getLogger().info("Successfully removed all relations between " + 
+					getClass().getSimpleName() + " by id: '" + 
+					getPrimaryKey() + "' and " + 
+					entityInterfaceClass.getSimpleName());
+		} catch (IDORemoveRelationshipException e) {
+			getLogger().log(Level.WARNING, "Failed to remove relations between " + 
+					getClass().getSimpleName() + " by id: '" + 
+					getPrimaryKey() + "' and " + 
+					entityInterfaceClass.getSimpleName(), e);
+		}
+	}
+	
+	/**
+	 * 
+	 * <p>Removes a record between this and given {@link IDOEntity}s</p>
+	 * @param entity to remove relation between, not <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected void idoRemoveRelationTo(IDOEntity entity) {
+		if (entity != null) {
+			try {
+				removeFrom(entity);
+				getLogger().info("Entity " + entity.getClass().getSimpleName() + 
+						" by id: '" + entity.getPrimaryKey() + 
+						"' removed from relation to " + getClass().getSimpleName() + 
+						" by id: '" + getPrimaryKey() + "'");
+			} catch (SQLException ex) {
+				getLogger().log(Level.WARNING, 
+						"Failed to remove " + entity.getClass().getSimpleName() + 
+						" by id: '" + entity.getPrimaryKey() + 
+						"' from relation to " + getClass().getSimpleName() + 
+						" by id: '" + getPrimaryKey() + "' cause of: ", ex);
+			}
+		}
+	}
+
+	/**
 	 *
 	 * <p>Removes all records from SQL table, which are related to this
 	 * instance of entity object.</p>
