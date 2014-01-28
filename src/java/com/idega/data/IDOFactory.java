@@ -2,11 +2,15 @@ package com.idega.data;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Set;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
+import javax.ejb.EJBLocalObject;
 import javax.ejb.FinderException;
 
 import com.idega.util.CoreUtil;
@@ -96,7 +100,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
 
   /**
-   * @deprecated
+   * @deprecated use {@link IDOFactory#createIDO()}
    */
   @Deprecated
   public <T extends IDOEntity> T idoCreate() throws CreateException{
@@ -114,7 +118,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
   }
 
   /**
-   * @deprecated
+   * @deprecated use {@link IDOFactory#findByPrimaryKeyIDO(Object)}
    */
   @Deprecated
 public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws FinderException{
@@ -137,38 +141,126 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
     return idoFindByPrimaryKey(interfaceClass, realPK);
   }
 
-  public <T extends IDOEntity> T findSubTypeByPrimaryKeyIDO(Object primaryKey) throws FinderException {
-	  if (primaryKey == null) {
-		  return null;
-	  }
-	  Class<T> interfaceClass = getEntityInterfaceClass();
-	  if (interfaceClass == null) {
-		  return null;
-	  }
+  
+	/**
+	 * 
+	 * <p>Makes a search for entity with primary key in all hierarchy.</p>
+	 * @param primaryKeys is {@link Collection} of 
+	 * {@link EJBLocalObject#getPrimaryKey()}, not <code>null</code>;
+	 * @return entities, extending this entity by given primary key or 
+	 * entities of this type by primary key;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public <T extends IDOEntity> List<T> findSubTypesByPrimaryKeysIDO(Collection<Object> primaryKeys) {
+		if (ListUtil.isEmpty(primaryKeys)) {
+			return Collections.emptyList();
+		}
 
-	  //	Checking original entity
-	  try {
-		  return findByPrimaryKeyIDO(primaryKey);
-	  } catch (Exception e) {}
+		ArrayList<T> entities = new ArrayList<T>(primaryKeys.size());
+		for (Object primaryKey : primaryKeys) {
+			T entity = findSubTypeByPrimaryKeyIDO(primaryKey);
+			if (entity != null) {
+				entities.add(entity);
+			}
+		}
 
-	  try {
-		  Collection<Class<? extends T>> subTypes = CoreUtil.getSubTypesOf(interfaceClass, true);
-		  if (ListUtil.isEmpty(subTypes)) {
-			  return null;
-		  }
+		return entities;
+	}
 
-		  for (Class<? extends T> subType: subTypes) {
-			  IDOHome subTypeHome = IDOLookup.getHome(subType);
-			  try {
-				  return subTypeHome.findByPrimaryKeyIDO(primaryKey);
-			  } catch (FinderException e) {}
-		  }
-	  } catch (Exception e) {
-		  e.printStackTrace();
-	  }
+	/**
+	 * 
+	 * @param primaryKey is {@link IDOEntity#getPrimaryKey()} to search by,
+	 * not <code>null</code>;
+	 * @return entity itself or a sub-type which has given id or 
+	 * <code>null</code> failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public <T extends IDOEntity> T findSubTypeByPrimaryKeyIDO(Object primaryKey) {
+		if (primaryKey == null) {
+			return null;
+		}
 
-	  return null;
-  }
+		Class<T> interfaceClass = getEntityInterfaceClass();
+		if (interfaceClass == null) {
+			return null;
+		}
+
+		/* Getting sub-types */
+		Collection<Class<? extends T>> subTypes = CoreUtil.getSubTypesOf(
+				interfaceClass, true);
+		if (ListUtil.isEmpty(subTypes)) {
+			/* Checking original entity */
+			try {
+				return findByPrimaryKeyIDO(primaryKey);
+			} catch (FinderException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).info(
+						"Instances of " + interfaceClass.getSimpleName()
+								+ " not found");
+			}
+
+			return null;
+		}
+
+		/* Getting homes */
+		Set<? extends IDOHome> homes = getHomesForSubtypes(subTypes);
+		if (ListUtil.isEmpty(homes)) {
+			return null;
+		}
+
+		/* Searching for instance by primary keys in sub-types */
+		for (IDOHome home : homes) {
+			try {
+				T entity = home.findByPrimaryKeyIDO(primaryKey);
+				if (entity != null) {
+					java.util.logging.Logger.getLogger(getClass().getName()).info(
+							"Found subtype " + entity.getClass().getSimpleName()
+									+ " by primary key: '" + primaryKey + "'");
+					return entity;
+				}
+			} catch (FinderException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).info(
+						"No instances in " + home.getClass().getSimpleName()
+								+ " by id: '" + primaryKey
+								+ "' proceeding to next one! ");
+			}
+		}
+		
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param subTypes is {@link IDOEntity}s to get {@link IDOHome}s for, 
+	 * not <code>null</code>;
+	 * @return {@link Set} of different {@link IDOHome}s or 
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected <T extends IDOEntity> Set<? extends IDOHome> getHomesForSubtypes(
+			Collection<Class<? extends T>> subTypes) {
+		if (ListUtil.isEmpty(subTypes)) {
+			return Collections.emptySet();
+		}
+
+		Set<IDOHome> homes = new HashSet<IDOHome>();
+		for (Class<? extends T> subType : subTypes) {
+			IDOHome home = null;
+			try {
+				home = IDOLookup.getHome(subType);
+			} catch (IDOLookupException e) {
+				java.util.logging.Logger.getLogger(getClass().getName()).log(
+						Level.WARNING, 
+						"Failed to get home for " + subType.getSimpleName() + 
+						" cause of: ", e);
+			}
+
+			if (home != null) {
+				homes.add(home);
+			}
+		}
+
+		return homes;
+	}
 
   public IDOEntity findByPrimaryKeyIDO(int primaryKey) throws FinderException{
     return idoFindByPrimaryKey(getEntityInterfaceClass(),primaryKey);
