@@ -76,6 +76,7 @@ public class IDOQuery implements Cloneable {
 	public static final String ENTITY_TO_SELECT = "selected_entity";
 	public static final String MIDDLE_ENTITY = "middle_entity_";
 	public static final String RELATED_ENTITY = "related_entity_";
+	public boolean useDefaultAlias = false;
 
 
 	private DatastoreInterface dataStore = null;
@@ -264,24 +265,42 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 
-	public static IDOQuery getStaticInstance() {
-		IDOQuery query = new IDOQuery();
+	public static IDOQuery getStaticInstance(boolean useDefaultAlias) {
+		IDOQuery query = new IDOQuery(useDefaultAlias);
 		return query;
+	}
+
+	public static IDOQuery getStaticInstance() {
+		return getStaticInstance(false);
 	}
 
 	/**
 	 * @see com.idega.data.GenericEntity.idoQuery()
 	 */
 	protected IDOQuery() {
+		this(false);
+	}
+
+	protected IDOQuery(boolean useDefaultAlias) {
+		this.useDefaultAlias = useDefaultAlias;
 		this._buffer = new StringBuffer();
 	}
 
-
 	protected IDOQuery(int length) {
+		this(length, false);
+	}		
+	
+	protected IDOQuery(int length, boolean useDefaultAlias) {
+		this.useDefaultAlias = useDefaultAlias;
 		this._buffer = new StringBuffer(length);
 	}
 
 	protected IDOQuery(String str) {
+		this(str, false);
+	}
+		
+	protected IDOQuery(String str, boolean useDefaultAlias) {
+		this.useDefaultAlias = useDefaultAlias;
 		this._buffer = new StringBuffer(str);
 	}
 
@@ -713,7 +732,9 @@ public class IDOQuery implements Cloneable {
 		setEntityToSelect(entity);
 		//return this.appendSelectAllFrom(((IDOLegacyEntity)entity).getTableName());
 		appendSelectAllFrom(entity.getEntityDefinition().getSQLTableName());
-		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		if (useDefaultAlias) {
+			append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		}
 		return this;
 	}
 	public IDOQuery appendSelectAllFrom(String entityName) {
@@ -728,7 +749,9 @@ public class IDOQuery implements Cloneable {
 		append(entity.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName());
 		appendFrom();
 		append(entity.getEntityDefinition().getSQLTableName());
-		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		if (useDefaultAlias) {
+			append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		}
 
 		return this;
 	}
@@ -744,7 +767,9 @@ public class IDOQuery implements Cloneable {
 	public IDOQuery appendSelectCountFrom(IDOEntity entity) {
 		setEntityToSelect(entity);
 		appendSelectCountFrom(entity.getEntityDefinition().getSQLTableName());
-		append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		if (useDefaultAlias) {
+			append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+		}
 		return this;
 	}
 	public IDOQuery appendSelectCountFrom(String entityName) {
