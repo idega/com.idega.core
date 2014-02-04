@@ -218,7 +218,7 @@ public class IDOQuery implements Cloneable {
 		if (manyToOneRelation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
 
-			currentTableKeyColumn = new StringBuilder(ENTITY_TO_SELECT)
+			String currentTableForeignKeyColumn = new StringBuilder(ENTITY_TO_SELECT)
 					.append(CoreConstants.DOT)
 					.append(manyToOneRelation.getColumnName())
 					.append(CoreConstants.SPACE)
@@ -227,7 +227,7 @@ public class IDOQuery implements Cloneable {
 			/* Joining related entity */
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
-			append(ON).appendEquals(currentTableKeyColumn, relatedTableKeyColumn);
+			append(ON).appendEquals(currentTableForeignKeyColumn, relatedTableKeyColumn);
 			append(CoreConstants.SPACE);
 		}
 
@@ -238,7 +238,7 @@ public class IDOQuery implements Cloneable {
 		if (oneToManyRelation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
 
-			relatedTableKeyColumn = new StringBuilder(RELATED_ENTITY)
+			String foreignKeyColumn = new StringBuilder(RELATED_ENTITY)
 					.append(joinNumber)
 					.append(CoreConstants.DOT)
 					.append(oneToManyRelation.getColumnName())
@@ -248,7 +248,7 @@ public class IDOQuery implements Cloneable {
 			/* Joining related entity */
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
-			append(ON).appendEquals(currentTableKeyColumn, relatedTableKeyColumn);
+			append(ON).appendEquals(currentTableKeyColumn, foreignKeyColumn);
 			append(CoreConstants.SPACE);
 		}
 
