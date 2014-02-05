@@ -88,7 +88,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		Query query = getEntityManager().createNamedQuery(ICPermission.DELETE_BY_CRITERIA);
 		query.setParameter("contextType", contextType);
 		query.setParameter("contextValue", contextValue);
-		query.setParameter("permissionString", permissionString);
+		query.setParameter("permissionStrings", permissionString);
 		query.setParameter("groups", groups);
 
 		query.executeUpdate();
