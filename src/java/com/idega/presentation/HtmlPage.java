@@ -70,6 +70,8 @@ import com.idega.util.xml.XmlUtil;
  * an idegaWeb Page.
  */
 public class HtmlPage extends Page {
+	
+	private Boolean addTemplateFilesAtEnd = null;
 
 	private static final Logger LOGGER = Logger.getLogger(HtmlPage.class.getName());
 
@@ -283,41 +285,43 @@ public class HtmlPage extends Page {
 		String headContent = headClosesSplit[0];
 		String body = headClosesSplit[1];
 		
-		ArrayList<String> styles = new ArrayList<String>();
-		try {
-			DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-		    DocumentBuilder builder = factory.newDocumentBuilder();
-		    InputSource is = new InputSource(new StringReader("<head>"+headContent+"</head>"));
-		    org.w3c.dom.Document document = builder.parse(is);
-		    Node head = document.getFirstChild();
-		    NodeList nodes = head.getChildNodes();
-		    int length = nodes.getLength();
-		    ByteArrayOutputStream stream = new ByteArrayOutputStream();
-		    Transformer transformer = TransformerFactory.newInstance().newTransformer();
-			transformer.setOutputProperty(OutputKeys.INDENT, "yes");
-			transformer.setOutputProperty(OutputKeys.METHOD, "xml");
-			transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
-			ArrayList<Node> nodesToRemove = new ArrayList<Node>();
-		    for(int i = 0;i < length;i++){
-		    	Node node = nodes.item(i);
-		    	if("link".equalsIgnoreCase(node.getNodeName())){
-		    		String uri = node.getAttributes().getNamedItem("href").getNodeValue();
-			    	styles.add(uri);
-			    	nodesToRemove.add(node);
-			    	continue;
-		    	}
-		    }
-		    for(Node node : nodesToRemove){
-		    	head.removeChild(node);
-		    }
-		    transformer.transform(new DOMSource(document), new StreamResult(stream));
-		    headContent= stream.toString();
-		    headContent = headContent.substring(6);
-		    headContent = headContent.substring(0, headContent.length() - 8);
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "failed", e);
+		if(isAddTemplateFilesAtEnd(iwc)){
+			ArrayList<String> styles = new ArrayList<String>();
+			try {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			    DocumentBuilder builder = factory.newDocumentBuilder();
+			    InputSource is = new InputSource(new StringReader("<head>"+headContent+"</head>"));
+			    org.w3c.dom.Document document = builder.parse(is);
+			    Node head = document.getFirstChild();
+			    NodeList nodes = head.getChildNodes();
+			    int length = nodes.getLength();
+			    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+			    for(int i = 0;i < length;i++){
+			    	Node node = nodes.item(i);
+			    	if("link".equalsIgnoreCase(node.getNodeName())){
+			    		String uri = node.getAttributes().getNamedItem("href").getNodeValue();
+				    	styles.add(uri);
+				    	nodesToRemove.add(node);
+				    	continue;
+			    	}
+			    }
+			    for(Node node : nodesToRemove){
+			    	head.removeChild(node);
+			    }
+			    transformer.transform(new DOMSource(document), new StreamResult(stream));
+			    headContent= stream.toString();
+			    headContent = headContent.substring(6);
+			    headContent = headContent.substring(0, headContent.length() - 8);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "failed", e);
+			}
+			PresentationUtil.addStyleSheetsToHeader(iwc, styles);
 		}
-		PresentationUtil.addStyleSheetsToHeader(iwc, styles);
 		//	Get the contents from the superclass first
 		out.write(getHeadContents(ctx));
 		Script associatedScript = getAssociatedScript();
@@ -575,4 +579,12 @@ public class HtmlPage extends Page {
 		}
 		return this.facetMap;
 	}
+
+	private boolean isAddTemplateFilesAtEnd(IWContext iwc) {
+		if(addTemplateFilesAtEnd == null){
+			addTemplateFilesAtEnd = iwc.getApplicationSettings().getBoolean("add-template-files-at-end", false);
+		}
+		return addTemplateFilesAtEnd;
+	}
+
 }
