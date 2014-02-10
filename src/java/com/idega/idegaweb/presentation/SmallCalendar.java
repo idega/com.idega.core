@@ -37,6 +37,7 @@ public class SmallCalendar extends Block {
 	private boolean showNameOfDays = true;
 	private boolean _highlight = false;
 	private boolean LINE_VIEW = false;
+	private boolean allDaysFullyBooked = false;
 
 	private String textColor = "#000000";
 	private String highlightedText = "#660000";
@@ -285,13 +286,17 @@ public class SmallCalendar extends Block {
 			}
 			this.T.setAlignment(xpos, ypos, "center");
 
-			if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
-				this.T.setStyleClass(xpos, ypos, this.todayBackgroundStyleClass);
-			} else if ((this.todayColor != null) && ((n == this.today.getDay()) && shadow)) {
-				this.T.setColor(xpos, ypos, this.todayColor);
+			if (isAllDaysFullyBooked()) {
+				this.T.setStyleClass(xpos, ypos, "travel_FullyBooked FAV_full");
+			} else {
+				if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
+					this.T.setStyleClass(xpos, ypos, this.todayBackgroundStyleClass);
+				} else if ((this.todayColor != null) && ((n == this.today.getDay()) && shadow)) {
+					this.T.setColor(xpos, ypos, this.todayColor);
+				}
 			}
 
-			if (this._highlight) {
+			if (this._highlight && !isAllDaysFullyBooked()) {
 				if (n == this.stamp.getDay() && month == this.stamp.getMonth() && year == this.stamp.getYear()) {
 					if (this.selectedBackgroundStyleClass != null) {
 						this.T.setStyleClass(xpos, ypos, this.selectedBackgroundStyleClass);
@@ -1028,4 +1033,13 @@ public class SmallCalendar extends Block {
 	public void setDateParameterName(String dateParameterName) {
 		this.dateParameterName = dateParameterName;
 	}
+
+	public boolean isAllDaysFullyBooked() {
+		return allDaysFullyBooked;
+	}
+
+	public void setAllDaysFullyBooked(boolean allDaysFullyBooked) {
+		this.allDaysFullyBooked = allDaysFullyBooked;
+	}
+
 }
