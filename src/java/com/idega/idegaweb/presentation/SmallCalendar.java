@@ -6,6 +6,7 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
@@ -82,6 +83,9 @@ public class SmallCalendar extends Block {
 	public Table T;
 	
 	private int iCellpadding = 2;
+	
+	// <Map<Year, Map<Month, Map<Day, Boolean>>> Year, Month & Day: Integer
+	private Map invalidDays;
 	
 	public SmallCalendar() {
 		initialize();
@@ -286,7 +290,7 @@ public class SmallCalendar extends Block {
 			}
 			this.T.setAlignment(xpos, ypos, "center");
 
-			if (isAllDaysFullyBooked()) {
+			if (isAllDaysFullyBooked() || !isValidDay(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(n))) {
 				this.T.setStyleClass(xpos, ypos, "travel_FullyBooked FAV_full");
 			} else {
 				if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
@@ -1042,4 +1046,45 @@ public class SmallCalendar extends Block {
 		this.allDaysFullyBooked = allDaysFullyBooked;
 	}
 
+	public Map getInvalidDays() {
+		return invalidDays;
+	}
+
+	public void setInvalidDays(Map invalidDays) {
+		this.invalidDays = invalidDays;
+	}
+
+	public void addInvalidDay(Integer year, Integer month, Integer day) {
+		if (invalidDays == null) {
+			invalidDays = new java.util.HashMap();
+		}
+		Map months = (Map) invalidDays.get(year);
+		if (months == null) {
+			months = new java.util.HashMap();
+			invalidDays.put(year, months);
+		}
+		Map days = (Map) months.get(month);
+		if (days == null) {
+			days = new java.util.HashMap();
+			months.put(month, days);
+		}
+		days.put(day, Boolean.FALSE);
+	}
+	
+	public boolean isValidDay(Integer year, Integer month, Integer day) {
+		if (invalidDays == null) {
+			return true;
+		}
+		Map months = (Map) invalidDays.get(year);
+		if (months == null) {
+			return true;
+		}
+		Map days = (Map) months.get(month);
+		if (days == null) {
+			return true;
+		}
+		Boolean valid = (Boolean) days.get(day);
+		return valid == null ? true : valid.booleanValue();
+	}
+	
 }
