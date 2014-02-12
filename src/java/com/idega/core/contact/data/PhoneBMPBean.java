@@ -1,5 +1,8 @@
 package com.idega.core.contact.data;
 import java.sql.SQLException;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -7,6 +10,8 @@ import javax.ejb.RemoveException;
 import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOFinderException;
+import com.idega.data.IDOQuery;
+import com.idega.util.StringUtil;
 /**
  * Title:        IW Core
  * Description:
@@ -256,6 +261,32 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 		}
 		return userRelationshipTableName;
 	}
-	
 
+	/**
+	 * 
+	 * <p>Finds primary keys by criteria.</p>
+	 * @param phoneNumber is {@link Phone#getNumber()}, not <code>null</code>;
+	 * @return {@link Phone}s by number or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindByPhoneNumber(String phoneNumber) {
+		if (StringUtil.isEmpty(phoneNumber)) {
+			return Collections.emptyList();
+		}
+		
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this);
+		query.appendWhereEquals(getColumnNamePhoneNumber(), phoneNumber);
+		
+		try {
+			return idoFindPKsByQuery(query);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to find primary keys for " + this.getClass().getName() + 
+					" by query: '" + query.toString() + "'");
+		}
+
+		return Collections.emptyList();
+	}
 }

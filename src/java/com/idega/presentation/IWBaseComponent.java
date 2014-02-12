@@ -75,6 +75,21 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		return LOGGER;
 	}
 
+	protected Page getParentPage() {
+		return getPage(this);
+	}
+
+	private Page getPage(UIComponent parent) {
+		if (parent == null) {
+			return null;
+		}
+
+		if (parent instanceof Page) {
+			return (Page) parent;
+		}
+		return getPage(parent.getParent());
+	}
+
 	/**
 	 * This is an old idegaWeb style add method.
 	 * Does the same as getChildren().add(comp) in JSF>

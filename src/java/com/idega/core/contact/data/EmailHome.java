@@ -11,6 +11,7 @@ package com.idega.core.contact.data;
 
 import java.rmi.RemoteException;
 import java.util.Collection;
+import java.util.Collections;
 
 import javax.ejb.FinderException;
 
@@ -30,11 +31,11 @@ public interface EmailHome extends IDOHome {
 
 	 public Email create() throws javax.ejb.CreateException;
 	 public Email createLegacy();
-	 public Email findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
+	 public Email findByPrimaryKey(Object pk);
 	 public Email findByPrimaryKey(int id) throws javax.ejb.FinderException;
 	 public Email findByPrimaryKeyLegacy(int id) throws java.sql.SQLException;
-	 public java.util.Collection findEmailsForUser(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException;
-	 public java.util.Collection findEmailsForUser(int p0)throws javax.ejb.FinderException;
+	 public Collection<Email> findEmailsForUser(com.idega.user.data.User p0)throws java.rmi.RemoteException,javax.ejb.FinderException;
+	 public Collection<Email> findEmailsForUser(int p0)throws javax.ejb.FinderException;
 
 	/**
 	 * 
@@ -64,4 +65,32 @@ public interface EmailHome extends IDOHome {
 	
 	public Collection<Email> findMainEmailsForUsers(Collection<User> users) throws FinderException;
 
+	/**
+	 * 
+	 * <p>Creates/updates {@link Email} in data source.</p>
+	 * @param primaryKey is {@link Email#getPrimaryKey()}, 
+	 * if not <code>null</code>, will be updated;
+	 * @param emailAddress is {@link Email#getEmailAddress()}, not <code>null</code>;
+	 * @return updated/created {@link Email} or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Email update(String primaryKey, String emailAddress);
+
+	/**
+	 * 
+	 * @param emailAddress is {@link Collection} of {@link Email#getEmailAddress()}, 
+	 * not <code>null</code>;
+	 * @return {@link Email}s, by criteria or {@link Collections#emptyList()}; 
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Email> findByEmailAddress(Collection<String> emailAddress);
+	
+	/**
+	 * 
+	 * @param emailAddress is {@link Email#getEmailAddress()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link Email}s similar to given one, or 
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Email> findByEmailAddressPart(String emailAddress);
 }

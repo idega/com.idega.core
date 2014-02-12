@@ -57,7 +57,6 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
-import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -1833,7 +1832,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	@Override
 	public Address updateGroupMainAddressOrCreateIfDoesNotExist(Integer groupId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox) throws CreateException, RemoteException {
 		Address address = null;
-		if (streetNameAndNumber != null && groupId != null) {
+		if (groupId != null) {
 			try {
 				AddressBusiness addressBiz = getAddressBusiness();
 				String streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
@@ -1880,7 +1879,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 					address.setPOBox(poBox);
 				}
 
-				address.setStreetName(streetName);
+				if (!StringUtil.isEmpty(streetName)) {
+					address.setStreetName(streetName);
+				}
+
 				if (streetNumber != null) {
 					address.setStreetNumber(streetNumber);
 				}
@@ -1916,6 +1918,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	@Override
 	public Address getGroupMainAddress(Group group) throws RemoteException, IDOLookupException, IDOCompositePrimaryKeyException, IDORelationshipException {
+		if (group == null) {
+			return null;
+		}
+
 		AddressType type = getAddressHome().getAddressType1();
 		Collection coll = group.getAddresses(type);
 		if (coll == null || coll.isEmpty()) {
@@ -2932,45 +2938,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 		for (Group group : groups) {
 			if (!StringUtil.isEmpty(city)) {
-
-				/* Searching for existing addresses of group */
-				Collection<Address> addresses = null;
 				try {
-					addresses = group.getAddresses(null);
+					updateGroupMainAddressOrCreateIfDoesNotExist(
+							Integer.valueOf(group.getPrimaryKey().toString()), 
+							null, null, null, city, null, null);
 				} catch (Exception e) {
-					getLogger().log(Level.WARNING,
-							"Failed to get addresses for group: " +
-							group.getName() + "cause of: ", e);
-				}
-
-				Address address = null;
-				/* Will take the first one, the main */
-				if (!ListUtil.isEmpty(addresses)) {
-					address = addresses.iterator().next();
-				}
-
-				/* Creating new one if not exist */
-				if (address == null) {
-					try {
-						address = getAddressHome().create();
-					} catch (CreateException e) {
-						getLogger().log(Level.WARNING,
-								"Failed to create address for group cause of: ",
-								e);
-					}
-				}
-
-				address.setCity(city);
-				address.store();
-
-				/* Adding new address if not existed yet */
-				if (ListUtil.isEmpty(addresses)) {
-					try {
-						group.addAddress(address);
-					} catch (IDOAddRelationshipException e) {
-						getLogger().log(Level.WARNING,
-								"Failed to append address to group cause of:", e);
-					}
+					getLogger().log(Level.WARNING, 
+							"Failed to update group main address cause of: ", e);
 				}
 			}
 

@@ -2,10 +2,10 @@ package com.idega.data.query;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
@@ -240,8 +240,8 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	@Override
-	public Set getTables() {
-		Set s = new HashSet();
+	public Set<Table> getTables() {
+		Set<Table> s = new HashSet<Table>();
 		s.add(this.column.getTable());
 		return s;
 	}
@@ -254,8 +254,8 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	@Override
-	public List getValues() {
-		Vector v = new Vector(1);
+	public List<Object> getValues() {
+		List<Object> v = new ArrayList<Object>(1);
 		if (this.placeHolderValue != null) {
 			v.add(this.placeHolderValue);
 		}

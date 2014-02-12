@@ -475,18 +475,32 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 
   }
   
-	/**
-	 * 
+
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupRelation#removeBy(com.idega.user.data.User, java.sql.Timestamp)
 	 */
+	@Override
 	public void removeBy(User currentUser, Timestamp time) throws RemoveException{
-		int userId = ((Integer) currentUser.getPrimaryKey()).intValue(); 
-		this.setPassive();
-		this.setTerminationDate(time);
-		setPassiveBy(userId);
-		store();
+		if (currentUser != null && currentUser.getPrimaryKey() != null) {
+			Integer userId = null;
+			String primaryKey = currentUser.getPrimaryKey().toString();
+			try {
+				userId = Integer.valueOf(primaryKey);
+			} catch (NumberFormatException e) {
+				getLogger().warning(
+						"Failed to convert " + primaryKey + 
+						" to " + Integer.class.getSimpleName());
+			}
+
+			setPassive();
+			setTerminationDate(time);
+			setPassiveBy(userId);
+			store();
+		}
 	}
-  
-  
+
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
   	
 	//constructing query

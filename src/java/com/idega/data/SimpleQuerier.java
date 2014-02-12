@@ -5,7 +5,9 @@
 
 */
 package com.idega.data;
+import java.io.Reader;
 import java.io.Serializable;
+import java.sql.Clob;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -15,6 +17,8 @@ import java.util.List;
 import java.util.logging.Logger;
 
 import com.idega.util.CoreUtil;
+import com.idega.util.IOUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.database.ConnectionBroker;
 /**
 *A class to query/update directly to an SQL datastore. This class should only be used by data implementation classes
@@ -125,13 +129,14 @@ public class SimpleQuerier {
                 }
             	objects.add(data);
             }
+
             results.close();
         } finally {
             if (stmt != null) {
                 stmt.close();
             }
             if (conn != null) {
-            	conn.close();
+            	freeConnection(conn);
             }
 
             long end = System.currentTimeMillis();
@@ -307,4 +312,54 @@ public class SimpleQuerier {
         }
         return result;
     }
+
+    public static String getClobValue(String sql) throws Exception {
+    	if (StringUtil.isEmpty(sql)) {
+    		return null;
+    	}
+
+    	Statement stmt = null;
+        Connection conn = null;
+
+        String value = null;
+        Reader chrInstream = null;
+        long start = System.currentTimeMillis();
+        try {
+        	conn = getConnection();
+        	stmt = conn.createStatement();
+            ResultSet results = stmt.executeQuery(sql);
+            results.next();
+            Clob clob = results.getClob(1);
+
+			if (clob == null) {
+				return null;
+			}
+
+			//set buffersize
+			long length = clob.length();
+			// Now get as a unicode stream.
+			chrInstream = clob.getCharacterStream();
+			int intLength = (length < Integer.MAX_VALUE) ? (int) length : Integer.MAX_VALUE;
+			char chrBuffer[] = new char[intLength]; // Clob buffer
+			chrInstream.read(chrBuffer);
+			value = new String(chrBuffer);
+
+            results.close();
+        } finally {
+            if (stmt != null) {
+                stmt.close();
+            }
+            if (conn != null) {
+            	freeConnection(conn);
+            }
+            IOUtil.close(chrInstream);
+
+            long end = System.currentTimeMillis();
+            if (CoreUtil.isSQLMeasurementOn()) {
+            	Logger.getLogger(SimpleQuerier.class.getName()).info("Query '" + sql + "' was executed in " + (end - start) + " ms.");
+            }
+        }
+        return value;
+    }
+
 }

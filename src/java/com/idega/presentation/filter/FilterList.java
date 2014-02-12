@@ -2,12 +2,17 @@ package com.idega.presentation.filter;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.text.Collator;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
-import java.util.TreeMap;
+import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
+import javax.faces.component.UIComponentBase;
 
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
@@ -15,6 +20,7 @@ import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Layer;
+import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Span;
 import com.idega.presentation.text.Heading3;
 import com.idega.presentation.text.Text;
@@ -48,6 +54,30 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 
 	private String parameterName = null;
 
+	protected PresentationObjectContainer getCell(){
+		Span span = new Span();
+		span.setStyleClass(getEntityCellClass());
+		return span;
+	}
+	
+	protected Collection<UIComponentBase> getEntityFields(T entity){
+		ArrayList<UIComponentBase> components = new ArrayList<UIComponentBase>();
+		
+		String name = getRepresentation(entity);
+		PresentationObjectContainer spanName = getCell();
+		spanName.add(new Text(name));
+		components.add(spanName);
+		
+		return components;
+	}
+	
+	protected String getRepresentation(T entity){
+		return getRepresentation(entity, getRepresentationMethodName());
+	}
+	
+	protected String getEntityCellClass(){
+		return "filtered-span";
+	}
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		PresentationUtil.addStyleSheetToHeader(iwc, getBundle(iwc).getVirtualPathWithFileNameString("style/filter.css"));
@@ -56,7 +86,8 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 		container.setStyleClass("filterListStyle");
 		add(container);
 
-		if (ListUtil.isEmpty(getEntities())) {
+		List<T> entities = getEntities();
+		if (ListUtil.isEmpty(entities)) {
 			container.add(
 					new Heading3(getResourceBundle(iwc).getLocalizedString(
 							"filter.nothing_found", "Nothing found"
@@ -65,28 +96,37 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 			return;
 		}
 
-		if (!ListUtil.isEmpty(getEntities())) {
-			TreeMap<String, Layer> componentMap = new TreeMap<String, Layer>();
-			for (T entity: getEntities()) {
-				Layer entityEntry = new Layer();
-
-				String id = entity.getPrimaryKey().toString();
-				String name = getRepresentation(entity, getRepresentationMethodName());
-
-				componentMap.put(name, entityEntry);
-				entityEntry.add(getCheckBox(iwc, id));
-
-				Span spanName = new Span(new Text(name));
-				entityEntry.add(spanName);
-				spanName.setStyleClass("company-name");
-			}
-			for(String key : componentMap.keySet()){
-				container.add(componentMap.get(key));
+		Comparator<T> comparator = new Entitycomparator(this, iwc.getCurrentLocale());
+		Collections.sort(entities, comparator);
+		for (T entity: entities) {
+			Layer entityEntry = new Layer();
+			container.add(entityEntry);
+			String id = entity.getPrimaryKey().toString();
+			
+			PresentationObjectContainer checkBoxSpan = getCell();
+			entityEntry.add(checkBoxSpan);
+			checkBoxSpan.add(getCheckBox(iwc, id));
+			
+			Collection<UIComponentBase> elements = getEntityFields(entity);
+			for(UIComponentBase element : elements){
+				entityEntry.add(element);
 			}
 		}
 		
-		
-
+		Layer script = new Layer();
+		add(script);
+		StringBuilder js = new StringBuilder("<script>jQuery(document).ready(function(){")
+				.append("\tjQuery('#").append(container.getId()).append("').children().each(function(){")
+				.append("\n\t\tvar element = jQuery(this);")
+				.append("\n\t\tvar top = jQuery('<span class=\"action-layer\"/>');")
+				.append("\n\t\telement.append(top);")
+				.append("\n\t\ttop.click(function(){")
+				.append("\n\t\t\tvar checkBox = jQuery(this).parent().find('input[type=\"checkbox\"]');")
+				.append("\n\t\t\tcheckBox.prop('checked', !checkBox.is(':checked'));")
+				.append("\n\t\t});")
+				.append("\n\t});")
+				.append("\n});</script>");
+		script.add(js.toString());
 		return;
 	}
 
@@ -397,4 +437,21 @@ public abstract class FilterList<T extends IDOEntity> extends InterfaceObject {
 	public void setParameterName(String parameterName) {
 		this.parameterName = parameterName;
 	}
+	
+	private class Entitycomparator implements Comparator<T>{
+		private FilterList<T> component = null;
+		private Collator collator = null;
+		public Entitycomparator(FilterList<T> component,Locale locale){
+			this.component = component;
+			this.collator = Collator.getInstance(locale);
+		}
+		@Override
+		public int compare(T en1, T en2) {
+			String name1 = component.getRepresentation(en1).toUpperCase();
+			String name2 = component.getRepresentation(en2).toUpperCase();
+ 
+			//ascending order
+			return collator.compare(name1, name2);
+		}
+	};
 }

@@ -119,8 +119,10 @@ public class ELUtil implements ApplicationContextAware {
 	}
 
 	public void publishEvent(ApplicationEvent event) {
-		ApplicationContext ac = getApplicationContext();
-		ac.publishEvent(event);
+		if (event != null) {
+			ApplicationContext ac = getApplicationContext();
+			ac.publishEvent(event);
+		}
 	}
 
 	public <T>T getBean(Class<T> clazz) throws BeanCreationException {

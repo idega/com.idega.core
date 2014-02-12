@@ -42,33 +42,34 @@ import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
 /**
- * IWEventProcessor //TODO: tryggvil Describe class 
+ * IWEventProcessor //TODO: tryggvil Describe class
  * Copyright (C) idega software 2004
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.0
  */
 public class IWEventProcessor implements Singleton {
-	
-	
+
+
 	private final static String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	private final static String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
 	private static Logger log = Logger.getLogger(IWEventProcessor.class.toString());
-	
-	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new IWEventProcessor();}};
-	
+
+	private static Instantiator instantiator = new Instantiator() { @Override
+	public Object getInstance() { return new IWEventProcessor();}};
+
 	protected IWEventProcessor() {
 		// default constructor
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="instance"
 	 */
 	public static IWEventProcessor getInstance() {
 		return (IWEventProcessor) SingletonRepository.getRepository().getInstance(IWEventProcessor.class, instantiator);
 	}
-	
+
 	public void processAllEvents(IWContext iwc) {
 		try {
 			processBusinessEvent(iwc);
@@ -145,7 +146,7 @@ public class IWEventProcessor implements Singleton {
 					//theServiceDone = true;
 					if (obj instanceof IWModuleEvent) {
 						((IWModuleEvent) obj).setIWContext(iwc);
-					} 
+					}
 					/*else {
 						this.getPage()._setIWContext(iwc);
 					}*/
@@ -311,8 +312,8 @@ public class IWEventProcessor implements Singleton {
 		pathToFile.append(sep);
 		FileUtil.createFolder(pathToFile.toString());
 		int maxSize = iwc.getRequest().getContentLength();
-		System.out.println("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
-		
+		Logger.getLogger(getClass().getName()).info("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
+
 		if(iwc.getRequest() instanceof MultipartWrapper){
 			//oreilly This ONLY supports one file
 		    // Cast the request to a MultipartWrapper
@@ -325,7 +326,7 @@ public class IWEventProcessor implements Singleton {
 	          String fileName = multi.getFilesystemName(name);
 	          String mimetype = multi.getContentType(name);
 	          File f = multi.getFile(name);
-	          
+
 	          if (fileName != null) {
 					pathToFile.append(fileName);
 					String filePath = pathToFile.toString();
@@ -356,9 +357,9 @@ public class IWEventProcessor implements Singleton {
 			FileUploadUtil.handleMyFacesMultiPartRequest(iwc);
 		}
 		else{
-		
+
 			MultipartParser mp = new MultipartParser(iwc.getRequest(), maxSize);
-			/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/ 
+			/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/
 			Part part;
 			while ((part = mp.readNextPart()) != null) {
 				if (part.isParam()) {

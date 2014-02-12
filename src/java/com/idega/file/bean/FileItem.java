@@ -9,6 +9,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -19,6 +20,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.ArrayUtil;
+import com.idega.util.ListUtil;
 
 public class FileItem extends RepositoryItem {
 
@@ -36,25 +38,28 @@ public class FileItem extends RepositoryItem {
 
 	@Override
 	public InputStream getInputStream() throws IOException {
-		if(icFile != null){
+		if (icFile != null) {
 			return icFile.getFileValue();
 		}
+
 		return new FileInputStream(file);
 	}
 
 	@Override
 	public String getName() {
-		if(icFile != null){
+		if (icFile != null) {
 			return icFile.getName();
 		}
+
 		return file.getName();
 	}
 
 	@Override
 	public long getLength() {
-		if(icFile != null){
+		if (icFile != null) {
 			return icFile.getFileSize();
 		}
+
 		return file.length();
 	}
 
@@ -170,5 +175,50 @@ public class FileItem extends RepositoryItem {
 		}
 
 		return true;
+	}
+	
+	@Override
+	public boolean isDirectory() {
+		if (icFile != null) {
+			return false;
+		}
+
+		return file.isDirectory();
+	}
+
+	private List<FileItem> children;
+
+	@Override
+	public List<FileItem> getChildren() {
+		if (children != null) {
+			return children;
+		}
+
+		children = new ArrayList<FileItem>();
+
+		if (icFile != null) {
+			@SuppressWarnings("unchecked")
+			Collection<ICFile> icFileChildren = icFile.getChildren();
+			if (!ListUtil.isEmpty(icFileChildren)) {
+				for (ICFile child: icFileChildren) {
+					children.add(new FileItem(child));
+				}
+			}
+			return children;
+		}
+
+		File[] files = file.listFiles();
+		if (ArrayUtil.isEmpty(files)) {
+			return children;
+		}
+		for (File file: files) {
+			children.add(new FileItem(file));
+		}
+		return children;
+	}
+
+	@Override
+	public String toString() {
+		return "Name: " + getName() + ", directory: " + isDirectory() + ", children: " + getChildren();
 	}
 }

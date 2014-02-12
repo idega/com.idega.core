@@ -207,8 +207,7 @@ public class EmailMessage extends SimpleMessage {
 
 	@Override
 	public String toString() {
-		return new StringBuilder(getSubject()).append(": ").append(getBody()).append("; to: ").append(getToAddress()).append("; from: ").append(getFromAddress())
-		.toString();
+		return "Email's subject: " + getSubject() + "; to: " + getToAddress() + "; from: " + getFromAddress();
 	}
 
 	public void setAttachedFiles(Collection<File> attachedFiles) {

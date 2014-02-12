@@ -33,7 +33,7 @@ public interface IDOHome extends EJBLocalHome {
 
   public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException;
   public <T extends IDOEntity> Collection<T> findByPrimaryKeyCollection(Collection<?> primaryKey) throws FinderException;
-  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys)throws FinderException;
+  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException;
 
   public Object decode(String pkString);
   public Collection<?> decode(String[] primaryKeys);

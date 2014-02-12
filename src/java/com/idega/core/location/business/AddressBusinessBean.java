@@ -3,6 +3,7 @@ package com.idega.core.location.business;
 import java.rmi.RemoteException;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
+
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
@@ -19,6 +20,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -204,6 +206,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 *         point or the whole string if no number is present
 	 */
 	public String getStreetNameFromAddressString(String addressString) {
+		if (StringUtil.isEmpty(addressString)) {
+			return null;
+		}
+
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
 		if (index == -1) {
 			return addressString.trim();
@@ -221,6 +227,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 *         that point or null if no number found
 	 */
 	public String getStreetNumberFromAddressString(String addressString) {
+		if (StringUtil.isEmpty(addressString)) {
+			return null;
+		}
+		
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
 		if (index != -1) {
 			return addressString.substring(index, addressString.length()).trim();

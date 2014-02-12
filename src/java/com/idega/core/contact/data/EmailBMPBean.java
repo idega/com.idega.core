@@ -2,7 +2,9 @@ package com.idega.core.contact.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -23,6 +25,9 @@ import com.idega.data.query.Table;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.UserBMPBean;
+import com.idega.util.CoreConstants;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 /**
  * Title:        IW Core
  * Description:
@@ -142,7 +147,7 @@ public class EmailBMPBean
 	 * @throws RemoteException
 	 *
 	 */
-	public Collection ejbFindEmailsForUser(com.idega.user.data.User user) throws FinderException
+	public Collection<Object> ejbFindEmailsForUser(com.idega.user.data.User user) throws FinderException
 	{
 		Object userId = user.getPrimaryKey();
 		return executeQuery(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, userId);
@@ -155,7 +160,7 @@ public class EmailBMPBean
 	 * @throws FinderException
 	 *
 	 */
-	public Collection ejbFindEmailsForUser(int iUserId) throws FinderException
+	public Collection<Object> ejbFindEmailsForUser(int iUserId) throws FinderException
 	{
 		Object userId = new Integer(iUserId);
 		return executeQuery(com.idega.user.data.User.class, UserBMPBean.SQL_RELATION_EMAIL, userId);
@@ -327,7 +332,6 @@ public class EmailBMPBean
 		query.append("iue.").append(userOrGroupPrimaryKey).appendEqualSign().append(userOrGroupId);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<Integer> ejbFindMainEmailsForUsers(Collection<com.idega.user.data.User> users) throws FinderException {
 		Table emails = new Table(this);
 		SelectQuery query = new SelectQuery(emails);
@@ -349,4 +353,65 @@ public class EmailBMPBean
     	return idoFindPKsByQuery(query);
 	}
 
+	/**
+	 * 
+	 * @param emailAddress is {@link Collection} of {@link Email#getEmailAddress()}, 
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link Email#getPrimaryKey()} or 
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindByEmailAddress(
+			Collection<String> emailAddress) {
+		if (ListUtil.isEmpty(emailAddress)) {
+			return Collections.emptyList();
+		}
+
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this);
+		query.appendWhere().append(SQL_COLUMN_EMAIL);
+		query.appendInForStringCollectionWithSingleQuotes(emailAddress);
+
+		try {
+			return idoFindPKsByQuery(query);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to get primary keys for " + this.getClass().getName() + 
+					" by primary keys: " + query.toString());
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * 
+	 * @param emailAddress is {@link Email#getEmailAddress()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link Email#getPrimaryKey()}s similar to given one, or 
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Object> ejbFindByEmailAddressPart(String emailAddress) {
+		if (StringUtil.isEmpty(emailAddress)) {
+			return Collections.emptyList();
+		}
+
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this)
+		.appendWhere(SQL_COLUMN_EMAIL)
+		.appendLike().append(CoreConstants.QOUTE_SINGLE_MARK).append(CoreConstants.PERCENT)
+		.append(emailAddress)
+		.append(CoreConstants.PERCENT).append(CoreConstants.QOUTE_SINGLE_MARK);
+
+		try {
+			return idoFindPKsByQuery(query);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, 
+					"Failed to get primary keys for " + this.getClass().getName() + 
+					" by primary keys: " + query.toString());
+		}
+
+		return Collections.emptyList();
+	}
 }

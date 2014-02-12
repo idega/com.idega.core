@@ -172,4 +172,9 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 	public boolean isHidden() {
 		return getName().startsWith(CoreConstants.DOT);
 	}
+
+	public boolean isDirectory() {
+		return isCollection();
+	}
+
 }

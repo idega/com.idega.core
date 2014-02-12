@@ -818,7 +818,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	public Object getColumnValue(String columnName) {
 		Object returnObj = null;
 		Object value = getValue(columnName);
-		Class relationClass = this.getRelationShipClass(columnName);
+		Class<? extends IDOEntity> relationClass = this.getRelationShipClass(columnName);
 		if (value instanceof com.idega.data.IDOEntity) {
 			returnObj = value;
 		}
@@ -1066,8 +1066,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns null if the specified column does have a relationship Class
 	 */
-	public Class getRelationShipClass(String columnName) {
-		EntityAttribute column = getColumn(columnName);
+	public Class<? extends IDOEntity> getRelationShipClass(String columnName) {
+		EntityAttribute column = getAttribute(columnName);
 		if (column != null) {
 			return column.getRelationShipClass();
 		}
@@ -3377,7 +3377,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 	}
 
-	public void addManyToManyRelationShip(Class relatingEntityClass) {
+	public void addManyToManyRelationShip(
+			Class<? extends IDOEntity> relatingEntityClass) {
 		addManyToManyRelationShip(relatingEntityClass.getName());
 	}
 
@@ -4266,7 +4267,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns a collection of returningEntity instances
 	 */
-	protected Collection idoGetRelatedEntities(IDOEntity returningEntity, String columnName, String entityColumnValue) throws IDOException {
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(T returningEntity, String columnName, String entityColumnValue) throws IDOException {
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, columnName, entityColumnValue);
 		return this.idoGetRelatedEntitiesBySQL(returningEntity, SQLString);
 	}
@@ -4283,8 +4284,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Returns a collection of returningEntity instances
 	 */
-	protected Collection idoGetRelatedEntitiesOrderedByColumn(Class returningEntityInterfaceClass, String columnName) throws IDOException {
-		IDOEntity returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntitiesOrderedByColumn(Class<T> returningEntityInterfaceClass, String columnName) throws IDOException {
+		T returningEntity = IDOLookup.instanciateEntity(returningEntityInterfaceClass);
 		String SQLString = this.getFindRelatedSQLQuery(returningEntity, null, null, columnName);
 		return this.idoGetRelatedEntitiesBySQL(returningEntityInterfaceClass, SQLString);
 	}
@@ -4296,7 +4297,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if the returningEntity has no relationship defined with this bean
 	 *           or an error with the query
 	 */
-	protected Collection idoGetRelatedEntities(IDOEntity returningEntity) throws IDORelationshipException {
+	protected <T extends IDOEntity> Collection<T> idoGetRelatedEntities(T returningEntity) throws IDORelationshipException {
 		String sqlQuery = this.getFindRelatedSQLQuery(returningEntity, "", "");
 
 		logSQL(sqlQuery);
@@ -4798,6 +4799,52 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
+	 * 
+	 * <p>Removes all relations between this {@link IDOEntity} and 
+	 * entity given as parameter.</p>
+	 * @param entityInterfaceClass
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected void idoRemoveRelationsTo(Class<? extends IDOEntity> entityInterfaceClass) {
+		try {
+			idoRemoveFrom(entityInterfaceClass);
+			getLogger().info("Successfully removed all relations between " + 
+					getClass().getSimpleName() + " by id: '" + 
+					getPrimaryKey() + "' and " + 
+					entityInterfaceClass.getSimpleName());
+		} catch (IDORemoveRelationshipException e) {
+			getLogger().log(Level.WARNING, "Failed to remove relations between " + 
+					getClass().getSimpleName() + " by id: '" + 
+					getPrimaryKey() + "' and " + 
+					entityInterfaceClass.getSimpleName(), e);
+		}
+	}
+	
+	/**
+	 * 
+	 * <p>Removes a record between this and given {@link IDOEntity}s</p>
+	 * @param entity to remove relation between, not <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected void idoRemoveRelationTo(IDOEntity entity) {
+		if (entity != null) {
+			try {
+				removeFrom(entity);
+				getLogger().info("Entity " + entity.getClass().getSimpleName() + 
+						" by id: '" + entity.getPrimaryKey() + 
+						"' removed from relation to " + getClass().getSimpleName() + 
+						" by id: '" + getPrimaryKey() + "'");
+			} catch (SQLException ex) {
+				getLogger().log(Level.WARNING, 
+						"Failed to remove " + entity.getClass().getSimpleName() + 
+						" by id: '" + entity.getPrimaryKey() + 
+						"' from relation to " + getClass().getSimpleName() + 
+						" by id: '" + getPrimaryKey() + "' cause of: ", ex);
+			}
+		}
+	}
+
+	/**
 	 *
 	 * <p>Removes all records from SQL table, which are related to this
 	 * instance of entity object.</p>
@@ -4851,6 +4898,38 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		catch (Exception e) {
 			throw new IDOAddRelationshipException(e, this);
 		}
+	}
+
+	/**
+	 * 
+	 * <p>Adds realtions between current entity and given ones.</p>
+	 * @param entities to add, not <code>null</code>;
+	 * @return <code>true</code> if all entities added, 
+	 * <code>false</code> otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean idoAddTo(Collection<? extends IDOEntity> entities) {
+		if (ListUtil.isEmpty(entities)) {
+			return false;
+		}
+		
+		for (IDOEntity entity: entities) {
+			try {
+				idoAddTo(entity);
+				getLogger().info("Relation between " + 
+						getClass().getName() + " by id: '" + getPrimaryKey() + "' and " + 
+						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() + "' added!");
+			} catch (IDOAddRelationshipException e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to add relation between " + getClass().getName() +
+						" by id: '" + getPrimaryKey() + "' and " + 
+						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() + 
+						"' cause of: ", e);
+				return false;
+			}
+		}
+
+		return true;
 	}
 
 	protected void idoAddTo(IDOEntity entity, String middleTableName) throws IDOAddRelationshipException {

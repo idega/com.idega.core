@@ -1,19 +1,31 @@
 package com.idega.core.accesscontrol.data;
 
+import java.io.Serializable;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
+import com.idega.data.IDOLookup;
+import com.idega.data.IDOLookupException;
 import com.idega.data.IDORelationshipException;
+import com.idega.data.SimpleQuerier;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.Order;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.user.data.User;
+import com.idega.user.data.UserHome;
+import com.idega.util.ArrayUtil;
+import com.idega.util.ListUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  * Title: idegaclasses Description: Copyright: Copyright (c) 2001 Company:
@@ -139,7 +151,7 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		setColumn(getColumnLoginAsUser(), user);
 	}
 
-	public Collection ejbFindAllLoginRecords(int loginID) throws FinderException {
+	public Collection<?> ejbFindAllLoginRecords(int loginID) throws FinderException {
 		String sql = "select * from " + this.getTableName() + " where " + LoginRecordBMPBean.getColumnLoginId() + " = " + loginID;
 		System.out.println("----------------");
 		System.out.println(sql);
@@ -153,7 +165,7 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 	}
 
 	public Integer ejbFindByLoginID(int loginID) throws FinderException {
-		Collection loginRecords = idoFindAllIDsByColumnOrderedBySQL(LoginRecordBMPBean.getColumnLoginId(), loginID);
+		Collection<?> loginRecords = idoFindAllIDsByColumnOrderedBySQL(LoginRecordBMPBean.getColumnLoginId(), loginID);
 		if (!loginRecords.isEmpty()) {
 			return (Integer) loginRecords.iterator().next();
 		}
@@ -208,6 +220,55 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		query.addOrder(new Order(table.getColumn(getColumnInStamp()), false));
 
 		return idoFindOnePKByQuery(query);
+	}
+
+	public Map<User, Date> ejbFindLastLoginRecordsForAllUsers() throws FinderException, IDOLookupException {
+		String query = "select l.ic_user_id, max(r.IN_STAMP) from IC_LOGIN_REC r, ic_login l where r.ic_login_id = l.ic_login_id group by l.IC_USER_ID";
+		List<Serializable[]> data = null;
+		try {
+			data = SimpleQuerier.executeQuery(query, 2);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		if (ListUtil.isEmpty(data)) {
+			return null;
+		}
+
+		Map<Integer, Date> usersIdsAndDates = new HashMap<Integer, Date>();
+		for (Serializable[] dataPair: data) {
+			if (ArrayUtil.isEmpty(dataPair)) {
+				continue;
+			}
+			if (dataPair.length != 2) {
+				continue;
+			}
+
+			Serializable userId = dataPair[0];
+			Serializable date = dataPair[1];
+			if (userId instanceof Number && date instanceof Date) {
+				usersIdsAndDates.put(((Number) userId).intValue(), (Date) date);
+			}
+		}
+		if (MapUtil.isEmpty(usersIdsAndDates)) {
+			return null;
+		}
+
+		UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
+		Collection<User> users = userHome.findByPrimaryKeyCollection(usersIdsAndDates.keySet());
+		if (ListUtil.isEmpty(users)) {
+			return null;
+		}
+
+		Map<User, Date> lastLogins = new HashMap<User, Date>();
+		for (User user: users) {
+			Date date = usersIdsAndDates.get(Integer.valueOf(user.getId()));
+			if (date == null) {
+				continue;
+			}
+
+			lastLogins.put(user, date);
+		}
+		return lastLogins;
 	}
 
 	public Object ejbFindPreviousLoginRecord(LoginRecord record) throws FinderException {

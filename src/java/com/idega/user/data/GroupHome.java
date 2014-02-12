@@ -10,6 +10,7 @@
 package com.idega.user.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Locale;
 
 import javax.ejb.CreateException;
@@ -150,7 +151,15 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroups
 	 */
 	public Collection<Group> findGroups(String[] groupIDs) throws FinderException;
-	public Collection<Group> findGroups(Collection<String> groupIDs) throws FinderException;
+	
+	/**
+	 * 
+	 * @param groupIDs is {@link Collection} of {@link Group#getPrimaryKey()}s,
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public Collection<Group> findGroups(Collection<String> groupIDs);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByType

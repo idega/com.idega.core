@@ -7,6 +7,8 @@
  */
 package com.idega.data;
 
+import java.util.Collection;
+
 import javax.ejb.CreateException;
 import javax.ejb.EntityBean;
 import javax.ejb.FinderException;
@@ -43,6 +45,6 @@ public interface IDOEntityBean extends EntityBean {
 /**
  * @return Set
  */
-  public java.util.Collection getAttributes();
+  public Collection<EntityAttribute> getAttributes();
 
 }

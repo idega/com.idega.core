@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 
 import javax.jcr.RepositoryException;
+import java.util.List;
 
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.StringHandler;
@@ -101,4 +102,8 @@ public class EmptyItem extends RepositoryItem {
 	public boolean createNewFile() throws IOException, RepositoryException {
 		return false;
 	}
+	public List<EmptyItem> getChildren() {
+		return null;
+	}
+
 }

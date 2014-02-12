@@ -156,14 +156,13 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	protected ViewNode getDirectChild(String realChildId){
 		ViewNode theReturn = getChildrenMap().get(realChildId);
-		if(theReturn==null){
+		if (theReturn == null) {
 			theReturn = loadChild(realChildId);
-			if(theReturn!=null){
+			if (theReturn != null) {
 				getChildrenMap().put(realChildId,theReturn);
 				return theReturn;
 			}
-		}
-		else{
+		} else {
 			return theReturn;
 		}
 		return null;

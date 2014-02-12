@@ -19,6 +19,8 @@ import com.idega.util.EncryptionType;
 
 public class LoginTableBMPBean extends GenericEntity implements LoginTable, EncryptionType {
 
+	private static final long serialVersionUID = -581639181444967671L;
+
 	public static String className = LoginTable.class.getName();
 	public static String _COLUMN_PASSWORD = "USR_PASSWORD";
 	private static final String ENTITY_NAME = "IC_LOGIN";
@@ -27,9 +29,9 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	private static final String COLUMN_LAST_CHANGED = "LAST_CHANGED";
 	private static final String COLUMN_CHANGED_BY_USER = "CHANGED_BY_USER_ID";
 	private static final String COLUMN_CHANGED_BY_GROUP = "CHANGED_BY_GROUP_ID";
-	
+
 	private static final String COLUMN_COUNT_SENT_TO_BANK = "bank_count";
-	
+
 	private static final String COLUMN_LOGIN_TYPE = "LOGIN_TYPE";
 	private transient String unEncryptedUserPassword;
 
@@ -45,19 +47,19 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		addAttribute(getLoginTypeColumnName(), "Login type", true, true, String.class, 32);
 		addAttribute(COLUMN_CHANGED_BY_USER, "Last changed by user id", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(COLUMN_CHANGED_BY_GROUP, "Last changed by group id", true, true, Integer.class, "many-to-one", Group.class);
-		
+
 		addAttribute(COLUMN_COUNT_SENT_TO_BANK, "bank count", Integer.class);
-		
+
 		setNullable(getUserLoginColumnName(), false);
 		setUnique(getUserLoginColumnName(), true);
-		
+
 		addIndex("IDX_LOGIN_REC_2", getUserIDColumnName());
 		addIndex("IDX_LOGIN_REC_3", new String[]{getUserIDColumnName(), getLoginTypeColumnName()});
 		addIndex("IDX_LOGIN_REC_4", new String[]{getUserIDColumnName(), getUserLoginColumnName()});
 		addIndex("IDX_LOGIN_REC_5", getUserLoginColumnName());
-	    
+
 		getEntityDefinition().setBeanCachingActiveByDefault(true);
-		
+
 	}
 
 	@Override
@@ -105,6 +107,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	/**
 	 * just sets the password column value as this string without encoding.
 	 */
+	@Override
 	public void setUserPasswordInClearText(String password) {
 		setColumn(getNewUserPasswordColumnName(), password);
 	}
@@ -112,10 +115,12 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	/**
 	 * just returns the password column value as is.
 	 */
+	@Override
 	public String getUserPasswordInClearText() {
 		return getStringColumnValue(getNewUserPasswordColumnName());
 	}
 
+	@Override
 	public String getUserPassword() {
 		String str = null;
 		try {
@@ -169,6 +174,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		return str;
 	}
 
+	@Override
 	public void setUserPassword(String userPassword) {
 		try {
 			String str = "";
@@ -193,91 +199,111 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		}
 	}
 
+	@Override
 	public void setUserLogin(String userLogin) {
 		setColumn(getUserLoginColumnName(), userLogin);
 	}
 
+	@Override
 	public String getUserLogin() {
 		return getStringColumnValue(getUserLoginColumnName());
 	}
 
+	@Override
 	public int getUserId() {
 		return getIntColumnValue(getUserIDColumnName());
 	}
 
+	@Override
 	public User getUser() {
 		return (User) getColumnValue(getUserIDColumnName());
 	}
 
+	@Override
 	public void setUserId(Integer userId) {
 		setColumn(getUserIDColumnName(), userId);
 	}
 
+	@Override
 	public void setUserId(int userId) {
 		setColumn(getUserIDColumnName(), userId);
 	}
 
+	@Override
 	public void setUser(User user){
 		Integer userId = (Integer)user.getPrimaryKey();
 		setUserId(userId);
 	}
-	
+
 	public static String getUserIDColumnName() {
 		return UserBMPBean.getColumnNameUserID();
 	}
 
+	@Override
 	public void setChangedByGroup(Group group){
 		setColumn(COLUMN_CHANGED_BY_GROUP, group);
 	}
-	
+
+	@Override
 	public void setChangedByGroupId(int changedByGroupId){
 		setColumn(COLUMN_CHANGED_BY_GROUP, changedByGroupId);
 	}
-	
+
+	@Override
 	public int getChangedByGroupId(){
 		return getIntColumnValue(COLUMN_CHANGED_BY_GROUP);
 	}
-	
+
+	@Override
 	public Group getChangedByGroup(){
 		return (Group) getColumnValue(COLUMN_CHANGED_BY_GROUP);
 	}
-	
+
+	@Override
 	public void setChangedByUser(User changedByUser){
 		setColumn(COLUMN_CHANGED_BY_USER, changedByUser);
 	}
-	
+
+	@Override
 	public void setChangedByUserId(int changedByUserId){
 		setColumn(COLUMN_CHANGED_BY_USER, changedByUserId);
 	}
-	
+
+	@Override
 	public int getChangedByUserId(){
 		return getIntColumnValue(COLUMN_CHANGED_BY_USER);
 	}
-	
+
+	@Override
 	public User getChangedByUser(){
 		return (User) getColumnValue(COLUMN_CHANGED_BY_USER);
 	}
-	
+
+	@Override
 	public void setLastChanged(Timestamp when) {
 		setColumn(getLastChangedColumnName(), when);
 	}
 
+	@Override
 	public Timestamp getLastChanged() {
 		return ((Timestamp) getColumnValue(getLastChangedColumnName()));
 	}
 
+	@Override
 	public void setBankCount(int bankCount) {
 		setColumn(COLUMN_COUNT_SENT_TO_BANK, bankCount);
 	}
-	
+
+	@Override
 	public int getBankCount() {
 		return getIntColumnValue(COLUMN_COUNT_SENT_TO_BANK, 2);
 	}
-	
+
 	/**
 	 * Sets both the intented encrypted password and the original unencrypted
 	 * password for temporary retrieval
 	 */
+	@Override
 	public void setUserPassword(String encryptedPassword, String unEncryptedPassword) {
 		this.unEncryptedUserPassword = unEncryptedPassword;
 		this.setUserPassword(encryptedPassword);
@@ -288,6 +314,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	 * be retrieved , if this is not a newly created record the exception
 	 * PasswordNotKnown is thrown
 	 */
+	@Override
 	public String getUnencryptedUserPassword() throws PasswordNotKnown {
 		if (this.unEncryptedUserPassword == null) {
 			throw new PasswordNotKnown(this.getUserLogin());
@@ -297,57 +324,59 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		}
 	}
 
+	@Override
 	public void setLoginType(String loginType) {
 		setColumn(getLoginTypeColumnName(), loginType);
 	}
 
+	@Override
 	public String getLoginType() {
 		return getStringColumnValue(getLoginTypeColumnName());
 	}
-	
+
 	public Object ejbFindLoginForUser(User user) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, user));
-		
+
 		return idoFindOnePKByQuery(query);
 	}
 
 	public Collection ejbFindLoginsForUser(User user) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, user));
-		
+
 		return idoFindPKsByQuery(query);
 	}
 
 	public Object ejbFindLoginForUser(int userID) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, userID));
-		
+
 		return idoFindOnePKByQuery(query);
 	}
 
 	public Collection ejbFindLoginsForUser(int userID) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, userID));
-		
+
 		return idoFindPKsByQuery(query);
 	}
-	
+
 	public int ejbHomeGetNumberOfLogins(String userName) throws IDOException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(new CountColumn(table, getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getUserLoginColumnName()), MatchCriteria.EQUALS, userName));
@@ -357,13 +386,13 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 
 	/**
 	 * Gets the <code>LoginTable</code> object for the given login.
-	 * 
+	 *
 	 * @param login
 	 * @return
 	 * @throws FinderException
 	 */
 	public Object ejbFindByLogin(String login) throws FinderException {
-		
+
 		//try to find it cached:
 		Collection cachedEntities = this.getCachedEntities();
 		for (Iterator iter = cachedEntities.iterator(); iter.hasNext();) {
@@ -377,7 +406,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 				}
 			}
 		}
-		
+
 		//if it is not found in the cache query the database:
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
@@ -386,12 +415,12 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 
 		return idoFindOnePKByQuery(query);
 	}
-	
+
 	public Object ejbFindByUserAndLogin(User user, String login) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
-		query.addColumn(table.getColumn(getIDColumnName()));	
+		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getUserLoginColumnName()), MatchCriteria.EQUALS, login));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, user));
 
@@ -400,7 +429,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 
 	public Object ejbFindByUserAndType(User user, String loginType) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getLoginTypeColumnName()), MatchCriteria.EQUALS, loginType));
@@ -415,15 +444,15 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	 * </p>
 	 * @param userID
 	 * @return
-	 * @throws FinderException 
+	 * @throws FinderException
 	 */
 	public Object ejbFindDefaultLoginForUser(int userID) throws FinderException {
 		Table table = new Table(this);
-		
+
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(table.getColumn(getIDColumnName()));
 		query.addCriteria(new MatchCriteria(table.getColumn(getColumnNameUserID()), MatchCriteria.EQUALS, userID));
-		query.addCriteria(new MatchCriteria(table.getColumn(getLoginTypeColumnName()), MatchCriteria.IS,(String)null));		
+		query.addCriteria(new MatchCriteria(table.getColumn(getLoginTypeColumnName()), MatchCriteria.IS,(String)null));
 		return idoFindOnePKByQuery(query);
 	}
 

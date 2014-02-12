@@ -10,9 +10,14 @@
 package com.idega.core.accesscontrol.data;
 
 import java.util.Collection;
+import java.util.Date;
+import java.util.Map;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOException;
 import com.idega.data.IDOHome;
+import com.idega.data.IDOLookupException;
 import com.idega.user.data.User;
 
 
@@ -21,7 +26,7 @@ import com.idega.user.data.User;
  * TODO laddi Describe Type LoginRecordHome
  * </p>
  *  Last modified: $Date: 2006/02/16 12:48:50 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.8 $
  */
@@ -34,7 +39,7 @@ public interface LoginRecordHome extends IDOHome {
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbFindAllLoginRecords
 	 */
-	public Collection findAllLoginRecords(int loginID) throws FinderException;
+	public Collection<LoginRecord> findAllLoginRecords(int loginID) throws FinderException;
 
 	/**
 	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbHomeGetNumberOfLoginsByLoginID
@@ -65,4 +70,13 @@ public interface LoginRecordHome extends IDOHome {
 	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbFindPreviousLoginRecord
 	 */
 	public LoginRecord findPreviousLoginRecord(LoginRecord record) throws FinderException;
+
+	/**
+	 * User
+	 * Date: last login date
+	 *
+	 * @return
+	 * @throws FinderException
+	 */
+	public Map<User, Date> getLastLoginRecordsForAllUsers() throws FinderException, IDOLookupException;
 }

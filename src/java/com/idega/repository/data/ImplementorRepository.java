@@ -3,6 +3,7 @@ package com.idega.repository.data;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+
 import com.idega.util.ArrayUtil;
 import com.idega.util.datastructures.HashMatrix;
 
@@ -16,30 +17,35 @@ import com.idega.util.datastructures.HashMatrix;
  * Created on Jun 14, 2004
  */
 public class ImplementorRepository implements Singleton {
-	
-	private static Instantiator instantiator = new Instantiator() { public Object getInstance() { return new ImplementorRepository();}};
-	
+
+	private static Instantiator instantiator = new Instantiator() {
+		@Override
+		public Object getInstance() {
+			return new ImplementorRepository();
+		}
+	};
+
 	private static final String GENERAL = "general";
-	
+
 	static public ImplementorRepository getInstance() {
 		return (ImplementorRepository) SingletonRepository.getRepository().getInstance(ImplementorRepository.class, instantiator);
 	  }
-	
-	private HashMatrix interfaceCallerImplementor = null;
-	
+
+	private HashMatrix<String, String, List<String>> interfaceCallerImplementor = null;
+
 	protected ImplementorRepository(){
 		// should not be initialized by constructor
-	} 
-	
-	public void  addImplementorForCaller(Class interfaceClass, Class callerClass, Class implementorClass) {
+	}
+
+	public <T, C, I extends T> void addImplementorForCaller(Class<T> interfaceClass, Class<C> callerClass, Class<I> implementorClass) {
 		if (this.interfaceCallerImplementor == null) {
-			this.interfaceCallerImplementor = new HashMatrix();
+			this.interfaceCallerImplementor = new HashMatrix<String, String, List<String>>();
 		}
 		String interfaceClassName = interfaceClass.getName();
 		String callerClassName = (callerClass == null) ? GENERAL : callerClass.getName();
 		String implementorClassName = implementorClass.getName();
 		if (this.interfaceCallerImplementor.containsKey(interfaceClassName, callerClassName)) {
-			List implementorNames = (List) this.interfaceCallerImplementor.get(interfaceClassName, callerClassName);
+			List<String> implementorNames = this.interfaceCallerImplementor.get(interfaceClassName, callerClassName);
 			if (implementorNames.contains(implementorClassName)) {
 				// already added
 				return;
@@ -49,30 +55,30 @@ public class ImplementorRepository implements Singleton {
 		}
 		else{
 			// new entry
-			List implementorNames = new ArrayList(1);
+			List<String> implementorNames = new ArrayList<String>(1);
 			implementorNames.add(implementorClassName);
 			this.interfaceCallerImplementor.put(interfaceClassName, callerClassName, implementorNames);
 		}
 	}
-	
-	public void addImplementor(Class interfaceClass, Class implementationClass) {
+
+	public <T, I extends T> void addImplementor(Class<T> interfaceClass, Class<I> implementationClass) {
 		addImplementorForCaller(interfaceClass, null, implementationClass);
 	}
-	
-	public Object newInstance(Class interfaceClass, Class callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-		List implementors = getValidImplementorClasses(interfaceClass, callerClass);
+
+	public <T, I extends T, C> I newInstance(Class<T> interfaceClass, Class<C> callerClass) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+		List<Class<I>> implementors = getValidImplementorClasses(interfaceClass, callerClass);
 		// get the first one
 		if (implementors == null) {
 			throw new ClassNotFoundException("[ImplementorRepository] ImImplementor for interface " + interfaceClass.getName() + "could not be found");
 		}
-		Class implementorClass = (Class) implementors.get(0);
+		Class<I> implementorClass = implementors.get(0);
 		return implementorClass.newInstance();
 	}
-	
-	public Object newInstanceOrNull(Class interfaceClass, Class callerClass) {
+
+	public <T, I extends T, C> I newInstanceOrNull(Class<T> interfaceClass, Class<C> callerClass) {
 		try {
 			return newInstance(interfaceClass, callerClass);
-		} 
+		}
 		catch (ClassNotFoundException e) {
 			return null;
 		}
@@ -83,20 +89,20 @@ public class ImplementorRepository implements Singleton {
 			return null;
 		}
 	}
-	
-	public List  newInstances(Class interfaceClass, Class callerClass) {
-		List implementors = getValidImplementorClasses(interfaceClass, callerClass);
-		List instances = null;
+
+	public <T, I extends T> List<I> newInstances(Class<T> interfaceClass, Class<?> callerClass) {
+		List<Class<I>> implementors = getValidImplementorClasses(interfaceClass, callerClass);
+		List<I> instances = null;
 		if (implementors == null) {
 			// return empty list
-			return new ArrayList(0);
+			return new ArrayList<I>(0);
 		}
-		instances = new ArrayList(implementors.size());
-		Iterator iterator = implementors.iterator();
-		while (iterator.hasNext()) {
-			Class aClass = (Class) iterator.next();
+		instances = new ArrayList<I>(implementors.size());
+
+		for (Iterator<Class<I>> iterator = implementors.iterator(); iterator.hasNext();) {
+			Class<I> aClass = iterator.next();
 			try {
-				Object object = aClass.newInstance();
+				I object = aClass.newInstance();
 				instances.add(object);
 			}
 			catch (InstantiationException e) {
@@ -108,24 +114,22 @@ public class ImplementorRepository implements Singleton {
 		}
 		return instances;
 	}
-	
-	public Class getAnyClassImpl(Class interfaceClass, Class callerClass) {
-		List validClasses = getValidImplementorClasses(interfaceClass, callerClass);
+
+	public <T, I extends T, C> Class<I> getAnyClassImpl(Class<T> interfaceClass, Class<C> callerClass) {
+		List<Class<I>> validClasses = getValidImplementorClasses(interfaceClass, callerClass);
 		if (validClasses == null || validClasses.isEmpty()) {
 			return null;
 		}
-		return (Class) validClasses.get(0);
+		return validClasses.get(0);
 	}
-		
-	
-	
+
 	/**
-	 * 
+	 *
 	 * @param interfaceClass
 	 * @param callerClass
 	 * @return null or a non-empty list
 	 */
-	private List getImplementorNames(Class interfaceClass, Class callerClass) {
+	private <T, C> List<String> getImplementorNames(Class<T> interfaceClass, Class<C> callerClass) {
 		if (this.interfaceCallerImplementor == null) {
 			return null;
 		}
@@ -134,24 +138,23 @@ public class ImplementorRepository implements Singleton {
 		if (! this.interfaceCallerImplementor.containsKey(interfaceClassName, callerClassName)) {
 			callerClassName = GENERAL;
 		}
-		List implementors = (List) this.interfaceCallerImplementor.get(interfaceClassName, callerClassName);
+		List<String> implementors = this.interfaceCallerImplementor.get(interfaceClassName, callerClassName);
 		if (implementors == null || implementors.isEmpty()) {
 			return null;
 		}
 		return implementors;
 	}
-	
-	private List getValidImplementorClasses(Class interfaceClass, Class callerClass) {
-		List names = getImplementorNames(interfaceClass, callerClass);
+
+	public <T, I extends T, C> List<Class<I>> getValidImplementorClasses(Class<T> interfaceClass, Class<C> callerClass) {
+		List<String> names = getImplementorNames(interfaceClass, callerClass);
 		if (names == null) {
 			return null;
 		}
-		List classes = new ArrayList(names.size());
-		Iterator iterator = names.iterator();
-		while (iterator.hasNext()) {
-			String name = (String) iterator.next();
+		List<Class<I>> classes = new ArrayList<Class<I>>(names.size());
+		for (Iterator<String> iterator = names.iterator(); iterator.hasNext();) {
+			String name = iterator.next();
 			try {
-				Class implementorClass = RefactorClassRegistry.forName(name);
+				Class<I> implementorClass = RefactorClassRegistry.forName(name);
 				classes.add(implementorClass);
 			}
 			catch (ClassNotFoundException e) {
@@ -164,27 +167,27 @@ public class ImplementorRepository implements Singleton {
 		}
 		return classes;
 	}
-	
 
-	/** 
+
+	/**
 	 * Checks if the caller class is considered to be of the specified type.
 	 * Use that method only for interfaces that are used as flags like Clonable.
 	 * If that method returns true it doesn't mean that you can cast an instance of
 	 * the callerClass to the specified class.
-	 * If you are going to perform a cast use the instanceOf check. 
+	 * If you are going to perform a cast use the instanceOf check.
 	 * @param interfaceClass
 	 * @param callerClass
-	 * @return true if the callerClass is considered to be of the specified type. 
+	 * @return true if the callerClass is considered to be of the specified type.
 	 */
-	public boolean isTypeOf(Class interfaceClass, Class callerClass) {
-		// first part: 
+	public <T, I extends T, C> boolean isTypeOf(Class<T> interfaceClass, Class<C> callerClass) {
+		// first part:
 		// does the same like "instanceOf"
 		//
 		// get all super classes and check for the interface
-		List classes = new ArrayList(); 
-		Class superClass = callerClass;
+		List<Class<?>> classes = new ArrayList<Class<?>>();
+		Class<?> superClass = callerClass;
 		while (superClass != null) {
-			Class[] interfaces = superClass.getInterfaces();
+			Class<?>[] interfaces = superClass.getInterfaces();
 			if (ArrayUtil.contains(interfaces,interfaceClass)) {
 				// if the method is left at the place a cast could be done
 				return true;
@@ -195,19 +198,17 @@ public class ImplementorRepository implements Singleton {
 		// second part:
 		// not found? check if there are some registered implementors that are considered as interface implementors
 		// Important note: You can't cast the caller to that type! You can only check if that class is of that type.
-		List implementorClasses = getValidImplementorClasses(interfaceClass, callerClass);
+		List<Class<I>> implementorClasses = getValidImplementorClasses(interfaceClass, callerClass);
 		if (implementorClasses == null) {
 			return false;
 		}
-		Iterator iterator = implementorClasses.iterator();
-		while (iterator.hasNext()) {
-			Class implementor = (Class) iterator.next();
+		for (Iterator<Class<I>> iterator = implementorClasses.iterator(); iterator.hasNext();) {
+			Class<I> implementor = iterator.next();
 			if (classes.contains(implementor)) {
 				return true;
 			}
 		}
-		return false;		
+		return false;
 	}
-	
 
 }

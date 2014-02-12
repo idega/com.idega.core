@@ -145,8 +145,12 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.location.data.PostalCodeHome#update(java.lang.Object, java.lang.String, java.lang.String)
+	 */
 	@Override
-	public List<PostalCode> update(Object primaryKey, String postalCode) {
+	public List<PostalCode> update(Object primaryKey, String postalCode, String name) {
 		List<PostalCode> postalCodes = new ArrayList<PostalCode>();
 		
 		/* Trying by primary key */
@@ -172,7 +176,7 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 		}
 		
 		/* If nothing found, creating new one */
-		if (ListUtil.isEmpty(postalCodes)) {
+		if (ListUtil.isEmpty(postalCodes) && !StringUtil.isEmpty(postalCode)) {
 			PostalCode postal = null;
 			try {
 				postal = create();
@@ -188,10 +192,40 @@ public class PostalCodeHomeImpl extends IDOFactory implements PostalCodeHome {
 		if (!StringUtil.isEmpty(postalCode)) {
 			for (PostalCode pc : postalCodes) {
 				pc.setPostalCode(postalCode);
+				pc.setName(name);
 				pc.store();
 			}
 		}
 
 		return postalCodes;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.location.data.PostalCodeHome#findUpdatedByPostalCode(java.util.Collection)
+	 */
+	@Override
+	public List<PostalCode> findUpdatedByPostalCode(Collection<String> codes) {
+		if (ListUtil.isEmpty(codes)) {
+			return Collections.emptyList();
+		}
+
+		/* Collections are mutable, so better copy it */
+		ArrayList<String> zipCodes = new ArrayList<String>(codes);
+
+		/* Getting existing postal codes */
+		Collection<PostalCode> postalCodeEntities = findByPostalCode(codes);
+
+		/* Removing found postal codes */
+		for (PostalCode code : postalCodeEntities) {
+			zipCodes.remove(code.getPostalCode());
+		}
+
+		/* Creating postal codes, which not existed */
+		for (String zipCode: zipCodes) {
+			postalCodeEntities.addAll(update(null, zipCode, null));
+		}
+
+		return new ArrayList<PostalCode>(postalCodeEntities);
 	}
 }

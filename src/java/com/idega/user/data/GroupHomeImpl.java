@@ -22,6 +22,7 @@ import com.idega.core.builder.data.ICDomain;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
 import com.idega.util.ArrayUtil;
+import com.idega.util.ListUtil;
 
 /**
  *
@@ -255,13 +256,28 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	public Collection<Group> findGroups(String[] groupIDs) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroups(groupIDs);
-		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupHome#findGroups(java.util.Collection)
+	 */
 	@Override
-	public Collection<Group> findGroups(Collection<String> groupIDs) throws FinderException {
-		return findGroups(ArrayUtil.convertListToArray(groupIDs));
+	public Collection<Group> findGroups(Collection<String> groupIDs) {
+		if (ListUtil.isEmpty(groupIDs)) {
+			return Collections.emptyList();
+		}
+		
+		try {
+			return findGroups(ArrayUtil.convertListToArray(groupIDs));
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).warning(
+					"Failed to get " + getEntityInterfaceClass().getSimpleName() + 
+					" by id's: '" + groupIDs +  "'");
+		}
+
+		return Collections.emptyList();
 	}
 
 	@Override

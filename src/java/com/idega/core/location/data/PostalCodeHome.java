@@ -27,13 +27,14 @@ public interface PostalCodeHome extends IDOHome {
 	/**
 	 * 
 	 * @param primaryKey is {@link PostalCode#getPrimaryKey()};
-	 * @param postalCode is {@link PostalCode#getPostalCode()};
+	 * @param postalCode is {@link PostalCode#getPostalCode()}, not <code>null</code>;
+	 * @param name is {@link PostalCode#getName()}, what is city of that postal code;
 	 * @return created or found {@link PostalCode}s by given 
 	 * {@link PostalCode#getPostalCode()} or {@link Collections#emptyList()}
 	 * on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public List<PostalCode> update(Object primaryKey, String postalCode);
+	public List<PostalCode> update(Object primaryKey, String postalCode, String name);
 
 	public PostalCode findByPrimaryKey(Object pk) throws FinderException;
 
@@ -48,6 +49,18 @@ public interface PostalCodeHome extends IDOHome {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<PostalCode> findByPostalCode(Collection<String> codes);
+
+	/**
+	 * 
+	 * <p>Finds all {@link PostalCode}s, by given postal codes and creates new
+	 * one's if some of them are missing.</p>
+	 * @param codes is {@link PostalCode#getPostalCode()} of codes to find or 
+	 * update, not <code>null</code>;
+	 * @return found/updated postalCodes or {@link Collections#emptyList()} 
+	 * on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public List<PostalCode> findUpdatedByPostalCode(Collection<String> codes);
 
 	public PostalCode findByPostalCode(String code) throws FinderException;
 
