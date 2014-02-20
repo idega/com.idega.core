@@ -230,6 +230,22 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 
 	/**
 	 * 
+	 * @return {@link Set} of different {@link IDOHome}s or 
+	 * {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected <T extends IDOEntity> Set<? extends IDOHome> getHomesForSubtypes() {
+		Collection<Class<? extends IDOEntity>> subTypes = CoreUtil.getSubTypesOf(
+				getEntityInterfaceClass(), true);
+		if (!ListUtil.isEmpty(subTypes)) {
+			return getHomesForSubtypes(subTypes);
+		}
+
+		return Collections.emptySet();
+	}
+	
+	/**
+	 * 
 	 * @param subTypes is {@link IDOEntity}s to get {@link IDOHome}s for, 
 	 * not <code>null</code>;
 	 * @return {@link Set} of different {@link IDOHome}s or 
