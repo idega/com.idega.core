@@ -4,8 +4,10 @@
  */
 package com.idega.presentation;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.StringReader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -19,12 +21,22 @@ import java.util.regex.Pattern;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.OutputKeys;
+import javax.xml.transform.Transformer;
+import javax.xml.transform.TransformerFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.transform.stream.StreamResult;
 
 import org.jdom2.Attribute;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.Namespace;
 import org.springframework.web.context.support.WebApplicationContextUtils;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
@@ -32,6 +44,7 @@ import com.idega.presentation.util.RenderUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.PresentationUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
@@ -59,6 +72,8 @@ import com.idega.util.xml.XmlUtil;
  * an idegaWeb Page.
  */
 public class HtmlPage extends Page {
+	
+	private Boolean addTemplateFilesAtEnd = null;
 
 	private static final Logger LOGGER = Logger.getLogger(HtmlPage.class.getName());
 
@@ -271,7 +286,44 @@ public class HtmlPage extends Page {
 		String[] headClosesSplit = headClosesPattern.split(postHeadOpens);
 		String headContent = headClosesSplit[0];
 		String body = headClosesSplit[1];
-
+		
+		if(isAddTemplateFilesAtEnd(iwc)){
+			ArrayList<String> styles = new ArrayList<String>();
+			try {
+				DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
+			    DocumentBuilder builder = factory.newDocumentBuilder();
+			    InputSource is = new InputSource(new StringReader("<head>"+headContent+"</head>"));
+			    org.w3c.dom.Document document = builder.parse(is);
+			    Node head = document.getFirstChild();
+			    NodeList nodes = head.getChildNodes();
+			    int length = nodes.getLength();
+			    ByteArrayOutputStream stream = new ByteArrayOutputStream();
+			    Transformer transformer = TransformerFactory.newInstance().newTransformer();
+				transformer.setOutputProperty(OutputKeys.INDENT, "yes");
+				transformer.setOutputProperty(OutputKeys.METHOD, "xml");
+				transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
+				ArrayList<Node> nodesToRemove = new ArrayList<Node>();
+			    for(int i = 0;i < length;i++){
+			    	Node node = nodes.item(i);
+			    	if("link".equalsIgnoreCase(node.getNodeName())){
+			    		String uri = node.getAttributes().getNamedItem("href").getNodeValue();
+				    	styles.add(uri);
+				    	nodesToRemove.add(node);
+				    	continue;
+			    	}
+			    }
+			    for(Node node : nodesToRemove){
+			    	head.removeChild(node);
+			    }
+			    transformer.transform(new DOMSource(document), new StreamResult(stream));
+			    headContent= stream.toString();
+			    headContent = headContent.substring(6);
+			    headContent = headContent.substring(0, headContent.length() - 8);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "failed", e);
+			}
+			PresentationUtil.addStyleSheetsToHeader(iwc, styles);
+		}
 		//	Get the contents from the superclass first
 		out.write(getHeadContents(ctx));
 		Script associatedScript = getAssociatedScript();
@@ -540,4 +592,12 @@ public class HtmlPage extends Page {
 		}
 		return this.facetMap;
 	}
+
+	private boolean isAddTemplateFilesAtEnd(IWContext iwc) {
+		if(addTemplateFilesAtEnd == null){
+			addTemplateFilesAtEnd = iwc.getApplicationSettings().getBoolean("add-template-files-at-end", false);
+		}
+		return addTemplateFilesAtEnd;
+	}
+
 }
