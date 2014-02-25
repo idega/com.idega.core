@@ -12,6 +12,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
 public class AddressBMPBean extends com.idega.data.GenericEntity implements Address {
@@ -128,7 +129,9 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	@Override
 	public void setStreetName(String street_name) {
 		setColumn(ORIGINAL_STREET_NAME, street_name);
-		setColumn(STREET_NAME, street_name.toUpperCase());
+		if (!StringUtil.isEmpty(street_name)) {
+			setColumn(STREET_NAME, street_name.toUpperCase());
+		}
 	}
 
 	@Override

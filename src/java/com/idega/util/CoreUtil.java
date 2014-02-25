@@ -176,10 +176,10 @@ public class CoreUtil {
 	}
 
 	public static boolean sendExceptionNotification(final String message, final Throwable exception) {
-		return sendExceptionNotification(message, exception, null);
+		return sendExceptionNotification(message, exception, new File[0]);
 	}
 
-	public static boolean sendExceptionNotification(final String message, final Throwable exception, final File[] attachments) {
+	public static boolean sendExceptionNotification(final String message, final Throwable exception, final File... attachments) {
 		RequestResponseProvider reqResProvider = null;
 		try {
 			reqResProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
