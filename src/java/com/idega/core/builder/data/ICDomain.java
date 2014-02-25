@@ -1,18 +1,21 @@
 package com.idega.core.builder.data;
 
 
-import java.util.Locale;
-import com.idega.data.IDORelationshipException;
-import java.util.Collection;
-import javax.ejb.FinderException;
 import java.rmi.RemoteException;
+import java.util.Collection;
+import java.util.Locale;
+
+import javax.ejb.FinderException;
+
 import com.idega.data.IDOEntity;
+import com.idega.data.IDORelationshipException;
+import com.idega.user.data.Group;
 
 public interface ICDomain extends IDOEntity {
-	
+
 	public static final String TYPE_DEFAULT="default";
 	public static final String TYPE_SUBDOMAIN="subdomain";
-	
+
 	/**
 	 * @see com.idega.core.builder.data.ICDomainBMPBean#getStartPage
 	 */
@@ -66,7 +69,7 @@ public interface ICDomain extends IDOEntity {
 	/**
 	 * @see com.idega.core.builder.data.ICDomainBMPBean#getTopLevelGroupsUnderDomain
 	 */
-	public Collection getTopLevelGroupsUnderDomain() throws IDORelationshipException, RemoteException, FinderException;
+	public Collection<Group> getTopLevelGroupsUnderDomain() throws IDORelationshipException, RemoteException, FinderException;
 
 	/**
 	 * @see com.idega.core.builder.data.ICDomainBMPBean#setIBPage
@@ -161,8 +164,8 @@ public interface ICDomain extends IDOEntity {
 	public int getID();
 
 	public boolean isDefaultDomain();
-	
+
 	public String getServerAliases();
-	
+
 	public void setServerAliases(String aliases);
 }

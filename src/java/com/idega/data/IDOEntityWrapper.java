@@ -248,7 +248,7 @@ public abstract class IDOEntityWrapper implements IDOEntityBean {
 	}
 
 	@Override
-	public Collection getAttributes() {
+	public Collection<EntityAttribute> getAttributes() {
 		//	TODO - implement
 		throw new UnsupportedOperationException("Not yet implemented");
 	}

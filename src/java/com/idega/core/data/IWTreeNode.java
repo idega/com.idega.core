@@ -2,6 +2,7 @@ package com.idega.core.data;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 
 import com.idega.idegaweb.IWApplicationContext;
@@ -10,12 +11,12 @@ import com.idega.util.CoreConstants;
  * <p>Company: idegaweb </p>
  * @author aron
  */
-public class IWTreeNode implements ICTreeNodeAddable {
+public class IWTreeNode implements ICTreeNodeAddable<IWTreeNode> {
 
 	protected static final String PATH_DELIMITER = CoreConstants.HASH;
 
-	ICTreeNode parent = null;
-	ArrayList childs = null;
+	ICTreeNode<IWTreeNode> parent = null;
+	List<IWTreeNode> childs = null;
 	String Name = "";
 	//Object object = null;
 	String path = null;
@@ -30,12 +31,12 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		this(name,ID,null);
 	}
 
-	public IWTreeNode(String name,int iID,ICTreeNodeAddable parent){
+	public IWTreeNode(String name,int iID,ICTreeNodeAddable<IWTreeNode> parent){
 		this(name,Integer.toString(iID),parent);
 	}
 
-	public IWTreeNode(String name,String sID,ICTreeNodeAddable parent){
-			this.childs = new ArrayList();
+	public IWTreeNode(String name,String sID,ICTreeNodeAddable<IWTreeNode> parent){
+			this.childs = new ArrayList<IWTreeNode>();
 			this.Name = name;
 			//this.object = object;
 			//this.ID = ID;
@@ -65,7 +66,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	}
 
 	@Override
-	public void setParent(ICTreeNode parent){
+	public void setParent(ICTreeNode<IWTreeNode> parent){
 		this.parent = parent;
 	}
 
@@ -73,8 +74,8 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNodeAddable#addChild(ICTreeNodeAddable)
 	 */
 	@Override
-	public void addChild(ICTreeNodeAddable child) {
-		this.childs.add(child);
+	public void addChild(ICTreeNodeAddable<IWTreeNode> child) {
+		this.childs.add((IWTreeNode) child);
 		child.setParent(this);
 	}
 
@@ -85,16 +86,16 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNode#getChildren()
 	 */
 	@Override
-	public Collection getChildren() {
+	public Collection<IWTreeNode> getChildren() {
 		return this.childs;
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#getChildrenIterator()
 	 */
 	@Override
-	public Iterator getChildrenIterator() {
-	    Iterator it = null;
-	    Collection children = getChildren();
+	public Iterator<IWTreeNode> getChildrenIterator() {
+	    Iterator<IWTreeNode> it = null;
+	    Collection<IWTreeNode> children = getChildren();
 	    if (children != null) {
 	        it = children.iterator();
 	    }
@@ -111,8 +112,8 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNode#getChildAtIndex(int)
 	 */
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex) {
-		return (ICTreeNode) this.childs.get(childIndex);
+	public IWTreeNode getChildAtIndex(int childIndex) {
+		return this.childs.get(childIndex);
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#getChildCount()
@@ -125,15 +126,15 @@ public class IWTreeNode implements ICTreeNodeAddable {
 	 * @see com.idega.core.ICTreeNode#getIndex(ICTreeNode)
 	 */
 	@Override
-	public int getIndex(ICTreeNode node) {
+	public int getIndex(IWTreeNode node) {
 		return this.childs.indexOf(node);
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#getParentNode()
 	 */
 	@Override
-	public ICTreeNode getParentNode() {
-		return this.parent;
+	public IWTreeNode getParentNode() {
+		return (IWTreeNode) this.parent;
 	}
 	/**
 	 * @see com.idega.core.ICTreeNode#isLeaf()
@@ -181,7 +182,7 @@ public class IWTreeNode implements ICTreeNodeAddable {
 		return this.path;
 	}
 
-	private String generatePath(ICTreeNode node){
+	private String generatePath(IWTreeNode node){
 		if(node.getParentNode()!=null ){
 			return  generatePath(node.getParentNode())+ PATH_DELIMITER +node.getNodeName();
 		}

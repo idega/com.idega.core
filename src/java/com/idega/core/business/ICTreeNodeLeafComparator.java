@@ -14,7 +14,7 @@ import com.idega.core.data.ICTreeNode;
  * @version 1.0
  */
 
-public class ICTreeNodeLeafComparator implements Comparator {
+public class ICTreeNodeLeafComparator<Node extends ICTreeNode<?>> implements Comparator<Node> {
 
   boolean _leafsFirst = false;
 
@@ -26,17 +26,16 @@ public class ICTreeNodeLeafComparator implements Comparator {
     this._leafsFirst = leafsFirst;
   }
 
-  public int compare(Object o1, Object o2) {
-      ICTreeNode p1 = (ICTreeNode) o1;
-      ICTreeNode p2 = (ICTreeNode) o2;
+  @Override
+public int compare(Node n1, Node n2) {
       int result = 0;
 
-      boolean p1Leaf = p1.isLeaf();
-      boolean p2Leaf = p2.isLeaf();
+      boolean n1Leaf = n1.isLeaf();
+      boolean n2Leaf = n2.isLeaf();
 
-      if(p1Leaf == p2Leaf){
+      if(n1Leaf == n2Leaf){
         result = 0;
-      } else if(p1Leaf){
+      } else if(n1Leaf){
         result = (this._leafsFirst)?-1:1;
       } else {
         result = (this._leafsFirst)?1:-1;
@@ -46,7 +45,8 @@ public class ICTreeNodeLeafComparator implements Comparator {
   }
 
 
-  public boolean equals(Object obj) {
+  @Override
+public boolean equals(Object obj) {
     /**@todo: Implement this java.util.Comparator method*/
     throw new java.lang.UnsupportedOperationException("Method equals() not yet implemented.");
   }

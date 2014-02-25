@@ -1,7 +1,9 @@
 package com.idega.core.data;
 
+import com.idega.data.TreeableEntity;
 
-public interface ICBusiness extends com.idega.data.TreeableEntity
+
+public interface ICBusiness extends TreeableEntity<ICBusiness>
 {
  public java.sql.Timestamp getCreated();
  public java.lang.String getDescription();

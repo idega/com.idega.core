@@ -3,15 +3,15 @@ package com.idega.core.file.data;
 import java.util.Collection;
 
 import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDORemoveRelationshipException;
+import com.idega.data.MetaDataCapable;
+import com.idega.data.TreeableEntity;
 import com.idega.io.serialization.Storable;
 import com.idega.repository.data.Resource;
 import com.idega.user.data.User;
 
-
-
-public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity,com.idega.data.MetaDataCapable, Resource, Storable
-{
+public interface ICFile extends IDOEntity, TreeableEntity<ICFile>, MetaDataCapable, Resource, Storable {
  public final static String UFN_NAME = "NAME";
  public java.sql.Timestamp getCreationDate();
  public boolean getDeleted();
@@ -29,6 +29,7 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public java.sql.Timestamp getModificationDate();
  public java.lang.String getName();
  public void initializeAttributes();
+ @Override
  public boolean isLeaf();
  public void setCreationDate(java.sql.Timestamp p0);
  public void setDeleted(boolean p0);
@@ -50,11 +51,17 @@ public interface ICFile extends com.idega.data.IDOEntity,com.idega.data.Treeable
  public void setLocalizationKey(String key);
  public void setFileUri(String uri);
  public String getFileUri();
- 
+
  	public Collection<User> getDownloadedBy();
 	public void addDownloadedBy(User downloader) throws IDOAddRelationshipException;
 	public void removeDownloadedBy(User downloader) throws IDORemoveRelationshipException;
-	
+
 	public Integer getHash();
 	public void setHash(Integer hash);
+
+	@Override
+	public ICFile getParentNode();
+	
+	@Override
+	public int getIndex(ICFile node);
 }

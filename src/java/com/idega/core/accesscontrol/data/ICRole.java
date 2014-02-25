@@ -1,7 +1,10 @@
 package com.idega.core.accesscontrol.data;
 
+import com.idega.data.IDOEntity;
+import com.idega.data.TreeableEntity;
 
-public interface ICRole extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity
+
+public interface ICRole extends IDOEntity, TreeableEntity<ICRole>
 {
  public java.lang.String getRoleDescriptionLocalizableKey();
  public java.lang.String getRoleKey();

@@ -32,7 +32,6 @@ import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDORuntimeException;
 import com.idega.data.IDOStoreException;
 import com.idega.data.MetaDataCapable;
-import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
@@ -61,7 +60,7 @@ import com.idega.util.ListUtil;
  * @version 1.0
  */
 
-public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, TreeableEntity, MetaDataCapable, Resource, Storable{
+public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFile, MetaDataCapable, Resource, Storable {
 
 	private static final long serialVersionUID = 6911355143485852117L;
 
@@ -422,15 +421,15 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 			e.printStackTrace(System.err);
 		}
 
-		ICFile file = (ICFile)getParentNode();
+		ICFile file = getParentNode();
 		if (file != null) {
 			file.removeChild(this);
 		}
 
-		Iterator iter = getChildrenIterator();
+		Iterator<ICFile> iter = getChildrenIterator();
 		if (iter != null) {
 			while (iter.hasNext()) {
-				ICFile item = (ICFile)iter.next();
+				ICFile item = iter.next();
 				item.delete();
 			}
 		}
@@ -467,15 +466,15 @@ public class ICFileBMPBean extends TreeableEntityBMPBean implements ICFile, Tree
 	 */
 	@Override
 	public void superDelete() throws SQLException {
-		ICFile file = (ICFile)getParentNode();
+		ICFile file = getParentNode();
 		if (file != null) {
 			file.removeChild(this);
 		}
 
-		Iterator iter = getChildrenIterator();
+		Iterator<ICFile> iter = getChildrenIterator();
 		if (iter != null) {
 			while (iter.hasNext()) {
-				ICFile item = (ICFile)iter.next();
+				ICFile item = iter.next();
 				item.superDelete();
 			}
 		}

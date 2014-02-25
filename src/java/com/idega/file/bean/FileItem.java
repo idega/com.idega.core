@@ -15,7 +15,6 @@ import java.util.logging.Logger;
 
 import javax.jcr.RepositoryException;
 
-import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.repository.bean.RepositoryItem;
@@ -132,10 +131,8 @@ public class FileItem extends RepositoryItem {
 	}
 
 	@Override
-	public <T extends ICTreeNode> T getParenItem() {
-		@SuppressWarnings("unchecked")
-		T item = (T) new FileItem(file.getParentFile());
-		return item;
+	public RepositoryItem getParenItem() {
+		return new FileItem(file.getParentFile());
 	}
 
 	@Override
@@ -176,7 +173,7 @@ public class FileItem extends RepositoryItem {
 
 		return true;
 	}
-	
+
 	@Override
 	public boolean isDirectory() {
 		if (icFile != null) {
@@ -186,18 +183,17 @@ public class FileItem extends RepositoryItem {
 		return file.isDirectory();
 	}
 
-	private List<FileItem> children;
+	private List<RepositoryItem> children;
 
 	@Override
-	public List<FileItem> getChildren() {
+	public List<RepositoryItem> getChildren() {
 		if (children != null) {
 			return children;
 		}
 
-		children = new ArrayList<FileItem>();
+		children = new ArrayList<RepositoryItem>();
 
 		if (icFile != null) {
-			@SuppressWarnings("unchecked")
 			Collection<ICFile> icFileChildren = icFile.getChildren();
 			if (!ListUtil.isEmpty(icFileChildren)) {
 				for (ICFile child: icFileChildren) {

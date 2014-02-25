@@ -89,12 +89,12 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public List<RepositoryItemVersionInfo> getVersions(String parentPath, String fileName) throws RepositoryException;
 
 	public <T extends RepositoryItem> T getRepositoryItem(String path) throws RepositoryException;
-	public RepositoryItem getRepositoryItem(User user, String path) throws RepositoryException;
+	public <T extends RepositoryItem> T getRepositoryItem(User user, String path) throws RepositoryException;
 	public <T extends RepositoryItem> T getRepositoryItemAsRootUser(String path) throws RepositoryException;
 
-	public Collection<RepositoryItem> getChildNodes(User user, String path) throws RepositoryException;
-	public Collection<RepositoryItem> getChildNodesAsRootUser(String path) throws RepositoryException;
-	public Collection<RepositoryItem> getChildResources(String path) throws RepositoryException;
+	public <T extends RepositoryItem> Collection<T> getChildNodes(User user, String path) throws RepositoryException;
+	public <T extends RepositoryItem> Collection<T> getChildNodesAsRootUser(String path) throws RepositoryException;
+	public <T extends RepositoryItem> Collection<T> getChildResources(String path) throws RepositoryException;
 
 	public boolean isFolder(String path) throws RepositoryException;
 
@@ -134,7 +134,7 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public Lock lock(String path, boolean isDeep, boolean isSessionScoped) throws RepositoryException;
 	public void unLock(String path) throws RepositoryException;
 
-	public List<RepositoryItem> getSiblingResources(String path) throws RepositoryException;
+	public <T extends RepositoryItem> List<T> getSiblingResources(String path) throws RepositoryException;
 
 	public void logout(Session session);
 

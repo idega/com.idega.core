@@ -14,17 +14,17 @@ import com.idega.idegaweb.IWApplicationContext;
 *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
 *@version 1.0
 */
-public interface ICTreeNode {
+public interface ICTreeNode<T> {
 
 	/**
 	 * Returns the children of the receiver as an Collection.
 	 */
-	public <T extends ICTreeNode> Collection<T> getChildren();
+	public Collection<T> getChildren();
 
 	/**
 	 * Returns the children of the receiver as an Enumeration.
 	 */
-	public <T extends ICTreeNode> Iterator<T> getChildrenIterator();
+	public Iterator<T> getChildrenIterator();
 	/**
 	 *  Returns true if the receiver allows children.
 	 */
@@ -33,7 +33,7 @@ public interface ICTreeNode {
 	/**
 	 *  Returns the child TreeNode at index childIndex.
 	 */
-	public <T extends ICTreeNode> T getChildAtIndex(int childIndex);
+	public T getChildAtIndex(int childIndex);
 
 	/**
 	 *    Returns the number of children TreeNodes the receiver contains.
@@ -43,12 +43,12 @@ public interface ICTreeNode {
 	/**
 	 * Returns the index of node in the receivers children.
 	 */
-	public int getIndex(ICTreeNode node);
+	public int getIndex(T node);
 
 	/**
 	 *  Returns the parent TreeNode of the receiver.
 	 */
-	public <T extends ICTreeNode> T getParentNode();
+	public T getParentNode();
 
 	/**
 	 *  Returns true if the receiver is a leaf.
@@ -69,7 +69,6 @@ public interface ICTreeNode {
 	 *  @return Returns the name of the Node localized from the bundle, if localization possible, else it returns getNodeName(Locale locale)
 	 */
 	public String getNodeName(Locale locale, IWApplicationContext iwac);
-
 
 	/**
 	 * @deprecated Replaced with getId()

@@ -21,7 +21,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 
-public abstract class RepositoryItem implements ICTreeNode, Serializable {
+public abstract class RepositoryItem implements ICTreeNode<RepositoryItem>, Serializable {
 
 	private static final long serialVersionUID = -5591183900265522785L;
 
@@ -45,10 +45,10 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 
 	public abstract boolean delete() throws IOException;
 
-	public abstract <T extends ICTreeNode> T getParenItem();
+	public abstract RepositoryItem getParenItem();
 
-	public abstract <T extends RepositoryItem> Collection<T> getChildResources();
-	public abstract <T extends RepositoryItem> Collection<T> getSiblingResources();
+	public abstract Collection<RepositoryItem> getChildResources();
+	public abstract Collection<RepositoryItem> getSiblingResources();
 
 	public abstract boolean isCollection();
 
@@ -76,17 +76,18 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 		return getPath();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
-	public <T extends ICTreeNode> Collection<T> getChildren() {
-		Collection<RepositoryItem> children = getChildResources();
-		return (Collection<T>) children;
+	public Collection<RepositoryItem> getChildren() {
+		return getChildResources();
 	}
 
 	@Override
-	public <T extends ICTreeNode> Iterator<T> getChildrenIterator() {
-		Collection<T> children = getChildren();
-		return ListUtil.isEmpty(children) ? null : children.iterator();
+	public Iterator<RepositoryItem> getChildrenIterator() {
+		Collection<RepositoryItem> children = getChildren();
+		if (children == null) {
+			return null;
+		}
+		return children.iterator();
 	}
 
 	@Override
@@ -95,36 +96,36 @@ public abstract class RepositoryItem implements ICTreeNode, Serializable {
 	}
 
 	@Override
-	public <T extends ICTreeNode> T getChildAtIndex(int childIndex) {
-		Collection<T> children = getChildren();
+	public RepositoryItem getChildAtIndex(int childIndex) {
+		Collection<RepositoryItem> children = getChildren();
 		if (ListUtil.isEmpty(children))
 			return null;
 
 		if (childIndex >= children.size())
 			return null;
 
-		List<T> childrenList = new ArrayList<T>(children);
+		List<RepositoryItem> childrenList = new ArrayList<RepositoryItem>(children);
 		return childrenList.get(childIndex);
 	}
 
 	@Override
 	public int getChildCount() {
-		Collection<? extends ICTreeNode> children = getChildren();
+		Collection<RepositoryItem> children = getChildren();
 		return ListUtil.isEmpty(children) ? 0 : children.size();
 	}
 
 	@Override
-	public int getIndex(ICTreeNode node) {
-		Collection<? extends ICTreeNode> children = getChildren();
+	public int getIndex(RepositoryItem node) {
+		Collection<RepositoryItem> children = getChildren();
 		if (ListUtil.isEmpty(children))
 			return -1;
 
-		List<? extends ICTreeNode> childrenList = new ArrayList<ICTreeNode>(children);
+		List<RepositoryItem> childrenList = new ArrayList<RepositoryItem>(children);
 		return childrenList.indexOf(node);
 	}
 
 	@Override
-	public <T extends ICTreeNode> T getParentNode() {
+	public RepositoryItem getParentNode() {
 		return getParenItem();
 	}
 

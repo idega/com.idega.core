@@ -7,12 +7,12 @@ package com.idega.core.data;
 *@version 1.0
 */
 
-public interface ICTreeNodeAddable extends ICTreeNode {
-		
+public interface ICTreeNodeAddable<Node extends ICTreeNode<?>> extends ICTreeNode<Node> {
+
 	/**
  	*  Adds a child to this nodes children.
  	*/
-	public void addChild(ICTreeNodeAddable child);
-	
-	public void setParent(ICTreeNode parent);
+	public void addChild(ICTreeNodeAddable<Node> child);
+
+	public void setParent(ICTreeNode<Node> parent);
 }

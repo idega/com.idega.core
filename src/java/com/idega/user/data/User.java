@@ -11,18 +11,16 @@ import javax.ejb.EJBException;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
-import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
 import com.idega.data.IDOAddRelationshipException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOReportableEntity;
 
-
-public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group,com.idega.core.user.data.User, IDOReportableEntity
-{
+public interface User extends IDOEntity, Group, com.idega.core.user.data.User, IDOReportableEntity {
 
  public static final String FIELD_USER_ID = "IC_USER_ID";
  public static final String FIELD_FIRST_NAME = "FIRST_NAME";
@@ -70,7 +68,7 @@ public void setFirstName(java.lang.String p0);
  @Override
 public void addGroup(com.idega.user.data.Group p0)throws javax.ejb.EJBException;
  @Override
-public <U extends ICTreeNode> U getChildAtIndex(int p0);
+public Group getChildAtIndex(int p0);
  @Override
 public void setGender(int p0);
  @Override
@@ -82,8 +80,7 @@ public java.lang.String getFirstName();
  public void removeAddress(com.idega.core.location.data.Address p0)throws com.idega.data.IDORemoveRelationshipException;
  @Override
 public int getSystemImageID();
- @Override
-public int getIndex(com.idega.core.data.ICTreeNode p0);
+public int getIndex(User p0);
  @Override
 public void setSystemImageID(java.lang.Integer p0);
  @Override
@@ -105,8 +102,8 @@ public boolean isLeaf();
  public void setFullName(java.lang.String p0);
  public void removeEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDORemoveRelationshipException;
  public List<Group> getListOfAllGroupsContaining(int p0)throws javax.ejb.EJBException;
- @Override
-public <U extends ICTreeNode> Iterator<U> getChildrenIterator();
+@Override
+public Iterator<Group> getChildrenIterator();
  public Collection<Address> getAddresses();
  @Override
 public boolean isUser();
@@ -155,7 +152,7 @@ public void addGroup(int p0)throws javax.ejb.EJBException;
 public List<Group> getChildGroups()throws javax.ejb.EJBException;
  public com.idega.user.data.Group getUserGroup();
  @Override
-public <U extends ICTreeNode> U getParentNode();
+public User getParentNode();
  @Override
 public java.lang.String getDisplayName();
  public void removeUser(com.idega.user.data.User p0);

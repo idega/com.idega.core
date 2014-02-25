@@ -21,7 +21,7 @@ import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
-import com.idega.core.data.ICTreeNode;
+import com.idega.core.data.GenericGroupBMPBean;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
@@ -64,7 +64,7 @@ import com.idega.util.expression.ELUtil;
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * @version 1.0
  */
-public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implements Group, ICTreeNode, MetaDataCapable, UniqueIDCapable {
+public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaDataCapable, UniqueIDCapable {
 
 	private static final long serialVersionUID = -5276962419455614341L;
 
@@ -1567,7 +1567,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	public Group getChildAtIndex(int childIndex) {
 		try {
 			return ((GroupHome) this.getEJBLocalHome()).findByPrimaryKey(new Integer(childIndex));
 		}
@@ -1606,7 +1606,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	@Override
-	public int getIndex(ICTreeNode node) {
+	public int getIndex(Group node) {
 		return node.getNodeID();
 	}
 
@@ -1614,8 +1614,8 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	 * @todo reimplement
 	 */
 	@Override
-	public ICTreeNode getParentNode() {
-		ICTreeNode parent = null;
+	public Group getParentNode() {
+		Group parent = null;
 		try {
 			parent = this.getParentGroups().iterator().next();
 		}
@@ -1654,7 +1654,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 
 	@Override
 	public int getSiblingCount() {
-		ICTreeNode parent = getParentNode();
+		Group parent = getParentNode();
 		if (parent != null) {
 			return parent.getChildCount();
 		}
@@ -1787,7 +1787,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 			groupID = Integer.valueOf(primaryKey);
 		} catch (NumberFormatException e) {
 			getLogger().warning(
-					"Failed to convert " + primaryKey + 
+					"Failed to convert " + primaryKey +
 					" to " + Integer.class.getSimpleName());
 		}
 
@@ -1804,7 +1804,7 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 	}
 
 	@Override
-	public void removeGroup(int relatedGroupId, User currentUser, 
+	public void removeGroup(int relatedGroupId, User currentUser,
 			boolean allEntries, Timestamp time) throws EJBException {
 		try {
 			Collection<GroupRelation> rels = null;

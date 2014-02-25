@@ -46,7 +46,7 @@ import com.idega.idegaweb.IWApplicationContext;
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.51 $
  */
-public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDCapable {
+public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable {
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
@@ -412,13 +412,13 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getChildrenIterator
 	 */
 	@Override
-	public <G extends ICTreeNode> Iterator<G> getChildrenIterator();
+	public Iterator<Group> getChildrenIterator();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildren
 	 */
 	@Override
-	public <G extends ICTreeNode> Collection<G> getChildren();
+	public Collection<Group> getChildren();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAllowsChildren
@@ -430,7 +430,7 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getChildAtIndex
 	 */
 	@Override
-	public <G extends ICTreeNode> G getChildAtIndex(int childIndex);
+	public Group getChildAtIndex(int childIndex);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildCount
@@ -442,13 +442,13 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	 * @see com.idega.user.data.GroupBMPBean#getIndex
 	 */
 	@Override
-	public int getIndex(ICTreeNode node);
+	public int getIndex(Group group);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentNode
 	 */
 	@Override
-	public <G extends ICTreeNode> G getParentNode();
+	public Group getParentNode();
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#isLeaf

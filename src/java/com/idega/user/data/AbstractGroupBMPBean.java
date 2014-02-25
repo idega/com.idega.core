@@ -11,7 +11,6 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
-import com.idega.core.data.ICTreeNode;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOEntity;
@@ -563,7 +562,7 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return this.getGeneralGroup().getAllowsChildren();
 	}
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	public Group getChildAtIndex(int childIndex) {
 		return this.getGeneralGroup().getChildAtIndex(childIndex);
 	}
 	@Override
@@ -571,11 +570,11 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return this.getGeneralGroup().getChildCount();
 	}
 	@Override
-	public int getIndex(ICTreeNode node) {
+	public int getIndex(Group node) {
 		return this.getGeneralGroup().getIndex(node);
 	}
 	@Override
-	public ICTreeNode getParentNode() {
+	public Group getParentNode() {
 		return this.getGeneralGroup().getParentNode();
 	}
 	@Override

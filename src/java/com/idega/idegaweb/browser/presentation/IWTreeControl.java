@@ -1,5 +1,6 @@
 package com.idega.idegaweb.browser.presentation;
 
+import com.idega.core.data.ICTreeNode;
 import com.idega.event.IWPresentationEvent;
 import com.idega.presentation.ui.AbstractTreeViewer;
 
@@ -12,7 +13,7 @@ import com.idega.presentation.ui.AbstractTreeViewer;
  * @version 1.0
  */
 
-public abstract class IWTreeControl extends AbstractTreeViewer implements IWBrowserView {
+public abstract class IWTreeControl<Node extends ICTreeNode<?>> extends AbstractTreeViewer<Node> implements IWBrowserView {
 
   private String _controlTarget = null;
   private IWPresentationEvent _contolEvent = null;
@@ -22,12 +23,14 @@ public abstract class IWTreeControl extends AbstractTreeViewer implements IWBrow
   }
 
 
-  public void setControlTarget(String controlTarget){
+  @Override
+public void setControlTarget(String controlTarget){
     this.setOpenCloseLinkTarget(controlTarget);
     this._controlTarget = controlTarget;
   }
 
-  public void setControlEventModel(IWPresentationEvent model){
+  @Override
+public void setControlEventModel(IWPresentationEvent model){
     this._contolEvent = model;
     this.addEventModel(model);
   }
@@ -39,14 +42,5 @@ public abstract class IWTreeControl extends AbstractTreeViewer implements IWBrow
   public String getControlTarget(){
     return this._controlTarget;
   }
-
-
-
-//  public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
-//    /**@todo: implement this com.idega.presentation.ui.AbstractTreeViewer abstract method*/
-//    return PresentationObject.NULL_CLONE_OBJECT;
-//
-//  }
-
 
 }

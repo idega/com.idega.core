@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
@@ -32,7 +32,7 @@ import com.idega.idegaweb.IWApplicationContext;
 	@NamedQuery(name = "groupType.findByType", query = "select t from GroupType t where t.groupType = :groupType"),
 	@NamedQuery(name = "groupType.findAllVisibleTypes", query = "select t from GroupType t where t.isVisible != 'N'")
 })
-public class GroupType implements Serializable, ICTreeNode {
+public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	private static final long serialVersionUID = 3574509217562528319L;
 
@@ -248,64 +248,78 @@ public class GroupType implements Serializable, ICTreeNode {
 	public void setOnlySupportsSameChildType(boolean onlySupportsSameChildType) {
 		this.onlySupportsSameChildType = onlySupportsSameChildType ? 'Y' : 'N';
 	}
-	
+
 	/* ICTreeNode implementation */
+	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
 
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	@Override
+	public GroupType getChildAtIndex(int childIndex) {
 		return children.get(childIndex);
 	}
 
+	@Override
 	public int getChildCount() {
 		return children.size();
 	}
-	
-	public Collection getChildren() {
+
+	@Override
+	public Collection<GroupType> getChildren() {
 		return children;
 	}
-	
-	public Iterator getChildrenIterator() {
+
+	@Override
+	public Iterator<GroupType> getChildrenIterator() {
 		return children.iterator();
 	}
-	
+
+	@Override
 	public String getId() {
 		return getGroupType();
 	}
 
-	public int getIndex(ICTreeNode node) {
+	@Override
+	public int getIndex(GroupType node) {
 		return Integer.parseInt(node.getId());
 	}
-	
+
+	@Override
 	public int getNodeID() {
 		return -1;
 	}
-	
+
+	@Override
 	public String getNodeName() {
 		return getGroupType();
 	}
 
+	@Override
 	public String getNodeName(Locale locale) {
 		return getNodeName();
 	}
 
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return getNodeName(locale);
 	}
-	
-	public ICTreeNode getParentNode() {
+
+	@Override
+	public GroupType getParentNode() {
 		return parent;
 	}
-	
+
+	@Override
 	public int getSiblingCount() {
-		ICTreeNode parent = getParentNode();
+		GroupType parent = getParentNode();
 		if (parent != null) {
 			return parent.getChildCount() - 1;
 		}
 		return 0;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		return children == null || children.isEmpty();
 	}

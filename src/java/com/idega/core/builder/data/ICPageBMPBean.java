@@ -28,6 +28,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
+import com.idega.data.TreeableEntityBMPBean;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.query.Column;
 import com.idega.data.query.Criteria;
@@ -48,7 +49,7 @@ import com.idega.util.IWTimestamp;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.3
  */
-public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.builder.data.ICPage, Storable, Resource, UniqueIDCapable {
+public class ICPageBMPBean extends TreeableEntityBMPBean<ICPage> implements ICPage, Storable, Resource, UniqueIDCapable {
 
 	private static final long serialVersionUID = 5624201999388048294L;
 	private final static String ENTITY_NAME = "IB_PAGE";

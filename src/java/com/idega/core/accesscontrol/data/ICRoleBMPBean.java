@@ -3,7 +3,6 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
-import com.idega.data.TreeableEntity;
 import com.idega.data.TreeableEntityBMPBean;
 
 /**
@@ -15,7 +14,7 @@ import com.idega.data.TreeableEntityBMPBean;
  * @version 1.0
  */
 
-public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,TreeableEntity {
+public class ICRoleBMPBean extends TreeableEntityBMPBean<ICRole> implements ICRole {
 
 	private static final long serialVersionUID = 8325923589332383177L;
 
@@ -29,7 +28,7 @@ public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,Treea
 	 * @see com.idega.data.IDOEntityBean#getPrimaryKeyClass()
 	 */
 	@Override
-	public Class getPrimaryKeyClass() {
+	public Class<String> getPrimaryKeyClass() {
 		return String.class;
 	}
 
@@ -65,7 +64,7 @@ public class ICRoleBMPBean extends TreeableEntityBMPBean implements ICRole,Treea
 		return COLUMN_ROLE_NAME_LOCALIZABLE_KEY;
 	}
 
-	public Collection ejbFindAllRoles() throws FinderException{
+	public Collection<ICRole> ejbFindAllRoles() throws FinderException{
 		return super.idoFindAllIDsBySQL();
 	}
 

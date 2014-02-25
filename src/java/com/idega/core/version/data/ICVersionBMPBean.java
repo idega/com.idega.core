@@ -15,7 +15,6 @@ import java.util.Locale;
 
 import javax.ejb.FinderException;
 
-import com.idega.core.data.ICTreeNode;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -32,7 +31,7 @@ import com.idega.user.data.User;
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		1.0
  */
-public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTreeNode{
+public class ICVersionBMPBean extends GenericEntity implements ICVersion {
 
 	private final static String COLUMNNAME_PARENT_VERSION_ID = "parent_version_id";
 	private final static String COLUMNNAME_PARENT_HISTORY_ID = "parent_history_id";
@@ -44,7 +43,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	private final static String COLUMNNAME_IC_ITEM_ID = "ic_item_id";
 
 	/**
-	 * 
+	 *
 	 */
 	public ICVersionBMPBean() {
 		super();
@@ -61,10 +60,12 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.data.IDOLegacyEntity#getEntityName()
 	 */
+	@Override
 	public String getEntityName() {
 		return "ic_version";
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(COLUMNNAME_NAME, "Name", true, true, String.class);
@@ -82,6 +83,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public int getCreatedByUserID() {
 		return this.getIntColumnValue(COLUMNNAME_CREATED_BY_USER);
 	}
@@ -89,6 +91,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public User getCreatedByUser() {
 		return (User)this.getColumnValue(COLUMNNAME_CREATED_BY_USER);
 	}
@@ -96,6 +99,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public Timestamp getCreatedTimestamp() {
 		return (Timestamp)this.getColumnValue(COLUMNNAME_CREATED_TIMESTAMP);
 	}
@@ -103,6 +107,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public String getDescription() {
 		return this.getStringColumnValue(COLUMNNAME_DESCRIPTION);
 	}
@@ -110,6 +115,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public String getName() {
 		return this.getStringColumnValue(COLUMNNAME_NAME);
 	}
@@ -117,6 +123,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public String getNumber() {
 		return this.getStringColumnValue(COLUMNNAME_NUMBER);
 	}
@@ -124,6 +131,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public int getParentVersionID() {
 		return this.getIntColumnValue(COLUMNNAME_PARENT_VERSION_ID);
 	}
@@ -131,6 +139,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @return
 	 */
+	@Override
 	public ICVersion getParentVersion() {
 		return (ICVersion)this.getColumnValue(COLUMNNAME_PARENT_VERSION_ID);
 	}
@@ -138,6 +147,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param userID
 	 */
+	@Override
 	public void setCreatedByUser(int userID) {
 		this.setColumn(COLUMNNAME_CREATED_BY_USER, userID);
 	}
@@ -145,6 +155,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param user
 	 */
+	@Override
 	public void setCreatedByUser(User user) {
 		this.setColumn(COLUMNNAME_CREATED_BY_USER, user);
 	}
@@ -152,6 +163,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param time
 	 */
+	@Override
 	public void setCreatedTimestamp(Timestamp time) {
 		this.setColumn(COLUMNNAME_CREATED_TIMESTAMP, time);
 	}
@@ -159,6 +171,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param desc
 	 */
+	@Override
 	public void setDescription(String desc) {
 		this.setColumn(COLUMNNAME_DESCRIPTION, desc);
 	}
@@ -166,6 +179,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param name
 	 */
+	@Override
 	public void setName(String name) {
 		this.setColumn(COLUMNNAME_NAME, name);
 	}
@@ -173,6 +187,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param number
 	 */
+	@Override
 	public void setNumber(String number) {
 		this.setColumn(COLUMNNAME_NUMBER, number);
 	}
@@ -180,6 +195,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param versionID
 	 */
+	@Override
 	public void setParentVersionID(int versionID) {
 		this.setColumn(COLUMNNAME_PARENT_VERSION_ID, versionID);
 	}
@@ -187,51 +203,53 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/**
 	 * @param version
 	 */
+	@Override
 	public void setParentVersion(ICVersion version) {
 		this.setColumn(COLUMNNAME_PARENT_VERSION_ID, version);
 	}
 
 
-	
+
 	//Home begins
 	public Collection ejbFindChildrens(ICVersion version) throws FinderException{
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(version);
 		query.appendWhereEquals(COLUMNNAME_PARENT_VERSION_ID,version.getPrimaryKey());
-			
-		return this.idoFindPKsByQuery(query);	
+
+		return this.idoFindPKsByQuery(query);
 	}
-	
-	
+
+
 	public int ejbHomeGetChildrenCount(ICVersion version) throws IDOException{
 		IDOQuery query = idoQuery();
 		query.appendSelectCountFrom(version);
 		query.appendWhereEquals(COLUMNNAME_PARENT_VERSION_ID,version.getPrimaryKey());
-		
-		return this.idoGetNumberOfRecords(query);	
+
+		return this.idoGetNumberOfRecords(query);
 	}
-	
+
 	public Object ejbFindVersionByNumber(ICItem item, String Number) throws FinderException{
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(IDOLookup.instanciateEntity(ICVersion.class));
 		query.appendWhereEquals(COLUMNNAME_NUMBER,Number);
-	
-		return this.idoFindOnePKByQuery(query);	
+
+		return this.idoFindOnePKByQuery(query);
 	}
-	
+
 	//Home ends
-	
-	
-	
-	
+
+
+
+
 	//ICTreeNode methods begin
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getChildrenIterator()
 	 */
-	public Iterator getChildrenIterator() {
-	    Iterator it = null;
-	    Collection children = getChildren();
+	@Override
+	public Iterator<ICVersion> getChildrenIterator() {
+	    Iterator<ICVersion> it = null;
+	    Collection<ICVersion> children = getChildren();
 	    if (children != null) {
 				it = children.iterator();
 			}
@@ -240,8 +258,9 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getChildren()
 	 */
-	public Collection getChildren() {
-		Collection coll = null;
+	@Override
+	public Collection<ICVersion> getChildren() {
+		Collection<ICVersion> coll = null;
 		try {
 			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
 			coll = versionHome.findChildrens(this);
@@ -250,27 +269,29 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
-		
+
 		return coll;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getAllowsChildren()
 	 */
+	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.core.ICTreeNode#getChildAtIndex(int)
+	 * @see com.idega.core.ICVersion#getChildAtIndex(int)
 	 */
-	public ICTreeNode getChildAtIndex(int childIndex) {
-		Object node = null;
+	@Override
+	public ICVersion getChildAtIndex(int childIndex) {
+		ICVersion node = null;
 		try {
 			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
-			Collection coll = versionHome.findChildrens(this);
+			Collection<ICVersion> coll = versionHome.findChildrens(this);
 			try{
-				List list = (List)coll;
+				List<ICVersion> list = (List<ICVersion>)coll;
 				if(list.size()>childIndex){
 					node = list.get(childIndex);
 				}
@@ -279,21 +300,22 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 				System.out.println("ICVersion#getChildAtIndex(int):Not java.util.List -> cannot implement getChildAtIndex()");
 				ex.printStackTrace();
 				throw new UnsupportedOperationException("ICVersion#getChildAtIndex(int):Not java.util.List -> cannot implement getChildAtIndex()");
-			}	
-			
-			
+			}
+
+
 		} catch (IDOLookupException e) {
 			e.printStackTrace();
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
-		
-		return (ICTreeNode)node;
+
+		return node;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getChildCount()
 	 */
+	@Override
 	public int getChildCount() {
 		try {
 			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
@@ -309,41 +331,44 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getIndex(com.idega.core.ICTreeNode)
 	 */
-	public int getIndex(ICTreeNode node) {
+	@Override
+	public int getIndex(ICVersion node) {
 		try {
 			ICVersionHome versionHome = (ICVersionHome)IDOLookup.getHome(ICVersion.class);
-			Collection coll = versionHome.findChildrens(this);
-	
+			Collection<ICVersion> coll = versionHome.findChildrens(this);
+
 			try{
-				List list = (List)coll;
+				List<ICVersion> list = (List<ICVersion>)coll;
 				return list.indexOf(node);
 			} catch(ClassCastException ex){
 				System.out.println("ICVersion#getIndex(int):(List)(Collection)ICVersionHome#getIndex(ICTreeNode)");
 				System.out.println("ICVersion#getIndex(int):Not java.util.List -> cannot implement getIndex()");
 				ex.printStackTrace();
 				throw new UnsupportedOperationException("ICVersion#getIndex(int):Not java.util.List -> cannot implement getIndex()");
-			}	
-			
-			
+			}
+
+
 		} catch (IDOLookupException e) {
 			e.printStackTrace();
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
-		
+
 		return -1;
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getParentNode()
 	 */
-	public ICTreeNode getParentNode() {
+	@Override
+	public ICVersion getParentNode() {
 		return this.getParentVersion();
 	}
 
 	/* (non-Javadoc)
-	 * @see com.idega.core.ICTreeNode#isLeaf()
+	 * @see com.idega.core.ICVersion#isLeaf()
 	 */
+	@Override
 	public boolean isLeaf() {
 		return !(this.getChildCount() > 0);
 	}
@@ -351,6 +376,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getNodeName()
 	 */
+	@Override
 	public String getNodeName() {
 		return this.getName();
 	}
@@ -358,10 +384,12 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getNodeName(Locale locale)
 	 */
+	@Override
 	public String getNodeName(Locale locale) {
 		return this.getNodeName();
 	}
-	
+
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac){
 		return this.getNodeName(locale);
 	}
@@ -369,6 +397,7 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getNodeID()
 	 */
+	@Override
 	public int getNodeID() {
 		return this.getID();
 	}
@@ -376,16 +405,18 @@ public class ICVersionBMPBean extends GenericEntity implements ICVersion, ICTree
 	/* (non-Javadoc)
 	 * @see com.idega.core.ICTreeNode#getSiblingCount()
 	 */
+	@Override
 	public int getSiblingCount() {
 		return (this.getParentVersion().getChildCount() - 1);
 	}
-	
+
 	/**
 	 * @return the number of siblings this node has
 	 */
+	@Override
 	public String getId(){
 		return getPrimaryKey().toString();
 	}
 	//ICTreeNode methods end
-	
+
 }

@@ -5,9 +5,9 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.jcr.RepositoryException;
-import java.util.List;
 
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.StringHandler;
@@ -89,7 +89,7 @@ public class EmptyItem extends RepositoryItem {
 	}
 
 	@Override
-	public RepositoryItem getParenItem() {
+	public EmptyItem getParenItem() {
 		return null;
 	}
 
@@ -102,7 +102,8 @@ public class EmptyItem extends RepositoryItem {
 	public boolean createNewFile() throws IOException, RepositoryException {
 		return false;
 	}
-	public List<EmptyItem> getChildren() {
+	@Override
+	public List<RepositoryItem> getChildren() {
 		return null;
 	}
 

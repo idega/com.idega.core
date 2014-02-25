@@ -53,7 +53,7 @@ import com.idega.util.xml.XMLData;
 @NamedQueries({
 	@NamedQuery(name = "page.findAll", query = "select p from ICPage p")
 })
-public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource, ICTreeNode {
+public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource, ICTreeNode<ICPage> {
 
 	private static final long serialVersionUID = -8452915401731298916L;
 
@@ -540,7 +540,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	}
 
 	@Override
-	public ICTreeNode getChildAtIndex(int index) {
+	public ICPage getChildAtIndex(int index) {
 		return children.get(index);
 	}
 
@@ -550,12 +550,12 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	}
 
 	@Override
-	public Collection getChildren() {
+	public Collection<ICPage> getChildren() {
 		return children;
 	}
 
 	@Override
-	public Iterator getChildrenIterator() {
+	public Iterator<ICPage> getChildrenIterator() {
 		return children.iterator();
 	}
 
@@ -565,7 +565,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	}
 
 	@Override
-	public int getIndex(ICTreeNode node) {
+	public int getIndex(ICPage node) {
 		return Integer.parseInt(node.getId());
 	}
 
@@ -590,13 +590,13 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	}
 
 	@Override
-	public ICTreeNode getParentNode() {
+	public ICPage getParentNode() {
 		return parent;
 	}
 
 	@Override
 	public int getSiblingCount() {
-		ICTreeNode parent = getParentNode();
+		ICPage parent = getParentNode();
 		if (parent != null) {
 			return parent.getChildCount() - 1;
 		}

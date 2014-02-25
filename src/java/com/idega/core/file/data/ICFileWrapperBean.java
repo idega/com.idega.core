@@ -37,7 +37,7 @@ import com.idega.user.data.User;
  * @author		2003 - idega team - <br><a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a><br>
  * @version		1.0
  */
-public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
+public class ICFileWrapperBean extends TreeableEntityWrapper<ICFile> implements ICFile {
 
 	private static final long serialVersionUID = -6927389169887750294L;
 
@@ -61,12 +61,12 @@ public class ICFileWrapperBean extends TreeableEntityWrapper implements ICFile {
 	 * @see com.idega.data.IDOEntityWrapper#getMainClass()
 	 */
 	@Override
-	protected Class getMainClass() {
+	protected Class<ICFile> getMainClass() {
 		return ICFile.class;
 	}
 
 	@Override
-	protected Class getVersionClass() {
+	protected Class<ICFile> getVersionClass() {
 		return ICFile.class;
 	}
 

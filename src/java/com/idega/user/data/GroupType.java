@@ -1,7 +1,8 @@
 package com.idega.user.data;
 
+import com.idega.data.TreeableEntity;
 
-public interface GroupType extends com.idega.data.IDOEntity,com.idega.data.TreeableEntity
+public interface GroupType extends com.idega.data.IDOEntity, TreeableEntity<GroupType>
 {
  public boolean getAutoCreate();
  public java.lang.String getDefaultGroupName();
@@ -9,7 +10,7 @@ public interface GroupType extends com.idega.data.IDOEntity,com.idega.data.Treea
  public java.lang.Integer getMaximumNumberOfInstances();
  public java.lang.Integer getMaximumNumberOfInstancesPerParent();
  public java.lang.Integer getNumberOfInstancesToAutoCreate();
- public java.lang.Class getPrimaryKeyClass();
+ public java.lang.Class<String> getPrimaryKeyClass();
  public java.lang.String getType();
  public boolean getVisibility();
  public void setAutoCreate(java.lang.Boolean p0);

@@ -2,16 +2,20 @@ package com.idega.core.data;
 
 import java.sql.SQLException;
 
+import com.idega.data.TreeableEntityBMPBean;
 
-public class ICBusinessBMPBean extends com.idega.data.TreeableEntityBMPBean implements com.idega.core.data.ICBusiness {
+public class ICBusinessBMPBean extends TreeableEntityBMPBean<ICBusiness> implements ICBusiness {
 
-  public ICBusinessBMPBean(){
+	private static final long serialVersionUID = 4007143170674400270L;
+
+public ICBusinessBMPBean(){
     super();
   }
   public ICBusinessBMPBean(int id)throws SQLException{
     super(id);
   }
-  public void initializeAttributes(){
+  @Override
+public void initializeAttributes(){
     addAttribute(getIDColumnName());
     addAttribute(getColumnName(),"Name", true, true, String.class);
     addAttribute(getColumnDescription(),"Description", true, true, String.class);
@@ -27,38 +31,49 @@ public class ICBusinessBMPBean extends com.idega.data.TreeableEntityBMPBean impl
   public static String getColumnCreated(){return "CREATED";}
   public static String getColumnValid(){return "VALID";}
 
-  public String getEntityName(){
+  @Override
+public String getEntityName(){
     return getEntityTableName();
   }
 
-  public String getName(){
+  @Override
+public String getName(){
     return getStringColumnValue(getColumnName());
   }
-  public void setName(String name){
+  @Override
+public void setName(String name){
     setColumn(getColumnName(),name);
   }
-  public String getDescription(){
+  @Override
+public String getDescription(){
     return getStringColumnValue(getColumnDescription());
   }
-  public void setDescription(String description){
+  @Override
+public void setDescription(String description){
     setColumn(getColumnDescription(), description);
   }
-  public boolean getValid(){
+  @Override
+public boolean getValid(){
     return getBooleanColumnValue(getColumnValid());
   }
-  public void setValid(boolean valid){
+  @Override
+public void setValid(boolean valid){
     setColumn(getColumnValid(), valid);
   }
-  public java.sql.Timestamp getCreated(){
+  @Override
+public java.sql.Timestamp getCreated(){
     return (java.sql.Timestamp) getColumnValue(getColumnCreated());
   }
-  public void setCreated(java.sql.Timestamp created){
+  @Override
+public void setCreated(java.sql.Timestamp created){
     setColumn(getColumnCreated(), created);
   }
-  public String getType(){
+  @Override
+public String getType(){
     return getStringColumnValue(getColumnType());
   }
-  public void setType(String type){
+  @Override
+public void setType(String type){
     setColumn(getColumnType(),type);
   }
 }

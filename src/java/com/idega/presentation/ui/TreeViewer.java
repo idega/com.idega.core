@@ -25,7 +25,7 @@ import com.idega.util.StringUtil;
  * @version 1.0
  */
 
-public class TreeViewer extends AbstractTreeViewer {
+public class TreeViewer extends AbstractTreeViewer<ICTreeNode<?>> {
 
 	private static final String TREEVIEW_PREFIX = "treeviewer/ui/";
 
@@ -64,7 +64,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		setWrap(false);
 	}
 
-	public static TreeViewer getTreeViewerInstance(ICTreeNode node, IWContext iwc) {
+	public static TreeViewer getTreeViewerInstance(ICTreeNode<?> node, IWContext iwc) {
 		TreeViewer viewer = new TreeViewer();
 		viewer.setRootNode(node);
 		return viewer;
@@ -105,7 +105,7 @@ public class TreeViewer extends AbstractTreeViewer {
 	}
 
 	@Override
-	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodesOpen, boolean nodeHasChild, boolean isRootNode) {
+	public PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode<?> node, IWContext iwc, boolean nodesOpen, boolean nodeHasChild, boolean isRootNode) {
 		boolean fromEditor = false;
 		if (iwc.isParameterSet("from_editor")) {
 			fromEditor = true;
@@ -131,7 +131,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		return false;
 	}
 
-	public PresentationObject getSecondColumnObject(ICTreeNode node, IWContext iwc, boolean fromEditor) {
+	public PresentationObject getSecondColumnObject(ICTreeNode<?> node, IWContext iwc, boolean fromEditor) {
 		String nodeName = null;
 		String titleName = null;
 		//if (node instanceof ICTreeNode)
@@ -205,7 +205,7 @@ public class TreeViewer extends AbstractTreeViewer {
 		return l;
 	}
 
-	public PresentationObject getFirstColumnObject(ICTreeNode node, boolean nodesOpen, boolean isRootNode) {
+	public PresentationObject getFirstColumnObject(ICTreeNode<?> node, boolean nodesOpen, boolean isRootNode) {
 		if (node.isLeaf()) {
 			if (isRootNode && !showRootNodeTreeIcons()) {
 				Link l = getLinkOpenClosePrototype();
@@ -328,6 +328,7 @@ public class TreeViewer extends AbstractTreeViewer {
 
 	}
 
+	@Override
 	public void setOnClick(String action) {
 		getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME, action);
 	}

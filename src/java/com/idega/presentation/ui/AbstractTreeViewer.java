@@ -1,12 +1,13 @@
 package com.idega.presentation.ui;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+
 import com.idega.core.data.DefaultTreeNode;
 import com.idega.core.data.ICTreeNode;
 import com.idega.event.IWActionListener;
@@ -27,6 +28,7 @@ import com.idega.presentation.text.AnchorLink;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeComparator;
+import com.idega.user.business.GroupTreeNode;
 import com.idega.util.StringUtil;
 
 /**
@@ -38,9 +40,9 @@ import com.idega.util.StringUtil;
  * @version 1.0
  */
 
-public abstract class AbstractTreeViewer extends PresentationObjectContainer implements StatefullPresentation {
+public abstract class AbstractTreeViewer<Node extends ICTreeNode<?>> extends PresentationObjectContainer implements StatefullPresentation {
 
-	DefaultTreeNode defaultRoot = null;
+	DefaultTreeNode<Node> defaultRoot = null;
 	boolean showRootNode = false;
 	boolean showRootNodeTreeIcons = false;
 	int defaultOpenLevel = 1;
@@ -56,8 +58,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public static final String _UI_IW = "iw/";
 	private String _ui = _UI_IW;
 
-	private HashMap _extraHorizontal;
-	private HashMap _extraVertical;
+	private Map<Integer, String> _extraHorizontal;
+	private Map<Integer, String> _extraVertical;
 
 	Image icons[] = null;
 	String iconNames[] = { "treeviewer_trancparent.gif", "treeviewer_line.gif", "treeviewer_R_line.gif", "treeviewer_R_minus.gif", "treeviewer_R_plus.gif", "treeviewer_L_line.gif", "treeviewer_L_minus.gif", "treeviewer_L_plus.gif", "treeviewer_M_line.gif", "treeviewer_M_minus.gif", "treeviewer_M_plus.gif", "treeviewer_F_line.gif", "treeviewer_F_minus.gif", "treeviewer_F_plus.gif" };
@@ -79,7 +81,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	protected String iconWidth = "16";
 	protected String iconHeight = "16";
-	
+
 	protected String lightRowStyle;
 	protected String darkRowStyle;
 
@@ -89,7 +91,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	AnchorLink openCloseLink = new AnchorLink();
 
-	List openNodes = new Vector();
+	List<String> openNodes = new ArrayList<String>();
 	//  public static final String PRM_OPEN_TREENODES = "ic_opn_trnds";
 	//  public static final String PRM_TREENODE_TO_CLOSE = "ic_cls_trnd";
 	//public static final String PRM_TREE_CHANGED = "ic_tw_ch";
@@ -106,19 +108,19 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	private StatefullPresentationImplHandler _stateHandler = null;
 
-	private Map _extraHeadings;
-	private Map _extraWidths;
+	private Map<Integer, PresentationObject> _extraHeadings;
+	private Map<Integer, String> _extraWidths;
 	private String _headingColor;
-	
+
 	private String closeOrOpenNodesHref = null;
-	
+
 	public AbstractTreeViewer() {
 		super();
 
 		this._stateHandler = new StatefullPresentationImplHandler();
 		this._stateHandler.setPresentationStateClass(TreeViewerPS.class);
 
-		this.defaultRoot = new DefaultTreeNode("root", -1);
+		this.defaultRoot = new DefaultTreeNode<Node>("root", -1);
 		this.icons = new Image[14];
 		this.treeTable = new Table(2, 1);
 		//treeTable.setBorder(1);
@@ -180,6 +182,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		this._showTreeIcons_changed = true;
 	}
 
+	@Override
 	public void initializeInMain(IWContext iwc) throws Exception {
 		super.initializeInMain(iwc);
 		this.addActionListener((IWActionListener) this.getPresentationState(iwc));
@@ -211,7 +214,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		if (this.defaultRoot.getChildCount() > 0) {
 			drawTree(this.defaultRoot.getChildrenIterator(), null, iwc);
 		}
-		
+
 		if (this.lightRowStyle != null && this.darkRowStyle != null) {
 			int startRow = ((!this._showHeaderRow) ? 1 : 2);
 			int row = 1;
@@ -225,8 +228,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				row++;
 			}
 		}
-		
-		
 	}
 
 	private void drawSuperRoot(IWContext iwc) {
@@ -242,7 +243,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 			nodeTable.add(this._superRootNodeIcon, 1, 1);
 		}
 		nodeTable.add(new Text(this._superRootNodeName), 3, 1);
-		
+
 		if(this._refreshTopNodes != null) {
 			setEventModelToLink(this._refreshTopNodes);
 			nodeTable.setAlignment(5, 1, Table.HORIZONTAL_ALIGN_RIGHT);
@@ -250,22 +251,21 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 
 		this.frameTable.add(nodeTable, 1, this.getRowIndex());
-		
+
 	}
 
-	private synchronized void drawTree(Iterator nodes, Image[] collectedIcons, IWContext iwc) {
+	@SuppressWarnings("unchecked")
+	private synchronized  void drawTree(Iterator<Node> nodes, Image[] collectedIcons, IWContext iwc) {
 		if (nodes != null) {
-			Iterator iter = nodes;
+			Iterator<Node> iter = nodes;
 			for (int i = 0; iter.hasNext(); i++) {
-				ICTreeNode item = (ICTreeNode) iter.next();			
+				Node item = iter.next();
 				boolean hasChild = (item.getChildCount() > 0);
 				boolean isOpen = false;
 				int rowIndex = getRowIndex();
 				Table treeColumns = this.getTreeTableClone();
 				String anchorName =item.getId();
 				treeColumns.add(new Anchor(anchorName), 1, 1);
-//				treeColumns.setBorder(1);
-//				frameTable.setBorder(1);
 				if (hasChild) {
 					isOpen = this.openNodes.contains(item.getId());
 				}
@@ -412,7 +412,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 									treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
 									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 								}
-							
+
 							}else { //all but first and last rootnodes
 								if (hasChild) { // if this node has a child
 									if (isOpen) { // if this node is open
@@ -528,8 +528,10 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 				this.frameTable.add(treeColumns, 1, rowIndex);
 
 				if (hasChild && isOpen) {
-				    Collection children = item.getChildren();
-				    Collections.sort((List)children, new GroupTreeComparator(iwc) );
+					Collection<Node> children = (Collection<Node>) item.getChildren();
+				    if (item instanceof GroupTreeNode && children instanceof List) {
+				    	Collections.sort(((List<GroupTreeNode>) children), new GroupTreeComparator(iwc));
+				    }
 				    drawTree(children.iterator(), newCollectedIcons, iwc);
 				}
 			}
@@ -557,44 +559,35 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	}
 
 	public void setInitOpenLevel() {
-		Iterator iter = this.defaultRoot.getChildrenIterator();
+		Iterator<Node> iter = this.defaultRoot.getChildrenIterator();
 		if (this.defaultOpenLevel > 0) {
 			setInitOpenLevel(iter, 1);
 		}
 	}
 
-	private void setInitOpenLevel(Iterator iter, int level) {
+	private void setInitOpenLevel(Iterator<Node> iter, int level) {
 		if (iter != null) {
 			while (iter.hasNext()) {
-				ICTreeNode node = (ICTreeNode) iter.next();
-				Object item = node.getId();
+				Node node = iter.next();
+				String item = node.getId();
 				if (!this.openNodes.contains(item)) {
 					this.openNodes.add(item);
 				}
 				if (level < this.defaultOpenLevel) {
-					setInitOpenLevel(node.getChildrenIterator(), level + 1);
+					@SuppressWarnings("unchecked")
+					Iterator<Node> childrenIter = (Iterator<Node>) node.getChildrenIterator();
+					setInitOpenLevel(childrenIter, level + 1);
 				}
 			}
 		}
 	}
 
-	public void setOpenNodes(List openNodeList) {
+	public void setOpenNodes(List<String> openNodeList) {
 		this.openNodes = openNodeList;
 	}
 
 	public void updateOpenNodes(IWContext iwc) {
 		TreeViewerPS state = (TreeViewerPS) this.getPresentationState(iwc);
-		//    System.out.println("----------------updateOpenNodes-----------------");
-		//    System.out.println(this+" STATE = "+ state );
-		//
-		//    System.out.println("ATV - TreeViewerPS: initLevel: " + state.setToInitOpenLevel());
-		//    Iterator iter = state.getOpenNodeList().iterator();
-		//    int counter = 1;
-		//    while (iter.hasNext()) {
-		//      Object item = iter.next();
-		//      System.out.println("ATV - TreeViewerPS: openItem"+counter+": "+item);
-		//      counter++;
-		//    }
 
 		this.setOpenNodes(state.getOpenNodeList());
 		this.lastNode = state.getLastOpenedOrClosedNode();
@@ -605,6 +598,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		if (this._showTreeIcons_changed) {
 			initIcons(iwc);
@@ -615,7 +609,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		// causes a reload of the page and not just jumping to the anchor
 		if (this.lastNode != null && !iwc.isSafari()) {
 			getParentPage().setOnLoad("location.href='#"+this.lastNode+"'");
-			
+
 		}
 		setHeadings();
 		setAlignments();
@@ -623,19 +617,17 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	private void setAlignments() {
 		if (this._extraHorizontal != null) {
-			Iterator iter = this._extraHorizontal.keySet().iterator();
-			while (iter.hasNext()) {
-				Integer column = (Integer) iter.next();
-				String alignment = (String) this._extraHorizontal.get(column);
+			for (Iterator<Integer> iter = this._extraHorizontal.keySet().iterator(); iter.hasNext();) {
+				Integer column = iter.next();
+				String alignment = this._extraHorizontal.get(column);
 				this.frameTable.setColumnAlignment(column.intValue(), alignment);
 			}
 		}
 
 		if (this._extraVertical != null) {
-			Iterator iter = this._extraVertical.keySet().iterator();
-			while (iter.hasNext()) {
-				Integer column = (Integer) iter.next();
-				String alignment = (String) this._extraVertical.get(column);
+			for (Iterator<Integer> iter = this._extraVertical.keySet().iterator(); iter.hasNext();) {
+				Integer column = iter.next();
+				String alignment = this._extraVertical.get(column);
 				this.frameTable.setColumnVerticalAlignment(column.intValue(), alignment);
 			}
 		}
@@ -643,19 +635,18 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	private void setHeadings() {
 		if (this._extraHeadings != null) {
-			Iterator iter = this._extraHeadings.keySet().iterator();
-			while (iter.hasNext()) {
-				Integer column = (Integer) iter.next();
-				PresentationObject object = (PresentationObject) this._extraHeadings.get(column);
+			for (Iterator<Integer> iter = this._extraHeadings.keySet().iterator(); iter.hasNext();) {
+				Integer column = iter.next();
+				PresentationObject object = this._extraHeadings.get(column);
 				this.frameTable.add(object, column.intValue(), 1);
 			}
 		}
 
 		if (this._extraWidths != null) {
-			Iterator iter = this._extraWidths.keySet().iterator();
+			Iterator<Integer> iter = this._extraWidths.keySet().iterator();
 			while (iter.hasNext()) {
-				Integer column = (Integer) iter.next();
-				String width = (String) this._extraWidths.get(column);
+				Integer column = iter.next();
+				String width = this._extraWidths.get(column);
 				this.frameTable.setWidth(column.intValue(), width);
 			}
 		}
@@ -665,9 +656,23 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 	}
 
-	public abstract PresentationObject getObjectToAddToColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode);
+	public abstract PresentationObject getObjectToAddToColumn(
+			int colIndex,
+			Node node,
+			IWContext iwc,
+			boolean nodeIsOpen,
+			boolean nodeHasChild,
+			boolean isRootNode
+	);
 
-	public PresentationObject getObjectToAddToParallelExtraColumn(int colIndex, ICTreeNode node, IWContext iwc, boolean nodeIsOpen, boolean nodeHasChild, boolean isRootNode) {
+	public PresentationObject getObjectToAddToParallelExtraColumn(
+			int colIndex,
+			Node node,
+			IWContext iwc,
+			boolean nodeIsOpen,
+			boolean nodeHasChild,
+			boolean isRootNode
+	) {
 		return null;
 	}
 
@@ -682,16 +687,16 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public void setSuperRootNodeIcon(Image image) {
 		this._superRootNodeIcon = image;
 	}
-	
+
 	public void setRefreshLink(Link refreshTN) {
 		this._refreshTopNodes = refreshTN;
 	}
-	
+
 	public Link getRefreshLink() {
 		return this._refreshTopNodes;
 	}
 
-	public void setRootNode(ICTreeNode root) {
+	public void setRootNode(Node root) {
 		this.defaultRoot.clear();
 		this.defaultRoot.addTreeNode(root);
 	}
@@ -712,7 +717,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		this.showRootNodeTreeIcons = value;
 	}
 
-	public void setFirstLevelNodes(ICTreeNode[] nodes) {
+	public void setFirstLevelNodes(Node[] nodes) {
 		this.defaultRoot.clear();
 		if (nodes != null) {
 			for (int i = 0; i < nodes.length; i++) {
@@ -721,17 +726,17 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 	}
 
-	public void setFirstLevelNodes(Iterator nodes) {
+	public void setFirstLevelNodes(Iterator<Node> nodes) {
 		this.defaultRoot.clear();
 		if (nodes != null) {
 			while (nodes.hasNext()) {
-				ICTreeNode node = (ICTreeNode) nodes.next();
+				Node node = nodes.next();
 				this.defaultRoot.addTreeNode(node);
 			}
 		}
 	}
 
-	public void addFirstLevelNode(ICTreeNode node) {
+	public void addFirstLevelNode(Node node) {
 		if (node != null) {
 			this.defaultRoot.addTreeNode(node);
 		}
@@ -740,7 +745,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public void setToMaintainParameter(String parameterName, IWContext iwc) {
 		this.openCloseLink.maintainParameter(parameterName, iwc);
 	}
-	
+
 	public void addOpenCloseParameter(String name,String value){
 		this.openCloseLink.addParameter(name,value);
 	}
@@ -783,7 +788,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		return this._eventModel;
 	}
 
-	public Link setLinkToOpenOrCloseNode(Link l, ICTreeNode node, boolean nodeIsOpen) {
+	public Link setLinkToOpenOrCloseNode(Link l, Node node, boolean nodeIsOpen) {
 		TreeViewerEvent event = (TreeViewerEvent) getOpenCloseEventModel().clone();
 		if (nodeIsOpen) {
 			event.setToCloseNode(node);
@@ -797,7 +802,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		}
 		return l;
 	}
-	
+
 	public Link setEventModelToLink(Link l) {
 		TreeViewerEvent event = (TreeViewerEvent) getOpenCloseEventModel().clone();
 		event.setToTreeStateChanged(l);
@@ -825,7 +830,7 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 	public void setExtraColumnWidth(int col, String width) {
 		if (this._extraWidths == null) {
-			this._extraWidths = new HashMap();
+			this._extraWidths = new HashMap<Integer, String>();
 		}
 		this._extraWidths.put(new Integer(col + 1), width);
 	}
@@ -834,27 +839,28 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		this.treeTable.setWidth(col + 1, width);
 	}
 
+	@Override
 	public void setWidth(String s) {
 		this.frameTable.setWidth(s);
 	}
 
 	public void setExtraColumnHorizontalAlignment(int col, String alignment) {
 		if (this._extraHorizontal == null) {
-			this._extraHorizontal = new HashMap();
+			this._extraHorizontal = new HashMap<Integer, String>();
 		}
 		this._extraHorizontal.put(new Integer(col + 1), alignment);
 	}
 
 	public void setExtraColumnVerticalAlignment(int col, String alignment) {
 		if (this._extraVertical == null) {
-			this._extraVertical = new HashMap();
+			this._extraVertical = new HashMap<Integer, String>();
 		}
 		this._extraVertical.put(new Integer(col + 1), alignment);
 	}
 
 	public void setExtraColumnHeading(int col, PresentationObject obj) {
 		if (this._extraHeadings == null) {
-			this._extraHeadings = new HashMap();
+			this._extraHeadings = new HashMap<Integer, PresentationObject>();
 		}
 		this._extraHeadings.put(new Integer(col + 1), obj);
 	}
@@ -887,33 +893,16 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		return getDefaultOpenLevel();
 	}
 
-	//HeaderRow methods
-
 	public void setHeaderRowHeight(String height) {
 		this.frameTable.setHeight(1, height);
 	}
 
-	/*
-	public void setToUseOnClick(){
-	  setToUseOnClick(ONCLICK_DEFAULT_NODE_NAME_PARAMETER_NAME,ONCLICK_DEFAULT_NODE_ID_PARAMETER_NAME);
-	}
-	
-	public void setToUseOnClick(String NodeNameParameterName,String NodeIDParameterName){
-	  _usesOnClick=true;
-	  getAssociatedScript().addFunction(ONCLICK_FUNCTION_NAME,"function "+ONCLICK_FUNCTION_NAME+"("+NodeNameParameterName+","+NodeIDParameterName+"){ }");
-	
-	}
-	
-	public void setOnClick(String action){
-	   this.getAssociatedScript().addToFunction(ONCLICK_FUNCTION_NAME,action);
-	}
-	
-	*/
-
-	public Class getPresentationStateClass() {
+	@Override
+	public Class<? extends IWPresentationState> getPresentationStateClass() {
 		return this._stateHandler.getPresentationStateClass();
 	}
 
+	@Override
 	public IWPresentationState getPresentationState(IWUserContext iwuc) {
 		return this._stateHandler.getPresentationState(this, iwuc);
 	}
@@ -921,7 +910,6 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 	public StatefullPresentationImplHandler getStateHandler() {
 		return this._stateHandler;
 	}
-
 
 	public void addEventModel(IWPresentationEvent model) {
 		this.openCloseLink.addEventModel(model);

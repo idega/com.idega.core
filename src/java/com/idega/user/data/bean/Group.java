@@ -68,7 +68,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID")
 })
 @XmlTransient
-public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode {
+public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode<Group> {
 
 	private static final long serialVersionUID = -9014094183053434782L;
 
@@ -666,7 +666,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	public Group getChildAtIndex(int childIndex) {
 		return children.get(childIndex);
 	}
 
@@ -675,13 +675,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		return children.size();
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Collection<Group> getChildren() {
 		return children;
 	}
 
-	@SuppressWarnings("unchecked")
 	@Override
 	public Iterator<Group> getChildrenIterator() {
 		return children.iterator();
@@ -693,7 +691,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	@Override
-	public int getIndex(ICTreeNode node) {
+	public int getIndex(Group node) {
 		return Integer.parseInt(node.getId());
 	}
 
@@ -718,7 +716,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	@Override
-	public ICTreeNode getParentNode() {
+	public Group getParentNode() {
 		if (parents != null && !parents.isEmpty()) {
 			return parents.iterator().next();
 		}
@@ -731,7 +729,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public int getSiblingCount() {
-		ICTreeNode parent = getParentNode();
+		Group parent = getParentNode();
 		if (parent != null) {
 			return parent.getChildCount() - 1;
 		}

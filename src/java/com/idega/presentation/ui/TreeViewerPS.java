@@ -1,10 +1,12 @@
 package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Vector;
+
 import javax.ejb.RemoveException;
+
 import com.idega.event.IWActionListener;
 import com.idega.event.IWPresentationEvent;
 import com.idega.event.IWPresentationStateImpl;
@@ -26,24 +28,25 @@ import com.idega.user.business.UserBusiness;
 
 public class TreeViewerPS extends IWPresentationStateImpl implements IWActionListener {
 
-  protected List _openNodes = new Vector();
+  protected List<String> _openNodes = new ArrayList<String>();
   protected boolean _initLevel = true;
   private String lastOpenedOrClosedNode = null;
 
   public TreeViewerPS() {
   }
 
-  public void reset() {
+  @Override
+public void reset() {
     this._openNodes.clear();
     this._initLevel = true;
     this.lastOpenedOrClosedNode = null;
   }
 
-  public List getOpenNodeList(){
+  public List<String> getOpenNodeList(){
     return this._openNodes;
   }
 
-  public void setOpenNodeList(List list){
+  public void setOpenNodeList(List<String> list){
     if(list != null){
       this._openNodes = list;
     } else {
@@ -66,7 +69,8 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
 //  }
 
 
-  public Object clone() {
+  @Override
+public Object clone() {
     TreeViewerPS obj = null;
     try {
       obj = (TreeViewerPS)super.clone();
@@ -84,8 +88,9 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
   public void resetLastOpenedOrClosedNode() {
   	this.lastOpenedOrClosedNode = null;
   }
-  
-  public void actionPerformed(IWPresentationEvent e)throws IWException{
+
+  @Override
+public void actionPerformed(IWPresentationEvent e)throws IWException{
 
     if(e instanceof ResetPresentationEvent){
       this.reset();
@@ -107,7 +112,7 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
         changed = true;
       }
       this.lastOpenedOrClosedNode = ((TreeViewerEvent)e).getOpenNodeAction();
-      if (this.lastOpenedOrClosedNode == null) { 
+      if (this.lastOpenedOrClosedNode == null) {
       	this.lastOpenedOrClosedNode = ((TreeViewerEvent)e).getCloseNodeAction();
       }
       IWContext iwc = ((TreeViewerEvent)e).getIWContext();
@@ -129,7 +134,7 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
         this.fireStateChanged();
       }
 //      System.out.println("TreeViewerPS: initLevel: " + _initLevel);
-      Iterator iter = this._openNodes.iterator();
+      Iterator<String> iter = this._openNodes.iterator();
       //int counter = 1;
       while (iter.hasNext()) {
         iter.next();
@@ -143,11 +148,11 @@ public class TreeViewerPS extends IWPresentationStateImpl implements IWActionLis
 
 
   }
-  
+
 	public UserBusiness getUserBusiness(IWApplicationContext iwc) {
 		UserBusiness userBiz = null;
 		try {
-			userBiz = (UserBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
+			userBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, UserBusiness.class);
 		}
 		catch (java.rmi.RemoteException rme) {
 			throw new RuntimeException(rme.getMessage());

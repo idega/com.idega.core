@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 import com.idega.core.business.ICTreeNodeLeafComparator;
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
@@ -18,7 +19,10 @@ import com.idega.idegaweb.IWApplicationContext;
  * @version 1.0
  */
 
-public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity implements com.idega.data.TreeableEntity, IDOLegacyEntity, com.idega.core.data.ICTreeNode {
+public abstract class TreeableEntityBMPBean<Node extends ICTreeNode<?>> extends GenericEntity
+																		implements TreeableEntity<Node>, IDOLegacyEntity, ICTreeNode<Node> {
+
+	private static final long serialVersionUID = -7018051419205886687L;
 
 	protected boolean _sortLeafs = false;
 	protected boolean _leafsFirst = false;
@@ -31,31 +35,36 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		super(id);
 	}
 
+	@Override
 	protected void beforeInitializeAttributes() {
 		addTreeRelationShip();
 	}
 
+	@Override
 	public int getNodeID() {
 		return getID();
 	}
-	
+
 	/**
 	 * Default implementation just calls getName()
 	 */
+	@Override
 	public String getNodeName() {
 		return getName();
 	}
-	
+
 	/**
 	 * Default implementation just calls getNodeName()
 	 */
+	@Override
 	public String getNodeName(Locale locale) {
 		return getNodeName();
 	}
-	
+
 	/**
 	 * Default implementation just calls getNodeName()
 	 */
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac) {
 		return getNodeName(locale);
 	}
@@ -63,42 +72,50 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 * Returns the children of the reciever as an Iterator. Returns null if no children found
 	 */
-	public Iterator getChildrenIterator() {
-		return getChildrenIterator(null);
+	@SuppressWarnings("unchecked")
+	@Override
+	public Iterator<Node> getChildrenIterator() {
+		Iterator<TreeableEntity<Node>> childrenIter = getChildrenIterator(null);
+		return (Iterator<Node>) childrenIter;
 	}
-	public Iterator getChildrenIterator(String orderBy) {
+	@Override
+	public Iterator<TreeableEntity<Node>> getChildrenIterator(String orderBy) {
 		return getChildrenIterator(orderBy, false);
 	}
-	public Iterator getChildrenIterator(String orderBy, boolean orderDescending) {
-	    Iterator it = null;
-	    Collection children = getChildren(orderBy, orderDescending);
+	@Override
+	public Iterator<TreeableEntity<Node>> getChildrenIterator(String orderBy, boolean orderDescending) {
+	    Iterator<TreeableEntity<Node>> it = null;
+	    Collection<TreeableEntity<Node>> children = getChildren(orderBy, orderDescending);
 	    if (children != null) {
 	        it = children.iterator();
 	    }
-	    return it; 
+	    return it;
 	}
-	public Collection getChildren() {
-	    return getChildren(null);
+	@SuppressWarnings("unchecked")
+	@Override
+	public Collection<Node> getChildren() {
+		Collection<TreeableEntity<Node>> children = getChildren(null);
+		return (Collection<Node>) children;
 	}
-	public Collection getChildren(String orderBy) {
+	public Collection<TreeableEntity<Node>> getChildren(String orderBy) {
 		return getChildren(orderBy, false);
 	}
-	public Collection getChildren(String orderBy, boolean orderDescending) {
+	public Collection<TreeableEntity<Node>> getChildren(String orderBy, boolean orderDescending) {
 		try {
 			String thisTable = this.getTableName();
 			String treeTable = EntityControl.getTreeRelationShipTableName(this);
 			String idColumnName = this.getIDColumnName();
 			String childIDColumnName = EntityControl.getTreeRelationShipChildColumnName(this);
 			StringBuffer buffer = new StringBuffer();
-			
+
 			if(this.getPrimaryKey() instanceof Integer){
-				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(this.getPrimaryKey().toString());	
+				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = ").append(this.getPrimaryKey().toString());
 			}
 			else{//add the ' for strings, dates etc.
 				buffer.append("select " ).append( thisTable ).append(".* from ").append( thisTable).append(",").append(treeTable).append(" where ").append(thisTable).append(".").append(idColumnName).append(" = ").append(treeTable).append(".").append(childIDColumnName).append(" and ").append(treeTable).append(".").append(idColumnName).append( " = '").append(this.getPrimaryKey().toString()).append("'");
 			}
-			
-			
+
+
 			if (orderBy != null && !orderBy.equals("")) {
 				buffer.append(" order by ").append(thisTable).append( ".").append(orderBy);
 				if (orderDescending) {
@@ -106,11 +123,10 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 				}
 			}
 			//System.out.println(buffer.toString());
-			List list = EntityFinder.findAll(this, buffer.toString());
+			List<TreeableEntity<Node>> list = EntityFinder.findAll(this, buffer.toString());
 			if (list != null) {
 				if (this._sortLeafs) {
-					ICTreeNodeLeafComparator c = new ICTreeNodeLeafComparator(this._leafsFirst);
-					Collections.sort(list, c);
+					Collections.sort(list, new ICTreeNodeLeafComparator<TreeableEntity<Node>>(this._leafsFirst));
 				}
 				return list;
 			} else {
@@ -126,6 +142,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 *  Returns true if the receiver allows children.
 	 */
+	@Override
 	public boolean getAllowsChildren() {
 		return true;
 	}
@@ -133,11 +150,13 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 *  Returns the child TreeNode at index childIndex.
 	 */
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	@SuppressWarnings("unchecked")
+	@Override
+	public Node getChildAtIndex(int childIndex) {
 		try {
 			GenericEntity entity = this.getClass().newInstance();
 			entity.findByPrimaryKey(childIndex);
-			return (TreeableEntity)entity;
+			return (Node) entity;
 		} catch (Exception e) {
 			System.err.println("There was an error in com.idega.data.TreeableEntityBMPBean.getChildAtIndex() " + e.getMessage());
 			e.printStackTrace(System.err);
@@ -148,9 +167,10 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 *    Returns the number of children TreeNodes the receiver contains.
 	 */
+	@Override
 	public int getChildCount() {
 		String treeTableName = EntityControl.getTreeRelationShipTableName(this);
-		
+
 		if(this.getPrimaryKey() instanceof Integer){
 			return EntityControl.returnSingleSQLQuery(this, "select count(*) from " + treeTableName + " where " + this.getIDColumnName() + "=" + this.getPrimaryKey().toString() + "");
 		}
@@ -162,19 +182,21 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 * Returns the index of node in the receivers children.
 	 */
-	public int getIndex(ICTreeNode node) {
+	@Override
+	public int getIndex(Node node) {
 		return ((GenericEntity)node).getID();
 	}
 
 	/**
-	 * 
+	 *
 	 *  Returns the parent TreeNode of the receiver. Return null if none
 	 */
-	public ICTreeNode getParentNode() {
-		
+	@SuppressWarnings("unchecked")
+	@Override
+	public Node getParentNode() {
 		boolean isInteger = false;
 		String sql = null;
-		
+
 		if(this.getPrimaryKey() instanceof Integer){
 			 sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "=" + this.getPrimaryKey();
 			 isInteger = true;
@@ -182,7 +204,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		else{
 			sql = "select " + this.getIDColumnName() + " from " + EntityControl.getTreeRelationShipTableName(this) + " where " + EntityControl.getTreeRelationShipChildColumnName(this) + "='" + this.getPrimaryKey()+"'";
 		}
-		
+
 		//List list;
 		try {
 			//list = EntityFinder.findAll(this, sql);
@@ -190,11 +212,13 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			//well presume that the first result is the primary key of the parent:
 			if(arr.length>0){
 				String parentPk = arr[0];
-			    if (isInteger) { 
-			    	return (ICTreeNode)((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(Integer.valueOf(parentPk));
-			    } 
+			    if (isInteger) {
+			    	IDOEntity parentNode = ((IDOHome) getEJBLocalHome()).findByPrimaryKeyIDO(Integer.valueOf(parentPk));
+			    	return (Node) parentNode;
+			    }
 			    else {
-					return (ICTreeNode)((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(parentPk);
+			    	IDOEntity parentNode = ((IDOHome)getEJBLocalHome()).findByPrimaryKeyIDO(parentPk);
+					return (Node) parentNode;
 			    }
 			}
 			/*
@@ -204,7 +228,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 			else{
 				return null;
 			}*/
-			
+
 		} catch (Exception e1) {
 			e1.printStackTrace();
 			return null;
@@ -212,10 +236,13 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		return null;
 	}
 
-	public TreeableEntity getParentEntity() {
-		return (TreeableEntity)getParentNode();
+	@SuppressWarnings("unchecked")
+	@Override
+	public TreeableEntity<Node> getParentEntity() {
+		return (TreeableEntity<Node>) getParentNode();
 	}
 
+	@Override
 	public boolean isLeaf() {
 		int children = getChildCount();
 		if (children > 0) {
@@ -225,49 +252,56 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 		}
 	}
 
-	public String getTreeRelationshipTableName(TreeableEntity entity) {
+	@Override
+	public String getTreeRelationshipTableName(TreeableEntity<Node> entity) {
 		return EntityControl.getTreeRelationShipTableName(entity);
 	}
 
-	public String getTreeRelationshipChildColumnName(TreeableEntity entity) {
-		return EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entity);
+	@Override
+	public String getTreeRelationshipChildColumnName(TreeableEntity<Node> entity) {
+		return EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean<Node>)entity);
 	}
 
-	public void addChild(TreeableEntity entity) throws java.sql.SQLException {
-		addToTree((TreeableEntityBMPBean)entity, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entity), getTreeRelationshipTableName(entity));
+	@Override
+	public void addChild(TreeableEntity<Node> entity) throws java.sql.SQLException {
+		addToTree((TreeableEntityBMPBean<Node>)entity, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean<Node>)entity), getTreeRelationshipTableName(entity));
 	}
 
-	public void removeChild(TreeableEntity entity) throws java.sql.SQLException {
-		removeFrom((TreeableEntityBMPBean)entity, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entity));
+	@Override
+	public void removeChild(TreeableEntity<Node> entity) throws java.sql.SQLException {
+		removeFrom((TreeableEntityBMPBean<Node>)entity, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean<Node>)entity));
 	}
 
-	public void moveChildrenFrom(TreeableEntity entityFrom) throws java.sql.SQLException {
-		moveChildrenToCurrent((TreeableEntityBMPBean)entityFrom, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean)entityFrom));
+	@Override
+	public void moveChildrenFrom(TreeableEntity<Node> entityFrom) throws java.sql.SQLException {
+		moveChildrenToCurrent((TreeableEntityBMPBean<Node>)entityFrom, EntityControl.getTreeRelationShipChildColumnName((TreeableEntityBMPBean<Node>)entityFrom));
 	}
 
 	/**
 	 *
 	 */
+	@Override
 	public int getSiblingCount() {
-		ICTreeNode parent = getParentNode();
+		Node parent = getParentNode();
 		if (parent == null) {
 			return (0);
 		}
 
 		return (parent.getChildCount() - 1);
 	}
-	
+
 	/**
 	 * @see com.idega.core.ICTreeNode#getNodeType()
 	 */
 	public int getNodeType(){
 		return -1;
 	}
-	
+
 
 	/**
 	 * @return
 	 */
+	@Override
 	public boolean leafsFirst() {
 		return this._leafsFirst;
 	}
@@ -275,6 +309,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 * @return
 	 */
+	@Override
 	public boolean sortLeafs() {
 		return this._sortLeafs;
 	}
@@ -282,6 +317,7 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 * @param b
 	 */
+	@Override
 	public void setLeafsFirst(boolean b) {
 		this._leafsFirst = b;
 	}
@@ -289,10 +325,12 @@ public abstract class TreeableEntityBMPBean extends com.idega.data.GenericEntity
 	/**
 	 * @param b
 	 */
+	@Override
 	public void setToSortLeafs(boolean b) {
 		this._sortLeafs = b;
 	}
-	
+
+	@Override
 	public String getId(){
 		return getPrimaryKey().toString();
 	}

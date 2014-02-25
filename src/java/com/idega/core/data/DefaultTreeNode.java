@@ -14,6 +14,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+
 import com.idega.idegaweb.IWApplicationContext;
 
 
@@ -22,14 +23,15 @@ import com.idega.idegaweb.IWApplicationContext;
  * Default implementation of the ICTreeNode interface
  * </p>
  *  Last modified: $Date: 2006/05/31 11:12:02 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
+ * @param <Node>
  */
-public class DefaultTreeNode implements ICTreeNode {
+public class DefaultTreeNode<Node extends ICTreeNode<?>> implements ICTreeNode<Node> {
 
-	protected List children = new ArrayList();
-	protected ICTreeNode parentNode = null;
+	protected List<Node> children = new ArrayList<Node>();
+	protected DefaultTreeNode<Node> parentNode = null;
 	protected String name;
 	protected String id;
 
@@ -40,7 +42,7 @@ public class DefaultTreeNode implements ICTreeNode {
 	public DefaultTreeNode(String nodeName, int id) {
 		this(nodeName,Integer.toString(id));
 	}
-	
+
 	public DefaultTreeNode(String nodeName, String id) {
 		this.name = nodeName;
 		this.id = id;
@@ -49,9 +51,10 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 * Returns the children of the reciever as an Iterator.
 	 */
-	public Iterator getChildrenIterator() {
-	    Iterator it = null;
-	    Collection children = getChildren();
+	@Override
+	public Iterator<Node> getChildrenIterator() {
+	    Iterator<Node> it = null;
+	    Collection<Node> children = getChildren();
 	    if (children != null) {
 	        it = children.iterator();
 	    }
@@ -61,7 +64,8 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 * Returns the children of the reciever as a Collection.
 	 */
-	public Collection getChildren() {
+	@Override
+	public Collection<Node> getChildren() {
 		if (this.children != null) {
 			return this.children;
 		} else {
@@ -72,6 +76,7 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 *  Returns true if the receiver allows children.
 	 */
+	@Override
 	public boolean getAllowsChildren() {
 		if (this.children != null) {
 			return true;
@@ -83,13 +88,15 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 *  Returns the child TreeNode at index childIndex.
 	 */
-	public ICTreeNode getChildAtIndex(int childIndex) {
-		return (ICTreeNode) this.children.get(childIndex);
+	@Override
+	public Node getChildAtIndex(int childIndex) {
+		return this.children.get(childIndex);
 	}
 
 	/**
 	 *    Returns the number of children TreeNodes the receiver contains.
 	 */
+	@Override
 	public int getChildCount() {
 		return this.children.size();
 	}
@@ -97,20 +104,24 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 * Returns the index of node in the receivers children.
 	 */
-	public int getIndex(ICTreeNode node) {
+	@Override
+	public int getIndex(Node node) {
 		return this.children.indexOf(node);
 	}
 
 	/**
 	 *  Returns the parent TreeNode of the receiver.
 	 */
-	public ICTreeNode getParentNode() {
-		return this.parentNode;
+	@SuppressWarnings("unchecked")
+	@Override
+	public Node getParentNode() {
+		return (Node) this.parentNode;
 	}
 
 	/**
 	 *  Returns true if the receiver is a leaf.
 	 */
+	@Override
 	public boolean isLeaf() {
 		return (this.getChildCount() == 0);
 	}
@@ -118,20 +129,23 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 *  Returns the name of the Node
 	 */
+	@Override
 	public String getNodeName() {
 		return this.name;
 	}
-	
+
 	/**
 	 *  Returns the name of the Node
 	 */
+	@Override
 	public String getNodeName(Locale locale ) {
 		return getNodeName();
 	}
-	
+
 	/**
 	 *  Returns the name of the Node
 	 */
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac ) {
 		return getNodeName(locale);
 	}
@@ -139,6 +153,7 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 * Returns the unique ID of the Node in the tree
 	 */
+	@Override
 	public int getNodeID() {
 		return Integer.parseInt(getId());
 	}
@@ -146,6 +161,7 @@ public class DefaultTreeNode implements ICTreeNode {
 	/**
 	 * @return the number of siblings this node has
 	 */
+	@Override
 	public int getSiblingCount() {
 		try {
 			return this.getParentNode().getChildCount() - 1;
@@ -153,16 +169,16 @@ public class DefaultTreeNode implements ICTreeNode {
 			return -1;
 		}
 	}
-	
 
-	public void addTreeNode(ICTreeNode node) {
+	@SuppressWarnings("unchecked")
+	public void addTreeNode(Node node) {
 		if (node instanceof DefaultTreeNode) {
-			((DefaultTreeNode) node).setParentNode(this);
+			((DefaultTreeNode<Node>) node).setParentNode(this);
 		}
 		this.children.add(node);
 	}
 
-	public void setParentNode(ICTreeNode node) {
+	public void setParentNode(DefaultTreeNode<Node> node) {
 		this.parentNode = node;
 	}
 
@@ -171,7 +187,8 @@ public class DefaultTreeNode implements ICTreeNode {
 			this.children.clear();
 		}
 	}
-	
+
+	@Override
 	public String getId(){
 		return this.id;
 	}

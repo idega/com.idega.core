@@ -83,16 +83,16 @@ public class EntityFinder implements Singleton {
 	/**
 	 * Returns null if there was no match
 	 */
-	public static List findAll(IDOLegacyEntity entity, String SQLString) throws SQLException {
-		return findAll(entity, SQLString, -1);
+	public static <T extends IDOEntity> List<T> findAll(IDOLegacyEntity entity, String SQLString) throws SQLException {
+		return (List<T>) findAll(entity, SQLString, -1);
 	}
 
 	/**
 	 * Returns an empty List if there was no match
 	 */
-	public List findAll(Class entityClass, String SQLString) throws IDOFinderException {
+	public <T extends IDOEntity> List<T> findAll(Class entityClass, String SQLString) throws IDOFinderException {
 		try {
-			List theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass), SQLString);
+			List<T> theReturn = findAll(com.idega.data.GenericEntity.getStaticInstance(entityClass), SQLString);
 			if (theReturn == null) {
 				return com.idega.util.ListUtil.getEmptyList();
 			}
@@ -102,7 +102,7 @@ public class EntityFinder implements Singleton {
 			throw new IDOFinderException(sql);
 		}
 	}
-	public static List findAll(IDOLegacyEntity entity, String SQLString, int returningNumberOfRecords) throws SQLException {
+	public static List<?> findAll(IDOLegacyEntity entity, String SQLString, int returningNumberOfRecords) throws SQLException {
 		if (debug) {
 			System.err.println("EntityFinder sql query for class :" + entity.getClass().getName() + ":");
 			System.err.println(SQLString);

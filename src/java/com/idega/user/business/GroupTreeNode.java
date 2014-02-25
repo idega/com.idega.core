@@ -1,13 +1,14 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
+
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICDomainHome;
 import com.idega.core.data.ICTreeNode;
@@ -26,33 +27,34 @@ import com.idega.user.data.GroupHome;
  * @version 1.0
  */
 
-public class GroupTreeNode implements ICTreeNode {
+public class GroupTreeNode implements ICTreeNode<GroupTreeNode> {
 
-	private ICTreeNode _parent = null;
+	private GroupTreeNode _parent = null;
 
 	private ICDomain _domain = null;
 	private Group _group = null;
 	private int _nodeType;
 	private GroupBusiness groupBiz;
-	private List _children = null;
+	private List<GroupTreeNode> _children = null;
 	private IWApplicationContext _iwac = null;
-	
+
 	public static final int TYPE_DOMAIN = 0;
 	public static final int TYPE_GROUP = 1;
 
 	public GroupTreeNode(ICDomain domain,  IWApplicationContext iwc) {
 		setIWApplicationContext(iwc);
-		Map m = (Map)iwc.getApplicationAttribute("domain_group_tree");
+		@SuppressWarnings("unchecked")
+		Map<Object, GroupTreeNode> m = (Map<Object, GroupTreeNode>) iwc.getApplicationAttribute("domain_group_tree");
 		if (m == null) {
-			m = new Hashtable();
-			iwc.setApplicationAttribute("domain_group_tree",m);
-		}		
+			m = new Hashtable<Object, GroupTreeNode>();
+			iwc.setApplicationAttribute("domain_group_tree", m);
+		}
 
-		GroupTreeNode node = (GroupTreeNode)m.get(domain.getPrimaryKey());
+		GroupTreeNode node = m.get(domain.getPrimaryKey());
 		if (node == null) {
 			this._domain = domain;
 			this._nodeType = TYPE_DOMAIN;
-		
+
 			m.put(domain.getPrimaryKey(),this);
 		}
 		else {
@@ -61,7 +63,7 @@ public class GroupTreeNode implements ICTreeNode {
 			this._group = node._group;
 			this._nodeType = node._nodeType;
 			this._children = node._children;
-		}			
+		}
 	}
 
 	protected void setIWApplicationContext(IWApplicationContext iwac){
@@ -72,19 +74,20 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 		this._iwac=iwacToSet;
 	}
-	
-	public GroupTreeNode(Group group,  IWApplicationContext iwc) {
-		Map m = (Map)iwc.getApplicationAttribute("group_tree");
-		if (m == null) {
-			m = new Hashtable();
-			iwc.setApplicationAttribute("group_tree",m);
-		}		
 
-		GroupTreeNode node = (GroupTreeNode)m.get(group.getPrimaryKey());
+	public GroupTreeNode(Group group,  IWApplicationContext iwc) {
+		@SuppressWarnings("unchecked")
+		Map<Object, GroupTreeNode> m = (Map<Object, GroupTreeNode>) iwc.getApplicationAttribute("group_tree");
+		if (m == null) {
+			m = new Hashtable<Object, GroupTreeNode>();
+			iwc.setApplicationAttribute("group_tree", m);
+		}
+
+		GroupTreeNode node = m.get(group.getPrimaryKey());
 		if (node == null) {
 			this._group = group;
 			this._nodeType = TYPE_GROUP;
-		
+
 			m.put(group.getPrimaryKey(),this);
 		}
 		else {
@@ -114,37 +117,38 @@ public class GroupTreeNode implements ICTreeNode {
 		return this._nodeType;
 	}
 
-	public void setParent(ICTreeNode parent) {
+	public void setParent(GroupTreeNode parent) {
 		this._parent = parent;
 	}
 
-	public Iterator getChildrenIterator() {
-	    Iterator it = null;
-	    Collection children = getChildren();
+	@Override
+	public Iterator<GroupTreeNode> getChildrenIterator() {
+	    Iterator<GroupTreeNode> it = null;
+	    Collection<GroupTreeNode> children = getChildren();
 	    if (children != null) {
 	        it = children.iterator();
 	    }
 	    return it;
 	}
-	
-	public Collection getChildren() {
+
+	@Override
+	public Collection<GroupTreeNode> getChildren() {
 		if (this._children != null) {
 			return this._children;
 		}
-			
+
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
 				/**
 				 * @todo optimize the tree. store the tree nodes in session?
 				 */
 				try {
-					List l = new Vector();
-					Iterator iter = this.getGroupHome().findTopNodeVisibleGroupsContained(this._domain).iterator();
-					
-					
+					List<GroupTreeNode> l = new ArrayList<GroupTreeNode>();
+					Iterator<Group> iter = this.getGroupHome().findTopNodeVisibleGroupsContained(this._domain).iterator();
+
 					GroupTreeNode node = null;
 					while (iter.hasNext()) {
-						Group item = (Group) iter.next();
+						Group item = iter.next();
 						node = new GroupTreeNode(item);
 						node.setParent(this);
 						l.add(node);
@@ -158,7 +162,7 @@ public class GroupTreeNode implements ICTreeNode {
 					throw new RuntimeException(e.getMessage());
 				}
 			case TYPE_GROUP :
-				List l = new Vector();
+				List<GroupTreeNode> l = new ArrayList<GroupTreeNode>();
 
 				Group g = null;
 				if (isAlias()) {
@@ -171,10 +175,10 @@ public class GroupTreeNode implements ICTreeNode {
 					g = this._group;
 				}
 
-				Iterator iter = g.getChildrenIterator();
+				Iterator<Group> iter = g.getChildrenIterator();
 				GroupTreeNode node = null;
 				while (iter.hasNext()) {
-					Group item = (Group) iter.next();
+					Group item = iter.next();
 					node = new GroupTreeNode(item);
 					node.setParent(this);
 					l.add(node);
@@ -223,6 +227,7 @@ public class GroupTreeNode implements ICTreeNode {
 		return alias;
 	}
 
+	@Override
 	public boolean getAllowsChildren() {
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
@@ -239,12 +244,12 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 	}
 
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	@Override
+	public GroupTreeNode getChildAtIndex(int childIndex) {
 		if (this._children != null) {
-			System.out.println("Getting child at index from vector");
-			return (ICTreeNode)this._children.get(childIndex);
+			return this._children.get(childIndex);
 		}
-			
+
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
 				try {
@@ -264,7 +269,7 @@ public class GroupTreeNode implements ICTreeNode {
 					else {
 						g = this._group;
 					}
-					GroupTreeNode node = new GroupTreeNode((Group) g.getChildAtIndex(childIndex));
+					GroupTreeNode node = new GroupTreeNode(g.getChildAtIndex(childIndex));
 					node.setParent(this);
 					return node;
 				}
@@ -276,13 +281,12 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 	}
 
+	@Override
 	public int getChildCount() {
 		if (this._children != null){
-//			System.out.println("Getting child count from vector");
-
 			return this._children.size();
 		}
-			
+
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
 				try {
@@ -294,7 +298,7 @@ public class GroupTreeNode implements ICTreeNode {
 			case TYPE_GROUP :
 				if (isAlias()){
 					Group aliasGroup = getAlias();
-					Collection allAncestors = null;
+					Collection<Group> allAncestors = null;
 					try {
 						allAncestors = getGroupBusiness(this._iwac).getParentGroupsRecursive(this.getNodeID());
 					} catch (Exception e) {
@@ -320,26 +324,43 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 	}
 
-	public int getIndex(ICTreeNode node) {
+	private Group getGroupById(Integer id) {
+		if (id == null) {
+			return null;
+		}
+
+		try {
+			return getGroupHome().findByPrimaryKey(id);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return null;
+	}
+
+	@Override
+	public int getIndex(GroupTreeNode node) {
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
 				return node.getNodeID();
 			case TYPE_GROUP :
 				if (isAlias()) {
-					return getAlias().getIndex(node);
+					return getAlias().getIndex(getGroupById(node.getNodeID()));
 				}
 				else {
-					return this._group.getIndex(node);
+					return this._group.getIndex(getGroupById(node.getNodeID()));
 				}
 			default :
 				throw new UnsupportedOperationException("Operation not supported for type:" + getNodeType());
 		}
 	}
 
-	public ICTreeNode getParentNode() {
+	@Override
+	public GroupTreeNode getParentNode() {
 		return this._parent;
 	}
 
+	@Override
 	public boolean isLeaf() {
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
@@ -351,6 +372,7 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 	}
 
+	@Override
 	public String getNodeName() {
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
@@ -361,15 +383,17 @@ public class GroupTreeNode implements ICTreeNode {
 				throw new UnsupportedOperationException("Operation not supported for type:" + getNodeType());
 		}
 	}
-	
+
+	@Override
 	public String getNodeName(Locale locale) {
 		return getNodeName();
 	}
-	
+
+	@Override
 	public String getNodeName(Locale locale, IWApplicationContext iwac){
 		return getNodeName(locale);
 	}
-	
+
 	public String getGroupType() {
 		if (this._nodeType == TYPE_GROUP) {
 			return this._group.getGroupType();
@@ -377,6 +401,7 @@ public class GroupTreeNode implements ICTreeNode {
 		return null;
 	}
 
+	@Override
 	public int getNodeID() {
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
@@ -400,6 +425,7 @@ public class GroupTreeNode implements ICTreeNode {
 		return null;
 	}
 
+	@Override
 	public int getSiblingCount() {
 		switch (this._nodeType) {
 			case TYPE_DOMAIN :
@@ -415,11 +441,11 @@ public class GroupTreeNode implements ICTreeNode {
 				throw new UnsupportedOperationException("Operation not supported for type:" + getNodeType());
 		}
 	}
-	
+
 	public GroupBusiness getGroupBusiness(IWApplicationContext iwc) {
 		if (this.groupBiz == null) {
 			try {
-				this.groupBiz = (GroupBusiness) com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
+				this.groupBiz = com.idega.business.IBOLookup.getServiceInstance(iwc, GroupBusiness.class);
 			}
 			catch (java.rmi.RemoteException rme) {
 				throw new RuntimeException(rme.getMessage());
@@ -427,7 +453,8 @@ public class GroupTreeNode implements ICTreeNode {
 		}
 		return this.groupBiz;
 	}
-	
+
+	@Override
 	public String getId(){
 		return Integer.toString(getNodeID());
 	}

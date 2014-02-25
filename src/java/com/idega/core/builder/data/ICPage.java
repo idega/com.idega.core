@@ -2,15 +2,18 @@ package com.idega.core.builder.data;
 
 import java.util.Collection;
 import java.util.Locale;
+
 import com.idega.data.IDOLegacyEntity;
+import com.idega.data.TreeableEntity;
 import com.idega.data.UniqueIDCapable;
 import com.idega.io.serialization.Storable;
 import com.idega.repository.data.Resource;
 
-public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, Resource, Storable,UniqueIDCapable {
+public interface ICPage extends TreeableEntity<ICPage>, IDOLegacyEntity, Resource, Storable, UniqueIDCapable {
 
 	public void delete(int p0) throws java.sql.SQLException;
 
+	@Override
 	public void delete() throws java.sql.SQLException;
 
 	public boolean getDeleted();
@@ -23,6 +26,7 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 
 	public int getLockedBy();
 
+	@Override
 	public java.lang.String getName();
 
 	public java.lang.String getName(Locale locale);
@@ -52,12 +56,14 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 
 	public boolean isFolder();
 
+	@Override
 	public boolean isLeaf();
 
 	public boolean isPage();
 
 	public boolean isTemplate();
 
+	@Override
 	public void setDefaultValues();
 
 	public void setDeleted(boolean p0);
@@ -74,6 +80,7 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 
 	public void setLockedBy(int p0);
 
+	@Override
 	public void setName(java.lang.String p0);
 
 	public void setOwner(com.idega.idegaweb.IWUserContext p0);
@@ -115,10 +122,10 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	public boolean getIsFormattedInFacelet();
 
 	public boolean getIsFormattedInIBXML2();
-	
+
 	/**
 	 * Gets the id/key of the page as a String
-	 * 
+	 *
 	 * @return
 	 */
 	public String getPageKey();
@@ -126,27 +133,27 @@ public interface ICPage extends com.idega.data.TreeableEntity, IDOLegacyEntity, 
 	public String getDefaultPageURI();
 
 	public void setDefaultPageURI(String pageUri);
-	
+
 	public String getWebDavUri();
 	public void setWebDavUri(String fileUri);
-	
+
 	public ICDomain getDomain();
-	
+
 	public int getDomainId();
-	
+
 	public void setDomain(ICDomain domain);
-	
+
 	public void setHidePageInMenu(boolean hidePageInMenu);
-	
+
 	public boolean isHidePageInMenu();
-	
-	public Collection ejbFindBySubType(String subType, boolean deleted)  throws javax.ejb.FinderException;
-	
+
+	public Collection<ICPage> ejbFindBySubType(String subType, boolean deleted)  throws javax.ejb.FinderException;
+
 	public void setPublished(boolean published);
-	
+
 	public boolean isPublished();
-	
+
 	public void setLocked(boolean locked);
-	
+
 	public boolean isLocked();
 }

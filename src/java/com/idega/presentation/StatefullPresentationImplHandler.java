@@ -8,6 +8,7 @@ import com.idega.event.IWStateMachine;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -31,16 +32,16 @@ public class StatefullPresentationImplHandler {
   public static IWPresentationState getPresentationState(String compoundId, IWUserContext iwuc) {
     IWPresentationState presentationState = null;
     try {
-      IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
-      StringTokenizer tokenizer = new StringTokenizer(compoundId, "/");
+      IWStateMachine stateMachine = IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+      StringTokenizer tokenizer = new StringTokenizer(compoundId, CoreConstants.SLASH);
       String lastElement = "";
       while (tokenizer.hasMoreTokens()) {
         lastElement = tokenizer.nextToken();
       }
-      int childDelimiterPosition = lastElement.lastIndexOf("_");
+      int childDelimiterPosition = lastElement.lastIndexOf(CoreConstants.UNDER);
       String classCode = lastElement.substring(0, childDelimiterPosition);
       String className = IWMainApplication.decryptClassName(classCode);
-      Class presentationClass = RefactorClassRegistry.forName(className);
+      Class<?> presentationClass = RefactorClassRegistry.forName(className);
       presentationState = stateMachine.getStateFor(compoundId, presentationClass);
     }
     catch (ClassNotFoundException ce)  {
@@ -64,7 +65,7 @@ public class StatefullPresentationImplHandler {
   public IWPresentationState getPresentationState(PresentationObject obj, IWUserContext iwuc){
     if(this._presentationState == null){
       try {
-        IWStateMachine stateMachine = (IWStateMachine)IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
+        IWStateMachine stateMachine = IBOLookup.getSessionInstance(iwuc,IWStateMachine.class);
           this._presentationState = stateMachine.getStateFor(obj.getCompoundId(), this._class);
       }
       catch (RemoteException re) {

@@ -24,7 +24,6 @@ import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.contact.data.PhoneHome;
-import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
@@ -1314,7 +1313,7 @@ public void delete(int userId) throws SQLException {
 		return false;
 	}
 	@Override
-	public ICTreeNode getChildAtIndex(int childIndex) {
+	public User getChildAtIndex(int childIndex) {
 		/**@todo: Implement this com.idega.core.ICTreeNode method*/
 		throw new java.lang.UnsupportedOperationException("Method getChildAtIndex() not supported.");
 	}
@@ -1323,11 +1322,11 @@ public void delete(int userId) throws SQLException {
 		return 0;
 	}
 	@Override
-	public int getIndex(ICTreeNode node) {
+	public int getIndex(User node) {
 		throw new java.lang.UnsupportedOperationException("Method getIndex() not supported.");
 	}
 	@Override
-	public ICTreeNode getParentNode() {
+	public User getParentNode() {
 		/**@todo: Implement this com.idega.core.ICTreeNode method*/
 		throw new java.lang.UnsupportedOperationException("Method getParentNode() not yet implemented.");
 	}
@@ -1443,10 +1442,10 @@ public void delete(int userId) throws SQLException {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param personalID is part of {@link User#getPersonalID()} to search for,
 	 * not <code>null</code>;
-	 * @return {@link Collection} of {@link User#getPrimaryKey()} or 
+	 * @return {@link Collection} of {@link User#getPrimaryKey()} or
 	 * {@link Collections#emptyList()};
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -1464,8 +1463,8 @@ public void delete(int userId) throws SQLException {
 		try {
 			return idoFindPKsByQuery(query);
 		} catch (FinderException e) {
-			getLogger().log(Level.WARNING, 
-					"Failed to get primary keys for " + User.class.getSimpleName() + 
+			getLogger().log(Level.WARNING,
+					"Failed to get primary keys for " + User.class.getSimpleName() +
 					" by query: '" + query.toString() + "'", e);
 		}
 
@@ -1910,7 +1909,7 @@ public void delete(int userId) throws SQLException {
 						groupID = Integer.valueOf(this.getPrimaryKey().toString());
 					} catch (NumberFormatException e) {
 						getLogger().warning(
-								"Failed to convert: '" + this.getPrimaryKey().toString() + 
+								"Failed to convert: '" + this.getPrimaryKey().toString() +
 								"' to " + Integer.class.getName());
 					}
 				}

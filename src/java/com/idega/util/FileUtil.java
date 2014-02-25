@@ -978,7 +978,6 @@ public static String getFileSeparator(){
 
 	  for (RepositoryItem item: filesToZip) {
 		  if (item.isDirectory()) {
-			  @SuppressWarnings("unchecked")
 			  Collection<RepositoryItem> children = (Collection<RepositoryItem>) item.getChildren();
 			  doAddZipEntries(
 					  StringUtil.isEmpty(namePrefix) ? item.getName() : namePrefix + File.separator + item.getName(),
