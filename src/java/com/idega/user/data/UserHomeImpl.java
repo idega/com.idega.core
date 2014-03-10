@@ -333,10 +333,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		@SuppressWarnings("unchecked")
 		Collection<Integer> pks = ((UserBMPBean) entity).ejbFindUsersByEmail(
 				email, useLoweredValue, useLikeExpression);
-		this.idoCheckInPooledEntity(entity);
-		@SuppressWarnings("unchecked")
-		Collection<User> usrs = getEntityCollectionForPrimaryKeys(pks);
-		return usrs;
+		return getEntityCollectionForPrimaryKeys(pks);
 	}
 
 	@Override
