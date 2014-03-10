@@ -565,7 +565,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else { //user check
 
 			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if ( !"true".equalsIgnoreCase(recurseParents) )  { //old crap
+			if ( !Boolean.TRUE.toString().equalsIgnoreCase(recurseParents) )  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
@@ -575,16 +575,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 			GenericGroup primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
-			if (groups != null && !groups.isEmpty()) {
+			if (!ListUtil.isEmpty(groups)) {
 				if (primaryGroup != null) {
 					groups.remove(primaryGroup);
 				}
-				List groupIds = new ArrayList();
-				Iterator iter = groups.iterator();
-				while (iter.hasNext()) {
-					GenericGroup group = (GenericGroup) iter.next();
-					if(group!=null) {
-						groupIds.add(Integer.toString(group.getID()));
+				List<String> groupIds = new ArrayList<String>();
+				for (Object o: groups) {
+					if (o instanceof GenericGroup) {
+						GenericGroup group = (GenericGroup) o;
+						if(group!=null) {
+							groupIds.add(Integer.toString(group.getID()));
+						}
 					}
 				}
 
@@ -836,7 +837,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					//Template object instance permission.  Used for DynamicPageTrigger
 					if(Boolean.FALSE.equals(myPermission)) { //TODO: should check if myPermission is null when the todo above has been changed (myPermission should be set null there)
 						PresentationObject currentObject = (PresentationObject)obj; //TODO: user interfase to avoid using presentation object in business logic
-						ICDynamicPageTrigger dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, AccessControl.class);
+						ICDynamicPageTrigger dynamicPageTrigger = ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, AccessControl.class);
 						if (dynamicPageTrigger == null) {
 							throw new RuntimeException("[AccessControl] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
 						}
