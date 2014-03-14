@@ -41,6 +41,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWModuleLoader;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
@@ -236,7 +237,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 
 		String pathWithinBundle = getResourceWithinBundle(requestUriWithoutContextPath);
 
-		requestUriWithoutContextPath = requestUriWithoutContextPath.replaceAll("//", File.separator);
+		requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, CoreConstants.SLASH + CoreConstants.SLASH, File.separator);
 
 		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
 		File webappFile = new File(webappFilePath);
@@ -274,8 +275,9 @@ public class IWBundleResourceFilter extends BaseFilter {
 			IWBundle bundle,
 			long lastModified
 	) {
-		InputStream input = null;
+		InputStream stream = null;
 		String webappFilePath = iwma.getApplicationRealPath() + requestUriWithoutContextPath;
+		String doubleSlash = CoreConstants.SLASH + CoreConstants.SLASH;
 		try {
 			//Special Windows handling:
 			char separatorChar = File.separatorChar;
@@ -285,17 +287,55 @@ public class IWBundleResourceFilter extends BaseFilter {
 				webappFilePath = webappFilePath.replace(FileUtil.UNIX_FILE_SEPARATOR, FileUtil.WINDOWS_FILE_SEPARATOR);
 			}
 
-			input = StringUtil.isEmpty(content) ? bundle.getResourceInputStream(pathWithinBundle) : StringHandler.getStreamFromString(content);
+			if (StringUtil.isEmpty(content)) {
+				if (webappFilePath.indexOf(doubleSlash) != -1) {
+					webappFilePath = StringHandler.replace(webappFilePath, doubleSlash, File.separator);
+				}
+				if (pathWithinBundle.indexOf(doubleSlash) != -1) {
+					pathWithinBundle = StringHandler.replace(pathWithinBundle, doubleSlash, File.separator);
+				}
+
+				stream = bundle.getResourceInputStream(pathWithinBundle);
+			} else {
+				stream = StringHandler.getStreamFromString(content);
+			}
 			File webappFile = FileUtil.getFileAndCreateRecursiveIfNotExists(webappFilePath);
-			FileUtil.streamToFile(input, webappFile);
+			FileUtil.streamToFile(stream, webappFile);
 			webappFile.setLastModified(lastModified);
 			return webappFile;
+		} catch (FileNotFoundException fnf) {
+			if (pathWithinBundle.startsWith(CoreConstants.WEBDAV_SERVLET_URI + CoreConstants.PATH_FILES_ROOT + CoreConstants.SLASH)) {
+				return getFileFromRepository(pathWithinBundle);
+			} else {
+				if (requestUriWithoutContextPath.indexOf(doubleSlash) != -1) {
+					requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, doubleSlash, File.separator);
+				}
+
+				LOGGER.log(Level.WARNING, "Could not copy resource from jar (" + bundle.getBundleIdentifier() + ") to " + requestUriWithoutContextPath, fnf);
+			}
 		} catch (Exception e) {
+			if (requestUriWithoutContextPath.indexOf(doubleSlash) != -1) {
+				requestUriWithoutContextPath = StringHandler.replace(requestUriWithoutContextPath, doubleSlash, File.separator);
+			}
+
 			LOGGER.log(Level.WARNING, "Could not copy resource from jar (" + bundle.getBundleIdentifier() + ") to " + requestUriWithoutContextPath, e);
 		} finally {
-			IOUtil.closeInputStream(input);
+			IOUtil.closeInputStream(stream);
 		}
 
+		return null;
+	}
+
+	private static File getFileFromRepository(String path) {
+		try {
+			File file = CoreUtil.getFileFromRepository(path);
+			if (file == null || !file.exists()) {
+				throw new FileNotFoundException("File '" + path + "' can not be loaded from repository");
+			}
+			return file;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting file '" + path + "' from repository", e);
+		}
 		return null;
 	}
 
@@ -473,7 +513,6 @@ public class IWBundleResourceFilter extends BaseFilter {
 			int buffer = 1000;
 			byte[] barray = new byte[buffer];
 			int read = streamToResource.read(barray);
-			// out.write(barray);
 			while (read != -1) {
 				out.write(barray, 0, read);
 				read = streamToResource.read(barray);

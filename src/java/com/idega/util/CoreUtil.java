@@ -228,8 +228,26 @@ public class CoreUtil {
 		    			notification.append("Message: ").append(message).append("\n");
 		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		    		SendMail.send("idegaweb@idega.com", settings.getProperty("exception_report_receiver", "abuse@idega.com"), null, null, null,
-		    				null, "EXCEPTION: on ePlatform, server: " + server,notification.toString(), false, true, attachments);
+		    		String receiver = settings.getProperty("exception_report_receiver", "abuse@idega.com");
+		    		String subject = "EXCEPTION: on ePlatform, server: " + server;
+		    		String text = notification.toString();
+		    		if (EmailValidator.getInstance().validateEmail(receiver)) {
+		    			SendMail.send(
+		    					"idegaweb@idega.com",
+		    					receiver,
+		    					null,
+		    					null,
+		    					null,
+		    					null,
+		    					subject,
+		    					text,
+		    					false,
+		    					true,
+		    					attachments
+		    			);
+		    		} else {
+		    			LOGGER.warning(subject + "\n" + text);
+		    		}
 		        } catch(Exception e) {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
 		        } finally {

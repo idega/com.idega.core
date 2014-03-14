@@ -596,7 +596,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else { //user check
 
 			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if ( !"true".equalsIgnoreCase(recurseParents) )  { //old crap
+			if ( !Boolean.TRUE.toString().equalsIgnoreCase(recurseParents) )  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
@@ -606,16 +606,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
-			if (groups != null && !groups.isEmpty()) {
+			if (!ListUtil.isEmpty(groups)) {
 				if (primaryGroup != null) {
 					groups.remove(primaryGroup);
 				}
-
 				List<String> groupIds = new ArrayList<String>();
-				Iterator<Group> iter = groups.iterator();
-				while (iter.hasNext()) {
-					Group group = iter.next();
-					if(group!=null) {
+				for (Object o: groups) {
+					if (o instanceof Group) {
+						Group group = (Group) o;
 						groupIds.add(Integer.toString(group.getID()));
 					}
 				}
