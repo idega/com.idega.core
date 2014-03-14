@@ -552,6 +552,10 @@ public class StringHandler {
 	 * @author thomas
 	 */
 	public static String replace(String str, String pattern, String replace) {
+		if (StringUtil.isEmpty(str)) {
+			return str;
+		}
+
 		int s = 0;
 		int e = 0;
 		StringBuffer result = new StringBuffer();
