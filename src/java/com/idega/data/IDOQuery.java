@@ -6,6 +6,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
+import java.util.TreeMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -13,6 +16,8 @@ import com.idega.data.query.SelectQuery;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -73,9 +78,11 @@ public class IDOQuery implements Cloneable {
 	public static final String JOIN = "JOIN ";
 	public static final String ON = "ON ";
 	public static final String AS = " ";
+	public static final String UNION = "UNION";
 	public static final String ENTITY_TO_SELECT = "selected_entity";
 	public static final String MIDDLE_ENTITY = "middle_entity_";
 	public static final String RELATED_ENTITY = "related_entity_";
+	public static final String RELATED_VIEW = "related_view_";
 	public boolean useDefaultAlias = false;
 
 
@@ -97,6 +104,32 @@ public class IDOQuery implements Cloneable {
 
 	protected void setEntityToSelect(IDOEntity entityToSelect) {
 		this.entityToSelect = entityToSelect;
+	}
+
+	private String primaryKeyColumnName = null;
+
+	protected String getPrimaryKeyColumnName() {
+		if (StringUtil.isEmpty(this.primaryKeyColumnName)) {
+			this.primaryKeyColumnName = getColumnNameForPrimaryKey(
+					getEntityToSelect()
+					);
+		}
+
+		return this.primaryKeyColumnName;
+	}
+
+	private String primaryKeyColumnNameForSelectedEntity = null;
+
+	protected String getPrimaryKeyColumnNameForSelectedEntity() {
+		if (StringUtil.isEmpty(this.primaryKeyColumnNameForSelectedEntity)) {
+			this.primaryKeyColumnNameForSelectedEntity = new StringBuilder(ENTITY_TO_SELECT)
+					.append(CoreConstants.DOT)
+					.append(getPrimaryKeyColumnName())
+					.append(CoreConstants.SPACE)
+					.toString();
+		}
+
+		return this.primaryKeyColumnNameForSelectedEntity;
 	}
 
 	/**
@@ -137,13 +170,13 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 *
+	 * 
 	 * <p>Constructs JOIN ON... part for related EJB entities</p>
 	 * @param entities to search by, should be only one type, not <code>null</code>;
 	 * @return query for filtering required entity by these given entities;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public IDOQuery appendJoinOn(Collection<? extends IDOEntity> entities) {
+	protected IDOQuery appendJoinOnEntity(Collection<IDOEntity> entities) {
 		if (ListUtil.isEmpty(entities) || getEntityToSelect() == null) {
 			return this;
 		}
@@ -153,14 +186,6 @@ public class IDOQuery implements Cloneable {
 		if (relatedEntity == null) {
 			return this;
 		}
-
-		/* Current table info */
-		String currentTablePrimaryKeySqlName = getColumnNameForPrimaryKey(getEntityToSelect());
-		String currentTableKeyColumn = new StringBuilder(ENTITY_TO_SELECT)
-				.append(CoreConstants.DOT)
-				.append(currentTablePrimaryKeySqlName)
-				.append(CoreConstants.SPACE)
-				.toString();
 
 		String relatedTableName = relatedEntity.getEntityDefinition().getSQLTableName();
 		String relatedTablePrimaryKeySqlName = getColumnNameForPrimaryKey(relatedEntity);
@@ -180,7 +205,8 @@ public class IDOQuery implements Cloneable {
 		/*
 		 * Case of many to many relation
 		 */
-		EntityRelationship relation = EntityControl.getManyToManyRelationShip(relatedEntity, getEntityToSelect());
+		EntityRelationship relation = EntityControl.getManyToManyRelationShip(
+				relatedEntity, getEntityToSelect());
 		if (relation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
 
@@ -190,7 +216,7 @@ public class IDOQuery implements Cloneable {
 			String middleTableCurrentKeyColumn = new StringBuilder(MIDDLE_ENTITY)
 					.append(joinNumber)
 					.append(CoreConstants.DOT)
-					.append(currentTablePrimaryKeySqlName)
+					.append(getPrimaryKeyColumnName())
 					.toString();
 			String middleTableRelatedKeyColumn = new StringBuilder(MIDDLE_ENTITY)
 					.append(joinNumber)
@@ -201,7 +227,9 @@ public class IDOQuery implements Cloneable {
 			/* Joining middle table */
 			append(JOIN).append(middleTableName);
 			append(AS).append(middleName).append(CoreConstants.SPACE);
-			append(ON).appendEquals(currentTableKeyColumn, middleTableCurrentKeyColumn);
+			append(ON).appendEquals(
+					getPrimaryKeyColumnNameForSelectedEntity(), 
+					middleTableCurrentKeyColumn);
 			append(CoreConstants.SPACE);
 
 			/* Joining related entity */
@@ -234,7 +262,8 @@ public class IDOQuery implements Cloneable {
 		/*
 		 * In case of one to many or one to one relation
 		 */
-		EntityAttribute oneToManyRelation = EntityControl.getOneToNRelation(getEntityToSelect(), relatedEntity);
+		EntityAttribute oneToManyRelation = EntityControl.getOneToNRelation(
+				getEntityToSelect(), relatedEntity);
 		if (oneToManyRelation != null && !relationFound) {
 			relationFound = Boolean.TRUE;
 
@@ -248,7 +277,9 @@ public class IDOQuery implements Cloneable {
 			/* Joining related entity */
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
-			append(ON).appendEquals(currentTableKeyColumn, foreignKeyColumn);
+			append(ON).appendEquals(
+					getPrimaryKeyColumnNameForSelectedEntity(), 
+					foreignKeyColumn);
 			append(CoreConstants.SPACE);
 		}
 
@@ -260,6 +291,94 @@ public class IDOQuery implements Cloneable {
 			append(relatedTableKeyColumn);
 			appendInCollectionWithSingleQuotes(entities);
 			joinNumber++;
+		}
+
+		return this;
+	}
+	
+	/**
+	 * 
+	 * <p>Constructs JOIN ON... part for related EJB entities</p>
+	 * @param sortedEntities is {@link IDOEntity}s sorted by 
+	 * their table names, not <code>null</code>;
+	 * @return query for filtering required entity by these given entities;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected IDOQuery appendJoinOn(Map<String, Collection<IDOEntity>> sortedEntities) {
+		if (MapUtil.isEmpty(sortedEntities)) {
+			return this;	
+		}
+
+		Set<String> types = sortedEntities.keySet();
+		if (types.size() > 1) {
+			String relatedView = new StringBuilder(RELATED_VIEW)
+					.append(joinNumber).toString();
+			String viewKeyColumn = new StringBuilder(relatedView)
+					.append(CoreConstants.DOT)
+					.append(getPrimaryKeyColumnName())
+					.append(CoreConstants.SPACE)
+					.toString();
+
+			append(JOIN).append(CoreConstants.BRACKET_LEFT);
+			Iterator<String> typeIterator = types.iterator();
+			while (typeIterator.hasNext()) {
+				append(CoreConstants.BRACKET_LEFT);
+
+				try {
+					appendSelectIDColumnFrom(getEntityToSelect());
+					appendJoinOnEntity(sortedEntities.get(typeIterator.next()));
+				} catch (IDOCompositePrimaryKeyException e) {
+					Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+							"No solution for composite keys: ", e);
+				}
+
+				append(CoreConstants.BRACKET_RIGHT);
+				if (typeIterator.hasNext()) {
+					append(CoreConstants.SPACE);
+					append(UNION);
+					append(CoreConstants.SPACE);
+				}
+			}
+
+			append(CoreConstants.BRACKET_RIGHT);
+			append(CoreConstants.SPACE);
+			append(relatedView);
+			append(CoreConstants.SPACE);
+			append(ON).appendEquals(
+					viewKeyColumn, 
+					getPrimaryKeyColumnNameForSelectedEntity());
+		} else {
+			appendJoinOnEntity(sortedEntities.get(types.iterator().next()));
+		}
+
+		return this;
+	}
+
+	/**
+	 *
+	 * <p>Constructs JOIN ON... part for related EJB entities</p>
+	 * @param entities to search by, not <code>null</code>;
+	 * @return query for filtering required entity by these given entities;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendJoinOn(Collection<? extends IDOEntity> entities) {
+		if (!ListUtil.isEmpty(entities)) {
+			/*
+			 * Sorting by type if some sub-types are passed
+			 */
+			Map<String, Collection<IDOEntity>> sortedEntities = new TreeMap<String, Collection<IDOEntity>>();
+			for (IDOEntity entity : entities) {
+				String tableName = entity.getEntityDefinition().getSQLTableName();
+				Collection<IDOEntity> entityList = sortedEntities.get(tableName);
+				if (ListUtil.isEmpty(entityList)) {
+					entityList = new ArrayList<IDOEntity>();
+				}
+
+				entityList.add(entity);
+				sortedEntities.put(tableName, entityList);
+			}
+
+			return appendJoinOn(sortedEntities);
 		}
 
 		return this;
