@@ -15,6 +15,7 @@ import javax.ejb.FinderException;
 
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 /**
  * Title:        idegaclasses
@@ -176,7 +177,7 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public <T extends IDOEntity> T findSubTypeByPrimaryKeyIDO(Object primaryKey) {
-		if (primaryKey == null) {
+		if (primaryKey == null || StringUtil.isEmpty(primaryKey.toString())) {
 			return null;
 		}
 
