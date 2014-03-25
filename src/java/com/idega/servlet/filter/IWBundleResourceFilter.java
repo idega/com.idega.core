@@ -231,6 +231,10 @@ public class IWBundleResourceFilter extends BaseFilter {
 	) {
 		String bundleIdentifier = getBundleFromRequest(requestUriWithoutContextPath);
 		if (StringUtil.isEmpty(bundleIdentifier)) {
+			if (requestUriWithoutContextPath.startsWith(CoreConstants.WEBDAV_SERVLET_URI + CoreConstants.PATH_FILES_ROOT + CoreConstants.SLASH)) {
+				return getFileFromRepository(requestUriWithoutContextPath);
+			}
+
 			LOGGER.warning("Unknown bundle identifier, can not return requested file: " + requestUriWithoutContextPath);
 			return null;
 		}

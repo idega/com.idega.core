@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.FileWriter;
-import java.util.logging.Logger;
 
 import org.apache.commons.io.IOUtils;
 
@@ -137,7 +136,6 @@ public class StringConverterUtility {
 	 */
 	public static String loadConvert(String theString) {
 		if (StringUtil.isEmpty(theString)) {
-			Logger.getLogger(StringConverterUtility.class.getName()).warning("Provided string: '" + theString + "' is empty!");
 			return theString;
 		}
 
