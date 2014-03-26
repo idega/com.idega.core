@@ -109,15 +109,20 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		// setParameterValue(SmallCalendar.PRM_SETTINGS,SmallCalendar.getInitializingString(true,null,"#0000FF","#00FF00","#00FFFF","#FFFF00","#FFFFFF","#FFF000"));
 	}
 
+	private TextInput realInput = null;
+	
 	public PresentationObject getPresentationObject(IWContext iwc) {
-
-		TextInput input = new TextInput(this.displayInputName);
-		input.setDisabled(this.disabled);
+		if (realInput != null) {
+			return realInput;
+		}
+		
+		realInput = new TextInput(this.displayInputName);
+		realInput.setDisabled(this.disabled);
 		if (textInputId != null) {
-			input.setId(textInputId);
+			realInput.setId(textInputId);
 		}
 		if (textInputOnchange != null) {
-			input.setOnChange(textInputOnchange);
+			realInput.setOnChange(textInputOnchange);
 		}
 
 		int inputLength = 10;
@@ -140,9 +145,9 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 		else {
 			inputLength = this.length;
 		}
-		input.setLength(inputLength);
+		realInput.setLength(inputLength);
 		if (this._style != null) {
-			input.setMarkupAttribute("style", this._style);
+			realInput.setMarkupAttribute("style", this._style);
 		}
 
 		if (this.keepStatus && iwc.isParameterSet(getChooserParameter())) {
@@ -150,13 +155,13 @@ public class DatePicker extends AbstractChooser implements InputHandler {
 			setDate(new IWTimestamp(p).getDate());
 		}
 		if (this._stringDisplay != null) {
-			input.setValue(this._stringDisplay);
+			realInput.setValue(this._stringDisplay);
 		}
 		if (this.styleClass != null) {
-			input.setStyleClass(this.styleClass);
+			realInput.setStyleClass(this.styleClass);
 		}
 
-		return input;
+		return realInput;
 	}
 
 	/*
