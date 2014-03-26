@@ -4,6 +4,7 @@ package com.idega.block.web2.business;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
+import java.util.Locale;
 
 import com.idega.business.IBOService;
 import com.idega.business.SpringBeanName;
@@ -11,6 +12,8 @@ import com.idega.presentation.IWContext;
 
 @SpringBeanName(Web2Business.SPRING_BEAN_IDENTIFIER)
 public interface Web2Business extends IBOService {
+	
+	public static final String JQUERY_UI_LATEST_VERSION = "1.10.3";
 
 	public static final String SPRING_BEAN_IDENTIFIER = "web2bean";
 
@@ -479,4 +482,7 @@ public interface Web2Business extends IBOService {
 
 	public String getBundleUriToLoadMaskScript();
 	public String getBundleUriToLoadMaskStyle();
+	public List<String> getBundleUrisToTimeAgoScript(Locale locale);
+	public List<String> getBundleUrisToTimePickerScript(Locale locale);
+	public String getBundleUriToTimePickerStyle();
 }
