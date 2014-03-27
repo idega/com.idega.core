@@ -69,7 +69,7 @@ public class CoreConstants {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public static final String ORGANIZATION_NAME = "organization_name";
-	
+
 	public static final String DEVELOPEMENT_SERVER_URL = "http://localhost:8080/";
 
 	public static final String HANDLER_PARAMETER = "handler_parameter";
@@ -100,7 +100,7 @@ public class CoreConstants {
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";
 	public static final String DWR_UTIL_SCRIPT = "/dwr/util.js";
 	public static final String HIDDEN_PAGE_IN_MENU_STYLE_CLASS = "hiddenPageInNavigationMenu";
-	
+
 	public static final String PDF_ICON_LINK =  "idegaweb/bundles/org.jboss.jbpm.bundle/resources/images/pdf.gif";
 
 	public static final String UNDEFINED_VALUE = "-1";
@@ -171,6 +171,9 @@ public class CoreConstants {
 			PAGE_VIEW_TYPE_REGULAR = "regular",
 			PAGE_VIEW_TYPE_MOBILE = "mobile",
 
-			PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body";
-	public static final String PROPERTIES_FOLDER_NAME_IN_JAR = "properties";
+			PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body",
+			PROPERTIES_FOLDER_NAME_IN_JAR = "properties",
+
+			ACTIVE_ROLE = "iw_session_user_active_role";
+
 }

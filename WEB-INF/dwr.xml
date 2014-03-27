@@ -33,6 +33,7 @@
       		<include method="getApplicationProperty" />
       		<include method="getFirstDayOfCurrentMonth" />
       		<include method="getLastDayOfCurrentMonth" />
+      		<include method="setActiveRole"/>
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
