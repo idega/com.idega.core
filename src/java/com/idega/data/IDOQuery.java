@@ -856,6 +856,30 @@ public class IDOQuery implements Cloneable {
 		}
 		return this;
 	}
+
+	/**
+	 * 
+	 * @param entity to select from, not <code>null</code>;
+	 * @return SELECT selected_entity.* FROM given entity;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendSelectDistinctFrom(IDOEntity entity) {
+		if (entity != null) {
+			setEntityToSelect(entity);
+			appendSelect();
+			appendDistinct();
+			append(ENTITY_TO_SELECT).append(CoreConstants.DOT)
+					.append(CoreConstants.STAR).append(CoreConstants.SPACE);
+			appendFrom();
+			append(entity.getEntityDefinition().getSQLTableName());
+			if (useDefaultAlias) {
+				append(AS).append(ENTITY_TO_SELECT).append(CoreConstants.SPACE);
+			}
+		}
+
+		return this;
+	}
+	
 	public IDOQuery appendSelectAllFrom(String entityName) {
 		this.append(SELECT_ALL_FROM);
 		this.append(entityName);
