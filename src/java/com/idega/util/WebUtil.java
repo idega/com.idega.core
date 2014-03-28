@@ -8,6 +8,7 @@ import java.util.Locale;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -76,15 +77,15 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning("Subject or/and message not provided, unable to send a message:\n" + message);
     		return false;
     	}
-    	
+
     	// Printing errors to console
     	if (isDevelopementState()) {
-    		getLogger().log(Level.INFO, 
-        			"To: " + to + "\n" + 
-        			"From: " + from + "\n" + 
-        			"Subject: " + subject + "\n" + 
+    		getLogger().log(Level.INFO,
+        			"To: " + to + "\n" +
+        			"From: " + from + "\n" +
+        			"Subject: " + subject + "\n" +
         			"Message: " + message);
-    		
+
     		return Boolean.TRUE;
     	}
 
@@ -115,6 +116,7 @@ public class WebUtil extends DefaultSpringBean {
     	final String sbjct = subject;
     	final String msg = message;
     	Thread sender = new Thread(new Runnable() {
+			@Override
 			public void run() {
 				try {
 		    		SendMail.send(fromAddress, toAddress, null, null, hostName, sbjct, msg);
@@ -264,4 +266,18 @@ public class WebUtil extends DefaultSpringBean {
     public String getLastDayOfCurrentMonth(boolean showTime) {
     	return getLocalizedDate(getLastDay(showTime), getCurrentLocale(), showTime);
     }
+
+    public boolean setActiveRole(String sessionId, String role, HttpSession session) {
+    	if (session == null || StringUtil.isEmpty(role) || StringUtil.isEmpty(sessionId)) {
+    		return false;
+    	}
+
+    	if (!sessionId.equals(session.getId())) {
+    		return false;
+    	}
+
+    	session.setAttribute(CoreConstants.ACTIVE_ROLE, role);
+    	return true;
+    }
+
 }
