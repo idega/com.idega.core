@@ -130,11 +130,20 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 	 */
 	@Override
 	public Address update(String primaryKey, String streetName) {
-		Address address = null;
-		if (!StringUtil.isEmpty(primaryKey)) {
-			address = findByPrimaryKey(primaryKey);
-		}
+		return update(findByPrimaryKey(primaryKey), null, streetName, null, null);
+	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.location.data.AddressHome#update(com.idega.core.location.data.Address, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Address update(
+			Address address, 
+			String streetNumber,
+			String streetName,
+			String city, 
+			PostalCode postalCode) {
 		if (address == null) {
 			try {
 				address = createEntity();
@@ -150,8 +159,20 @@ public class AddressHomeImpl extends IDOFactory implements AddressHome {
 			}
 		}
 
+		if (!StringUtil.isEmpty(streetNumber)) {
+			address.setStreetNumber(streetNumber);
+		}
+
 		if (!StringUtil.isEmpty(streetName)) {
 			address.setStreetName(streetName);
+		}
+
+		if (!StringUtil.isEmpty(city)) {
+			address.setCity(city);
+		}
+
+		if (postalCode != null) {
+			address.setPostalCode(postalCode);
 		}
 
 		try {

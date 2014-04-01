@@ -25,6 +25,27 @@ public interface AddressHome extends IDOHome {
 	 */
 	public Address update(String primaryKey, String streetName);
 
+	/**
+	 * 
+	 * <p>Creates or updates {@link Address} entity.</p>
+	 * @param address to update, if <code>null</code> new one will be created;
+	 * @param streetNumber is {@link Address#getStreetNumber()}, 
+	 * skipped if <code>null</code>;
+	 * @param streetName is {@link Address#getStreetName()}, 
+	 * skipped if <code>null</code>
+	 * @param city is {@link Address#getCity()}, skipped if <code>null</code>;
+	 * @param postalCode is {@link PostalCode} for {@link Address}, 
+	 * skipped if <code>null</code>;
+	 * @return updated or created {@link Address} or <code>null</code> on 
+	 * failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	Address update(Address address, 
+			String streetNumber, 
+			String streetName,
+			String city, 
+			PostalCode postalCode);
+
 	public Address findByPrimaryKey(Object pk) throws FinderException;
 
 	public AddressType getAddressType1() throws RemoteException;
