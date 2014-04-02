@@ -85,7 +85,8 @@ public class SmallCalendar extends Block {
 	private int iCellpadding = 2;
 	
 	// <Map<Year, Map<Month, Map<Day, Boolean>>> Year, Month & Day: Integer
-	private Map invalidDays;
+	private Map fullyBookedDays;
+	private Map notAvailableDays;
 	
 	public SmallCalendar() {
 		initialize();
@@ -290,7 +291,10 @@ public class SmallCalendar extends Block {
 			}
 			this.T.setAlignment(xpos, ypos, "center");
 
-			if (isAllDaysFullyBooked() || !isValidDay(Integer.valueOf(year), Integer.valueOf(month), Integer.valueOf(n))) {
+			Integer yearValue = Integer.valueOf(year), monthValue = Integer.valueOf(month), dayValue = Integer.valueOf(n);
+			if (isNotAvailableDay(yearValue, monthValue, dayValue)) {
+				this.T.setStyleClass(xpos, ypos, "FAV_not_available");
+			} else if (isAllDaysFullyBooked() || isFullyBookedDay(yearValue, monthValue, dayValue)) {
 				this.T.setStyleClass(xpos, ypos, "travel_FullyBooked FAV_full");
 			} else {
 				if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
@@ -1046,22 +1050,40 @@ public class SmallCalendar extends Block {
 		this.allDaysFullyBooked = allDaysFullyBooked;
 	}
 
-	public Map getInvalidDays() {
-		return invalidDays;
+	public Map getFullyBookedDays() {
+		return fullyBookedDays;
 	}
 
-	public void setInvalidDays(Map invalidDays) {
-		this.invalidDays = invalidDays;
+	public void setIFullyBookedDays(Map fullyBookedDays) {
+		this.fullyBookedDays = fullyBookedDays;
 	}
 
-	public void addInvalidDay(Integer year, Integer month, Integer day) {
-		if (invalidDays == null) {
-			invalidDays = new java.util.HashMap();
+	public Map getNotAvailableDays() {
+		return notAvailableDays;
+	}
+
+	public void setNotAvailableDays(Map notAvailableDays) {
+		this.notAvailableDays = notAvailableDays;
+	}
+
+	public void addFullyBookedDay(Integer year, Integer month, Integer day) {
+		if (fullyBookedDays == null) {
+			fullyBookedDays = new java.util.HashMap();
 		}
-		Map months = (Map) invalidDays.get(year);
+		addInvalidDayDay(fullyBookedDays, year, month, day);
+	}
+	public void addNotAvailableDay(Integer year, Integer month, Integer day) {
+		if (notAvailableDays == null) {
+			notAvailableDays = new java.util.HashMap();
+		}
+		addInvalidDayDay(notAvailableDays, year, month, day);
+	}
+	
+	private void addInvalidDayDay(Map info, Integer year, Integer month, Integer day) {
+		Map months = (Map) info.get(year);
 		if (months == null) {
 			months = new java.util.HashMap();
-			invalidDays.put(year, months);
+			info.put(year, months);
 		}
 		Map days = (Map) months.get(month);
 		if (days == null) {
@@ -1071,11 +1093,19 @@ public class SmallCalendar extends Block {
 		days.put(day, Boolean.FALSE);
 	}
 	
-	public boolean isValidDay(Integer year, Integer month, Integer day) {
-		if (invalidDays == null) {
+	public boolean isFullyBookedDay(Integer year, Integer month, Integer day) {
+		return !isValidDay(fullyBookedDays, year, month, day);
+	}
+	
+	public boolean isNotAvailableDay(Integer year, Integer month, Integer day) {
+		return !isValidDay(notAvailableDays, year, month, day);
+	}
+	
+	private boolean isValidDay(Map info, Integer year, Integer month, Integer day) {
+		if (info == null) {
 			return true;
 		}
-		Map months = (Map) invalidDays.get(year);
+		Map months = (Map) info.get(year);
 		if (months == null) {
 			return true;
 		}
@@ -1083,8 +1113,8 @@ public class SmallCalendar extends Block {
 		if (days == null) {
 			return true;
 		}
-		Boolean valid = (Boolean) days.get(day);
-		return valid == null ? true : valid.booleanValue();
+		Boolean invalidDay = (Boolean) days.get(day);
+		return invalidDay == null ? true : invalidDay.booleanValue();
 	}
 	
 }
