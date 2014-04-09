@@ -469,15 +469,21 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			if (isIE()) {
 				String splitter = "MSIE ";
 				String agentInfo[] = userAgent.split(splitter);
-				String theFirstPart = agentInfo[1];
-				if (theFirstPart.indexOf(CoreConstants.SEMICOLON) == -1) {
-					LOGGER.warning("Failed to resolve IE browser version from '" + userAgent + "'. Was expecting '" + splitter + "'");
-				} else {
-					String[] parts = theFirstPart.split(CoreConstants.SEMICOLON);
-					if (!ArrayUtil.isEmpty(parts)) {
-						return parts[0];
-					} else {
+				if (agentInfo == null || agentInfo.length <= 1) {
+					splitter = "MSIE";
+					agentInfo = userAgent.split(splitter);
+				}
+				if (agentInfo != null && agentInfo.length >=2) {
+					String theFirstPart = agentInfo[1];
+					if (theFirstPart.indexOf(CoreConstants.SEMICOLON) == -1) {
 						LOGGER.warning("Failed to resolve IE browser version from '" + userAgent + "'. Was expecting '" + splitter + "'");
+					} else {
+						String[] parts = theFirstPart.split(CoreConstants.SEMICOLON);
+						if (!ArrayUtil.isEmpty(parts)) {
+							return parts[0];
+						} else {
+							LOGGER.warning("Failed to resolve IE browser version from '" + userAgent + "'. Was expecting '" + splitter + "'");
+						}
 					}
 				}
 			} else if (isSafari()) {
