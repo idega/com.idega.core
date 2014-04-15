@@ -13,8 +13,6 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.jcr.RepositoryException;
-
 import com.idega.core.file.data.ICFile;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.repository.bean.RepositoryItem;
@@ -29,9 +27,13 @@ public class FileItem extends RepositoryItem {
 	private ICFile icFile = null;
 
 	public FileItem(File file) {
+		super(file.getName());
+		
 		this.file = file;
 	}
 	public FileItem(ICFile file) {
+		super(file.getName());
+		
 		this.icFile = file;
 	}
 
@@ -163,12 +165,16 @@ public class FileItem extends RepositoryItem {
 	}
 
 	@Override
-	public boolean createNewFile() throws IOException, RepositoryException {
+	public boolean createNewFile() {
 		if (file == null)
 			return false;
 
 		if (!file.exists()) {
-			return file.createNewFile();
+			try {
+				return file.createNewFile();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
 
 		return true;

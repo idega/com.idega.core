@@ -71,6 +71,7 @@ import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.UserProperties;
 import com.idega.user.data.bean.User;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
@@ -464,8 +465,25 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 		try {
 			if (isIE()) {
-				String agentInfo[] = userAgent.split("MSIE ");
-				return agentInfo[1].split(";")[0];
+				String splitter = "MSIE ";
+				String agentInfo[] = userAgent.split(splitter);
+				if (agentInfo == null || agentInfo.length <= 1) {
+					splitter = "MSIE";
+					agentInfo = userAgent.split(splitter);
+				}
+				if (agentInfo != null && agentInfo.length >=2) {
+					String theFirstPart = agentInfo[1];
+					if (theFirstPart.indexOf(CoreConstants.SEMICOLON) == -1) {
+						LOGGER.warning("Failed to resolve IE browser version from '" + userAgent + "'. Was expecting '" + splitter + "'");
+					} else {
+						String[] parts = theFirstPart.split(CoreConstants.SEMICOLON);
+						if (!ArrayUtil.isEmpty(parts)) {
+							return parts[0];
+						} else {
+							LOGGER.warning("Failed to resolve IE browser version from '" + userAgent + "'. Was expecting '" + splitter + "'");
+						}
+					}
+				}
 			} else if (isSafari()) {
 				String agentInfo[] = userAgent.split("Version/");
 				return agentInfo[1].split(CoreConstants.SPACE)[0];

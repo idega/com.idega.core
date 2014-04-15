@@ -7,8 +7,6 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import javax.jcr.RepositoryException;
-
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.util.StringHandler;
 
@@ -18,6 +16,10 @@ public class EmptyItem extends RepositoryItem {
 
 	private String explanation = "This directory has no files";
 
+	public EmptyItem(String name) {
+		super(name);
+	}
+	
 	@Override
 	public InputStream getInputStream() throws IOException {
 		try {
@@ -39,7 +41,7 @@ public class EmptyItem extends RepositoryItem {
 	}
 
 	@Override
-	public boolean delete() throws IOException {
+	public boolean delete() {
 		return true;
 	}
 
@@ -99,7 +101,7 @@ public class EmptyItem extends RepositoryItem {
 	}
 
 	@Override
-	public boolean createNewFile() throws IOException, RepositoryException {
+	public boolean createNewFile() {
 		return false;
 	}
 	@Override

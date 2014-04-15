@@ -12,6 +12,7 @@ import java.util.Map;
 import java.util.logging.Level;
 
 import javax.ejb.FinderException;
+import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -321,4 +322,18 @@ public class WebUtil extends DefaultSpringBean {
 
     	return IWTimestamp.getDaysBetween(new IWTimestamp(dateFrom), new IWTimestamp(dateTo));
     }
+
+    public boolean setActiveRole(String sessionId, String role, HttpSession session) {
+    	if (session == null || StringUtil.isEmpty(role) || StringUtil.isEmpty(sessionId)) {
+    		return false;
+    	}
+
+    	if (!sessionId.equals(session.getId())) {
+    		return false;
+    	}
+
+    	session.setAttribute(CoreConstants.ACTIVE_ROLE, role);
+    	return true;
+    }
+
 }

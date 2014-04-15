@@ -947,7 +947,7 @@ public static String getFileSeparator(){
 		  filesToZip = new ArrayList<RepositoryItem>(1);
 	  }
 	  if (filesToZip.size() == 0) {
-		  filesToZip.add(new EmptyItem());
+		  filesToZip.add(new EmptyItem(CoreConstants.EMPTY));
 	  }
 
 	  ZipOutputStream zos = new ZipOutputStream(new FileOutputStream(zippedFile));

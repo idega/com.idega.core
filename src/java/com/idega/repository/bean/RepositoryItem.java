@@ -1,5 +1,6 @@
 package com.idega.repository.bean;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.Serializable;
@@ -14,14 +15,12 @@ import java.util.Locale;
 import java.util.Random;
 import java.util.logging.Logger;
 
-import javax.jcr.RepositoryException;
-
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 
-public abstract class RepositoryItem implements ICTreeNode<RepositoryItem>, Serializable {
+public abstract class RepositoryItem extends File implements ICTreeNode<RepositoryItem>, Serializable {
 
 	private static final long serialVersionUID = -5591183900265522785L;
 
@@ -34,16 +33,19 @@ public abstract class RepositoryItem implements ICTreeNode<RepositoryItem>, Seri
 	}
 
 	private int id;
-
+	private String name;
+	
 	public abstract InputStream getInputStream() throws IOException;
 
-	public abstract String getName();
+	public String getName() {
+		return name;
+	}
 
 	public abstract long getLength();
 	public abstract long getCreationDate();
 	public abstract long getLastModified();
 
-	public abstract boolean delete() throws IOException;
+	public abstract boolean delete();
 
 	public abstract RepositoryItem getParenItem();
 
@@ -54,7 +56,7 @@ public abstract class RepositoryItem implements ICTreeNode<RepositoryItem>, Seri
 
 	public abstract boolean exists();
 
-	public abstract boolean createNewFile() throws IOException, RepositoryException;
+	public abstract boolean createNewFile();
 
 	public abstract String getPath();
 	public abstract String getParentPath();
@@ -63,10 +65,13 @@ public abstract class RepositoryItem implements ICTreeNode<RepositoryItem>, Seri
 
 	public abstract String getMimeType();
 
-	public RepositoryItem() {
+	public RepositoryItem(String name) {
+		super(name);
+		this.name = name;
+		
 		id = new Random().nextInt();
 	}
-
+	
 	public String getEncodedPath() {
 		try {
 			return URLEncoder.encode(getPath(), CoreConstants.ENCODING_UTF8);

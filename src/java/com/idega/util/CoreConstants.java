@@ -192,8 +192,8 @@ public class CoreConstants {
 			PAGE_VIEW_TYPE_MOBILE = "mobile",
 
 			PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body",
-
 			PROPERTIES_FOLDER_NAME_IN_JAR = "properties",
+			REPOSITORY = "repository",
+			ACTIVE_ROLE = "iw_session_user_active_role";
 
-			REPOSITORY = "repository";
 }

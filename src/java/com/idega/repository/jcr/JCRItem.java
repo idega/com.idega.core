@@ -27,6 +27,10 @@ public abstract class JCRItem extends RepositoryItem {
 
 	public abstract Property getProperty(String property);
 
+	public JCRItem(String name) {
+		super(name);
+	}
+	
 	public Property getProperty(String prefix, String name) {
 		return getProperty(prefix.concat(CoreConstants.COLON).concat(name));
 	}
