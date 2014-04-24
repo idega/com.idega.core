@@ -3,6 +3,7 @@ package com.idega.util;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
 import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
@@ -22,6 +23,7 @@ import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.handlers.IWDatePickerHandler;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
 
@@ -278,6 +280,16 @@ public class WebUtil extends DefaultSpringBean {
 
     	session.setAttribute(CoreConstants.ACTIVE_ROLE, role);
     	return true;
+    }
+
+    public boolean isDateEarlierThan(String date, String dateToCompare) {
+    	Locale locale = getCurrentLocale();
+    	Date date1 = IWDatePickerHandler.getParsedDate(date, locale);
+    	Date date2 = IWDatePickerHandler.getParsedDate(dateToCompare, locale);
+    	if (date1 == null || date2 == null) {
+    		return false;
+    	}
+    	return date1.before(date2);
     }
 
 }

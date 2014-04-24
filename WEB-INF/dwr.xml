@@ -34,6 +34,7 @@
       		<include method="getFirstDayOfCurrentMonth" />
       		<include method="getLastDayOfCurrentMonth" />
       		<include method="setActiveRole"/>
+      		<include method="isDateEarlierThan"/>
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
