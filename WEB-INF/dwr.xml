@@ -35,6 +35,7 @@
       		<include method="getLastDayOfCurrentMonth" />
       		<include method="setActiveRole"/>
       		<include method="isDateEarlierThan"/>
+      		<include method="setSessionProperty"/>
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />

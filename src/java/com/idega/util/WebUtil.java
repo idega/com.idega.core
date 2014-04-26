@@ -282,6 +282,19 @@ public class WebUtil extends DefaultSpringBean {
     	return true;
     }
 
+    public boolean setSessionProperty(String sessionId, String name, String property, HttpSession session) {
+    	if (session == null || StringUtil.isEmpty(name) || StringUtil.isEmpty(property) || StringUtil.isEmpty(sessionId)) {
+    		return false;
+    	}
+
+    	if (!sessionId.equals(session.getId())) {
+    		return false;
+    	}
+
+    	session.setAttribute(name, property);
+    	return true;
+    }
+
     public boolean isDateEarlierThan(String date, String dateToCompare) {
     	Locale locale = getCurrentLocale();
     	Date date1 = IWDatePickerHandler.getParsedDate(date, locale);
