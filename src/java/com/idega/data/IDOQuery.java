@@ -1222,6 +1222,22 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 
+	/**
+	 * 
+	 * <p>TODO</p>
+	 * @param columnName
+	 * @param columnValue
+	 * @return
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendNotEquals(String columnName, String columnValue) {
+		this.append(WHITE_SPACE);
+		this.append(columnName);
+		this.appendNOTEqual();
+		this.append(columnValue);
+		return this;
+	}
+
 	public IDOQuery appendEqualsQuoted(String columnName, String columnValue) {
 		this.append(WHITE_SPACE);
 		this.append(columnName);
@@ -1608,6 +1624,19 @@ public class IDOQuery implements Cloneable {
 	 */
 	public IDOQuery appendOnEquals(String selectedEntityColumn, String joinedEntityColumn) {
 		return append(ON).appendEquals(selectedEntityColumn, joinedEntityColumn);
+	}
+
+	/**
+	 * 
+	 * @param selectedEntityColumn is column name of {@link IDOEntity}
+	 * to filter by, not <code>null</code>;
+	 * @param joinedEntityColumn is column name of {@link IDOEntity} 
+	 * to be matched by, not <code>null</code>;
+	 * @return query appended with SQL ON selectedEntityColumn != joinedEntityColumn
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendOnNotEquals(String selectedEntityColumn, String joinedEntityColumn) {
+		return append(ON).appendNotEquals(selectedEntityColumn, joinedEntityColumn);
 	}
 
 	/**
