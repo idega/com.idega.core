@@ -254,7 +254,10 @@ public class CoreUtil {
 		try {
 			Locale locale = null;
 
-			LoginSession loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+			LoginSession loginSession = null;
+			try {
+				loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+			} catch (Exception e) {}
 			if (loginSession != null) {
 				//	1. Trying to get from request
 				locale = loginSession.getCurrentLocale();
