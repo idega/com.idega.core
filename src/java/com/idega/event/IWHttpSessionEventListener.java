@@ -1,13 +1,18 @@
 package com.idega.event;
 
+import java.io.InputStream;
+import java.util.Properties;
+
 import javax.servlet.http.HttpSession;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
+import org.owasp.csrfguard.CsrfGuard;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.IOUtil;
 import com.idega.util.expression.ELUtil;
 
 public class IWHttpSessionEventListener implements HttpSessionListener {
@@ -18,11 +23,31 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 	@Autowired
 	private ScriptCallerInterface scriptCaller;
 
+	@Override
 	public void sessionCreated(HttpSessionEvent sessionEvent) {
+		if (!CsrfGuard.getInstance().isEnabled()) {
+			Properties prop = new Properties();
+			InputStream input = null;
+			try {
+				input = getClass().getClassLoader().getResourceAsStream("com/idega/core/Owasp.CsrfGuard.properties");
+				prop.load(input);
+			} catch (Exception e) {
+				e.printStackTrace();
+			} finally {
+				IOUtil.close(input);
+			}
+			try {
+				CsrfGuard.load(prop);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+
 		HttpSession newSession = sessionEvent.getSession();
 		getSessionsManager().addSession(newSession);
 	}
 
+	@Override
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
 
@@ -43,10 +68,10 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 				}
 			}
 		}
-		
+
 		getSessionsManager().removeSession(destroyedSession.getId());
 	}
-	
+
 	private ScriptCallerInterface getScriptCaller() {
 		if (scriptCaller == null)
 			ELUtil.getInstance().autowire(this);
