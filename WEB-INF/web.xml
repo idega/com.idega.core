@@ -126,6 +126,10 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<url-pattern>/setup*</url-pattern>
 	</filter-mapping>
 
+	<listener>
+	    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+	</listener>
+
 	<!-- IWBlockFilter Filter blocks certain sensitive URLs -->
 	<filter>
 		<filter-name>IWBlockFilter</filter-name>
