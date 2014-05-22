@@ -1003,7 +1003,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @returns the address if found or null if not.
 	 */
 	public Address getUsersMainAddress(User user) throws RemoteException {
-		return getUsersMainAddress(((Integer) user.getPrimaryKey()).intValue());
+		if (user != null) {
+			return getUsersMainAddress(((Integer) user.getPrimaryKey()).intValue());
+		}
+		
+		return null;
 	}
 
 	/**
