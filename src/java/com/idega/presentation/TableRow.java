@@ -32,6 +32,14 @@ public class TableRow extends PresentationObject {
 	 */
 	public TableCell2 createCell(int index) {
 		TableCell2 cell = new TableCell2();
+		
+		int amount = getChildren().size();
+		if (amount < index + 1) {
+			for (int i = 0; i < ((index + 1) - amount); i++) {
+				getChildren().add(new TableCell2());
+			}
+		}
+		
 		getChildren().add(index, cell);
 		
 		return cell;
