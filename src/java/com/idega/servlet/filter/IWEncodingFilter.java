@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
+import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
@@ -16,6 +17,7 @@ import javax.servlet.http.HttpSession;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -42,13 +44,21 @@ public class IWEncodingFilter implements Filter {
 		String viewStateParam = "javax.faces.ViewState";
 		String viewStateParamValue = request.getParameter(viewStateParam);
 		if (!StringUtil.isEmpty(viewStateParamValue)) {
-			String redirectUri = IWMainApplication.getDefaultIWMainApplication().getSettings()
-					.getProperty("view_state_param_redirect_page", CoreConstants.PAGES_URI_PREFIX);
-			if (!StringUtil.isEmpty(redirectUri)) {
-				Logger.getLogger(getClass().getName()).info("Redirecting to '" + redirectUri + "' because of parameter '" +
-						viewStateParam + "' and it's value: " + viewStateParamValue);
-				response.sendRedirect(redirectUri);
-				return;
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				iwc = new IWContext(request, response, servletConfig == null ? request.getSession().getServletContext() : servletConfig.getServletContext());
+			}
+
+			if (!iwc.isLoggedOn()) {
+				Logger.getLogger(getClass().getName()).info("User is not logged in, not allowing to use param '" + viewStateParam + "'");
+				String redirectUri = IWMainApplication.getDefaultIWMainApplication().getSettings()
+						.getProperty("view_state_param_redirect_page", CoreConstants.PAGES_URI_PREFIX);
+				if (!StringUtil.isEmpty(redirectUri)) {
+					Logger.getLogger(getClass().getName()).info("Redirecting to '" + redirectUri + "' because of parameter '" +
+							viewStateParam + "' and it's value: " + viewStateParamValue);
+					response.sendRedirect(redirectUri);
+					return;
+				}
 			}
 		}
 
@@ -89,13 +99,18 @@ public class IWEncodingFilter implements Filter {
 		} catch(Exception e) {}
 	}
 
+	private ServletConfig servletConfig;
+
 	/*
 	 * (non-Javadoc)
 	 *
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
 	@Override
-	public void init(FilterConfig arg0) throws ServletException {
+	public void init(FilterConfig config) throws ServletException {
+		if (config instanceof ServletConfig) {
+			servletConfig = (ServletConfig) config;
+		}
 	}
 
 	/*
