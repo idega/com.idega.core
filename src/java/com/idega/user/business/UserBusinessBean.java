@@ -1073,7 +1073,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public Address getUsersMainAddress(User user) throws RemoteException {
-		return getUsersMainAddress(((Integer) user.getPrimaryKey()).intValue());
+		if (user != null) {
+			return getUsersMainAddress(((Integer) user.getPrimaryKey()).intValue());
+		}
+		
+		return null;
 	}
 
 	/**

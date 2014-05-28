@@ -13,6 +13,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.idega.data.query.SelectQuery;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -864,12 +865,35 @@ public class IDOQuery implements Cloneable {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public IDOQuery appendSelectDistinctFrom(IDOEntity entity) {
+		return appendSelectDistinctFrom(entity, null);
+	}
+
+	/**
+	 * 
+	 * <p>Selects SQL DISTINCT entity or given column name.</p>
+	 * @param entity to select from, not <code>null</code>;
+	 * @param columnName to select from entity, skipped if <code>null</code>;
+	 * @return query appended with SELECT DISTINCT selected_entity.columnName
+	 * or unmodified query on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendSelectDistinctFrom(IDOEntity entity, String columnName) {
 		if (entity != null) {
 			setEntityToSelect(entity);
 			appendSelect();
 			appendDistinct();
-			append(ENTITY_TO_SELECT).append(CoreConstants.DOT)
-					.append(CoreConstants.STAR).append(CoreConstants.SPACE);
+
+			if (useDefaultAlias) {
+				append(ENTITY_TO_SELECT).append(CoreConstants.DOT);
+			}
+
+			if (!StringUtil.isEmpty(columnName)) {
+				append(columnName);
+			} else {
+				append(CoreConstants.STAR);
+			}
+
+			append(CoreConstants.SPACE);
 			appendFrom();
 			append(entity.getEntityDefinition().getSQLTableName());
 			if (useDefaultAlias) {
@@ -1071,9 +1095,26 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 
+	/**
+	 * 
+	 * @param columnNames to ORDER BY, not <code>null</code>;
+	 * @return query appended with ORDER BY column1 DESC, column2 DESC,..
+	 * or same query on failure; 
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
 	public IDOQuery appendOrderByDescending(String[] columnNames) {
-		this.appendOrderBy(columnNames);
-		this.appendDescending();
+		if (!ArrayUtil.isEmpty(columnNames)) {
+			appendOrderBy();
+			for (int i = 0; i < columnNames.length; i++) {
+				append(columnNames[i]);
+				appendDescending();
+				if (i + 1 < columnNames.length) {
+					append(CoreConstants.COMMA);
+					append(CoreConstants.SPACE);
+				}
+			}
+		}
+
 		return this;
 	}
 
@@ -1178,6 +1219,22 @@ public class IDOQuery implements Cloneable {
 		appendWhere(columnName);
 		this.appendEqualSign();
 		this.append(date);
+		return this;
+	}
+
+	/**
+	 * 
+	 * <p>TODO</p>
+	 * @param columnName
+	 * @param columnValue
+	 * @return
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendNotEquals(String columnName, String columnValue) {
+		this.append(WHITE_SPACE);
+		this.append(columnName);
+		this.appendNOTEqual();
+		this.append(columnValue);
 		return this;
 	}
 
@@ -1547,6 +1604,40 @@ public class IDOQuery implements Cloneable {
 		return this;
 	}
 
+	/**
+	 * 
+	 * @return query appended with SQL JOIN;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendJoin() {
+		return append(JOIN);
+	}
+
+	/**
+	 * 
+	 * @param selectedEntityColumn is column name of {@link IDOEntity}
+	 * to filter by, not <code>null</code>;
+	 * @param joinedEntityColumn is column name of {@link IDOEntity} 
+	 * to be matched by, not <code>null</code>;
+	 * @return query appended with SQL ON selectedEntityColumn = joinedEntityColumn
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendOnEquals(String selectedEntityColumn, String joinedEntityColumn) {
+		return append(ON).appendEquals(selectedEntityColumn, joinedEntityColumn);
+	}
+
+	/**
+	 * 
+	 * @param selectedEntityColumn is column name of {@link IDOEntity}
+	 * to filter by, not <code>null</code>;
+	 * @param joinedEntityColumn is column name of {@link IDOEntity} 
+	 * to be matched by, not <code>null</code>;
+	 * @return query appended with SQL ON selectedEntityColumn != joinedEntityColumn
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public IDOQuery appendOnNotEquals(String selectedEntityColumn, String joinedEntityColumn) {
+		return append(ON).appendNotEquals(selectedEntityColumn, joinedEntityColumn);
+	}
 
 	/**
 	 * Appends a condition where date column specified is between the provided dates

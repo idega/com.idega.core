@@ -61,6 +61,8 @@ public class IWDatePicker extends TextInput {
 	
 	private boolean addJQueryUIFiles = true;
 
+	private String alternateFieldId = null;
+
 	private static final String INITIAL_DATE_PROPERTY = "initialDate";
 	private static final String INITIAL_DATE_TO_PROPERTY = "initialDateTo";
 	private static final String MAX_DATE_PROPERTY = "maxDate";
@@ -75,6 +77,8 @@ public class IWDatePicker extends TextInput {
 	private static final String SHOW_TIME_PROPERTY = "showTime";
 	private static final String USE_CURRENT_PROPERTY = "useCurrent";
 	private static final String YEAR_RANGE_PROPERTY = "yearRange";
+	private static final String DATEPICKER_VERSION_PROPERTY = "version";
+	private static final String ALTERNATE_FIELD_PROPERTY = "alternateFieldId";
 
 	private String version;
 
@@ -179,6 +183,22 @@ public class IWDatePicker extends TextInput {
 	    	setUseCurrentDateIfNotSet(useCurrent);
     	}
 
+    	ve = getValueExpression(DATEPICKER_VERSION_PROPERTY);
+    	if (ve != null) {
+	    	String version = (String) ve.getValue(context.getELContext());
+	    	if (!StringUtil.isEmpty(version)) {
+	    		setVersion(version);
+	    	}
+    	}
+
+    	ve = getValueExpression(ALTERNATE_FIELD_PROPERTY);
+    	if (ve != null) {
+	    	String version = (String) ve.getValue(context.getELContext());
+	    	if (!StringUtil.isEmpty(version)) {
+	    		setAlternateFieldId(version);
+	    	}
+    	}    	
+
     	super.encodeBegin(context);
     }
 
@@ -275,6 +295,10 @@ public class IWDatePicker extends TextInput {
 
 		if (isShowTime()) {
 			initAction.append(", showTime: true");
+		}
+
+		if (!StringUtil.isEmpty(getAlternateFieldId())) {
+			initAction.append(", altField: '" + getAlternateFieldId() + "'");
 		}
 
 		// onSelect action
@@ -518,5 +542,12 @@ public class IWDatePicker extends TextInput {
 		return web2Business;
 	}
 
+	public String getAlternateFieldId() {
+		return alternateFieldId;
+	}
 
+	public void setAlternateFieldId(String alternateFieldId) {
+		this.alternateFieldId = alternateFieldId;
+	}
+	
 }

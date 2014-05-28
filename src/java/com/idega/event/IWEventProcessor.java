@@ -108,7 +108,7 @@ public class IWEventProcessor implements Singleton {
 				System.out.println("IWEventListener: " + EventListenerClass);
 			}
 			try{
-				Class eventClass = RefactorClassRegistry.forName(EventListenerClass);
+				Class<?> eventClass = RefactorClassRegistry.forName(EventListenerClass);
 				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
 				listener.actionPerformed(iwc);
 			}
@@ -125,8 +125,8 @@ public class IWEventProcessor implements Singleton {
 	}
 	public void processApplicationEvents(IWContext iwc) throws ClassNotFoundException, IllegalAccessException, IWException,
 			InstantiationException {
-		java.util.List eventListeners = iwc.getIWMainApplication().getApplicationEventListeners();
-		Iterator iter = eventListeners.iterator();
+		java.util.List<?> eventListeners = iwc.getIWMainApplication().getApplicationEventListeners();
+		Iterator<?> iter = eventListeners.iterator();
 		while (iter.hasNext()) {
 			String className = (String) iter.next();
 			processIWEvent(iwc, className);
@@ -301,7 +301,6 @@ public class IWEventProcessor implements Singleton {
 		return getPage(IWContext.getInstance());
 	}
 
-
 	public void handleMultipartFormData(IWContext iwc) throws Exception {
 		String sep = FileUtil.getFileSeparator();
 		StringBuffer pathToFile = new StringBuffer();
@@ -320,7 +319,7 @@ public class IWEventProcessor implements Singleton {
 	        MultipartWrapper multi = (MultipartWrapper) iwc.getRequest();
 
 	        // Show which files we received
-	        Enumeration files = multi.getFileNames();
+	        Enumeration<?> files = multi.getFileNames();
 	        while (files.hasMoreElements()) {
 	          String name = (String)files.nextElement();
 	          String fileName = multi.getFilesystemName(name);
@@ -357,7 +356,6 @@ public class IWEventProcessor implements Singleton {
 			FileUploadUtil.handleMyFacesMultiPartRequest(iwc);
 		}
 		else{
-
 			MultipartParser mp = new MultipartParser(iwc.getRequest(), maxSize);
 			/**@todo the maximum size should be flexible could just match the filesiz we have? or don't we**/
 			Part part;
@@ -398,7 +396,5 @@ public class IWEventProcessor implements Singleton {
 			}
 		}
 	}
-
-
 
 }

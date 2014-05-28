@@ -42,6 +42,8 @@
       		<include method="getParsedDates"/>
       		<include method="getTimeDifferenceBetweenDates"/>
       		<include method="setActiveRole"/>
+      		<include method="isDateEarlierThan"/>
+      		<include method="setSessionProperty"/>
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
