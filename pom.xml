@@ -186,11 +186,18 @@
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
-      <artifactId>ehcache-core</artifactId>
+      <artifactId>ehcache</artifactId>
+      <version>${net.sf.ehcache-ehcache-version}</version>
     </dependency>
     <dependency>
       <groupId>net.sf.ehcache</groupId>
       <artifactId>ehcache-web</artifactId>
+      <exclusions>
+      	<exclusion>
+      		<groupId>net.sf.ehcache</groupId>
+      		<artifactId>ehcache-core</artifactId>
+      	</exclusion>
+      </exclusions>
     </dependency>
     <dependency>
       <groupId>commons-jxpath</groupId>
@@ -277,10 +284,11 @@
       <version>1.0-FCS</version>
       <type>jar</type>
     </dependency>
-<!--     <dependency>
-        <groupId>org.hibernate</groupId>
+    <dependency>
+        <groupId>org.hibernate.common</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
-    </dependency> -->
+        <version>${org.hibernate-hibernate-annotations-version}</version>
+    </dependency>
     <dependency>
     	<groupId>org.beanshell</groupId>
     	<artifactId>bsh</artifactId>
