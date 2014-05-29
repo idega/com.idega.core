@@ -2931,14 +2931,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			//even if you have the view rights the page might not be published yet.
 			//extra check for unpublished pages
 			ICPage page = getPageDAO().findPage(new Integer(pageKey));
-			if (!page.isPublished()) {
+			if (page != null && !page.isPublished()) {
 				//only editors can view unpublished pages.
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}
 
 			return permission;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
