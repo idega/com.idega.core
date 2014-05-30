@@ -341,10 +341,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         this.setBundlesRealPath();
         IWMainApplicationSettings settings = new IWMainApplicationSettings(this);
         setAttribute(SETTINGS_STORAGE_PARAMETER, settings);
-        // log("Starting the idegaWeb Application Framework - Version "
-        //        + this.getVersion());
-        log.info("Starting "+getProductInfo().getFullProductName()+" - Version "
-		+ this.getVersion());
+        log.info("Starting " + getProductInfo().getFullProductName() + " - Version " + this.getVersion());
         loadCryptoProperties();
     }
 

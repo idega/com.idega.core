@@ -48,6 +48,7 @@ import com.idega.core.component.dao.ICObjectDAO;
 import com.idega.core.component.data.bean.ICObject;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.idgenerator.business.UUIDBusiness;
+import com.idega.core.persistence.Param;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.idegaweb.IWApplicationContext;
@@ -222,13 +223,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public boolean isAdmin(IWUserContext iwc) throws Exception {
 		try {
 			Object ob = LoginBusinessBean.getLoginAttribute(getAdministratorGroupName(), iwc);
-			if (ob != null) {
+			if (ob instanceof Boolean) {
 				return ((Boolean) ob).booleanValue();
 			} else {
-				if (getAdministratorUser().equals(LoginBusinessBean.getUser(iwc))) {
+				User admin = getAdministratorUser();
+				User currentUser = LoginBusinessBean.getUser(iwc);
+				if (admin != null && currentUser != null && admin.getId().intValue() == currentUser.getId().intValue()) {
 					LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(), Boolean.TRUE, iwc);
 					return true;
 				}
+				
 				List<Group> groups = LoginBusinessBean.getPermissionGroups(iwc);
 				if (groups != null) {
 					for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
@@ -1397,19 +1401,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public User getAdministratorUser() throws Exception {
 		Object ob = getApplication().getAttribute(_APPADDRESS_ADMINISTRATOR_USER);
-		if (ob == null) {
+		if (ob instanceof User) {
+			return (User) ob;
+		} else {
 			try {
 				initAdministratorUser();
 				return (User) getApplication().getAttribute(_APPADDRESS_ADMINISTRATOR_USER);
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				ex.printStackTrace();
 				return null;
 			}
 
-		}
-		else {
-			return (User) ob;
 		}
 	}
 
@@ -1421,10 +1423,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	private void initAdministratorUser() throws UsernameExistsException, IWServiceNotStartedException {
-		Collection<User> users = getUserDAO().getUsersByNames(User.ADMINISTRATOR_DEFAULT_NAME, CoreConstants.EMPTY, CoreConstants.EMPTY);
-
+		Collection<User> users = getUserDAO().getResultListByInlineQuery(
+				"select u from " + User.class.getName() + " u where u.firstName = :name",
+				User.class,
+				new Param("name", User.ADMINISTRATOR_DEFAULT_NAME)
+		);
+		
 		User adminUser = null;
 		if (ListUtil.isEmpty(users)) {
+			getLogger().warning("No administrators exist, creating a new one");
 			adminUser = createAdministratorUser();
 		} else {
 			adminUser = users.iterator().next();

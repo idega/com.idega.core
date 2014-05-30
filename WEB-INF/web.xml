@@ -140,10 +140,6 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 		<filter-name>CSRFGuard</filter-name> 
 		<url-pattern>/setup/*</url-pattern>
 	</filter-mapping>
-	<filter-mapping>
-		<filter-name>CSRFGuard</filter-name> 
-		<url-pattern>/setup*</url-pattern>
-	</filter-mapping>
 
 	<listener>
 	    <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
