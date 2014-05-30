@@ -530,6 +530,9 @@ public class LoginDBHandler {
 		try {
 			LoginRecordHome lHome = (LoginRecordHome) com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
 			LoginRecord inRec = lHome.create();
+			if (IPAddress.length() > 16) {
+				IPAddress = IPAddress.substring(0, 16);
+			}
 			inRec.setIPAdress(IPAddress);
 			inRec.setLogin(login);
 			inRec.setLogInStamp(IWTimestamp.getTimestampRightNow());
@@ -543,6 +546,9 @@ public class LoginDBHandler {
 			ce.printStackTrace();
 		}
 		catch (RemoteException ex) {
+		}
+		catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
