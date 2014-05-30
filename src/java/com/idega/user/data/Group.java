@@ -568,5 +568,6 @@ public interface Group extends IDOEntity, ICTreeNode, MetaDataCapable, UniqueIDC
 	public User getModerator();
 
 	public void setModerator(User moderator);
+	public Collection<Group> getRelated(Collection<String> relationTypes);
 
 }

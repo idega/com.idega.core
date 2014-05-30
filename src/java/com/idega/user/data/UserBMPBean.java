@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
@@ -3134,6 +3135,57 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException {
 		this.idoRemoveFrom(language);
+	}
+	
+	private List<Integer> getRelatedPks(Collection<String> relationTypes){
+		Collection<GroupRelation> rels = null;
+		rels = getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationTypes);
+		if(ListUtil.isEmpty(rels)){
+			return Collections.emptyList();
+		}
+		ArrayList<Integer> pks = new ArrayList<Integer>(rels.size());
+		for(GroupRelation rel : rels){
+			Integer pk = rel.getRelatedGroupPK();
+			pks.add(pk);
+		}
+		return pks;
+	}
+	@Override
+	public Collection<Group> getRelated(Collection<String> relationTypes){
+		List<Integer> pks = getRelatedPks(relationTypes);
+		if(ListUtil.isEmpty(pks)){
+			return Collections.emptyList();
+		}
+		try {
+			GroupHome groupHome = (GroupHome) IDOLookup.getHome(Group.class);
+			return groupHome.findByPrimaryKeyCollection(pks);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Failed finding related users by relations " + relationTypes, e);
+			return Collections.emptyList();
+		}
+	}
+	
+	public Collection<User> getRelatedUsers(Collection<String> relationTypes){
+		List<Integer> pks = getRelatedPks(relationTypes);
+		if(ListUtil.isEmpty(pks)){
+			return Collections.emptyList();
+		}
+		try {
+			UserHome userHome = (UserHome) IDOLookup.getHome(User.class);
+			return userHome.findByPrimaryKeyCollection(pks);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Failed finding related users by relations " + relationTypes, e);
+			return Collections.emptyList();
+		}
+	}
+	protected GroupRelationHome getGroupRelationHome() {
+		try {
+			return ((GroupRelationHome) IDOLookup.getHome(GroupRelation.class));
+		}
+		catch (IDOLookupException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

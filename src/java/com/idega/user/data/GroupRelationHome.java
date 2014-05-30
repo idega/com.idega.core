@@ -1,5 +1,7 @@
 package com.idega.user.data;
 
+import java.util.Collection;
+
 
 public interface GroupRelationHome extends com.idega.data.IDOHome
 {
@@ -31,5 +33,6 @@ public interface GroupRelationHome extends com.idega.data.IDOHome
  public java.util.Collection findGroupsRelationshipsUnder(int p0)throws javax.ejb.FinderException;
  public java.lang.String getFindGroupsRelationshipsContainingSQL(int p0,java.lang.String p1);
  public java.lang.String getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int p0,java.lang.String p1);
+ public Collection<GroupRelation> findGroupsRelationshipsContaining(int groupId,Collection<String> relationTypes);
 
 }

@@ -1170,6 +1170,20 @@ public class GroupBMPBean extends com.idega.core.data.GenericGroupBMPBean implem
 		}
 		return theReturn;
 	}
+	@Override
+	public Collection<Group> getRelated(Collection<String> relationTypes){
+		GroupRelation rel = null;
+		Collection<Group> theReturn = new ArrayList<Group>();
+		Collection<GroupRelation> rels = null;
+		rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationTypes);
+		Iterator<GroupRelation> iter = rels.iterator();
+		while (iter.hasNext()) {
+			rel = iter.next();
+			Group g = rel.getRelatedGroup();
+			theReturn.add(g);
+		}
+		return theReturn;
+	}
 
 	/**
 	 * Returns a collection of Group objects that are reverse related by the

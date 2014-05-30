@@ -298,6 +298,7 @@ private boolean isBlobCached(Cache cache){
 
       String fileName = ent.getID()+"_"+ent.getName();
       fileName = TextSoap.findAndCut(fileName," ");//remove spaces
+      fileName = StringHandler.stripNonRomanCharacters(fileName, new char[] {'_', '.', '0', '1','2','3','4','5','6','7','8','9' });
 
       if(input != null ){
         FileUtil.streamToFile(input,realPath,fileName);
