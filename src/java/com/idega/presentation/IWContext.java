@@ -1528,7 +1528,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	 *             if no user is logged on.
 	 */
 	@Override
-	public com.idega.user.data.User getCurrentUser() {
+	public com.idega.user.data.User getCurrentUser() throws NotLoggedOnException {
 		HttpSession session = getSession();
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(session);
 		return loginBean.getCurrentUserLegacy(session);

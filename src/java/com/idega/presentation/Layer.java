@@ -119,4 +119,8 @@ public class Layer extends PresentationObjectContainer {
 		values[1] = this.layerType;
 		return values;
 	}
+	
+	public void setPadding(int padding) {
+		setStyleAttribute("padding", padding + "px");
+	}
 }

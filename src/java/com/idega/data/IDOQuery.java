@@ -535,6 +535,11 @@ public class IDOQuery implements Cloneable {
 	}
 
 	public IDOQuery append(IDOEntity entity) {
+		if (entity == null) {
+			Logger.getLogger(IDOQuery.class.getName()).warning("Provided IDOEntity is null!");
+			return this;
+		}
+		
 		Object pk = entity.getPrimaryKey();
 		if (pk instanceof Integer) {
 			return this.append(pk);
