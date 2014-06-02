@@ -102,8 +102,8 @@ public boolean isLeaf();
  public void setFullName(java.lang.String p0);
  public void removeEmail(com.idega.core.contact.data.Email p0)throws com.idega.data.IDORemoveRelationshipException;
  public List<Group> getListOfAllGroupsContaining(int p0)throws javax.ejb.EJBException;
-@Override
-public Iterator<Group> getChildrenIterator();
+ @Override
+ public Iterator<Group> getChildrenIterator();
  public Collection<Address> getAddresses();
  @Override
 public boolean isUser();
@@ -231,4 +231,6 @@ public java.lang.String getIDColumnName();
 
  public String getSHA1();
  public void setSHA1(String sha1);
+ 
+ public Collection<User> getRelatedUsers(Collection<String> relationTypes);
 }

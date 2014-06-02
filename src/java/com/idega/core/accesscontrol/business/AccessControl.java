@@ -1851,7 +1851,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return hasPermissionForGroup(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
 	}
 
-	//Methods added after big changes by Eiki
 	public static Collection<ICPermission> getAllPermissions(Group group, String contextType) {
 		PermissionDAO dao = ELUtil.getInstance().getBean(PermissionDAO.class);
 		return dao.findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(contextType, dao.findPermissionGroup(group.getID()));

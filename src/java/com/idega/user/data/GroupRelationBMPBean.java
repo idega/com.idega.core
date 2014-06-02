@@ -2,6 +2,8 @@ package com.idega.user.data;
 
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.Iterator;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -10,6 +12,8 @@ import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
+import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 
 /**
@@ -22,6 +26,8 @@ import com.idega.util.IWTimestamp;
 
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation {
 
+	private static final long serialVersionUID = 4570104106589251472L;
+	
 	protected static final String  TABLE_NAME="IC_GROUP_RELATION";
 	protected static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
 	protected static final String  RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
@@ -41,7 +47,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   protected final static String STATUS_PASSIVE_PENDING="PASS_PEND";
   protected final static String STATUS_ACTIVE_PENDING="ACT_PEND";
 	
-  public void initializeAttributes() {
+  @Override
+public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
 
     this.addManyToOneRelationship(GROUP_ID_COLUMN,"Type",Group.class);
@@ -73,77 +80,95 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
  		addIndex("IDX_IC_GROUP_REL_14", new String[]{RELATED_GROUP_ID_COLUMN, STATUS_COLUMN});
   }
   
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return TABLE_NAME;
   }
 
-  public void setDefaultValues(){
+  @Override
+public void setDefaultValues(){
     this.setInitiationDate(IWTimestamp.getTimestampRightNow());
     this.setStatus(STATUS_ACTIVE);
   }
 
-  public void setGroup(Group group){
+  @Override
+public void setGroup(Group group){
     this.setColumn(GROUP_ID_COLUMN,group);
   }
 
-  public void setGroup(int groupID){
+  @Override
+public void setGroup(int groupID){
     this.setColumn(GROUP_ID_COLUMN,groupID);
   }
 
-  public Group getGroup(){
+  @Override
+public Group getGroup(){
     return (Group)getColumnValue(GROUP_ID_COLUMN);
   }
   
-  public int getGroupID() {
+  @Override
+public int getGroupID() {
   	return getIntColumnValue(GROUP_ID_COLUMN);
   }
 
-  public void setRelatedGroup(Group group){
+  @Override
+public void setRelatedGroup(Group group){
     this.setColumn(RELATED_GROUP_ID_COLUMN,group);
   }
 
-  public void setRelatedGroup(int groupID){
+  @Override
+public void setRelatedGroup(int groupID){
     this.setColumn(RELATED_GROUP_ID_COLUMN,groupID);
   }
 
-  public void setRelatedUser(User user){
+  @Override
+public void setRelatedUser(User user){
     setRelatedGroup(user);
   }
 
-  public Group getRelatedGroup(){
+  @Override
+public Group getRelatedGroup(){
     return (Group)getColumnValue(RELATED_GROUP_ID_COLUMN);
   }
 
-  public Integer getRelatedGroupPK(){
+  @Override
+public Integer getRelatedGroupPK(){
     return getIntegerColumnValue(RELATED_GROUP_ID_COLUMN);
   }
 
-  public void setRelationship(GroupRelationType type){
+  @Override
+public void setRelationship(GroupRelationType type){
     this.setColumn(RELATIONSHIP_TYPE_COLUMN,type);
   }
 
-  public void setRelationshipType(String groupRelationType){
+  @Override
+public void setRelationshipType(String groupRelationType){
     this.setColumn(RELATIONSHIP_TYPE_COLUMN,groupRelationType);
   }
 
-  public GroupRelationType getRelationship(){
+  @Override
+public GroupRelationType getRelationship(){
     return (GroupRelationType)getColumnValue(RELATIONSHIP_TYPE_COLUMN);
   }
 
-  public String getRelationshipType(){
+  @Override
+public String getRelationshipType(){
     return getStringColumnValue(RELATIONSHIP_TYPE_COLUMN);
   }
 
 
-  public void setStatus(String status){
+  @Override
+public void setStatus(String status){
     setColumn(GroupRelationBMPBean.STATUS_COLUMN,status);
   }
 
-  public String getStatus(){
+  @Override
+public String getStatus(){
     return getStringColumnValue(GroupRelationBMPBean.STATUS_COLUMN);
   }
 
-  public boolean isActive(){
+  @Override
+public boolean isActive(){
     String status = this.getStatus();
     if(status != null && status.equals(STATUS_ACTIVE)){
       return true;
@@ -151,7 +176,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return false;
   }
 
-  public boolean isPassive(){
+  @Override
+public boolean isPassive(){
     String status = this.getStatus();
     if(status != null && status.equals(STATUS_PASSIVE)){
       return true;
@@ -159,6 +185,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return false;
   }
   
+	@Override
 	public boolean isActivePending(){
 		String status = this.getStatus();
 		if(status != null && status.equals(STATUS_ACTIVE_PENDING) ){
@@ -167,6 +194,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		return false;
 	}
 
+	@Override
 	public boolean isPassivePending(){
 		String status = this.getStatus();
 		if(status != null && status.equals(STATUS_PASSIVE_PENDING) ){
@@ -175,6 +203,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		return false;
 	}
 	
+	@Override
 	public boolean isPending(){
 		String status = this.getStatus();
 		if(status != null && ( status.equals(STATUS_ACTIVE_PENDING) || status.equals(STATUS_PASSIVE_PENDING) ) ){
@@ -182,80 +211,99 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		}
 		return false;
 	}
-  public void setActive(){
+  @Override
+public void setActive(){
     this.setStatus(STATUS_ACTIVE);
   }
 
-  public void setPassive(){
+  @Override
+public void setPassive(){
     this.setStatus(STATUS_PASSIVE);
   }
   
+	@Override
 	public void setPassivePending(){
 		this.setStatus(STATUS_PASSIVE_PENDING);
 	}
 
+	@Override
 	public void setActivePending(){
 		this.setStatus(STATUS_ACTIVE_PENDING);
 	}
 	
-  public void setInitiationDate(Timestamp stamp){
+  @Override
+public void setInitiationDate(Timestamp stamp){
     this.setColumn(GroupRelationBMPBean.INITIATION_DATE_COLUMN,stamp);
     this.setColumn(INITIATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow().getTimestamp());
   }
 
-  public Timestamp getInitiationDate(){
+  @Override
+public Timestamp getInitiationDate(){
     return (Timestamp)getColumnValue(GroupRelationBMPBean.INITIATION_DATE_COLUMN);
   }
 
-  public Timestamp getInitiationModificationDate(){
+  @Override
+public Timestamp getInitiationModificationDate(){
 		return (Timestamp)getColumnValue(GroupRelationBMPBean.INITIATION_MODIFICATION_DATE_COLUMN);
   }
 
-  public void setTerminationDate(Timestamp stamp){
+  @Override
+public void setTerminationDate(Timestamp stamp){
     this.setColumn(GroupRelationBMPBean.TERMINATION_DATE_COLUMN,stamp);
     this.setColumn(GroupRelationBMPBean.TERMINATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow().getTimestamp());
   }
 
-  public Timestamp getTerminationDate(){
+  @Override
+public Timestamp getTerminationDate(){
     return (Timestamp)getColumnValue(GroupRelationBMPBean.TERMINATION_DATE_COLUMN);
   }
   
-  public Timestamp getTerminationModificationDate(){
+  @Override
+public Timestamp getTerminationModificationDate(){
 		return (Timestamp)getColumnValue(GroupRelationBMPBean.TERMINATION_MODIFICATION_DATE_COLUMN);
   }
-  public void setPassiveBy(int userId)  {
+  @Override
+public void setPassiveBy(int userId)  {
     setColumn(SET_PASSIVE_BY, userId);
   }
 
-  public int getPassiveById() { 
+  @Override
+public int getPassiveById() { 
     return getIntColumnValue(SET_PASSIVE_BY);
   }
   
-  public User getPassiveBy(){
+  @Override
+public User getPassiveBy(){
       return (User)getColumnValue(SET_PASSIVE_BY);
   }
   
-  public void setCreatedBy(int userId){
+  @Override
+public void setCreatedBy(int userId){
       setColumn(CREATED_BY,userId);
   }
   
-  public void setCreatedBy(Integer userId){
+  @Override
+public void setCreatedBy(Integer userId){
       setColumn(CREATED_BY,userId);
   }
   
-  public void setCreatedBy(User user){
+  @Override
+public void setCreatedBy(User user){
       setColumn(CREATED_BY,user);
   }
   
-  public int getCreatedById(){
+  @Override
+public int getCreatedById(){
       return getIntColumnValue(CREATED_BY);
   }
   
-  public User getCreatedBy(){
+  @Override
+public User getCreatedBy(){
       return (User)getColumnValue(CREATED_BY);
   }
 
-  public void setRelatedGroupType(String groupType)  {
+  @Override
+public void setRelatedGroupType(String groupType)  {
     setColumn(RELATED_GROUP_TYPE_COLUMN, groupType);
   }
 
@@ -263,7 +311,8 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   	return getStringColumnValue(RELATED_GROUP_TYPE_COLUMN);
   }
 
-  public boolean equals(Object obj) {
+  @Override
+public boolean equals(Object obj) {
   	if (obj instanceof GroupRelationBMPBean) {
 	  	GroupRelation compareRelation = (GroupRelationBMPBean)obj;
 	  	if (this.getRelatedGroupPK().equals(compareRelation.getRelatedGroupPK()) &&
@@ -325,6 +374,32 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
     return this.idoFindPKsBySQL(ejbHomeGetFindGroupsRelationshipsContainingSQL(groupID,relationType));
   }
   
+  public Collection ejbFindGroupsRelationshipsContaining(int groupId,Collection<String> relationTypes){
+	  StringBuilder relations = new StringBuilder();
+	  for(Iterator<String> iter = relationTypes.iterator();iter.hasNext();){
+		  relations.append(CoreConstants.QOUTE_SINGLE_MARK).append(iter.next()).append(CoreConstants.QOUTE_SINGLE_MARK);
+		  if(iter.hasNext()){
+			  relations.append(", ");
+		  }
+	  }
+	  StringBuilder sql = new StringBuilder();
+	  	sql.append("select " + getIDColumnName() + " from ")
+	  	.append(this.getEntityName())
+	  	.append(" where ")
+	  	.append(GROUP_ID_COLUMN).append("=").append(groupId)
+	  	.append(" and ")
+	  	.append(RELATIONSHIP_TYPE_COLUMN).append(" IN (").append(relations).append(")")
+	  	.append(" and ( ")
+	  	.append(STATUS_COLUMN).append("='").append(STATUS_ACTIVE).append("'")
+	  	.append(" or ")
+	  	.append(STATUS_COLUMN).append("='").append(STATUS_PASSIVE_PENDING).append("' ) ");
+	  	try {
+	  		return this.idoFindPKsBySQL(sql.toString());
+		} catch (Exception e) {
+			return Collections.emptyList();
+		}
+  }
+  
   public String ejbHomeGetFindGroupsRelationshipsContainingSQL(int groupId, String relationType){
   	StringBuffer sql = new StringBuffer();
   	sql.append("select " + getIDColumnName() + " from ")
@@ -340,6 +415,7 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
 		//might have to or null check
   	return sql.toString();
   }
+  
   
 	public String ejbHomeGetFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int groupId, String relationType){
 		StringBuffer sql = new StringBuffer();
@@ -468,9 +544,29 @@ public class GroupRelationBMPBean extends GenericEntity implements GroupRelation
   /**Finders end**/
   
   /**
+<<<<<<< HEAD
+=======
+   * @deprecated Replaced with remove(User)
+   */
+  @Deprecated
+@Override
+public void remove()  throws RemoveException  {    
+    User currentUser;
+    try {
+      currentUser = IWContext.getInstance().getCurrentUser();
+    }
+    catch (Exception ex)  {
+    currentUser = null;
+    }
+    removeBy(currentUser);
+  }
+
+  /**
+>>>>>>> fdc7351764269b322882b03abe9addf99fcd9c33
    * 
    */
-  public void removeBy(User currentUser) throws RemoveException{
+  @Override
+public void removeBy(User currentUser) throws RemoveException{
     this.removeBy(currentUser,IWTimestamp.getTimestampRightNow());
 
   }

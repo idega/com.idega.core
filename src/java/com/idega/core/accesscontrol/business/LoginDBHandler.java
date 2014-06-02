@@ -469,7 +469,6 @@ public class LoginDBHandler {
 			try {
 				int id = ((Integer) login.getPrimaryKey()).intValue();
 				LoginRecordHome lr = ((LoginRecordHome) com.idega.data.IDOLookup.getHomeLegacy(LoginRecord.class));
-				@SuppressWarnings("unchecked")
 				Collection<LoginRecord> recs = lr.findAllLoginRecords(id);
 				for (Iterator<LoginRecord> iter = recs.iterator(); iter.hasNext();) {
 					iter.next().remove();
@@ -558,6 +557,9 @@ public class LoginDBHandler {
 		try {
 			LoginRecordHome lHome = (LoginRecordHome) com.idega.data.IDOLookup.getHome(com.idega.core.accesscontrol.data.LoginRecord.class);
 			LoginRecord inRec = lHome.create();
+			if (IPAddress.length() > 16) {
+				IPAddress = IPAddress.substring(0, 16);
+			}
 			inRec.setIPAdress(IPAddress);
 			inRec.setLogin(login);
 			inRec.setLogInStamp(IWTimestamp.getTimestampRightNow());
@@ -568,7 +570,12 @@ public class LoginDBHandler {
 			return inRec;
 		} catch (CreateException ce) {
 			ce.printStackTrace();
-		} catch (RemoteException ex) {}
+		}
+		catch (RemoteException ex) {
+		}
+		catch (Exception e) {
+			e.printStackTrace();
+		}
 		return null;
 	}
 

@@ -53,6 +53,7 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 
 @Entity
@@ -330,6 +331,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the homePage
 	 */
 	public ICPage getHomePage() {
+		if (!DBUtil.getInstance().isInitialized(homePage)) {
+			homePage = DBUtil.getInstance().lazyLoad(homePage);
+		}
 		return this.homePage;
 	}
 
@@ -345,6 +349,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the homeFolder
 	 */
 	public ICFile getHomeFolder() {
+		if (!DBUtil.getInstance().isInitialized(homeFolder)) {
+			homeFolder = DBUtil.getInstance().lazyLoad(homeFolder);
+		}
 		return this.homeFolder;
 	}
 
@@ -360,6 +367,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the alias
 	 */
 	public Group getAlias() {
+		if (!DBUtil.getInstance().isInitialized(alias)) {
+			alias = DBUtil.getInstance().lazyLoad(alias);
+		}
 		return this.alias;
 	}
 
@@ -375,6 +385,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the permissionControllingGroup
 	 */
 	public Group getPermissionControllingGroup() {
+		if (!DBUtil.getInstance().isInitialized(permissionControllingGroup)) {
+			permissionControllingGroup = DBUtil.getInstance().lazyLoad(permissionControllingGroup);
+		}
 		return this.permissionControllingGroup;
 	}
 
@@ -435,6 +448,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the groupModerator
 	 */
 	public Group getGroupModerator() {
+		if (!DBUtil.getInstance().isInitialized(groupModerator)) {
+			groupModerator = DBUtil.getInstance().lazyLoad(groupModerator);
+		}
 		return this.groupModerator;
 	}
 
