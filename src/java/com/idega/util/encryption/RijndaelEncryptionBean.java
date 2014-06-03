@@ -53,7 +53,7 @@ public class RijndaelEncryptionBean {
 			return encrypt(inputPlainText, getSecretKey());
 		}
 		catch (Exception e) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
+			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, "Failed to encrypt: '" + inputPlainText + "', error message: " + e.getMessage());
 			return null;
 		}
 	}
