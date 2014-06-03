@@ -1487,7 +1487,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			UserLogin userLogin = this.chooseLoginRecord(request, logins, user);
 			if (userLogin == null) {
 				try {
-					throw new LoginCreateException("No login found by UUID: '" + uuid + "', request URI: " + request.getRequestURI());
+					throw new LoginCreateException("No login found by UUID: '" + uuid + "', request URI: " + request.getRequestURI() + request.getQueryString());
 				} catch (LoginCreateException e1) {
 					e1.printStackTrace();
 				}
