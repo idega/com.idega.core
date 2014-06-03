@@ -15,6 +15,8 @@ import java.nio.CharBuffer;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -38,6 +40,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.expression.ELUtil;
@@ -56,17 +59,18 @@ import com.idega.util.expression.ELUtil;
  */
 public class WebServiceAuthorizationFilter implements Filter {
 
+	private static final Logger LOGGER = Logger.getLogger(WebServiceAuthorizationFilter.class.getName());
+	
 	private final String WEB_SERVICE_USER_ROLE = "web_service_user";
 
 	private final String DO_BASIC_AUTHENTICATION = "WS_DO_BASIC_AUTHENTICATION";
 
 	private final String VALID_IP = "WS_VALID_IP";
 
-	LoginBusinessBean loginBusiness = null;
-	UserBusiness userBusiness = null;
+	private LoginBusinessBean loginBusiness = null;
 
 	@Autowired
-	UserLoginDAO userLoginDAO;
+	private UserLoginDAO userLoginDAO;
 
 	/*
 	 * (non-Javadoc)
@@ -75,43 +79,53 @@ public class WebServiceAuthorizationFilter implements Filter {
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
 	@Override
-	public void doFilter(ServletRequest myRequest, ServletResponse myResponse,
-			FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest)myRequest;
-		HttpServletResponse response = (HttpServletResponse)myResponse;
+	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
+		HttpServletRequest request = (HttpServletRequest) myRequest;
+		HttpServletResponse response = (HttpServletResponse) myResponse;
+		
+		LOGGER.info("Processing " + request.getRequestURI() + request.getQueryString());
 
 		ServletContext myServletContext = request.getSession().getServletContext();
 	   	// getting the application context
-    		IWMainApplication mainApplication = IWMainApplication.getIWMainApplication(myServletContext);
-    		boolean doCheck = mainApplication.getIWApplicationContext().getApplicationSettings().getBoolean(this.DO_BASIC_AUTHENTICATION, true);
+    	IWMainApplication mainApplication = IWMainApplication.getIWMainApplication(myServletContext);
+    	boolean doCheck = mainApplication.getIWApplicationContext().getApplicationSettings().getBoolean(this.DO_BASIC_AUTHENTICATION, true);
 
-    		if (doCheck) {
-    			if (! requestIsValid(request)) {
-    				//send a 403 error
-    				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-    				return;
-    			}
-    		} else {
-			boolean isValid = false;
-    			try {
-    				String validIP = mainApplication.getIWApplicationContext().getApplicationSettings().getProperty(this.VALID_IP, "");
-    				String[] ips = validIP.split("\\;");
-    				for (int i = 0; i < ips.length; i++) {
-    					if (ips[i].equals(request.getRemoteAddr())) {
-    						isValid = true;
-    						break;
-    					}
-    				}
-    			} catch (Exception e) {
-    				isValid = false;
-    			}
-
-    			if (!isValid) {
-    				//send a 403 error
-    				response.sendError(HttpServletResponse.SC_FORBIDDEN);
-    				return;
-    			}
+    	if (doCheck) {
+    		if (!requestIsValid(request)) {
+    			LOGGER.warning("Invalid request: basic authentication needed for " + request.getRequestURI() + request.getQueryString());
+    			//send a 403 error
+    			response.sendError(HttpServletResponse.SC_FORBIDDEN);
+    			return;
     		}
+    	} else {
+			boolean isValid = false;
+			String clientIP = null, validIP = null;
+	    	try {
+	    		clientIP = request.getRemoteAddr();
+	    		validIP = mainApplication.getIWApplicationContext().getApplicationSettings().getProperty(this.VALID_IP, "");
+	    		if (CoreConstants.STAR.equals(validIP)) {
+	    			isValid = true;
+	    		} else {
+		    		String[] ips = validIP.split("\\;");
+		    		for (int i = 0; i < ips.length; i++) {
+		    			if (ips[i].equals(clientIP)) {
+		    				isValid = true;
+		    				break;
+		    			}
+		    		}
+	    		}
+	    	} catch (Exception e) {
+	    		LOGGER.log(Level.WARNING, "Error determening if IP address (" + clientIP + ") is valid to access " +  request.getRequestURI() + request.getQueryString());
+	    		isValid = false;
+	    	}
+	
+	    	if (!isValid) {
+	    		LOGGER.warning("Invalid request: client's IP address (" + clientIP + ") is not a valid IP (valid IPs: " + validIP + ") " + request.getRequestURI() + request.getQueryString());
+	    		//send a 403 error
+	    		response.sendError(HttpServletResponse.SC_FORBIDDEN);
+	    		return;
+	    	}
+    	}
 
 		chain.doFilter(request, response);
 	}
