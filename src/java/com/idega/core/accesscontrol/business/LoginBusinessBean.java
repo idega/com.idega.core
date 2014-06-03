@@ -1485,22 +1485,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 			User user = getUserDAO().getUserByUUID(uuid);
 			List<UserLogin> logins = getUserLoginDAO().findAllLoginsForUser(user);
 			UserLogin userLogin = this.chooseLoginRecord(request, logins, user);
-			if (userLogin != null) {
+			if (userLogin == null) {
+				try {
+					throw new LoginCreateException("No login found by UUID: '" + uuid + "', request URI: " + request.getRequestURI());
+				} catch (LoginCreateException e1) {
+					e1.printStackTrace();
+				}
+			} else {
 				returner = logIn(request, userLogin);
 				if (returner) {
 					onLoginSuccessful(request);
 				}
 			}
-			else {
-				try {
-					throw new LoginCreateException("No record chosen");
-				}
-				catch (LoginCreateException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-		catch (EJBException e) {
+		} catch (EJBException e) {
 			returner = false;
 		}
 		return returner;
