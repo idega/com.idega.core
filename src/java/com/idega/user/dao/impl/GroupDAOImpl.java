@@ -26,6 +26,9 @@ import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
+import com.idega.util.ArrayUtil;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("groupDAO")
@@ -61,10 +64,29 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Group findByGroupTypeAndName(GroupType type, String name) {
-		Param param1 = new Param("groupType", type);
-		Param param2 = new Param("name", name);
+		Param param1 = type == null ? null : new Param("groupType", type);
+		Param param2 = StringUtil.isEmpty(name) ? null : new Param("name", name);
 
-		return getSingleResult("group.findByGroupTypeAndName", Group.class, param1, param2);
+		if (param1 == null && param2 == null) {
+			return null;
+		}
+
+		if (param1 != null && param2 != null) {
+			return getSingleResult("group.findByGroupTypeAndName", Group.class, param1, param2);
+		} else {
+			List<Param> params = new ArrayList<Param>();
+			String query = "select g from " + Group.class.getName() + " g where ";
+			if (param1 != null) {
+				query += " g.groupType = :groupType";
+				params.add(param1);
+			}
+			if (param2 != null) {
+				query += "g.name = :name";
+				params.add(param2);
+			}
+			List<Group> groups = getResultListByInlineQuery(query, Group.class, ArrayUtil.convertListToArray(params));
+			return ListUtil.isEmpty(groups) ? null : groups.get(0);
+		}
 	}
 
 	@Override

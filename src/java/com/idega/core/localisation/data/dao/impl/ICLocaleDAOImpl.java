@@ -55,6 +55,7 @@ public class ICLocaleDAOImpl extends GenericDaoImpl implements ICLocaleDAO {
 
 		ICLocale icLocale = new ICLocale();
 		icLocale.setLocale(locale);
+		icLocale.setInUse(locale.equals(Locale.ENGLISH.toString()));
 		persist(icLocale);
 		return icLocale.getId() == null ? null : icLocale;
 	}
