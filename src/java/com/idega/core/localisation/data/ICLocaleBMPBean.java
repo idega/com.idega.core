@@ -20,19 +20,17 @@ import com.idega.data.query.WildCardColumn;
  */
 public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements ICLocale{
 
-  /**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = 2393090935124729715L;
 
-public ICLocaleBMPBean() {
-  }
+	public ICLocaleBMPBean() {
+	}
 
   public ICLocaleBMPBean(int id)throws java.sql.SQLException {
     super(id);
   }
 
-  public void initializeAttributes() {
+  @Override
+public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getColumnNameLocale(),"Locale",true,true,String.class,20);
     this.addAttribute(getColumnNameLanguageId(),"Language",true,true,Integer.class,"many-to-one",ICLanguage.class);
@@ -42,7 +40,8 @@ public ICLocaleBMPBean() {
     this.getEntityDefinition().setUseFinderCollectionPrefetch(true);
   }
 
-  public void insertStartData() throws Exception{
+  @Override
+public void insertStartData() throws Exception{
 
     java.util.Locale[] JavaLocales = java.util.Locale.getAvailableLocales();
     ICLocale il;
@@ -64,7 +63,8 @@ public ICLocaleBMPBean() {
   }
 
 
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return getEntityTableName();
   }
   public static String getEntityTableName(){return "IC_LOCALE";}
@@ -73,53 +73,66 @@ public ICLocaleBMPBean() {
   public static String getColumnNameCountryId(){return "IC_COUNTRY_ID";}
   public static String getColumnNameInUse(){return "IN_USE";}
 
-  public String getName(){
+  @Override
+public String getName(){
     return getLocale();
   }
 
-  public void setLocale(String sLocaleName){
+  @Override
+public void setLocale(String sLocaleName){
     setColumn(getColumnNameLocale(),sLocaleName);
   }
-  public String getLocale(){
+  @Override
+public String getLocale(){
     return getStringColumnValue(getColumnNameLocale());
   }
-  public void setLanguageId(int iLanguageId){
+  @Override
+public void setLanguageId(int iLanguageId){
     setColumn(getColumnNameLanguageId(),iLanguageId);
   }
-  public void setLanguageId(Integer iLanguageId){
+  @Override
+public void setLanguageId(Integer iLanguageId){
     setColumn(getColumnNameLanguageId(),iLanguageId);
   }
-  public int getLanguageId(){
+  @Override
+public int getLanguageId(){
     return getIntColumnValue(getColumnNameLanguageId());
   }
-  public void setCountryId(int iCountryId){
+  @Override
+public void setCountryId(int iCountryId){
     setColumn(getColumnNameCountryId(),iCountryId);
   }
-  public void setCountryId(Integer iCountryId){
+  @Override
+public void setCountryId(Integer iCountryId){
     setColumn(getColumnNameCountryId(),iCountryId);
   }
-  public int getCountryId(){
+  @Override
+public int getCountryId(){
     return getIntColumnValue(getColumnNameCountryId());
   }
-  public void setInUse(boolean inUse){
+  @Override
+public void setInUse(boolean inUse){
     setColumn(getColumnNameInUse() ,inUse);
   }
-  public boolean getInUse(){
+  @Override
+public boolean getInUse(){
     return getBooleanColumnValue(getColumnNameInUse());
   }
-  
-  public int getLocaleID(){
+
+  @Override
+public int getLocaleID(){
       return ((Integer) getPrimaryKey()).intValue();
   }
 
-  public Locale getLocaleObject(){
+  @Override
+public Locale getLocaleObject(){
     String localeString = this.getLocale();
     if(localeString!=null){
       return com.idega.core.localisation.business.ICLocaleBusiness.getLocaleFromLocaleString(localeString);
     }
     return null;
   }
-  
+
   public Collection ejbFindAll() throws FinderException{
       Table table = new Table(this);
       SelectQuery query = new SelectQuery(table);
@@ -127,19 +140,19 @@ public ICLocaleBMPBean() {
       //return idoFindPKsByQuery(query);
       return idoFindPKsByQuery(query);
   }
-  
+
   public Collection ejbFindAllInUse()throws FinderException{
       return ejbFindByUsage(true);
   }
-  
+
   public Collection ejbFindByUsage(boolean usage) throws FinderException{
       Table table = new Table(this);
       SelectQuery query = new SelectQuery(table);
       query.addColumn(new WildCardColumn());
       query.addCriteria(new MatchCriteria(table,getColumnNameInUse(),MatchCriteria.EQUALS,usage));
-      return idoFindPKsByQuery(query);	
+      return idoFindPKsByQuery(query);
   }
-  
+
   public Object ejbFindByLocaleName(String locale) throws FinderException {
 	  Table table = new Table(this);
 	  SelectQuery query = new SelectQuery(table);

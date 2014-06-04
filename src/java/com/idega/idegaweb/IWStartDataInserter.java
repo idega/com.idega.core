@@ -268,16 +268,16 @@ public class IWStartDataInserter implements Singleton {
 	private void insertDefaultLocales() {
 		try {
 			ICLocaleHome home = (ICLocaleHome) IDOLookup.getHome(ICLocale.class);
-			Locale[] JavaLocales = Locale.getAvailableLocales();
-			for (Locale locale : JavaLocales) {
+			Locale[] javaLocales = Locale.getAvailableLocales();
+			for (Locale locale: javaLocales) {
 				String localeString = locale.toString();
 				try {
 					home.findByLocaleName(localeString);
-				}
-				catch (FinderException e) {
+				} catch (FinderException e) {
+					Logger.getLogger(getClass().getName()).info("Creating locale '" + localeString + "'");
 					ICLocale icLocale = home.create();
 					icLocale.setLocale(localeString);
-					icLocale.setInUse(localeString.equals("en"));
+					icLocale.setInUse(localeString.equals(Locale.ENGLISH.toString()));
 					icLocale.store();
 				}
 			}
