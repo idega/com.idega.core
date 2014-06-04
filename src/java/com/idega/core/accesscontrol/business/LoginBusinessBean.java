@@ -890,12 +890,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 		Locale locale = null;
 		if (StringUtil.isEmpty(preferredLocale)) {
 			ICLanguage language = user.getNativeLanguage();
-			if (language != null)
+			if (language != null) {
 				locale = ICLocaleBusiness.getLocaleFromLocaleString(language.getISOAbbreviation());
-		} else
+			}
+		} else {
 			locale = ICLocaleBusiness.getLocaleFromLocaleString(preferredLocale);
+		}
 		if (locale != null) {
-			LOGGER.info("Found preferred locale " + locale + " from '" + preferredLocale + "' for " + user + ", will set as default");
 			request.getSession().setAttribute(IWContext.LOCALE_ATTRIBUTE, locale);
 		}
 	}

@@ -37,7 +37,6 @@ import com.idega.core.accesscontrol.dao.UserLoginDAO;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.user.business.UserBusiness;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
