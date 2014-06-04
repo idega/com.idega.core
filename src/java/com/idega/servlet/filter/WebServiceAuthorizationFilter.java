@@ -83,8 +83,6 @@ public class WebServiceAuthorizationFilter implements Filter {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
 		
-		LOGGER.info("Processing " + request.getRequestURI() + request.getQueryString());
-
 		ServletContext myServletContext = request.getSession().getServletContext();
 	   	// getting the application context
     	IWMainApplication mainApplication = IWMainApplication.getIWMainApplication(myServletContext);
