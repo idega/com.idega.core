@@ -7,6 +7,20 @@
 version="1.2">
 
 	<component>
+		<component-type>countryDropdownMenu</component-type>
+		<component-class>com.idega.presentation.ui.CountryDropdownMenu</component-class>
+		<property>
+			<display-name>Label</display-name>
+			<property-name>label</property-name>
+			<property-class>String</property-class>
+		</property>
+		<property>
+			<display-name>Name</display-name>
+			<property-name>name</property-name>
+			<property-class>String</property-class>
+		</property>
+	</component>
+	<component>
 		<component-type>Page</component-type>
 		<component-class>com.idega.presentation.Page</component-class>
 	</component>

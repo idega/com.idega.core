@@ -6,6 +6,12 @@
 	<namespace>http://xmlns.idega.com/com.idega.core</namespace>
 	
 	<tag>
+		<tag-name>countryDropdownMenu</tag-name>
+		<component>
+            <component-type>countryDropdownMenu</component-type>
+        </component>
+	</tag>
+	<tag>
 		<tag-name>contactPurposeSelector</tag-name>
 		<component>
             <component-type>contactPurposeSelector</component-type>
