@@ -482,4 +482,5 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		IWMainApplication iwma = iwuc.getApplicationContext().getIWMainApplication();
 		return iwma.getBundle(bundleIdentifier);
 	}
+    
 }
