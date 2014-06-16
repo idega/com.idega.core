@@ -1,9 +1,9 @@
 package com.idega.notifier.bean;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class InstantMessage implements Serializable {
 
@@ -11,20 +11,20 @@ public class InstantMessage implements Serializable {
 
 	private String title;
 	private String message;
-	
-	private List<String> sentToSessions = new ArrayList<String>();
-	
+
+	private Map<String, Boolean> sentToSessions = new ConcurrentHashMap<String, Boolean>();
+
 	public InstantMessage() {
 		super();
 	}
-	
+
 	public InstantMessage(String title, String message) {
 		this();
-		
+
 		this.title = title;
 		this.message = message;
 	}
-	
+
 	public String getTitle() {
 		return title;
 	}
@@ -41,30 +41,18 @@ public class InstantMessage implements Serializable {
 		this.message = message;
 	}
 
-	public List<String> getSentToSessions() {
-		return sentToSessions;
+	public void addSentToSession(String id) {
+		sentToSessions.put(id, Boolean.TRUE);
 	}
 
-	public void setSentToSessions(List<String> sentToSessions) {
-		this.sentToSessions = sentToSessions;
-	}
-	
-	public void addSentToSession(String id) {
-		synchronized (sentToSessions) {
-			sentToSessions.add(id);
-		}
-	}
-	
 	public void addSentToSession(Collection<String> ids) {
-		synchronized (sentToSessions) {
-			sentToSessions.addAll(ids);
+		for (String id: ids) {
+			addSentToSession(id);
 		}
 	}
-	
+
 	public boolean canSendToSession(String id) {
-		synchronized (sentToSessions) {
-			return !sentToSessions.contains(id);
-		}
+		return !sentToSessions.containsKey(id);
 	}
 
 }
