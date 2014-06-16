@@ -41,7 +41,7 @@ public class PresentationUtil {
 
 		return url;
 	}
-	
+
 	/**
 	 * Add javascript resources to the default location of the HTML header.
 	 */
@@ -140,7 +140,7 @@ public class PresentationUtil {
 	}
 
 	@SuppressWarnings({ "unchecked", "rawtypes" })
-	private static synchronized void manageCientResource(IWContext iwc, String attributeName, String resource) {
+	private static void manageCientResource(IWContext iwc, String attributeName, String resource) {
 		List<String> resources = null;
 		Object o = iwc.getSessionAttribute(attributeName);
 		if (o instanceof List) {
