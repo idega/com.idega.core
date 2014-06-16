@@ -376,7 +376,7 @@ public class IBOLookup<Service, ServiceBean, Home, S extends Service, SB extends
 	/**
 	 * Clears all cached object instances of looked up objects (Home instances etc.)
 	 **/
-	public static synchronized void clearAllCache() {
+	public static void clearAllCache() {
 		getInstance().getHomesMap().clear();
 		getInstance().getBeanClassesMap().clear();
 		getInstance().getInterfaceClassesMap().clear();
