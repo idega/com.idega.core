@@ -211,11 +211,11 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param iwma
 	 * @param requestUriWithoutContextPath
 	 */
-	public synchronized static File copyResourceFromJarToWebapp(IWMainApplication iwma, String requestUriWithoutContextPath) {
+	public static File copyResourceFromJarToWebapp(IWMainApplication iwma, String requestUriWithoutContextPath) {
 		return copyResourceFromJarOrCustomContentToWebapp(iwma, requestUriWithoutContextPath, null);
 	}
 
-	public synchronized static File copyResourceFromJarOrCustomContentToWebapp(
+	public static File copyResourceFromJarOrCustomContentToWebapp(
 			IWMainApplication iwma,
 			String requestUriWithoutContextPath,
 			String fileContent
@@ -223,7 +223,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		return copyResourceFromJarOrCustomContentToWebapp(iwma, requestUriWithoutContextPath, fileContent, true);
 	}
 
-	private synchronized static File copyResourceFromJarOrCustomContentToWebapp(
+	private static File copyResourceFromJarOrCustomContentToWebapp(
 			IWMainApplication iwma,
 			String requestUriWithoutContextPath,
 			String fileContent,
@@ -271,7 +271,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		return copyFileContentToWebApp(iwma, requestUriWithoutContextPath, fileContent, pathWithinBundle, bundle, bundleLastModified);
 	}
 
-	private synchronized static File copyFileContentToWebApp(
+	private static File copyFileContentToWebApp(
 			IWMainApplication iwma,
 			String requestUriWithoutContextPath,
 			String content,
@@ -351,7 +351,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 * @param pathInBundle - like 'resources/resourcesToLoadDirectory/'
 	 */
 	@SuppressWarnings("unchecked")
-	public synchronized static final List<File> copyAllFilesFromJarDirectory(IWMainApplication iwma, IWBundle bundle, String pathInBundle) {
+	public static final List<File> copyAllFilesFromJarDirectory(IWMainApplication iwma, IWBundle bundle, String pathInBundle) {
 		Set<String> paths = iwma.getResourcePaths(IWModuleLoader.DEFAULT_LIB_PATH);
 		if (ListUtil.isEmpty(paths)) {
 			return null;
@@ -563,7 +563,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 	 *          Something like
 	 *          '/idegaweb/bundles/com.idega.core.bundle/jsp/myjsp.jsp'
 	 */
-	public static synchronized File copyWorkspaceFileToWebapp(String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
+	public static File copyWorkspaceFileToWebapp(String workspaceDir, String webappDir, String requestUriWithoutContextPath) {
 		if (webappDir.endsWith(File.separator)) {
 			// cut the slash:
 			webappDir = webappDir.substring(0, webappDir.length() - 1);
