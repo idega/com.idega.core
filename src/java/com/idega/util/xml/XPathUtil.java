@@ -80,12 +80,9 @@ public class XPathUtil {
 
 	public <T extends Node>T getNode(Node context) {
 		try {
-			synchronized (xpathExpression) {
-				@SuppressWarnings("unchecked")
-				T node = (T)xpathExpression.evaluate(context, XPathConstants.NODE);
-				return node;
-			}
-
+			@SuppressWarnings("unchecked")
+			T node = (T)xpathExpression.evaluate(context, XPathConstants.NODE);
+			return node;
 		} catch (XPathException e) {
 			throw new RuntimeException("Could not evaluate XPath expression: " + e.getMessage(), e);
 		}
@@ -93,10 +90,7 @@ public class XPathUtil {
 
 	public NodeList getNodeset(Node context) {
 		try {
-			synchronized (xpathExpression) {
-				return (NodeList)xpathExpression.evaluate(context, XPathConstants.NODESET);
-			}
-
+			return (NodeList)xpathExpression.evaluate(context, XPathConstants.NODESET);
 		} catch (XPathException e) {
 			throw new RuntimeException("Could not evaluate XPath expression: " + e.getMessage(), e);
 		}
@@ -104,10 +98,7 @@ public class XPathUtil {
 
 	public String getString(Node context) {
 		try {
-			synchronized (xpathExpression) {
-				return (String)xpathExpression.evaluate(context, XPathConstants.STRING);
-			}
-
+			return (String)xpathExpression.evaluate(context, XPathConstants.STRING);
 		} catch (XPathException e) {
 			throw new RuntimeException("Could not evaluate XPath expression: " + e.getMessage(), e);
 		}
@@ -115,10 +106,7 @@ public class XPathUtil {
 
 	public Object getObject(Node context, QName objType) {
 		try {
-			synchronized (xpathExpression) {
-				return xpathExpression.evaluate(context, objType);
-			}
-
+			return xpathExpression.evaluate(context, objType);
 		} catch (XPathException e) {
 			throw new RuntimeException("Could not evaluate XPath expression: " + e.getMessage(), e);
 		}
