@@ -1,7 +1,7 @@
 package com.idega.util.caching;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 /**
  *<p>
  *This class is to be used as a java.util.Map as a convenient way of caching objects.
@@ -12,18 +12,18 @@ import java.util.Map;
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 0.5
  */
-public class CacheMap extends HashMap implements Map
-{
+public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
+
 	private static final long serialVersionUID = -2566778836998184283L;
 	private int maxNumberOfObjectsInMap = 100;
-	private Map accesses;
-	
+	private Map<Object, Integer> accesses;
+
 	/**
 	 * Constructs a CacheMap with maximum 100 stored objects
 	 **/
 	public CacheMap()
 	{
-		this(100);	
+		this(100);
 	}
 
 	/**
@@ -33,8 +33,8 @@ public class CacheMap extends HashMap implements Map
 	public CacheMap(int maxNumberOfStoredObjects)
 	{
 		setMaxNumberOfObjects(maxNumberOfStoredObjects);
-	}	
-	
+	}
+
 	/**
 	 * Sets the maximum number of objects to be stored in cache
 	 **/
@@ -46,23 +46,24 @@ public class CacheMap extends HashMap implements Map
 	{
 		return this.maxNumberOfObjectsInMap;
 	}
-	private Map getAcesses()
+	private Map<Object, Integer> getAcesses()
 	{
 		if (this.accesses == null)
 		{
-			this.accesses = new HashMap();
+			this.accesses = new ConcurrentHashMap<Object, Integer>();
 		}
 		return this.accesses;
 	}
 
-	protected synchronized void reduce(int byCount)
+	protected void reduce(int byCount)
 	{
 		for (int i = 0; i < byCount; i++)
 		{
 			removeLeastUsedObjectFromMemory();
 		}
 	}
-	public Object put(Object key, Object value)
+	@Override
+	public V put(K key, V value)
 	{
 		int difference = super.size() - this.getMaxNumberOfObjects();
 		if (difference >= 0)
@@ -72,9 +73,10 @@ public class CacheMap extends HashMap implements Map
 		incrementAccessesForKey(key);
 		return super.put(key, value);
 	}
-	public Object get(Object key)
+	@Override
+	public V get(Object key)
 	{
-		Object value = super.get(key);
+		V value = super.get(key);
 		if (value == null)
 		{
 			this.removeAccessesForKey(key);
@@ -85,27 +87,28 @@ public class CacheMap extends HashMap implements Map
 			return value;
 		}
 	}
-	public synchronized Object remove(Object key)
+	@Override
+	public V remove(Object key)
 	{
 		removeAccessesForKey(key);
 		return super.remove(key);
 	}
-	protected synchronized void removeLeastUsedObjectFromMemory()
+	protected void removeLeastUsedObjectFromMemory()
 	{
 		Object key = getLeastAccessedKey();
 		//System.out.println("Removing: "+key);
 		onReducementFromMemory(key);
 	}
-	public synchronized void removeLeastUsedObjectFromMap()
+	public void removeLeastUsedObjectFromMap()
 	{
 		Object key = getLeastAccessedKey();
 		onReducementFromMap(key);
 	}
-	protected synchronized void onReducementFromMap(Object key)
+	protected void onReducementFromMap(Object key)
 	{
 		remove(key);
 	}
-	protected synchronized void onReducementFromMemory(Object key)
+	protected void onReducementFromMemory(Object key)
 	{
 		remove(key);
 	}
@@ -116,13 +119,13 @@ public class CacheMap extends HashMap implements Map
 
 	protected Object getLeastAccessedKeyInteger()
 	{
-		Iterator keyIter = getAcesses().keySet().iterator();
+		Iterator<Object> keyIter = getAcesses().keySet().iterator();
 		Object theReturn = null;
 		int lowestIntVal = -1;
 		while (keyIter.hasNext())
 		{
 			Object key = keyIter.next();
-			Integer integ = (Integer) this.getAcesses().get(key);
+			Integer integ = this.getAcesses().get(key);
 			int intval = integ.intValue();
 			if (intval < lowestIntVal || lowestIntVal == -1)
 			{
@@ -132,14 +135,14 @@ public class CacheMap extends HashMap implements Map
 		}
 		return theReturn;
 	}
-	
+
 	protected void incrementAccessesForKey(Object key){
 		incrementAccessesForKeyInteger(key);
 	}
 
 	protected void incrementAccessesForKeyInteger(Object key)
 	{
-		Integer prevValue = (Integer) this.getAcesses().get(key);
+		Integer prevValue = this.getAcesses().get(key);
 		int prevIntValue;
 		if (prevValue == null)
 		{
@@ -156,13 +159,14 @@ public class CacheMap extends HashMap implements Map
 	{
 		this.getAcesses().remove(key);
 	}
-	public synchronized void clear()
+	@Override
+	public void clear()
 	{
 		super.clear();
 		this.accesses.clear();
 	}
-	
-	protected class AccessCount implements Comparable{
+
+	protected class AccessCount implements Comparable<AccessCount> {
 		int intValue=0;
 		Object oKey;
 		protected AccessCount(Object key){
@@ -175,27 +179,24 @@ public class CacheMap extends HashMap implements Map
 		public int getCount(){
 			return this.intValue;
 		}
-		
-		public int compareTo(Object o){
-			AccessCount c = (AccessCount)o;
-			/*if(getCount()<c.getCount()){
-				return -1;
-			}*/
-			return(getCount()-c.getCount());		
+
+		@Override
+		public int compareTo(AccessCount c){
+			return(getCount()-c.getCount());
 		}
-		
+
 		public Object getKey(){
-			return this.oKey;	
+			return this.oKey;
 		}
 	}
-	
-	
+
+
 	/**
 	 * Testing method
 	 **/
 	public static void main(String[] args){
-			
-			CacheMap map = new CacheMap(100);
+
+			CacheMap<String, Integer> map = new CacheMap<String, Integer>(100);
 			//Map map = new HashMap();
 			int max = 10000;
 			String key0 = "key0";
@@ -211,7 +212,7 @@ public class CacheMap extends HashMap implements Map
 				String key = "key"+i;
 				map.put(key,test1);
 			}
-			
+
 			long end = System.currentTimeMillis();
 			long elapsed  = end-begin;
 			System.out.println("Put1 for "+map.getClass().getName()+" Took: "+elapsed+" ms.");
@@ -224,23 +225,23 @@ public class CacheMap extends HashMap implements Map
 			 elapsed  = end-begin;
 			System.out.println("Get2 for "+map.getClass().getName()+" Took: "+elapsed+" ms.");
 			System.out.println("Map.size():"+map.size());
-			
+
 			if(args.length>0){
 				System.out.println("Contents:");
-				for (Iterator iter = map.keySet().iterator(); iter.hasNext();)
+				for (Iterator<String> iter = map.keySet().iterator(); iter.hasNext();)
 				{
 					Object key =  iter.next();
 					Object value = map.get(key);
 					System.out.print("Key "+key+"="+value);
 					if(map != null){
-						CacheMap cMap = map;
+						CacheMap<String, Integer> cMap = map;
 						System.out.print(" - With accesses: "+cMap.getAcesses().get(key));
 					}
 					System.out.println("");
-				
+
 				}
 			}
-			
-	
+
+
 	}
 }
