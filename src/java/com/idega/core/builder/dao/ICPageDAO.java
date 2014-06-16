@@ -15,7 +15,8 @@ import com.idega.core.persistence.GenericDao;
 
 @SpringBeanName("icPageDAO")
 public interface ICPageDAO extends GenericDao {
-	
+
 	public ICPage findPage(Integer pageID);
-	
+
+	public boolean isPagePublished(Integer pageId);
 }

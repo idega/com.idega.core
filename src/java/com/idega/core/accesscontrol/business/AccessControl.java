@@ -232,7 +232,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(), Boolean.TRUE, iwc);
 					return true;
 				}
-				
+
 				List<Group> groups = LoginBusinessBean.getPermissionGroups(iwc);
 				if (groups != null) {
 					for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
@@ -598,13 +598,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			usersGroupsToCheckAgainstPermissions[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
 		}
 		else { //user check
-
 			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if ( !Boolean.TRUE.toString().equalsIgnoreCase(recurseParents) )  { //old crap
+			if (!Boolean.TRUE.toString().equalsIgnoreCase(recurseParents))  { //old crap
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
-			}
-			else { //the correct version
+			} else { //the correct version
 				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getLoggedInUser());
 			}
 
@@ -624,8 +622,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 				usersGroupsToCheckAgainstPermissions = new List[5];
 				usersGroupsToCheckAgainstPermissions[4] = groupIds;
-			}
-			else {
+			} else {
 				usersGroupsToCheckAgainstPermissions = new List[4];
 			}
 			usersGroupsToCheckAgainstPermissions[0] = new ArrayList<String>();
@@ -659,16 +656,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (permissionKey.equals(AccessController.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessController.PERMISSION_KEY_VIEW)) {
 			if (obj instanceof Group) {
 				return isGroupOwnerRecursively((Group) obj, iwuc); //because owners parents groups always get read/write access
-			}
-			else {
+			} else {
 				return isOwner(obj, iwuc);
 			}
-		}
-		else {
+		} else {
 			return false;
 		}
-
-	} // method hasPermission
+	}
 
 	private Collection<Group> getParentGroupsAndPermissionControllingParentGroups(String permissionKey, User user) throws RemoteException {
 		Collection<Group> groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
@@ -871,7 +865,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				//Template object instance permission.  Used for DynamicPageTrigger
 				if(Boolean.FALSE.equals(myPermission)) { //TODO: should check if myPermission is null when the todo above has been changed (myPermission should be set null there)
 					PresentationObject currentObject = (PresentationObject)obj; //TODO: user interfase to avoid using presentation object in business logic
-					ICDynamicPageTrigger dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, AccessControl.class);
+					ICDynamicPageTrigger dynamicPageTrigger = ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, AccessControl.class);
 					if (dynamicPageTrigger == null) {
 						throw new RuntimeException("[AccessControl] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
 					}
@@ -1428,7 +1422,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				User.class,
 				new Param("name", User.ADMINISTRATOR_DEFAULT_NAME)
 		);
-		
+
 		User adminUser = null;
 		if (ListUtil.isEmpty(users)) {
 			getLogger().warning("No administrators exist, creating a new one");
@@ -2668,8 +2662,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			else{
 				return hasPermission(roleKey, RoleHelperObject.getStaticInstance(), iwuc);
 			}
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 			return false;
 		}
@@ -2925,19 +2918,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	   * @return
 	   */
 	  @Override
-	public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc) {
-  		PagePermissionObject pageKeyObject = new PagePermissionObject(pageKey);
+	public boolean hasViewPermissionForPageKey(String pageKey, IWUserContext iwuc) {
 		try {
+			PagePermissionObject pageKeyObject = new PagePermissionObject(pageKey);
 			boolean permission = hasPermission(PERMISSION_KEY_VIEW, pageKeyObject, iwuc);
 			if (!permission) {
 				//if regular user check fails do extra check for content roles
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}
 
-			//even if you have the view rights the page might not be published yet.
-			//extra check for unpublished pages
-			ICPage page = getPageDAO().findPage(new Integer(pageKey));
-			if (page != null && !page.isPublished()) {
+			//even if you have the view rights the page might not be published yet. Extra check for unpublished pages
+			if (!getPageDAO().isPagePublished(Integer.valueOf(pageKey))) {
 				//only editors can view unpublished pages.
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}
@@ -2948,7 +2939,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return false;
 		}
 	  }
-
 
 	  private String getRecurseParentsSettings(IWApplicationContext iwac) {
 		  return iwac.getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
