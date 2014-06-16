@@ -40,8 +40,10 @@ import com.idega.transaction.IdegaTransactionManager;
  *@author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version $Revision: 1.19 $
 */
-public class ConnectionBroker
-{
+public class ConnectionBroker {
+
+	private static final Logger LOGGER = Logger.getLogger(ConnectionBroker.class.getName());
+
 	private static Context initialContext;
 	public final static String DEFAULT_POOL = "default";
 	public final static int POOL_MANAGER_TYPE_IDEGA = 1;
@@ -53,79 +55,58 @@ public class ConnectionBroker
 
 	private static DataSource defaultDs;
 	private static Map<String, DataSource> dataSourcesMap=new HashMap<String, DataSource>();
-	private static Logger log = Logger.getLogger(ConnectionBroker.class.getName());
 	public static int gottenConns=0;
+
 	/**
 	 * Returns a Datastore connection from the default datasource
 	 */
-	public static Connection getConnection()
-	{
+	public static Connection getConnection() {
 		return getConnection(true);
 	}
+
 	/**
 	 * Returns a Datastore connection from the default datasource
 	 */
-	public static Connection getConnection(boolean doTransactionCheck)
-	{
-		if (doTransactionCheck)
-		{
+	public static Connection getConnection(boolean doTransactionCheck) {
+		if (doTransactionCheck) {
 			return getConnection(DEFAULT_POOL);
-		}
-		else
-		{
+		} else {
 			return PoolManager.getInstance().getConnection();
 		}
 	}
+
 	/**
 	 * Does not fully support TransactionManager
 	 * Returns a Datastore connection from the datasource
 	 */
-	public static Connection getConnection(String dataSourceName)
-	{
-		if (log.isLoggable(Level.FINEST)) {
-			log.finest("Getting database connection from: "+dataSourceName+" for "+(++gottenConns)+" time");
+	public static Connection getConnection(String dataSourceName) {
+		if (LOGGER.isLoggable(Level.FINEST)) {
+			LOGGER.finest("Getting database connection from: "+dataSourceName+" for "+(++gottenConns)+" time");
 		}
-		if (dataSourceName == null)
-		{
+
+		if (dataSourceName == null) {
 			return getConnection();
-		}
-		else
-		{
+		} else {
 			Connection conn = null;
 			IdegaTransactionManager tm = (IdegaTransactionManager) IdegaTransactionManager.getInstance(dataSourceName);
-			if (tm.hasCurrentThreadBoundTransaction())
-			{
-				try
-				{
+			if (tm.hasCurrentThreadBoundTransaction()) {
+				try {
 					//System.out.println("Getting connection from transaction for datasource: "+dataSourceName);
 					conn = ((IdegaTransaction) tm.getTransaction()).getConnection();
+				} catch (Exception ex) {
+					LOGGER.log(Level.WARNING, "Error getting connection from JDBC data source: " + dataSourceName, ex);
 				}
-				catch (Exception ex)
-				{
-					ex.printStackTrace(System.err);
-				}
-			}
-			else
-			{
-				if (isUsingIdegaPool())
-				{
+			} else {
+				if (isUsingIdegaPool()) {
 					//System.out.println("Getting connection from pool for datasource: "+dataSourceName);
 					conn = PoolManager.getInstance().getConnection(dataSourceName);
-				}
-				else if (isUsingJNDIDatasource())
-				{
-					try
-					{
+				} else if (isUsingJNDIDatasource()) {
+					try {
 						conn = getDataSource(dataSourceName).getConnection();
+					} catch (SQLException e) {
+						LOGGER.log(Level.WARNING, "Error getting connection from JDBC data source: " + dataSourceName, e);
 					}
-					catch (SQLException e)
-					{
-						System.out.println("Error getting connection from JDBC datasource : " + dataSourceName);
-						e.printStackTrace(System.err);
-					}
-				}
-				else if (isUsingPoolManPool())
-				{
+				} else if (isUsingPoolManPool()) {
 					//try{
 					/**
 					 * @todo: Commit in support for com.codestudio.util PoolMan
@@ -140,146 +121,121 @@ public class ConnectionBroker
 			return conn;
 		}
 	}
+
 	/**
 	 * Frees (Reallocates) a Datastore connection to the default datasource
 	 */
-	public static void freeConnection(Connection connection)
-	{
+	public static void freeConnection(Connection connection) {
 		freeConnection(connection, true);
 	}
+
 	/**
-
 	 * Returns a Datastore connection from the default datasource
-
 	 */
-	public static void freeConnection(Connection connection, boolean doTransactionCheck)
-	{
-		if (doTransactionCheck)
-		{
+	public static void freeConnection(Connection connection, boolean doTransactionCheck) {
+		if (doTransactionCheck) {
 			freeConnection(DEFAULT_POOL, connection);
-		}
-		else
-		{
+		} else {
 			freePooledConnection(null,connection);
 		}
 	}
-	private static void freePooledConnection(String dataSourceName,Connection connection){
-		if (isUsingIdegaPool())
-		{
-			if(dataSourceName==null){
+
+	private static void freePooledConnection(String dataSourceName, Connection connection) {
+		if (isUsingIdegaPool()) {
+			if (dataSourceName == null) {
 				PoolManager.getInstance().freeConnection(connection);
+			} else {
+				PoolManager.getInstance().freeConnection(dataSourceName, connection);
 			}
-			else{
-				PoolManager.getInstance().freeConnection(dataSourceName,connection);
-			}
-		}
-		else if (isUsingJNDIDatasource())
-		{
+		} else if (isUsingJNDIDatasource()) {
 			try {
-				if(!connection.isClosed()){
+				if (!connection.isClosed()) {
 					connection.close();
 				}
+			} catch (SQLException e) {
+				LOGGER.log(Level.WARNING, "Error closing connection to data source: " + (dataSourceName == null ? DEFAULT_JDBC_JNDI_URL : dataSourceName), e);
 			}
-			catch (SQLException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
-		}
-		else if (isUsingPoolManPool())
-		{
+		} else if (isUsingPoolManPool()) {
 			/**
-
 			 * @todo: Commit in support for com.codestudio.util PoolMan
-
 			 */
 			//com.codestudio.util.SQLManager.getInstance().returnConnection(connection);
 		}
 	}
+
 	/**
-
 	 * Frees (Reallocates) a Datastore connection to the datasource
-
 	 */
-	public static void freeConnection(String dataSourceName, Connection connection, boolean doTransactionCheck)
-	{
-		if (dataSourceName == null)
-		{
+	public static void freeConnection(String dataSourceName, Connection connection, boolean doTransactionCheck) {
+		if (dataSourceName == null) {
 			freeConnection(connection, doTransactionCheck);
-		}
-		else
-		{
-			if (doTransactionCheck && !((IdegaTransactionManager) IdegaTransactionManager.getInstance(dataSourceName)).hasCurrentThreadBoundTransaction())
-			{
+		} else {
+			if (doTransactionCheck && !((IdegaTransactionManager) IdegaTransactionManager.getInstance(dataSourceName)).hasCurrentThreadBoundTransaction()) {
 				freePooledConnection(dataSourceName,connection);
-			}
-			else if (!doTransactionCheck)
-			{
+			} else if (!doTransactionCheck) {
 				freePooledConnection(dataSourceName,connection);
 			}
 		}
 	}
+
 	/**
-
 	 * Frees (Reallocates) a Datastore connection to the datasource
-
 	 */
-	public static void freeConnection(String dataSourceName, Connection connection)
-	{
+	public static void freeConnection(String dataSourceName, Connection connection) {
 		freeConnection(dataSourceName, connection, true);
 	}
-	public static String[] getDatasources()
-	{
+
+	public static String[] getDatasources() {
 		return PoolManager.getInstance().getDatasources();
 	}
-	public static String getURL()
-	{
+
+	public static String getURL() {
 		return PoolManager.getInstance().getURLForPool();
 	}
-	public static String getURL(String dataSourceName)
-	{
+
+	public static String getURL(String dataSourceName) {
 		return PoolManager.getInstance().getURLForPool(dataSourceName);
 	}
-	public static String getUserName()
-	{
+
+	public static String getUserName() {
 		return PoolManager.getInstance().getUserNameForPool();
 	}
-	public static String getUserName(String dataSourceName)
-	{
+
+	public static String getUserName(String dataSourceName) {
 		return PoolManager.getInstance().getUserNameForPool(dataSourceName);
 	}
-	public static String getPassword()
-	{
+
+	public static String getPassword() {
 		return PoolManager.getInstance().getPasswordForPool();
 	}
-	public static String getPassword(String dataSourceName)
-	{
+
+	public static String getPassword(String dataSourceName) {
 		return PoolManager.getInstance().getPasswordForPool(dataSourceName);
 	}
-	public static String getDriverClass()
-	{
+
+	public static String getDriverClass() {
 		return PoolManager.getInstance().getDriverClassForPool();
 	}
-	public Connection recycleConnection(Connection conn, String dataSourceName)
-	{
+
+	public Connection recycleConnection(Connection conn, String dataSourceName) {
 		return PoolManager.getInstance().recycleConnection(conn, dataSourceName);
 	}
-	public Connection recycleConnection(Connection conn)
-	{
+
+	public Connection recycleConnection(Connection conn) {
 		return PoolManager.getInstance().recycleConnection(conn);
 	}
-	public static boolean isUsingIdegaPool()
-	{
+
+	public static boolean isUsingIdegaPool() {
 		return (POOL_MANAGER_TYPE == POOL_MANAGER_TYPE_IDEGA);
 	}
-	public static boolean isUsingPoolManPool()
-	{
+
+	public static boolean isUsingPoolManPool() {
 		return (POOL_MANAGER_TYPE == POOL_MANAGER_TYPE_POOLMAN);
 	}
-	public static boolean isUsingJNDIDatasource()
-	{
+
+	public static boolean isUsingJNDIDatasource() {
 		return (POOL_MANAGER_TYPE == POOL_MANAGER_TYPE_JDBC_DATASOURCE);
 	}
-
 
 	public static boolean tryDefaultJNDIDataSource(){
 		/**
@@ -288,17 +244,16 @@ public class ConnectionBroker
 		*/
 		DataSource ds;
 		try{
-			log.info("Trying DataSource with url: '"+DEFAULT_JDBC_JNDI_URL+"'");
+			LOGGER.info("Trying DataSource with url: '"+DEFAULT_JDBC_JNDI_URL+"'");
 			ds = getDataSource(DEFAULT_POOL);
-		}
-		catch(Exception e){
-			e.printStackTrace();
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting connection from data source: " + DEFAULT_JDBC_JNDI_URL, e);
 			return false;
 		}
 
-		if(ds!=null){
+		if (ds!=null) {
 			POOL_MANAGER_TYPE=POOL_MANAGER_TYPE_JDBC_DATASOURCE;
-			log.info("Successfully enabled Database from DataSource: "+DEFAULT_JDBC_JNDI_URL);
+			LOGGER.info("Successfully enabled Database from DataSource: "+DEFAULT_JDBC_JNDI_URL);
 			return true;
 		}
 		return false;
@@ -314,38 +269,29 @@ public class ConnectionBroker
 	 * @return
 	 */
 	public static boolean hasDataSource(String datasourceName) {
-		if(datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)){
-			if (defaultDs == null)
-			{
-				try
-				{
+		if (datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)) {
+			if (defaultDs == null) {
+				try {
 					defaultDs = (DataSource) getEnvContext().lookup(DEFAULT_JDBC_JNDI_URL);
-					dataSourcesMap.put(DEFAULT_POOL,defaultDs);
-				}
-				catch (NamingException e)
-				{
+					dataSourcesMap.put(DEFAULT_POOL, defaultDs);
+				} catch (NamingException e) {
 					return false;
 				}
 			}
 			return true;
-		}
-		else{
+		} else {
 			DataSource dataSource = dataSourcesMap.get(datasourceName);
-			if(dataSource==null){
-				try
-				{
-					dataSource = (DataSource) getEnvContext().lookup("jdbc/"+datasourceName);
-					dataSourcesMap.put(datasourceName,dataSource);
-				}
-				catch (NamingException e)
-				{
+			if (dataSource==null) {
+				try {
+					dataSource = (DataSource) getEnvContext().lookup("jdbc/" + datasourceName);
+					dataSourcesMap.put(datasourceName, dataSource);
+				} catch (NamingException e) {
 					return false;
 				}
 			}
 			return true;
 		}
 	}
-
 
 	/**
 	 * <p>
@@ -356,55 +302,48 @@ public class ConnectionBroker
 	 * @param datasourceName
 	 * @return
 	 */
-	public static DataSource getDataSource(String datasourceName)
-	{
-		if(datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)){
-			if (defaultDs == null)
-			{
-				try
-				{
+	public static DataSource getDataSource(String datasourceName) {
+		if (datasourceName == null || datasourceName == DEFAULT_POOL || datasourceName.equals(DEFAULT_POOL)) {
+			if (defaultDs == null) {
+				try {
 					defaultDs = (DataSource) getEnvContext().lookup(DEFAULT_JDBC_JNDI_URL);
 					dataSourcesMap.put(DEFAULT_POOL,defaultDs);
-				}
-				catch (NamingException e)
-				{
+				} catch (NamingException e) {
 					throw new RuntimeException("Error initializing datasource: " + datasourceName + ". Error was: " + e.getMessage());
 				}
 			}
 			return defaultDs;
-		}
-		else{
+		} else {
 			DataSource dataSource = dataSourcesMap.get(datasourceName);
-			if(dataSource==null){
-				try
-				{
+			if (dataSource == null) {
+				try {
 					dataSource = (DataSource) getEnvContext().lookup("jdbc/"+datasourceName);
 					dataSourcesMap.put(datasourceName,dataSource);
-				}
-				catch (NamingException e)
-				{
+				} catch (NamingException e) {
 					throw new RuntimeException("Error initializing datasource: " + datasourceName + ". Error was: " + e.getMessage());
 				}
 			}
 			return dataSource;
 		}
 	}
+
 	/**
 	 * Sets the url to the default datasource if the JDBC datasource is the current pool type
 	 * @param url
 	 */
-	public static void setDefaultJDBCDatasourceURL(String url){
-		DEFAULT_JDBC_JNDI_URL=url;
+	public static void setDefaultJDBCDatasourceURL(String url) {
+		DEFAULT_JDBC_JNDI_URL = url;
 	}
 
-	private static Context getEnvContext()throws NamingException{
-		if(initialContext==null){
+	private static Context getEnvContext() throws NamingException {
+		if (initialContext == null) {
 			initialContext = new InitialContext();
 		}
 		return (Context) initialContext.lookup("java:comp/env");
 	}
 
-	public static String getDefaultJNDIUrl(){
+	public static String getDefaultJNDIUrl() {
 		return DEFAULT_JDBC_JNDI_URL;
 	}
+
 }
