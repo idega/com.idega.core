@@ -115,18 +115,12 @@ public class XmlUtil {
 			throws ParserConfigurationException {
 		DocumentBuilderFactory factory = getDocumentBuilderFactory(namespaceAware);
 
-		synchronized (factory) {
-			return factory.newDocumentBuilder();
-		}
+		return factory.newDocumentBuilder();
 	}
 
 	private static DocumentBuilderFactory getDocumentBuilderFactoryNSAware() {
 		if (factory == null) {
-			synchronized (XmlUtil.class) {
-				if (factory == null) {
-					factory = getFactory(Boolean.TRUE);
-				}
-			}
+			factory = getFactory(Boolean.TRUE);
 		}
 		return factory;
 	}
@@ -137,11 +131,7 @@ public class XmlUtil {
 			return getDocumentBuilderFactoryNSAware();
 
 		if (factoryNoNamespace == null) {
-			synchronized (XmlUtil.class) {
-				if (factoryNoNamespace == null) {
-					factoryNoNamespace = getFactory(Boolean.FALSE);
-				}
-			}
+			factoryNoNamespace = getFactory(Boolean.FALSE);
 		}
 		return factoryNoNamespace;
 	}
@@ -615,9 +605,9 @@ public class XmlUtil {
 
 		return elements;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Converts {@link Document} to {@link Byte} array.</p>
 	 * @param node to convert, not <code>null</code>;
 	 * @return converted bytes or <code>null</code> on failure;
@@ -649,7 +639,7 @@ public class XmlUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Parses {@link InputStream} to {@link Document}.</p>
 	 * @param in - {@link InputStream} to parse, not <code>null</code>;
 	 * @return parsed {@link Document} or <code>null</code> on failure;
@@ -670,17 +660,17 @@ public class XmlUtil {
 		try {
 			ret = builder.parse(new InputSource(in));
 		} catch (SAXException e) {
-			LOGGER.log(Level.WARNING, "Failed to parse " + InputStream.class + 
+			LOGGER.log(Level.WARNING, "Failed to parse " + InputStream.class +
 					" cause of: ", e);
 		} catch (IOException e) {
-			LOGGER.log(Level.WARNING, "Unable to get " + InputStream.class + 
+			LOGGER.log(Level.WARNING, "Unable to get " + InputStream.class +
 					" cause of :" , e);
 		}
 		return ret;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Converts whole {@link Document} to {@link String}</p>
 	 * @param document to convert, not <code>null</code>;
 	 * @return xml {@link Document} in {@link String} format or <code>null</code>
@@ -691,7 +681,7 @@ public class XmlUtil {
 		if (document == null) {
 			return null;
 		}
-		
+
 		StringWriter sw = new StringWriter();
         TransformerFactory tf = TransformerFactory.newInstance();
 
@@ -699,7 +689,7 @@ public class XmlUtil {
 		try {
 			transformer = tf.newTransformer();
 		} catch (TransformerConfigurationException e) {
-			LOGGER.log(Level.WARNING, 
+			LOGGER.log(Level.WARNING,
 					"Unable to creat new transformer cause of: ", e);
 			return null;
 		}
@@ -708,14 +698,14 @@ public class XmlUtil {
         transformer.setOutputProperty(OutputKeys.METHOD, "xml");
         transformer.setOutputProperty(OutputKeys.INDENT, "yes");
         transformer.setOutputProperty(OutputKeys.ENCODING, "UTF-8");
-        
+
         try {
 			transformer.transform(new DOMSource(document), new StreamResult(sw));
 		} catch (TransformerException e) {
-			LOGGER.log(Level.WARNING, 
+			LOGGER.log(Level.WARNING,
 					"Failed to transform document cause of: ", e);
 		}
-        
+
         return sw.toString();
 	}
 }
