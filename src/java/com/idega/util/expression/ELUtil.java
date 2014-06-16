@@ -55,11 +55,9 @@ public class ELUtil implements ApplicationContextAware {
 	}
 
 	public ELUtil() {
-		//should be created by spring, so no need to synchronize
-		if(ELUtil.me == null) {
+		if (ELUtil.me == null) {
 			ELUtil.me = this;
-		}
-		else {
+		} else {
 			LOGGER.warning("Tried to repeatedly create singleton instance");
 		}
 	}
