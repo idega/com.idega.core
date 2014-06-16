@@ -34,7 +34,7 @@ public class PropertyCache implements Singleton {
 
 	private PropertyCache(){}
 
-	public static synchronized PropertyCache getInstance(){
+	public static PropertyCache getInstance(){
 		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		PropertyCache cache = (PropertyCache) iwma.getAttribute(appKey);
 		if (cache == null) {
