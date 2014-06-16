@@ -1,7 +1,7 @@
 package com.idega.event;
 
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import javax.servlet.http.HttpSession;
@@ -28,14 +28,12 @@ public class IWHttpSessionsManager {
 	private Map<String, HttpSession> sessions;
 
 	private IWHttpSessionsManager() {
-		sessions = new HashMap<String, HttpSession>();
+		sessions = new ConcurrentHashMap<String, HttpSession>();
 	}
 
 	void addSession(HttpSession session) {
 		String id = session.getId();
-		synchronized (session) {
-			sessions.put(id, session);
-		}
+		sessions.put(id, session);
 
 		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("log_session_creation", Boolean.FALSE)) {
 			String uri = "unknown";
@@ -48,10 +46,7 @@ public class IWHttpSessionsManager {
 	}
 
 	void removeSession(String id) {
-		HttpSession session = null;
-		synchronized (sessions) {
-			session = sessions.remove(id);
-		}
+		HttpSession session = sessions.remove(id);
 
 		long lastAccessedTime = session == null ? 0 : session.getLastAccessedTime();
 		int maxInactiveInterval = session == null ? 0 : session.getMaxInactiveInterval();
@@ -59,9 +54,7 @@ public class IWHttpSessionsManager {
 	}
 
 	public boolean isSessionValid(String id) {
-		synchronized (sessions) {
-			return sessions.containsKey(id);
-		}
+		return sessions.containsKey(id);
 	}
 
 	public ApplicationContext getContext() {
