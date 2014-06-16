@@ -289,7 +289,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		storeState();
 	}
 
-	public synchronized void storeState() {
+	public void storeState() {
 		if (file != null) {
 			try {
 				this.properties.clear();
