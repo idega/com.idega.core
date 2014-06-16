@@ -28,43 +28,51 @@ import com.idega.util.database.ConnectionBroker;
 *@version 1.0
 */
 public class SimpleQuerier {
+
     /**
      * Does nothing
      */
     private SimpleQuerier() {}
+
     private static String getDatasource() {
-        return "default";
+        return ConnectionBroker.DEFAULT_POOL;
     }
+
     /**
-     * Gets a databaseconnection identified by the datasourceName
+     * Gets a database connection identified by the datasourceName
      */
     private static Connection getConnection(String datasourceName) throws SQLException {
         return ConnectionBroker.getConnection(datasourceName);
     }
+
     /**
      * Gets the default database connection
      */
     public static Connection getConnection() throws SQLException {
         return ConnectionBroker.getConnection(getDatasource());
     }
+
     /**
      * Frees the connection used, must be done after using a databaseconnection
      */
     private static void freeConnection(String datasourceName, Connection connection) {
         ConnectionBroker.freeConnection(datasourceName, connection);
     }
+
     /**
      * Frees the default connection used, must be done after using a databaseconnection
      */
     public static void freeConnection(Connection connection) {
         ConnectionBroker.freeConnection(getDatasource(), connection);
     }
+
     /**
      * Frees the default connection used, must be done after using a databaseconnection
      */
     private static void freeConnection(Connection connection, String datasource) {
         ConnectionBroker.freeConnection(datasource, connection);
     }
+
     public static String[] executeStringQuery(String sqlQuery) throws Exception {
         Connection conn= null;
         try {
@@ -77,6 +85,7 @@ public class SimpleQuerier {
             }
         }
     }
+
     public static String[] executeStringQuery(String sqlQuery, String datasource) throws Exception {
         Connection conn= null;
         try {
@@ -89,6 +98,7 @@ public class SimpleQuerier {
             }
         }
     }
+
     public static String[] executeStringQuery(String sqlQuery, Connection conn) throws Exception {
         Statement Stmt= null;
         String[] theReturn= null;
@@ -110,14 +120,31 @@ public class SimpleQuerier {
         return theReturn;
     }
 
+    public static List<Serializable[]> executeQuery(String sqlQuery, String datasource, int columns) throws Exception {
+    	Connection conn= null;
+        try {
+            conn = getConnection(datasource);
+            return executeQuery(conn, sqlQuery, columns);
+        } finally {
+            if (conn != null) {
+                freeConnection(conn, datasource);
+            }
+        }
+    }
     public static List<Serializable[]> executeQuery(String sqlQuery, int columns) throws Exception {
-        Statement stmt = null;
-        Connection conn = null;
+    	return executeQuery(sqlQuery, getDatasource(), columns);
+    }
+    private static List<Serializable[]> executeQuery(Connection conn, String sqlQuery, int columns) throws Exception {
+        if (conn == null) {
+        	Logger.getLogger(SimpleQuerier.class.getName()).warning("Connection is not provided, cannot execute query: " + sqlQuery);
+        	return null;
+        }
+
+    	Statement stmt = null;
 
         long start = System.currentTimeMillis();
         List<Serializable[]> objects = null;
         try {
-        	conn = getConnection();
         	stmt = conn.createStatement();
             ResultSet results = stmt.executeQuery(sqlQuery);
 
@@ -134,9 +161,6 @@ public class SimpleQuerier {
         } finally {
             if (stmt != null) {
                 stmt.close();
-            }
-            if (conn != null) {
-            	freeConnection(conn);
             }
 
             long end = System.currentTimeMillis();
@@ -195,7 +219,6 @@ public class SimpleQuerier {
         }
         return theReturn;
     }
-
 
     public static int executeIntQuery(String sqlQuery, Connection conn) throws Exception {
         Statement Stmt= null;
