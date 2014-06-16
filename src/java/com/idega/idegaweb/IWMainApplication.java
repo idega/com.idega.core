@@ -737,7 +737,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return settings;
     }
 
-    public synchronized void unloadInstanceAndClass() {
+    public void unloadInstanceAndClass() {
         if (!this.alreadyUnloaded) {
         	unloadInstance();
         	IWMainApplication.unload();
@@ -1399,7 +1399,7 @@ public class IWMainApplication	extends Application  implements MutableClass {
 				}
     }
 
-    private synchronized static String createAndStoreCryptoName(String className) {
+    private static String createAndStoreCryptoName(String className) {
 
         String crypto = (String) cryptoCodesPropertiesKeyedByClassName
                 .get(className);//if someone just beat us to creating it
