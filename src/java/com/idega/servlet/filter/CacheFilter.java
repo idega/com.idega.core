@@ -10,6 +10,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
 import javax.servlet.ServletContext;
@@ -18,11 +19,14 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
+
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.cache.filter.SimplePageCachingFilter;
 import com.idega.idegaweb.IWMainApplication;
@@ -34,19 +38,19 @@ import com.idega.idegaweb.IWMainApplication;
  * is not authenticated into the idegaWeb user system.
  * </p>
  * Last modified: $Date: 2008/11/05 16:39:28 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.4 $
  */
 public class CacheFilter extends SimplePageCachingFilter {
-	
+
 	private static final Log log = LogFactory.getLog(CacheFilter.class.getName());
 
 	public static final int DEFAULT_CACHE_SIZE=1000;
 	public static final long DEFAULT_CACHE_TIME_SECONDS=60*20;
 	public static final long DEFAULT_CACHE_TIME_IDLE_SECONDS=60*20;
 	public static final String DEFAULT_CACHE_NAME="CacheFilter";
-	
+
 	public static boolean defaultEnabled = false;
 	private static final String METHOD_GET="GET";
 	public static final String PROPERTY_CACHE_FILTER_ENABLED = "CACHE_FILTER_ENABLED";
@@ -56,7 +60,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 	private static boolean INITALIZED=false;
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#doFilter(javax.servlet.http.HttpServletRequest,
 	 *      javax.servlet.http.HttpServletResponse, javax.servlet.FilterChain)
 	 */
@@ -64,7 +68,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 	public void doFilter(ServletRequest sRequest, ServletResponse sResponse, FilterChain chain) throws ServletException {
 		HttpServletRequest request = (HttpServletRequest)sRequest;
 		HttpServletResponse response = (HttpServletResponse)sResponse;
-		
+
 		if(cacheRequest(request,response)){
 			super.doFilter(sRequest, sResponse, chain);
 		}
@@ -78,7 +82,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 		}
 	}
 
-	
+
     /**
      * Initialises blockingCache to use
      *
@@ -92,11 +96,11 @@ public class CacheFilter extends SimplePageCachingFilter {
 		int cacheSize = DEFAULT_CACHE_SIZE;
 		long cacheTTLSeconds = DEFAULT_CACHE_TIME_SECONDS;
 		long cacheTTLIdleSeconds = DEFAULT_CACHE_TIME_IDLE_SECONDS;
-		
+
 		FilterConfig config = this.getFilterConfig();
 		ServletContext context = config.getServletContext();
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(context);
-		
+
 		try{
 			String propEnabled = iwma.getSettings().getProperty(PROPERTY_CACHE_FILTER_ENABLED);
 			defaultEnabled = Boolean.valueOf(propEnabled).booleanValue();
@@ -130,20 +134,18 @@ public class CacheFilter extends SimplePageCachingFilter {
     		cm.removeCache(cacheName);
     		Cache cache = new Cache(cacheName, cacheSize, true, false, cacheTTLSeconds, cacheTTLIdleSeconds);
     		cm.addCache(cache);
-    		
-    		
+
+
     		super.doInit();
     		INITALIZED=true;
     }
-    
+
     protected void checkInitialization(){
     		if(!INITALIZED){
     			try {
-    					synchronized(this){
     						if(!INITALIZED){
     							doInit();
     						}
-    					}
 				}
 				catch (CacheException e) {
 					// TODO Auto-generated catch block
@@ -151,7 +153,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 				}
     		}
     }
-    
+
     /**
      * <p>
      * Tells the CacheFilter to reload its settings.
@@ -160,7 +162,7 @@ public class CacheFilter extends SimplePageCachingFilter {
     public static void reload(){
     		INITALIZED=false;
     }
-    
+
 	/**
 	 * <p>
 	 * TODO tryggvil describe method cacheRequest
@@ -187,7 +189,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#getCacheName()
 	 */
 	@Override
@@ -197,7 +199,7 @@ public class CacheFilter extends SimplePageCachingFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see net.sf.ehcache.constructs.web.filter.CachingFilter#calculateKey(javax.servlet.http.HttpServletRequest)
 	 */
 	@Override
