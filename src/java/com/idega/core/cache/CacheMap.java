@@ -18,14 +18,13 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Element;
-
-import com.idega.idegaweb.IWMainApplication;
 
 
 /**
@@ -37,9 +36,13 @@ import com.idega.idegaweb.IWMainApplication;
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.13 $
  */
-public class CacheMap<K extends Serializable, V> implements Map<K, V> {
+public class CacheMap<K extends Serializable, V> extends ConcurrentHashMap<K, V> {
+
+	private static final long serialVersionUID = 6864090015851792665L;
 
 	private static final Logger LOGGER = Logger.getLogger(CacheMap.class.getName());
+
+	private Cache cache = null;
 
 	private boolean resetable = Boolean.TRUE;
 
@@ -48,23 +51,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	private List<CacheMapListener<K, V>> cacheListeners;
 	private List<CacheMapGuardian<K, V>> guardians;
 
-	CacheMap(String cacheName) {
-		this(cacheName, Boolean.TRUE);
-	}
-
-	CacheMap(String cacheName, boolean resetable) {
-		this(cacheName, resetable, null, null);
-	}
-
-	CacheMap(String cacheName, boolean resetable, CacheMapListener<K, V> cacheListener) {
-		this(cacheName, resetable, cacheListener, null);
-	}
-
-	CacheMap(String cacheName, boolean resetable, CacheMapGuardian<K, V> guardian) {
-		this(cacheName, resetable, null, guardian);
-	}
-
-	CacheMap(String cacheName, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> guardian) {
+	CacheMap(Cache cache, String cacheName, boolean resetable, CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> guardian) {
 		this.cacheName = cacheName;
 		this.resetable = resetable;
 
@@ -74,10 +61,12 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 		if (guardian != null) {
 			addCacheGuardian(guardian);
 		}
+
+		this.cache = cache;
 	}
 
 	private Cache getCache() {
-		return IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication()).getInternalCacheManager().getCache(cacheName);
+		return cache;
 	}
 
 	@Override
@@ -109,7 +98,6 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public V get(Object key) {
 		if (key == null) {
 			return null;
@@ -221,7 +209,6 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public V remove(Object key) {
 		try {
 			K realKey = (K) key;
@@ -306,7 +293,6 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Set<K> keySet() {
 		Set<K> set = new HashSet<K>();
 		List<K> keys;
@@ -336,7 +322,7 @@ public class CacheMap<K extends Serializable, V> implements Map<K, V> {
 
 	@Override
 	public Set<Map.Entry<K, V>> entrySet() {
-		Set<Map.Entry<K, V>> entrySet = new HashSet<Map.Entry<K, V>>(); 
+		Set<Map.Entry<K, V>> entrySet = new HashSet<Map.Entry<K, V>>();
 		for (Iterator<K> iter = keySet().iterator(); iter.hasNext();) {
 			K key = iter.next();
 			V  value = get(key);

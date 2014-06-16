@@ -20,6 +20,9 @@ import net.sf.ehcache.CacheException;
 import net.sf.ehcache.CacheManager;
 import net.sf.ehcache.Status;
 import net.sf.ehcache.bootstrap.BootstrapCacheLoader;
+import net.sf.ehcache.config.CacheConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration;
+import net.sf.ehcache.config.PersistenceConfiguration.Strategy;
 import net.sf.ehcache.event.RegisteredEventListeners;
 import net.sf.ehcache.store.MemoryStoreEvictionPolicy;
 
@@ -53,7 +56,7 @@ public class IWCacheManager2 {
 
 	private IWCacheManager2() {}
 
-	public static synchronized IWCacheManager2 getInstance(IWMainApplication iwma) {
+	public static IWCacheManager2 getInstance(IWMainApplication iwma) {
 		IWCacheManager2 iwcm = (IWCacheManager2) iwma.getAttribute(IW_CACHEMANAGER_KEY);
 		if (iwcm == null) {
 			iwcm = new IWCacheManager2();
@@ -65,7 +68,7 @@ public class IWCacheManager2 {
 	/**
 	 * @return Returns the ehCacheManager.
 	 */
-	public CacheManager getInternalCacheManager() {
+	private CacheManager getInternalCacheManager() {
 		if (this.internalCacheManager == null) {
 			InputStream streamToConfiguration = null;
 			try {
@@ -85,7 +88,20 @@ public class IWCacheManager2 {
 	}
 
 	public <K extends Serializable, V> Map<K, V> getDefaultCacheMap() {
-		return new CacheMap<K, V>(Cache.DEFAULT_CACHE_NAME);
+		return getCache(
+				Cache.DEFAULT_CACHE_NAME,
+				DEFAULT_CACHE_SIZE,
+				MemoryStoreEvictionPolicy.LFU,
+				DEFAULT_OVERFLOW_TO_DISK,
+				DEFAULT_ETERNAL,
+				DEFAULT_CACHE_TTL_SECONDS,
+				DEFAULT_CACHE_TTL_IDLE_SECONDS,
+				null,
+				null,
+				true,
+				null,
+				null
+		);
 	}
 
 	public <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
@@ -127,54 +143,69 @@ public class IWCacheManager2 {
 				null, resetable, cacheListener, cacheGuardian);
 	}
 
-	private synchronized <K extends Serializable, V extends Object> Map<K, V> getCache(String cacheName, int cacheSize,
-			MemoryStoreEvictionPolicy memoryPolicy, boolean overFlowToDisk, boolean isEternal, long cacheTTLIdleSeconds, long cacheTTLSeconds,
-			RegisteredEventListeners registeredEventListeners, BootstrapCacheLoader bootstrapCacheLoader, boolean resetable,
-			CacheMapListener<K, V> cacheListener, CacheMapGuardian<K, V> cacheGuardian) {
-
+	private <K extends Serializable, V extends Object> Map<K, V> getCache(
+			String cacheName,
+			int cacheSize,
+			MemoryStoreEvictionPolicy memoryPolicy,
+			boolean overFlowToDisk,
+			boolean isEternal,
+			long cacheTTLIdleSeconds,
+			long cacheTTLSeconds,
+			RegisteredEventListeners registeredEventListeners,
+			BootstrapCacheLoader bootstrapCacheLoader,
+			boolean resetable,
+			CacheMapListener<K, V> cacheListener,
+			CacheMapGuardian<K, V> cacheGuardian
+	) {
 		Cache cache = getInternalCache(cacheName);
 		if (cache == null) {
 			try {
 				isEternal = cacheTTLSeconds > 0 || cacheTTLIdleSeconds > 0 ? false : isEternal;
-				cache = new Cache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, null, isEternal, cacheTTLSeconds, cacheTTLIdleSeconds,
-						overFlowToDisk, cacheTTLIdleSeconds, registeredEventListeners, bootstrapCacheLoader);
+				CacheConfiguration config = new CacheConfiguration(cacheName, cacheSize);
+				config.setMemoryStoreEvictionPolicyFromObject(memoryPolicy);
+
+				PersistenceConfiguration persistenceConfig = new PersistenceConfiguration();
+				persistenceConfig.setStrategy(overFlowToDisk ? Strategy.LOCALTEMPSWAP.name() : Strategy.NONE.name());
+				config.addPersistence(persistenceConfig);
+
+				config.setEternal(isEternal);
+				config.setTimeToLiveSeconds(cacheTTLSeconds);
+				config.setTimeToIdleSeconds(cacheTTLIdleSeconds);
+				cache = new Cache(config, registeredEventListeners, bootstrapCacheLoader);
 				getInternalCacheManager().addCache(cache);
 
-				return new CacheMap<K, V>(cacheName, resetable, cacheListener, cacheGuardian);
+				return new CacheMap<K, V>(cache, cacheName, resetable, cacheListener, cacheGuardian);
 			} catch (Exception e) {
 				LOGGER.log(Level.SEVERE, "Error creating cache: " + cacheName, e);
 			}
 
-			//	Checking if cache is alive
 		} else if (cache.getStatus() == Status.STATUS_ALIVE) {
-			return new CacheMap<K, V>(cacheName, resetable, cacheListener, cacheGuardian);
+			//	Checking if cache is alive
+			return new CacheMap<K, V>(cache, cacheName, resetable, cacheListener, cacheGuardian);
 		}
 
 		//	If status is not alive try to re-create the cache
-		synchronized (this) {
-			getInternalCacheManager().removeCache(cacheName);
-			return getCache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds,
-					registeredEventListeners, bootstrapCacheLoader, resetable, cacheListener, cacheGuardian);
-		}
+		getInternalCacheManager().removeCache(cacheName);
+		return getCache(cacheName, cacheSize, memoryPolicy, overFlowToDisk, isEternal, cacheTTLIdleSeconds, cacheTTLSeconds, registeredEventListeners, bootstrapCacheLoader, resetable, cacheListener, cacheGuardian);
 	}
 
 	public void invalidate(String cacheName) {
-		Cache cache = getInternalCacheManager().getCache(cacheName);
+		CacheManager manager = getInternalCacheManager();
+		Cache cache = manager.getCache(cacheName);
 		if (cache != null)
 			cache.removeAll();
 
-		getInternalCacheManager().removeCache(cacheName);
+		manager.removeCache(cacheName);
 	}
 
 	public void reset() {
-		synchronized(this) {
-			String[] cacheKeys = getInternalCacheManager().getCacheNames();
+		CacheManager manager = getInternalCacheManager();
+			String[] cacheKeys = manager.getCacheNames();
 			for (String cacheName: cacheKeys) {
-				Cache cache = getInternalCacheManager().getCache(cacheName);
+				Cache cache = manager.getCache(cacheName);
 				if (cache != null)
 					cache.removeAll();
 			}
-		}
 	}
 
 	/**
