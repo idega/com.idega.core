@@ -13,11 +13,11 @@ package com.idega.idegaweb;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
-import java.util.HashMap;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Logger;
 
 import com.idega.data.CacheableEntity;
@@ -53,13 +53,12 @@ public class IWCacheManager implements Singleton {
   public static final String IW_ROOT_CACHE_DIRECTORY = "iw_cache";
   private Logger log = Logger.getLogger(IWCacheManager.class.getName());
 
-  //private static IWCacheManager instance;
-  private Map objectsMap;
-  private Map timesMap;
-  private Map intervalsMap;
-  private Map entityMaps;
-  private Map entityMapsKeys;
-  private Map _keysMap;
+  private Map<String, Object> objectsMap;
+  private Map<String, Long> timesMap;
+  private Map<String, Long> intervalsMap;
+  private Map<Object, Object> entityMaps;
+  private Map<Class<?>, List<String>> entityMapsKeys;
+  private Map<String, List<String>> _keysMap;
 
   private IWCacheManagerEventClient iwCacheManagerEventClient = null;
 
@@ -69,7 +68,7 @@ public class IWCacheManager implements Singleton {
 	  iwCacheManagerEventClient = new IWCacheManagerEventClient(this);
   }
 
-  public static synchronized IWCacheManager getInstance(IWMainApplication iwma){
+  public static IWCacheManager getInstance(IWMainApplication iwma){
     IWCacheManager iwcm = (IWCacheManager)iwma.getAttribute(IW_CACHEMANAGER_KEY);
     if(iwcm==null){
       iwcm = new IWCacheManager();
@@ -126,29 +125,29 @@ public class IWCacheManager implements Singleton {
 
   }
 
-  private Map getKeysMap(){
+  private Map<String, List<String>> getKeysMap(){
     if(this._keysMap==null){
-      this._keysMap=new HashMap();
+      this._keysMap=new ConcurrentHashMap<String, List<String>>();
     }
     return this._keysMap;
   }
 
-  public synchronized void registerDerivedKey(String key,String derivedKey){
-    List derived = (List) getKeysMap().get(key);
+  public void registerDerivedKey(String key,String derivedKey){
+    List<String> derived = getKeysMap().get(key);
     if(derived==null){
-      derived=new Vector();
+      derived=new ArrayList<String>();
       getKeysMap().put(key,derived);
     }
     derived.add(derivedKey);
   }
 
-  public synchronized void setObject(String key,String derivedKey, Object object,long cacheInterval){
+  public void setObject(String key,String derivedKey, Object object,long cacheInterval){
     registerDerivedKey(key,derivedKey);
     setObject(derivedKey,object,cacheInterval);
   }
 
 
-  private synchronized void setObject(String key, Object object,long cacheInterval){
+  private void setObject(String key, Object object,long cacheInterval){
     getObjectsMap().put(key,object);
     getTimesMap().put(key,getCurrentTime());
     if (cacheInterval < 1) {
@@ -177,7 +176,7 @@ public class IWCacheManager implements Singleton {
   }
 
   private long getTimeOfCacheing(String key){
-    Long time = (Long)getTimesMap().get(key);
+    Long time = getTimesMap().get(key);
     if(time!=null){
       return time.longValue();
     }
@@ -187,7 +186,7 @@ public class IWCacheManager implements Singleton {
   }
 
   private long getCacheingInterval(String key){
-    Long time = (Long)getIntervalsMap().get(key);
+    Long time = getIntervalsMap().get(key);
     if(time!=null){
       return time.longValue();
     }
@@ -196,17 +195,17 @@ public class IWCacheManager implements Singleton {
     }
   }
 
-  private synchronized void removeCache(String key, String partialKey){
+  private void removeCache(String key, String partialKey){
   		if (partialKey == null) {
 	  		removeFromGlobalCache(key);
 	  	}
 
-    Map map = getKeysMap();
-    List derived = (List)map.get(key);
+    Map<String, List<String>> map = getKeysMap();
+    List<String> derived = map.get(key);
     if(derived!=null){
-      Iterator iter = derived.iterator();
+      Iterator<String> iter = derived.iterator();
       while (iter.hasNext()) {
-        String item = (String)iter.next();
+        String item = iter.next();
         if (partialKey == null) {
         		removeFromGlobalCache(item);
         }
@@ -226,27 +225,27 @@ public class IWCacheManager implements Singleton {
   }
 
 
-  private Map getTimesMap(){
+  private Map<String, Long> getTimesMap(){
     if(this.timesMap==null){
-      this.timesMap = new HashMap();
+      this.timesMap = new ConcurrentHashMap<String, Long>();
     }
     return this.timesMap;
   }
 
-  private Map getObjectsMap(){
+  private Map<String, Object> getObjectsMap(){
     if(this.objectsMap==null){
-      this.objectsMap = new java.util.HashMap();
+      this.objectsMap = new ConcurrentHashMap<String, Object>();
     }
     return this.objectsMap;
   }
 
-  private Map getIntervalsMap(){
+  private Map<String, Long> getIntervalsMap(){
     if(this.intervalsMap==null){
-      this.intervalsMap = new HashMap();
+      this.intervalsMap = new ConcurrentHashMap<String, Long>();
     }
     return this.intervalsMap;
   }
-//added by Eirikur Hrafnsson, eiki@idega.is
+
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
 	  return getCachedBlobObject(entityClassString, id, iwma, null);
   }
@@ -342,7 +341,7 @@ private boolean isBlobCached(Cache cache){
 /** caches a single entity of type IDOEntity **/
   public void cacheEntity(IDOEntity entity, String cacheKey){
     if( this.entityMaps == null ){
-      this.entityMaps = new HashMap();
+      this.entityMaps = new ConcurrentHashMap<Object, Object>();
     }
     this.entityMaps.put(cacheKey, entity);
   }
@@ -367,7 +366,7 @@ private boolean isBlobCached(Cache cache){
     cacheTable(entity,columnNameForKey,null);
   }
 
-  public void removeTableFromCache(Class entityClass){
+  public void removeTableFromCache(Class<?> entityClass){
     iwCacheManagerEventClient.removeTableFromCache(entityClass);
     if( this.entityMaps != null ){
       this.entityMaps.remove(entityClass);
@@ -377,7 +376,7 @@ private boolean isBlobCached(Cache cache){
     }
   }
 
-  public Map getCachedTableMap(Class entityClass){
+  public Map getCachedTableMap(Class<?> entityClass){
     if( this.entityMaps!=null ){
        return (Map) this.entityMaps.get(entityClass);
     }
@@ -389,14 +388,14 @@ private boolean isBlobCached(Cache cache){
   public void cacheTable(CacheableEntity entity, String columnNameForKey ,String columnNameForSecondKey){
 
     if( this.entityMaps == null ){
-      this.entityMaps = new HashMap();
-      this.entityMapsKeys = new HashMap();
+      this.entityMaps = new ConcurrentHashMap<Object, Object>();
+      this.entityMapsKeys = new ConcurrentHashMap<Class<?>, List<String>>();
     }
 
 
     if( this.entityMaps.get(getCorrectClassForEntity(entity)) == null ){
-      Map entityMap = new HashMap();
-      Vector keys = new Vector();
+      Map<String, Object> entityMap = new ConcurrentHashMap<String, Object>();
+      List<String> keys = new ArrayList<String>();
 
       IDOLegacyEntity[] e;
       try {
@@ -404,9 +403,9 @@ private boolean isBlobCached(Cache cache){
         if( (e!= null) && (e.length>0) ){
           boolean hasTwoKeys = false;
           //store key names for update, insert and delete
-          keys.addElement(columnNameForKey);
+          keys.add(columnNameForKey);
           if( columnNameForSecondKey != null ){
-            keys.addElement(columnNameForSecondKey);
+            keys.add(columnNameForSecondKey);
             hasTwoKeys = true;
           }
           this.entityMapsKeys.put(getCorrectClassForEntity(entity),keys);
@@ -431,7 +430,7 @@ private boolean isBlobCached(Cache cache){
 
   }
 
-  public IDOLegacyEntity getFromCachedTable(Class entityClass, String value ){
+  public IDOLegacyEntity getFromCachedTable(Class<?> entityClass, String value ){
     IDOLegacyEntity entity = null;
 
     if( this.entityMaps != null ){
@@ -447,50 +446,50 @@ private boolean isBlobCached(Cache cache){
     return entity;
   }
 
-  public IDOLegacyEntity getFromCachedTable(Class entityClass, String value, String value2 ){
+  public IDOLegacyEntity getFromCachedTable(Class<?> entityClass, String value, String value2 ){
     return getFromCachedTable(entityClass, StringHandler.concatAlphabetically(value,value2));
   }
 
-  public Map getEntityMap(Class entityClass){
+  public Map getEntityMap(Class<?> entityClass){
     Map entityMap = null;
     if( this.entityMaps != null ){
-      Class entityBeanClass = this.getCorrectClassForEntity(entityClass);
+      Class<?> entityBeanClass = this.getCorrectClassForEntity(entityClass);
       entityMap = (Map) this.entityMaps.get(entityBeanClass);
     }//else System.out.println("IWCacheManager entityMaps is null!");
     return entityMap;
   }
 
-  public Vector getEntityKeyVector(Class entityClass){
-    Vector entityKeys = null;
+  public List<String> getEntityKeyVector(Class<?> entityClass){
+	  List<String> entityKeys = null;
     if( this.entityMapsKeys != null ){
-      entityKeys = (Vector) this.entityMapsKeys.get(entityClass);
+      entityKeys = this.entityMapsKeys.get(entityClass);
     }
     return entityKeys;
   }
 
 
   public void updateFromCachedTable(IDOLegacyEntity entity){
-    Vector keys = getEntityKeyVector(getCorrectClassForEntity(entity));
+	  List<String> keys = getEntityKeyVector(getCorrectClassForEntity(entity));
     if( keys!=null ){
       int length = keys.size();
       if(length==2){
-        getEntityMap(getCorrectClassForEntity(entity)).put(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))),entity);
+        getEntityMap(getCorrectClassForEntity(entity)).put(StringHandler.concatAlphabetically(entity.getStringColumnValue(keys.get(0)),entity.getStringColumnValue(keys.get(1))),entity);
       }
       else{
-         getEntityMap(getCorrectClassForEntity(entity)).put(entity.getStringColumnValue((String) keys.elementAt(0)),entity);
+         getEntityMap(getCorrectClassForEntity(entity)).put(entity.getStringColumnValue(keys.get(0)),entity);
       }
     }
   }
 
   public void deleteFromCachedTable(IDOLegacyEntity entity){
-    Vector keys = getEntityKeyVector(getCorrectClassForEntity(entity));
+	  List<String> keys = getEntityKeyVector(getCorrectClassForEntity(entity));
     if( keys!=null ){
       int length = keys.size();
       if(length==2){
-         getEntityMap(getCorrectClassForEntity(entity)).remove(StringHandler.concatAlphabetically(entity.getStringColumnValue((String) keys.elementAt(0)),entity.getStringColumnValue((String) keys.elementAt(1))));
+         getEntityMap(getCorrectClassForEntity(entity)).remove(StringHandler.concatAlphabetically(entity.getStringColumnValue(keys.get(0)),entity.getStringColumnValue(keys.get(1))));
       }
       else{
-         getEntityMap(getCorrectClassForEntity(entity)).remove(entity.getStringColumnValue((String) keys.elementAt(0)));
+         getEntityMap(getCorrectClassForEntity(entity)).remove(entity.getStringColumnValue(keys.get(0)));
       }
     }
   }
@@ -500,11 +499,11 @@ private boolean isBlobCached(Cache cache){
   }
 
 
-  private Class getCorrectClassForEntity(IDOLegacyEntity entityInstance){
+  private Class<?> getCorrectClassForEntity(IDOLegacyEntity entityInstance){
     return getCorrectClassForEntity(entityInstance.getClass());
   }
 
-  private Class getCorrectClassForEntity(Class entityBeanOrInterfaceClass){
+  private Class<?> getCorrectClassForEntity(Class entityBeanOrInterfaceClass){
       return com.idega.data.IDOLookup.getInterfaceClassFor(entityBeanOrInterfaceClass);
   }
 
@@ -530,7 +529,7 @@ private boolean isBlobCached(Cache cache){
   	clearAllCaches();
   }
 
-  public Map getCacheMap(){
+  public Map<String, Object> getCacheMap(){
 	  return getObjectsMap();
   }
 
