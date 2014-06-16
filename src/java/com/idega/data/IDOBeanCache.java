@@ -99,15 +99,21 @@ public class IDOBeanCache {
 
 	<T extends IDOEntity> T getCachedEntity(Object pk) {
 		Map<?, T> cache = getCacheMap();
-		return cache.get(pk);
+		return cache == null ? null : cache.get(pk);
 	}
 
 	void putCachedEntity(Object pk, IDOEntity entity) {
-		getCacheMap().put((Serializable) pk, entity);
+		Map<Serializable, IDOEntity> cache = getCacheMap();
+		if (cache != null) {
+			cache.put((Serializable) pk, entity);
+		}
 	}
 
 	void removeCachedEntity(Object pk) {
-		getCacheMap().remove(pk);
+		Map<?, IDOEntity> cache = getCacheMap();
+		if (cache != null) {
+			cache.remove(pk);
+		}
 	}
 
 	/**
@@ -120,7 +126,7 @@ public class IDOBeanCache {
 	 */
 	protected <E extends IDOEntity> Collection<E> getCachedEntities() {
 		Map<?, E> cache = getCacheMap();
-		return cache.values();
+		return cache == null ? null : cache.values();
 	}
 
 	<T> void putCachedFindQuery(String querySQL, Collection<T> pkColl) {
