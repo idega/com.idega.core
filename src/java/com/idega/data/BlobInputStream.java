@@ -11,6 +11,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+
 import com.idega.util.database.ConnectionBroker;
 /**
  * This is a class to read from BLOB columns in GenericEntity classes to be used as a regular InputStream
@@ -47,11 +48,11 @@ public class BlobInputStream extends InputStream {
 	public void setEntity(GenericEntity entity) {
 		this.entity = entity;
 		setDataSource(entity.getDatasource());
-		
+
 		//For Safetys sake if this BlobInputStream has been previously used with another entity entity instanse or inputstream:
 		closeInternalInputStream();
 		closeSQLVariables();
-		
+
 		this.readFromEntityBlob=true;
 		this.isClosed=false;
 	}
@@ -64,6 +65,7 @@ public class BlobInputStream extends InputStream {
 	public void setTableColumnName(String columnName) {
 		this.columnName = columnName;
 	}
+	@Override
 	public int read() throws IOException {
 		InputStream in = getInternalInputStream();
 		if (in!= null) {
@@ -74,6 +76,7 @@ public class BlobInputStream extends InputStream {
 			return -1;
 		}
 	}
+	@Override
 	public int read(byte b[], int off, int len) throws IOException {
 		InputStream in =getInternalInputStream();
 		if (in != null) {
@@ -84,14 +87,16 @@ public class BlobInputStream extends InputStream {
 			return -1;
 		}
 	}
+	@Override
 	public int read(byte b[]) throws IOException {
 		return read(b, 0, b.length);
 	}
 	/**
-	
+
 	*<STRONG>Mandatory</STRONG> to call this function using this class
-	
+
 	**/
+	@Override
 	public void close() throws IOException {
 		try{
 			InputStream in = getInternalInputStream();
@@ -107,6 +112,7 @@ public class BlobInputStream extends InputStream {
 		}
 	}
 	// basic inputstream functions
+	@Override
 	public int available() throws IOException {
 		InputStream in = getInternalInputStream();
 		if (in != null) {
@@ -116,6 +122,7 @@ public class BlobInputStream extends InputStream {
 			return 0;
 		}
 	}
+	@Override
 	public boolean markSupported() {
 		InputStream in = getInternalInputStream();
 		if (in != null) {
@@ -125,12 +132,14 @@ public class BlobInputStream extends InputStream {
 			return false;
 		}
 	}
-	public synchronized void mark(int readlimit) {
+	@Override
+	public void mark(int readlimit) {
 		InputStream in = getInternalInputStream();
 		if (in != null) {
 			in.mark(readlimit);
 		}
 	}
+	@Override
 	public long skip(long n) throws IOException {
 		InputStream in = getInternalInputStream();
 		if (in != null) {
@@ -142,7 +151,8 @@ public class BlobInputStream extends InputStream {
 		}
 	}
 
-	public synchronized void reset() throws IOException {
+	@Override
+	public void reset() throws IOException {
 		InputStream in = getInternalInputStream();
 		if (in != null) {
 			in.reset();
@@ -150,11 +160,11 @@ public class BlobInputStream extends InputStream {
 		else {
 			throw new IOException("BlobInputStream: reset() inputstream is null!");
 		/*else{
-		
+
 		  close();
-		
+
 		  this.getInputStreamForBlobRead();
-		
+
 		}*/
 		}
 	}
@@ -202,33 +212,33 @@ public class BlobInputStream extends InputStream {
 	public GenericEntity getEntity() {
 		return this.entity;
 	}
-	
+
 	public boolean isClosed() {
 		return this.isClosed;
 	}
-	
+
 	private String getTableColumnName() {
 		return this.columnName;
 	}
-	
+
 	private Connection getConnection(){
 		if(this.connection==null){
 			this.connection=ConnectionBroker.getConnection(getDataSource());
 		}
 		return this.connection;
 	}
-	
+
 	private InputStream getInternalInputStream(){
 		if(this.readFromEntityBlob&& (!this.isClosed) && this.input==null){
 			this.input = getInputStreamForBlobRead();
 		}
 		return this.input;
 	}
-	
+
 	private void setInternalInputStream(InputStream in){
 		this.input=in;
 	}
-	
+
 	private void closeInternalInputStream(){
 		if (this.input != null) {
 			try
@@ -244,7 +254,7 @@ public class BlobInputStream extends InputStream {
 		}
 		this.isClosed=true;
 	}
-	
+
 	private void closeSQLVariables(){
 		if (this.RS != null) {
 			try {
@@ -269,7 +279,7 @@ public class BlobInputStream extends InputStream {
 			this.connection = null;
 		}
 	}
-	
+
 	/*
 	  protected void finalize()throws Throwable{
 	    close();
