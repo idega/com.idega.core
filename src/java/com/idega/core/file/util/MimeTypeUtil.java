@@ -210,7 +210,7 @@ public class MimeTypeUtil implements Singleton {
 		}
 	}
 
-	public static synchronized MimeTypeUtil getInstance() {
+	public static MimeTypeUtil getInstance() {
 		IWApplicationContext iwac = IWMainApplication
 				.getDefaultIWApplicationContext();
 		MimeTypeUtil util = (MimeTypeUtil) iwac
@@ -305,7 +305,7 @@ public class MimeTypeUtil implements Singleton {
 		return this.pathToConfigFile;
 	}
 
-	protected synchronized void storeProperties(Properties props,
+	protected void storeProperties(Properties props,
 			String pathToSettingsFile) throws IOException {
 		FileOutputStream fos = new FileOutputStream(pathToSettingsFile);
 		props.store(fos, null);
