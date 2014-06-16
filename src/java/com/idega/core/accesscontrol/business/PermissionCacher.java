@@ -464,12 +464,8 @@ class PermissionCacher {
 		}
 	}
 
-	private synchronized void updatePermissions(String permissionMapKey, String identifier, String permissionKey,
-			IWApplicationContext iwac) throws SQLException {
-		// PermissionMap permissionMap =
-		// (PermissionMap)iwac.getApplicationAttribute(permissionMapKey);
-		PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
-				permissionMapKey);
+	private void updatePermissions(String permissionMapKey, String identifier, String permissionKey, IWApplicationContext iwac) throws SQLException {
+		PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(permissionMapKey);
 		if (permissionMap == null) {
 			permissionMap = new PermissionMap();
 			iwac.setApplicationAttribute(permissionMapKey, permissionMap);
