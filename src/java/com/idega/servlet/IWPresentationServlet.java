@@ -1,11 +1,11 @@
 /*
  * $Id: IWPresentationServlet.java,v 1.67 2006/06/07 15:50:46 tryggvil Exp $
- * 
+ *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.servlet;
 
@@ -13,10 +13,12 @@ import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
 import java.io.IOException;
 import java.rmi.RemoteException;
+
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
+
 import com.idega.business.IBOLookup;
 import com.idega.event.IWEventMachine;
 import com.idega.event.IWEventProcessor;
@@ -45,6 +47,7 @@ import com.idega.presentation.text.Text;
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.2
  */
+@Deprecated
 public class IWPresentationServlet extends IWCoreServlet {
 
 	/**
@@ -68,7 +71,6 @@ public class IWPresentationServlet extends IWCoreServlet {
 	 */
 	protected boolean hasCheckedCurrentAppContext() {
 		if (this.checkedCurrentAppContext == null) {
-			synchronized (this) {
 				if (this.checkedCurrentAppContext == null) {
 					this.checkedCurrentAppContext = Boolean.TRUE;
 					return false;
@@ -76,7 +78,6 @@ public class IWPresentationServlet extends IWCoreServlet {
 				else {
 					return true;
 				}
-			}
 		}
 		else {
 			return true;
@@ -107,10 +108,12 @@ public class IWPresentationServlet extends IWCoreServlet {
 		}
 	}
 
+	@Override
 	public void doGet(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		executeAllPhases(servReq, servRes);
 	}
 
+	@Override
 	public void doPost(HttpServletRequest servReq, HttpServletResponse servRes) throws ServletException, IOException {
 		executeAllPhases(servReq, servRes);
 	}
@@ -229,7 +232,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 			 * String item = (String)enum.nextElement();
 			 * writer.println("Attribute: "+item+" =
 			 * "+iwc.getSession().getAttribute(item)); }
-			 * 
+			 *
 			 *  } else { writer.println("Session empty"); }
 			 * writer.println("-->");
 			 */
@@ -264,7 +267,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 
 	/**
 	 * This method is called after everything is done
-	 * 
+	 *
 	 * @param iwc
 	 */
 	protected void finished(IWContext iwc) {
@@ -305,6 +308,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public HttpServletRequest getRequest() {
 		return getIWContext().getRequest();
 	}
@@ -312,6 +316,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public HttpSession getSession() {
 		return getIWContext().getSession();
 	}
@@ -319,6 +324,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 	/**
 	 * @deprecated
 	 */
+	@Deprecated
 	public HttpServletResponse getResponse() {
 		return getIWContext().getResponse();
 	}
@@ -467,7 +473,7 @@ public class IWPresentationServlet extends IWCoreServlet {
 
 	public void processPresentationEvent(IWContext iwc) throws RemoteException {
 		if (IWPresentationEvent.anyEvents(iwc)) {
-			IWEventMachine eventMachine = (IWEventMachine) IBOLookup.getSessionInstance(iwc, IWEventMachine.class);
+			IWEventMachine eventMachine = IBOLookup.getSessionInstance(iwc, IWEventMachine.class);
 			eventMachine.processEvent(this.getPage(), iwc);
 		}
 	}
