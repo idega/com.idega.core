@@ -1107,6 +1107,7 @@ public class TextSoap {
 		encodedString = findAndReplace(encodedString, "?", " ");
 		encodedString = findAndReplace(encodedString, "[", " ");
 		encodedString = findAndReplace(encodedString, "]", " ");
+		encodedString = findAndReplace(encodedString, ":", " ");
 		if (encodedString.length() > 31) {
 		    encodedString = encodedString.substring(0,31);
 		}
