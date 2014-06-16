@@ -816,7 +816,7 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		return false;
 	}
 
-	synchronized boolean storeLocalizableStrings() {
+	boolean storeLocalizableStrings() {
 		try {
 			/*getLocalizableStringsProperties().clear();
 			Iterator keyIter = getLocalizableStringsMap().keySet().iterator();
@@ -842,7 +842,7 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		return true;
 	}
 
-	synchronized void storeResourceBundles(){
+	void storeResourceBundles(){
 		for (IWResourceBundle item: getResourceBundles().values()) {
 			item.storeState();
 		}
