@@ -26,7 +26,7 @@ public class ChooserServiceBean extends IBOServiceBean implements ChooserService
 
 	private BuilderService service = null;
 
-	private synchronized BuilderService getBuilderService(IWContext iwc) {
+	private BuilderService getBuilderService(IWContext iwc) {
 		if (service == null) {
 			if (iwc == null) {
 				iwc = CoreUtil.getIWContext();
