@@ -3,8 +3,9 @@
 *Copyright 2000 idega.is All Rights Reserved.
 */
 package com.idega.util;
-import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+
 import com.idega.repository.data.Singleton;
 /**
 *Class to store objects in context to a thread throughout its execution or some part of it
@@ -13,7 +14,7 @@ import com.idega.repository.data.Singleton;
 */
 public class ThreadContext implements Singleton
 {
-	private Map threadsMap;
+	private Map<Thread, Map<String, Object>> threadsMap;
 	private static ThreadContext instance;
 	private ThreadContext()
 	{
@@ -22,7 +23,7 @@ public class ThreadContext implements Singleton
 	/**
 	 * Return a static instance of this class since only one instance is needed in each JVM
 	 * */
-	public static synchronized ThreadContext getInstance()
+	public static ThreadContext getInstance()
 	{
 		if (instance == null)
 		{
@@ -30,7 +31,7 @@ public class ThreadContext implements Singleton
 		}
 		return instance;
 	}
-	
+
 	/**
 	 * Unloads the ThreadContext
 	 */
@@ -38,10 +39,10 @@ public class ThreadContext implements Singleton
 		instance=null;
 	}
 
-	private Map getThreadsMap(){
+	private Map<Thread, Map<String, Object>> getThreadsMap(){
 		if (this.threadsMap == null)
 		{
-			this.threadsMap = new HashMap();
+			this.threadsMap = new ConcurrentHashMap<Thread, Map<String, Object>>();
 		}
 		return this.threadsMap;
 	}
@@ -51,7 +52,7 @@ public class ThreadContext implements Singleton
 	 */
 	public void putThread(Thread thread)
 	{
-		getThreadsMap().put(thread, new HashMap());
+		getThreadsMap().put(thread, new ConcurrentHashMap<String, Object>());
 	}
 	/**
 	 * releases all object mapped to the Thread thread
@@ -97,13 +98,13 @@ public class ThreadContext implements Singleton
 	{
 		getThreadAttributes(Thread.currentThread()).remove(attributeName);
 	}
-	private Map getThreadAttributes(Thread thread)
+	private Map<String, Object> getThreadAttributes(Thread thread)
 	{
-		Map theReturn = (Map) getThreadsMap().get(thread);
+		Map<String, Object> theReturn = getThreadsMap().get(thread);
 		if (theReturn == null)
 		{
 			putThread(thread);
-			theReturn = (Map) getThreadsMap().get(thread);
+			theReturn = getThreadsMap().get(thread);
 		}
 		return theReturn;
 	}
@@ -114,7 +115,7 @@ public class ThreadContext implements Singleton
 	 */
 	public Object getAttribute(Thread thread, String attributeName)
 	{
-		Map tempTable = (Map) getThreadsMap().get(thread);
+		Map<String, Object> tempTable = getThreadsMap().get(thread);
 		if (tempTable != null)
 		{
 			return tempTable.get(attributeName);
@@ -127,7 +128,7 @@ public class ThreadContext implements Singleton
 	/**
 	 * Gets an object attribute associated to the currently running thread
 	 * @param attributeName the key name
-	 */	
+	 */
 	public Object getAttribute(String attributeName)
 	{
 		return getAttribute(Thread.currentThread(), attributeName);
@@ -140,7 +141,7 @@ public class ThreadContext implements Singleton
 	{
 		return getThreadsMap().size();
 	}
-	
+
 	public boolean reset(){
 		try{
 			getThreadsMap().clear();
