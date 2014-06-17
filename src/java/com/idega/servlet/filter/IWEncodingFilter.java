@@ -32,10 +32,21 @@ import com.idega.util.expression.ELUtil;
  */
 public class IWEncodingFilter implements Filter {
 
+	private static final Logger LOGGER = Logger.getLogger(IWEncodingFilter.class.getName());
+
 	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
+
+		String requestURI = request.getRequestURI();
+		boolean print = requestURI.indexOf(CoreConstants.DOT) == -1 && IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_page_performance", Boolean.FALSE);
+		String key = null;
+		Long start = null;
+		if (print) {
+			key = "URI: " + requestURI + ", session ID: " + request.getSession(true).getId();
+			start = System.currentTimeMillis();
+		}
 
 		IWContext.setCharactersetEncoding(request);
 
@@ -54,7 +65,7 @@ public class IWEncodingFilter implements Filter {
 				String redirectUri = IWMainApplication.getDefaultIWMainApplication().getSettings()
 						.getProperty("view_state_param_redirect_page", CoreConstants.PAGES_URI_PREFIX);
 				if (!StringUtil.isEmpty(redirectUri)) {
-					Logger.getLogger(getClass().getName()).info("Redirecting to '" + redirectUri + "' because of parameter '" +
+					LOGGER.info("Redirecting to '" + redirectUri + "' because of parameter '" +
 							viewStateParam + "' and it's value: " + viewStateParamValue);
 					response.sendRedirect(redirectUri);
 					return;
@@ -65,6 +76,13 @@ public class IWEncodingFilter implements Filter {
 		doDetectMobileBrowser(request);
 
 		chain.doFilter(request, response);
+
+		if (print) {
+			long time = System.currentTimeMillis() - start;
+			if (time >= 100) {
+				LOGGER.info("### served " + key + " in " + time + " ms");
+			}
+		}
 	}
 
 	private void doDetectMobileBrowser(HttpServletRequest request) {

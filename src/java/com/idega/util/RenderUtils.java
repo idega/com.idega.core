@@ -12,10 +12,13 @@ package com.idega.util;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
+
+import com.idega.presentation.IWContext;
 
 
 /**
@@ -28,10 +31,11 @@ import javax.faces.context.ResponseWriter;
  */
 public class RenderUtils {
 
+	public static final Logger LOGGER = Logger.getLogger(RenderUtils.class.getName());
+
 	public static final String DIV_TAG="div";
 	public static final String STYLE_CLASS_ATTRIBUTE="class";
 	public static final String ID_ATTRIBUTE="id";
-
 
 	/**
 	 * Renders a child component for the current component. This operation is handy when implementing
@@ -42,25 +46,45 @@ public class RenderUtils {
 	 * @param child which child to render
 	 */
 	public static void renderChild(FacesContext context, UIComponent child) throws IOException {
-		if (context == null || child == null)
+		if (context == null || child == null) {
 			return;
+		}
 
-		CoreUtil.doEnsureScopeIsSet(context);
+		boolean print = false;
+		String key = null;
+		Long start = null;
+		IWContext iwc = IWContext.getIWContext(context);
+		if (iwc.getIWMainApplication().getSettings().getBoolean("measure_component_performance", Boolean.FALSE)) {
+			key = "URI: " + iwc.getRequestURI() + ", session ID: " + iwc.getRequest().getSession(true).getId() + ", UI: " + child.getClass().getName();
+			start = System.currentTimeMillis();
+		}
 
-		if (!child.isRendered())
-			return;	//	No need to render
+		try {
+			CoreUtil.doEnsureScopeIsSet(context);
 
-		child.encodeBegin(context);
-		if (child.getRendersChildren()) {
-			child.encodeChildren(context);
-		} else {
-			//	Special case for forms:
-			Collection<UIComponent> fChildren = child.getChildren();
-			for (Iterator<UIComponent> iter = fChildren.iterator(); iter.hasNext();) {
-				renderChild(context, iter.next());
+			if (!child.isRendered()) {
+				return;	//	No need to render
+			}
+
+			child.encodeBegin(context);
+			if (child.getRendersChildren()) {
+				child.encodeChildren(context);
+			} else {
+				//	Special case for forms:
+				Collection<UIComponent> fChildren = child.getChildren();
+				for (Iterator<UIComponent> iter = fChildren.iterator(); iter.hasNext();) {
+					renderChild(context, iter.next());
+				}
+			}
+			child.encodeEnd(context);
+		} finally {
+			if (print) {
+				long time = System.currentTimeMillis() - start;
+				if (time >= 100) {
+					LOGGER.info("### Rendered " + key + " in " + (time) + " ms");
+				}
 			}
 		}
-		child.encodeEnd(context);
 	}
 
 	/**
