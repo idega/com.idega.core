@@ -52,7 +52,8 @@ import com.idega.util.IWTimestamp;
 public class ICPageBMPBean extends TreeableEntityBMPBean<ICPage> implements ICPage, Storable, Resource, UniqueIDCapable {
 
 	private static final long serialVersionUID = 5624201999388048294L;
-	private final static String ENTITY_NAME = "IB_PAGE";
+
+	public final static String ENTITY_NAME = "IB_PAGE";
 	private final static String FILE_COLUMN = "FILE_ID";
 	private final static String NAME_COLUMN = "NAME";
 	private final static String TEMPLATE_ID_COLUMN = "TEMPLATE_ID";
