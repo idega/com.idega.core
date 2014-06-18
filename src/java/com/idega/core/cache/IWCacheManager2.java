@@ -143,7 +143,7 @@ public class IWCacheManager2 {
 				null, resetable, cacheListener, cacheGuardian);
 	}
 
-	private <K extends Serializable, V extends Object> Map<K, V> getCache(
+	private synchronized <K extends Serializable, V extends Object> Map<K, V> getCache(
 			String cacheName,
 			int cacheSize,
 			MemoryStoreEvictionPolicy memoryPolicy,
