@@ -128,7 +128,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	private User lockedBy;
 
 	@Column(name = COLUMN_DELETED, length = 1)
-	private Character isDeleted;
+	private Character deleted;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_DELETED_BY)
@@ -139,10 +139,10 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	private Date deletedWhen;
 
 	@Column(name = COLUMN_TREE_ORDER)
-	private int treeOrder;
+	private Integer treeOrder;
 
 	@Column(name = COLUMN_IS_CATEGORY, length = 1)
-	private Character isCategory;
+	private Character category;
 
 	@Column(name = COLUMN_PAGE_FORMAT, length = 30)
 	private String pageFormat;
@@ -157,10 +157,10 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	private Character hidePageInMenu;
 
 	@Column(name = COLUMN_PAGE_IS_PUBLISHED, length = 1)
-	private Character isPublished;
+	private Character published;
 
 	@Column(name = COLUMN_PAGE_IS_LOCKED, length = 1)
-	private Character isLocked;
+	private Character locked;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_DOMAIN_ID)
@@ -296,18 +296,18 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the isDeleted
 	 */
 	public boolean isDeleted() {
-		if (this.isDeleted == null) {
+		if (this.deleted == null) {
 			return false;
 		}
-		return this.isDeleted == 'Y';
+		return this.deleted == 'Y';
 	}
 
 	/**
 	 * @param isDeleted
 	 *          the isDeleted to set
 	 */
-	public void setDeleted(boolean isDeleted) {
-		this.isDeleted = isDeleted ? 'Y' : 'N';
+	public void setDeleted(boolean deleted) {
+		this.deleted = deleted ? 'Y' : 'N';
 	}
 
 	/**
@@ -359,18 +359,18 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the isCategory
 	 */
 	public boolean isCategory() {
-		if (this.isCategory == null) {
+		if (this.category == null) {
 			return false;
 		}
-		return this.isCategory == 'Y';
+		return this.category == 'Y';
 	}
 
 	/**
 	 * @param isCategory
 	 *          the isCategory to set
 	 */
-	public void setCategory(boolean isCategory) {
-		this.isCategory = isCategory ? 'Y' : 'N';
+	public void setCategory(boolean category) {
+		this.category = category ? 'Y' : 'N';
 	}
 
 	/**
@@ -440,36 +440,36 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the isPublished
 	 */
 	public boolean isPublished() {
-		if (this.isPublished == null) {
+		if (this.published == null) {
 			return false;
 		}
-		return this.isPublished == 'Y';
+		return this.published == 'Y';
 	}
 
 	/**
 	 * @param isPublished
 	 *          the isPublished to set
 	 */
-	public void setPublished(Character isPublished) {
-		this.isPublished = isPublished;
+	public void setPublished(Character published) {
+		this.published = published;
 	}
 
 	/**
 	 * @return the isLocked
 	 */
 	public boolean isLocked() {
-		if (this.isLocked == null) {
+		if (this.locked == null) {
 			return false;
 		}
-		return this.isLocked == 'Y';
+		return this.locked == 'Y';
 	}
 
 	/**
 	 * @param isLocked
 	 *          the isLocked to set
 	 */
-	public void setLocked(boolean isLocked) {
-		this.isLocked = isLocked ? 'Y' : 'N';
+	public void setLocked(boolean locked) {
+		this.locked = locked ? 'Y' : 'N';
 	}
 
 	/**
