@@ -35,7 +35,7 @@ public class IWDatePicker extends TextInput {
 
 	@Autowired
 	private JQuery jQuery;
-	
+
 	@Autowired
 	private Web2Business web2Business;
 
@@ -58,7 +58,7 @@ public class IWDatePicker extends TextInput {
 	private boolean showYearChange = false;
 	private boolean showMonthChange = false;
 	private boolean showTime;
-	
+
 	private boolean addJQueryUIFiles = true;
 
 	private String alternateFieldId = null;
@@ -197,7 +197,7 @@ public class IWDatePicker extends TextInput {
 	    	if (!StringUtil.isEmpty(version)) {
 	    		setAlternateFieldId(version);
 	    	}
-    	}    	
+    	}
 
     	super.encodeBegin(context);
     }
@@ -248,12 +248,17 @@ public class IWDatePicker extends TextInput {
 //		}
 
 		boolean canUseLocalizedText = language != null && !CoreConstants.EMPTY.equals(language) && !Locale.ENGLISH.getLanguage().equals(language);
-		String function = 
+
+		String version = getVersion();
+		if (StringUtil.isEmpty(version)) {
+			version = Web2Business.JQUERY_UI_LATEST_VERSION;
+		}
+		String function =
 //			"datepicker";
-			"iwDatePicker";
+			"1.8.17".equals(version) ? isShowTime() ? "datetimepicker" : "datepicker" : "iwDatePicker";
 //			isShowTime() ? "datetimepicker" : "datepicker";
 		StringBuffer initAction = new StringBuffer("jQuery('#").append(this.getId()).append("').").append(function).append("({");
-		
+
 		initAction.append("iwdp:{id:'").append(getId()).append("',lang:'").append(locale.getLanguage()).append("'},");
 		// Is date range?
 		initAction.append("rangeSelect: ").append(isDateRange()).append(", rangeSeparator: '").append(dateRangeSeparator).append("', ");
@@ -337,15 +342,12 @@ public class IWDatePicker extends TextInput {
 			dateSet.append("});");
 			initAction.append(dateSet);
 		}
-		
-		
 
 		// Initialization action
 		if (!CoreUtil.isSingleComponentRenderingProcess(iwc)) {
 			initAction = new StringBuffer("jQuery(window).load(function() {").append(initAction.toString()).append("});");
 		}
 		PresentationUtil.addJavaScriptActionToBody(iwc, initAction.toString());
-		
 
 		// Resources
 		addRequiredLibraries(iwc, canUseLocalizedText ? language : null);
@@ -359,7 +361,8 @@ public class IWDatePicker extends TextInput {
 		if (StringUtil.isEmpty(version)) {
 			version = Web2Business.JQUERY_UI_LATEST_VERSION;
 		}
-		if(isAddJQueryUIFiles()){
+
+		if (isAddJQueryUIFiles()) {
 			scripts.add(jQuery.getBundleURIToJQueryLib());
 			scripts.add(jQuery.getBundleURIToJQueryUILib(JQueryUIType.UI_CORE));
 			if (StringUtil.isEmpty(getVersion())) {
@@ -375,14 +378,16 @@ public class IWDatePicker extends TextInput {
 		if (language != null) {
 			scripts.add(jQuery.getBundleURIToJQueryUILib("1.8.17/i18n", "ui.datepicker-" + language + ".js"));
 		}
-		if(isShowTime() || isDateRange()){
+		if (isShowTime() || (isDateRange() && !version.equals("1.8.17"))) {
 			Web2Business web2Business = getWeb2Business();
 			scripts.addAll(web2Business
 					.getBundleUrisToTimePickerScript(language == null ? null : iwc.getCurrentLocale()));
 			PresentationUtil.addStyleSheetToHeader(iwc,web2Business.getBundleUriToTimePickerStyle());
 		}
 		IWBundle iwb = CoreUtil.getCoreBundle();
-		scripts.add(iwb.getVirtualPathWithFileNameString("javascript/datepicker.js"));
+		if (!"1.8.17".equals(version)) {
+			scripts.add(iwb.getVirtualPathWithFileNameString("javascript/datepicker.js"));
+		}
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/datepicker.css"));
 		PresentationUtil.addJavaScriptSourcesLinesToHeader(iwc, scripts);
 	}
@@ -549,5 +554,5 @@ public class IWDatePicker extends TextInput {
 	public void setAlternateFieldId(String alternateFieldId) {
 		this.alternateFieldId = alternateFieldId;
 	}
-	
+
 }

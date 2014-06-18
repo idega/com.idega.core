@@ -104,9 +104,13 @@
 //			}
 			return this.each(function () {
 				var $t = $(this);
-				if(o.showTime || o.rangeSelect){
-					$t.datetimepicker(o);
-				}else{
+				if (o.showTime || o.rangeSelect) {
+					if (typeof $t.datetimepicker == 'function') {
+						$t.datetimepicker(o);
+					} else {
+						$t.datepicker(o);
+					}
+				} else {
 					$t.datepicker(o);
 				}
 			});
