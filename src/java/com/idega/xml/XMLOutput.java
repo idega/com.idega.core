@@ -18,6 +18,9 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.util.xml.XmlUtil;
+
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
@@ -37,7 +40,7 @@ public class XMLOutput {
 	 *
 	 */
 	public XMLOutput(String indent, boolean newlines) {
-		Format f = (newlines) ? Format.getPrettyFormat() : Format.getCompactFormat();
+		Format f = (newlines) ? XmlUtil.getPrettyFormat(IWMainApplication.getDefaultIWMainApplication().getSettings()) : Format.getCompactFormat();
 		f.setIndent(indent);
 		this._output = new XMLOutputter(f);
 	}

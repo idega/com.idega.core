@@ -53,6 +53,7 @@ import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.business.BuilderServiceFactory;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.ListUtil;
@@ -385,17 +386,20 @@ public class XmlUtil {
 		return writer.toString();
 	}
 
-	public static String getPrettyJDOMDocument(org.jdom2.Document document) {
-		XMLOutputter outputter = new XMLOutputter();
+	public static final Format getPrettyFormat(boolean omitDeclaration) {
 		Format format = Format.getPrettyFormat();
 		format.setExpandEmptyElements(true);
-		format.setOmitDeclaration(IWMainApplication
-				.getDefaultIWApplicationContext()
-				.getApplicationSettings()
-				.getBoolean(
-						CoreConstants.APPLICATION_PROPERTY_OMIT_DECLARATION,
-						false));
-		outputter.setFormat(format);
+		format.setOmitDeclaration(omitDeclaration);
+		return format;
+	}
+
+	public static final Format getPrettyFormat(IWMainApplicationSettings settings) {
+		return getPrettyFormat(settings.getBoolean(CoreConstants.APPLICATION_PROPERTY_OMIT_DECLARATION, false));
+	}
+
+	public static String getPrettyJDOMDocument(org.jdom2.Document document) {
+		XMLOutputter outputter = new XMLOutputter();
+		outputter.setFormat(getPrettyFormat(IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings()));
 		return outputter.outputString(document);
 	}
 
