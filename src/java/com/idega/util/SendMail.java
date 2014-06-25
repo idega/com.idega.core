@@ -171,10 +171,22 @@ public class SendMail {
 	 * @param attachedFiles
 	 * @throws MessagingException
 	 */
-	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
-			List<AdvancedProperty> headers, final boolean useThread, final boolean deleteFiles, boolean simpleMessage, final File... attachedFiles)
-		throws MessagingException {
-
+	public synchronized static Message send(
+			String from,
+			String to,
+			String cc,
+			String bcc,
+			String replyTo,
+			String host,
+			String subject,
+			String text,
+			String mailType,
+			List<AdvancedProperty> headers,
+			final boolean useThread,
+			final boolean deleteFiles,
+			boolean simpleMessage,
+			final File... attachedFiles
+	) throws MessagingException {
 		if (simpleMessage) {
 			sendSimpleMail(from, to, subject, text);
 			return null;
@@ -425,9 +437,20 @@ public class SendMail {
 	 * @return
 	 * @throws MessagingException
 	 */
-	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text,
-			List<AdvancedProperty> headers, boolean useThread, boolean deleteFiles, File... attachedFiles) throws MessagingException {
-		return send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, useThread, deleteFiles, false,
-				attachedFiles);
+	public static Message send(
+			String from,
+			String to,
+			String cc,
+			String bcc,
+			String replyTo,
+			String host,
+			String subject,
+			String text,
+			List<AdvancedProperty> headers,
+			boolean useThread,
+			boolean deleteFiles,
+			File... attachedFiles
+	) throws MessagingException {
+		return send(from, to, cc, bcc, replyTo, host, subject, text, MimeTypeUtil.MIME_TYPE_TEXT_PLAIN, headers, useThread, deleteFiles, false, attachedFiles);
 	}
 }
