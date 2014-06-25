@@ -10,6 +10,7 @@
 package com.idega.core.builder.dao.impl;
 
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -18,14 +19,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.builder.dao.ICPageDAO;
 import com.idega.core.builder.data.bean.ICPage;
-import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.persistence.impl.GenericDaoImpl;
-import com.idega.idegaweb.IWMainApplication;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("icPageDAO")
 @Transactional(readOnly = true)
 public class ICPageDAOImpl extends GenericDaoImpl implements ICPageDAO {
+
+	private Map<Integer, Boolean> cache = new ConcurrentHashMap<Integer, Boolean>();
 
 	@Override
 	public ICPage findPage(Integer pageID) {
@@ -38,8 +39,6 @@ public class ICPageDAOImpl extends GenericDaoImpl implements ICPageDAO {
 			return false;
 		}
 
-		IWCacheManager2 cacheManager = IWCacheManager2.getInstance(IWMainApplication.getDefaultIWMainApplication());
-		Map<Integer, Boolean> cache = cacheManager.getCache("ic_page_is_published_cache", 1000000, true, false, 604800, 604800);
 		if (cache.containsKey(pageId)) {
 			return cache.get(pageId);
 		}
