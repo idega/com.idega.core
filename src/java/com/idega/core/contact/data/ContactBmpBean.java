@@ -14,18 +14,18 @@ import com.idega.util.ListUtil;
 public abstract class ContactBmpBean extends GenericEntity{
 
 	/**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -757671147177963517L;
-	
+
 	public ContactBmpBean(){
 		super();
 	}
-	
+
 	public ContactBmpBean(int id) throws SQLException {
 		super(id);
 	}
-	
+
 
 	@Override
 	public void initializeAttributes() {
@@ -44,16 +44,16 @@ public abstract class ContactBmpBean extends GenericEntity{
 		}
 		return contactPurposes.iterator().next();
 	}
-	
+
 	public void setContactPurpose(ContactPurpose contactPurpose) throws IDOAddRelationshipException{
 		try {
 			idoRemoveFrom(ContactPurpose.class);
 		} catch (IDORemoveRelationshipException e) {
-			
+
 		}
 		addContactPurpose(contactPurpose);
 	}
-	
+
 	public void setContactPurpose(String contactPurposeId){
 		try{
 			idoRemoveFrom(ContactPurpose.class);
@@ -67,23 +67,22 @@ public abstract class ContactBmpBean extends GenericEntity{
 		} catch (Exception e) {
 		}
 	}
-	
+
 	public void addContactPurpose(ContactPurpose contactPurpose) throws IDOAddRelationshipException{
 		idoAddTo(contactPurpose);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public Collection<ContactPurpose> getContactPurposes() throws IDORelationshipException{
 		return idoGetRelatedEntities(ContactPurpose.class);
 	}
-	
+
 	public void setContactPurposes(Collection<ContactPurpose> contactPurposes) throws IDORelationshipException{
 		idoRemoveFrom(ContactPurpose.class);
 		for(ContactPurpose contactPurpose : contactPurposes){
 			addContactPurpose(contactPurpose);
 		}
 	}
-	
+
 	public void removeContactPurpose(ContactPurpose contactPurpose) throws IDORemoveRelationshipException{
 		idoRemoveFrom(contactPurpose);
 	}
@@ -99,5 +98,5 @@ public abstract class ContactBmpBean extends GenericEntity{
 		super.remove();
 	}
 
-	
+
 }

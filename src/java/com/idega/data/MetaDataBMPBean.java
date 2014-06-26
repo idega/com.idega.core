@@ -1,11 +1,11 @@
 /*
  * $Id: MetaDataBMPBean.java,v 1.9 2008/06/05 20:42:14 eiki Exp $
- * 
+ *
  * Copyright (C) 2001-2006 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.data;
 
@@ -26,7 +26,7 @@ import com.idega.data.query.Table;
  * store arbitary key/value pairs.
  * <p>
  * Last modified: $Date: 2008/06/05 20:42:14 $ by $Author: eiki $
- * 
+ *
  * @author <a href="eiki@idega.is">Eirikur S. Hrafnsson</a>,<a
  *         href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.9 $
@@ -38,7 +38,7 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 	public static final String COLUMN_META_KEY ="METADATA_NAME";
 	public static final String COLUMN_META_VALUE = "METADATA_VALUE";
 	public static final String COLUMN_META_TYPE = "META_DATA_TYPE";
-	
+
 	public static final String TABLE_NAME="IC_METADATA";
 
 	protected MetaDataBMPBean() {
@@ -71,38 +71,47 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		return (String) getColumnValue(COLUMN_META_KEY);
 	}
 
+	@Override
 	public String getMetaDataName() {
 		return getName();
 	}
 
+	@Override
 	public String getMetaDataValue() {
 		return getValue();
 	}
 
+	@Override
 	public String getValue() {
 		return (String) getColumnValue(COLUMN_META_VALUE);
 	}
 
+	@Override
 	public String getMetaDataType() {
 		return getType();
 	}
 
+	@Override
 	public String getType() {
 		return (String) getColumnValue(COLUMN_META_TYPE);
 	}
 
+	@Override
 	public void setValue(String value) {
 		setColumn(COLUMN_META_VALUE, value);
 	}
 
+	@Override
 	public void setMetaDataValue(String value) {
 		setValue(value);
 	}
 
+	@Override
 	public void setMetaDataName(String name) {
 		setName(name);
 	}
 
+	@Override
 	public void setMetaDataNameAndValue(String name, String value) {
 		setName(name);
 		setValue(value);
@@ -113,35 +122,36 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		setColumn(COLUMN_META_KEY, name);
 	}
 
+	@Override
 	public void setMetaDataType(String type) {
 		setType(type);
 	}
 
+	@Override
 	public void setType(String type) {
 		setColumn(COLUMN_META_TYPE, type);
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	public Collection<Object> ejbFindAllByMetaDataNameAndType(String name, String type) throws FinderException {
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(new Column(table, getIDColumnName()));
-		
+
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_KEY), MatchCriteria.EQUALS, name));
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_TYPE), MatchCriteria.EQUALS, type));
-		
+
 		return this.idoFindPKsByQuery(query);
 	}
-	
+
 	public Object ejbFindByMetaDataNameAndValueAndType(String name, String value, String type) throws FinderException {
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
 		query.addColumn(new Column(table, getIDColumnName()));
-		
+
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_KEY), MatchCriteria.EQUALS, name));
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_VALUE), MatchCriteria.EQUALS, value));
 		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_TYPE), MatchCriteria.EQUALS, type));
-		
+
 		return this.idoFindOnePKByQuery(query);
 	}
 }

@@ -33,11 +33,13 @@ public class PhoneTypeBMPBean extends com.idega.core.data.GenericTypeBMPBean imp
     super(id);
   }
 
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return "IC_PHONE_TYPE";
   }
 
-  public void insertStartData() {
+  @Override
+public void insertStartData() {
     try {
       PhoneType pt = ((com.idega.core.contact.data.PhoneTypeHome)com.idega.data.IDOLookup.getHomeLegacy(PhoneType.class)).createLegacy();
         pt.setID(com.idega.core.contact.data.PhoneTypeBMPBean.HOME_PHONE_ID);
@@ -64,8 +66,7 @@ public class PhoneTypeBMPBean extends com.idega.core.data.GenericTypeBMPBean imp
       sql.printStackTrace(System.err);
     }
   }
-  
-   @SuppressWarnings("unchecked")
+
 	public Collection<Integer> ejbFindPhoneTypes(int maxAmount) throws FinderException {
 		String query = "SELECT * FROM "  + getEntityName();
 		if(maxAmount > 0){

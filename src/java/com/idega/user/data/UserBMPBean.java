@@ -3129,7 +3129,6 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<ICLanguage> getLanguages() throws IDORelationshipException {
 		return super.idoGetRelatedEntities(ICLanguage.class);
 	}
@@ -3143,7 +3142,7 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	public void removeLanguage(ICLanguage language) throws IDORemoveRelationshipException {
 		this.idoRemoveFrom(language);
 	}
-	
+
 	private List<Integer> getRelatedPks(Collection<String> relationTypes){
 		Collection<GroupRelation> rels = null;
 		rels = getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationTypes);
@@ -3171,7 +3170,8 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 			return Collections.emptyList();
 		}
 	}
-	
+
+	@Override
 	public Collection<User> getRelatedUsers(Collection<String> relationTypes){
 		List<Integer> pks = getRelatedPks(relationTypes);
 		if(ListUtil.isEmpty(pks)){

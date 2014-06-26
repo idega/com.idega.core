@@ -34,13 +34,13 @@ public class PageSessionPoller extends DefaultSpringBean {
 
 	@Autowired
 	private ApplicationContext context;
-	
+
 	public boolean isPollingSettingEnabled() {
 		IWMainApplicationSettings applicationSettings = IWMainApplication.getDefaultIWMainApplication().getSettings();
-		
+
 		return applicationSettings.getIfUseSessionPolling();
 	}
-	
+
 	public RenderedComponent pollSession(String ping, HttpSession httpSession) {
 		if (httpSession == null) {
 			getLogger().warning("No HTTP session session was provided!");
@@ -49,28 +49,27 @@ public class PageSessionPoller extends DefaultSpringBean {
 			getLogger().info("Pinging HTTP session: " + httpSession.getId() + ", it was last time accessed @ " + new Date(lastTimeAccessed) +
 					", session can be idle for " + httpSession.getMaxInactiveInterval() + " seconds");
 		}
-		
+
 		getContext().publishEvent(new SessionPollerEvent(this));
-		
+
 		return getNotifications();
 	}
-	
-	@SuppressWarnings("unchecked")
+
 	private RenderedComponent getNotifications() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
 			return null;
 		}
-		
+
 		Map<String, ? extends Notifier> notifiers = WebApplicationContextUtils.getWebApplicationContext(iwc.getServletContext()).getBeansOfType(Notifier.class);
 		if (notifiers == null || notifiers.isEmpty()) {
 			return null;
 		}
-		
+
 		boolean reverseAjaxEnabled = iwc.getApplicationSettings().isReverseAjaxEnabled();
 		HttpSession session = iwc.getSession();
 		List<BasicNotification> notifications = reverseAjaxEnabled ? null : new ArrayList<BasicNotification>();
-		
+
 		for (Notifier notifier: notifiers.values()) {
 			if (notifier.isActive()) {
 				if (reverseAjaxEnabled) {
@@ -83,11 +82,11 @@ public class PageSessionPoller extends DefaultSpringBean {
 				}
 			}
 		}
-		
+
 		if (ListUtil.isEmpty(notifications)) {
 			return null;
 		}
-		
+
 		BuilderService builderService = null;
 		try {
 			builderService = BuilderServiceFactory.getBuilderService(iwc);
@@ -97,12 +96,12 @@ public class PageSessionPoller extends DefaultSpringBean {
 		if (builderService == null) {
 			return null;
 		}
-		
+
 		Layer container = new Layer();
 		for (BasicNotification notification: notifications) {
 			container.add(notification);
 		}
-		
+
 		return builderService.getRenderedComponent(container, null);
 	}
 

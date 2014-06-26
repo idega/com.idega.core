@@ -10,15 +10,18 @@ import javax.ejb.FinderException;
 
 public class PhoneTypeHomeImpl extends com.idega.data.IDOFactory implements PhoneTypeHome
 {
- protected Class getEntityInterfaceClass(){
+ @Override
+protected Class getEntityInterfaceClass(){
   return PhoneType.class;
  }
 
- public PhoneType create() throws javax.ejb.CreateException{
+ @Override
+public PhoneType create() throws javax.ejb.CreateException{
   return (PhoneType) super.idoCreate();
  }
 
- public PhoneType createLegacy(){
+ @Override
+public PhoneType createLegacy(){
 	try{
 		return create();
 	}
@@ -28,15 +31,18 @@ public class PhoneTypeHomeImpl extends com.idega.data.IDOFactory implements Phon
 
  }
 
- public PhoneType findByPrimaryKey(int id) throws javax.ejb.FinderException{
+ @Override
+public PhoneType findByPrimaryKey(int id) throws javax.ejb.FinderException{
   return (PhoneType) super.idoFindByPrimaryKey(id);
  }
 
- public PhoneType findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
+ @Override
+public PhoneType findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
   return (PhoneType) super.idoFindByPrimaryKey(pk);
  }
 
- public PhoneType findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
+ @Override
+public PhoneType findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
 		return findByPrimaryKey(id);
 	}
@@ -46,7 +52,7 @@ public class PhoneTypeHomeImpl extends com.idega.data.IDOFactory implements Phon
 
  }
 
-@SuppressWarnings("unchecked")
+@Override
 public Collection<PhoneType> getPhoneTypes(int maxAmount) {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	try {

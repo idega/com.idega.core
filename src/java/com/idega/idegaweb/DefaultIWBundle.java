@@ -299,7 +299,6 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 	@Override
 	public Collection<ICObject> getDataObjects() throws IDOLookupException, FinderException {
 		ICObjectHome icoHome = (ICObjectHome) IDOLookup.getHome(ICObject.class);
-		@SuppressWarnings("unchecked")
 		Collection<ICObject> entities = icoHome.findAllByObjectTypeAndBundle(ICObjectBMPBean.COMPONENT_TYPE_DATA, this.identifier);
 		return entities;
 	}
@@ -376,7 +375,6 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 		buffer.append(IWBundleStartable.DEFAULT_STARTER_CLASS);
 	  	String className = buffer.toString();
 	  	try {
-	  		@SuppressWarnings("unchecked")
 			Class<? extends IWBundleStartable> starterClass = RefactorClassRegistry.forName(className);
 	  		return starterClass.newInstance();
 	  	} catch (ClassNotFoundException ex) {
@@ -1102,7 +1100,6 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 	 * Returns an empty list if nothing found
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<ICObject> getICObjectsList() throws FinderException, IDOLookupException {
 		return getICObjectHome().findAllByBundle(this.getBundleIdentifier());
 	}
@@ -1128,7 +1125,6 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 	 * Returns null if there is an exception
 	 */
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<ICObject> getICObjectsList(String componentType) throws FinderException, IDOLookupException {
 		return getICObjectHome().findAllByObjectTypeAndBundle(componentType, this.getBundleIdentifier());
 	}
@@ -1282,7 +1278,6 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 					try {
 						ICObject ico;
 						ico = icoHome.create();
-						@SuppressWarnings("unchecked")
 						Class<? extends UIComponent> c = RefactorClassRegistry.forName(className);
 						ico.setObjectClass(c);
 						ico.setName(componentName);

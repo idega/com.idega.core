@@ -64,7 +64,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	private String fileHolderIdentifier;
 
 	private Boolean showCompany = null;
-	
+
 	private Boolean showLastLoginDate = null;
 
 	@Autowired(required = false)
@@ -110,7 +110,7 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 				public int compare(User user1, User user2) {
 					String user1Name = user1.getName().toUpperCase();
 					String user2Name = user2.getName().toUpperCase();
-		 
+
 					//ascending order
 					return collator.compare(user1Name, user2Name);
 				}
@@ -195,7 +195,6 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 		addNotifier(iwc, container, file, downloaders);
 	}
 
-	@SuppressWarnings("unchecked")
 	public Collection<User> getPotentialDownloaders(IWContext iwc) {
 		Map<String, ? extends FileStatisticsProvider> beans = WebApplicationContextUtils.getWebApplicationContext(iwc.getServletContext())
 															.getBeansOfType(FileStatisticsProvider.class);
@@ -385,6 +384,6 @@ public abstract class FileDownloadStatisticsViewer extends Block {
 	public void setShowLastLoginDate(Boolean showLastLoginDate) {
 		this.showLastLoginDate = showLastLoginDate;
 	}
-	
+
 
 }

@@ -16,6 +16,7 @@ public class ContactPurposeHomeImpl extends IDOFactory implements ContactPurpose
 
 	private static final long serialVersionUID = -3095244442933155843L;
 
+	@Override
 	public ContactPurpose create() throws CreateException {
 		return (ContactPurpose)super.createIDO();
 	}
@@ -24,8 +25,8 @@ public class ContactPurposeHomeImpl extends IDOFactory implements ContactPurpose
 	protected Class<? extends IDOEntity> getEntityInterfaceClass() {
 		return ContactPurpose.class;
 	}
-	
-	@SuppressWarnings("unchecked")
+
+	@Override
 	public Collection<ContactPurpose> getContactPurposes(int maxAmount) {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		try {
