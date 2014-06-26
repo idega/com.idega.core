@@ -50,8 +50,10 @@ import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.Status;
+import com.idega.user.data.TopNodeGroup;
 import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
+import com.idega.user.data.UserComment;
 import com.idega.user.data.UserHome;
 import com.idega.util.IWTimestamp;
 
@@ -366,12 +368,12 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersMainAddresses
 	 */
-	public Collection getUsersMainAddresses(String[] userIDs) throws EJBException, RemoteException;
+	public Collection<Address> getUsersMainAddresses(String[] userIDs) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersMainAddresses
 	 */
-	public Collection getUsersMainAddresses(IDOQuery query) throws EJBException, RemoteException;
+	public Collection<Address> getUsersMainAddresses(IDOQuery query) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersMainAddress
@@ -396,7 +398,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsers
 	 */
-	public Collection getUsers(IDOQuery query) throws EJBException, RemoteException;
+	public Collection<User> getUsers(IDOQuery query) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressOrCreateIfDoesNotExist
@@ -471,7 +473,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#listOfUserEmails
 	 */
-	public Collection listOfUserEmails(int iUserId) throws java.rmi.RemoteException;
+	public Collection<Email> listOfUserEmails(int iUserId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserEmail
@@ -498,7 +500,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#listOfUserGroups
 	 */
-	public Collection listOfUserGroups(int iUserId) throws java.rmi.RemoteException;
+	public Collection<Group> listOfUserGroups(int iUserId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
@@ -556,17 +558,17 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInNoGroup
 	 */
-	public Collection getUsersInNoGroup() throws SQLException, java.rmi.RemoteException;
+	public Collection<User> getUsersInNoGroup() throws SQLException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroupsDirectlyRelated
 	 */
-	public Collection getUserGroupsDirectlyRelated(int iUserId) throws java.rmi.RemoteException;
+	public Collection<Group> getUserGroupsDirectlyRelated(int iUserId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersInPrimaryGroup
 	 */
-	public Collection getUsersInPrimaryGroup(Group group) throws java.rmi.RemoteException;
+	public Collection<User> getUsersInPrimaryGroup(Group group) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroupsDirectlyRelated
@@ -576,12 +578,12 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getParentGroupsInDirectForUser
 	 */
-	public Collection getParentGroupsInDirectForUser(int iUserId) throws java.rmi.RemoteException;
+	public Collection<Group> getParentGroupsInDirectForUser(int iUserId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getNonParentGroups
 	 */
-	public Collection getNonParentGroups(int iUserId) throws java.rmi.RemoteException;
+	public Collection<Group> getNonParentGroups(int iUserId) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
@@ -591,12 +593,12 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
 	 */
-	public Collection getUserGroups(User aUser, String[] groupTypes) throws EJBException, java.rmi.RemoteException;
+	public Collection<Group> getUserGroups(User aUser, String[] groupTypes) throws EJBException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserGroups
 	 */
-	public Collection getUserGroups(User aUser, String[] groupTypes, boolean returnSepcifiedGroupTypes)
+	public Collection<Group> getUserGroups(User aUser, String[] groupTypes, boolean returnSepcifiedGroupTypes)
 			throws EJBException, java.rmi.RemoteException;
 
 	/**
@@ -683,7 +685,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersHighestTopGroupNode
 	 */
-	public Group getUsersHighestTopGroupNode(User user, List groupTypes, IWUserContext iwuc) throws RemoteException;
+	public Group getUsersHighestTopGroupNode(User user, List<String> groupTypes, IWUserContext iwuc) throws RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#isGroupUnderUsersTopGroupNode
@@ -693,7 +695,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#isGroupUnderUsersTopGroupNode
 	 */
-	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection topGroupNodes)
+	public boolean isGroupUnderUsersTopGroupNode(IWUserContext iwc, Group group, User user, Collection<Group> topGroupNodes)
 			throws java.rmi.RemoteException;
 
 	/**
@@ -704,7 +706,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersTopGroupNodesByViewAndOwnerPermissions
 	 */
-	public Collection getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)
+	public Collection<Group> getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc)
 			throws RemoteException;
 
 	/**
@@ -716,12 +718,12 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getStoredTopNodeGroups
 	 */
-	public Collection getStoredTopNodeGroups(User user) throws java.rmi.RemoteException;
+	public Collection<Group> getStoredTopNodeGroups(User user) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getStoredTopGroupNodes
 	 */
-	public Collection getStoredTopGroupNodes(User user) throws java.rmi.RemoteException;
+	public Collection<TopNodeGroup> getStoredTopGroupNodes(User user) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#removeStoredTopGroupNodes
@@ -731,35 +733,35 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#storeUserTopGroupNodes
 	 */
-	public boolean storeUserTopGroupNodes(User user, Collection nodeGroups, int numberOfPermissions,
+	public boolean storeUserTopGroupNodes(User user, Collection<Group> nodeGroups, int numberOfPermissions,
 			String totalLoginTime, String comment) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getAllGroupsWithEditPermission
 	 */
-	public Collection getAllGroupsWithEditPermission(User user, IWUserContext iwuc) throws java.rmi.RemoteException;
+	public Collection<Group> getAllGroupsWithEditPermission(User user, IWUserContext iwuc) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getAllGroupsWithViewPermission
 	 */
-	public Collection getAllGroupsWithViewPermission(User user, IWUserContext iwuc) throws java.rmi.RemoteException;
+	public Collection<Group> getAllGroupsWithViewPermission(User user, IWUserContext iwuc) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
-	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId)
+	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId)
 			throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
-	public Map moveUsers(IWUserContext iwuc, Collection userIds, Group parentGroup, int targetGroupId,
+	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId,
 			boolean leaveCopyOfUserInCurrentGroup) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
-	public Map moveUsers(IWUserContext iwuc, Collection groups, Collection groupTypesToMoveAmong)
+	public Map<Integer, Map<Object, String>> moveUsers(IWUserContext iwuc, Collection<Group> groups, Collection<String> groupTypesToMoveAmong)
 			throws java.rmi.RemoteException;
 
 	/**
@@ -796,8 +798,8 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersBySpecificGroupsUserstatusDateOfBirthAndGender
 	 */
-	public Collection getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection groups,
-			Collection userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender)
+	public Collection<User> getUsersBySpecificGroupsUserstatusDateOfBirthAndGender(Collection<?> groups,
+			Collection<?> userStatuses, Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender)
 			throws java.rmi.RemoteException;
 
 	/**
@@ -808,7 +810,7 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserComments
 	 */
-	public Collection getUserComments(User user) throws FinderException, java.rmi.RemoteException;
+	public Collection<UserComment> getUserComments(User user) throws FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#callAllUserGroupPluginAfterUserCreateOrUpdateMethod
@@ -939,9 +941,9 @@ public interface UserBusiness extends IBOService {
 	public boolean hasValidPersonalId(User user, Locale locale);
 
 	/**
-	 * 
+	 *
 	 * <p>Creates or updates {@link User} with login.</p>
-	 * @param primaryKey is {@link User#getPrimaryKey()}, new entity will be 
+	 * @param primaryKey is {@link User#getPrimaryKey()}, new entity will be
 	 * created if <code>null</code>;
 	 * @param name is {@link User#getName()}, not <code>null</code>;
 	 * @param email is {@link Email#getEmailAddress()}, not <code>null</code>;
@@ -952,7 +954,7 @@ public interface UserBusiness extends IBOService {
 	public User update(String primaryKey, String name, String email, String phone);
 
 	/**
-	 * 
+	 *
 	 * <p>Updates existing password of {@link User}</p>
 	 * @param user to change password, not <code>null</code>;
 	 * @param newPassword to update, not <code>null</code>;
