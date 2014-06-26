@@ -2507,6 +2507,25 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	}
 
+	@Deprecated
+	public static Collection<com.idega.core.accesscontrol.data.ICPermission> getAllGroupEditPermissionsLegacy(Collection<com.idega.user.data.Group> groups) throws IDOLookupException, RemoteException {
+		if (ListUtil.isEmpty(groups)) {
+			return Collections.emptyList();
+		}
+
+		ICPermissionHome permissionHome = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
+		try {
+			return permissionHome.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
+						groups,
+						AccessController.PERMISSION_KEY_EDIT,
+						AccessController.CATEGORY_STRING_GROUP_ID
+			);
+		} catch (FinderException e) {
+			e.printStackTrace();
+		}
+		return Collections.emptyList();
+	}
+
 	/**
 	 * @param groups
 	 * @return all ICPermissions owned by these groups
@@ -2516,7 +2535,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
 
 	    Collection<Group> permGroups = new ArrayList<Group>();
-	    for (Group group : groups) {
+	    for (Group group: groups) {
 			permGroups.add(groupDAO.findGroup(group.getID()));
 		}
 
@@ -2539,7 +2558,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Deprecated
 	public static Collection<com.idega.core.accesscontrol.data.ICPermission> getAllGroupViewPermissionsLegacy(
 			Collection<com.idega.user.data.Group> groups
-		) throws IDOLookupException, RemoteException {
+	) throws IDOLookupException, RemoteException {
 
 		ICPermissionHome permissionHome = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
 		GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
