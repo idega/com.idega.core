@@ -215,21 +215,19 @@ public class IDOUtil implements Singleton {
 	 * @param entities a Collection of IDOEntity instances.
 	 * @return if entities are not null or empty it return a Map that has the primarykeys of the entities as the keys and the entities as values, else returns null
 	 */
-	public Map<Object, IDOEntity> convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(Collection<IDOEntity> entities){
+	@SuppressWarnings("unchecked")
+	public <K extends Object, E extends IDOEntity> Map<K, E> convertIDOEntityCollectionToMapOfPrimaryKeysAndEntityValues(Collection<E> entities){
 		if (entities!=null && !entities.isEmpty()) {
-			Map<Object, IDOEntity> map = new HashMap<Object, IDOEntity>();
+			Map<K, E> map = new HashMap<K, E>();
 
-			for (Iterator<IDOEntity> iter = entities.iterator(); iter.hasNext();) {
-				IDOEntity entity = iter.next();
-				map.put(entity.getPrimaryKey(),entity);
+			for (Iterator<E> iter = entities.iterator(); iter.hasNext();) {
+				E entity = iter.next();
+				map.put((K) entity.getPrimaryKey(), entity);
 			}
-
 			return map;
-		}
-		else {
+		} else {
 			return null;
 		}
-
 	}
 
 	/**

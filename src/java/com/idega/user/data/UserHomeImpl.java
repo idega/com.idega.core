@@ -442,7 +442,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 	}
 
 	@Override
-	public Collection ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(
+	public Collection<User> ejbFindUsersBySpecificGroupsUserstatusDateOfBirthAndGender(
 			Collection groups, Collection userStatuses,
 			Integer yearOfBirthFrom, Integer yearOfBirthTo, String gender)
 			throws FinderException {
@@ -518,8 +518,8 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		try {
 			return getEntityCollectionForPrimaryKeys(primaryKeys);
 		} catch (FinderException e) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, 
-					"Failed to get " + this.getClass().getSimpleName() + 
+			Logger.getLogger(getClass().getName()).log(Level.WARNING,
+					"Failed to get " + this.getClass().getSimpleName() +
 					" by primary keys: '" + primaryKeys + "'");
 		}
 
@@ -544,8 +544,8 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 	public Collection<User> findAllByNameAndEmail(String name, String email) {
 		if (StringUtil.isEmpty(name) || StringUtil.isEmpty(email)) {
 			java.util.logging.Logger.getLogger(getClass().getName()).log(
-					Level.WARNING, 
-					"Failed to get " + User.class.getName() + 
+					Level.WARNING,
+					"Failed to get " + User.class.getName() +
 					" because user name or email was not provided!");
 			return null;
 		}
@@ -558,12 +558,12 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 			usersByEmail = findUsersByEmail(email);
 		} catch (FinderException e) {
 			java.util.logging.Logger.getLogger(getClass().getName()).log(
-					Level.WARNING, 
-					"Failed to get " + getEntityInterfaceClass().getName() + 
+					Level.WARNING,
+					"Failed to get " + getEntityInterfaceClass().getName() +
 					"'s by email: '" + email + "'");
 		}
 
-		
+
 		if (ListUtil.isEmpty(usersByEmail)) {
 			return Collections.emptyList();
 		}
@@ -572,7 +572,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		users = new ArrayList<User>(usersByEmail.size());
 		for (User user : usersByEmail) {
 			boolean nameMatches = Boolean.TRUE;
-			
+
 			for (String namePart : name.split(CoreConstants.SPACE)) {
 				if (!user.getName().contains(namePart)) {
 					nameMatches = Boolean.FALSE;

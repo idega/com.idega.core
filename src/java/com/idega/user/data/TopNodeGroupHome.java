@@ -49,22 +49,22 @@ public interface TopNodeGroupHome extends IDOHome {
     /**
      * @see com.idega.user.data.TopNodeGroupBMPBean#ejbFindByUser
      */
-    public Collection findByUser(Integer userID) throws FinderException;
+    public Collection<TopNodeGroup> findByUser(Integer userID) throws FinderException;
 
     /**
      * @see com.idega.user.data.TopNodeGroupBMPBean#ejbFindByUser
      */
-    public Collection findByUser(User user) throws FinderException;
+    public Collection<TopNodeGroup> findByUser(User user) throws FinderException;
 
     /**
      * @see com.idega.user.data.TopNodeGroupBMPBean#ejbFindByGroup
      */
-    public Collection findByGroup(Integer groupID) throws FinderException;
+    public Collection<TopNodeGroup> findByGroup(Integer groupID) throws FinderException;
 
     /**
      * @see com.idega.user.data.TopNodeGroupBMPBean#ejbHomegetTopNodeGroups
      */
-    public Collection getTopNodeGroups(User user)
+    public Collection<Group> getTopNodeGroups(User user)
             throws IDORelationshipException;
 
 }

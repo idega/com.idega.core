@@ -18,7 +18,7 @@ import com.idega.data.IDOHome;
 
 /**
  * Last modified: $Date: 2005/02/16 11:11:16 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.1 $
  */
@@ -31,6 +31,6 @@ public interface UserCommentHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.UserCommentBMPBean#ejbFindAllByUser
 	 */
-	public Collection findAllByUser(User user) throws FinderException;
+	public Collection<UserComment> findAllByUser(User user) throws FinderException;
 
 }
