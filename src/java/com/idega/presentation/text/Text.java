@@ -16,13 +16,14 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.StyleConstants;
 
 /**
  * A wrapper class for presenting plain (formatted) text in idegaWeb
  * Presentaiton Objects.
- * 
+ *
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson </a>
  * @version 1.2
  */
@@ -61,11 +62,11 @@ public class Text extends PresentationObject {
 	public static String NON_BREAKING_SPACE = "&nbsp;";
 	public static String BREAK = "<br/>";
 
-	public static final String EMPTY_TEXT_STRING = "No text";	
-	
+	public static final String EMPTY_TEXT_STRING = "No text";
+
 	//instance variables:
 	protected String text;
-	protected Map localizationMap;
+	protected Map<Locale, String> localizationMap;
 	protected boolean attributeSet;
 	protected boolean teletype;
 	private boolean addHTMLFontTag = true;
@@ -104,7 +105,7 @@ public class Text extends PresentationObject {
 		this.attributeSet = true;
 		super.setMarkupAttribute(name, value);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#setStyleAttribute(java.lang.String, java.lang.String)
 	 */
@@ -173,7 +174,7 @@ public class Text extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="text"
 	 */
 	public void setText(String text) {
@@ -194,12 +195,12 @@ public class Text extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="localizationMap"
 	 */
-	private Map getLocalizationMap() {
+	private Map<Locale, String> getLocalizationMap() {
 		if (this.localizationMap == null) {
-			this.localizationMap = new HashMap();
+			this.localizationMap = new HashMap<Locale, String>();
 		}
 		return this.localizationMap;
 	}
@@ -253,7 +254,7 @@ public class Text extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="text"
 	 */
 	public String getText() {
@@ -315,7 +316,7 @@ public class Text extends PresentationObject {
 			obj.attributeSet = this.attributeSet;
 			obj.addHTMLFontTag = this.addHTMLFontTag;
 			if (this.localizationMap != null) {
-				obj.localizationMap = (Map) ((HashMap) this.localizationMap).clone();
+				obj.localizationMap = MapUtil.deepCopy(localizationMap);
 			}
 		}
 		catch (Exception ex) {
@@ -326,7 +327,7 @@ public class Text extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>
 	 * Gets the String localized if set or the default string if it is not set as a regular String (unencoded for xhtml)
 	 * </p>
@@ -337,12 +338,12 @@ public class Text extends PresentationObject {
 		if (this.localizationMap != null) {
 			Locale currLocale = iwc.getCurrentLocale();
 
-			String localizedString = (String) this.getLocalizationMap().get(currLocale);
+			String localizedString = this.getLocalizationMap().get(currLocale);
 			if (localizedString != null) {
 				return localizedString;
 			}
 			else {
-				String defLocalizedString = (String) this.getLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
+				String defLocalizedString = this.getLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
 				if (defLocalizedString != null) {
 					return defLocalizedString;
 				}
@@ -350,7 +351,7 @@ public class Text extends PresentationObject {
 		}
 		return getText();
 	}
-	
+
 	public String getLocalizedText(IWContext iwc){
 		//return xhtmlEncode(getLocalizedTextAsUnencodedString(iwc));
 		return getLocalizedTextAsUnencodedString(iwc);
@@ -405,21 +406,22 @@ public class Text extends PresentationObject {
 		}
 		return size + "px";
 	}
-	
+
 	protected String getTag() {
 		return "span";
 	}
-	
+
 	protected boolean showTag() {
 		return false;
 	}
-	
+
+	@SuppressWarnings("unchecked")
 	@Override
 	public void restoreState(FacesContext context, Object state) {
 		Object values[] = (Object[])state;
 		super.restoreState(context, values[0]);
 		this.text = (String) values[1];
-		this.localizationMap = (Map) values[2];
+		this.localizationMap = (Map<Locale, String>) values[2];
 		this.attributeSet = ((Boolean)values[3]).booleanValue();
 		this.teletype = ((Boolean)values[4]).booleanValue();
 		this.addHTMLFontTag = ((Boolean)values[5]).booleanValue();
@@ -437,8 +439,8 @@ public class Text extends PresentationObject {
 		values[4] = Boolean.valueOf(this.teletype);
 		values[5] = Boolean.valueOf(this.addHTMLFontTag);
 		return values;
-	}	
-	
+	}
+
 	protected InlineEditableComponent getInlineEditable() throws Exception {
 		return ELUtil.getInstance().getBean(InlineEditableComponent.SPRING_BEAN_IDENTIFIER);
 	}
