@@ -33,6 +33,8 @@ import com.idega.util.expression.ELUtil;
  */
 public class IWDatePicker extends TextInput {
 
+	public static final String VERSION_1_8_17 = "1.8.17";
+
 	@Autowired
 	private JQuery jQuery;
 
@@ -255,7 +257,7 @@ public class IWDatePicker extends TextInput {
 		}
 		String function =
 //			"datepicker";
-			"1.8.17".equals(version) ? isShowTime() ? "datetimepicker" : "datepicker" : "iwDatePicker";
+			VERSION_1_8_17.equals(version) ? isShowTime() ? "datetimepicker" : "datepicker" : "iwDatePicker";
 //			isShowTime() ? "datetimepicker" : "datepicker";
 		StringBuffer initAction = new StringBuffer("jQuery('#").append(this.getId()).append("').").append(function).append("({");
 
@@ -378,14 +380,14 @@ public class IWDatePicker extends TextInput {
 		if (language != null) {
 			scripts.add(jQuery.getBundleURIToJQueryUILib("1.8.17/i18n", "ui.datepicker-" + language + ".js"));
 		}
-		if (isShowTime() || (isDateRange() && !version.equals("1.8.17"))) {
+		if (isShowTime() || (isDateRange() && !version.equals(VERSION_1_8_17))) {
 			Web2Business web2Business = getWeb2Business();
 			scripts.addAll(web2Business
 					.getBundleUrisToTimePickerScript(language == null ? null : iwc.getCurrentLocale()));
 			PresentationUtil.addStyleSheetToHeader(iwc,web2Business.getBundleUriToTimePickerStyle());
 		}
 		IWBundle iwb = CoreUtil.getCoreBundle();
-		if (!"1.8.17".equals(version)) {
+		if (!VERSION_1_8_17.equals(version)) {
 			scripts.add(iwb.getVirtualPathWithFileNameString("javascript/datepicker.js"));
 		}
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/datepicker.css"));

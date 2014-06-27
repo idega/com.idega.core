@@ -51,6 +51,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 
 		Layer layer = new Layer();
 		IWDatePicker datePicker = new IWDatePicker();
+		datePicker.setVersion(IWDatePicker.VERSION_1_8_17);
 		layer.add(datePicker);
 
 		Date date = getParsedDate(stringValue);
