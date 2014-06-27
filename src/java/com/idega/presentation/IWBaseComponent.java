@@ -22,6 +22,8 @@ import javax.faces.component.UIComponentBase;
 import javax.faces.component.UIViewRoot;
 import javax.faces.context.FacesContext;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.core.cache.CacheableUIComponent;
 import com.idega.core.cache.UIComponentCacher;
 import com.idega.idegaweb.IWBundle;
@@ -30,6 +32,8 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.util.CoreUtil;
 import com.idega.util.RenderUtils;
+import com.idega.util.WebUtil;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextStyler;
 
 /**
@@ -482,5 +486,15 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		IWMainApplication iwma = iwuc.getApplicationContext().getIWMainApplication();
 		return iwma.getBundle(bundleIdentifier);
 	}
-    
+
+    @Autowired
+	private WebUtil webUtil = null;
+
+	protected WebUtil getWebUtil() {
+		if (this.webUtil == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.webUtil;
+	}
 }
