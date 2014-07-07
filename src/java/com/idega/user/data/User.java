@@ -38,7 +38,7 @@ public interface User extends com.idega.data.IDOEntity,com.idega.user.data.Group
  public static final String FIELD_DELETED_WHEN = "DELETED_WHEN";
  public static final String USER_GROUP_TYPE="ic_user_representative";
  public static final String FIELD_JURIDICAL_PERSON = "juridical_person";
-  
+ public static final String AUTHORIZATION_TYPE = "com.idega.user.data.User";
 	
  @Override
 public void setPrimaryGroupID(java.lang.Integer p0);
