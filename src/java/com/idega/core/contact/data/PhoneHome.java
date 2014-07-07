@@ -1,5 +1,7 @@
 package com.idega.core.contact.data;
 
+import java.util.Collection;
+
 
 public interface PhoneHome extends com.idega.data.IDOHome
 {
@@ -13,5 +15,5 @@ public Phone findUsersHomePhone(com.idega.user.data.User user)throws javax.ejb.F
 public Phone findUsersWorkPhone(com.idega.user.data.User user)throws javax.ejb.FinderException,java.rmi.RemoteException;
 public Phone findUsersMobilePhone(com.idega.user.data.User user)throws javax.ejb.FinderException,java.rmi.RemoteException;
 public Phone findUsersFaxPhone(com.idega.user.data.User user)throws javax.ejb.FinderException,java.rmi.RemoteException;
-
+public Collection findUsersPhones(int userId,int type);
 }

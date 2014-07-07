@@ -1,5 +1,6 @@
 package com.idega.core.contact.data;
 import java.sql.SQLException;
+import java.util.Collection;
 
 import javax.ejb.FinderException;
 
@@ -186,6 +187,16 @@ public class PhoneBMPBean extends com.idega.data.GenericEntity implements com.id
 			int userID = ((Integer)user.getPrimaryKey()).intValue();
 			String sql = getSelectWithPhoneType(userID,getMobileNumberID());
 			return (Integer) this.idoFindOnePKBySQL(sql);
+		}
+		catch(Exception e){
+			throw new IDOFinderException(e);	
+		}
+	}
+	public Collection ejbFindUsersPhones(int userId,int type) throws FinderException
+	{
+		try{
+			String sql = getSelectWithPhoneType(userId,type);
+			return idoFindPKsBySQL(sql);
 		}
 		catch(Exception e){
 			throw new IDOFinderException(e);	

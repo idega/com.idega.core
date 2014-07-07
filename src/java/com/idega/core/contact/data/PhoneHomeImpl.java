@@ -1,5 +1,12 @@
 package com.idega.core.contact.data;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import javax.ejb.FinderException;
+
 
 public class PhoneHomeImpl extends com.idega.data.IDOFactory implements PhoneHome
 {
@@ -63,6 +70,23 @@ public Phone findUsersMobilePhone(com.idega.user.data.User user)throws javax.ejb
 	return this.findByPrimaryKey(pk);
 }
 
+public Collection findUsersPhones(int userId,int type){
+	try{
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection pks = ((PhoneBMPBean)entity).ejbFindUsersPhones(userId, type);
+		this.idoCheckInPooledEntity(entity);
+		return getEntityCollectionForPrimaryKeys(pks);
+	}
+	catch (FinderException e) {
+	}
+	catch(Exception e){
+		getLogger().log(Level.WARNING, "Failed finding phones for user " + userId + " and type " + type, e);
+	}
+	return Collections.EMPTY_LIST;
+}
+private Logger getLogger(){
+	return Logger.getLogger(PhoneHomeImpl.class.getName());
+}
 public Phone findUsersFaxPhone(com.idega.user.data.User user)throws javax.ejb.FinderException,java.rmi.RemoteException
 {
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

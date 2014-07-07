@@ -1272,7 +1272,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 				Integer groupID;
 				Integer userGroupID = this.getIntegerColumnValue(_COLUMNNAME_USER_GROUP_ID);
 				if (userGroupID == null) {
-					groupID = (Integer) this.getPrimaryKey();
+						groupID = Integer.valueOf(getID());
 				}
 				else {
 					groupID = userGroupID;

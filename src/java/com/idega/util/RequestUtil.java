@@ -25,7 +25,7 @@ public class RequestUtil {
 	private static final String IMAGEBUTTON_XPOS_SUFFIX = ".x";
 	private static final String HEADER_USER_AGENT = "User-agent";
 	private static final String HEADER_REFERER = "Referer";
-	private static final String HEADER_AUTHORIZATION = "Authorization";
+	public static final String HEADER_AUTHORIZATION = "Authorization";
 
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it
