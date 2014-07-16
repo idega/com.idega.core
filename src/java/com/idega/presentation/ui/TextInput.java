@@ -11,7 +11,9 @@ package com.idega.presentation.ui;
 
 import java.text.NumberFormat;
 import java.util.Locale;
+
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 import com.idega.util.LocaleUtil;
 import com.idega.util.text.TextSoap;
@@ -482,7 +484,7 @@ public class TextInput extends GenericInput {
         if (this.isSetAsNotEmpty) {
 					setOnSubmitFunction(
 					        "warnIfEmpty",
-					        "function warnIfEmpty (inputbox,warnMsg) {\n\n		if ( !inputbox.disabled && inputbox.value == '' ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
+					        "function warnIfEmpty (inputbox,warnMsg) {\n\nvar str =inputbox.value; \nif ( !inputbox.disabled && (!str || /^\\s*$/.test(str)) ) { \n		alert ( warnMsg );\n		return false;\n	}\n	else{\n		return true;\n}\n\n}",
 					        this.notEmptyErrorMessage);
 				}
 
