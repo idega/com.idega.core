@@ -264,7 +264,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			permissionOrder[0] = new ArrayList<String>();
 			permissionOrder[0].add(user.getId().toString());
 			permissionOrder[1] = new ArrayList<String>();
-			permissionOrder[1].add(user.getPrimaryGroup().getID().toString());
+
+			Group primaryGroup = user.getPrimaryGroup();
+			permissionOrder[1].add(primaryGroup == null ? "-1" : primaryGroup.getID().toString());
 
 			returnVal = checkForPermission(permissionOrder, obj, AccessController.PERMISSION_KEY_OWNER, iwc);
 		}
