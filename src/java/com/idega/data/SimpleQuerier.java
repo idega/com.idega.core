@@ -5,11 +5,12 @@
 
 */
 package com.idega.data;
-import java.sql.SQLException;
 import java.sql.Connection;
-import java.sql.Statement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Vector;
+
 import com.idega.util.database.ConnectionBroker;
 /**
 *A class to query/update directly to an SQL datastore. This class should only be used by data implementation classes
@@ -219,6 +220,14 @@ public class SimpleQuerier {
      */
     protected static boolean executeUpdate(String sqlString, String dataSource) throws SQLException {
         return executeUpdate(sqlString, dataSource, true);
+    }
+    /**
+     * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if there was an update
+     *  @returns true if there was an update, false if there was no update
+     *  @throws SQLException if there was an error
+     */
+    public static boolean executeUpdate(String sqlString, boolean flushCache) throws SQLException {
+    	return executeUpdate(sqlString, getDatasource(), flushCache);
     }
     /**
      * Executes an sql update command specified by sqlString to the datastore specified and flushes all cache if flushCache==true
