@@ -215,7 +215,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public void internalSetState(HttpServletRequest request, LoginState state) {
 		LoginBusinessBean.getLoginSessionBean().setLoginState(state);
 	}
-
+	
 	public static LoginState internalGetState(IWContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getLoginState();
 	}
@@ -258,7 +258,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			 * (didLogin == STATE_LOGGED_ON) { onLoginSuccessful(iwc); return true; }
 			 */
 			LoginState didLogin = verifyPasswordAndLogin(request, username, password);
-			if (didLogin.equals(LoginState.LoggedOn)) {
+			if (didLogin.equals(LoginState.LOGGED_ON)) {
 				onLoginSuccessful(request);
 				return true;
 			}
@@ -275,7 +275,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean logOutUser(HttpServletRequest request, String userName) {
 		try {
 			logOut(request, userName);
-			internalSetState(request, LoginState.LoggedOut);
+			internalSetState(request, LoginState.LOGGED_OUT);
 			return true;
 		}
 		catch (Exception e) {
@@ -349,7 +349,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * alter behaviour By default this sets the state to "logged on"
 	 */
 	protected void onLoginSuccessful(HttpServletRequest request) {
-		internalSetState(request, LoginState.LoggedOn);
+		internalSetState(request, LoginState.LOGGED_ON);
 	}
 
 	/**
@@ -434,13 +434,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 			else {
 				if (isLogOnAction(request)) {
 					// int canLogin = STATE_LOGGED_OUT;
-					LoginState canLogin = LoginState.LoggedOut;
+					LoginState canLogin = LoginState.LOGGED_OUT;
 					username = getLoginUserName(request);
 					String password = getLoginPassword(request);
 					if ((username != null) && (password != null)) {
 						canLogin = verifyPasswordAndLogin(request, username, password);
 						// if (canLogin == STATE_LOGGED_ON) {
-						if (canLogin.equals(LoginState.LoggedOn)) {
+						if (canLogin.equals(LoginState.LOGGED_ON)) {
 							// isLoggedOn(iwc);
 							// internalSetState(iwc,"loggedon");
 							// addon
@@ -474,7 +474,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 				}
 				else if (isTryAgainAction(request)) {
-					internalSetState(request, LoginState.LoggedOut);
+					internalSetState(request, LoginState.LOGGED_OUT);
 				}
 			}
 		} catch (Exception ex) {
@@ -595,7 +595,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					username = unencodedNamePassword.substring(0, seperator);
 					String password = unencodedNamePassword.substring(seperator + 1);
 
-					LoginState canLogin = LoginState.LoggedOut;
+					LoginState canLogin = LoginState.LOGGED_OUT;
 					LoggedOnInfo lInfo = getLoggedOnInfo(session, username);
 					if (!isLoggedOn(request) && lInfo != null) {
 						// used for re-logging in clients that do not keep cookies/session
@@ -610,7 +610,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 					else {
 						canLogin = verifyPasswordAndLogin(request, username, password);
-						if (canLogin.equals(LoginState.LoggedOn)) {
+						if (canLogin.equals(LoginState.LOGGED_ON)) {
 							onLoginSuccessful(request);
 							return true;
 						}
@@ -901,32 +901,40 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	private LoginState verifyPasswordAndLogin(HttpServletRequest request, String login, String password) throws Exception {
+	private LoginState verifyPasswordAndLogin(HttpServletRequest request, 
+			String login, String password) throws Exception {	
+		if (isLoginLocked(request)) {
+			return LoginState.DISABLED;
+		}
+
 		UserLogin userLogin = getUserLoginDAO().findLoginByUsername(login);
 		if (userLogin == null) {
-			return LoginState.NoUser;
+			createFailedLoginRecord(request);
+			return LoginState.USER_NOT_FOUND;
 		}
 
 		User user = userLogin.getUser();
 		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
 		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
 		if (isLoginExpired(userLogin) && !isAdmin) {
-			return LoginState.Expired;
+			return LoginState.EXPIRED;
 		}
 
 		LoginInfo loginInfo = userLogin.getLoginInfo();
 		if (verifyPassword(userLogin, password)) {
 			if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
-				return LoginState.Expired;
+				return LoginState.EXPIRED;
 			}
 			if (logIn(request, userLogin)) {
 				loginInfo.setFailedAttemptCount(0);
 				getUserLoginDAO().merge(loginInfo);
-				return LoginState.LoggedOn;
+				return LoginState.LOGGED_ON;
 			}
 		} else {
-			if (isAdmin) { // admin must get unlimited attempts
-				return LoginState.WrongPassword;
+			createFailedLoginRecord(request);
+			
+			if (isAdmin) { // admin must get unlimited attempts				
+				return LoginState.WRONG_PASSWORD;
 			}
 			int maxFailedLogginAttempts = 0;
 			try {
@@ -957,7 +965,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		}
 
-		return LoginState.Failed;
+		return LoginState.FAILED;
 	}
 
 	public void resetPassword(String login, String newPassword, boolean changeNextTime) throws Exception {
@@ -1652,6 +1660,37 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return null;
 	}
 
+	/**
+	 * <p>Method requires com.idega.block.login module, it will always
+	 * return <code>false</code> if module not provided.</p>
+	 * @param request to create record for, not <code>null</code>;
+	 * @return <code>true</code> when record created, <code>false</code>
+	 * otherwise.
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean createFailedLoginRecord(HttpServletRequest request) {
+		if (getLoginLock() != null) {
+			return getLoginLock().createFailedLoginRecord(request);		
+		}
+
+		return false;
+	}
+
+	/**
+	 * 
+	 * @param request from where login attempt was made, not <code>null</code>;
+	 * @return <code>true</code> when there was too many unsuccessful 
+	 * attempts to login from given IP address, <code>false</code> otherwise.
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected boolean isLoginLocked(HttpServletRequest request) {
+		if (getLoginLock() != null) {
+			return getLoginLock().isLoginLocked(request);
+		}
+
+		return Boolean.FALSE;
+	}
+
 	private GroupDAO getGroupDAO() {
 		if (groupDAO == null) {
 			ELUtil.getInstance().autowire(this);
@@ -1671,5 +1710,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 			ELUtil.getInstance().autowire(this);
 		}
 		return userLoginDAO;
+	}
+
+	@Autowired(required=false)
+	private LoginLock loginLock;
+
+	protected LoginLock getLoginLock() {
+		if (this.loginLock == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.loginLock;
 	}
 }

@@ -262,7 +262,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		protected Group primaryGroup = null;
 		protected UserGroupRepresentative repGroup = null;
 		protected LoggedOnInfo loggedOnInfo = null;
-		protected LoginState loginState = LoginState.NoState;
+		protected LoginState loginState = LoginState.NO_STATE;
 		protected String userLoginName = null;
 		protected UserProperties userProperties = null;
 		protected Map<String, Object> mapOfExtraAttributes = new Hashtable<String, Object>();

@@ -29,6 +29,7 @@ public class LoginState implements Serializable {
 	private static final int STATE_LOGIN_EXPIRED = 5;
 	private static final int STATE_LOGIN_FAILED = 6;
 	private static final int STATE_LOGIN_FAILED_DISABLED_NEXT_TIME = 8;
+	private static final int STATE_LOGIN_DISABLED = 9;
 
 	private int state = STATE_NO_STATE;
 
@@ -36,14 +37,15 @@ public class LoginState implements Serializable {
 		this.state = state;
 	}
 
-	public static LoginState NoState = new LoginState(STATE_NO_STATE);
-	public static LoginState LoggedOn = new LoginState(STATE_LOGGED_ON);
-	public static LoginState LoggedOut = new LoginState(STATE_LOGGED_OUT);
-	public static LoginState NoUser = new LoginState(STATE_NO_USER);
-	public static LoginState WrongPassword = new LoginState(STATE_WRONG_PASSW);
-	public static LoginState Expired = new LoginState(STATE_LOGIN_EXPIRED);
-	public static LoginState Failed = new LoginState(STATE_LOGIN_FAILED);
-	public static LoginState FailedDisabledNextTime = new LoginState(STATE_LOGIN_FAILED_DISABLED_NEXT_TIME);
+	public static final LoginState NO_STATE = new LoginState(STATE_NO_STATE);
+	public static final LoginState LOGGED_ON = new LoginState(STATE_LOGGED_ON);
+	public static final LoginState LOGGED_OUT = new LoginState(STATE_LOGGED_OUT);
+	public static final LoginState USER_NOT_FOUND = new LoginState(STATE_NO_USER);
+	public static final LoginState WRONG_PASSWORD = new LoginState(STATE_WRONG_PASSW);
+	public static final LoginState EXPIRED = new LoginState(STATE_LOGIN_EXPIRED);
+	public static final LoginState FAILED = new LoginState(STATE_LOGIN_FAILED);
+	public static final LoginState FAILED_DISABLED_NEXT_TIME = new LoginState(STATE_LOGIN_FAILED_DISABLED_NEXT_TIME);
+	public static final LoginState DISABLED = new LoginState(STATE_LOGIN_DISABLED);
 
 	/*
 	 * (non-Javadoc)
