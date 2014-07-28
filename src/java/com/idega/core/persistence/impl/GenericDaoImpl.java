@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.orm.hibernate3.HibernateTemplate;
@@ -103,6 +104,15 @@ public class GenericDaoImpl implements GenericDao {
 	@Transactional(readOnly = false)
 	public void flush() {
 		entityManager.flush();
+	}
+
+	@Override
+	public CriteriaBuilder getCriteriaBuilder() {
+		if (getEntityManager() != null) {
+			return getEntityManager().getCriteriaBuilder();
+		}
+
+		return null;
 	}
 
 	@Override
