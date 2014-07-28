@@ -928,6 +928,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (logIn(request, userLogin)) {
 				loginInfo.setFailedAttemptCount(0);
 				getUserLoginDAO().merge(loginInfo);
+				getLoginLock().deleteAllPreviuosRecords(request);
 				return LoginState.LOGGED_ON;
 			}
 		} else {
@@ -990,9 +991,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * <p>
 	 * Returns true if the password matches the encrypted value in loginTable.
 	 * </p>
-	 * @param userLogin
-	 * @param password
-	 * @return
+	 * @param userLogin is username, not <code>null</code>;
+	 * @param password, not <code>null</code>;
+	 * @return <code>true</code> if user can login by credentials, 
+	 * <code>false</code> otherwise!
 	 */
 	public boolean verifyPassword(UserLogin userLogin, String password){
 		if (Encrypter.verifyOneWayEncrypted(userLogin.getUserPassword(), password)) {
