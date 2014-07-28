@@ -321,7 +321,7 @@ public class MimeTypeUtil implements Singleton {
 	}
 
 	public boolean isCompressed(String mimeType) {
-		return isMimeTypeInCategory(mimeType, MIME_TYPE_CATEGORY_COMPRESSED);
+		return isMimeTypeInCategory(mimeType, MIME_TYPE_CATEGORY_COMPRESSED) || "application/x-zip".equals(mimeType);
 	}
 
 	public boolean isZip(String mimeType) {
