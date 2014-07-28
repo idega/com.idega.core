@@ -130,6 +130,16 @@ public interface LoginLock {
 
 	/**
 	 * 
+	 * @param context to get {@link HttpServletRequest} from, 
+	 * not <code>null</code>;
+	 * @return <code>true</code> if record about unsuccessful login was created
+	 * <code>false</code> otherwise;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	boolean isLoginLocked(FacesContext context);
+
+	/**
+	 * 
 	 * @param ip address from which unsuccessful login was made, 
 	 * not <code>null</code>;
 	 * @return <code>true</code> if record about unsuccessful login was created
@@ -149,11 +159,20 @@ public interface LoginLock {
 
 	/**
 	 * 
-	 * @param context to get {@link HttpServletRequest} from, 
+	 * <p>Removes entities by criteria</p>
+	 * @param ip address from which unsuccessful login was made, 
 	 * not <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	void deleteAllPreviuosRecords(String ip);
+	
+	/**
+	 * 
+	 * <p>Removes entities by criteria</p>
+	 * @param request from where login attempt was made, not <code>null</code>;
 	 * @return <code>true</code> if record about unsuccessful login was created
 	 * <code>false</code> otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	boolean isLoginLocked(FacesContext context);
+	void deleteAllPreviuosRecords(HttpServletRequest request);
 }
