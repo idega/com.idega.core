@@ -5,7 +5,9 @@ package com.idega.core.location.data;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.Collection;
+
 import javax.ejb.FinderException;
+
 import com.idega.core.user.data.User;
 import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
@@ -104,7 +106,11 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	 */
 	public void setStreetName(String street_name) {
 		setColumn(ORIGINAL_STREET_NAME, street_name);
-		setColumn(STREET_NAME, street_name.toUpperCase());
+		if(street_name != null){
+			setColumn(STREET_NAME, street_name.toUpperCase());
+		}else{
+			setColumn(STREET_NAME, ORIGINAL_STREET_NAME);
+		}
 	}
 
 	public String getStreetNumber() {
