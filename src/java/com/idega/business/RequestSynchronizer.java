@@ -40,7 +40,6 @@ public class RequestSynchronizer {
 	@PreDestroy
 	private void activateSynchronization(){
 		explicitSynchronizationBusiness.activateSynchronization(synchronizationEntities,getProperties());
-		synchronizationEntities = null;
 	}
 	public Map<String, Object> getProperties() {
 		if(properties != null){

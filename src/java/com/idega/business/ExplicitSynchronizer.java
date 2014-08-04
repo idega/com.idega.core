@@ -1,11 +1,10 @@
 package com.idega.business;
 
+import java.util.Collection;
 import java.util.Map;
 
 import com.idega.data.ExplicitlySynchronizedEntity;
 
 public interface ExplicitSynchronizer {
-	public void addEntity(ExplicitlySynchronizedEntity entity);
-	public void setProperties(Map<String, Object> properties);
-	public void executeSynchronization();
+	public void executeSynchronization(Collection<ExplicitlySynchronizedEntity> entities,Map<String, Object> properties);
 }

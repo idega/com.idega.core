@@ -1,9 +1,11 @@
 package com.idega.business;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -44,21 +46,25 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 		if(synchronizersEntityMap == null){
 			return;
 		}
-		Collection<SynchronizerWraper> synchronizersToExecute = new HashSet<SynchronizerWraper>();
+		Map<SynchronizerWraper,Collection<ExplicitlySynchronizedEntity>> synchronizersToExecute = new HashMap<SynchronizerWraper,Collection<ExplicitlySynchronizedEntity>>();
 		for(ExplicitlySynchronizedEntity entity : entities){
 			Collection<SynchronizerWraper> synchronizers = synchronizersEntityMap.get(entity.getSynchronizerKey());
 			if(ListUtil.isEmpty(synchronizers)){
 				continue;
 			}
 			for(SynchronizerWraper synchronizer : synchronizers){
-				synchronizer.synchronizer.addEntity(entity);
-				synchronizersToExecute.add(synchronizer);
+				Collection<ExplicitlySynchronizedEntity> synchronizerEntities = synchronizersToExecute.get(synchronizer);
+				if(synchronizerEntities == null){
+					synchronizerEntities = new ArrayList<ExplicitlySynchronizedEntity>();
+					synchronizersToExecute.put(synchronizer, synchronizerEntities);
+				}
+				synchronizerEntities.add(entity);
 			}
 		}
-		for(SynchronizerWraper wraper : synchronizersToExecute){
+		Set<SynchronizerWraper> keySet = synchronizersToExecute.keySet();
+		for(SynchronizerWraper wraper : keySet){
 			try{
-				wraper.synchronizer.setProperties(properties);
-				wraper.synchronizer.executeSynchronization();
+				wraper.synchronizer.executeSynchronization(synchronizersToExecute.get(wraper), properties);
 			}catch (Exception e) {
 				getLogger().log(Level.WARNING, "Synchronizer " + wraper.synchronizer +" failed!", e);
 			}
