@@ -2,6 +2,8 @@ package com.idega.business;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 import javax.annotation.PreDestroy;
 
@@ -17,6 +19,7 @@ public class RequestSynchronizer {
 	public static final String BEAN_NAME = "requestSynchronizer";
 	
 	private Collection<ExplicitlySynchronizedEntity> synchronizationEntities;
+	private Map<String, Object> properties;
 	
 	@Autowired
 	private ExplicitSynchronizationBusiness explicitSynchronizationBusiness;
@@ -36,8 +39,15 @@ public class RequestSynchronizer {
 	@SuppressWarnings("unused")
 	@PreDestroy
 	private void activateSynchronization(){
-		explicitSynchronizationBusiness.activateSynchronization(synchronizationEntities);
+		explicitSynchronizationBusiness.activateSynchronization(synchronizationEntities,getProperties());
 		synchronizationEntities = null;
 	}
-	
+	public Map<String, Object> getProperties() {
+		if(properties != null){
+			return properties;
+		}
+		properties = new HashMap<String, Object>();
+		return properties;
+	}
+
 }

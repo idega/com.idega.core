@@ -34,6 +34,10 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 	}
 	@Override
 	public void activateSynchronization(Collection<ExplicitlySynchronizedEntity> entities) {
+		activateSynchronization(entities, new HashMap<String, Object>());
+	}
+	@Override
+	public void activateSynchronization(Collection<ExplicitlySynchronizedEntity> entities,Map<String, Object> properties) {
 		if(ListUtil.isEmpty(entities)){
 			return;
 		}
@@ -53,6 +57,7 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 		}
 		for(SynchronizerWraper wraper : synchronizersToExecute){
 			try{
+				wraper.synchronizer.setProperties(properties);
 				wraper.synchronizer.executeSynchronization();
 			}catch (Exception e) {
 				getLogger().log(Level.WARNING, "Synchronizer " + wraper.synchronizer +" failed!", e);
