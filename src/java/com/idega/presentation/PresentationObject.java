@@ -33,6 +33,8 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
 import com.idega.core.builder.business.BuilderService;
@@ -512,6 +514,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 				returnString.append(CoreConstants.SPACE);
 				returnString.append(attributeKey);
 				attributeValue = mapEntry.getValue();
+				attributeValue = StringEscapeUtils.escapeHtml(attributeValue);
 				if (!attributeValue.equals(slash))
 				{
 					returnString.append("=\"");
