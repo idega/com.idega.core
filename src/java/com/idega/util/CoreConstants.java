@@ -56,6 +56,7 @@ public class CoreConstants {
 
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER;
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS;
+	public static final String PROP_EMAIL_ACOUSTICS_PERMISSION_CC = MessagingSettings.PROP_EMAIL_ACOUSTICS_PERMISSION_CC;
 	public static final String PROP_SYSTEM_SMTP_USER = MessagingSettings.PROP_SYSTEM_SMTP_USER_NAME;
 	public static final String PROP_SYSTEM_SMTP_PASSWORD = MessagingSettings.PROP_SYSTEM_SMTP_PASSWORD;
 	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION;
@@ -198,4 +199,6 @@ public class CoreConstants {
 			REPOSITORY = "repository",
 			ACTIVE_ROLE = "iw_session_user_active_role";
 
+	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "vejukas@yahoo.dk"; //"skjalaver@reykjavik.is";
+	public static final String ACOUSTIC_PERMISSION_PROCESS_NAME = "AcousticsPermission";
 }

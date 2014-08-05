@@ -7,7 +7,7 @@ import com.idega.idegaweb.IWMainApplication;
  * Class to fetch system wide settings for messaging (for emailing).
  * </p>
  *  Last modified: $Date: 2008/05/09 01:04:42 $ by $Author: eiki $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.3 $
  */
@@ -18,6 +18,7 @@ public class MessagingSettings {
 	public static final String PROP_SYSTEM_SMTP_USER_NAME = "messagebox_smtp_username";
 	public static final String PROP_SYSTEM_SMTP_PASSWORD = "messagebox_smtp_password";
 	public static final String PROP_MESSAGEBOX_FROM_ADDRESS = "messagebox_from_mailaddress";
+	public static final String PROP_EMAIL_ACOUSTICS_PERMISSION_CC = "messagebox_email_acoustics_cc";
 	public static final String PROP_SYSTEM_FORCED_RECEIVER = "messagebox_forced_receiver_address";
 	public static final String PROP_SYSTEM_BCC_RECEIVER = "messagebox_bcc_receiver_address";
 	public static final String DEFAULT_MESSAGEBOX_FROM_ADDRESS = "info@idega.com";
@@ -25,20 +26,20 @@ public class MessagingSettings {
 	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = "messagebox_smtp_authenticate";
 	public static final String PROP_SYSTEM_SMTP_USE_SSL = "messagebox_smtp_ssl";
 	public static final String PROP_SYSTEM_SMTP_PORT = "messagebox_smtp_port";
-	
-	
+
+
 	public static String PROPERTY_VALUE_NOTSET="notset";
-	
+
 	private IWMainApplication iwma;
-	
+
 	public MessagingSettings(IWMainApplication iwma){
 		this.iwma=iwma;
 	}
-	
+
 	private String getProperty(String propertyKey){
 		return getProperty(propertyKey,null);
 	}
-	
+
 	private String getProperty(String propertyKey,String defaultValue){
 		if(defaultValue==null){
 			return this.iwma.getSettings().getProperty(propertyKey);
@@ -47,11 +48,11 @@ public class MessagingSettings {
 			return this.iwma.getSettings().getProperty(propertyKey,defaultValue);
 		}
 	}
-	
+
 	private void setProperty(String propertyKey,String propertyValue){
 		this.iwma.getSettings().setProperty(propertyKey,propertyValue);
 	}
-	
+
 	public String getBCCReceiver() {
 		String theRet =  getProperty(PROP_SYSTEM_BCC_RECEIVER);
 		if(theRet!=null){
@@ -61,11 +62,11 @@ public class MessagingSettings {
 		}
 		return theRet;
 	}
-	
+
 	public void setBCCReceiver(String receiver) {
 		setProperty(PROP_SYSTEM_BCC_RECEIVER, receiver);
 	}
-	
+
 	public String getForcedReceiver() {
 		String theRet =  getProperty(PROP_SYSTEM_FORCED_RECEIVER);
 		if(theRet!=null){
@@ -75,27 +76,27 @@ public class MessagingSettings {
 		}
 		return theRet;
 	}
-	
+
 	public void setForcedReceiver(String forcedReceiver) {
 		setProperty(PROP_SYSTEM_FORCED_RECEIVER, forcedReceiver);
 	}
-	
+
 	public String getFromMailAddress() {
 		return getProperty(PROP_MESSAGEBOX_FROM_ADDRESS, DEFAULT_MESSAGEBOX_FROM_ADDRESS);
 	}
-	
+
 	public void setFromMailAddress(String fromMailAddress) {
 		setProperty(PROP_MESSAGEBOX_FROM_ADDRESS, fromMailAddress);
 	}
-	
+
 	public String getSMTPMailServer() {
 		return getProperty(PROP_SYSTEM_SMTP_MAILSERVER,DEFAULT_SMTP_MAILSERVER);
 	}
-	
+
 	public void setSMTPMailServer(String mailServer) {
 		setProperty(PROP_SYSTEM_SMTP_MAILSERVER, mailServer);
 	}
-	
+
 	/**
 	 * <p>
 	 * Returns if emailing is switched on or off globally<br/>
@@ -106,7 +107,7 @@ public class MessagingSettings {
 	public boolean isEmailingEnabled() {
 		return iwma.getSettings().getBoolean(PROPERTY_EMAIL_ENABLED, Boolean.TRUE);
 	}
-	
+
 	public void setEmailingEnabled(boolean enabled) {
 		setProperty(PROPERTY_EMAIL_ENABLED, Boolean.valueOf(enabled).toString());
 	}
