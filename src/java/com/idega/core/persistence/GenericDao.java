@@ -3,7 +3,9 @@ package com.idega.core.persistence;
 import java.util.List;
 
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Query;
+import javax.persistence.criteria.CriteriaBuilder;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -79,4 +81,11 @@ public interface GenericDao {
 	 */
 	public abstract com.idega.core.persistence.Query getQueryNamed(
 	        String queryName);
+
+	/**
+	 * 
+	 * @see EntityManager#getCriteriaBuilder()
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	CriteriaBuilder getCriteriaBuilder();
 }

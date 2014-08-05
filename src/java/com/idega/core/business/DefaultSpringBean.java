@@ -28,6 +28,7 @@ import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
@@ -150,6 +151,55 @@ public abstract class DefaultSpringBean {
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Som error occurred getting home interface for entity: " + entityClass, e);
 		}
+		return null;
+	}
+
+	/**
+	 * 
+	 * <p>Application properties are defined 
+	 * at ~/workspace/developer/applicationproperties/</p>
+	 * @param propertyName is 'property key name',
+	 * not <code>null</code>;
+	 * @return 'property key value' or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected String getApplicationProperty(String propertyName) {
+		IWMainApplicationSettings settings = getSettings();
+		if (settings != null) {
+			return settings.getProperty(propertyName);
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * <p>Application properties are defined 
+	 * at ~/workspace/developer/applicationproperties/</p>
+	 * @param propertyName is 'property key name',
+	 * not <code>null</code>;
+	 * @param defaultPropertyValue is initial value of 'property key value',
+	 * not <code>null</code>;
+	 * @return 'property key value' or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected String getApplicationProperty(
+			String propertyName, 
+			String defaultPropertyValue) {
+		IWMainApplicationSettings settings = getSettings();
+		if (settings != null) {
+			return settings.getProperty(propertyName, defaultPropertyValue);
+		}
+
+		return null;
+	}
+	
+	protected IWMainApplicationSettings getSettings() {
+		IWMainApplication application = getApplication();
+		if (application != null) {
+			return application.getSettings();
+		}
+
 		return null;
 	}
 
