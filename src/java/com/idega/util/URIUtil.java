@@ -81,19 +81,12 @@ public class URIUtil {
 		if(parameters == null)
 			parameters = getParameters();
 		
-		if(key.contains(CoreConstants.QMARK) || key.contains(CoreConstants.AMP) || key.contains(CoreConstants.EQ))
-			throw new IllegalArgumentException("Illegal format key provided: "+key);
-		
-		if(value.contains(CoreConstants.AMP))
-			throw new IllegalArgumentException("Illegal format value provided: "+value);
-		
 		String notEncodedKey = key;
 		String notEncodedValue = value;
 		
 		try {
 			key = URLEncoder.encode(key, CoreConstants.ENCODING_UTF8);
 			value = URLEncoder.encode(value, CoreConstants.ENCODING_UTF8);
-			
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}

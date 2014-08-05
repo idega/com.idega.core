@@ -34,6 +34,7 @@ import com.idega.repository.RepositoryService;
 import com.idega.repository.RepositorySession;
 import com.idega.util.CoreUtil;
 import com.idega.util.RenderUtils;
+import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextStyler;
 
@@ -452,6 +453,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 		return iwma.getBundle(bundleIdentifier);
 	}
 
+<<<<<<< HEAD
     protected RepositoryService getRepositoryService() {
     	if (repositoryService == null) {
     		ELUtil.getInstance().autowire(this);
@@ -469,5 +471,16 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
 		RepositorySession repositorySession = ELUtil.getInstance().getBean(RepositorySession.class);
 		return repositorySession;
+=======
+    @Autowired
+	private WebUtil webUtil = null;
+
+	protected WebUtil getWebUtil() {
+		if (this.webUtil == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.webUtil;
+>>>>>>> 19665f0666f3c0f1a7ed21caaf522601286156c8
 	}
 }

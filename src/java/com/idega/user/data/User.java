@@ -41,7 +41,8 @@ public interface User extends IDOEntity, Group, com.idega.core.user.data.User, I
  public static final String FIELD_JURIDICAL_PERSON = "juridical_person";
 
  public static final String FIELD_SHA1 = "sha1",
-		 					FIELD_SHA1_INDEX = "IDX_IC_USER_SHA1";
+		 					FIELD_SHA1_INDEX = "IDX_IC_USER_SHA1",
+		 					AUTHORIZATION_TYPE = "com.idega.user.data.User";
 
  @Override
 public void setPrimaryGroupID(java.lang.Integer p0);
@@ -231,6 +232,6 @@ public java.lang.String getIDColumnName();
 
  public String getSHA1();
  public void setSHA1(String sha1);
- 
+
  public Collection<User> getRelatedUsers(Collection<String> relationTypes);
 }
