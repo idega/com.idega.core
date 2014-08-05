@@ -199,6 +199,6 @@ public class CoreConstants {
 			REPOSITORY = "repository",
 			ACTIVE_ROLE = "iw_session_user_active_role";
 
-	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "vejukas@yahoo.dk"; //"skjalaver@reykjavik.is";
+	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "skjalaver@reykjavik.is";
 	public static final String ACOUSTIC_PERMISSION_PROCESS_NAME = "AcousticsPermission";
 }
