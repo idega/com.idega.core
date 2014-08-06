@@ -41,6 +41,7 @@ import javax.ejb.RemoveException;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 
+import com.idega.business.ExplicitSynchronizationBusiness;
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.persistence.EntityManagerService;
@@ -57,6 +58,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.database.ConnectionBroker;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.logging.LoggingHelper;
 
 /**
@@ -3845,6 +3847,11 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			if (this.hasMetaDataRelationship()) {
 				this.updateMetaData();
 			}
+			if(this instanceof ExplicitlySynchronizedEntity){
+				ExplicitlySynchronizedEntity thisEntity = (ExplicitlySynchronizedEntity) this;
+				ExplicitSynchronizationBusiness explicitSynchronizationBusiness = ELUtil.getInstance().getBean(ExplicitSynchronizationBusiness.BEAN_NAME);
+				explicitSynchronizationBusiness.synchronize(thisEntity);
+			}
 		}
 		catch (Exception e) {
 			e.printStackTrace();
@@ -5692,5 +5699,68 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 */
 	protected Collection getCachedEntities(){
 		return getBeanCache().getCachedEntities();
+	}
+	
+	public ExplicitlySynchronizedEntity getSimpleExplicitlySynchronizedEntityEntity() {
+		ExplicitlySynchronizedEntityImpl entity = new ExplicitlySynchronizedEntityImpl();
+		entity.setPK(getPrimaryKey());
+		if(this instanceof ExplicitlySynchronizedEntity){
+			ExplicitlySynchronizedEntity thisEntity = (ExplicitlySynchronizedEntity) this;
+			entity.setSynchronizerKey(thisEntity.getSynchronizerKey());
+			entity.setChanges(getChanges());
+		}	
+		return entity;
+	}
+	public Collection<String> getChanges(){
+		if(this._updatedColumns == null){
+			return null;
+		}
+		return _updatedColumns.keySet();
+	}
+	public String getPK() {
+		return getStringColumnValue(getIDColumnName());
+	}
+	private class ExplicitlySynchronizedEntityImpl implements ExplicitlySynchronizedEntity{
+
+		private String synchronizerKey;
+		private String PK;
+		private Collection<String> changes;
+
+		@Override
+		public String getSynchronizerKey() {
+			return synchronizerKey;
+		}
+
+		public void setSynchronizerKey(String synchronizerKey) {
+			this.synchronizerKey = synchronizerKey;
+		}
+
+		@Override
+		public String getPK() {
+			return PK;
+		}
+
+		public void setPK(Object pK) {
+			PK = pK.toString();
+		}
+
+		@Override
+		public ExplicitlySynchronizedEntity getSimpleExplicitlySynchronizedEntityEntity() {
+			return this;
+		}
+
+		public boolean equals(ExplicitlySynchronizedEntity entity) {
+			return (entity.getPK().equals(PK) && entity.getSynchronizerKey().equals(synchronizerKey));
+		}
+		
+		@Override
+		public Collection<String> getChanges(){
+			return changes;
+		}
+		
+		public void setChanges(Collection<String> changes){
+			this.changes = changes;
+		}
+		
 	}
 }

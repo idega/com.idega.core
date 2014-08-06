@@ -1,5 +1,5 @@
 /**
- * @(#)LoginLock.java    1.0.0 9:39:37 AM
+ * @(#)FileWrapper.java    1.0.0 9:38:38 AM
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,99 +80,34 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.core.accesscontrol.business;
+package com.idega.core.file.data;
 
-import javax.faces.context.FacesContext;
-import javax.servlet.http.HttpServletRequest;
+import java.io.File;
 
 /**
- * <p>Service of for locking possibility to log in when too many bad attempts 
- * </p>
+ * <p>Wrapper which allows to change name of the file.</p>
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 Jul 24, 2014
+ * @version 1.0.0 Jul 15, 2014
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-public interface LoginLock {
+public class FileWrapper extends File {
 
-	static final String PROPERTY_NAME_DURATION_FOR_FAILED_LOGIN_ATTEMPTS="duration_for_failed_login_attempts_in_milliseconds",
-			PROPERTY_NAME_MAX_AMOUNT_OF_FAILED_LOGIN_ATTEMPTS	= "maximum_amount_of_failed_attempts_to_login";
+	private static final long serialVersionUID = -9126454975497209764L;
+
+	private String name = null;
 	
-	static final long PROPERTY_VALUE_DURATION_FOR_FAILED_LOGIN_ATTEMPTS = 1000*60*60*24,
-			PROPERTY_VALUE_MAX_AMOUNT_OF_FAILED_LOGIN_ATTEMPTS = 5;
+	public FileWrapper(String pathname) {
+		super(pathname);
+	}
 
-	/**
-	 * 
-	 * @return <code>true</code> when there was too many unsuccessful 
-	 * attempts to login from given IP address, <code>false</code> otherwise.
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	boolean isLoginLocked();
-	
-	/**
-	 * 
-	 * @param ip address to check login for, not <code>null</code>;
-	 * @return <code>true</code> when there was too many unsuccessful 
-	 * attempts to login from given IP address, <code>false</code> otherwise.
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	boolean isLoginLocked(String ip);
+	@Override
+	public String getName() {
+		return this.name;
+	}
 
-	/**
-	 * 
-	 * @param request from where login attempt was made, not <code>null</code>;
-	 * @return <code>true</code> when there was too many unsuccessful 
-	 * attempts to login from given IP address, <code>false</code> otherwise.
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	boolean isLoginLocked(HttpServletRequest request);
-
-	/**
-	 * 
-	 * @param context to get {@link HttpServletRequest} from, 
-	 * not <code>null</code>;
-	 * @return <code>true</code> if record about unsuccessful login was created
-	 * <code>false</code> otherwise;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	boolean isLoginLocked(FacesContext context);
-
-	/**
-	 * 
-	 * @param ip address from which unsuccessful login was made, 
-	 * not <code>null</code>;
-	 * @return <code>true</code> if record about unsuccessful login was created
-	 * <code>false</code> otherwise;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	boolean createFailedLoginRecord(String ip);
-
-	/**
-	 * 
-	 * @param request from where login attempt was made, not <code>null</code>;
-	 * @return <code>true</code> if record about unsuccessful login was created
-	 * <code>false</code> otherwise;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	boolean createFailedLoginRecord(HttpServletRequest request);
-
-	/**
-	 * 
-	 * <p>Removes entities by criteria</p>
-	 * @param ip address from which unsuccessful login was made, 
-	 * not <code>null</code>;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	void deleteAllPreviuosRecords(String ip);
-	
-	/**
-	 * 
-	 * <p>Removes entities by criteria</p>
-	 * @param request from where login attempt was made, not <code>null</code>;
-	 * @return <code>true</code> if record about unsuccessful login was created
-	 * <code>false</code> otherwise;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-	 */
-	void deleteAllPreviuosRecords(HttpServletRequest request);
+	public void setName(String name) {
+		this.name = name;
+	}
 }

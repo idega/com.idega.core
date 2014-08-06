@@ -2,6 +2,7 @@ package com.idega.presentation.ui;
 
 import java.rmi.RemoteException;
 import java.text.Collator;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,7 +12,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Vector;
 
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
@@ -31,46 +31,48 @@ import com.idega.util.StringUtil;
 /**
  * A UI element that can display country names (localized) from the database. <br>
  * The default parameter it submits is the public static string IW_COUNTRY_MENU_PARAM_NAME and is the id for the Country
- * 
+ *
  * @author <a href= "eiki@idega.is">Eirikur S. Hrafnsson</a>
  * @author <a href= "aron@idega.is">Aron Birkir</a>
  */
 
 public class CountryDropdownMenu extends DropdownMenu {
-	
+
 	private String selectedCountryName = null;
 	private Country selectedCountry = null;
 	public static final String IW_COUNTRY_MENU_PARAM_NAME="iw_country_id";
-	private static Map countries = null;
+	private static Map<String, Country> countries = null;
 	private String label = null;
 	private String name = IW_COUNTRY_MENU_PARAM_NAME;
 	private Integer selectedCountryId = null;
-	
+	private boolean useCode;
+	private String selectedCountryCode;
+
 	public CountryDropdownMenu(){
 	}
-	
+
 	public CountryDropdownMenu(String parameterName){
-		super(parameterName); 
+		super(parameterName);
 	}
-	
+
 	private Country getCountryByISO(String ISO){
 		if(countries==null) {
 			initCountries();
 		}
 		if(countries.containsKey(ISO)) {
-			return (Country) countries.get(ISO);
+			return countries.get(ISO);
 		}
 		return null;
 	}
-	
+
 	private void initCountries(){
-		
+
 		try {
 			CountryHome countryHome = (CountryHome) IDOLookup.getHome(Country.class);
-			Collection counts = countryHome.findAll();
-			countries = new Hashtable(counts.size());
-			for (Iterator iter = counts.iterator(); iter.hasNext();) {
-				Country element = (Country) iter.next();
+			Collection<Country> counts = countryHome.findAll();
+			countries = new Hashtable<String, Country>(counts.size());
+			for (Iterator<Country> iter = counts.iterator(); iter.hasNext();) {
+				Country element = iter.next();
 				countries.put(element.getIsoAbbreviation(),element);
 			}
 		}
@@ -81,41 +83,41 @@ public class CountryDropdownMenu extends DropdownMenu {
 			e.printStackTrace();
 		}
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) throws Exception{
-		//TODO eiki cache countries 
+		//TODO eiki cache countries
 		// some caching made by aron
 		super.main(iwc);
 		setName(getName());
 		//System.out.println( "country dropdown main start "+ com.idega.util.IWTimestamp.RightNow().toString());
-		List localeCountries = Arrays.asList(Locale.getISOCountries());
-		
+		List<String> localeCountries = Arrays.asList(Locale.getISOCountries());
+
 		//List locales = Arrays.asList( java.util.Locale.getAvailableLocales());
 		//List locales = ICLocaleBusiness.listOfAllLocalesJAVA();
 		Locale currentLocale = iwc.getCurrentLocale();
 
 		//Iterator iter = locales.iterator();
-		Iterator iter = localeCountries.iterator();
-		
+		Iterator<String> iter = localeCountries.iterator();
+
 		Country country = null;
 		String countryDisplayName = null;
-		Map countries = new HashMap();
+		Map<Object, Country> countries = new HashMap<Object, Country>();
 		String lang = currentLocale.getISO3Language();
 		Locale locale;
-		List smallCountries = new Vector();
+		List<SmallCountry> smallCountries = new ArrayList<SmallCountry>();
 		//CountryHome countryHome = getAddressBusiness(iwc).getCountryHome();
 		while (iter.hasNext()) {
 			//Locale locale = (Locale) iter.next();
-			
-			String ISOCountry = (String ) iter.next();
+
+			String ISOCountry = iter.next();
 			try {
 				locale = new Locale(lang,ISOCountry);
-				
+
 				countryDisplayName = locale.getDisplayCountry(currentLocale);
-				//country = countryHome.findByIsoAbbreviation(locale.getCountry());	
+				//country = countryHome.findByIsoAbbreviation(locale.getCountry());
 				country = getCountryByISO(locale.getCountry());
-				
+
 				if( countryDisplayName!=null && country!=null && !countries.containsKey(country.getPrimaryKey())){
 					countries.put(country.getPrimaryKey(),country);//cache
 					SmallCountry sCountry = new SmallCountry((Integer)country.getPrimaryKey(),countryDisplayName,ISOCountry,currentLocale);
@@ -132,21 +134,26 @@ public class CountryDropdownMenu extends DropdownMenu {
 		if(label != null){
 			addMenuElement(-1, label);
 		}
-		for (Iterator iterator = smallCountries.iterator(); iterator.hasNext();) {
-			SmallCountry sCountry = (SmallCountry) iterator.next();
+		boolean useCode = isUseCode();
+		for (Iterator<SmallCountry> iterator = smallCountries.iterator(); iterator.hasNext();) {
+			SmallCountry sCountry = iterator.next();
 			// we dont want the ISO code into the list
 			if(!sCountry.name .equalsIgnoreCase(sCountry.code)) {
-				addMenuElement(sCountry.getID().intValue(),sCountry.getName());
+				if(useCode){
+					addMenuElement(sCountry.getCode(),sCountry.getName());
+				}else{
+					addMenuElement(sCountry.getID().intValue(),sCountry.getName());
+				}
 			}
 		}
-		
+
 		try {
 			if(!StringUtil.isEmpty(this.selectedCountryName)){
-				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByCountryName(this.selectedCountryName);	
+				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByCountryName(this.selectedCountryName);
 			}
 			// we must ensure no external selected country is set
 			else if(this.selectedCountry==null && !StringUtil.isEmpty(currentLocale.getCountry())){
-				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(currentLocale.getCountry());	
+				this.selectedCountry = getAddressBusiness(iwc).getCountryHome().findByIsoAbbreviation(currentLocale.getCountry());
 			}
 		}
 		catch (RemoteException e) {
@@ -158,18 +165,24 @@ public class CountryDropdownMenu extends DropdownMenu {
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
-		
-		if(this.selectedCountry!=null){
-			setSelectedElement(((Integer)this.selectedCountry.getPrimaryKey()).intValue());
+		if(useCode){
+			String code =getSelectedCountryCode();
+			if(!StringUtil.isEmpty(code)){
+				setSelectedElement(code);
+			}
 		}else{
-			if(selectedCountryId != null){
-				setSelectedElement(selectedCountryId);
+			if(this.selectedCountry!=null){
+				setSelectedElement(((Integer)this.selectedCountry.getPrimaryKey()).intValue());
+			}else{
+				if(selectedCountryId != null){
+					setSelectedElement(selectedCountryId);
+				}
 			}
 		}
 		//System.out.println( "country dropdown main end "+ com.idega.util.IWTimestamp.RightNow().toString());
 	}
-	
-	
+
+
 	public void setSelectedCountry(Country country){
 		this.selectedCountry = country;
 	}
@@ -182,32 +195,26 @@ public class CountryDropdownMenu extends DropdownMenu {
 	private AddressBusiness getAddressBusiness(IWApplicationContext iwc) throws RemoteException{
 		return IBOLookup.getServiceInstance(iwc,AddressBusiness.class);
 	}
-	
-	private class SmallCountry implements Comparable{
+
+	private class SmallCountry implements Comparable<SmallCountry> {
 		String name;
 		private Integer ID;
 		String code;
-		private Locale locale;
-		
+		private Collator coll = null;
+
 		public SmallCountry(Integer ID,String name,String code,Locale locale){
 			this.name = name;
 			this.ID = ID;
 			this.code = code;
-			this.locale = locale;
+			this.coll = Collator.getInstance(locale);
 		}
-		
-		
-		
-		
+
 		/* (non-Javadoc)
 		 * @see java.lang.Comparable#compareTo(java.lang.Object)
 		 */
 		@Override
-		public int compareTo(Object o) {
-			// TODO Auto-generated method stub
-			Collator coll = Collator.getInstance(this.locale);
-			return coll.compare( this.name,((SmallCountry)o).name);
-				
+		public int compareTo(SmallCountry o) {
+			return coll.compare(this.name, o.name);
 		}
 
 		/**
@@ -222,6 +229,10 @@ public class CountryDropdownMenu extends DropdownMenu {
 		 */
 		public String getName() {
 			return this.name;
+		}
+
+		public String getCode(){
+			return code;
 		}
 
 	}
@@ -253,7 +264,11 @@ public class CountryDropdownMenu extends DropdownMenu {
 		selectedCountryId = (Integer) getValue("selectedCountryId");
 		return selectedCountryId;
 	}
-	
+
+	public void setSelectedCountryId(Integer selectedCountryId) {
+		this.selectedCountryId = selectedCountryId;
+	}
+
 	private Object getValue(String attribute){
 		ValueExpression valueExpression = getValueExpression(attribute);
 		if(valueExpression == null){
@@ -263,8 +278,31 @@ public class CountryDropdownMenu extends DropdownMenu {
 		return value;
 	}
 
-	public void setSelectedCountryId(Integer selectedCountryId) {
-		this.selectedCountryId = selectedCountryId;
+	public boolean isUseCode() {
+		return useCode;
 	}
-	
+
+	public void setUseCode(boolean useCode) {
+		this.useCode = useCode;
+	}
+
+	public String getSelectedCountryCode() {
+		if(selectedCountryCode != null){
+			return selectedCountryCode;
+		}
+		if(selectedCountryCode == null){
+			selectedCountryCode = (String) getValue("selectedCountryCode");
+		}
+		if(selectedCountryCode == null){
+			if(selectedCountry != null){
+				selectedCountryCode = selectedCountry.getIsoAbbreviation();
+			}
+		}
+		return selectedCountryCode;
+	}
+
+	public void setSelectedCountryCode(String selectedCountryCode) {
+		this.selectedCountryCode = selectedCountryCode;
+	}
+
 }
