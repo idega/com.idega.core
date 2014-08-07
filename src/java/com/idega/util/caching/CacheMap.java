@@ -62,12 +62,15 @@ public class CacheMap<K, V> extends ConcurrentHashMap<K, V> {
 			removeLeastUsedObjectFromMemory();
 		}
 	}
+
 	@Override
-	public V put(K key, V value)
-	{
+	public V put(K key, V value) {
+		if (key == null || value == null) {
+			return value;
+		}
+
 		int difference = super.size() - this.getMaxNumberOfObjects();
-		if (difference >= 0)
-		{
+		if (difference >= 0) {
 			reduce(difference + 1);
 		}
 		incrementAccessesForKey(key);

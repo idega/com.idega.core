@@ -237,6 +237,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				if (groups != null) {
 					for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
 						Group item = iter.next();
+						if (item == null) {
+							continue;
+						}
+
 						if (getAdministratorGroupName().equals(item.getName())) {
 							LoginBusinessBean.setLoginAttribute(getAdministratorGroupName(), Boolean.TRUE, iwc);
 							return true;
@@ -638,8 +642,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			Group userPrimaryGroup = user.getPrimaryGroup();
 			if (userPrimaryGroup != null) {
 				usersGroupsToCheckAgainstPermissions[3].add(Integer.toString(userPrimaryGroup.getID()));
-			} else {
-				getLogger().warning(user + " (ID: " + user.getId() + ") does not have primary group!");
 			}
 			// ([0])Everyone, ([1])users, ([2])user, ([3])primaryGroup, ([4])otherGroups
 		}
@@ -2949,7 +2951,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 
 			//even if you have the view rights the page might not be published yet. Extra check for unpublished pages
-			if (!getPageDAO().isPagePublished(Integer.valueOf(pageKey))) {
+			if (iwuc.getApplicationContext().getApplicationSettings().getBoolean("iw_check_page_published", Boolean.TRUE) && !getPageDAO().isPagePublished(Integer.valueOf(pageKey))) {
 				//only editors can view unpublished pages.
 				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
 			}

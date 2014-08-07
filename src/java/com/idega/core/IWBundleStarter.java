@@ -35,8 +35,9 @@ public class IWBundleStarter implements IWBundleStartable {
 
 	@Override
 	public void start(IWBundle starterBundle) {
-		doChangePermissionLength(starterBundle.getApplication().getSettings());
-		doCachePages();
+		IWMainApplicationSettings settings = starterBundle.getApplication().getSettings();
+		doChangePermissionLength(settings);
+		doCachePages(settings);
 	}
 
 	private void doChangePermissionLength(IWMainApplicationSettings settings) {
@@ -54,24 +55,31 @@ public class IWBundleStarter implements IWBundleStartable {
 		}
 	}
 
-	private void doCachePages() {
-		//	Temporary solution to cache
+	private void doCachePages(IWMainApplicationSettings settings) {
+		//	TODO: temporary solution to cache
 		try {
-			String query = "select p." + ICPageBMPBean.ENTITY_NAME + "_ID from " + ICPageBMPBean.ENTITY_NAME + " p";
-			List<Serializable[]> ids = SimpleQuerier.executeQuery(query, 1);
-			if (ListUtil.isEmpty(ids)) {
-				return;
-			}
-
-			ICPageDAO icPageDAO = getICPageDAO();
-			for (Serializable[] data: ids) {
-				if (ArrayUtil.isEmpty(data)) {
-					continue;
+			if (settings.getBoolean("iw_cache_pages", Boolean.TRUE)) {
+				String query = "select p." + ICPageBMPBean.ENTITY_NAME + "_ID from " + ICPageBMPBean.ENTITY_NAME + " p where p.deleted is null or p.deleted = 'N'";
+				List<Serializable[]> ids = SimpleQuerier.executeQuery(query, 1);
+				if (ListUtil.isEmpty(ids)) {
+					return;
 				}
 
-				Serializable id = data[0];
-				if (id instanceof Number) {
-					icPageDAO.isPagePublished(((Number) id).intValue());
+				ICPageDAO icPageDAO = getICPageDAO();
+				int index = 0;
+				int totalPages = ids.size();
+				LOGGER.info("Pages to cache: " + totalPages);
+				for (Serializable[] data: ids) {
+					index++;
+					if (ArrayUtil.isEmpty(data)) {
+						continue;
+					}
+
+					Serializable id = data[0];
+					if (id instanceof Number) {
+						LOGGER.info("Will cache page with ID: " + id + ", " + index + " of " + totalPages);
+						icPageDAO.isPagePublished(((Number) id).intValue());
+					}
 				}
 			}
 		} catch (Exception e) {
