@@ -902,14 +902,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	private LoginState verifyPasswordAndLogin(HttpServletRequest request, 
-			String login, String password) throws Exception {	
-		if (isLoginLocked(request)) {
+			String login, String password) throws Exception {
+		if (isLoginLocked(request, login)) {
 			return LoginState.DISABLED;
 		}
 
 		UserLogin userLogin = getUserLoginDAO().findLoginByUsername(login);
 		if (userLogin == null) {
-			createFailedLoginRecord(request);
+			createFailedLoginRecord(request, login);
 			return LoginState.USER_NOT_FOUND;
 		}
 
@@ -928,11 +928,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (logIn(request, userLogin)) {
 				loginInfo.setFailedAttemptCount(0);
 				getUserLoginDAO().merge(loginInfo);
-				getLoginLock().deleteAllPreviuosRecords(request);
+				getLoginLock().deleteAllPreviuosRecords(request, login);
 				return LoginState.LOGGED_ON;
 			}
 		} else {
-			createFailedLoginRecord(request);
+			createFailedLoginRecord(request, login);
 			
 			if (isAdmin) { // admin must get unlimited attempts				
 				return LoginState.WRONG_PASSWORD;
@@ -1666,13 +1666,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * <p>Method requires com.idega.block.login module, it will always
 	 * return <code>false</code> if module not provided.</p>
 	 * @param request to create record for, not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> when record created, <code>false</code>
 	 * otherwise.
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	protected boolean createFailedLoginRecord(HttpServletRequest request) {
+	protected boolean createFailedLoginRecord(HttpServletRequest request, String username) {
 		if (getLoginLock() != null) {
-			return getLoginLock().createFailedLoginRecord(request);		
+			return getLoginLock().createFailedLoginRecord(request, username);		
 		}
 
 		return false;
@@ -1681,13 +1683,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * 
 	 * @param request from where login attempt was made, not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> when there was too many unsuccessful 
 	 * attempts to login from given IP address, <code>false</code> otherwise.
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	protected boolean isLoginLocked(HttpServletRequest request) {
+	protected boolean isLoginLocked(HttpServletRequest request, String username) {
 		if (getLoginLock() != null) {
-			return getLoginLock().isLoginLocked(request);
+			return getLoginLock().isLoginLocked(request, username);
 		}
 
 		return Boolean.FALSE;

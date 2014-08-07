@@ -85,6 +85,8 @@ package com.idega.core.accesscontrol.business;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpServletRequest;
 
+import com.idega.core.accesscontrol.data.LoginTable;
+
 /**
  * <p>Service of for locking possibility to log in when too many bad attempts 
  * </p>
@@ -113,20 +115,24 @@ public interface LoginLock {
 	/**
 	 * 
 	 * @param ip address to check login for, not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> when there was too many unsuccessful 
 	 * attempts to login from given IP address, <code>false</code> otherwise.
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	boolean isLoginLocked(String ip);
+	boolean isLoginLocked(String ip, String username);
 
 	/**
 	 * 
 	 * @param request from where login attempt was made, not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> when there was too many unsuccessful 
 	 * attempts to login from given IP address, <code>false</code> otherwise.
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	boolean isLoginLocked(HttpServletRequest request);
+	boolean isLoginLocked(HttpServletRequest request, String username);
 
 	/**
 	 * 
@@ -142,37 +148,45 @@ public interface LoginLock {
 	 * 
 	 * @param ip address from which unsuccessful login was made, 
 	 * not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> if record about unsuccessful login was created
 	 * <code>false</code> otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	boolean createFailedLoginRecord(String ip);
+	boolean createFailedLoginRecord(String ip, String username);
 
 	/**
 	 * 
 	 * @param request from where login attempt was made, not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> if record about unsuccessful login was created
 	 * <code>false</code> otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	boolean createFailedLoginRecord(HttpServletRequest request);
+	boolean createFailedLoginRecord(HttpServletRequest request, String username);
 
 	/**
 	 * 
 	 * <p>Removes entities by criteria</p>
 	 * @param ip address from which unsuccessful login was made, 
 	 * not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	void deleteAllPreviuosRecords(String ip);
+	void deleteAllPreviuosRecords(String ip, String username);
 	
 	/**
 	 * 
 	 * <p>Removes entities by criteria</p>
 	 * @param request from where login attempt was made, not <code>null</code>;
+	 * @param username is {@link LoginTable#getUserLogin()}, 
+	 * skipped if <code>null</code>;
 	 * @return <code>true</code> if record about unsuccessful login was created
 	 * <code>false</code> otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	void deleteAllPreviuosRecords(HttpServletRequest request);
+	void deleteAllPreviuosRecords(HttpServletRequest request, String username);
 }
