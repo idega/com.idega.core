@@ -919,7 +919,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	private LoginState verifyPasswordAndLogin(HttpServletRequest request, String login, String password) throws Exception {
 		boolean loginLockIsEnabled = isLoginLockIsEnabled();
 		if (loginLockIsEnabled) {
-			if (isLoginLocked(request)) {
+			if (isLoginLocked(request, login)) {
 				return LoginState.DISABLED;
 			}
 		}
