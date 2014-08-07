@@ -215,7 +215,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public void internalSetState(HttpServletRequest request, LoginState state) {
 		LoginBusinessBean.getLoginSessionBean().setLoginState(state);
 	}
-	
+
 	public static LoginState internalGetState(IWContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getLoginState();
 	}
@@ -743,8 +743,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 * @throws Exception
 	 */
-	protected boolean logIn(IWContext iwc, User user) throws Exception {
-		return logIn(iwc.getRequest(), iwc.getResponse(), user);
+	protected boolean logIn(IWContext iwc, User user, String userName) throws Exception {
+		return logIn(iwc.getRequest(), iwc.getResponse(), user, userName);
 	}
 
 	/**
@@ -756,12 +756,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 * @throws Exception
 	 */
-	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, User user) throws Exception {
-		UserLogin userLogin = getUserLoginDAO().findLoginForUser(user);
+	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, User user, String userName) throws Exception {
+		UserLogin userLogin = null;
+		try {
+			userLogin = getUserLoginDAO().findLoginForUser(user);
+		} catch (Exception e) {}
+		if (userLogin == null && !StringUtil.isEmpty(userName)) {
+			userLogin = getUserLoginDAO().findLoginByUsername(userName);
+		}
+
+		if (userLogin == null) {
+			LOGGER.warning("Unable to find login for user " + user + ", ID: " + user.getId() + ", user name: " + userName);
+			return false;
+		}
+
 		storeUserAndGroupInformationInSession(request.getSession(), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
-		storeLoggedOnInfoInSession(request, response, request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord,
-				userLogin.getLoginType());
+		storeLoggedOnInfoInSession(request, response, request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
 		if (user != null)
 			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
 		return true;
@@ -901,10 +912,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	private LoginState verifyPasswordAndLogin(HttpServletRequest request, 
-			String login, String password) throws Exception {	
-		if (isLoginLocked(request)) {
-			return LoginState.DISABLED;
+	private boolean isLoginLockIsEnabled() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("iw_login_lock_enabled", Boolean.TRUE);
+	}
+
+	private LoginState verifyPasswordAndLogin(HttpServletRequest request, String login, String password) throws Exception {
+		boolean loginLockIsEnabled = isLoginLockIsEnabled();
+		if (loginLockIsEnabled) {
+			if (isLoginLocked(request)) {
+				return LoginState.DISABLED;
+			}
 		}
 
 		UserLogin userLogin = getUserLoginDAO().findLoginByUsername(login);
@@ -928,13 +945,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (logIn(request, userLogin)) {
 				loginInfo.setFailedAttemptCount(0);
 				getUserLoginDAO().merge(loginInfo);
-				getLoginLock().deleteAllPreviuosRecords(request);
+
+				if (loginLockIsEnabled) {
+					getLoginLock().deleteAllPreviuosRecords(request);
+				}
+
 				return LoginState.LOGGED_ON;
 			}
 		} else {
 			createFailedLoginRecord(request);
-			
-			if (isAdmin) { // admin must get unlimited attempts				
+
+			if (isAdmin) { // admin must get unlimited attempts
 				return LoginState.WRONG_PASSWORD;
 			}
 			int maxFailedLogginAttempts = 0;
@@ -993,7 +1014,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * </p>
 	 * @param userLogin is username, not <code>null</code>;
 	 * @param password, not <code>null</code>;
-	 * @return <code>true</code> if user can login by credentials, 
+	 * @return <code>true</code> if user can login by credentials,
 	 * <code>false</code> otherwise!
 	 */
 	public boolean verifyPassword(UserLogin userLogin, String password){
@@ -1672,16 +1693,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	protected boolean createFailedLoginRecord(HttpServletRequest request) {
 		if (getLoginLock() != null) {
-			return getLoginLock().createFailedLoginRecord(request);		
+			return getLoginLock().createFailedLoginRecord(request);
 		}
 
 		return false;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param request from where login attempt was made, not <code>null</code>;
-	 * @return <code>true</code> when there was too many unsuccessful 
+	 * @return <code>true</code> when there was too many unsuccessful
 	 * attempts to login from given IP address, <code>false</code> otherwise.
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
