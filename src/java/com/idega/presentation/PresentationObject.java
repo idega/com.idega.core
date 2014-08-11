@@ -14,6 +14,7 @@ import java.lang.reflect.Method;
 import java.rmi.RemoteException;
 import java.util.Dictionary;
 import java.util.Enumeration;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,8 @@ import javax.faces.el.ValueBinding;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.swing.event.EventListenerList;
+
+import org.apache.commons.lang.StringEscapeUtils;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
@@ -172,6 +175,8 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	private boolean renderForLoggedOut = true;
 	private boolean renderForLoggedIn = true;
 
+    private boolean escaped = Boolean.FALSE;
+
 	/**
 	 * Default constructor.
 	 * Should only be called by sublasses.
@@ -194,6 +199,18 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 			//to maintain backwards compatability.
 			return null;
 		}
+	}
+
+	/**
+	 * 
+	 * @return <code>true</code> if text in input should be escaped;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public boolean isEscaped() {
+		return escaped;
+	}
+	public void setEscaped(boolean escaped) {
+		this.escaped = escaped;
 	}
 
 	protected String generateID() {
@@ -490,13 +507,30 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 			return true;
 		}
 	}
-	public Map<String, String> getMarkupAttributes()
-	{
+
+	public Map<String, String> getMarkupAttributes() {
 		if(this.attributes==null){
 			this.attributes = new Hashtable<String, String>();
 		}
+
+		if (!isEscaped()) {
+			return this.attributes;
+		}
+
+		Map<String, String> modifiedMap = new HashMap<String, String>();
+		if (!MapUtil.isEmpty(this.attributes)) {
+			for (String attributeName : this.attributes.keySet()) {
+				String attributeValue = this.attributes.get(attributeName);
+				attributeValue = StringEscapeUtils.escapeHtml(attributeValue);
+				modifiedMap.put(attributeName, attributeValue);
+			}
+		}
+
+		this.attributes = modifiedMap;
+
 		return this.attributes;
 	}
+
 	protected static String getAttributesString(Map<String, String> map)
 	{
 		StringBuffer returnString = new StringBuffer();

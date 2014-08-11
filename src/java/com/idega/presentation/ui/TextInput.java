@@ -15,6 +15,7 @@ import java.util.Locale;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 import com.idega.util.LocaleUtil;
 import com.idega.util.text.TextSoap;
@@ -726,7 +727,7 @@ public class TextInput extends GenericInput {
 	    	this.nextInputID = input.getId();
     	}
     }
-    
+
 	/**
 	 * Sets whether the interface object should get autofocus or not.
 	 * @param autofocus	The status to set.
@@ -739,5 +740,4 @@ public class TextInput extends GenericInput {
 			this.removeMarkupAttribute("autofocus");
 		}
 	}
-
 }
