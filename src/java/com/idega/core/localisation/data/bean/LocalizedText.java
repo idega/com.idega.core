@@ -9,6 +9,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
+import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
@@ -41,7 +42,8 @@ public class LocalizedText implements Serializable {
 	@JoinColumn(name = ICLocale.COLUMN_LOCALE_ID, nullable = false)
 	private ICLocale locale;
 
-	@Column(name = "text", length = 65535, nullable = false)
+	@Lob
+	@Column(name = "text", nullable = false)
 	private String text;
 
 	public Long getId() {
