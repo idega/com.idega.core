@@ -186,14 +186,7 @@ public class CacheMap<K extends Serializable, V> extends ConcurrentHashMap<K, V>
 			}
 
 			Element element = new Element(key, value);
-			boolean checkTheSizes = !keySet().contains(key);
-			int sizeBefore = cache.getSize();
 			cache.put(element);
-			int sizeAfter = cache.getSize();
-			if (checkTheSizes && (sizeAfter <= 0 || sizeBefore == sizeAfter)) {
-				LOGGER.warning("Value '" + value + "' with key '" + key + "' was not added to the cache " + cache.getName());
-				return null;
-			}
 
 			if (getCacheListeners() != null) {
 				for (Iterator<CacheMapListener<K, V>> iterator = getCacheListeners().iterator(); iterator.hasNext();) {
