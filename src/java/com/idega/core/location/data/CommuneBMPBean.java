@@ -221,6 +221,7 @@ public class CommuneBMPBean extends GenericEntity implements Commune {
 //			commune.setCommuneCode(OTHER);
 			commune.setCommuneName(OTHER);
 			commune.setIsValid(true);
+			commune.setIsDefault(false);
 			commune.store();
 		}
 		return commune.getPrimaryKey();
