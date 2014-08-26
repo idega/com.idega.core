@@ -202,7 +202,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	}
 
 	/**
-	 * 
+	 *
 	 * @return <code>true</code> if text in input should be escaped;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -2287,8 +2287,9 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 					try {
 						m.invoke(this, value);
 					} catch (Exception e) {
-						getLogger().warning("Unable to set value (" + value + ") from binding " + key + " to object " + this + ", class: " +
-								this.getClass());
+						getLogger().warning("Unable to set value ('" + value + "', type of value: " +
+								(value == null ? "unknown" : value.getClass().getName()) + ") from binding '" +
+								key + "' to object " + this + ", class: " + this.getClass().getName() + " using method " + m.getName());
 					}
 			}
 		}
