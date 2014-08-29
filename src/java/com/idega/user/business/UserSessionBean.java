@@ -18,25 +18,31 @@ import com.idega.user.data.User;
 
 /**
  * Last modified: $Date: 2007/05/08 16:38:14 $ by $Author: eiki $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.3 $
  */
 public class UserSessionBean extends IBOSessionBean implements UserSession, HttpSessionBindingListener {
 
+	private static final long serialVersionUID = -2773376391938154702L;
+
+	@Override
 	public void valueBound(HttpSessionBindingEvent arg0) {
 	}
 
+	@Override
 	public void valueUnbound(HttpSessionBindingEvent arg0) {
 		iUser = null;
 	}
 
 	private User iUser;
-	
+
+	@Override
 	public User getUser() {
 		return this.iUser;
 	}
-	
+
+	@Override
 	public void setUser(User user) {
 		this.iUser = user;
 	}
