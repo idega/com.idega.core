@@ -162,4 +162,11 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		userLogin.getLoginInfo().setAccountEnabled(true);
 		persist(userLogin);
 	}
+	
+	@Transactional(readOnly=false)
+	public void changeLoginPassword(Integer loginID,String password){
+		UserLogin userLogin = findLogin(loginID);
+		userLogin.setUserPassword(password);
+		merge(userLogin);
+	}
 }

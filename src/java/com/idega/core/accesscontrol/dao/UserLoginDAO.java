@@ -49,4 +49,5 @@ public interface UserLoginDAO extends GenericDao {
 	public UserLogin getDefaultLoginByUUId(String UUId);
 
 	public void enableUserLogin(String UUId);
+	public void changeLoginPassword(Integer loginID,String password);
 }

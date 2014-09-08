@@ -43,9 +43,12 @@ import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.business.AccessControl;
 import com.idega.core.accesscontrol.business.AccessController;
+import com.idega.core.accesscontrol.business.LoggedOnInfo;
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginCreateException;
 import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.business.NotLoggedOnException;
+import com.idega.core.accesscontrol.dao.UserLoginDAO;
 import com.idega.core.accesscontrol.data.ICPermission;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.ICRoleHome;
@@ -4280,6 +4283,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	public boolean changeUserCurrentPassword(IWContext iwc,String newPassword){
+		try{
+			LoggedOnInfo loggedOnInfo = LoginBusinessBean.getLoggedOnInfo(iwc);
+			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean("userLoginDAO");
+			userLoginDAO.changeLoginPassword(loggedOnInfo.getUserLogin().getId(), newPassword);
+			return true;
+		}catch (Exception e) {
+			getLogger().log(Level.WARNING, "Failed changing current user password", e);
+		}
+		return false;
+	}
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.user.business.UserBusiness#changeUserPassword(com.idega.user.data.User, java.lang.String)

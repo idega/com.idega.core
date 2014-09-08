@@ -37,7 +37,7 @@ public class IWBundleStarter implements IWBundleStartable {
 	public void start(IWBundle starterBundle) {
 		IWMainApplicationSettings settings = starterBundle.getApplication().getSettings();
 		doChangePermissionLength(settings);
-		doCachePages(settings);
+		//doCachePages(settings);TODO: uncommentn when commit
 	}
 
 	private void doChangePermissionLength(IWMainApplicationSettings settings) {
