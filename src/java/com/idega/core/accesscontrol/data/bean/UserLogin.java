@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.accesscontrol.data.bean;
 
@@ -57,6 +57,7 @@ public class UserLogin implements Serializable {
 	private static final String COLUMN_CHANGED_BY_USER = "changed_by_user_id";
 	private static final String COLUMN_CHANGED_BY_GROUP = "changed_by_group_id";
 	private static final String COLUMN_LOGIN_TYPE = "login_type";
+	private static final String COLUMN_COUNT_SENT_TO_BANK = "bank_count";
 
 	public static final String QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId";
 	@Id
@@ -67,7 +68,7 @@ public class UserLogin implements Serializable {
 	@ManyToOne
 	@JoinColumn(name = COLUMN_USER)
 	private User user;
-	
+
 	@Column(name = COLUMN_USER_LOGIN, length = 32, nullable = false, unique = true)
 	private String userLogin;
 
@@ -91,10 +92,10 @@ public class UserLogin implements Serializable {
 
 	@Column(name = COLUMN_LOGIN_TYPE, length = 32)
 	private String loginType;
-	
+
 	@OneToOne(cascade = CascadeType.ALL, mappedBy = "userLogin")
 	private LoginInfo loginInfo;
-	
+
 	@OneToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL, targetEntity = LoginRecord.class)
 	@JoinColumn(name = COLUMN_LOGIN_ID)
 	private List<LoginRecord> loginRecords;
@@ -106,6 +107,9 @@ public class UserLogin implements Serializable {
 		setLastChanged(IWTimestamp.getTimestampRightNow());
 	}
 
+	@Column(name = COLUMN_COUNT_SENT_TO_BANK)
+	private Integer bankCount;
+
 	public Integer getId() {
 		return this.loginID;
 	}
@@ -113,11 +117,11 @@ public class UserLogin implements Serializable {
 	public void setId(Integer loginID) {
 		this.loginID = loginID;
 	}
-	
+
 	public User getUser() {
 		return this.user;
 	}
-	
+
 	public void setUser(User user) {
 		this.user = user;
 	}
@@ -192,16 +196,25 @@ public class UserLogin implements Serializable {
 	public void setLoginType(String loginType) {
 		this.loginType = loginType;
 	}
-	
+
 	public LoginInfo getLoginInfo() {
 		return this.loginInfo;
 	}
-	
+
 	public List<LoginRecord> getLoginRecords() {
 		return this.loginRecords;
 	}
-	
+
 	public void setLoginRecords(List<LoginRecord> loginRecords) {
 		this.loginRecords = loginRecords;
 	}
+
+	public Integer getBankCount() {
+		return bankCount;
+	}
+
+	public void setBankCount(Integer bankCount) {
+		this.bankCount = bankCount;
+	}
+
 }
