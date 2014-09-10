@@ -6,6 +6,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationListener;
 
 import com.idega.core.accesscontrol.data.bean.ICPermission;
 import com.idega.core.accesscontrol.data.bean.ICRole;
@@ -15,11 +16,12 @@ import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.idegaweb.RepositoryStartedEvent;
 import com.idega.util.ArrayUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
 
-public class IWBundleStarter implements IWBundleStartable {
+public class IWBundleStarter implements IWBundleStartable, ApplicationListener<RepositoryStartedEvent> {
 
 	private static final Logger LOGGER = Logger.getLogger(IWBundleStarter.class.getName());
 
@@ -37,7 +39,10 @@ public class IWBundleStarter implements IWBundleStartable {
 	public void start(IWBundle starterBundle) {
 		IWMainApplicationSettings settings = starterBundle.getApplication().getSettings();
 		doChangePermissionLength(settings);
-		doCachePages(settings);
+
+		if (settings.getBoolean("iw_cache_pages", Boolean.TRUE)) {
+			doCachePages();
+		}
 	}
 
 	private void doChangePermissionLength(IWMainApplicationSettings settings) {
@@ -55,31 +60,29 @@ public class IWBundleStarter implements IWBundleStartable {
 		}
 	}
 
-	private void doCachePages(IWMainApplicationSettings settings) {
+	private void doCachePages() {
 		//	TODO: temporary solution to cache
 		try {
-			if (settings.getBoolean("iw_cache_pages", Boolean.TRUE)) {
-				String query = "select p." + ICPageBMPBean.ENTITY_NAME + "_ID from " + ICPageBMPBean.ENTITY_NAME + " p where p.deleted is null or p.deleted = 'N'";
-				List<Serializable[]> ids = SimpleQuerier.executeQuery(query, 1);
-				if (ListUtil.isEmpty(ids)) {
-					return;
+			String query = "select p." + ICPageBMPBean.ENTITY_NAME + "_ID from " + ICPageBMPBean.ENTITY_NAME + " p where p.deleted is null or p.deleted = 'N'";
+			List<Serializable[]> ids = SimpleQuerier.executeQuery(query, 1);
+			if (ListUtil.isEmpty(ids)) {
+				return;
+			}
+
+			ICPageDAO icPageDAO = getICPageDAO();
+			int index = 0;
+			int totalPages = ids.size();
+			LOGGER.info("Pages to cache: " + totalPages);
+			for (Serializable[] data: ids) {
+				index++;
+				if (ArrayUtil.isEmpty(data)) {
+					continue;
 				}
 
-				ICPageDAO icPageDAO = getICPageDAO();
-				int index = 0;
-				int totalPages = ids.size();
-				LOGGER.info("Pages to cache: " + totalPages);
-				for (Serializable[] data: ids) {
-					index++;
-					if (ArrayUtil.isEmpty(data)) {
-						continue;
-					}
-
-					Serializable id = data[0];
-					if (id instanceof Number) {
-						LOGGER.info("Will cache page with ID: " + id + ", " + index + " of " + totalPages);
-						icPageDAO.isPagePublished(((Number) id).intValue());
-					}
+				Serializable id = data[0];
+				if (id instanceof Number) {
+					LOGGER.info("Will cache page with ID: " + id + ", " + index + " of " + totalPages);
+					icPageDAO.isPagePublished(((Number) id).intValue());
 				}
 			}
 		} catch (Exception e) {
@@ -89,6 +92,13 @@ public class IWBundleStarter implements IWBundleStartable {
 
 	@Override
 	public void stop(IWBundle starterBundle) {
+	}
+
+	@Override
+	public void onApplicationEvent(RepositoryStartedEvent event) {
+		if (event.getIWMA().getSettings().getBoolean("iw_cache_pages_on_startup", Boolean.TRUE)) {
+			doCachePages();
+		}
 	}
 
 }
