@@ -1838,8 +1838,12 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * This is set when the first IWMainApplication is instanciated.
      * @return the default application context
      */
-    public static IWApplicationContext getDefaultIWApplicationContext(){
-		return getDefaultIWMainApplication().getIWApplicationContext();
+    public static IWApplicationContext getDefaultIWApplicationContext() {
+    	if (getDefaultIWMainApplication() != null) {
+    		return getDefaultIWMainApplication().getIWApplicationContext();
+    	}
+
+		return null;
 	}
 
     public IWMainApplication getSubApplication(String domainServerName) {
