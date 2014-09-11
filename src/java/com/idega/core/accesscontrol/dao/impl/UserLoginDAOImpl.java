@@ -123,6 +123,15 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 	}
 
 	@Override
+	public Integer getNumberOfLogins(User user) {
+		if (user == null) {
+			return null;
+		}
+
+		return getSingleResult(LoginRecord.GET_NUMBER_OF_LOGINS_FOR_USER, Integer.class, new Param("user", user));
+	}
+
+	@Override
 	public LoginRecord getLastRecordByLogin(UserLogin userLogin) {
 		Param param = new Param("login", userLogin);
 		return getSingleResult("loginRecord.findLastByLogin", LoginRecord.class, param);
@@ -139,18 +148,25 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		info.setAccountEnabled(enabled);
 		persist(info);
 	}
-	
+
 	@Override
 	public UserLogin getDefaultLoginByUUId(String UUId){
 		UserLogin login = getSingleResult(UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, UserLogin.class, new Param(User.PROP_UNIQUE_ID, UUId));
 		return login;
 	}
-	
+
 	@Override
 	@Transactional
 	public void enableUserLogin(String UUId){
 		UserLogin userLogin = getDefaultLoginByUUId(UUId);
 		userLogin.getLoginInfo().setAccountEnabled(true);
 		persist(userLogin);
+	}
+	
+	@Transactional(readOnly=false)
+	public void changeLoginPassword(Integer loginID,String password){
+		UserLogin userLogin = findLogin(loginID);
+		userLogin.setUserPassword(password);
+		merge(userLogin);
 	}
 }

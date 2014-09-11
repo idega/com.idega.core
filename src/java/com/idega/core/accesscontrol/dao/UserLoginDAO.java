@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.accesscontrol.dao;
 
@@ -25,7 +25,7 @@ public interface UserLoginDAO extends GenericDao {
 	public UserLogin findLoginForUser(User user);
 
 	public List<UserLogin> findAllLoginsForUser(User user);
-	
+
 	public UserLogin findLoginByUsername(String username);
 
 	public UserLogin findLoginByUserAndUsername(User user, String username);
@@ -37,14 +37,17 @@ public interface UserLoginDAO extends GenericDao {
 	public boolean createLogoutRecord(LoginRecord record);
 
 	public LoginRecord getLastRecordByUser(User user);
-	
+
 	public LoginRecord getLastRecordByLogin(UserLogin userLogin);
-	
+
+	public Integer getNumberOfLogins(User user);
+
 	public void updateFailedLoginAttempts(LoginInfo info, int attempts);
-	
+
 	public void setAccountValidity(LoginInfo info, boolean enabled);
-	
+
 	public UserLogin getDefaultLoginByUUId(String UUId);
-	
+
 	public void enableUserLogin(String UUId);
+	public void changeLoginPassword(Integer loginID,String password);
 }

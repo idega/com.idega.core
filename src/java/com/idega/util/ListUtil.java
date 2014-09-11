@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
+import java.util.logging.Logger;
 
 /**
  * Title:        idegaclasses
@@ -151,7 +152,7 @@ private static <T> ArrayList<T> getEmptyVector(){
 			}
 		}
 		else{
-			System.err.println("[ListUtil] - convertTokenSeparatedStringToList: String or token is null!");
+			Logger.getLogger(ListUtil.class.getName()).warning("String or token is null!");
 		}
 
 		return list;
