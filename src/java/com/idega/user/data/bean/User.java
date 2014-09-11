@@ -30,6 +30,7 @@ import javax.persistence.PrimaryKeyJoinColumn;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.xml.bind.annotation.XmlTransient;
 
 import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
@@ -59,6 +60,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName")
 })
+@XmlTransient
 public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	private static final long serialVersionUID = 3393646538663696610L;
