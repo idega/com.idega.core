@@ -21,6 +21,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -321,28 +322,51 @@ public class IWDatePicker extends TextInput {
 		}
 
 		initAction.append("});");
-		if(date != null){
-			StringBuilder dateSet = new StringBuilder("jQuery(document).ready(function(){");
-			if (isDateRange()) {
-				long t1 = date.getTime();
-				Long t2;
-				if(dateTo == null){
-					dateTo = new Date();
-					t2 = dateTo.getTime();
-					t2 = t2 - (t2 % (1000 * 60));
-				}else{
-					t2 = dateTo.getTime();
+
+		if (date != null) {
+			if (VERSION_1_8_17.equals(getVersion())) {
+				iwDate = new IWTimestamp(date);
+
+				if (isDateRange() && setManualDate) {
+					iwDate.setDay(1);
 				}
-				dateSet.append("jQuery('#").append(this.getId()).append("').").append(function).append("('setDate',new Date(")
-				.append(t1).append("));");
-				dateSet.append("jQuery('#").append(this.getId()).append("').").append(function).append("('setDate',new Date(")
-					.append(t2).append("));");
-			}else{
-				dateSet.append("jQuery('#").append(this.getId()).append("').").append(function).append("('setDate',new Date(")
-					.append(date.getTime()).append("));");
+				if (iwDate != null) {
+					StringBuilder value = new StringBuilder(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
+
+					if (isDateRange()) {
+						iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
+						value.append(dateRangeSeparator);
+						if (isShowTime())
+							value.append(iwDateTo.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT));
+						else
+							value.append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+					}
+
+					setValue(value.toString());
+				}
+			} else {
+				StringBuilder dateSet = new StringBuilder("jQuery(document).ready(function(){");
+					if (isDateRange()) {
+						long t1 = date.getTime();
+						Long t2;
+						if(dateTo == null){
+							dateTo = new Date();
+							t2 = dateTo.getTime();
+							t2 = t2 - (t2 % (1000 * 60));
+						}else{
+							t2 = dateTo.getTime();
+						}
+						dateSet.append("jQuery('#").append(this.getId()).append("').").append(function).append("('setDate',new Date(")
+						.append(t1).append("));");
+						dateSet.append("jQuery('#").append(this.getId()).append("').").append(function).append("('setDate',new Date(")
+							.append(t2).append("));");
+					}else{
+						dateSet.append("jQuery('#").append(this.getId()).append("').").append(function).append("('setDate',new Date(")
+							.append(date.getTime()).append("));");
+					}
+					dateSet.append("});");
+					initAction.append(dateSet);
 			}
-			dateSet.append("});");
-			initAction.append(dateSet);
 		}
 
 		// Initialization action
