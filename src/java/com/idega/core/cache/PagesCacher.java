@@ -36,7 +36,15 @@ public class PagesCacher extends DefaultSpringBean implements ApplicationListene
 	@Override
 	public void onApplicationEvent(RepositoryStartedEvent event) {
 		if (event.getIWMA().getSettings().getBoolean("iw_cache_pages_on_startup", Boolean.TRUE)) {
-			doCachePages();
+			Thread cacher = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					doCachePages();
+				}
+
+			});
+			cacher.start();
 		}
 	}
 
