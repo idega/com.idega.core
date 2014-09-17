@@ -239,7 +239,11 @@ public abstract class TreeableEntityBMPBean<Node extends ICTreeNode<?>> extends 
 	@SuppressWarnings("unchecked")
 	@Override
 	public TreeableEntity<Node> getParentEntity() {
-		return (TreeableEntity<Node>) getParentNode();
+		Node node = getParentNode();
+		if (node instanceof TreeableEntity) {
+			return (TreeableEntity<Node>) node;
+		}
+		return null;
 	}
 
 	@Override
