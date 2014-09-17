@@ -54,6 +54,7 @@ import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.accesscontrol.data.ICRoleHome;
 import com.idega.core.accesscontrol.data.LoginInfo;
 import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.accesscontrol.data.PasswordNotKnown;
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICDomain;
@@ -4283,12 +4284,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public boolean changeUserCurrentPassword(IWContext iwc,String newPassword){
 		try{
 			LoggedOnInfo loggedOnInfo = LoginBusinessBean.getLoggedOnInfo(iwc);
 			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean("userLoginDAO");
-			userLoginDAO.changeLoginPassword(loggedOnInfo.getUserLogin().getId(), newPassword);
-			return true;
+			Integer loginId = loggedOnInfo.getUserLogin().getId();
+			userLoginDAO.changeLoginPassword(loginId, newPassword);
+
+			User user = getUser(loggedOnInfo.getUser().getId());
+
+			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
+			LoginTable loginTable = loginTableHome.findByPrimaryKey(loginId);
+
+			return doUpdateLoginInfo(user, loginTable, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
 		}catch (Exception e) {
 			getLogger().log(Level.WARNING, "Failed changing current user password", e);
 		}
@@ -4326,11 +4335,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return Boolean.FALSE;
 		}
 
-		boolean accountEnabled = Boolean.TRUE;
-		boolean passwordNeverExpires = Boolean.FALSE;
-		boolean userAllowedToChangePassword = Boolean.TRUE;
-		boolean mustChangePasswordNextTime = Boolean.FALSE;
+		return doUpdateLoginInfo(user, loginTable, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
+	}
 
+	private boolean doUpdateLoginInfo(User user, LoginTable loginTable, boolean accountEnabled, boolean passwordNeverExpires, boolean userAllowedToChangePassword, boolean mustChangePasswordNextTime) {
 		try {
 			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled,
 					IWTimestamp.RightNow(), 5000, passwordNeverExpires,
@@ -4339,9 +4347,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			getLogger().info("Password for user " + user.getName() + " has been changed");
 			return Boolean.TRUE;
 		} catch(Exception ex) {
-			getLogger().log(Level.WARNING,
-					"Failed to update login info for user: " +
-							user.getName() + " cause of: ", ex);
+			getLogger().log(Level.WARNING, "Failed to update login info for user: " + user.getName() + " cause of: ", ex);
 		}
 
 		return Boolean.FALSE;
