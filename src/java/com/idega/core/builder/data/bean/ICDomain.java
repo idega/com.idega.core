@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.builder.data.bean;
 
@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +35,7 @@ import com.idega.util.LocaleUtil;
 	@NamedQuery(name = "domain.findAllByServerName", query = "select d from ICDomain d where d.serverName = :serverName"),
 	@NamedQuery(name = "domain.findDefaultDomain", query = "select d from ICDomain d where d.type = " + ICDomain.TYPE_DEFAULT)
 })
+@Cacheable
 public class ICDomain implements Serializable, UniqueIDCapable {
 
 	private static final long serialVersionUID = 5174977643190597419L;
@@ -98,10 +100,10 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 
 	@Column(name = COLUMN_SERVER_ALIASES)
 	private String serverAliases;
-	
+
 	@OneToMany(mappedBy = "domain", fetch = FetchType.LAZY)
 	private List<ICPage> pages;
-	
+
 	@PrePersist
 	@PreUpdate
 	public void setDefaultValues() {
@@ -304,22 +306,24 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.data.UniqueIDCapable#getUniqueId()
 	 */
+	@Override
 	public String getUniqueId() {
 		return this.uniqueID;
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.data.UniqueIDCapable#setUniqueId(java.lang.String)
 	 */
+	@Override
 	public void setUniqueId(String uniqueId) {
 		this.uniqueID = uniqueId;
 	}
-	
+
 	/**
 	 * @return the pages
 	 */

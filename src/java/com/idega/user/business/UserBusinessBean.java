@@ -4288,7 +4288,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public boolean changeUserCurrentPassword(IWContext iwc,String newPassword){
 		try{
 			LoggedOnInfo loggedOnInfo = LoginBusinessBean.getLoggedOnInfo(iwc);
-			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean("userLoginDAO");
+			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean(UserLoginDAO.class);
 			Integer loginId = loggedOnInfo.getUserLogin().getId();
 			userLoginDAO.changeLoginPassword(loginId, newPassword);
 

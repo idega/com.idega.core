@@ -5,12 +5,12 @@ package com.idega.core.builder.data.bean;
 
 import java.io.Serializable;
 import java.rmi.RemoteException;
-import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,6 +46,8 @@ import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Resource;
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.xml.XMLData;
 
 @Entity
@@ -53,6 +55,7 @@ import com.idega.util.xml.XMLData;
 @NamedQueries({
 	@NamedQuery(name = "page.findAll", query = "select p from ICPage p")
 })
+@Cacheable
 public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource, ICTreeNode<ICPage> {
 
 	private static final long serialVersionUID = -8452915401731298916L;
@@ -170,11 +173,11 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	@JoinTable(name = SQL_RELATION_PROTOCOL, joinColumns = { @JoinColumn(name = COLUMN_PAGE_ID) }, inverseJoinColumns = { @JoinColumn(name = ICProtocol.COLUMN_PROTOCOL_ID) })
 	private List<ICProtocol> protocols;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true)
 	@JoinTable(name = SQL_RELATION_PAGE_TREE, joinColumns = { @JoinColumn(name = "child_" + COLUMN_PAGE_ID, referencedColumnName = COLUMN_PAGE_ID) }, inverseJoinColumns = { @JoinColumn(name = COLUMN_PAGE_ID) })
 	private ICPage parent;
 
-	@OneToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ICPage.class)
+	@OneToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ICPage.class)
 	@JoinTable(name = SQL_RELATION_PAGE_TREE, joinColumns = { @JoinColumn(name = COLUMN_PAGE_ID) }, inverseJoinColumns = { @JoinColumn(name = "child_" + COLUMN_PAGE_ID, referencedColumnName = COLUMN_PAGE_ID) })
 	private List<ICPage> children;
 
@@ -541,16 +544,19 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 
 	@Override
 	public ICPage getChildAtIndex(int index) {
-		return children.get(index);
+		return getChildren().get(index);
 	}
 
 	@Override
 	public int getChildCount() {
-		return children.size();
+		return getChildren().size();
 	}
 
 	@Override
-	public Collection<ICPage> getChildren() {
+	public List<ICPage> getChildren() {
+		if (!DBUtil.getInstance().isInitialized(children)) {
+			children = DBUtil.getInstance().lazyLoad(children);
+		}
 		return children;
 	}
 
@@ -591,6 +597,9 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 
 	@Override
 	public ICPage getParentNode() {
+		if (!DBUtil.getInstance().isInitialized(parent)) {
+			parent = DBUtil.getInstance().lazyLoad(parent);
+		}
 		return parent;
 	}
 
@@ -605,6 +614,6 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 
 	@Override
 	public boolean isLeaf() {
-		return children == null || children.isEmpty();
+		return ListUtil.isEmpty(getChildren());
 	}
 }

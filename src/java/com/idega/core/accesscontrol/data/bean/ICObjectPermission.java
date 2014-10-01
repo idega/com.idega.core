@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.core.accesscontrol.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import com.idega.core.component.data.bean.ICObject;
 
 @Entity
 @Table(name = ICObjectPermission.ENTITY_NAME)
+@Cacheable
 public class ICObjectPermission implements Serializable {
 
 	private static final long serialVersionUID = -8440268993662302436L;

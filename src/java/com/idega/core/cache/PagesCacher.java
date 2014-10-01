@@ -49,7 +49,6 @@ public class PagesCacher extends DefaultSpringBean implements ApplicationListene
 	}
 
 	public void doCachePages() {
-		//	TODO: temporary solution to cache
 		try {
 			String query = "select p." + ICPageBMPBean.ENTITY_NAME + "_ID from " + ICPageBMPBean.ENTITY_NAME + " p where p.deleted is null or p.deleted = 'N'";
 			List<Serializable[]> ids = SimpleQuerier.executeQuery(query, 1);

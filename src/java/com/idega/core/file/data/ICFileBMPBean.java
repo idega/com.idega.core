@@ -10,12 +10,12 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
 
-import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
-import com.idega.core.data.ICApplicationBinding;
-import com.idega.core.data.ICApplicationBindingHome;
+import com.idega.core.dao.ApplicationBindingDAO;
+import com.idega.core.data.bean.ApplicationBinding;
 import com.idega.core.localisation.data.ICLocale;
+import com.idega.core.persistence.Param;
 import com.idega.core.user.data.User;
 import com.idega.core.version.data.ICItem;
 import com.idega.core.version.data.ICVersion;
@@ -24,8 +24,6 @@ import com.idega.data.BlobWrapper;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
@@ -50,6 +48,7 @@ import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * Title:        idegaWeb Classes
@@ -512,56 +511,50 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 	}
 
 	public Object ejbFindRootFolder() throws FinderException {
-		//EntityFinder.findAllByColumn(file,com.idega.core.data.ICFileBMPBean.getColumnNameName(),com.idega.core.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME,com.idega.core.data.ICFileBMPBean.getColumnNameMimeType(),com.idega.core.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
-		Object pkToReturn;
+		ApplicationBindingDAO appDAO = ELUtil.getInstance().getBean(ApplicationBindingDAO.class);
 
 		try {
-			ICApplicationBindingHome bHome =((ICApplicationBindingHome)IDOLookup.getHome(ICApplicationBinding.class));
-
-			try {
-				ICApplicationBinding b = bHome.findByPrimaryKey(ICFileBMPBean.IC_ROOT_FOLDER_NAME);
-				pkToReturn = new Integer(b.getValue());
-			} catch (FinderException e) {
-				IDOQuery query = idoQuery();
-				query.appendSelectAllFrom(this);
-				query.appendWhereEqualsQuoted(ICFileBMPBean.getColumnNameName(), ICFileBMPBean.IC_ROOT_FOLDER_NAME);
-				query.appendAndEqualsQuoted(com.idega.core.file.data.ICFileBMPBean.getColumnNameMimeType(), com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
-
-				Object folderPK = idoFindOnePKByQuery(query);
-
-				try {
-					ICApplicationBinding b = bHome.create();
-					b.setKey(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME);
-					b.setBindingType(IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER);
-
-					b.setValue(folderPK.toString());
-					b.store();
-
-					ICFile folder = ((ICFileHome)getEJBLocalHome()).findByPrimaryKey(folderPK);
-					folder.setLocalizationKey(IC_ROOT_FOLDER_NAME);
-					folder.store();
-				}  catch (IDOStoreException e1) {
-					e1.printStackTrace();
-					throw new IDORuntimeException(e1,this);
-				} catch (CreateException e1) {
-					e1.printStackTrace();
-					throw new IDORuntimeException(e1,this);
-				} catch (FinderException e1) {
-					e1.printStackTrace();
-					throw new IDORuntimeException(e1,this);
-				}
-
-				pkToReturn = folderPK;
+			ApplicationBinding bind = appDAO.getSingleResultByInlineQuery(
+					"from " + ApplicationBinding.class.getSimpleName() + " app where app.key = :key",
+					ApplicationBinding.class,
+					new Param("key", ICFileBMPBean.IC_ROOT_FOLDER_NAME)
+			);
+			if (bind != null) {
+				return new Integer(bind.getValue());
 			}
-		} catch (IDOLookupException e) {
-			e.printStackTrace();
-			throw new IDORuntimeException(e,this);
-		} catch (NumberFormatException e) {
-			e.printStackTrace();
-			throw new IDORuntimeException(e,this);
+		} catch (Exception e) {}
+
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this);
+		query.appendWhereEqualsQuoted(ICFileBMPBean.getColumnNameName(), ICFileBMPBean.IC_ROOT_FOLDER_NAME);
+		query.appendAndEqualsQuoted(com.idega.core.file.data.ICFileBMPBean.getColumnNameMimeType(), com.idega.core.file.data.ICMimeTypeBMPBean.IC_MIME_TYPE_FOLDER);
+
+		Object folderPK = idoFindOnePKByQuery(query);
+
+		if (folderPK != null) {
+			try {
+	//			ICApplicationBinding b = bHome.create();
+	//			b.setKey(com.idega.core.file.data.ICFileBMPBean.IC_ROOT_FOLDER_NAME);
+	//			b.setBindingType(IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER);
+	////				b.setValue(folderPK.toString());
+	//			b.store();
+				appDAO.put(ICFileBMPBean.IC_ROOT_FOLDER_NAME, folderPK.toString(), IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER);
+
+				ICFile folder = ((ICFileHome)getEJBLocalHome()).findByPrimaryKey(folderPK);
+				folder.setLocalizationKey(IC_ROOT_FOLDER_NAME);
+				folder.store();
+			}  catch (IDOStoreException e1) {
+				e1.printStackTrace();
+				throw new IDORuntimeException(e1,this);
+			} catch (Exception e1) {
+				e1.printStackTrace();
+				throw new IDORuntimeException(e1,this);
+			}
+		} else {
+			getLogger().warning("Folder PK is null");
 		}
 
-		return pkToReturn;
+		return folderPK;
 	}
 
 	/* (non-Javadoc)

@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.core.component.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,6 +28,7 @@ import com.idega.core.file.data.bean.ICFile;
 	@NamedQuery(name = "object.findAllByBundleAndType", query = "select o from ICObject o where o.bundleName = :bundle and o.type = :type"),
 	@NamedQuery(name = "object.findAllByClass", query = "select o from ICObject o where o.className = :className")
 })
+@Cacheable
 public class ICObject implements Serializable {
 
 	private static final long serialVersionUID = -896325302059689975L;

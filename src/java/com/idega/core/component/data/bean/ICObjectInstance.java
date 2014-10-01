@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.core.component.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,7 @@ import com.idega.data.UniqueIDCapable;
 	@NamedQuery(name = "objectInstance.findByPageKey", query = "select o from ICObjectInstance o where o.page = :page"),
 	@NamedQuery(name = "objectInstance.findByUniqueID", query = "select o from ICObjectInstance o where o.uniqueID = :uniqueID")
 })
+@Cacheable
 public class ICObjectInstance implements Serializable, UniqueIDCapable {
 
 	private static final long serialVersionUID = -2961011967547708851L;
@@ -132,6 +134,7 @@ public class ICObjectInstance implements Serializable, UniqueIDCapable {
 	/**
 	 * @return the uniqueID
 	 */
+	@Override
 	public String getUniqueId() {
 		return this.uniqueID;
 	}
@@ -140,6 +143,7 @@ public class ICObjectInstance implements Serializable, UniqueIDCapable {
 	 * @param uniqueID
 	 *          the uniqueID to set
 	 */
+	@Override
 	public void setUniqueId(String uniqueID) {
 		this.uniqueID = uniqueID;
 	}

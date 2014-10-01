@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
@@ -69,6 +70,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID")
 })
 @XmlTransient
+@Cacheable
 public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode<Group> {
 
 	private static final long serialVersionUID = -9014094183053434782L;

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.accesscontrol.data.bean;
 
@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -33,6 +34,7 @@ import com.idega.util.IWTimestamp;
 
 @Entity
 @Table(name = LoginInfo.ENTITY_NAME)
+@Cacheable
 public class LoginInfo implements Serializable, MetaDataCapable {
 
 	private static final long serialVersionUID = 2994921102778269086L;
@@ -96,7 +98,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		this.setPasswordExpires(Boolean.FALSE.booleanValue());
 		this.setEncryptionType(EncryptionType.MD5);
 	}
-	
+
 	@SuppressWarnings("unused")
 	@PrePersist
 	@PreUpdate
@@ -243,6 +245,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		return null;
 	}
 
+	@Override
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -254,6 +257,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataAttributes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -265,6 +269,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		return map;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataTypes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -276,6 +281,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		return map;
 	}
 
+	@Override
 	public boolean removeMetaData(String metaDataKey) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata != null) {
@@ -285,6 +291,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		return false;
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		Metadata metadata = getMetadata(oldKeyName);
 		if (metadata != null) {
@@ -295,10 +302,12 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		}
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName) {
 		renameMetaData(oldKeyName, newKeyName, null);
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value, String type) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata == null) {
@@ -314,10 +323,12 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value) {
 		setMetaData(metaDataKey, value, null);
 	}
 
+	@Override
 	public void setMetaDataAttributes(Map<String, String> map) {
 		for (String key : map.keySet()) {
 			String value = map.get(key);
@@ -333,6 +344,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		}
 	}
 
+	@Override
 	public void updateMetaData() throws SQLException {
 		// Does nothing...
 	}

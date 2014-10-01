@@ -118,19 +118,31 @@ public class GenericDaoImpl implements GenericDao {
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
-		return getQueryInline(query).getSingleResult(expectedReturnType, params);
+		return getQueryInline(query).getSingleResult(expectedReturnType, null, params);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
-		return getQueryNamed(namedQueryName).getSingleResult(expectedReturnType, params);
+		return getQueryNamed(namedQueryName).getSingleResult(expectedReturnType, null, params);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
-		return getQueryInline(query).getResultList(expectedReturnType, params);
+		return getResultListByInlineQuery(query, expectedReturnType, null, null, null, params);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params) {
+		com.idega.core.persistence.Query hqlQuery = getQueryInline(query);
+		if (firstResult != null) {
+			hqlQuery.setFirstResult(firstResult);
+		}
+		if (maxResults != null) {
+			hqlQuery.setMaxResults(maxResults);
+		}
+		return hqlQuery.getResultList(expectedReturnType, cachedRegionName, params);
 	}
 
 	@Override
@@ -151,7 +163,20 @@ public class GenericDaoImpl implements GenericDao {
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
-		return getQueryNamed(namedQueryName).getResultList(expectedReturnType, params);
+		return getResultList(namedQueryName, expectedReturnType, null, null, null, params);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params) {
+		com.idega.core.persistence.Query query = getQueryNamed(namedQueryName);
+		if (firstResult != null) {
+			query.setFirstResult(firstResult);
+		}
+		if (maxResults != null) {
+			query.setMaxResults(maxResults);
+		}
+		return query.getResultList(expectedReturnType, cachedRegionName, params);
 	}
 
 	protected com.idega.core.persistence.Query createNewQueryNativeInline(String queryExpression) {

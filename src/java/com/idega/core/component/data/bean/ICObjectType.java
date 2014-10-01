@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.component.data.bean;
 
@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,6 +19,7 @@ import com.idega.util.text.TextSoap;
 
 @Entity
 @Table(name = ICObjectType.ENTITY_NAME)
+@Cacheable
 public class ICObjectType implements Serializable, BundleComponent {
 
 	private static final long serialVersionUID = 1933640010305267773L;
@@ -52,6 +54,7 @@ public class ICObjectType implements Serializable, BundleComponent {
 	/**
 	 * @return the type
 	 */
+	@Override
 	public String getType() {
 		return this.type;
 	}
@@ -82,6 +85,7 @@ public class ICObjectType implements Serializable, BundleComponent {
 	/**
 	 * @return the requiredSuperClass
 	 */
+	@Override
 	public Class getRequiredSuperClass() {
 		return getClassForName(this.requiredSuperClass);
 	}
@@ -97,6 +101,7 @@ public class ICObjectType implements Serializable, BundleComponent {
 	/**
 	 * @return the finalReflectionClass
 	 */
+	@Override
 	public Class getFinalReflectionClass() {
 		return getClassForName(this.finalReflectionClass);
 	}
@@ -112,6 +117,7 @@ public class ICObjectType implements Serializable, BundleComponent {
 	/**
 	 * @return the requiredInterfaces
 	 */
+	@Override
 	public Class[] getRequiredInterfaces() {
 		Collection<String> interfaces = seperateStringIntoVector(this.requiredInterfaces);
 		if (interfaces == null) {
@@ -139,6 +145,7 @@ public class ICObjectType implements Serializable, BundleComponent {
 	/**
 	 * @return the methodStartFilters
 	 */
+	@Override
 	public String[] getMethodStartFilters() {
 		Collection<String> methods = seperateStringIntoVector(this.methodStartFilters);
 		if (methods == null) {
@@ -157,11 +164,12 @@ public class ICObjectType implements Serializable, BundleComponent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.idega.core.component.data.BundleComponent#validateInterfaces(java.lang
 	 * .Class)
 	 */
+	@Override
 	public boolean validateInterfaces(Class validClass) {
 		boolean returner = false;
 
@@ -196,11 +204,12 @@ public class ICObjectType implements Serializable, BundleComponent {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see
 	 * com.idega.core.component.data.BundleComponent#validateSuperClasses(java
 	 * .lang.Class)
 	 */
+	@Override
 	public boolean validateSuperClasses(Class validClass) {
 		if (getRequiredSuperClass() == null) {
 			return true;
