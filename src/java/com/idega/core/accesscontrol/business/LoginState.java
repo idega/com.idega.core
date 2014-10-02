@@ -1,8 +1,8 @@
 /*
  * $Id: LoginState.java,v 1.2 2009/05/27 09:44:51 laddi Exp $ Created on 3.9.2004
- * 
+ *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -11,9 +11,9 @@ package com.idega.core.accesscontrol.business;
 import java.io.Serializable;
 
 /**
- * 
+ *
  * Last modified: $Date: 2009/05/27 09:44:51 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:aron@idega.com">aron</a>
  * @version $Revision: 1.2 $
  */
@@ -30,6 +30,7 @@ public class LoginState implements Serializable {
 	private static final int STATE_LOGIN_FAILED = 6;
 	private static final int STATE_LOGIN_FAILED_DISABLED_NEXT_TIME = 8;
 	private static final int STATE_LOGIN_DISABLED = 9;
+	private static final int STATE_USER_AND_PASSWORD_EXISTS = 10;
 
 	private int state = STATE_NO_STATE;
 
@@ -46,10 +47,11 @@ public class LoginState implements Serializable {
 	public static final LoginState FAILED = new LoginState(STATE_LOGIN_FAILED);
 	public static final LoginState FAILED_DISABLED_NEXT_TIME = new LoginState(STATE_LOGIN_FAILED_DISABLED_NEXT_TIME);
 	public static final LoginState DISABLED = new LoginState(STATE_LOGIN_DISABLED);
+	public static final LoginState USER_AND_PASSWORD_EXISTS = new LoginState(STATE_USER_AND_PASSWORD_EXISTS);
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see java.lang.Object#equals(java.lang.Object)
 	 */
 	public boolean equals(LoginState arg) {
