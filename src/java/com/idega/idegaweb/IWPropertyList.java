@@ -20,6 +20,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
+
 import com.idega.util.FileUtil;
 import com.idega.util.ListUtil;
 import com.idega.xml.XMLDocument;
@@ -142,6 +144,11 @@ public class IWPropertyList {
 
 	XMLElement getMapElement() {
 		if (this.mapElement == null) {
+			if (parentElement == null) {
+				Logger.getLogger(getClass().getName()).warning("Parent element is unknown, can not get element '" + mapTag + "' for file " + xmlFile);
+				return new XMLElement(mapTag);
+			}
+			
 			this.mapElement = this.parentElement.getChild(mapTag);
 			if (this.mapElement == null) {
 				XMLElement dictElement = this.parentElement.getChild(dictTag);
@@ -307,6 +314,15 @@ public class IWPropertyList {
 	 * @return null if no match
 	 */
 	static XMLElement findKeyElement(XMLElement startElement, String key) {
+		if (startElement == null) {
+			Logger.getLogger(IWPropertyList.class.getName()).warning("Start element is not provided. Key: " + key);
+			return null;
+		}
+		if (key == null) {
+			Logger.getLogger(IWPropertyList.class.getName()).warning("Key element is not provided. Start element: " + startElement);
+			return null;
+		}
+		
 		List list = startElement.getChildren();
 		Iterator iter = list.iterator();
 		while (iter.hasNext()) {
