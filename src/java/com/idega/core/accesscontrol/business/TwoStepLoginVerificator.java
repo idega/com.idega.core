@@ -1,5 +1,7 @@
 package com.idega.core.accesscontrol.business;
 
+import javax.servlet.http.Cookie;
+
 import com.idega.business.SpringBeanName;
 import com.idega.idegaweb.IWApplicationContext;
 
@@ -13,4 +15,6 @@ public interface TwoStepLoginVerificator {
 	public void invalidateSecondStepVerification(String userName, String sessionId, String smsCode);
 
 	public void invalidateSecondStepVerification(String userName);
+
+	public void addCookieToJarfallaSessionBean(Cookie cookie);
 }
