@@ -30,8 +30,10 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
@@ -66,6 +68,7 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -105,10 +108,22 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * being made
 	 */
 	public static final String LOGIN_EVENT_TRYAGAIN = "tryagain";
+	/**
+	 * Value that the LoginStateParameter can have to signal that a sms login is
+	 * being made
+	 */
+	public static final String LOGIN_EVENT_SMS_LOGIN = "smslogin";
+	/**
+	 * Value that the LoginStateParameter can have to signal that a full login with sms login is
+	 * being made
+	 */
+	public static final String LOGIN_EVENT_FULL_WITH_SMS_LOGIN = "fullwithsmslogin";
 
 	public static final String PARAMETER_USERNAME = "login";
 	public static final String PARAMETER_PASSWORD = "password";
 	public static final String PARAMETER_PASSWORD2 = "password2";
+	public static final String PARAMETER_SMS_CODE = "smsCode";
+	public static final String PARAMETER_IS_CANCEL = "isCancel";
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM = false;
 	public static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
@@ -245,7 +260,121 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 *         null if no log-in attempt is going on.
 	 */
 	protected String getLoginPassword(HttpServletRequest request) {
-		return request.getParameter(PARAMETER_PASSWORD);
+		String password = request.getParameter(PARAMETER_PASSWORD);
+		if (password == null) {
+			password = (String) request.getSession().getAttribute(PARAMETER_PASSWORD);
+			if (password != null) {
+				request.getSession().removeAttribute(PARAMETER_PASSWORD);
+			}
+		}
+
+		return password;
+	}
+
+	/**
+	 * To get the sms code of the current log-in attempt
+	 *
+	 * @return The sms code the current user is trying to log in with. Returns
+	 *         null if no log-in attempt is going on.
+	 */
+	protected String getSMSCode(HttpServletRequest request) {
+		String smsCode = request.getParameter(PARAMETER_SMS_CODE);
+		if (smsCode == null) {
+			smsCode = (String) request.getSession().getAttribute(PARAMETER_SMS_CODE);
+			if (smsCode != null) {
+				request.getSession().removeAttribute(PARAMETER_SMS_CODE);
+			}
+		}
+
+		return smsCode;
+	}
+
+	/**
+	 * To get the isCancel parameter value of the current log-in attempt
+	 *
+	 * @return The isCancel parameter value
+	 */
+	protected String getIsCancel(HttpServletRequest request) {
+		String isCancel = request.getParameter(PARAMETER_IS_CANCEL);
+		if (isCancel == null) {
+			isCancel = (String) request.getSession().getAttribute(PARAMETER_IS_CANCEL);
+			if (isCancel != null) {
+				request.getSession().removeAttribute(PARAMETER_IS_CANCEL);
+			}
+		}
+
+		return isCancel;
+	}
+
+	/**
+	 * Remove attributes from session
+	 *
+	 */
+	protected void removeAttributesFromSession(HttpServletRequest request) {
+		request.getSession().removeAttribute(PARAMETER_IS_CANCEL);
+		request.getSession().removeAttribute(PARAMETER_SMS_CODE);
+		request.getSession().removeAttribute(PARAMETER_PASSWORD);
+		request.getSession().removeAttribute(PARAMETER_USERNAME);
+	}
+
+
+	/**
+	 * To get the user name of the current log-in attempt
+	 *
+	 * @return The user name the current user is trying to log in with. Returns
+	 *         null if no log-in attempt is going on.
+	 */
+	protected String getLoginUserNameNoRemoveFromSession(HttpServletRequest request) {
+		String username = request.getParameter(PARAMETER_USERNAME);
+		if (username == null) {
+			username = (String) request.getSession().getAttribute(PARAMETER_USERNAME);
+		}
+
+		return username;
+	}
+
+	/**
+	 * To get the password of the current log-in attempt
+	 *
+	 * @return The password the current user is trying to log in with. Returns
+	 *         null if no log-in attempt is going on.
+	 */
+	protected String getLoginPasswordNoRemoveFromSession(HttpServletRequest request) {
+		String password = request.getParameter(PARAMETER_PASSWORD);
+		if (password == null) {
+			password = (String) request.getSession().getAttribute(PARAMETER_PASSWORD);
+		}
+
+		return password;
+	}
+
+	/**
+	 * To get the sms code of the current log-in attempt
+	 *
+	 * @return The sms code the current user is trying to log in with. Returns
+	 *         null if no log-in attempt is going on.
+	 */
+	protected String getSMSCodeNoRemoveFromSession(HttpServletRequest request) {
+		String smsCode = request.getParameter(PARAMETER_SMS_CODE);
+		if (smsCode == null) {
+			smsCode = (String) request.getSession().getAttribute(PARAMETER_SMS_CODE);
+		}
+
+		return smsCode;
+	}
+
+	/**
+	 * To get the isCancel parameter value of the current log-in attempt
+	 *
+	 * @return The isCancel parameter value
+	 */
+	protected String getIsCancelNoRemoveFromSession(HttpServletRequest request) {
+		String isCancel = request.getParameter(PARAMETER_IS_CANCEL);
+		if (isCancel == null) {
+			isCancel = (String) request.getSession().getAttribute(PARAMETER_IS_CANCEL);
+		}
+
+		return isCancel;
 	}
 
 	/**
@@ -397,6 +526,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return LOGIN_EVENT_TRYAGAIN.equals(controlAction);
 	}
 
+	public boolean isSMSLoginAction(HttpServletRequest request) {
+		String controlAction = getControlActionValue(request);
+		return LOGIN_EVENT_SMS_LOGIN.equals(controlAction);
+	}
+
+	public boolean isFullWithSMSLoginAction(HttpServletRequest request) {
+		String controlAction = getControlActionValue(request);
+		return LOGIN_EVENT_FULL_WITH_SMS_LOGIN.equals(controlAction);
+	}
+
 	private String getControlActionValue(HttpServletRequest request) {
 		return request.getParameter(LoginBusinessBean.LoginStateParameter);
 	}
@@ -411,12 +550,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return processRequest(request);
 	}
 
+	private Collection<TwoStepLoginVerificator> getVerificators() {
+		Map<String, TwoStepLoginVerificator> verficators = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
+			.getBeansOfType(TwoStepLoginVerificator.class);
+		return MapUtil.isEmpty(verficators) ? null : verficators.values();
+	}
+
 	/**
 	 * This method is invoked by the IWAuthenticator and tries to log in or log
 	 * out the user depending on the request parameters.
 	 */
 	public boolean processRequest(HttpServletRequest request) throws IWException {
 		String username = null;
+		Collection<TwoStepLoginVerificator> verificators = getVerificators();
 		try {
 			if (isLoggedOn(request)) {
 				if (isLogOffAction(request)) {
@@ -451,8 +597,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 							 * iwc.getParameter(LoginRedirectPageParameter)); }
 							 */
 							onLoginSuccessful(request);
-						}
-						else {
+						} else {
 							// logOut(iwc);
 							// internalSetState(iwc,"loginfailed");
 							/*
@@ -463,8 +608,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 							 */
 							onLoginFailed(request, canLogin, username);
 						}
-					}
-					else if (isLoginByUUID(request)) {
+					} else if (isLoginByUUID(request)) {
 						String uuid = request.getParameter(PARAM_LOGIN_BY_UNIQUE_ID);
 						boolean success = logInByUUID(request, uuid);
 						if (!success) {
@@ -472,9 +616,83 @@ public class LoginBusinessBean implements IWPageEventListener {
 							LOGGER.warning("Attempt to login with UUID: " + uuid + " failed from referer: " + referer + " , might be an attack");
 						}
 					}
-				}
-				else if (isTryAgainAction(request)) {
+				} else if (isTryAgainAction(request)) {
 					internalSetState(request, LoginState.LOGGED_OUT);
+				//SMS login action
+				} else if (isSMSLoginAction(request)) {
+					LoginState canLogin = LoginState.LOGGED_OUT;
+					username = getLoginUserNameNoRemoveFromSession(request);
+					String password = getLoginPasswordNoRemoveFromSession(request);
+					if ((username != null) && (password != null)) {
+						canLogin = verifyPasswordWithoutLogin(request, username, password);
+						if (canLogin.equals(LoginState.USER_AND_PASSWORD_EXISTS)) {
+							if (!ListUtil.isEmpty(verificators)) {
+								for (TwoStepLoginVerificator verificator: verificators) {
+									//Sending SMS message
+									IWApplicationContext iwac = IWMainApplication.getIWMainApplication(request.getSession().getServletContext()).getIWApplicationContext();
+									verificator.doSendSecondStepVerification(iwac, username, request.getSession().getId());
+								}
+							}
+							//Putting username and password ar attributes into the session
+							request.getSession().setAttribute(PARAMETER_USERNAME, username);
+							request.getSession().setAttribute(PARAMETER_PASSWORD, password);
+							//Setting the state
+							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+						} else {
+							onLoginFailed(request, canLogin, username);
+						}
+					}
+				//Full login with user name, password and SMS
+				} else if (isFullWithSMSLoginAction(request)) {
+					username = getLoginUserNameNoRemoveFromSession(request);
+					String smsCode = getSMSCode(request);
+					String isCancel = getIsCancel(request);
+					LoginState canLogin = LoginState.LOGGED_OUT;
+					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
+						//Invalidate SMS code
+						for (TwoStepLoginVerificator verificator: verificators) {
+							//Invalidating SMS code
+							verificator.invalidateSecondStepVerification(username);
+						}
+						//Remove attributes from session
+						removeAttributesFromSession(request);
+						//Go back
+						onLoginFailed(request, canLogin, username);
+					} else {
+						if (StringUtils.isNotBlank(smsCode)) {
+							boolean smsCodePassed = false;
+							if (!ListUtil.isEmpty(verificators)) {
+								for (TwoStepLoginVerificator verificator: verificators) {
+									//Verifying SMS message
+									smsCodePassed = verificator.checkSecondStepVerification(smsCode, username, request.getSession().getId());
+								}
+							}
+							if (smsCodePassed) {
+								String password = getLoginPassword(request);
+								if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) ) {
+									canLogin = verifyPasswordAndLogin(request, username, password);
+									//Remove attributes from session
+									removeAttributesFromSession(request);
+									//Invalidating SMS code
+									for (TwoStepLoginVerificator verificator: verificators) {
+										verificator.invalidateSecondStepVerification(username);
+									}
+									//Login
+									if (canLogin.equals(LoginState.LOGGED_ON)) {
+										onLoginSuccessful(request);
+									} else {
+										onLoginFailed(request, canLogin, username);
+									}
+								}
+							} else {
+								//Setting the state
+								internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+							}
+						} else {
+							//Setting the state
+							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+						}
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -1751,4 +1969,80 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		return this.loginLock;
 	}
+
+	/**
+	 * Verify password and user name, but do not login yet
+	 * @param request
+	 * @param login
+	 * @param password
+	 * @return
+	 * @throws Exception
+	 */
+	private LoginState verifyPasswordWithoutLogin(HttpServletRequest request, String login, String password) throws Exception {
+		boolean loginLockIsEnabled = isLoginLockIsEnabled();
+		if (loginLockIsEnabled) {
+			if (isLoginLocked(request, login)) {
+				return LoginState.DISABLED;
+			}
+		}
+
+		UserLogin userLogin = getUserLoginDAO().findLoginByUsername(login);
+		if (userLogin == null) {
+			createFailedLoginRecord(request, login);
+			return LoginState.USER_NOT_FOUND;
+		}
+
+		User user = userLogin.getUser();
+		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
+		if (isLoginExpired(userLogin) && !isAdmin) {
+			return LoginState.EXPIRED;
+		}
+
+		LoginInfo loginInfo = userLogin.getLoginInfo();
+		if (verifyPassword(userLogin, password)) {
+			if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
+				return LoginState.EXPIRED;
+			}
+			return LoginState.USER_AND_PASSWORD_EXISTS;
+		} else {
+			createFailedLoginRecord(request, login);
+
+			if (isAdmin) { // admin must get unlimited attempts
+				return LoginState.WRONG_PASSWORD;
+			}
+			int maxFailedLogginAttempts = 0;
+			try {
+				String maxStr = iwma.getIWApplicationContext().getApplicationSettings().getProperty("max_failed_login_attempts", "0");
+				if(maxStr==null){
+					maxStr="100";
+				}
+				maxFailedLogginAttempts = Integer.parseInt(maxStr);
+			} catch (Exception e) {
+				// default used, no maximum
+			}
+
+			if (maxFailedLogginAttempts != 0) {
+				int failedAttempts = loginInfo.getFailedAttemptCount();
+				failedAttempts++;
+				loginInfo.setFailedAttemptCount(failedAttempts);
+				if (failedAttempts == maxFailedLogginAttempts - 1) {
+					LOGGER.warning("login failed, disabled next time");
+				} else if (failedAttempts >= maxFailedLogginAttempts) {
+					LOGGER.warning("Maximum loggin attemps, disabling account " + login);
+					loginInfo.setAccountEnabled(false);
+					loginInfo.setFailedAttemptCount(0);
+				} else {
+					LOGGER.warning("Login failed, #" + failedAttempts);
+				}
+
+				getUserLoginDAO().merge(loginInfo);
+			}
+		}
+
+		return LoginState.FAILED;
+	}
+
+
+
 }
