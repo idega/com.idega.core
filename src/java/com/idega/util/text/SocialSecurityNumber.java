@@ -10,7 +10,7 @@ import com.idega.util.StringUtil;
 
 /**
  * Title: Description: Copyright: Copyright (c) 2001 Company:
- * 
+ *
  * @author <a href="mailto:aron@idega.is">Aron Birkir</a>
  * @version 1.0
  */
@@ -40,7 +40,7 @@ public class SocialSecurityNumber {
 	}
 
 	public static int getAge(String socialSecurityNumber) {
-		
+
 		int thisYear = Calendar.getInstance().get(Calendar.YEAR);
 		int age;
 		int year = Integer.parseInt(socialSecurityNumber.substring(4, 6));
@@ -98,14 +98,36 @@ public class SocialSecurityNumber {
 	public static boolean isValidSocialSecurityNumber(String ssn, Locale locale) {
 		if (StringUtil.isEmpty(ssn) || locale == null)
 			return false;
-			
+
 		if (ssn != null && locale.equals(new Locale("is", "IS"))) {
 			return isValidIcelandicSocialSecurityNumber(ssn);
+		} else 	if (ssn != null && locale.equals(new Locale("sv", "SE"))) {
+			return isValidSwedishSocialSecurityNumber(ssn);
+		} else 	if (ssn != null && locale.equals(new Locale("en", "EN"))) {
+			return isValidEnglishSocialSecurityNumber(ssn);
 		} else {
 			Logger.getLogger(SocialSecurityNumber.class.getName()).warning("Social security number '" + ssn + "' can not be verified by locale " + locale +
 					". Please implemente verifier!");
 			return true;
 		}
+	}
+
+	/**
+	 * Checks for validity of an icelandic ssn
+	 */
+	//FIXME: SHOULD BE IMPELEMENTED
+	public static boolean isValidSwedishSocialSecurityNumber(String socialSecurityNumber) {
+		if (socialSecurityNumber.length() != 12) {
+			return (false);
+		}
+		return true;
+	}
+
+	/**
+	 * Checks for validity of an icelandic ssn
+	 */
+	public static boolean isValidEnglishSocialSecurityNumber(String socialSecurityNumber) {
+		return true;
 	}
 
 	/**

@@ -7,11 +7,11 @@ import com.idega.user.data.User;
 public interface JarfallaServices {
 
 	/**
-	 * Getting User from Infotrog system according given peronal id
+	 * Getting User from KIR system according given peronal id
 	 * @param personalId User personal id
-	 * @return User from Infotrog
+	 * @return User from KIR
 	 */
-	public User getUserFromInfotrog(String personalId);
+	public User getUserFromKIR(String personalId);
 
 	/**
 	 * Send SMS message to the given phone number with the given message
