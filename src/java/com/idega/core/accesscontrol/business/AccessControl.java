@@ -2061,7 +2061,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public Set<String> getAllRolesForUser(User user) {
 		Set<String> s = new HashSet<String>();
 
-		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(user.getGroup());
+		
+		
+		Group userGroup = user.getGroup();
+		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(userGroup);
+		
+		GroupBusiness groupBussiness = getGroupBusiness(
+				IWMainApplication.getDefaultIWApplicationContext());
+		if (groupBussiness != null) {
+			Collection<com.idega.user.data.Group> allGroups = null;
+			try {
+				allGroups = groupBussiness.getParentGroups(userGroup.getID());
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to fetch parent groups for user: " + user + 
+						" cause of: ", e);
+			}
+
+			if (!ListUtil.isEmpty(allGroups)) {
+				for (com.idega.user.data.Group group: allGroups) {
+					Collection<String> tmpRoles = getAllRolesKeysForGroup(group);
+					if (!ListUtil.isEmpty(tmpRoles)) {
+						userRolesFromGroup.addAll(tmpRoles);
+					}
+				}
+			}
+		}
+
 		if (!ListUtil.isEmpty(userRolesFromGroup)) {
 			for (String key: userRolesFromGroup)
 				s.add(key);
