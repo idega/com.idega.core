@@ -2878,7 +2878,8 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	@Override
 	public List<Group> update(String groupId, String name, String description,
-			String city, Collection<String> roles) {
+			String city, 
+			Collection<String> roles) {
 		List<Group> groups = new ArrayList<Group>();
 
 		/* Trying by id... */

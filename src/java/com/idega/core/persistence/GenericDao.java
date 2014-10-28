@@ -38,15 +38,12 @@ public interface GenericDao {
 
 	public abstract void refresh(Object product);
 
-	public abstract <Expected> List<Expected> getResultList(
-	        String namedQueryName, Class<Expected> expectedReturnType,
-	        Param... params);
+	public abstract <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params);
 
-	public abstract <Expected> Expected getSingleResult(String namedQueryName,
-	        Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> Expected getSingleResult(String namedQueryName,  Class<Expected> expectedReturnType, Param... params);
 
-	public abstract <Expected> Expected getSingleResultByInlineQuery(
-	        String query, Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
 
 	/**
 	 * <p>Queries database for results.</p>
@@ -58,8 +55,8 @@ public interface GenericDao {
 	 * @return {@link List} of ? extends {@link Entity} (Is JPA or
 	 * Hibernate entity).
 	 */
-	public abstract <Expected> List<Expected> getResultListByInlineQuery(
-	        String query, Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params);
 
 	/**
 	 * @param query
@@ -83,7 +80,7 @@ public interface GenericDao {
 	        String queryName);
 
 	/**
-	 * 
+	 *
 	 * @see EntityManager#getCriteriaBuilder()
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */

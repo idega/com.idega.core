@@ -6,6 +6,7 @@ package com.idega.core.accesscontrol.data.bean;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,6 +25,7 @@ import javax.persistence.Table;
 @NamedQueries({
 	@NamedQuery(name = "role.findAll", query = "select r from ICRole r")
 })
+@Cacheable
 public class ICRole implements Serializable {
 
 	private static final long serialVersionUID = -6349961116652729409L;

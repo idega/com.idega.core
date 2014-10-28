@@ -6,6 +6,7 @@ package com.idega.core.accesscontrol.data.bean;
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -29,6 +30,7 @@ import com.idega.user.data.bean.User;
 	@NamedQuery(name = "loginRecord.findLastByLogin", query = "select l from LoginRecord l where l.login = :login order by l.inStamp desc"),
 	@NamedQuery(name = LoginRecord.GET_NUMBER_OF_LOGINS_FOR_USER, query = "select count(l) from LoginRecord l where l.user = :user")
 })
+@Cacheable
 public class LoginRecord implements Serializable {
 
 	private static final long serialVersionUID = 874430366534007413L;

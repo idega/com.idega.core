@@ -11,9 +11,9 @@ import javax.persistence.Query;
  */
 public interface DaoFunctions {
 
-	public abstract <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params);
 
-	public abstract <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType,  Collection<Param> params);
+	public abstract <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params);
 
-	public abstract <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, Param... params);
+	public abstract <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params);
 }

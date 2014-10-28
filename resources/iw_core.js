@@ -1450,11 +1450,13 @@ function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) 
 					}
 					
 					var redirectUriIndex = newHref.indexOf('logoff_redirect_uri=');
+					var uri = null;
 					if (redirectUriIndex == -1) {
-						window.location.href = '/pages';
+						uri = '/pages';
 					} else {
-						window.location.href = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
+						uri = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
 					}
+					window.location.href = uri;
 					closeAllLoadingMessages();
 				}
 			});

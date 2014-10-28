@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -61,6 +62,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName")
 })
 @XmlTransient
+@Cacheable
 public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	private static final long serialVersionUID = 3393646538663696610L;
@@ -201,7 +203,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
     @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
     private String sha1;
-    
+
     @OneToMany(mappedBy="user")
     private List<UserLogin> logins;
 

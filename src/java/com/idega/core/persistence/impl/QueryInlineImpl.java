@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 
 /**
@@ -45,31 +46,36 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Param... params) {
+		return getResultList(expectedReturnType, null, params);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
 		setExpectedReturnType(expectedReturnType);
 
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} finally {
 			if (measure) {
 				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) +
-						" ms");
+				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) + " ms");
 			}
 		}
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, Param... params) {
+	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, String cachedRegionName, Param... params) {
 		setMappingName(mappingName);
 		setExpectedReturnType(expectedReturnType);
 
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} catch (Exception e) {
 			CoreUtil.sendExceptionNotification("Error executing query: " + getQueryExpression() + " with parameters: " + Arrays.asList(params), e);
 			throw new RuntimeException(e);
@@ -84,14 +90,14 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 
 	@Override
 	@Transactional(readOnly = true)
-	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, Param... params) {
+	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, String cachedRegionName, Param... params) {
 		setMappingName(mappingName);
 		setExpectedReturnType(expectedReturnType);
 
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getSingleResultByQuery(getQuery(), expectedReturnType, params);
+			return getDaoFunctions().getSingleResultByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} catch (NoResultException e) {
 			return null;
 		} finally {
@@ -104,13 +110,23 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 
 	@Override
 	@Transactional(readOnly = true)
+	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType) {
+		return getSingleResult(expectedReturnType, CoreConstants.EMPTY);
+	}
+	@Override
+	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, Param... params) {
+		return getSingleResult(expectedReturnType, null, params);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
 		setExpectedReturnType(expectedReturnType);
 
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getSingleResultByQuery(getQuery(), expectedReturnType, params);
+			return getDaoFunctions().getSingleResultByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} catch (NoResultException e) {
 			return null;
 		} finally {
@@ -197,12 +213,17 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Collection<Param> params) {
+		return getResultList(expectedReturnType, null, params);
+	}
+	@Override
+	@Transactional(readOnly = true)
+	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
 		setExpectedReturnType(expectedReturnType);
 
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
 		try {
-			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, params);
+			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} finally {
 			if (measure) {
 				long end = System.currentTimeMillis();

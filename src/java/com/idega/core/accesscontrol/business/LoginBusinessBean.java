@@ -30,7 +30,6 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -562,7 +561,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean processRequest(HttpServletRequest request) throws IWException {
 		String username = null;
-		Collection<TwoStepLoginVerificator> verificators = getVerificators();
+//		Collection<TwoStepLoginVerificator> verificators = getVerificators();
 		try {
 			if (isLoggedOn(request)) {
 				if (isLogOffAction(request)) {
@@ -618,81 +617,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 				} else if (isTryAgainAction(request)) {
 					internalSetState(request, LoginState.LOGGED_OUT);
-				//SMS login action
-				} else if (isSMSLoginAction(request)) {
-					LoginState canLogin = LoginState.LOGGED_OUT;
-					username = getLoginUserNameNoRemoveFromSession(request);
-					String password = getLoginPasswordNoRemoveFromSession(request);
-					if ((username != null) && (password != null)) {
-						canLogin = verifyPasswordWithoutLogin(request, username, password);
-						if (canLogin.equals(LoginState.USER_AND_PASSWORD_EXISTS)) {
-							if (!ListUtil.isEmpty(verificators)) {
-								for (TwoStepLoginVerificator verificator: verificators) {
-									//Sending SMS message
-									IWApplicationContext iwac = IWMainApplication.getIWMainApplication(request.getSession().getServletContext()).getIWApplicationContext();
-									verificator.doSendSecondStepVerification(iwac, username, request.getSession().getId());
-								}
-							}
-							//Putting username and password ar attributes into the session
-							request.getSession().setAttribute(PARAMETER_USERNAME, username);
-							request.getSession().setAttribute(PARAMETER_PASSWORD, password);
-							//Setting the state
-							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
-						} else {
-							onLoginFailed(request, canLogin, username);
-						}
-					}
-				//Full login with user name, password and SMS
-				} else if (isFullWithSMSLoginAction(request)) {
-					username = getLoginUserNameNoRemoveFromSession(request);
-					String smsCode = getSMSCode(request);
-					String isCancel = getIsCancel(request);
-					LoginState canLogin = LoginState.LOGGED_OUT;
-					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
-						//Invalidate SMS code
-						for (TwoStepLoginVerificator verificator: verificators) {
-							//Invalidating SMS code
-							verificator.invalidateSecondStepVerification(username);
-						}
-						//Remove attributes from session
-						removeAttributesFromSession(request);
-						//Go back
-						onLoginFailed(request, canLogin, username);
-					} else {
-						if (StringUtils.isNotBlank(smsCode)) {
-							boolean smsCodePassed = false;
-							if (!ListUtil.isEmpty(verificators)) {
-								for (TwoStepLoginVerificator verificator: verificators) {
-									//Verifying SMS message
-									smsCodePassed = verificator.checkSecondStepVerification(smsCode, username, request.getSession().getId());
-								}
-							}
-							if (smsCodePassed) {
-								String password = getLoginPassword(request);
-								if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) ) {
-									canLogin = verifyPasswordAndLogin(request, username, password);
-									//Remove attributes from session
-									removeAttributesFromSession(request);
-									//Invalidating SMS code
-									for (TwoStepLoginVerificator verificator: verificators) {
-										verificator.invalidateSecondStepVerification(username);
-									}
-									//Login
-									if (canLogin.equals(LoginState.LOGGED_ON)) {
-										onLoginSuccessful(request);
-									} else {
-										onLoginFailed(request, canLogin, username);
-									}
-								}
-							} else {
-								//Setting the state
-								internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
-							}
-						} else {
-							//Setting the state
-							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
-						}
-					}
 				}
 			}
 		} catch (Exception ex) {

@@ -1779,7 +1779,8 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		// If the user is logged on then there is no caching by proxy servers
 		boolean notUseProxyCaching = true;
 		if (notUseProxyCaching) {
-			setHTTPEquivTag("pragma", "no-cache");
+			setHTTPEquivTag("Pragma", "no-cache");
+			setHTTPEquivTag("Cache-Control", "no-cache");
 		}
 
 		if (getRedirectInfo() != null) {
@@ -2158,7 +2159,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	public ICDynamicPageTrigger getDynamicPageTrigger() {
 		if (this.dynamicPageTrigger == null) {
-			this.dynamicPageTrigger = (ICDynamicPageTrigger) ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, this.getClass());
+			this.dynamicPageTrigger = ImplementorRepository.getInstance().newInstanceOrNull(ICDynamicPageTrigger.class, this.getClass());
 			if (this.dynamicPageTrigger == null) {
 				throw new RuntimeException("[Page] Implementation of ICDynamicPageTrigger could not be found. Implementing bundle was not loaded.");
 			}

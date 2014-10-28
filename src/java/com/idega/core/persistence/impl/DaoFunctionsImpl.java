@@ -1,5 +1,6 @@
 package com.idega.core.persistence.impl;
 
+import java.lang.annotation.Annotation;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -7,6 +8,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.logging.Logger;
 
+import javax.persistence.Cacheable;
 import javax.persistence.NoResultException;
 import javax.persistence.Query;
 
@@ -19,8 +21,10 @@ import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
+import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -62,10 +66,23 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		}
 	}
 
+	private <Expected> void doPrepareForCaching(Query q, Class<Expected> expectedReturnType, String cachedRegionName) {
+		if (StringUtil.isEmpty(cachedRegionName)) {
+			Annotation cacheableDeclaration = expectedReturnType.getAnnotation(Cacheable.class);
+			if (cacheableDeclaration != null) {
+				cachedRegionName = expectedReturnType.getName() + "Cache";
+			}
+		}
+		if (!StringUtil.isEmpty(cachedRegionName)) {
+			DBUtil.getInstance().doInitializeCaching(q, cachedRegionName);
+		}
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
+	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
+		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
 		setParameters(q, params);
 
 		final List<Expected> fresult;
@@ -127,7 +144,8 @@ public class DaoFunctionsImpl implements DaoFunctions {
 
 	@Override
 	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
-	public <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, Param... params) {
+	public <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
+		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
 		setParameters(q, params);
 
 		@SuppressWarnings("unchecked")
@@ -139,7 +157,8 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Override
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, Collection<Param> params) {
+	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
+		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
 		setParameters(q, params);
 
 		final List<Expected> fresult;

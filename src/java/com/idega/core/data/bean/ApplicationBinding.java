@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.core.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 	@NamedQuery(name = "applicationBinding.findAll", query = "select a from ApplicationBinding a"),
 	@NamedQuery(name = "applicationBinding.findAllByType", query = "select a from ApplicationBinding a where a.type = :type")
 })
+@Cacheable
 public class ApplicationBinding implements Serializable {
 
 	private static final long serialVersionUID = -8927507522282551946L;

@@ -13,18 +13,26 @@ public interface Query {
 
 	@Transactional(readOnly = true)
 	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Param... params);
+	@Transactional(readOnly = true)
+	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String cachedRegionName, Param... params);
 
 	@Transactional(readOnly = true)
 	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Collection<Param> params);
+	@Transactional(readOnly = true)
+	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params);
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, Param... params);
+	public abstract <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, String cachedRegionName, Param... params);
 
 	@Transactional(readOnly = true)
-	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, Param... params);
+	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, String cachedRegionName, Param... params);
 
+	@Transactional(readOnly = true)
+	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType);
 	@Transactional(readOnly = true)
 	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, Param... params);
+	@Transactional(readOnly = true)
+	public abstract <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String cachedRegionName, Param... params);
 
 	public abstract void setMaxResults(Integer maxResults);
 

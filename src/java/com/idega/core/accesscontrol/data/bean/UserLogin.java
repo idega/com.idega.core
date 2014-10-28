@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -44,6 +45,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, query = "SELECT l FROM UserLogin l JOIN l.user u WHERE (u.uniqueId = :"
 		+User.PROP_UNIQUE_ID+") AND l.loginType IS null")
 })
+@Cacheable
 public class UserLogin implements Serializable {
 
 	private static final long serialVersionUID = -2164709920312090204L;

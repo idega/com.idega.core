@@ -53,6 +53,7 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.user.data.bean.Group;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -3188,9 +3189,17 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 */
 	@Override
 	public boolean equals(Object obj) {
+		if (obj == null) {
+			return false;
+		}
+
+		if (obj instanceof Group && this instanceof com.idega.user.data.Group && ((Group) obj).getID().intValue() == this.getID()) {
+			return true;
+		}
+
 		if (!(obj instanceof IDOEntity)) {
-			logWarning("Object " + obj + " is not instance of " + IDOEntity.class.getName() + " and is not equal to " + this +
-					" (" + this.getClass().getName() + ")");
+			logWarning("Object " + obj + " (class: " + obj.getClass().getName() + ") is not instance of " + IDOEntity.class.getName() + " and is not equal to " + this +
+					" (ID: " + this.getPrimaryKey() + ", class: "  + this.getClass().getName() + ")");
 			return false;
 		}
 
@@ -4806,8 +4815,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
-	 * 
-	 * <p>Removes all relations between this {@link IDOEntity} and 
+	 *
+	 * <p>Removes all relations between this {@link IDOEntity} and
 	 * entity given as parameter.</p>
 	 * @param entityInterfaceClass
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -4815,20 +4824,20 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	protected void idoRemoveRelationsTo(Class<? extends IDOEntity> entityInterfaceClass) {
 		try {
 			idoRemoveFrom(entityInterfaceClass);
-			getLogger().info("Successfully removed all relations between " + 
-					getClass().getSimpleName() + " by id: '" + 
-					getPrimaryKey() + "' and " + 
+			getLogger().info("Successfully removed all relations between " +
+					getClass().getSimpleName() + " by id: '" +
+					getPrimaryKey() + "' and " +
 					entityInterfaceClass.getSimpleName());
 		} catch (IDORemoveRelationshipException e) {
-			getLogger().log(Level.WARNING, "Failed to remove relations between " + 
-					getClass().getSimpleName() + " by id: '" + 
-					getPrimaryKey() + "' and " + 
+			getLogger().log(Level.WARNING, "Failed to remove relations between " +
+					getClass().getSimpleName() + " by id: '" +
+					getPrimaryKey() + "' and " +
 					entityInterfaceClass.getSimpleName(), e);
 		}
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Removes a record between this and given {@link IDOEntity}s</p>
 	 * @param entity to remove relation between, not <code>null</code>;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -4837,15 +4846,15 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		if (entity != null) {
 			try {
 				removeFrom(entity);
-				getLogger().info("Entity " + entity.getClass().getSimpleName() + 
-						" by id: '" + entity.getPrimaryKey() + 
-						"' removed from relation to " + getClass().getSimpleName() + 
+				getLogger().info("Entity " + entity.getClass().getSimpleName() +
+						" by id: '" + entity.getPrimaryKey() +
+						"' removed from relation to " + getClass().getSimpleName() +
 						" by id: '" + getPrimaryKey() + "'");
 			} catch (SQLException ex) {
-				getLogger().log(Level.WARNING, 
-						"Failed to remove " + entity.getClass().getSimpleName() + 
-						" by id: '" + entity.getPrimaryKey() + 
-						"' from relation to " + getClass().getSimpleName() + 
+				getLogger().log(Level.WARNING,
+						"Failed to remove " + entity.getClass().getSimpleName() +
+						" by id: '" + entity.getPrimaryKey() +
+						"' from relation to " + getClass().getSimpleName() +
 						" by id: '" + getPrimaryKey() + "' cause of: ", ex);
 			}
 		}
@@ -4908,10 +4917,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Adds realtions between current entity and given ones.</p>
 	 * @param entities to add, not <code>null</code>;
-	 * @return <code>true</code> if all entities added, 
+	 * @return <code>true</code> if all entities added,
 	 * <code>false</code> otherwise;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -4919,18 +4928,18 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		if (ListUtil.isEmpty(entities)) {
 			return false;
 		}
-		
+
 		for (IDOEntity entity: entities) {
 			try {
 				idoAddTo(entity);
-				getLogger().info("Relation between " + 
-						getClass().getName() + " by id: '" + getPrimaryKey() + "' and " + 
+				getLogger().info("Relation between " +
+						getClass().getName() + " by id: '" + getPrimaryKey() + "' and " +
 						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() + "' added!");
 			} catch (IDOAddRelationshipException e) {
-				getLogger().log(Level.WARNING, 
+				getLogger().log(Level.WARNING,
 						"Failed to add relation between " + getClass().getName() +
-						" by id: '" + getPrimaryKey() + "' and " + 
-						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() + 
+						" by id: '" + getPrimaryKey() + "' and " +
+						entity.getClass().getName() + " by id: '" + entity.getPrimaryKey() +
 						"' cause of: ", e);
 				return false;
 			}
@@ -5700,7 +5709,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	protected Collection getCachedEntities(){
 		return getBeanCache().getCachedEntities();
 	}
-	
+
 	public ExplicitlySynchronizedEntity getSimpleExplicitlySynchronizedEntityEntity() {
 		ExplicitlySynchronizedEntityImpl entity = new ExplicitlySynchronizedEntityImpl();
 		entity.setPK(getPrimaryKey());
@@ -5708,7 +5717,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			ExplicitlySynchronizedEntity thisEntity = (ExplicitlySynchronizedEntity) this;
 			entity.setSynchronizerKey(thisEntity.getSynchronizerKey());
 			entity.setChanges(getChanges());
-		}	
+		}
 		return entity;
 	}
 	public Collection<String> getChanges(){
@@ -5752,15 +5761,15 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		public boolean equals(ExplicitlySynchronizedEntity entity) {
 			return (entity.getPK().equals(PK) && entity.getSynchronizerKey().equals(synchronizerKey));
 		}
-		
+
 		@Override
 		public Collection<String> getChanges(){
 			return changes;
 		}
-		
+
 		public void setChanges(Collection<String> changes){
 			this.changes = changes;
 		}
-		
+
 	}
 }

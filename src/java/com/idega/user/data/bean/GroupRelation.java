@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
@@ -10,6 +10,7 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -39,6 +40,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "groupRelation.findByRelatedGroupAndType", query = "select r from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'")
 })
+@Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
 
 	private static final long serialVersionUID = 5850270896539731950L;
@@ -54,7 +56,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public static final String COLUMN_GROUP_RELATION_ID = "ic_group_relation_id";
 	public static final String COLUMN_GROUP = "ic_group_id";
 	public static final String COLUMN_RELATED_GROUP = "related_ic_group_id";
-	
+
 	private static final String COLUMN_RELATIONSHIP_TYPE = "relationship_type";
 	private static final String COLUMN_STATUS = "group_relation_status";
 	private static final String COLUMN_INITIATION_DATE = "initiation_date";
@@ -231,7 +233,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public void setMetadata(Set<Metadata> metadata) {
 		this.metadata = metadata;
 	}
-	
+
 	private Metadata getMetadata(String key) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -239,10 +241,11 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 				return metaData;
 			}
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -250,10 +253,11 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 				return metaData.getValue();
 			}
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataAttributes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -261,10 +265,11 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		for (Metadata metaData : list) {
 			map.put(metaData.getKey(), metaData.getValue());
 		}
-		
+
 		return map;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataTypes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -272,19 +277,21 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		for (Metadata metaData : list) {
 			map.put(metaData.getKey(), metaData.getType());
 		}
-		
+
 		return map;
 	}
 
+	@Override
 	public boolean removeMetaData(String metaDataKey) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata != null) {
 			getMetadata().remove(metadata);
 		}
-		
+
 		return false;
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		Metadata metadata = getMetadata(oldKeyName);
 		if (metadata != null) {
@@ -295,10 +302,12 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		}
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName) {
 		renameMetaData(oldKeyName, newKeyName, null);
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value, String type) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata == null) {
@@ -309,30 +318,33 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		if (type != null) {
 			metadata.setType(type);
 		}
-		
+
 		getMetadata().add(metadata);
-		
+
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value) {
 		setMetaData(metaDataKey, value, null);
 	}
 
+	@Override
 	public void setMetaDataAttributes(Map<String, String> map) {
 		for (String key : map.keySet()) {
 			String value = map.get(key);
-			
+
 			Metadata metadata = getMetadata(key);
 			if (metadata == null) {
 				metadata = new Metadata();
 				metadata.setKey(key);
 			}
 			metadata.setValue(value);
-			
+
 			getMetadata().add(metadata);
 		}
 	}
 
+	@Override
 	public void updateMetaData() throws SQLException {
 		//Does nothing...
 	}

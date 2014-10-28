@@ -1,8 +1,8 @@
 package com.idega.util;
 
+import java.awt.AWTEventMulticaster;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.AWTEventMulticaster;
 
 /**
  * Description:  A threaded (daemon thread) event dispatcher class. add an actionlistener to it and it calls
@@ -35,6 +35,7 @@ public class EventTimer implements Runnable{
   public static long THREAD_SLEEP_10_MINUTES = 600000;
   public static long THREAD_SLEEP_30_MINUTES = 1800000;
   public static long THREAD_SLEEP_1_HOUR = 3600000;
+  public static long THREAD_SLEEP_4_HOUR = THREAD_SLEEP_1_HOUR * 4;
   public static long THREAD_SLEEP_24_HOURS = 86400000;
   private long interval = DEFAULT_THREAD_SLEEP_5_SECONDS;
   private String actionCommand = "iw_event_timer";
@@ -60,7 +61,8 @@ public class EventTimer implements Runnable{
     setActionCommand(actionCommand);
   }
 
-  public void run(){
+  @Override
+public void run(){
   	this.isRunning = true;
     while (this.runThread) {
       try {
@@ -79,7 +81,7 @@ public class EventTimer implements Runnable{
 				}
       }
     }
-    
+
     this.isRunning = false;
   }
 
@@ -97,7 +99,7 @@ public class EventTimer implements Runnable{
   public void start(){
     this.runThread = true;
     if( this.t == null || !this.isRunning){
-    		//a new thread must be created here because it was null or 
+    		//a new thread must be created here because it was null or
 		//we went out of the run() method. When run is finished the thread is considered dead and cannot be restarted
       this.t = new Thread(this,"com.idega.util.EventTimer thread");
       this.t.setPriority(Thread.MIN_PRIORITY);
