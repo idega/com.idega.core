@@ -127,7 +127,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		if (this.accountEnabled == null) {
 			return true;
 		}
-		return this.accountEnabled == 'Y';
+		return this.accountEnabled.charValue() == 'Y';
 	}
 
 	public void setAccountEnabled(boolean accountEnabled) {
@@ -154,7 +154,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		if (this.passwordExpires == null) {
 			return false;
 		}
-		return this.passwordExpires == 'Y';
+		return this.passwordExpires.charValue() == 'Y';
 	}
 
 	public void setPasswordExpires(boolean passwordExpires) {
@@ -165,7 +165,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		if (this.allowedToChange == null) {
 			return true;
 		}
-		return this.allowedToChange == 'Y';
+		return this.allowedToChange.charValue() == 'Y';
 	}
 
 	public void setAllowedToChange(boolean allowedToChange) {
@@ -176,7 +176,7 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		if (this.changeNextTime == null) {
 			return false;
 		}
-		return this.changeNextTime == 'Y';
+		return this.changeNextTime.charValue() == 'Y';
 	}
 
 	public void setChangeNextTime(boolean changeNextTime) {
