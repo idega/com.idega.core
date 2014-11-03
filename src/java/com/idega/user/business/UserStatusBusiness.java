@@ -17,6 +17,7 @@ import javax.ejb.CreateException;
 import com.idega.business.IBOService;
 import com.idega.user.data.Status;
 import com.idega.user.data.StatusHome;
+import com.idega.user.data.User;
 import com.idega.user.data.UserStatus;
 import com.idega.user.data.UserStatusHome;
 
@@ -96,11 +97,13 @@ public interface UserStatusBusiness extends IBOService {
      */
     public void setUserAsDeceased(Integer userID, Date deceasedDate)
             throws RemoteException, java.rmi.RemoteException;
-    
+
     public Status getStatusByStatusId(int statusId) throws RemoteException;
 
 	public Collection getAllUserStatuses(int userId) throws RemoteException;
-	
+
 	public Collection getAllUsersWithStatus(int statusId);
+
+	public boolean isDeceased(User user);
 
 }
