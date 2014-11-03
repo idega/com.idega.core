@@ -7,6 +7,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+
 import com.idega.core.data.DefaultTreeNode;
 import com.idega.core.data.ICTreeNode;
 import com.idega.event.IWActionListener;
@@ -27,6 +28,7 @@ import com.idega.presentation.text.AnchorLink;
 import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeComparator;
+import com.idega.util.ListUtil;
 
 /**
  * Title:        idegaWeb
@@ -205,7 +207,8 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 			drawSuperRoot(iwc);
 		}
 		if (this.defaultRoot.getChildCount() > 0) {
-			drawTree(this.defaultRoot.getChildrenIterator(), null, iwc);
+			Map addedNodes = new HashMap();
+			drawTree(this.defaultRoot.getChildrenIterator(), null, iwc, addedNodes);
 		}
 		
 		if (this.lightRowStyle != null && this.darkRowStyle != null) {
@@ -249,11 +252,19 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 		
 	}
 
-	private synchronized void drawTree(Iterator nodes, Image[] collectedIcons, IWContext iwc) {
+	private synchronized void drawTree(Iterator nodes, Image[] collectedIcons, IWContext iwc, Map addedNodes) {
 		if (nodes != null) {
 			Iterator iter = nodes;
-			for (int i = 0; iter.hasNext(); i++) {
-				ICTreeNode item = (ICTreeNode) iter.next();			
+			int i = 0;
+			while (iter.hasNext()) {
+				ICTreeNode item = (ICTreeNode) iter.next();		
+				if (addedNodes.containsKey(item.getId())) {
+					i++;
+					continue;
+				}
+				
+				addedNodes.put(item.getId(), Boolean.TRUE);
+				
 				boolean hasChild = (item.getChildCount() > 0);
 				boolean isOpen = false;
 				int rowIndex = getRowIndex();
@@ -525,9 +536,12 @@ public abstract class AbstractTreeViewer extends PresentationObjectContainer imp
 
 				if (hasChild && isOpen) {
 				    Collection children = item.getChildren();
-				    Collections.sort((List)children, new GroupTreeComparator(iwc) );
-				    drawTree(children.iterator(), newCollectedIcons, iwc);
+				    if (!ListUtil.isEmpty(children)) {
+				    	Collections.sort((List) children, new GroupTreeComparator(iwc));
+				    	drawTree(children.iterator(), newCollectedIcons, iwc, addedNodes);
+				    }
 				}
+				i++;
 			}
 		}
 	}
