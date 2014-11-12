@@ -2,6 +2,7 @@
  * Created on 26.2.2004 by  tryggvil in project com.project
  */
 package com.idega.event;
+
 import java.awt.AWTEvent;
 import java.awt.ActiveEvent;
 import java.io.File;
@@ -41,6 +42,7 @@ import com.oreilly.servlet.multipart.FilePart;
 import com.oreilly.servlet.multipart.MultipartParser;
 import com.oreilly.servlet.multipart.ParamPart;
 import com.oreilly.servlet.multipart.Part;
+
 /**
  * IWEventProcessor //TODO: tryggvil Describe class
  * Copyright (C) idega software 2004
@@ -49,7 +51,6 @@ import com.oreilly.servlet.multipart.Part;
  * @version 1.0
  */
 public class IWEventProcessor implements Singleton {
-
 
 	private final static String PRM_HISTORY_ID = ICBuilderConstants.PRM_HISTORY_ID;
 	private final static String SESSION_OBJECT_STATE = ICBuilderConstants.SESSION_OBJECT_STATE;
@@ -92,8 +93,8 @@ public class IWEventProcessor implements Singleton {
 			e1.printStackTrace();
 		}
 	}
-	public void processBusinessEvent(IWContext iwc) throws ClassNotFoundException, IllegalAccessException, IWException,
-			InstantiationException {
+
+	public void processBusinessEvent(IWContext iwc) throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
 		String[] eventListeners = iwc.getParameterValues(IWMainApplication.IdegaEventListenerClassParameter);
 		if (eventListeners != null) {
 			for (int i = 0; i < eventListeners.length; i++) {
@@ -101,30 +102,29 @@ public class IWEventProcessor implements Singleton {
 			}
 		}
 	}
-	private void processIWEvent(IWContext iwc, String EventListenerClass) throws IllegalAccessException,
-			IWException, InstantiationException {
-		if (EventListenerClass != null) {
+
+	private void processIWEvent(IWContext iwc, String eventListenerClass) throws IllegalAccessException, IWException, InstantiationException {
+		if (eventListenerClass != null) {
 			if (iwc.getApplicationSettings().getIfDebug()) {
-				System.out.println("IWEventListener: " + EventListenerClass);
-			}
-			try{
-				Class<?> eventClass = RefactorClassRegistry.forName(EventListenerClass);
-				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
-				listener.actionPerformed(iwc);
-			}
-			catch(ClassNotFoundException cnfe){
-				log.warning(cnfe.getMessage());
+				log.info("IWEventListener: " + eventListenerClass);
 			}
 
+			try {
+				Class<?> eventClass = RefactorClassRegistry.forName(eventListenerClass);
+				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
+				listener.actionPerformed(iwc);
+			} catch (ClassNotFoundException cnfe){
+				log.warning(cnfe.getMessage());
+			}
 		}
 	}
-	private void processIWEventEncrypted(IWContext iwc, String EncryptedEventListenerClassName) throws ClassNotFoundException,
-			IllegalAccessException, IWException, InstantiationException {
+
+	private void processIWEventEncrypted(IWContext iwc, String EncryptedEventListenerClassName) throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
 		String eventClass = IWMainApplication.decryptClassName(EncryptedEventListenerClassName);
 		processIWEvent(iwc, eventClass);
 	}
-	public void processApplicationEvents(IWContext iwc) throws ClassNotFoundException, IllegalAccessException, IWException,
-			InstantiationException {
+
+	public void processApplicationEvents(IWContext iwc) throws ClassNotFoundException, IllegalAccessException, IWException, InstantiationException {
 		java.util.List<?> eventListeners = iwc.getIWMainApplication().getApplicationEventListeners();
 		Iterator<?> iter = eventListeners.iterator();
 		while (iter.hasNext()) {
@@ -132,8 +132,7 @@ public class IWEventProcessor implements Singleton {
 			processIWEvent(iwc, className);
 		}
 	}
-	public boolean processAWTEvent(IWContext iwc, HttpServletRequest request, HttpServletResponse response) throws IOException,
-			ServletException {
+	public boolean processAWTEvent(IWContext iwc, HttpServletRequest request, HttpServletResponse response) throws IOException, ServletException {
 		String sessionAddress = iwc.getParameter(IWMainApplication.IWEventSessionAddressParameter);
 		if (sessionAddress != null && !"".equals(sessionAddress)) {
 			Object obj = iwc.getSessionAttribute(sessionAddress);
@@ -162,6 +161,7 @@ public class IWEventProcessor implements Singleton {
 		}
 		return false;
 	}
+
 	public void handleEvent(IWContext iwc) {
 		try {
 			//    System.err.println("-------------------------------------");
@@ -266,6 +266,7 @@ public class IWEventProcessor implements Singleton {
 			ex.printStackTrace();
 		}
 	}
+
 	public void handleLocaleParameter(IWContext iwc) {
 		Locale locale = iwc.getCurrentLocale();
 		String localeValue = iwc.getParameter(LocaleSwitcher.languageParameterString);
@@ -277,6 +278,7 @@ public class IWEventProcessor implements Singleton {
 		}
 		//IWEventProcessor.getInstance().handleLocaleParameter(iwc);
 	}
+
 	public void increaseHistoryID(IWContext iwc) {
 		String historyIDSession = (String) iwc.getSessionAttribute(PRM_HISTORY_ID);
 		if (historyIDSession == null) {
@@ -294,9 +296,11 @@ public class IWEventProcessor implements Singleton {
 			}
 		}
 	}
+
 	public Page getPage(IWContext iwc) {
 		return Page.getPage(iwc);
 	}
+
 	public Page getPage() {
 		return getPage(IWContext.getInstance());
 	}
