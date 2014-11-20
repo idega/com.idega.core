@@ -550,9 +550,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return processRequest(request);
 	}
 
-	private Collection<TwoStepLoginVerificator> getVerificators() {
-		Map<String, TwoStepLoginVerificator> verficators = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
-			.getBeansOfType(TwoStepLoginVerificator.class);
+	private Collection<TwoStepLoginVerificator> getVerificators(ServletContext sc) {
+		Map<String, TwoStepLoginVerificator> verficators = WebApplicationContextUtils.getWebApplicationContext(sc)
+				.getBeansOfType(TwoStepLoginVerificator.class);
 		return MapUtil.isEmpty(verficators) ? null : verficators.values();
 	}
 
@@ -562,7 +562,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean processRequest(HttpServletRequest request) throws IWException {
 		String username = null;
-		Collection<TwoStepLoginVerificator> verificators = getVerificators();
+
 		try {
 			if (isLoggedOn(request)) {
 				if (isLogOffAction(request)) {
@@ -576,8 +576,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 						logOutUser(request, info.getLogin());
 					}
 				}
-			}
-			else {
+
+			//	Not logged on
+			} else {
 				if (isLogOnAction(request)) {
 					// int canLogin = STATE_LOGGED_OUT;
 					LoginState canLogin = LoginState.LOGGED_OUT;
@@ -618,36 +619,50 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 				} else if (isTryAgainAction(request)) {
 					internalSetState(request, LoginState.LOGGED_OUT);
+
 				//SMS login action
 				} else if (isSMSLoginAction(request)) {
+					LOGGER.info("trying to login with SMS");	//	TODO
 					LoginState canLogin = LoginState.LOGGED_OUT;
 					username = getLoginUserNameNoRemoveFromSession(request);
 					String password = getLoginPasswordNoRemoveFromSession(request);
-					if ((username != null) && (password != null)) {
-						canLogin = verifyPasswordWithoutLogin(request, username, password);
-						if (canLogin.equals(LoginState.USER_AND_PASSWORD_EXISTS)) {
-							if (!ListUtil.isEmpty(verificators)) {
-								for (TwoStepLoginVerificator verificator: verificators) {
-									//Sending SMS message
-									IWApplicationContext iwac = IWMainApplication.getIWMainApplication(request.getSession().getServletContext()).getIWApplicationContext();
-									verificator.doSendSecondStepVerification(iwac, username, request.getSession().getId());
-								}
-							}
-							//Putting username and password ar attributes into the session
-							request.getSession().setAttribute(PARAMETER_USERNAME, username);
-							request.getSession().setAttribute(PARAMETER_PASSWORD, password);
-							//Setting the state
-							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+					canLogin = verifyPasswordWithoutLogin(request, username, password);
+					LOGGER.info("Login state: " + canLogin);	//	TODO
+					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
+						ServletContext sc = request.getSession().getServletContext();
+						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
+
+						if (ListUtil.isEmpty(verificators)) {
+							LOGGER.warning("There are no verificators: " + TwoStepLoginVerificator.class.getName());
 						} else {
-							onLoginFailed(request, canLogin, username);
+							for (TwoStepLoginVerificator verificator: verificators) {
+								//Sending SMS message
+								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
+								verificator.doSendSecondStepVerification(iwac, username, request.getSession().getId());
+							}
 						}
+						//Putting username and password ar attributes into the session
+						request.getSession().setAttribute(PARAMETER_USERNAME, username);
+						request.getSession().setAttribute(PARAMETER_PASSWORD, password);
+						//Setting the state
+						internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+					} else {
+						LOGGER.warning("Can not login with username " + username + ". Login state: " + canLogin);
+						onLoginFailed(request, canLogin, username);
 					}
+
 				//Full login with user name, password and SMS
 				} else if (isFullWithSMSLoginAction(request)) {
 					username = getLoginUserNameNoRemoveFromSession(request);
 					String smsCode = getSMSCode(request);
+					LOGGER.info("Verifying SMS code " + smsCode + ", username: " + username);//	TODO
 					String isCancel = getIsCancel(request);
 					LoginState canLogin = LoginState.LOGGED_OUT;
+
+					ServletContext sc = request.getSession().getServletContext();
+					Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
+
+					//	Canceling login
 					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
 						//Invalidate SMS code
 						for (TwoStepLoginVerificator verificator: verificators) {
@@ -659,6 +674,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 						//Go back
 						onLoginFailed(request, canLogin, username);
 					} else {
+						//	Logging in
 						if (StringUtils.isNotBlank(smsCode)) {
 							boolean smsCodePassed = false;
 							if (!ListUtil.isEmpty(verificators)) {
@@ -702,7 +718,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				e.printStackTrace();
 			}
 
-			LOGGER.log(Level.WARNING, "Error processing request", ex);
+			LOGGER.log(Level.WARNING, "Error processing request " + request.getRequestURI(), ex);
 		}
 		return true;
 	}
@@ -1979,6 +1995,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @throws Exception
 	 */
 	private LoginState verifyPasswordWithoutLogin(HttpServletRequest request, String login, String password) throws Exception {
+		if (StringUtil.isEmpty(login)) {
+			return LoginState.FAILED;
+		}
+		if (StringUtil.isEmpty(password)) {
+			return LoginState.FAILED;
+		}
+
 		boolean loginLockIsEnabled = isLoginLockIsEnabled();
 		if (loginLockIsEnabled) {
 			if (isLoginLocked(request, login)) {
