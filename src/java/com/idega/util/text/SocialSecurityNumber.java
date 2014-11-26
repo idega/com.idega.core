@@ -117,8 +117,8 @@ public class SocialSecurityNumber {
 	 */
 	//FIXME: SHOULD BE IMPELEMENTED
 	public static boolean isValidSwedishSocialSecurityNumber(String socialSecurityNumber) {
-		if (socialSecurityNumber.length() != 12) {
-			return (false);
+		if (socialSecurityNumber.length() != 10 || socialSecurityNumber.length() != 12) {
+			return false;
 		}
 		return true;
 	}
