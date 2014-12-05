@@ -3011,49 +3011,35 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		return primaryKey == null ? null : primaryKey.toString();
 	}
 
-
-//	public boolean isDeceased() {
-//		boolean isDeceased = false;
-//		try {
-//			UserStatus userStatus = getUserStatusBusiness().getDeceasedUserStatus((Integer)getPrimaryKey());
-//			isDeceased = userStatus != null;
-//		} catch (Exception e) {
-//			e.printStackTrace();
-//		}
-//   	 	return isDeceased;
-//	}
-
 	@Override
 	public boolean isDeceased()  {
 		Status deceasedStatus = null;
 		try {
 			deceasedStatus = getStatusHome().findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			try {
 				deceasedStatus = getStatusHome().create();
 				deceasedStatus.setStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
 				deceasedStatus.store();
-			}
-			catch (CreateException e1) {
+			} catch (CreateException e1) {
 				e1.printStackTrace();
 			}
 		}
-		Collection coll = null;
+
+		Collection<?> coll = null;
 		try {
 			coll = getUserStatusHome().findAllByUserIDAndStatusID((Integer)getPrimaryKey(),(Integer) deceasedStatus.getPrimaryKey());
+		} catch (FinderException e) {}
+		if (!ListUtil.isEmpty(coll)) {
+			getLogger().info("User with SSN = " + getPersonalID() + " is deceased");
+			return true;
 		}
-		catch (FinderException e) {
-			e.printStackTrace();
-		}
-		if (coll != null && !coll.isEmpty()) {
-			System.out.println("User with SSN = " + getPersonalID() + " is deceased");
-		}
-		return coll != null && !coll.isEmpty();
+
+		return false;
 	}
 
-		@Override
-		public void setUserProperties(ICFile file) {
+	@Override
+	public void setUserProperties(ICFile file) {
 		setColumn(COLUMN_NAME_USER_PROPERTIES_FILE_ID, file);
 	}
 
@@ -3061,7 +3047,6 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	public ICFile getUserProperties() {
 		return (ICFile) getColumnValue(COLUMN_NAME_USER_PROPERTIES_FILE_ID);
 	}
-
 
 	protected UserStatusHome getUserStatusHome(){
 		UserStatusHome home = null;

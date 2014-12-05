@@ -18,7 +18,6 @@ public class MessagingSettings {
 	public static final String PROP_SYSTEM_SMTP_USER_NAME = "messagebox_smtp_username";
 	public static final String PROP_SYSTEM_SMTP_PASSWORD = "messagebox_smtp_password";
 	public static final String PROP_MESSAGEBOX_FROM_ADDRESS = "messagebox_from_mailaddress";
-	public static final String PROP_EMAIL_ACOUSTICS_PERMISSION_CC = "messagebox_email_acoustics_cc";
 	public static final String PROP_SYSTEM_FORCED_RECEIVER = "messagebox_forced_receiver_address";
 	public static final String PROP_SYSTEM_BCC_RECEIVER = "messagebox_bcc_receiver_address";
 	public static final String DEFAULT_MESSAGEBOX_FROM_ADDRESS = "info@idega.com";

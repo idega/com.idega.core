@@ -15,13 +15,16 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
+
 import com.idega.business.IBOServiceBean;
 import com.idega.data.IDOStoreException;
 import com.idega.user.data.Status;
 import com.idega.user.data.StatusHome;
+import com.idega.user.data.User;
 import com.idega.user.data.UserStatus;
 import com.idega.user.data.UserStatusHome;
 import com.idega.util.IWTimestamp;
@@ -32,17 +35,20 @@ import com.idega.util.ListUtil;
  *Used to manipulate a users status.
  */
 public class UserStatusBusinessBean extends IBOServiceBean implements UserStatusBusiness {
-	
-	public final static String STATUS_DECEASED = "deceased"; 
-	
+
+	public final static String STATUS_DECEASED = "deceased";
+
+	@Override
 	public boolean removeUserFromGroup(int user_id, int group_id) {
 		return setUserGroupStatus(user_id,group_id,-1,-1);
 	}
-	
+
+	@Override
 	public boolean setUserGroupStatus(int user_id, int group_id, int status_id){
 	    return setUserGroupStatus(user_id,group_id,status_id,-1);
 	}
-	
+
+	@Override
 	public boolean setUserGroupStatus(int userId, int groupId, int statusId,int doneByUserId) {
 		try {
 			Collection obj = getUserStatusHome().findAllByUserIdAndGroupId(userId,groupId);
@@ -62,7 +68,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 					}
 				}
 			}
-			
+
 			if (statusId > 0 && !alreadyIsSet) {
 				UserStatus uStatus = getUserStatusHome().create();
 				uStatus.setUserId(userId);
@@ -77,14 +83,15 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			
+
 			return false;
 		}
-		
-		
+
+
 		return true;
 	}
-	
+
+	@Override
 	public int getUserGroupStatus(int user_id, int group_id) {
 		try {
 			Collection obj = getUserStatusHome().findAllActiveByUserIdAndGroupId(user_id,group_id);
@@ -92,18 +99,19 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 
 			if (obj != null && obj.size() > 0) {
 				UserStatus uStatus = (UserStatus)obj.toArray()[obj.size()-1];
-				ret = uStatus.getStatusId();			
+				ret = uStatus.getStatusId();
 			}
-			
+
 			return ret;
 		}
 		catch(Exception e) {
 			e.printStackTrace();
-			
+
 			return -1;
 		}
 	}
-	
+
+	@Override
 	public Collection getAllUserStatuses(int userId) throws RemoteException {
 		try {
 			return getUserStatusHome().findAllActiveByUserId(userId);
@@ -111,39 +119,45 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
-		
+
 		return ListUtil.getEmptyList();
 	}
-	
+
+	@Override
 	public UserStatusHome getUserStatusHome() throws RemoteException{
 		return (UserStatusHome) getIDOHome(UserStatus.class);
 	}
-	
+
+	@Override
 	public String getDeceasedStatusKey(){
 		return STATUS_DECEASED;
 	}
-	
+
+	@Override
 	public StatusHome getStatusHome() throws RemoteException{
 		return (StatusHome) getIDOHome(Status.class);
 	}
-	
+
+	@Override
 	public Status getDeceasedStatus() throws RemoteException{
 		try {
 			return getStatusHome().findByStatusKey(STATUS_DECEASED);
 		}
 		catch (FinderException e) {
-			
+
 		}
 		return null;
 	}
-	
+
+	@Override
 	public Status createDeceasedStatus() throws RemoteException,CreateException{
 		Status status = getStatusHome().create();
 		status.setStatusKey(STATUS_DECEASED);
 		status.store();
 		return status;
 	}
-	
+
+	@Override
 	public Status getDeceasedStatusCreateIfNone() throws RemoteException{
 		Status status = getDeceasedStatus();
 		if(status!=null) {
@@ -160,6 +174,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		return null;
 	}
+	@Override
 	public Status getStatusByStatusId(int statusId) throws RemoteException{
 		Status status = null;
 		try {
@@ -173,6 +188,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		return status;
 	}
+	@Override
 	public UserStatus getDeceasedUserStatus(Integer userID) throws RemoteException{
 		try {
 			Status deceasedStatus = getDeceasedStatusCreateIfNone();
@@ -187,10 +203,11 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		catch (FinderException e) {
 			e.printStackTrace();
 		}
-	
+
 		return null;
 	}
-	
+
+	@Override
 	public void setUserAsDeceased(Integer userID,Date deceasedDate) throws RemoteException{
 		try {
 			Status deceasedStatus = getDeceasedStatusCreateIfNone();
@@ -206,31 +223,32 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		}
 		catch (IDOStoreException e) {
 			e.printStackTrace();
-			
+
 		}
-	
+
 		catch (EJBException e) {
 			e.printStackTrace();
-			
+
 		}
-		
+
 		catch (CreateException e) {
 			e.printStackTrace();
-			
+
 		}
-		
+
 	}
-	
-	public Collection getAllUsersWithStatus(int statusId){
+
+	@Override
+	public Collection<User> getAllUsersWithStatus(int statusId){
 		try {
-			Collection userStatuses = getUserStatusHome().findAllActiveByStatusId(statusId);
-			List users = new ArrayList();
-			Iterator iter = userStatuses.iterator();
+			Collection<UserStatus> userStatuses = getUserStatusHome().findAllActiveByStatusId(statusId);
+			List<User> users = new ArrayList<User>();
+			Iterator<UserStatus> iter = userStatuses.iterator();
 			while (iter.hasNext()) {
-				UserStatus userStatus = (UserStatus) iter.next();
+				UserStatus userStatus = iter.next();
 				users.add(userStatus.getUser());
 			}
-			
+
 			return users;
 		}
 		catch (FinderException e) {
@@ -239,9 +257,14 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 		catch (RemoteException e) {
 			e.printStackTrace();
 		}
-		
+
 		return ListUtil.getEmptyList();
 	}
 
-	
+	@Override
+	public boolean isDeceased(User user) {
+		return user == null ? false : user.isDeceased();
+	}
+
+
 }
