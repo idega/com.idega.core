@@ -17,6 +17,7 @@ import java.io.Writer;
 import java.util.Iterator;
 import java.util.Set;
 import java.util.jar.JarInputStream;
+import java.util.logging.Logger;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -199,6 +200,11 @@ public class IOUtil {
 
 	public static final boolean isUploadExceedingLimits(HttpServletRequest request, long maxUploadSize) {
 		Long requestSize = getRequestSize(request);
-		return requestSize == null ? false : requestSize > maxUploadSize;
+		boolean exceeding = requestSize == null ? false : requestSize > maxUploadSize;
+		if (exceeding) {
+			Logger.getLogger(IOUtil.class.getName()).warning("Request's size (" + FileUtil.getHumanReadableSize(requestSize) + ") is exceeding max upload size: " +
+					FileUtil.getHumanReadableSize(maxUploadSize));
+		}
+		return exceeding;
 	}
 }
