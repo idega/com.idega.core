@@ -133,6 +133,12 @@ public enum JQueryPlugin {
 		public String getFileName() {
 			return ".typewatch.js";
 		}
+	},
+	FORM {
+		@Override
+		public String getFileName() {
+			return ".form.js";
+		}
 	};
 
 	public abstract String getFileName();
