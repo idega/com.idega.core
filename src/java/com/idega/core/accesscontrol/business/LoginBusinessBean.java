@@ -665,16 +665,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 					ServletContext sc = request.getSession().getServletContext();
 					Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
 
-					//	Canceling login
 					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
-						//Invalidate SMS code
+						//	Canceling login, invalidate SMS code
 						for (TwoStepLoginVerificator verificator: verificators) {
 							//Invalidating SMS code
 							verificator.invalidateSecondStepVerification(username);
 						}
-						//Remove attributes from session
+
+						//	Remove attributes from session
 						removeAttributesFromSession(request);
-						//Go back
+
+						//	Go back
 						onLoginFailed(request, canLogin, username);
 					} else {
 						String sessionId = getSessionId(request, false);
@@ -685,34 +686,43 @@ public class LoginBusinessBean implements IWPageEventListener {
 							boolean smsCodePassed = false;
 							if (!ListUtil.isEmpty(verificators)) {
 								for (TwoStepLoginVerificator verificator: verificators) {
-									//Verifying SMS message
+									//	Verifying SMS message
 									smsCodePassed = verificator.checkSecondStepVerification(smsCode, username, sessionId);
 								}
 							}
 							if (smsCodePassed) {
+								LOGGER.info("Passed verification. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);	//	TODO
+
 								String password = getLoginPassword(request);
-								if (StringUtils.isNotBlank(username) && StringUtils.isNotBlank(password) ) {
+								if (StringUtils.isNotBlank(password)) {
 									canLogin = verifyPasswordAndLogin(request, username, password);
 									//Remove attributes from session
 									removeAttributesFromSession(request);
+
 									//Invalidating SMS code
 									for (TwoStepLoginVerificator verificator: verificators) {
 										verificator.invalidateSecondStepVerification(username);
 									}
+
 									//Login
 									if (canLogin.equals(LoginState.LOGGED_ON)) {
 										onLoginSuccessful(request);
 									} else {
 										onLoginFailed(request, canLogin, username);
 									}
+								} else {
+									LOGGER.warning("Password is unknown, can not login. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);
+									onLoginFailed(request, LoginState.FAILED, username);
 								}
 							} else {
+								LOGGER.warning("Did not pass SMS code verification. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);
 								//Setting the state
-								internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+								onLoginFailed(request, LoginState.FAILED, username);
 							}
 						} else {
+							LOGGER.warning("Either username (" + username + ") or SMS code (" + smsCode + ") are unknown");
 							//Setting the state
-							internalSetState(request, LoginState.FAILED);
+							onLoginFailed(request, LoginState.FAILED, username);
 						}
 					}
 				}
