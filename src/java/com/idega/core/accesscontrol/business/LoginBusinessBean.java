@@ -622,12 +622,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 				//SMS login action
 				} else if (isSMSLoginAction(request)) {
-					LOGGER.info("trying to login with SMS");	//	TODO
 					LoginState canLogin = LoginState.LOGGED_OUT;
 					username = getLoginUserNameNoRemoveFromSession(request);
 					String password = getLoginPasswordNoRemoveFromSession(request);
 					canLogin = verifyPasswordWithoutLogin(request, username, password);
-					LOGGER.info("Login state: " + canLogin);	//	TODO
 					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
 						ServletContext sc = request.getSession().getServletContext();
 						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
@@ -647,15 +645,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 						//Setting the state
 						internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
 					} else {
-						LOGGER.warning("Can not login with username " + username + ". Login state: " + canLogin);
 						onLoginFailed(request, canLogin, username);
 					}
 
 				//Full login with user name, password and SMS
 				} else if (isFullWithSMSLoginAction(request)) {
 					username = getLoginUserNameNoRemoveFromSession(request);
+
 					String smsCode = getSMSCode(request);
-					LOGGER.info("Verifying SMS code " + smsCode + ", username: " + username);//	TODO
 					String isCancel = getIsCancel(request);
 					LoginState canLogin = LoginState.LOGGED_OUT;
 
@@ -675,7 +672,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 						onLoginFailed(request, canLogin, username);
 					} else {
 						//	Logging in
-						if (StringUtils.isNotBlank(smsCode)) {
+						if (!StringUtil.isEmpty(username) && StringUtils.isNotBlank(smsCode)) {
 							boolean smsCodePassed = false;
 							if (!ListUtil.isEmpty(verificators)) {
 								for (TwoStepLoginVerificator verificator: verificators) {
@@ -706,7 +703,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 							}
 						} else {
 							//Setting the state
-							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+							internalSetState(request, LoginState.FAILED);
 						}
 					}
 				}
