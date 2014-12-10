@@ -123,7 +123,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String PARAMETER_PASSWORD = "password";
 	public static final String PARAMETER_PASSWORD2 = "password2";
 	public static final String PARAMETER_SMS_CODE = "smsCode";
-	public static final String PARAMETER_IS_CANCEL = "isCancel";
+	public static final String PARAMETER_IS_CANCEL = "isCancel",
+								PARAMETER_SESSION_ID = "session_id";
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM = false;
 	public static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
@@ -626,6 +627,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					username = getLoginUserNameNoRemoveFromSession(request);
 					String password = getLoginPasswordNoRemoveFromSession(request);
 					canLogin = verifyPasswordWithoutLogin(request, username, password);
+					String sessionId = null;
 					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
 						ServletContext sc = request.getSession().getServletContext();
 						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
@@ -633,15 +635,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 						if (ListUtil.isEmpty(verificators)) {
 							LOGGER.warning("There are no verificators: " + TwoStepLoginVerificator.class.getName());
 						} else {
+							sessionId = getSessionId(request, true);
+							LOGGER.info("Session ID to generate SMS code for user '" + username + "': " + sessionId);	//	TODO
 							for (TwoStepLoginVerificator verificator: verificators) {
 								//Sending SMS message
 								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
-								verificator.doSendSecondStepVerification(iwac, username, request.getSession().getId());
+								verificator.doSendSecondStepVerification(iwac, username, sessionId);
 							}
 						}
-						//Putting username and password ar attributes into the session
+						//Putting username and password attributes into the session
 						request.getSession().setAttribute(PARAMETER_USERNAME, username);
 						request.getSession().setAttribute(PARAMETER_PASSWORD, password);
+						request.setAttribute(PARAMETER_SESSION_ID, sessionId);
+
 						//Setting the state
 						internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
 					} else {
@@ -671,13 +677,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 						//Go back
 						onLoginFailed(request, canLogin, username);
 					} else {
+						String sessionId = getSessionId(request, false);
+						LOGGER.info("Session ID to verify SMS code (" + smsCode + ") for user '" + username + "': " + sessionId);	//	TODO
+
 						//	Logging in
 						if (!StringUtil.isEmpty(username) && StringUtils.isNotBlank(smsCode)) {
 							boolean smsCodePassed = false;
 							if (!ListUtil.isEmpty(verificators)) {
 								for (TwoStepLoginVerificator verificator: verificators) {
 									//Verifying SMS message
-									smsCodePassed = verificator.checkSecondStepVerification(smsCode, username, request.getSession().getId());
+									smsCodePassed = verificator.checkSecondStepVerification(smsCode, username, sessionId);
 								}
 							}
 							if (smsCodePassed) {
@@ -718,6 +727,32 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LOGGER.log(Level.WARNING, "Error processing request " + request.getRequestURI(), ex);
 		}
 		return true;
+	}
+
+	private String getSessionId(HttpServletRequest request, boolean onlyFromSession) {
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			session = request.getSession();
+		}
+		String sessionId = session.getId();
+
+		if (!onlyFromSession) {
+			IWContext iwc = CoreUtil.getIWContext();
+			String sessionIdFromParam = iwc == null ? request.getParameter(PARAMETER_SESSION_ID) : iwc.getParameter(PARAMETER_SESSION_ID);
+			if (StringUtil.isEmpty(sessionIdFromParam)) {
+				LOGGER.warning("Did not find session ID by param's name '" + PARAMETER_SESSION_ID + "'. Using session ID: " + sessionId);
+			} else {
+				if (sessionId.equals(sessionIdFromParam)) {
+					LOGGER.info("IDs are the same: from session and parameter (" + sessionId + ")");
+					return sessionId;
+				} else {
+					LOGGER.warning("Using session ID (" + sessionIdFromParam + ") from parameter!");	//	TODO
+					return sessionIdFromParam;
+				}
+			}
+		}
+
+		return sessionId;
 	}
 
 	/**
