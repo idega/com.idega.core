@@ -20,15 +20,16 @@ import com.idega.util.expression.ELUtil;
 @Service(ExplicitSynchronizationBusiness.BEAN_NAME)
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizationBusiness{
+
 	private Map<String, Collection<SynchronizerWraper>> synchronizersEntityMap;
-	
+
 	@Override
 	public void synchronize(ExplicitlySynchronizedEntity entity){
 		try{
 			RequestSynchronizer rs = ELUtil.getInstance().getBean(RequestSynchronizer.BEAN_NAME);
 			rs.addEntityToSyncronize(entity);
-		}catch (Exception e) {
-			getLogger().log(Level.WARNING, "Non request synchronization is not implemented yet", e);
+		} catch (Exception e) {
+			getLogger().warning("Non request synchronization is not implemented yet. Can't get bean: " + RequestSynchronizer.BEAN_NAME);
 		}
 	}
 	private Logger getLogger(){
@@ -94,7 +95,7 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 			this.synchronizer = synchronizer;
 			equalKey = synchronizer.getClass();
 		}
-		
+
 		public boolean equals(SynchronizerWraper synchronizerWraper) {
 			return synchronizerWraper.equalKey.equals(equalKey);
 		}
@@ -111,7 +112,7 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 		public int hashCode() {
 			return equalKey.hashCode();
 		}
-		
-		
+
+
 	}
 }
