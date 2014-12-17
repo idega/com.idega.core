@@ -224,12 +224,22 @@ public class GroupComparator extends GenericGroupComparator{
 
     private Collection getParentGroupsRecursive(Integer groupId) throws RemoteException, FinderException {
         Collection parentGroupsRecursive = new ArrayList();
-        getParentGroupsRecursive(parentGroupsRecursive, groupId);
+        getParentGroupsRecursive(parentGroupsRecursive, groupId, new HashMap());
         return parentGroupsRecursive;
     }
 
-    private void getParentGroupsRecursive(Collection parentsRecursive, Integer groupId) throws RemoteException, FinderException {
-        Group group = null;
+    private void getParentGroupsRecursive(Collection parentsRecursive, Integer groupId, Map checkedGroups) throws RemoteException, FinderException {
+        if (groupId == null) {
+        	return;
+        }
+        Object flag = checkedGroups.get(groupId);
+    	if (flag instanceof Boolean && ((Boolean) flag).booleanValue()) {
+    		return;
+    	}
+    	
+    	checkedGroups.put(groupId, Boolean.TRUE);
+        
+    	Group group = null;
         Group parent = null;
         if (this.applicationCachedParents.containsKey(groupId.toString())) {
             Collection col = (Collection)this.applicationCachedParents.get(groupId.toString());
@@ -255,7 +265,7 @@ public class GroupComparator extends GenericGroupComparator{
 	                 this.applicationCachedGroups.put(key, cachedParentGroup);
                  }
                  parentsRecursive.add(cachedParentGroup);
-                 getParentGroupsRecursive(parentsRecursive, cachedParentGroup.getPrimaryKey());
+                 getParentGroupsRecursive(parentsRecursive, cachedParentGroup.getPrimaryKey(), checkedGroups);
             }       
         }
         else {
@@ -278,7 +288,7 @@ public class GroupComparator extends GenericGroupComparator{
 	            if (parent!= null) {
 	                CachedGroup cachedParentGroup = new CachedGroup(parent);
 		            parentsRecursive.add(cachedParentGroup);
-		            getParentGroupsRecursive(parentsRecursive, cachedParentGroup.getPrimaryKey());
+		            getParentGroupsRecursive(parentsRecursive, cachedParentGroup.getPrimaryKey(), checkedGroups);
 	            }
 	        }
         }
