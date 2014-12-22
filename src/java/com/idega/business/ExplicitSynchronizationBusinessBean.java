@@ -28,8 +28,10 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 		try{
 			RequestSynchronizer rs = ELUtil.getInstance().getBean(RequestSynchronizer.BEAN_NAME);
 			rs.addEntityToSyncronize(entity);
-		} catch (Exception e) {
+		} catch (IllegalStateException e) {
 			getLogger().warning("Non request synchronization is not implemented yet. Can't get bean: " + RequestSynchronizer.BEAN_NAME);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting bean: " + RequestSynchronizer.BEAN_NAME, e);
 		}
 	}
 	private Logger getLogger(){
