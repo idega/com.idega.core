@@ -12,6 +12,7 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
@@ -462,6 +463,23 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 			}
 		}
 		return returner;
+	}
+
+	@Override
+	public String getAddress() {
+		String name = getStreetNameOriginal();
+		String number = getStreetNumber();
+		StringBuilder address = new StringBuilder();
+		if (name != null) {
+			address.append(name);
+		}
+		if (!StringUtil.isEmpty(number)) {
+			if (name != null) {
+				address.append(CoreConstants.SPACE);
+			}
+			address.append(number);
+		}
+		return address.toString();
 	}
 
 }
