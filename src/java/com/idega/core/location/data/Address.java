@@ -16,6 +16,7 @@ public interface Address extends IDOLegacyEntity {
 	/**
 	 * @see com.idega.core.location.data.AddressBMPBean#getName
 	 */
+	@Override
 	public String getName();
 
 	/**
@@ -197,4 +198,7 @@ public interface Address extends IDOLegacyEntity {
 	 * @see com.idega.core.location.data.AddressBMPBean#isEqualTo
 	 */
 	public boolean isEqualTo(Address address);
+
+	public String getAddress();
+
 }

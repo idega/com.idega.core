@@ -57,18 +57,13 @@ public class PagesCacher extends DefaultSpringBean implements ApplicationListene
 			}
 
 			ICPageDAO icPageDAO = getICPageDAO();
-			int index = 0;
-			int totalPages = ids.size();
-			getLogger().info("Pages to cache: " + totalPages);
 			for (Serializable[] data: ids) {
-				index++;
 				if (ArrayUtil.isEmpty(data)) {
 					continue;
 				}
 
 				Serializable id = data[0];
 				if (id instanceof Number) {
-					getLogger().info("Will cache page with ID: " + id + ", " + index + " of " + totalPages);
 					icPageDAO.isPagePublished(((Number) id).intValue());
 				}
 			}

@@ -62,4 +62,8 @@ public class LoginState implements Serializable {
 		return this.state;
 	}
 
+	@Override
+	public String toString() {
+		return "State " + getStateValue();
+	}
 }

@@ -87,12 +87,16 @@ public class LoginDBHandler {
 	}
 
 	protected static LoginTable createUserLogin(boolean update, int userID, String userLogin, String password) throws LoginCreateException {
-		LoginTable loginTable = null;
-		try {
-			loginTable = getLoginTableHome().findLoginForUser(userID);
-		}
-		catch (FinderException fe) {
-			// No login found for user...
+		return createUserLogin(null, update, userID, userLogin, password);
+	}
+
+	protected static LoginTable createUserLogin(LoginTable loginTable, boolean update, int userID, String userLogin, String password) throws LoginCreateException {
+		if (loginTable == null) {
+			try {
+				loginTable = getLoginTableHome().findLoginForUser(userID);
+			} catch (FinderException fe) {
+				// No login found for user...
+			}
 		}
 
 		if (update) {
@@ -136,7 +140,7 @@ public class LoginDBHandler {
 						//throw new LoginCreateException(e.getMessage());
 					}
 					if (existingLogin != null && existingLogin.getUserId() != userID) {
-						throw new LoginCreateException("login not valid : in use");
+						throw new LoginCreateException("login not valid : in use (" + userLogin + ")");
 					}
 				}
 				if (encryptedPassword != null) {
@@ -144,7 +148,7 @@ public class LoginDBHandler {
 					loginTable.setUserLogin(userLogin);
 				}
 				else {
-					throw new LoginCreateException("Password not valid");
+					throw new LoginCreateException("Password not valid for user name: " + userLogin);
 				}
 			}
 		}
@@ -152,7 +156,7 @@ public class LoginDBHandler {
 			if (userLogin != null && !CoreConstants.EMPTY.equals(userLogin)) {
 				try {
 					loginTable = getLoginTableHome().findByLogin(userLogin);
-					throw new LoginCreateException("login not valid : in use");
+					throw new LoginCreateException("login not valid : in use (" + userLogin + ")");
 				}
 				catch (FinderException e) {
 					//No login found with user login...
@@ -160,7 +164,7 @@ public class LoginDBHandler {
 				loginTable.setUserLogin(userLogin);
 			}
 			else {
-				throw new LoginCreateException("Login not valid: null or emptyString");
+				throw new LoginCreateException("Login not valid: null or empty string: '" + userLogin + "'");
 			}
 		}
 		loginTable.setLastChanged(IWTimestamp.getTimestampRightNow());
@@ -334,6 +338,10 @@ public class LoginDBHandler {
 
 	public static void updateLogin(int userID, String userLogin, String password) throws Exception {
 		createLogin(true, userID, userLogin, password);
+	}
+
+	public static void updateLogin(LoginTable loginTable, int userID, String userLogin, String password) throws Exception {
+		createUserLogin(loginTable, true, userID, userLogin, password);
 	}
 
 	public static void changePassword(int userID, String password) throws Exception {

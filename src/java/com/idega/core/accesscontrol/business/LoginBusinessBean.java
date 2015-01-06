@@ -30,6 +30,7 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -122,7 +123,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public static final String PARAMETER_PASSWORD = "password";
 	public static final String PARAMETER_PASSWORD2 = "password2";
 	public static final String PARAMETER_SMS_CODE = "smsCode";
-	public static final String PARAMETER_IS_CANCEL = "isCancel";
+	public static final String PARAMETER_IS_CANCEL = "isCancel",
+								PARAMETER_SESSION_ID = "session_id";
 	public static final String SESSION_PRM_LOGINNAME_FOR_INVALID_LOGIN = "loginname_for_invalid_login";
 	public static boolean USING_OLD_USER_SYSTEM = false;
 	public static final String PARAM_LOGIN_BY_UNIQUE_ID = "l_by_uuid";
@@ -549,9 +551,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return processRequest(request);
 	}
 
-	private Collection<TwoStepLoginVerificator> getVerificators() {
-		Map<String, TwoStepLoginVerificator> verficators = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
-			.getBeansOfType(TwoStepLoginVerificator.class);
+	private Collection<TwoStepLoginVerificator> getVerificators(ServletContext sc) {
+		Map<String, TwoStepLoginVerificator> verficators = WebApplicationContextUtils.getWebApplicationContext(sc)
+				.getBeansOfType(TwoStepLoginVerificator.class);
 		return MapUtil.isEmpty(verficators) ? null : verficators.values();
 	}
 
@@ -561,7 +563,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public boolean processRequest(HttpServletRequest request) throws IWException {
 		String username = null;
-//		Collection<TwoStepLoginVerificator> verificators = getVerificators();
+
 		try {
 			if (isLoggedOn(request)) {
 				if (isLogOffAction(request)) {
@@ -575,8 +577,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 						logOutUser(request, info.getLogin());
 					}
 				}
-			}
-			else {
+
+			//	Not logged on
+			} else {
 				if (isLogOnAction(request)) {
 					// int canLogin = STATE_LOGGED_OUT;
 					LoginState canLogin = LoginState.LOGGED_OUT;
@@ -617,6 +620,111 @@ public class LoginBusinessBean implements IWPageEventListener {
 					}
 				} else if (isTryAgainAction(request)) {
 					internalSetState(request, LoginState.LOGGED_OUT);
+
+				//SMS login action
+				} else if (isSMSLoginAction(request)) {
+					LoginState canLogin = LoginState.LOGGED_OUT;
+					username = getLoginUserNameNoRemoveFromSession(request);
+					String password = getLoginPasswordNoRemoveFromSession(request);
+					canLogin = verifyPasswordWithoutLogin(request, username, password);
+					String sessionId = null;
+					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
+						ServletContext sc = request.getSession().getServletContext();
+						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
+
+						if (ListUtil.isEmpty(verificators)) {
+							LOGGER.warning("There are no verificators: " + TwoStepLoginVerificator.class.getName());
+						} else {
+							sessionId = getSessionId(request, true);
+							LOGGER.info("Session ID to generate SMS code for user '" + username + "': " + sessionId);	//	TODO
+							for (TwoStepLoginVerificator verificator: verificators) {
+								//Sending SMS message
+								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
+								verificator.doSendSecondStepVerification(iwac, username, sessionId);
+							}
+						}
+						//Putting username and password attributes into the session
+						request.getSession().setAttribute(PARAMETER_USERNAME, username);
+						request.getSession().setAttribute(PARAMETER_PASSWORD, password);
+						request.setAttribute(PARAMETER_SESSION_ID, sessionId);
+
+						//Setting the state
+						internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+					} else {
+						onLoginFailed(request, canLogin, username);
+					}
+
+				//Full login with user name, password and SMS
+				} else if (isFullWithSMSLoginAction(request)) {
+					username = getLoginUserNameNoRemoveFromSession(request);
+
+					String smsCode = getSMSCode(request);
+					String isCancel = getIsCancel(request);
+					LoginState canLogin = LoginState.LOGGED_OUT;
+
+					ServletContext sc = request.getSession().getServletContext();
+					Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
+
+					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
+						//	Canceling login, invalidate SMS code
+						for (TwoStepLoginVerificator verificator: verificators) {
+							//Invalidating SMS code
+							verificator.invalidateSecondStepVerification(username);
+						}
+
+						//	Remove attributes from session
+						removeAttributesFromSession(request);
+
+						//	Go back
+						onLoginFailed(request, canLogin, username);
+					} else {
+						String sessionId = getSessionId(request, false);
+						LOGGER.info("Session ID to verify SMS code (" + smsCode + ") for user '" + username + "': " + sessionId);	//	TODO
+
+						//	Logging in
+						if (!StringUtil.isEmpty(username) && StringUtils.isNotBlank(smsCode)) {
+							boolean smsCodePassed = false;
+							if (!ListUtil.isEmpty(verificators)) {
+								for (TwoStepLoginVerificator verificator: verificators) {
+									//	Verifying SMS message
+									smsCodePassed = verificator.checkSecondStepVerification(smsCode, username, sessionId);
+								}
+							}
+							if (smsCodePassed) {
+								LOGGER.info("Passed verification. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);	//	TODO
+
+								String password = getLoginPassword(request);
+								if (StringUtils.isNotBlank(password)) {
+									canLogin = verifyPasswordAndLogin(request, username, password);
+									//Remove attributes from session
+									removeAttributesFromSession(request);
+
+									//Invalidating SMS code
+									for (TwoStepLoginVerificator verificator: verificators) {
+										verificator.invalidateSecondStepVerification(username);
+									}
+
+									//Login
+									if (canLogin.equals(LoginState.LOGGED_ON)) {
+										onLoginSuccessful(request);
+									} else {
+										onLoginFailed(request, canLogin, username);
+									}
+								} else {
+									LOGGER.warning("Password is unknown, can not login. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);
+									onLoginFailed(request, LoginState.FAILED, username);
+								}
+							} else {
+								LOGGER.warning("Did not pass SMS code verification. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);
+								//Setting the state
+								onLoginFailed(request, LoginState.FAILED, username);
+							}
+						} else {
+							LOGGER.warning("Either username (" + username + ") or SMS code (" + smsCode + ") are unknown");
+							//Setting the state
+							onLoginFailed(request, LoginState.FAILED, username);
+						}
+					}
 				}
 			}
 		} catch (Exception ex) {
@@ -626,9 +734,35 @@ public class LoginBusinessBean implements IWPageEventListener {
 				e.printStackTrace();
 			}
 
-			LOGGER.log(Level.WARNING, "Error processing request", ex);
+			LOGGER.log(Level.WARNING, "Error processing request " + request.getRequestURI(), ex);
 		}
 		return true;
+	}
+
+	private String getSessionId(HttpServletRequest request, boolean onlyFromSession) {
+		HttpSession session = request.getSession(false);
+		if (session == null) {
+			session = request.getSession();
+		}
+		String sessionId = session.getId();
+
+		if (!onlyFromSession) {
+			IWContext iwc = CoreUtil.getIWContext();
+			String sessionIdFromParam = iwc == null ? request.getParameter(PARAMETER_SESSION_ID) : iwc.getParameter(PARAMETER_SESSION_ID);
+			if (StringUtil.isEmpty(sessionIdFromParam)) {
+				LOGGER.warning("Did not find session ID by param's name '" + PARAMETER_SESSION_ID + "'. Using session ID: " + sessionId);
+			} else {
+				if (sessionId.equals(sessionIdFromParam)) {
+					LOGGER.info("IDs are the same: from session and parameter (" + sessionId + ")");
+					return sessionId;
+				} else {
+					LOGGER.warning("Using session ID (" + sessionIdFromParam + ") from parameter!");	//	TODO
+					return sessionIdFromParam;
+				}
+			}
+		}
+
+		return sessionId;
 	}
 
 	/**
@@ -1903,6 +2037,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @throws Exception
 	 */
 	private LoginState verifyPasswordWithoutLogin(HttpServletRequest request, String login, String password) throws Exception {
+		if (StringUtil.isEmpty(login)) {
+			return LoginState.FAILED;
+		}
+		if (StringUtil.isEmpty(password)) {
+			return LoginState.FAILED;
+		}
+
 		boolean loginLockIsEnabled = isLoginLockIsEnabled();
 		if (loginLockIsEnabled) {
 			if (isLoginLocked(request, login)) {

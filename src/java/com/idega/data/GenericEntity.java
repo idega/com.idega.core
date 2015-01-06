@@ -3858,8 +3858,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if(this instanceof ExplicitlySynchronizedEntity){
 				ExplicitlySynchronizedEntity thisEntity = (ExplicitlySynchronizedEntity) this;
-				ExplicitSynchronizationBusiness explicitSynchronizationBusiness = ELUtil.getInstance().getBean(ExplicitSynchronizationBusiness.BEAN_NAME);
-				explicitSynchronizationBusiness.synchronize(thisEntity);
+				if (thisEntity.isSynchronizationEnabled()) {
+					ExplicitSynchronizationBusiness explicitSynchronizationBusiness = ELUtil.getInstance().getBean(ExplicitSynchronizationBusiness.BEAN_NAME);
+					explicitSynchronizationBusiness.synchronize(thisEntity);
+				}
 			}
 		}
 		catch (Exception e) {
@@ -5729,6 +5731,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	public String getPK() {
 		return getStringColumnValue(getIDColumnName());
 	}
+
 	private class ExplicitlySynchronizedEntityImpl implements ExplicitlySynchronizedEntity{
 
 		private String synchronizerKey;
@@ -5771,5 +5774,16 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			this.changes = changes;
 		}
 
+		private boolean synchronizationEnabled = true;
+
+		@Override
+		public void setSynchronizationEnabled(boolean enabled) {
+			synchronizationEnabled = enabled;
+		}
+
+		@Override
+		public boolean isSynchronizationEnabled() {
+			return synchronizationEnabled;
+		}
 	}
 }
