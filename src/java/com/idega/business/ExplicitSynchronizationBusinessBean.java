@@ -28,7 +28,16 @@ public class ExplicitSynchronizationBusinessBean implements ExplicitSynchronizat
 			RequestSynchronizer rs = ELUtil.getInstance().getBean(RequestSynchronizer.BEAN_NAME);
 			rs.addEntityToSyncronize(entity);
 		}catch (Exception e) {
-			getLogger().log(Level.WARNING, "Non request synchronization is not implemented yet", e);
+			if(e instanceof org.springframework.beans.factory.BeanCreationException){
+				Throwable cause = e.getCause();
+				if((cause != null) && (cause instanceof java.lang.IllegalStateException)){
+//					TODO: handle no request scope
+					getLogger().info("Entity " + entity.getClass() + 
+							" pk: "+ entity.getPK() + " is not syncronized with other servers. Not implemented.");
+					return;
+				}
+			}
+			getLogger().log(Level.WARNING, "Failed synchronizing", e);
 		}
 	}
 	private Logger getLogger(){
