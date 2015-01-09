@@ -105,6 +105,15 @@ AdminCoreHelper.makeComponentEditable = function(component, oldValue) {
 	});
 }
 
+jQuery(window).load(function() {
+	AdminToolbarSession.getMode({callback: function(mode) {
+		if (mode == AdminCoreHelper.modes.preview) {
+			AdminCoreHelper.currentMode = mode;
+			jQuery('li.adminPreviewMode').click();
+		}
+	}});
+});
+
 jQuery(document).ready(function() {
 	var toolbar = jQuery('#adminTopLayer').remove();
 	jQuery('body').prepend(toolbar);
