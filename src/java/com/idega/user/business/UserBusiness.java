@@ -963,6 +963,8 @@ public interface UserBusiness extends IBOService {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	boolean changeUserPassword(User user, String newPassword);
-	
+
 	public boolean changeUserCurrentPassword(IWContext iwc,String newPassword);
+
+	public Gender getGenderFromPersonalId(String personalId);
 }
