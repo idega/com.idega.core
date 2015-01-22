@@ -106,12 +106,16 @@ AdminCoreHelper.makeComponentEditable = function(component, oldValue) {
 }
 
 jQuery(window).load(function() {
-	AdminToolbarSession.getMode({callback: function(mode) {
-		if (mode == AdminCoreHelper.modes.preview) {
-			AdminCoreHelper.currentMode = mode;
-			jQuery('li.adminPreviewMode').click();
-		}
-	}});
+	if (typeof(AdminToolbarSession) == 'function') {
+		AdminToolbarSession.getMode({callback:
+			function(mode) {
+				if (mode == AdminCoreHelper.modes.preview) {
+					AdminCoreHelper.currentMode = mode;
+					jQuery('li.adminPreviewMode').click();
+				}
+			}
+		});
+	}
 });
 
 jQuery(document).ready(function() {
