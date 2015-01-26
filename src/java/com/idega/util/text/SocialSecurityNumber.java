@@ -115,7 +115,6 @@ public class SocialSecurityNumber {
 	/**
 	 * Checks for validity of an icelandic ssn
 	 */
-	//FIXME: SHOULD BE IMPELEMENTED
 	public static boolean isValidSwedishSocialSecurityNumber(String socialSecurityNumber) {
 		if (socialSecurityNumber.length() != 10 && socialSecurityNumber.length() != 11 && socialSecurityNumber.length() != 12) {
 			return false;
