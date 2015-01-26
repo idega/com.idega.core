@@ -36,6 +36,7 @@ import javax.ejb.RemoveException;
 import javax.transaction.SystemException;
 import javax.transaction.UserTransaction;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
@@ -126,6 +127,7 @@ import com.idega.util.StringUtil;
 import com.idega.util.Timer;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.Name;
+import com.idega.util.text.SocialSecurityNumber;
 
 /**
  * <p>
@@ -176,6 +178,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private UserInfoColumnsBusiness userInfoBusiness = null;
 
 	private SimpleDateFormat userDateOfBirthFormatter = new SimpleDateFormat("ddMMyy");
+	private SimpleDateFormat userDateOfBirthFormatterYearsFirst = new SimpleDateFormat("yyMMdd");
+	private SimpleDateFormat userDateOfBirthFormatterFullYears = new SimpleDateFormat("yyyyMMdd");
 
 	@Autowired
 	private UserDAO userDAO;
@@ -3406,6 +3410,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		if ("is_IS".equals(locale.toString())) {
 			return validateIcelandicSSN(personalId);
+		} else if ("sv_SE".equals(locale.toString())) {
+			return SocialSecurityNumber.isValidSocialSecurityNumber(personalId, locale);
 		} else if ("en".equals(locale.toString())) {
 			return true;	//	Default locale, no validator needed
 		}
@@ -3829,6 +3835,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		if ("is_IS".equals(locale.toString())) {
 			return getDateBirthFromIcelandicPersonalId(personalId);
+		} else if ("sv_SE".equals(locale.toString())) {
+			return getDateBirthFromSwedishPersonalId(personalId);
 		}
 
 		LOGGER.warning("There is no date parser from personal id: " + personalId + " and locale: " + locale);
@@ -3874,6 +3882,80 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		iwDate.setYear(getAdjustedYears(iwDate.getYear(), minYearsValue, maxYearsValue));
 
 		return iwDate.getDate();
+	}
+
+	/**
+	 * Calculate birth date from Swedish personal id
+	 * @param personalId Swedish personal id
+	 * @return Birth date
+	 */
+	private Date getDateBirthFromSwedishPersonalId(String personalId) {
+		java.util.Date birthDate = null;
+		if (StringUtils.isNotBlank(personalId)) {
+			if (personalId.length() == 12) {
+				String dateInString = personalId.substring(0, 8);
+				try {
+					birthDate = userDateOfBirthFormatterFullYears.parse(dateInString);
+					IWTimestamp iwDate = new IWTimestamp(birthDate.getTime());
+					return iwDate.getDate();
+				} catch (ParseException e) {
+					e.printStackTrace();
+					return null;
+				}
+			} else {
+				String dateInString = personalId.substring(0, 6);
+				try {
+					birthDate = userDateOfBirthFormatterYearsFirst.parse(dateInString);
+				} catch (ParseException e) {
+					e.printStackTrace();
+					return null;
+				}
+				if (birthDate == null) {
+					return null;
+				}
+				try {
+					int lastTwoYearDigitsFromNow = Integer.valueOf(new IWTimestamp().getDateString("yy"));
+					IWTimestamp iwDate = new IWTimestamp(birthDate.getTime());
+					int lastTwoYearDigitsFromBirthDate = Integer.valueOf(iwDate.getDateString("yy"));
+					int minYearsValue = 1900;
+					int maxYearsValue = 1999;
+					if (personalId.length() == 11) {
+						String sign = personalId.substring(6, 7);
+						if (sign.equalsIgnoreCase(CoreConstants.MINUS)) {
+							if (lastTwoYearDigitsFromBirthDate > lastTwoYearDigitsFromNow) {
+								minYearsValue = 1900;
+								maxYearsValue = 1999;
+							} else {
+								minYearsValue = 2000;
+								maxYearsValue = 2099;
+							}
+						} else if (sign.equalsIgnoreCase(CoreConstants.PLUS)) {
+							minYearsValue = 1900;
+							maxYearsValue = 1999;
+						} else {
+							return null;
+						}
+					} else if (personalId.length() == 10) {
+						if (lastTwoYearDigitsFromBirthDate > lastTwoYearDigitsFromNow) {
+							minYearsValue = 1900;
+							maxYearsValue = 1999;
+						} else {
+							minYearsValue = 2000;
+							maxYearsValue = 2099;
+						}
+					} else {
+						return null;
+					}
+					//Finish calculating years
+					iwDate.setYear(getAdjustedYears(iwDate.getYear(), minYearsValue, maxYearsValue));
+					return iwDate.getDate();
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+		}
+		return null;
 	}
 
 	private int getAdjustedYears(int years, int minValue, int maxValue) {
@@ -4585,6 +4667,58 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 
 		return null;
+	}
+
+	/**
+	 * Getting gender from personal id
+	 */
+	@Override
+	public Gender getGenderFromPersonalId(String personalId) {
+		Locale locale = CoreUtil.getCurrentLocale();
+		if (locale == null) {
+			LOGGER.warning("Current locale is unknown!");
+			return null;
+		}
+
+		if (!validatePersonalId(personalId, locale)) {
+			return null;
+		}
+
+		if ("is_IS".equals(locale.toString())) {
+			return null;
+		} else if ("sv_SE".equals(locale.toString())) {
+			return getGenderSwedishPersonalId(personalId);
+		} else {
+			LOGGER.warning("There is no gender parser from personal id: " + personalId + " and locale: " + locale);
+			return null;
+		}
+	}
+
+	/**
+	 * Get gender from Swedish personal id
+	 * @param personalId Swedish personal id
+	 * @return Gender
+	 */
+	private Gender getGenderSwedishPersonalId(String personalId) {
+		Gender gender = null;
+		if (StringUtils.isNotBlank(personalId)) {
+			if (personalId.length() == 10 || personalId.length() == 11 || personalId.length() == 12) {
+				try {
+					int penultimateNumber = Integer.valueOf(personalId.substring(personalId.length() - 2, personalId.length() - 1)).intValue();
+					if (penultimateNumber % 2 == 0) {
+						//Even = FEMALE
+						gender = getGenderHome().getFemaleGender();
+					} else {
+						//Odd = MALE
+						gender = getGenderHome().getMaleGender();
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+					return null;
+				}
+			}
+		}
+		return gender;
 	}
 
 } // Class UserBusiness

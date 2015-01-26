@@ -71,7 +71,7 @@ public class UserLogin implements Serializable {
 	@JoinColumn(name = COLUMN_USER)
 	private User user;
 
-	@Column(name = COLUMN_USER_LOGIN, length = 32, nullable = false, unique = true)
+	@Column(name = COLUMN_USER_LOGIN, length = 254, nullable = false, unique = true)
 	private String userLogin;
 
 	@Column(name = COLUMN_USER_PASSWORD)
