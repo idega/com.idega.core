@@ -29,6 +29,8 @@ import com.idega.util.database.ConnectionBroker;
 */
 public class SimpleQuerier {
 
+	private static final Logger LOGGER = Logger.getLogger(SimpleQuerier.class.getName());
+
     /**
      * Does nothing
      */
@@ -136,7 +138,7 @@ public class SimpleQuerier {
     }
     private static List<Serializable[]> executeQuery(Connection conn, String sqlQuery, int columns) throws Exception {
         if (conn == null) {
-        	Logger.getLogger(SimpleQuerier.class.getName()).warning("Connection is not provided, cannot execute query: " + sqlQuery);
+        	LOGGER.warning("Connection is not provided, cannot execute query: " + sqlQuery);
         	return null;
         }
 
@@ -165,7 +167,7 @@ public class SimpleQuerier {
 
             long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
-            	Logger.getLogger(SimpleQuerier.class.getName()).info("Query '" + sqlQuery + "' was executed in " + (end - start) + " ms.");
+            	LOGGER.info("Query '" + sqlQuery + "' was executed in " + (end - start) + " ms.");
             }
         }
 
@@ -321,6 +323,9 @@ public class SimpleQuerier {
             count = stmt.executeUpdate(sqlString);
             if (count > 0) {
             	result = true;
+            	LOGGER.info("Updated " + count + " row(s) by '" + sqlString + "'");
+            } else {
+            	LOGGER.warning("No rows were updated by '" + sqlString + "'");
             }
         } finally {
             if (stmt != null) {
@@ -379,7 +384,7 @@ public class SimpleQuerier {
 
             long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
-            	Logger.getLogger(SimpleQuerier.class.getName()).info("Query '" + sql + "' was executed in " + (end - start) + " ms.");
+            	LOGGER.info("Query '" + sql + "' was executed in " + (end - start) + " ms.");
             }
         }
         return value;
