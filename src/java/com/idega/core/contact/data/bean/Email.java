@@ -56,6 +56,7 @@ public class Email implements Serializable, EmailDataView {
 	@JoinColumn(name = COLUMN_EMAIL_TYPE_ID)
 	private EmailType emailType;
 
+	public static final String PROP_ADDRESS = ENTITY_NAME + "_" + COLUMN_ADDRESS;
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = User.class)
 	@JoinTable(name = "ic_user_email", joinColumns = { @JoinColumn(name = COLUMN_EMAIL_ID) }, inverseJoinColumns = { @JoinColumn(name = User.COLUMN_USER_ID) })
 	private List<User> users;
