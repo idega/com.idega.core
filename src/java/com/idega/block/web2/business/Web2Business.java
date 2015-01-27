@@ -485,4 +485,6 @@ public interface Web2Business extends IBOService {
 	public List<String> getBundleUrisToTimeAgoScript(Locale locale);
 	public List<String> getBundleUrisToTimePickerScript(Locale locale);
 	public String getBundleUriToTimePickerStyle();
+	
+	public String getBundleUriToJCaretScript();
 }
