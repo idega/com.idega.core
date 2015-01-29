@@ -21,10 +21,12 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -46,11 +48,13 @@ import org.springframework.stereotype.Service;
 import com.idega.exception.IWBundleDoesNotExist;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
@@ -161,10 +165,11 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		setLocale(locale);
 		this.file = file;
 
+		String content = null;
 		Reader reader = null;
 		try {
 			this.properties = new SortedProperties();
-			String content = StringHandler.getContentFromInputStream(streamForRead);
+			content = StringHandler.getContentFromInputStream(streamForRead);
 			if (content != null) {
 				reader = new StringReader(content);
 				this.properties.load(reader);
@@ -179,6 +184,32 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			this.lookup = new TreeMap<String, String>();
 			for (Entry<Object, Object> entry: this.properties.entrySet()) {
 				lookup.put(entry.getKey().toString(), entry.getValue().toString());
+			}
+		}
+
+		if (!StringUtil.isEmpty(content)) {
+			List<String> lines = StringUtil.getLinesFromString(content);
+			if (!ListUtil.isEmpty(lines)) {
+				List<String> newKeys = new ArrayList<String>();
+				for (String line: lines) {
+					if (StringUtil.isEmpty(line)) {
+						continue;
+					}
+
+					String[] parts = line.split(CoreConstants.EQ);
+					if (ArrayUtil.isEmpty(parts) || parts.length != 2) {
+						continue;
+					}
+
+					String key = parts[0];
+					if (!lookup.containsKey(key)) {
+						lookup.put(key, parts[1]);
+						newKeys.add(key);
+					}
+				}
+				if (!ListUtil.isEmpty(newKeys)) {
+					LOGGER.info("Found missing keys: " + newKeys + " in " + file + " for " + locale);
+				}
 			}
 		}
 
