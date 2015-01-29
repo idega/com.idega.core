@@ -663,15 +663,22 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	private void doMakeSureAllFilesLoaded(Map<String, String> data) {
 		String file = null;
 		try {
+			String identifier = getBundleIdentifier();
+			if (StringUtil.isEmpty(identifier)) {
+				return;
+			}
+
 			file = "resources/" + getLocale() + ".locale/" + getLocalizedStringsFileName();
 			InputStream stream = IOUtil.getStreamFromJar(getBundleIdentifier(), file);
 			String content = StringHandler.getContentFromInputStream(stream);
 			if (StringUtil.isEmpty(content)) {
+				LOGGER.warning("No content in " + getBundleIdentifier() + ", file: " + file + " for " + locale);
 				return;
 			}
 
 			List<String> lines = StringUtil.getLinesFromString(content);
 			if (ListUtil.isEmpty(lines)) {
+				LOGGER.warning("No lines in " + getBundleIdentifier() + ", file: " + file + " for " + locale + ", content: " + content);
 				return;
 			}
 
@@ -688,15 +695,15 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 
 				String key = parts[0];
 				if (!data.containsKey(key)) {
-					data.put(key, parts[1]);
+					setString(key, parts[1]);
 					newKeys.add(key);
 				}
 			}
 			if (!ListUtil.isEmpty(newKeys)) {
-				LOGGER.info("Found missing keys: " + newKeys + " in " + file + " for " + locale);
+				LOGGER.info("Found missing keys in " + getBundleIdentifier() + ", file: " + file + " for " + locale + "\n" + newKeys);
 			}
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error for checking missing keys in JAR file of " + getBundleIdentifier() + ", file: " , e);
+			LOGGER.log(Level.WARNING, "Error for checking missing keys in JAR file of " + getBundleIdentifier() + ", file: " + file + " for " + locale, e);
 		}
 	}
 
