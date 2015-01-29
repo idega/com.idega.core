@@ -185,32 +185,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			for (Entry<Object, Object> entry: this.properties.entrySet()) {
 				lookup.put(entry.getKey().toString(), entry.getValue().toString());
 			}
-		}
 
-		if (!StringUtil.isEmpty(content)) {
-			List<String> lines = StringUtil.getLinesFromString(content);
-			if (!ListUtil.isEmpty(lines)) {
-				List<String> newKeys = new ArrayList<String>();
-				for (String line: lines) {
-					if (StringUtil.isEmpty(line)) {
-						continue;
-					}
-
-					String[] parts = line.split(CoreConstants.EQ);
-					if (ArrayUtil.isEmpty(parts) || parts.length != 2) {
-						continue;
-					}
-
-					String key = parts[0];
-					if (!lookup.containsKey(key)) {
-						lookup.put(key, parts[1]);
-						newKeys.add(key);
-					}
-				}
-				if (!ListUtil.isEmpty(newKeys)) {
-					LOGGER.info("Found missing keys: " + newKeys + " in " + file + " for " + locale);
-				}
-			}
+			doMakeSureAllFilesLoaded(lookup);
 		}
 
 		setResourcesURL(parent.getResourcesVirtualPath() + CoreConstants.SLASH + locale.toString() + ".locale");
@@ -679,7 +655,48 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			String[] str = bundle.getLocalizableStrings();
 			return new TreeSet<String>(Arrays.asList(str));
 		} else {
+			doMakeSureAllFilesLoaded(getLookup());
 			return getLookup().keySet();
+		}
+	}
+
+	private void doMakeSureAllFilesLoaded(Map<String, String> data) {
+		String file = null;
+		try {
+			file = "resources/" + getLocale() + ".locale/" + getLocalizedStringsFileName();
+			InputStream stream = IOUtil.getStreamFromJar(getBundleIdentifier(), file);
+			String content = StringHandler.getContentFromInputStream(stream);
+			if (StringUtil.isEmpty(content)) {
+				return;
+			}
+
+			List<String> lines = StringUtil.getLinesFromString(content);
+			if (ListUtil.isEmpty(lines)) {
+				return;
+			}
+
+			List<String> newKeys = new ArrayList<String>();
+			for (String line: lines) {
+				if (StringUtil.isEmpty(line)) {
+					continue;
+				}
+
+				String[] parts = line.split(CoreConstants.EQ);
+				if (ArrayUtil.isEmpty(parts) || parts.length != 2) {
+					continue;
+				}
+
+				String key = parts[0];
+				if (!data.containsKey(key)) {
+					data.put(key, parts[1]);
+					newKeys.add(key);
+				}
+			}
+			if (!ListUtil.isEmpty(newKeys)) {
+				LOGGER.info("Found missing keys: " + newKeys + " in " + file + " for " + locale);
+			}
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error for checking missing keys in JAR file of " + getBundleIdentifier() + ", file: " , e);
 		}
 	}
 
