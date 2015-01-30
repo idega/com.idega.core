@@ -21,7 +21,6 @@ import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
 import java.text.MessageFormat;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -682,7 +681,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 				return;
 			}
 
-			List<String> newKeys = new ArrayList<String>();
 			for (String line: lines) {
 				if (StringUtil.isEmpty(line)) {
 					continue;
@@ -696,11 +694,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 				String key = parts[0];
 				if (!data.containsKey(key)) {
 					setString(key, parts[1]);
-					newKeys.add(key);
 				}
-			}
-			if (!ListUtil.isEmpty(newKeys)) {
-				LOGGER.info("Found missing keys in " + getBundleIdentifier() + ", file: " + file + " for " + locale + "\n" + newKeys);
 			}
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error for checking missing keys in JAR file of " + getBundleIdentifier() + ", file: " + file + " for " + locale, e);
