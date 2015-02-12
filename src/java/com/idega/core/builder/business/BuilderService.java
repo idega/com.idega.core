@@ -209,6 +209,7 @@ public interface BuilderService extends IBOService
 	 * @return true if successful
 	 */
 	public boolean changePageName(int ID, String newName, IWContext iwc);
+	public boolean changePageDescription(int ID, String description, IWContext iwc);
 
 	public Collection<? extends ICTreeNode<?>> getTopLevelPages(IWContext iwc);
 
