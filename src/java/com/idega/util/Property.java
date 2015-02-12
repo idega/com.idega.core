@@ -8,19 +8,19 @@ package com.idega.util;
  */
 public class Property {
 	
-	public String key;
-	public String value;
+	private String key;
+	private String value;
 	
-	public Property(String key, String value){
+	public Property(String key, String value) {
 		this.key = key;
-		this.value=value;
+		this.value = value;
 	}
 	
-	public String getKey(){
+	public String getKey() {
 		return this.key;
 	}
 	
-	public String getValue(){
+	public String getValue() {
 		return this.value;
 	}
 }

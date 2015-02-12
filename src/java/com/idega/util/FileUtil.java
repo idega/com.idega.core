@@ -28,6 +28,7 @@ import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.StringTokenizer;
@@ -1087,6 +1088,47 @@ public static String getFileSeparator(){
     else{
       throw new IOException(inputDirectory.toString()+" is not a directory");
     }
+  }
+
+  /**
+   * 
+   * @param folder to search filed and directories, not <code>null</code>;
+   * @return all folders and files in given directory or 
+   * {@link Collections#emptyList()} on failure;
+   * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+   */
+  public static List<String> getAllFilesRecursively(File folder){
+	  ArrayList<String> filepaths = new ArrayList<String>();
+
+	  if (folder != null) {
+		  if (folder.isDirectory()) {
+			  File[] innerFolders = folder.listFiles();
+			  if (!ArrayUtil.isEmpty(innerFolders)) {
+				  for (File innerFolder: innerFolders) {
+					  filepaths.addAll(getAllFilesRecursively(innerFolder));
+				  }
+			  }
+		  }
+
+		  filepaths.add(folder.getAbsolutePath());
+	  }
+
+	  return filepaths;
+  }
+
+  /**
+   * 
+   * @param directory to search filed and directories, not <code>null</code>;
+   * @return all folders and files in given directory or 
+   * {@link Collections#emptyList()} on failure;
+   * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+   */
+  public static List<String> getAllFilesRecursively(String directory) {
+	  if (!StringUtil.isEmpty(directory)) {
+		  return getAllFilesRecursively(new File(directory));
+	  }
+
+	  return Collections.emptyList();
   }
 
   /**
