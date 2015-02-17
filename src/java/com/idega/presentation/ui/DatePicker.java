@@ -24,6 +24,7 @@ import com.idega.presentation.Script;
 import com.idega.presentation.Table;
 import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -60,11 +61,15 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     }
 
     public DatePicker(String pickerName) {
-        this(pickerName, null, null, null);
+        this(pickerName, null, null, null, null);
     }
 
     public DatePicker(String pickerName, Locale locale) {
-        this(pickerName, null, locale, null);
+        this(pickerName, null, locale, null, null);
+    }
+
+    public DatePicker(String pickerName, Locale locale, String dateFormatPattern) {
+        this(pickerName, null, locale, null, dateFormatPattern);
     }
 
     public DatePicker(String pickerName, String style) {
@@ -72,10 +77,10 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     }
 
     public DatePicker(String pickerName, String style, Locale locale) {
-        this(pickerName, style, locale, null);
+        this(pickerName, style, locale, null, null);
     }
 
-    public DatePicker(String name, String style, Locale locale, Date date) {
+    public DatePicker(String name, String style, Locale locale, Date date, String dateFormatPattern) {
         addForm(false);
         if(name!=null) {
 					setChooserParameter(name);
@@ -87,6 +92,8 @@ public class DatePicker extends AbstractChooser implements InputHandler {
             this.locale = locale;
         }
         this.date = date;
+
+        this.dateFormatPattern = dateFormatPattern;
     }
 
     @Override
@@ -94,7 +101,7 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         empty();
         IWBundle iwb = getBundle(iwc);
         IWResourceBundle iwrb = this.getResourceBundle(iwc);
-        this.dateFormatPattern = iwb.getProperty("DatePicker.date_format_string","yyyy-MM-dd");
+        this.dateFormatPattern = StringUtil.isEmpty(this.dateFormatPattern) ? iwb.getProperty("DatePicker.date_format_string","yyyy-MM-dd") : this.dateFormatPattern;
         setChooseButtonImage(iwb.getImage("date.png", iwrb.getLocalizedString("datepicker.pick_date", "Pick date")));
         if (this.locale == null) {
             this.locale = iwc.getCurrentLocale();
