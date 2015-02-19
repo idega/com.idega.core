@@ -482,6 +482,7 @@ public interface Web2Business extends IBOService {
 
 	public String getBundleUriToLoadMaskScript();
 	public String getBundleUriToLoadMaskStyle();
+	public List<String> getBundleUrisToTimeAgoScript();
 	public List<String> getBundleUrisToTimeAgoScript(Locale locale);
 	public List<String> getBundleUrisToTimePickerScript(Locale locale);
 	public String getBundleUriToTimePickerStyle();
