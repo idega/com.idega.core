@@ -665,6 +665,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		}
 
 		String file = null;
+		char[] exceptions = new char[] {'0', '1', '2', '3', '4', '5', '6', '7', '8', '9', '.', '_'};
 		try {
 			String identifier = getBundleIdentifier();
 			if (StringUtil.isEmpty(identifier)) {
@@ -696,7 +697,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 				}
 
 				String key = parts[0];
-				if (!data.containsKey(key)) {
+				String strippedKey = StringHandler.stripNonRomanCharacters(key, exceptions);
+				if (key.equals(strippedKey) && !data.containsKey(key)) {
 					setString(key, parts[1]);
 				}
 			}
