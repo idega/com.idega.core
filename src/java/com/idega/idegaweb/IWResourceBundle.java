@@ -660,6 +660,10 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	private void doMakeSureAllFilesLoaded(Map<String, String> data) {
+		if (!DefaultIWBundle.isProductionEnvironment()) {
+			return;
+		}
+
 		String file = null;
 		try {
 			String identifier = getBundleIdentifier();
