@@ -157,6 +157,10 @@ public class IWCacheManager2 {
 			CacheMapListener<K, V> cacheListener,
 			CacheMapGuardian<K, V> cacheGuardian
 	) {
+		if (cacheSize <= 0) {
+			cacheSize = DEFAULT_CACHE_SIZE;
+		}
+
 		Cache cache = getInternalCache(cacheName);
 		if (cache == null) {
 			try {
