@@ -243,6 +243,7 @@ public class ResourcesAdder extends DefaultAddResource {
 	public void addFeedLink(RSSLink feedLink) {
 		if (!getFeedResources().contains(feedLink)) {
 			getFeedResources().add(feedLink);
+			getHeaderBeginInfos().add(new FeedInfo(feedLink));
 		}
 	}
 
@@ -254,6 +255,7 @@ public class ResourcesAdder extends DefaultAddResource {
 			this.feed = feed;
 		}
 
+		@Override
 		public void writePositionedInfo(HttpServletResponse response, ResponseWriter writer) throws IOException {
 			writer.startElement(HTML.LINK_ELEM, null);
 			writer.writeAttribute(HTML.REL_ATTR, StringUtil.isEmpty(feed.getRelationship()) ? "alternate" : feed.getRelationship(), null);
