@@ -187,6 +187,11 @@ public class SendMail {
 			boolean simpleMessage,
 			final File... attachedFiles
 	) throws MessagingException {
+		if (StringUtil.isEmpty(to)) {
+			LOGGER.warning("Unknown receiver. Can not send message with subject " + subject);
+			return null;
+		}
+
 		if (simpleMessage) {
 			sendSimpleMail(from, to, subject, text);
 			return null;
