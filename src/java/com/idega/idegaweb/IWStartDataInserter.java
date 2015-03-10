@@ -5,6 +5,7 @@ package com.idega.idegaweb;
 
 import java.sql.SQLException;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
@@ -274,19 +275,24 @@ public class IWStartDataInserter implements Singleton {
 				try {
 					home.findByLocaleName(localeString);
 				} catch (FinderException e) {
-					Logger.getLogger(getClass().getName()).info("Creating locale '" + localeString + "'");
-					ICLocale icLocale = home.create();
-					icLocale.setLocale(localeString);
-					icLocale.setInUse(localeString.equals(Locale.ENGLISH.toString()));
-					icLocale.store();
+					doCreateMissingLocale(home, localeString);
 				}
 			}
-		}
-		catch (CreateException ex) {
-			ex.printStackTrace();
-		}
-		catch (IDOLookupException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+
+	private void doCreateMissingLocale(ICLocaleHome home, String localeString) {
+		Logger logger= Logger.getLogger(getClass().getName());
+		logger.info("Creating locale '" + localeString + "'");
+		try {
+			ICLocale icLocale = home.create();
+			icLocale.setLocale(localeString);
+			icLocale.setInUse(localeString.equals(Locale.ENGLISH.toString()));
+			icLocale.store();
+		} catch (Exception e) {
+			logger.log(Level.WARNING, "Error creating locale " + localeString, e);
 		}
 	}
 
