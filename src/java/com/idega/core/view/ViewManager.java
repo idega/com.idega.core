@@ -29,18 +29,18 @@ import com.idega.util.RequestUtil;
 /**
  * This class is responsible for managing the "ViewNode" hierarchy.<br>
  * <br>
- * 
+ *
  *  Last modified: $Date: 2009/03/11 08:17:19 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.27 $
  */
 public class ViewManager implements Singleton {
-	
+
 	private static final String VIEWNODE_CACHE_KEY = "iw_viewnode_cached";
 
-	private static Instantiator instantiator = new Instantiator() 
-		{ 
+	private static Instantiator instantiator = new Instantiator()
+		{
 			@Override
 			public Object getInstance(Object parameter) {
 				IWMainApplication iwma = null;
@@ -53,26 +53,26 @@ public class ViewManager implements Singleton {
 				return new ViewManager(iwma);
 			}
 		};
-	
+
 	private ViewNode rootNode;
 	private ViewNode workspaceNode;
 	private IWMainApplication iwma;
 	private boolean showMyPage=false;
-	
+
 	public static ViewManager getInstance(IWMainApplication iwma){
 		return (ViewManager) SingletonRepository.getRepository().getInstance(ViewManager.class, instantiator, iwma);
 	}
-	
+
 	public static ViewManager getInstance(FacesContext context){
 		return (ViewManager) SingletonRepository.getRepository().getInstance(ViewManager.class, instantiator, context);
 	}
-	
+
 	protected ViewManager(IWMainApplication iwma){
 		this.iwma=iwma;
 	}
-	
+
 	public void initializeStandardViews(ViewHandler handler){
-		
+
 		setApplicationRoot(this.iwma,handler);
 
 		if(this.showMyPage){
@@ -84,7 +84,7 @@ public class ViewManager implements Singleton {
 		}
 
 	}
-	
+
 	public ViewNode getWorkspaceRoot(){
 		if(this.workspaceNode==null){
 			//DefaultViewNode node = new DefaultViewNode(iwma);
@@ -104,7 +104,7 @@ public class ViewManager implements Singleton {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-			
+
 			node.setViewId(CoreConstants.WORKSPACE_VIEW_MANAGER_ID);
 			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
@@ -117,24 +117,23 @@ public class ViewManager implements Singleton {
 	public ViewNode getApplicationRoot(){
 		//if(rootNode==null){
 		//	DefaultViewNode node = new DefaultViewNode();
-		//	node.setViewId("/");
+		//	node.setViewId(CoreConstants.SLASH);
 		//	rootNode = node;
 		//}
 		return this.rootNode;
 	}
-	
+
 	protected void setApplicationRoot(IWMainApplication iwma,ViewHandler rootViewhandler){
 		DefaultViewNode node = new DefaultViewNode(iwma);
-		node.setViewId("/");
+		node.setViewId(CoreConstants.SLASH);
 		node.setViewHandler(rootViewhandler);
 		this.rootNode = node;
 	}
-	
-	
+
 	public ViewNode calculateViewNodeForUrl(String url){
-		
+
 		ViewNode root = this.getApplicationRoot();
-		
+
 		ViewNode node = root.getChild(url);
 		if(node!=null){
 			return node;
@@ -144,7 +143,7 @@ public class ViewManager implements Singleton {
 			return root;
 		}
 	}
-	
+
 	/**
 	 * <p>
 	 * Checks if the given node is in the hierarchy of the URI uri.<br>
@@ -155,7 +154,7 @@ public class ViewManager implements Singleton {
 	 * @return
 	 */
 	public boolean isNodeInHierarchy(ViewNode node,String uri){
-		
+
 		String nodeUri = node.getURIWithContextPath();
 		if(uri!=null){
 			if(uri.startsWith(nodeUri)){
@@ -164,8 +163,8 @@ public class ViewManager implements Singleton {
 		}
 		return false;
 	}
-	
-	
+
+
 	/**
 	 * @param ctx
 	 * @return
@@ -173,7 +172,7 @@ public class ViewManager implements Singleton {
 	public String getRequestUriWithoutContext(FacesContext ctx) {
 		return FacesUtil.getRequestUri(ctx,false);
 	}
-	
+
 	/**
 	 * @param ctx
 	 * @return
@@ -181,8 +180,8 @@ public class ViewManager implements Singleton {
 	public String getRequestUriWithoutContext(HttpServletRequest request) {
 		return RequestUtil.getURIMinusContextPath(request);
 	}
-	
-	
+
+
 	public ViewNode getViewNodeForContext(FacesContext context){
 		ViewNode cachedNode = getCachedViewNode(context);
 		if(cachedNode==null){
@@ -213,7 +212,7 @@ public class ViewManager implements Singleton {
 	private ViewNode getCachedViewNode(FacesContext context) {
 		return (ViewNode) FacesUtil.getAttribute(context,VIEWNODE_CACHE_KEY);
 	}
-	
+
 	public ViewNode getViewNodeForRequest(HttpServletRequest request){
 		ViewNode cachedNode = getCachedViewNode(request);
 		if(cachedNode==null){
@@ -223,8 +222,8 @@ public class ViewManager implements Singleton {
 		}
 		return cachedNode;
 	}
-	
-	
+
+
 	/**
 	 * <p>
 	 * TODO tryggvil describe method setCachedViewNode
@@ -252,7 +251,7 @@ public class ViewManager implements Singleton {
 	protected IWMainApplication getIWMainApplication(){
 		return this.iwma;
 	}
-	
+
 	/**
 	 * Checks if the user has access to a node. This uses the role system.
 	 * @param node
@@ -260,7 +259,7 @@ public class ViewManager implements Singleton {
 	 * @return
 	 */
 	public boolean hasUserAccess(ViewNode node,IWUserContext userContext){
-		
+
 		//First check hasUserAccess for custom logic
 		try {
 			boolean hasAccess = node.hasUserAccess(userContext);
@@ -268,7 +267,7 @@ public class ViewManager implements Singleton {
 		} catch (UnsupportedOperationException e) {
 			//ignore just not implemented
 		}
-		
+
 		//then check roles
 		Collection roles = node.getAuthorizedRoles();
 		if(roles!=null){
@@ -282,8 +281,8 @@ public class ViewManager implements Singleton {
 				return false;
 			}
 		}
-		
+
 		return true;
 	}
-	
+
 }
