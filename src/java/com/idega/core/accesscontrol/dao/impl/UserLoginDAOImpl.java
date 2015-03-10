@@ -26,8 +26,32 @@ import com.idega.util.IWTimestamp;
 public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 
 	@Override
+	public UserLogin createLogin(
+			User user,
+			String username,
+			String password,
+			boolean accountEnabled,
+			boolean allowedToChange,
+			boolean changeNextTime,
+			int daysOfValidity,
+			boolean passwordExpires
+	) throws UsernameExistsException {
+		return createLogin(user, username, password, accountEnabled, allowedToChange, changeNextTime, daysOfValidity, passwordExpires, null);
+	}
+
+	@Override
 	@Transactional(readOnly = false)
-	public UserLogin createLogin(User user, String username, String password, boolean accountEnabled, boolean allowedToChange, boolean changeNextTime, int daysOfValidity, boolean passwordExpires) throws UsernameExistsException {
+	public UserLogin createLogin(
+			User user,
+			String username,
+			String password,
+			boolean accountEnabled,
+			boolean allowedToChange,
+			boolean changeNextTime,
+			int daysOfValidity,
+			boolean passwordExpires,
+			String type
+	) throws UsernameExistsException {
 		UserLogin login = findLoginForUser(user);
 		if (login == null) {
 			if (doesUsernameExist(username)) {
@@ -36,6 +60,7 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 			login = new UserLogin();
 			login.setUser(user);
 		}
+		login.setLoginType(type);
 		login.setUserLogin(username);
 		login.setUserPassword(password);
 		persist(login);
@@ -162,7 +187,8 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		userLogin.getLoginInfo().setAccountEnabled(true);
 		persist(userLogin);
 	}
-	
+
+	@Override
 	@Transactional(readOnly=false)
 	public void changeLoginPassword(Integer loginID,String password){
 		UserLogin userLogin = findLogin(loginID);

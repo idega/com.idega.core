@@ -20,6 +20,19 @@ public interface UserLoginDAO extends GenericDao {
 	@Transactional(readOnly = false)
 	public UserLogin createLogin(User user, String username, String password, boolean accountEnabled, boolean allowedToChange, boolean changeNextTime, int daysOfValidity, boolean passwordExpires) throws UsernameExistsException;
 
+	@Transactional(readOnly = false)
+	public UserLogin createLogin(
+			User user,
+			String username,
+			String password,
+			boolean accountEnabled,
+			boolean allowedToChange,
+			boolean changeNextTime,
+			int daysOfValidity,
+			boolean passwordExpires,
+			String type
+	) throws UsernameExistsException;
+
 	public UserLogin findLogin(Integer loginID);
 
 	public UserLogin findLoginForUser(User user);
