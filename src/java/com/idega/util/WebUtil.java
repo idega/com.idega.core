@@ -152,18 +152,21 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().warning(IWContext.class.getName() + " is not available!");
     		return false;
     	}
+
     	if (!iwc.isLoggedOn()) {
     		getLogger().warning("User is not logged in!");
     		return false;
     	}
+
     	LoginBusinessBean loginBusiness = null;
     	try {
     		loginBusiness = LoginBusinessBean.getLoginBusinessBean(iwc.getRequest().getSession(false));
     	} catch (Exception e) {
     		getLogger().log(Level.WARNING, "Error getting LoginBusiness", e);
     	}
-    	if (loginBusiness == null)
+    	if (loginBusiness == null) {
     		return false;
+    	}
 
     	return loginBusiness.logOutUser(iwc);
     }
@@ -187,7 +190,8 @@ public class WebUtil extends DefaultSpringBean {
     	return Boolean.FALSE;
     }
 
-    public String getApplicationProperty(String name) {
+    @Override
+	public String getApplicationProperty(String name) {
     	if (StringUtil.isEmpty(name))
     		return null;
 
