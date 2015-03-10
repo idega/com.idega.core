@@ -1,6 +1,8 @@
 package com.idega.core.file.data;
 
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.rmi.RemoteException;
@@ -9,6 +11,7 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
@@ -42,12 +45,15 @@ import com.idega.io.serialization.ObjectReader;
 import com.idega.io.serialization.ObjectWriter;
 import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
+import com.idega.repository.bean.RepositoryItem;
 import com.idega.repository.data.Resource;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -220,7 +226,23 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 
 	@Override
 	public InputStream getFileValue() {
-		return getInputStreamColumnValue(getColumnFileValue());
+		InputStream stream = getInputStreamColumnValue(getColumnFileValue());
+		if (stream == null) {
+			String uri = getFileUri();
+			if (!StringUtil.isEmpty(uri)) {
+				try {
+					File tmp = CoreUtil.getFileFromRepository(uri);
+					if (tmp instanceof RepositoryItem) {
+						stream = ((RepositoryItem) tmp).getInputStream();
+					} else {
+						stream = new FileInputStream(tmp);
+					}
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error getting input stream from " + uri + ", file ID: " + getPrimaryKey(), e);
+				}
+			}
+		}
+		return stream;
 	}
 
 	@Override
