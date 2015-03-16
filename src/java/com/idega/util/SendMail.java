@@ -73,9 +73,9 @@ public class SendMail {
 	 * @param attachedFiles
 	 * @throws MessagingException
 	 */
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
 			File... attachedFiles) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, false, false, attachedFiles);
+		return send(from, to, cc, bcc, replyTo, host, subject, text, mailType, false, false, attachedFiles);
 	}
 
 	/**
@@ -93,9 +93,9 @@ public class SendMail {
 	 * @param attachedFiles
 	 * @throws MessagingException
 	 */
-	public static void send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
+	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
 			boolean deleteFiles, boolean simpleMessage, File... attachedFiles) throws MessagingException {
-		send(from, to, cc, bcc, replyTo, host, subject, text, mailType, null, false, deleteFiles, simpleMessage, attachedFiles);
+		return send(from, to, cc, bcc, replyTo, host, subject, text, mailType, null, false, deleteFiles, simpleMessage, attachedFiles);
 	}
 
 	public static boolean sendSimpleMail(String from, String to, String subject, String message) {
