@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
 
 import com.idega.business.InputHandler;
 import com.idega.idegaweb.IWBundle;
@@ -22,6 +23,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
 import com.idega.presentation.Table;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWCalendar;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
@@ -94,6 +96,21 @@ public class DatePicker extends AbstractChooser implements InputHandler {
         this.date = date;
 
         this.dateFormatPattern = dateFormatPattern;
+
+        if (date == null && !StringUtil.isEmpty(dateFormatPattern)) {
+        	IWContext iwc = CoreUtil.getIWContext();
+        	if (iwc != null && iwc.isParameterSet(name)) {
+        		String dateValue = iwc.getParameter(name);
+        		if (!StringUtil.isEmpty(dateValue)) {
+        			try {
+	        			SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+	        			setDate(sdf.parse(dateValue), locale);
+        			} catch (Exception e) {
+        				getLogger().log(Level.WARNING, "Error parsing " + dateValue + " into date using pattern " + dateFormatPattern, e);
+        			}
+        		}
+        	}
+        }
     }
 
     @Override
