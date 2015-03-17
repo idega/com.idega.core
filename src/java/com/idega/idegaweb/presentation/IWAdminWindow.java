@@ -9,12 +9,15 @@ import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Table;
+import com.idega.presentation.TableCell;
 import com.idega.presentation.text.Text;
 import com.idega.presentation.ui.Form;
 import com.idega.presentation.ui.HiddenInput;
 import com.idega.presentation.ui.InterfaceObject;
 import com.idega.presentation.ui.Window;
 import com.idega.user.util.ICUserConstants;
+import com.idega.util.PresentationUtil;
+import com.idega.util.StringUtil;
 
 public class IWAdminWindow extends Window {
 
@@ -38,7 +41,7 @@ public class IWAdminWindow extends Window {
 	private String rightWidth = "160";
 	private String method = "post";
 	private int _cellPadding = 0;
-	
+
 	public static String HEADER_COLOR = "#38485C";
 
 	public IWAdminWindow() {
@@ -80,14 +83,23 @@ public class IWAdminWindow extends Window {
 		return this.adminForm;
 	}
 
+	@Override
 	public void _main(IWContext iwc) throws Exception {
+		String style = iwc.getIWMainApplication().getSettings().getProperty("admin_window_global_style");
+		if (!StringUtil.isEmpty(style)) {
+			PresentationUtil.addStyleSheetToHeader(iwc, style);
+		}
+
 		this.iwb = getBundle(iwc);
 		this.iwbCore = iwc.getIWMainApplication().getBundle(IW_BUNDLE_IDENTIFIER);
 		if (!this.displayEmpty) {
 			makeTables();
 			setAllMargins(0);
 			String prop = this.iwbCore.getProperty("adminHeaderColor");
-			if(prop!=null){
+			if (StringUtil.isEmpty(prop)) {
+				prop = iwc.getIWMainApplication().getSettings().getProperty("adminHeaderColor");
+			}
+			if (prop != null) {
 				HEADER_COLOR=prop;
 			}
 
@@ -104,6 +116,7 @@ public class IWAdminWindow extends Window {
 		this.setStyleSheetURL(getStyleSheetPath(iwc) + this.styleScript);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 	}
 
@@ -119,6 +132,7 @@ public class IWAdminWindow extends Window {
 		this.adminTable.setHeight("100%");
 		this.adminTable.setHeight(2, "100%");
 		this.adminTable.setColor(1, 1, HEADER_COLOR);
+		this.adminTable.setStyleClass("ePlatform-admin-table");
 		//adminTable.setColor(1, 2, "#FFFFFF");
 		if (!this.merged) {
 			this.adminTable.setColor(2, 2, MENU_COLOR);
@@ -136,9 +150,12 @@ public class IWAdminWindow extends Window {
 		this.headerTable.setCellspacing(0);
 		this.headerTable.setWidth("100%");
 		this.headerTable.setAlignment(2, 1, "right");
+		TableCell cell = headerTable.getCellAt(2, 1);
+		cell.setStyleClass("ePlatform-admin-table-label-cell");
+
 		//      Image idegaweb = iwbCore.getImage("/editorwindow/idegaweb.gif","idegaWeb");
 		//      headerTable.add(idegaweb,1,1);
-		this.headerTable.setStyleClass(1, 1, "top_left");
+		this.headerTable.setStyleClass(1, 1, "top_left ePlatform-admin-table-logo");
 		this.adminTable.add(this.headerTable, 1, 1);
 
 		this.leftTable = new Table();
@@ -165,10 +182,12 @@ public class IWAdminWindow extends Window {
 		this.adminTable.add(text, 1, 2);
 	}
 
+	@Override
 	public void add(PresentationObject pObject) {
 		this.add((UIComponent)pObject);
-	}	
-	
+	}
+
+	@Override
 	public void add(UIComponent obj) {
 		if (!this.displayEmpty) {
 			if (this.adminTable == null) {
@@ -233,7 +252,7 @@ public class IWAdminWindow extends Window {
 		}
 		this.leftTable.add(obj, 1, rows);
 	}
-	
+
 	public void addInverseLeft(String text, PresentationObject obj, boolean hasBreak) {
 		addInverseLeft(text, obj, hasBreak, false);
 	}
@@ -430,13 +449,14 @@ public class IWAdminWindow extends Window {
 		this._cellPadding = padding;
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
 
 	/**
 	 * This method depends on iwbCore and iwb to be initialized
-	 * 
+	 *
 	 * @return the path of the chosen stylesheet
 	 */
 	private String getStyleSheetPath(IWContext iwc) {
