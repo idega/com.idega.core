@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.zip.ZipInputStream;
 
@@ -145,4 +146,16 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public boolean doExportWorkspace(String workspaceName, String outputPath) throws IOException, RepositoryException;
 	public boolean doImportWorkspace(String workspaceName, String inputPath) throws IOException, RepositoryException;
 
+	
+	/**
+	 * 
+	 * @param path is the top directory path in repository, 
+	 * where the search should be performed;
+	 * @return all sub-directories of given directory, 
+	 * or {@link Collections#emptyList()} on failure;
+	 * @throws RepositoryException
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	Collection<String> getChildNodesAsRootUserRecursively(String path)
+			throws RepositoryException;
 }
