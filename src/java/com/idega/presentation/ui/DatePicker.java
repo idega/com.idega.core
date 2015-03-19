@@ -201,15 +201,19 @@ public class DatePicker extends AbstractChooser implements InputHandler {
      * @param date
      */
     public void setDate(Date date) {
-    	  this.date = date;
-        String display = date.toString();
-        String value = new SimpleDateFormat("yyyy-MM-dd").format(date);
-        if (this.locale != null) {
-            display = new SimpleDateFormat(this.dateFormatPattern,this.locale).format(date);
+    	this.date = date;
+
+    	if (date == null) {
+    		return;
+    	}
+
+    	String display = date.toString();
+    	String value = new SimpleDateFormat("yyyy-MM-dd").format(date);
+    	if (this.locale != null) {
+    		display = new SimpleDateFormat(this.dateFormatPattern,this.locale).format(date);
             //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
         } else {
             display = new SimpleDateFormat(this.dateFormatPattern).format(date);
-
             //DateFormat.getDateInstance(dateFormatStyle).format(date);
         }
         setChooserValue(display, value);
