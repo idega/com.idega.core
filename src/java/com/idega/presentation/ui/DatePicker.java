@@ -207,16 +207,21 @@ public class DatePicker extends AbstractChooser implements InputHandler {
     		return;
     	}
 
-    	String display = date.toString();
-    	String value = new SimpleDateFormat("yyyy-MM-dd").format(date);
-    	if (this.locale != null) {
-    		display = new SimpleDateFormat(this.dateFormatPattern,this.locale).format(date);
-            //DateFormat.getDateInstance(dateFormatStyle, locale).format(date);
-        } else {
-            display = new SimpleDateFormat(this.dateFormatPattern).format(date);
-            //DateFormat.getDateInstance(dateFormatStyle).format(date);
-        }
-        setChooserValue(display, value);
+    	String defaultPattern = "yyyy-MM-dd";
+    	String pattern = StringUtil.isEmpty(this.dateFormatPattern) ? defaultPattern : this.dateFormatPattern;
+    	try {
+	    	String display = date.toString();
+	    	String value = new SimpleDateFormat(defaultPattern).format(date);
+	    	if (this.locale != null) {
+	    		display = new SimpleDateFormat(pattern, this.locale).format(date);
+	        } else {
+	            display = new SimpleDateFormat(pattern).format(date);
+	        }
+
+	        setChooserValue(display, value);
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error setting display value from " + date + ", using format " + pattern + " and locale " + locale, e);
+    	}
     }
 
     /**
