@@ -5,6 +5,7 @@ package com.idega.core.file.business;
 
 import java.rmi.RemoteException;
 
+import com.idega.block.media.business.MediaFileSystem;
 import com.idega.business.IBOLookup;
 import com.idega.idegaweb.IWApplicationContext;
 
@@ -28,7 +29,7 @@ public final class ICFileSystemFactory {
 	 * @return the ICFileSystem instance
 	 */
 	public static ICFileSystem getFileSystem(IWApplicationContext iwac) throws RemoteException {
-		ICFileSystem system = IBOLookup.getServiceInstance(iwac, ICFileSystem.class);
+		ICFileSystem system = IBOLookup.getServiceInstance(iwac, MediaFileSystem.class);
 		return system;
 	}
 
