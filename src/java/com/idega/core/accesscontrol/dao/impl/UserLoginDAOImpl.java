@@ -5,6 +5,7 @@ package com.idega.core.accesscontrol.dao.impl;
 
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -124,7 +125,7 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 	public LoginRecord createLoginRecord(UserLogin login, String ipAddress, User performer) {
 		LoginRecord record = new LoginRecord();
 		record.setLogin(login);
-		record.setIpAddress(ipAddress);
+		record.setIpAddress(StringUtils.replace(ipAddress, "%", ""));
 		record.setUser(performer);
 		record.setInStamp(IWTimestamp.getTimestampRightNow());
 		persist(record);
