@@ -24,7 +24,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 {
 	private static final long serialVersionUID = -4420896834850155007L;
 	private static String userRelationshipTableName=null;
-	
+
 	public PhoneBMPBean()
 	{
 		super();
@@ -33,7 +33,8 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 	{
 		super(id);
 	}
-	
+
+	@Override
 	public void initializeAttributes()
 	{
 		addAttribute(getIDColumnName());
@@ -53,6 +54,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 		}
 		super.remove();
 	}
+	@Override
 	public String getEntityName()
 	{
 		return "ic_phone";
@@ -70,33 +72,39 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 	{
 		return "ic_phone_type_id";
 	}
+	@Override
 	public void setDefaultValues()
 	{
 		//      setColumn(getColumnNameCountryCodeId(),-1);
 		//      setColumn(getColumnNameAreaCodeId(),-1);
 	}
+	@Override
 	public String getNumber()
 	{
 		return (String) getColumnValue(getColumnNamePhoneNumber());
 	}
+	@Override
 	public void setNumber(String number)
 	{
 		setColumn(getColumnNamePhoneNumber(), number);
 	}
+	@Override
 	public int getPhoneTypeId()
 	{
 		return getIntColumnValue(getColumnNamePhoneTypeId());
 	}
-	
+
+	@Override
 	public void setPhoneTypeId(int phone_type_id)
 	{
 		setColumn(getColumnNamePhoneTypeId(), phone_type_id);
 	}
-	
+
+	@Override
 	public PhoneType getPhoneType() {
 		return (PhoneType)getColumnValue(getColumnNamePhoneTypeId());
 	}
-	
+
 	public static int getHomeNumberID()
 	{
 		/*int returner = -1;
@@ -189,7 +197,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 			return (Integer) this.idoFindOnePKBySQL(sql);
 		}
 		catch(Exception e){
-			throw new IDOFinderException(e);	
+			throw new IDOFinderException(e);
 		}
 	}
 	public Integer ejbFindUsersWorkPhone(com.idega.user.data.User user) throws FinderException
@@ -200,7 +208,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 			return (Integer) this.idoFindOnePKBySQL(sql);
 		}
 		catch(Exception e){
-			throw new IDOFinderException(e);	
+			throw new IDOFinderException(e);
 		}
 	}
 	public Integer ejbFindUsersMobilePhone(com.idega.user.data.User user) throws FinderException
@@ -211,7 +219,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 			return (Integer) this.idoFindOnePKBySQL(sql);
 		}
 		catch(Exception e){
-			throw new IDOFinderException(e);	
+			throw new IDOFinderException(e);
 		}
 	}
 	public Integer ejbFindUsersFaxPhone(com.idega.user.data.User user) throws FinderException
@@ -222,14 +230,14 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 			return (Integer) this.idoFindOnePKBySQL(sql);
 		}
 		catch(Exception e){
-			throw new IDOFinderException(e);	
+			throw new IDOFinderException(e);
 		}
 	}
-	
-	
-	
+
+
+
 	protected String getSelectWithPhoneType(int userID,int phoneTypeID){
-			
+
 			StringBuffer buf = new StringBuffer();
 			buf.append("select p.* from ");
 			buf.append(this.getTableName());
@@ -245,7 +253,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 			buf.append(getColumnNamePhoneTypeId());
 			buf.append("=");
 			buf.append(phoneTypeID);
-				
+
 			//System.out.println(buf.toString());
 			return buf.toString();
 	}
@@ -263,7 +271,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Finds primary keys by criteria.</p>
 	 * @param phoneNumber is {@link Phone#getNumber()}, not <code>null</code>;
 	 * @return {@link Phone}s by number or {@link Collections#emptyList()} on failure;
@@ -273,20 +281,30 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 		if (StringUtil.isEmpty(phoneNumber)) {
 			return Collections.emptyList();
 		}
-		
+
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(this);
 		query.appendWhereEquals(getColumnNamePhoneNumber(), phoneNumber);
-		
+
 		try {
 			return idoFindPKsByQuery(query);
 		} catch (FinderException e) {
 			java.util.logging.Logger.getLogger(getClass().getName()).log(
-					Level.WARNING, 
-					"Failed to find primary keys for " + this.getClass().getName() + 
+					Level.WARNING,
+					"Failed to find primary keys for " + this.getClass().getName() +
 					" by query: '" + query.toString() + "'");
 		}
 
 		return Collections.emptyList();
+	}
+
+	public Collection ejbFindUsersPhones(int userId,int type) throws FinderException {
+		try{
+			String sql = getSelectWithPhoneType(userId,type);
+			return idoFindPKsBySQL(sql);
+		}
+		catch(Exception e){
+			throw new IDOFinderException(e);
+		}
 	}
 }
