@@ -703,6 +703,7 @@ public interface UserBusiness extends IBOService {
 	 */
 	public boolean hasTopNodes(User user, IWUserContext iwuc) throws java.rmi.RemoteException;
 
+	public Collection<Group> getUsersTopGroupNodesByViewAndOwnerPermissionsInThread(User user, Collection<Group> sessionTopNodes, boolean isSuperUser, User currentUser) throws RemoteException;
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUsersTopGroupNodesByViewAndOwnerPermissions
 	 */
