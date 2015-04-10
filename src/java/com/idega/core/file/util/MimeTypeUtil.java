@@ -67,6 +67,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_CALENDAR = "text/calendar";
 	public static final String MIME_TYPE_ENCODED_URL = "application/x-www-form-urlencoded";
 	public static final String MIME_TYPE_JSON = "application/json";
+	public static final String MIME_TYPE_CSV = "text/csv";
 
 	private String pathToConfigFile;
 	private Properties properties;

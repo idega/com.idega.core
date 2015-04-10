@@ -28,6 +28,12 @@ public class AdvancedProperty implements Serializable {
 		this.value = value;
 	}
 
+	public AdvancedProperty(Object id, Object value) {
+		this(
+				id != null ? id.toString() : null,
+				value != null ? value.toString() : null);
+	}
+
 	public AdvancedProperty(String id, Long value) {
 		this(id);
 		this.value = String.valueOf(value);
