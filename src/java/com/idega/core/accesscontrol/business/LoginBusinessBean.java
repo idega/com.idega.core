@@ -1213,6 +1213,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return LoginState.EXPIRED;
 		}
 
+		if (user.isDeleted() && !iwma.getSettings().getBoolean("user.deleted_can_login", false)) {
+			LOGGER.warning(user + " (ID: " + user.getId() + ") is deleted");
+			return LoginState.USER_NOT_FOUND;
+		}
+
 		LoginInfo loginInfo = userLogin.getLoginInfo();
 		if (verifyPassword(userLogin, password)) {
 			if (loginInfo != null && !loginInfo.getAccountEnabled() && !isAdmin) {
