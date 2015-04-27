@@ -13,9 +13,9 @@ import java.util.Map;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2005/03/20 11:22:37 $ by $Author: eiki $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.2 $
  */
@@ -23,6 +23,7 @@ public interface SearchQuery {
 
 	public boolean isSimpleQuery();
 	public boolean isAdvancedQuery();
-	public Map getSearchParameters();
-	public void setSearchParameters(Map searchParameters);
+	public Map<String, String> getSearchParameters();
+	public void setSearchParameters(Map<String, String> searchParameters);
+
 }

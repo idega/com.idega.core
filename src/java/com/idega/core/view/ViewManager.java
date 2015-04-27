@@ -269,10 +269,10 @@ public class ViewManager implements Singleton {
 		}
 
 		//then check roles
-		Collection roles = node.getAuthorizedRoles();
+		Collection<String> roles = node.getAuthorizedRoles();
 		if(roles!=null){
 			if(roles.size()>0){
-				for (Iterator iter = roles.iterator(); iter.hasNext();) {
+				for (Iterator<String> iter = roles.iterator(); iter.hasNext();) {
 					String roleKey = (String) iter.next();
 					if(getIWMainApplication().getAccessController().hasRole(roleKey,userContext)){
 						return true;

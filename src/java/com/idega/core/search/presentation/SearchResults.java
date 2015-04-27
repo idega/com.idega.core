@@ -1,9 +1,9 @@
 /*
  * $Id: SearchResults.java,v 1.24 2008/12/03 09:38:35 laddi Exp $ Created on Jan
  * 17, 2005
- * 
+ *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -14,7 +14,6 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 
@@ -39,7 +38,7 @@ import com.idega.util.PresentationUtil;
 
 /**
  * Last modified: $Date: 2008/12/03 09:38:35 $ by $Author: laddi $
- * 
+ *
  * This block can use all SearchPlugin objects registered in bundles and sets up
  * the search results (simple by default or advanced) <br>
  * Use setInputParameterName if you want to have different searches on the same
@@ -49,7 +48,7 @@ import com.idega.util.PresentationUtil;
  * Do not change core_iw.css, rather add your own custom stylesheet after the<br>
  * iw_core.css is added and override the styles.<br>
  * This class can also be EXTENDED like e.g. WhatIsNew block does by overriding some of the methods of this class<br>
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson </a>
  * @version $Revision: 1.24 $
  */
@@ -157,7 +156,7 @@ public class SearchResults extends Block {
 	public String getStyleClass() {
 		return this.styleClass;
 	}
-	
+
 	public String getContainerID() {
 		return this.id;
 	}
@@ -170,11 +169,11 @@ public class SearchResults extends Block {
 	public void setStyleClass(String styleClass) {
 		this.styleClass = styleClass;
 	}
-	
+
 	public void setContainerID(String id) {
 		this.id = id;
 	}
-	
+
 	/**
 	 * You need a very special reason to use this class since it makes the result list disappear with the style attribute display:none;
 	 * For example if you want to use the file list in javascript but don't want to display it.
@@ -186,7 +185,7 @@ public class SearchResults extends Block {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.PresentationObject#main(com.idega.presentation.IWContext)
 	 */
 	@Override
@@ -195,7 +194,7 @@ public class SearchResults extends Block {
 		IWResourceBundle iwrb = IWContext.getInstance().getIWMainApplication().getCoreBundle().getResourceBundle(iwc);
 		IWBundle iwb = IWContext.getInstance().getIWMainApplication().getCoreBundle();
 		PresentationUtil.addStyleSheetToHeader(iwc, iwb.getVirtualPathWithFileNameString("style/search.css"));
-		
+
 		if (isSimpleSearch(iwc) || isAdvancedSearch(iwc)) {
 			CSSSpacer spacer = new CSSSpacer();
 			Layer container = new Layer();
@@ -203,11 +202,11 @@ public class SearchResults extends Block {
 			if (getContainerID() != null) {
 				container.setID(getContainerID());
 			}
-			
+
 			if(hideResultsLayer){
 				container.setStyleAttribute("display","none");
 			}
-			
+
 			beforeAddingResultRows(container);
 			// prototypes
 			Layer evenRowProtoType = new Layer();
@@ -244,19 +243,19 @@ public class SearchResults extends Block {
 			}
 			else {
 				String queryString = getSearchQueryString(iwc);
-				Map queryMap = new HashMap();
+				Map<String, String> queryMap = new HashMap<String, String>();
 				queryMap.put(getSimpleSearchParameterName(), queryString);
 				query = new SimpleSearchQuery(queryMap);
 			}
 			// /
 			boolean noResult = true;
-			Collection plugins = SearchPluginManager.getInstance().getAllSearchPluginsInitialized(iwc.getIWMainApplication());
+			Collection<SearchPlugin> plugins = SearchPluginManager.getInstance().getAllSearchPluginsInitialized(iwc.getIWMainApplication());
 			if (!plugins.isEmpty()) {
-				Iterator iter = plugins.iterator();
+				Iterator<SearchPlugin> iter = plugins.iterator();
 				while (iter.hasNext()) {
-					SearchPlugin searchPlugin = (SearchPlugin) iter.next();
+					SearchPlugin searchPlugin = iter.next();
 					searchPlugin = configureSearchPlugin(searchPlugin);
-					
+
 					// odd or even row
 					Layer rowContainer;
 					// todo get from handler
@@ -269,8 +268,8 @@ public class SearchResults extends Block {
 						}
 					}
 					//
-					
-					
+
+
 					//
 					if ((isAdvancedSearch && searchPlugin.getSupportsAdvancedSearch())
 							|| (!isAdvancedSearch && searchPlugin.getSupportsSimpleSearch())) {
@@ -278,17 +277,17 @@ public class SearchResults extends Block {
 							fillAdvancedSearch(iwc, query, searchPlugin);
 						}
 						Search search = searchPlugin.createSearch(query);
-						Collection results = search.getSearchResults();
+						Collection<SearchResult> results = search == null ? null : search.getSearchResults();
 						if (results != null && !results.isEmpty()) {
 							noResult = false;
 							Text searchName = new Text(searchPlugin.getSearchName());
 							searchName.setStyleClass(getSearchNameStyleClass());
 							container.add(searchName);
 							int row = 1;
-							Iterator iterator = results.iterator();
+							Iterator<SearchResult> iterator = results.iterator();
 							UUIDGenerator generator = UUIDGenerator.getInstance();
 							while (iterator.hasNext()) {
-								SearchResult result = (SearchResult) iterator.next();
+								SearchResult result = iterator.next();
 								String textOnLink = result.getSearchResultName();
 								String uri = result.getSearchResultURI();
 								String abstractText = result.getSearchResultAbstract();
@@ -303,7 +302,7 @@ public class SearchResults extends Block {
 									rowContainer = (Layer) oddRowProtoType.clone();
 								}
 								rowContainer.setId(generator.generateId());
-								
+
 								// add an extra optional style with the search
 								// type suffix
 								addSearchResultTypeStyleClass(rowContainer, type);
@@ -317,7 +316,7 @@ public class SearchResults extends Block {
 								// in the style
 								Layer icon = (Layer) iconPrototype.clone();
 								icon.setId(generator.generateId());
-								
+
 								addSearchResultTypeStyleClass(icon, type);
 								rowContainer.add(icon);
 								if (textOnLink != null) {
@@ -353,7 +352,7 @@ public class SearchResults extends Block {
 									addSearchResultTypeStyleClass(abstractT, type);
 									rowContainer.add(abstractT);
 								}
-								
+
 								if (extraParameters != null && !extraParameters.isEmpty() && isSetToShowAllResultProperties()) {
 									int counter = 0;
 									for (Iterator<String> keys = extraParameters.keySet().iterator(); keys.hasNext();) {
@@ -361,33 +360,33 @@ public class SearchResults extends Block {
 										String key = keys.next();
 										String value = extraParameters.get(key).toString();
 										Text extraParams;
-										
+
 										if (counter % 2 == 0) {
 											extraParams = (Text)extraAttributeEvenProtoType.clone();
 										}
 										else {
 											extraParams = (Text)extraAttributeOddProtoType.clone();
 										}
-										
+
 										extraParams.setText(value);
 										extraParams.setId(generator.generateId());
 										addSearchResultTypeAndAttributeKeyStyleClass(extraParams, type, key);
-								
+
 										rowContainer.add(extraParams);
 									}
 								}
-								
-								
-								
+
+
+
 								// extraRowElements
-								Collection rowElements = searchPlugin.getExtraRowElements(result, iwrb);
+								Collection<UIComponent> rowElements = searchPlugin.getExtraRowElements(result, iwrb);
 								if (rowElements != null && !rowElements.isEmpty()) {
-									Iterator reiter = rowElements.iterator();
+									Iterator<UIComponent> reiter = rowElements.iterator();
 									while (reiter.hasNext()) {
-										rowContainer.add((UIComponent) reiter.next());
+										rowContainer.add(reiter.next());
 									}
 								}
-								
+
 								// adding spacer to force the row container
 								// around all floating elements
 								CSSSpacer space2 = (CSSSpacer) spacer.clone();
@@ -397,7 +396,7 @@ public class SearchResults extends Block {
 								row++;
 							}
 						} else {
-							Logger.getLogger(SearchResults.class.getName()).info("There were foud no results by query: " + query);
+							getLogger().info("There were found no results by query: " + query + ". Search plugin: " + searchPlugin.getClass().getName());
 						}
 					}
 				}
@@ -419,7 +418,7 @@ public class SearchResults extends Block {
 	protected void addResultRow(Layer container, Layer rowContainer, String rowKey) {
 		container.add(rowContainer);
 	}
-	
+
 	protected void afterAddingResultRows(Layer container) {
 	}
 
@@ -467,13 +466,13 @@ public class SearchResults extends Block {
 	 */
 	protected void fillAdvancedSearch(IWContext iwc, SearchQuery query, SearchPlugin searchPlugin) {
 		String queryString = iwc.getParameter(getSimpleSearchParameterName());
-		Map queryMap = new HashMap();
+		Map<String, String> queryMap = new HashMap<String, String>();
 		queryMap.put(getSimpleSearchParameterName(), queryString);
-		List params = searchPlugin.getAdvancedSearchSupportedParameters();
+		List<String> params = searchPlugin.getAdvancedSearchSupportedParameters();
 		if (params != null && !params.isEmpty()) {
-			Iterator iterator = params.iterator();
+			Iterator<String> iterator = params.iterator();
 			while (iterator.hasNext()) {
-				String key = (String) iterator.next();
+				String key = iterator.next();
 				String value = iwc.getParameter(key);
 				queryMap.put(key, value);
 			}
@@ -483,7 +482,7 @@ public class SearchResults extends Block {
 
 	/**
 	 * Adds an extra optional style with the search type suffix
-	 * 
+	 *
 	 * @param obj
 	 * @param type
 	 */
@@ -491,11 +490,11 @@ public class SearchResults extends Block {
 		String style = obj.getStyleClass();
 		obj.setStyleClass(style + " " + style + "_" + type);
 	}
-	
+
 
 	/**
 	 * Adds an extra optional style with the search type suffix
-	 * 
+	 *
 	 * @param obj
 	 * @param type
 	 */
@@ -626,7 +625,7 @@ public class SearchResults extends Block {
 		this.extraAttributeTextOddStyleClass = extraAttributeOddStyleClass;
 	}
 
-	
+
 	/**
 	 * @param searchQueryString the searchQueryString to set
 	 */
@@ -648,7 +647,7 @@ public class SearchResults extends Block {
 	public void setToShowAllResultProperties(boolean showAllResultProperties) {
 		this.showAllResultProperties = showAllResultProperties;
 	}
-	
+
 	public boolean getOpenLinksInAnotherWindow() {
 		return openLinksInAnotherWindow;
 	}

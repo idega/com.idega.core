@@ -12,15 +12,17 @@ package com.idega.core.search.business;
 import java.util.Collection;
 import java.util.List;
 
+import javax.faces.component.UIComponent;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2007/07/02 16:16:10 $ by $Author: civilis $
  *  Last modified: $Date: 2007/07/02 16:16:10 $ by $Author: civilis $
- * 
+ *
  * This interface defines methods that have to be implemented to make "collection" searchable e.g. users/files/websites etc.<br>
  * Objects implementing this interface should be registered to their bundle as "iw.searchplugin" if you want to use the default<br>
  * presentation implementation from com.idega.core.search.presentation. The plugin will then become a search option in the Search block<br>
@@ -28,7 +30,7 @@ import com.idega.idegaweb.IWResourceBundle;
  * that they should also add to a page.<br>
  * Alternatively you can implement your own presentation layer for your own SearchPlugin using the interfaces and basic implementations<br>
  * in the package com.idega.search.
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>,<a href="mailto:tryggvi@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.6 $
  */
@@ -40,13 +42,13 @@ public interface SearchPlugin extends Cloneable{
 	 * @return true if initialized correctly otherwise false.
 	 */
 	public boolean initialize(IWMainApplication iwma);
-	
+
 	/**
 	 * This method is called when the server shuts down and the implementing class should use it to clean up and shutdown if needed.
 	 * @param iwc
 	 */
 	public void destroy(IWMainApplication iwma);
-	
+
 	/**
 	 * Creates a new search for a user with the key=value parameters in the SearchQuery object.<br>
 	 * The SearchQuery object is typically of either the type SimpleSearchQuery or AdvancedSearchQuery.<br>
@@ -55,45 +57,45 @@ public interface SearchPlugin extends Cloneable{
 	 * @return a Search object that you use to get some results from
 	 */
 	public Search createSearch(SearchQuery searchQuery);
-	
+
 	/**
 	 * @return a list of parameters the advanced search form should set up and retrieve after the form is submitted to use as input in getAdvancedSearchResults
 	 */
-	public List getAdvancedSearchSupportedParameters();
-	
+	public List<String> getAdvancedSearchSupportedParameters();
+
 	/**
 	 * @return true if the object implements getSimpleSearchResults.
 	 */
 	public boolean getSupportsSimpleSearch();
-	
+
 	/**
-	 * 
+	 *
 	 * @return true if the object implements getAdvancedSearchResults.
 	 */
 	public boolean getSupportsAdvancedSearch();
-	
+
 	/**
 	 * @return A displayable, preferably localized name, can be null
 	 */
 	public String getSearchName();
-	
+
 	/**
 	 * @return A preferably unical identifier, shouldn't be null. Component name fits best
 	 */
 	public String getSearchIdentifier();
-	
+
 	/**
 	 * @return A displayable, preferably localized name, can be null
 	 */
 	public String getSearchDescription();
-	
+
 	/**
-	 * @return A collection of UIComponents. 
+	 * @return A collection of UIComponents.
 	 */
-	public Collection getExtraRowElements(SearchResult result, IWResourceBundle iwrb);
-	
+	public Collection<UIComponent> getExtraRowElements(SearchResult result, IWResourceBundle iwrb);
+
 	/**
-	 * 
+	 *
 	 * @param result_uri - uri of the result. can be null
 	 * @return context uri to result img. if null returned - default is used
 	 */

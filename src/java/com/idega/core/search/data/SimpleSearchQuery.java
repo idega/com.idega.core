@@ -10,29 +10,30 @@
 package com.idega.core.search.data;
 
 import java.util.Map;
+
 import com.idega.core.search.business.SearchQuery;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2006/04/09 12:13:20 $ by $Author: laddi $
- * 
+ *
  * A basic implementor for an simple query.
  * @author <a href="mailto:eiki@idega.com">Eirikur S. Hrafnsson</a>
  * @version $Revision: 1.2 $
  */
 public class SimpleSearchQuery implements SearchQuery {
 
-	private Map searchParameters;
-	
+	private Map<String, String> searchParameters;
+
 	/**
-	 * 
+	 *
 	 */
 	public SimpleSearchQuery() {
 		super();
 	}
-	
-	public SimpleSearchQuery(Map searchParameters) {
+
+	public SimpleSearchQuery(Map<String, String> searchParameters) {
 		this();
 		setSearchParameters(searchParameters);
 	}
@@ -40,6 +41,7 @@ public class SimpleSearchQuery implements SearchQuery {
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchQuery#isSimpleQuery()
 	 */
+	@Override
 	public boolean isSimpleQuery() {
 		return true;
 	}
@@ -47,6 +49,7 @@ public class SimpleSearchQuery implements SearchQuery {
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchQuery#isAdvancedQuery()
 	 */
+	@Override
 	public boolean isAdvancedQuery() {
 		return false;
 	}
@@ -54,27 +57,29 @@ public class SimpleSearchQuery implements SearchQuery {
 	/* (non-Javadoc)
 	 * @see com.idega.core.search.business.SearchQuery#getSearchParameters()
 	 */
-	public Map getSearchParameters() {
+	@Override
+	public Map<String, String> getSearchParameters() {
 		return this.searchParameters;
 	}
-	
+
 	/**
 	 * @param searchParameters The searchParameters to set.
 	 */
-	public void setSearchParameters(Map searchParameters) {
+	@Override
+	public void setSearchParameters(Map<String, String> searchParameters) {
 		this.searchParameters = searchParameters;
 	}
-	
+
 	/**
 	 * @return the first value in the search parameter map
 	 */
 	public String getSimpleSearchQuery(){
 		if(this.searchParameters!=null && !this.searchParameters.isEmpty()){
-			return (String)this.searchParameters.values().iterator().next();
+			return this.searchParameters.values().iterator().next();
 		}
 		return null;
 	}
-	
+
 	@Override
 	public String toString() {
 		return "Simple search query: " + searchParameters;
