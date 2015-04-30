@@ -146,16 +146,16 @@ public class WebUtil extends DefaultSpringBean {
     	return true;
     }
 
-    public boolean logOut() {
+    public String logOut() {
     	IWContext iwc = CoreUtil.getIWContext();
     	if (iwc == null) {
     		getLogger().warning(IWContext.class.getName() + " is not available!");
-    		return false;
+    		return null;
     	}
 
     	if (!iwc.isLoggedOn()) {
     		getLogger().warning("User is not logged in!");
-    		return false;
+    		return null;
     	}
 
     	LoginBusinessBean loginBusiness = null;
@@ -165,10 +165,14 @@ public class WebUtil extends DefaultSpringBean {
     		getLogger().log(Level.WARNING, "Error getting LoginBusiness", e);
     	}
     	if (loginBusiness == null) {
-    		return false;
+    		return null;
     	}
 
-    	return loginBusiness.logOutUser(iwc);
+    	if (loginBusiness.logOutUser(iwc)) {
+    		return getApplication().getSettings().getProperty("logout_uri");
+    	}
+
+    	return null;
     }
 
     private Boolean latestNavigationUsed = Boolean.TRUE;

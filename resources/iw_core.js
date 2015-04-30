@@ -1449,12 +1449,19 @@ function changeWindowLocationHrefAndCheckParameters(newHref, keepOldParameters) 
 						jQuery('input[name="login_state"]').remove();
 					}
 					
-					var redirectUriIndex = newHref.indexOf('logoff_redirect_uri=');
 					var uri = null;
-					if (redirectUriIndex == -1) {
-						uri = '/pages';
+					if (result == null) {
+						var redirectUriIndex = newHref.indexOf('logoff_redirect_uri=');
+						if (redirectUriIndex == -1) {
+							uri = '/pages';
+						} else {
+							uri = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
+						}
 					} else {
-						uri = newHref.substring(redirectUriIndex + 'logoff_redirect_uri='.length);
+						uri = result;
+					}
+					if (uri == null || uri == '') {
+						uri = '/pages';
 					}
 					window.location.href = uri;
 					closeAllLoadingMessages();
