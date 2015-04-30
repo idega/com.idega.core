@@ -260,6 +260,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public boolean isOwner(Object obj, IWUserContext iwc) throws Exception {
+		if (obj instanceof com.idega.user.data.Group) {
+			return isOwnerLegacy((com.idega.user.data.Group) obj, iwc);
+		}
+		if (obj instanceof Group) {
+			return isOwner((Group) obj, iwc);
+		}
+
 		Boolean returnVal = Boolean.FALSE;
 		if (iwc.isLoggedOn()) {
 			User user = iwc.getLoggedInUser();
@@ -323,6 +330,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public boolean isOwner(ICFile file, IWUserContext iwc) throws Exception {
 		return isOwner(AccessController.CATEGORY_FILE_ID, file.getId().toString(), iwc);
+	}
+
+	@Override
+	public boolean isOwnerLegacy(com.idega.user.data.Group group, IWUserContext iwc) throws Exception {
+		if (group == null) {
+			return false;
+		}
+
+		Group g = getGroupDAO().findGroup(Integer.valueOf(group.getId()));
+		return isOwner(g, iwc);
 	}
 
 	@Override
