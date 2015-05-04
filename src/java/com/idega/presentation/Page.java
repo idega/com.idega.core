@@ -51,12 +51,10 @@ import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.IWCoreServlet;
-import com.idega.servlet.util.StringBufferWriter;
 import com.idega.util.CoreConstants;
 import com.idega.util.FacesUtil;
 import com.idega.util.FrameStorageInfo;
 import com.idega.util.IWColor;
-import com.idega.util.PresentationUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.QueueMap;
@@ -881,11 +879,15 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 * Description of the Method
 	 */
 	private void initializeAssociatedScript() {
-		Script _theAssociatedScript = (Script) getFacets().get("page_associated_script");
+		Object facet = getFacets().get("page_associated_script");
+		Script _theAssociatedScript = null;
+		if (facet instanceof Script) {
+			_theAssociatedScript = (Script) facet;
+		}
 		if (_theAssociatedScript == null) {
 			_theAssociatedScript = new Script();
-			setAssociatedScript(_theAssociatedScript);
 		}
+		setAssociatedScript(_theAssociatedScript);
 	}
 
 	/**
