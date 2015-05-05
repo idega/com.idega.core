@@ -102,7 +102,6 @@ public class UserLogin implements Serializable {
 	@JoinColumn(name = COLUMN_LOGIN_ID)
 	private List<LoginRecord> loginRecords;
 
-	@SuppressWarnings("unused")
 	@PrePersist
 	@PreUpdate
 	private void updateLastChanged() {
