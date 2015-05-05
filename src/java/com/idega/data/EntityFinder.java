@@ -10,11 +10,13 @@ import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -22,6 +24,7 @@ import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 
 /**
@@ -901,7 +904,7 @@ public class EntityFinder implements Singleton {
 		}
 	}
 
-	public static List findReverseRelated(IDOLegacyEntity fromEntity, IDOLegacyEntity returningEntity) throws SQLException {
+	public static <T extends IDOEntity> List<T> findReverseRelated(IDOLegacyEntity fromEntity, IDOLegacyEntity returningEntity) throws SQLException {
 		String tableToSelectFrom = EntityControl.getNameOfMiddleTable(fromEntity, returningEntity);
 		String SQLString =
 			"select * from "
@@ -916,7 +919,7 @@ public class EntityFinder implements Singleton {
 	/**
 	 * Returns null if nothing found
 	 */
-	protected static List findRelated(IDOLegacyEntity fromEntity, IDOLegacyEntity returningEntity, String SQLString) throws SQLException {
+	protected static <T extends IDOEntity> List<T> findRelated(IDOLegacyEntity fromEntity, IDOLegacyEntity returningEntity, String SQLString) throws SQLException {
 		if (debug) {
 			System.err.println("EntityFinder : findRelated :");
 			System.err.println(SQLString);
@@ -925,7 +928,7 @@ public class EntityFinder implements Singleton {
 		Connection conn = null;
 		Statement Stmt = null;
 		//Vector vector = new Vector();
-		Vector vector = null;
+		List<T> results = null;
 		/*
 		 * String tableToSelectFrom = ""; if
 		 * (returningEntity.getTableName().endsWith("_")){ tableToSelectFrom =
@@ -934,6 +937,8 @@ public class EntityFinder implements Singleton {
 		 * returningEntity.getTableName()+"_"+fromEntity.getTableName();
 		 */
 
+		boolean measureSQL = CoreUtil.isSQLMeasurementOn();
+		long start = measureSQL ? System.currentTimeMillis() : 0;
 		try {
 			conn = fromEntity.getConnection();
 			Stmt = conn.createStatement();
@@ -960,10 +965,10 @@ public class EntityFinder implements Singleton {
 					ex.printStackTrace();
 
 				}
-				if (vector == null) {
-					vector = new Vector();
+				if (results == null) {
+					results = new ArrayList<T>();
 				}
-				vector.addElement(tempobj);
+				results.add((T) tempobj);
 
 			}
 			RS.close();
@@ -976,14 +981,18 @@ public class EntityFinder implements Singleton {
 			if (conn != null) {
 				fromEntity.freeConnection(conn);
 			}
+
+			if (measureSQL) {
+				Logger.getLogger(EntityFinder.class.getName()).info("Query '" + SQLString + "' was executed in " + (System.currentTimeMillis() - start) + " ms");
+			}
 		}
 
-		if (vector != null) {
-			vector.trimToSize();
+		if (results != null) {
+//			vector.trimToSize();
 			//return (IDOLegacyEntity[])
 			// vector.toArray((Object[])java.lang.reflect.Array.newInstance(returningEntity.getClass(),0));
 			//return vector.toArray(new IDOLegacyEntity[0]);
-			return vector;
+			return results;
 		}
 		else {
 			return null;
