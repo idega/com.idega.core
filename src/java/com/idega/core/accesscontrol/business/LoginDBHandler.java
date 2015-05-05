@@ -121,13 +121,13 @@ public class LoginDBHandler {
 		}
 
 		String encryptedPassword = null;
-		if (password != null && !CoreConstants.EMPTY.equals(password)) {
+		if (!StringUtil.isEmpty(password)) {
 			encryptedPassword = Encrypter.encryptOneWay(password);
 			loginTable.setUserPassword(encryptedPassword, password);
+		} else if (!update) {
+			throw new LoginCreateException("Password ('" + password + "') not valid for login '" + userLogin + "', user ID: " + userID);
 		}
-		else if (!update) {
-			throw new LoginCreateException("Password not valid");
-		}
+
 		if (update) {
 			if (userLogin != null && !CoreConstants.EMPTY.equals(userLogin)) {
 				String userName = loginTable.getUserLogin();
