@@ -3010,11 +3010,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId) {
-		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, false);
+		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, false, false);
 	}
 
 	@Override
-	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup) {
+	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId,
+			boolean leaveCopyOfUserInCurrentGroup) {
+		return moveUsers(iwuc, userIds, parentGroup, targetGroupId, leaveCopyOfUserInCurrentGroup, false);
+	}
+
+	@Override
+	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId, boolean leaveCopyOfUserInCurrentGroup, boolean copyOrMoveUserInfo) {
 		IWMainApplication application = getIWApplicationContext().getIWMainApplication();
 		IWBundle bundle = application.getBundle("com.idega.user");
 		Locale locale = iwuc.getCurrentLocale();
@@ -3076,7 +3082,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// if there aren't any problems the message is null
 			if (message == null) {
-				message = moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, iwuc.getCurrentUser());
+				message = moveUserWithoutTest(iwrb, user, parentGroup, targetGroup, iwuc.getCurrentUser(), leaveCopyOfUserInCurrentGroup);
 			}
 			// if the user was sucessfully moved the message is null
 			result.put(userId, message);

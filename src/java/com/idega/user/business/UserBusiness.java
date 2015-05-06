@@ -753,11 +753,14 @@ public interface UserBusiness extends IBOService {
 	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId)
 			throws java.rmi.RemoteException;
 
+	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId,
+			boolean leaveCopyOfUserInCurrentGroup) throws java.rmi.RemoteException;
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
 	 */
 	public Map<Integer, String> moveUsers(IWUserContext iwuc, Collection<String> userIds, Group parentGroup, int targetGroupId,
-			boolean leaveCopyOfUserInCurrentGroup) throws java.rmi.RemoteException;
+			boolean leaveCopyOfUserInCurrentGroup, boolean copyOrMoveUserInfo) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#moveUsers
