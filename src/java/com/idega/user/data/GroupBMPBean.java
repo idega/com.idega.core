@@ -266,6 +266,11 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	@Override
+	public GroupType getGroupTypeEntity() {
+		return (GroupType) getColumnValue(getGroupTypeColumnName());
+	}
+
+	@Override
 	public void setGroupType(String groupType) {
 		setColumn(getGroupTypeColumnName(), groupType);
 	}

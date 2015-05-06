@@ -35,17 +35,20 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean<GroupType> implement
 
 	private static final long serialVersionUID = -6915410982062832214L;
 
-	private static final String TABLE_NAME = "IC_GROUP_TYPE";
-	private static final String TYPE_COLUMN = "GROUP_TYPE";
+	public static final String	TABLE_NAME = "IC_GROUP_TYPE",
+								TYPE_COLUMN = "GROUP_TYPE",
+								COLUMN_IS_VISIBLE = "IS_VISIBLE";
+
 	private static final String DESCRIPTION_COLUMN = "DESCRIPTION";
 	private static final String DEFAULT_GROUP_NAME_COLUMN = "DEFAULT_GROUP_NAME";
-	private static final String COLUMN_IS_VISIBLE = "IS_VISIBLE";
 	private static final String COLUMN_MAX_INSTANCES = "MAX_INSTANCES";
 	private static final String COLUMN_MAX_INSTANCES_PER_PARENT = "MAX_INSTANCES_PER_PARENT";
 	private static final String COLUMN_AUTO_CREATE = "AUTO_CREATE";
 	private static final String COLUMN_NUMBER_OF_INSTANCES_TO_AUTO_CREATE = "INSTANCES_AUTO_CREATED";
 	private static final String COLUMN_SUPPORTS_SAME_CHILD_TYPE = "SAME_CHILD_TYPE";
 	private static final String COLUMN_SAME_CHILD_TYPE_ONLY = "SAME_CHILD_TYPE_ONLY";
+
+	private static final String COLUMN_ALLOWS_PERMISSIONS = "allows_permissions";
 
 	public static final String TYPE_GENERAL_GROUP = "general";
 	public static final String TYPE_USER_REPRESENTATIVE = "ic_user_representative";
@@ -66,6 +69,8 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean<GroupType> implement
 		this.addAttribute(COLUMN_MAX_INSTANCES_PER_PARENT, "Maximum number of instances per parent", Integer.class);
 		this.addAttribute(COLUMN_SUPPORTS_SAME_CHILD_TYPE, "Does it support its own type as a child group",Boolean.class);
 		this.addAttribute(COLUMN_SAME_CHILD_TYPE_ONLY, "Only allows the same group type (for groups) for its children",Boolean.class);
+
+		this.addAttribute(COLUMN_ALLOWS_PERMISSIONS, "Allows permissions", Boolean.class);
 
 		this.addIndex("IDX_IC_GROUP_TYPE1", COLUMN_IS_VISIBLE);
 		this.addIndex("IDX_IC_GROUP_TYPE2", TYPE_COLUMN);
@@ -360,4 +365,14 @@ public class GroupTypeBMPBean extends TreeableEntityBMPBean<GroupType> implement
 	public String ejbHomeGetAliasGroupTypeString() {
 		return getAliasGroupTypeString();
 	}
+
+	@Override
+	public boolean getAllowsPermissions() {
+		return getBooleanColumnValue(COLUMN_ALLOWS_PERMISSIONS, true);
+	}
+
+	public void setAllowsPermissions(boolean allowsPermissions) {
+		setColumn(COLUMN_ALLOWS_PERMISSIONS, allowsPermissions);
+	}
+
 }

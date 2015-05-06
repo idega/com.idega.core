@@ -3187,4 +3187,9 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 
 		return super.equals(obj);
 	}
+
+	@Override
+	public GroupType getGroupTypeEntity() {
+		throw new java.lang.UnsupportedOperationException("Method getGroupTypeEntity() not yet implemented.");
+	}
 }

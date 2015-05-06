@@ -28,4 +28,5 @@ public interface GroupType extends com.idega.data.IDOEntity, TreeableEntity<Grou
  public void setOnlySupportsSameTypeChildGroups(Boolean onlySupportsSameTypeChildGroups);
  public boolean getSupportsSameTypeChildGroups();
  public void setSupportsSameTypeChildGroups(Boolean supportsSameTypeChildGroups);
+	public boolean getAllowsPermissions();
 }
