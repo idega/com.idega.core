@@ -2720,7 +2720,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 											// also we need to check the
 											// children of the current top nodes
 											// recursively for aliases :s
-											Collection<Group> aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(getGroupBusiness().getGroupByGroupID(topNodeId.intValue()), aliasGroupType, true);
+											Group group = getGroupBusiness().getGroupByGroupID(topNodeId.intValue());
+											Collection<Group> aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(group, aliasGroupType, true);
 											if (aliasesRecursive != null && !aliasesRecursive.isEmpty()) {
 												for (Iterator<Group> aliasIter = aliasesRecursive.iterator(); aliasIter.hasNext();) {
 													Group alias = aliasIter.next();
@@ -2746,6 +2747,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								}
 								time.stop();
 								log("[UserBusinessBean]: check children (recursively) complete " + time.getTimeString());
+
 								time.start();
 								// remove the top nodes that have aliases under
 								// another top node, or itself to avoid crashing
