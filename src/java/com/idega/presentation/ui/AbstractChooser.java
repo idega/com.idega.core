@@ -14,6 +14,7 @@ import javax.faces.component.UIComponentBase;
 import com.idega.core.builder.business.ICBuilderConstants;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWConstants;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -94,6 +95,9 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 
 	public AbstractChooser(boolean useOldLogic) {
 		this.useOldLogic = useOldLogic;
+		if (!useOldLogic) {
+			this.useOldLogic = IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("use_old_object_choosers", false);
+		}
 	}
 
 	public AbstractChooser(boolean needsReload, boolean useOldLogic, String actionAfterPropertySaved) {
