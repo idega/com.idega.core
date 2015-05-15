@@ -12,16 +12,17 @@ import com.idega.presentation.IWContext;
  *
  */
 public interface PDFGenerator {
-	
+
 	public static final String SPRING_BEAN_NAME_PDF_GENERATOR = "pdfGenerator";
 
 	public boolean generatePDF(IWContext iwc, UIComponent component, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
-	
+
 	public boolean generatePDFFromComponent(String componentUUID, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
-	
+
 	public boolean generatePDFFromPage(String pageUri, String fileName, String uploadPath, boolean replaceInputs, boolean checkCustomTags);
-	
+
 	public InputStream getStreamToGeneratedPDF(IWContext iwc, UIComponent component, boolean replaceInputs, boolean checkCustomTags);
 
 	public byte[] getBytesOfGeneratedPDF(IWContext iwc, UIComponent component, boolean replaceInputs, boolean checkCustomTags);
+	public byte[] getBytesOfGeneratedPDF(IWContext iwc, UIComponent component, boolean replaceInputs, boolean checkCustomTags, boolean resetWriter);
 }
