@@ -297,6 +297,7 @@ public interface BuilderService extends IBOService
 	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml);
 
 	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml, boolean omitDocTypeEnvelope, boolean omitHtmlEnvelope);
+	public Document getRenderedComponent(IWContext iwc, UIComponent component, boolean cleanHtml, boolean omitDocTypeEnvelope, boolean omitHtmlEnvelope, boolean resetWriter);
 
 	public String getRenderedComponent(UIComponent component, IWContext iwc, boolean cleanHtml);
 
