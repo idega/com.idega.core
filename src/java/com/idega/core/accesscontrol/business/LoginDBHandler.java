@@ -334,6 +334,7 @@ public class LoginDBHandler {
 
 	public static void changePassword(LoginTable login, String password) throws Exception {
 		if (login != null) {
+			login.setLastChanged(IWTimestamp.RightNow().getTimestamp());
 			login.setUserPassword(Encrypter.encryptOneWay(password));
 			login.store();
 		}
