@@ -807,6 +807,19 @@ function getAbsoluteTop(objectId) {
 	return oTop;
 }
 
+IWCORE.existElementInArray = function(array, element) {
+	if (array == null || element == null) {
+		return;
+	}
+	var found = false;
+	for (var i = 0; (i < array.length && !found); i++) {
+		if (element == array[i]) {
+			found = true;
+		}
+	}
+	return found;
+}
+
 function removeElementFromArray(array, elementToRemove) {
 	if (array == null || elementToRemove == null) {
 		return;
