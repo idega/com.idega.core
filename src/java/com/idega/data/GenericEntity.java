@@ -2545,39 +2545,62 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		return getIntTableValue(null, query);
 	}
 
-	private int getIntTableValue(String CountSQLString, SelectQuery query) throws SQLException {
-		Connection conn = null;
-		// Statement stmt = null;
-		// ResultSet rs = null;
-		ResultHelper rsh = null;
-		int recordCount = -1;
+	private int getIntTableValue(String countSQL, SelectQuery query) throws SQLException {
+		String queryTmp = null;
+		if (query != null) {
+			queryTmp = query.toString();
+		} else {
+			queryTmp = countSQL;
+		}
+
+		if (StringUtil.isEmpty(queryTmp) || "null".equals(queryTmp)) {
+			try {
+				throw new RuntimeException("Provided query is empty or null: '" + queryTmp + "'");
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Testing stack trace", e);
+			}
+		}
+
+		boolean measureSQL = CoreUtil.isSQLMeasurementOn();
+		long start = measureSQL ? System.currentTimeMillis() : 0;
 		try {
-			conn = getConnection(this.getDatasource());
-			rsh = prepareResultSet(conn, CountSQLString, query);
-			if (rsh.rs.next()) {
-				recordCount = rsh.rs.getInt(1);
-			// rs.close();
-			// System.out.println(SQLString+"\n");
+			Connection conn = null;
+			// Statement stmt = null;
+			// ResultSet rs = null;
+			ResultHelper rsh = null;
+			int recordCount = -1;
+			try {
+				conn = getConnection(this.getDatasource());
+				rsh = prepareResultSet(conn, countSQL, query);
+				if (rsh.rs.next()) {
+					recordCount = rsh.rs.getInt(1);
+				// rs.close();
+				// System.out.println(SQLString+"\n");
+				}
+			}
+			catch (SQLException e) {
+				throw new SQLException("There was an error in com.idega.data.GenericEntity.getNumberOfRecords \n" + e.getMessage());
+			}
+			catch (Exception e) {
+				System.err.println("There was an error in com.idega.data.GenericEntity.getNumberOfRecords " + e.getMessage());
+			}
+			finally {
+				if (rsh != null) {
+					rsh.close();
+				}
+				/*
+				 * if (stmt != null) { stmt.close(); }
+				 */
+				if (conn != null) {
+					freeConnection(getDatasource(), conn);
+				}
+			}
+			return recordCount;
+		} finally {
+			if (measureSQL) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), queryTmp);
 			}
 		}
-		catch (SQLException e) {
-			throw new SQLException("There was an error in com.idega.data.GenericEntity.getNumberOfRecords \n" + e.getMessage());
-		}
-		catch (Exception e) {
-			System.err.println("There was an error in com.idega.data.GenericEntity.getNumberOfRecords " + e.getMessage());
-		}
-		finally {
-			if (rsh != null) {
-				rsh.close();
-			}
-			/*
-			 * if (stmt != null) { stmt.close(); }
-			 */
-			if (conn != null) {
-				freeConnection(getDatasource(), conn);
-			}
-		}
-		return recordCount;
 	}
 
 	public Date getDateTableValue(String dateSQLString) throws SQLException {
@@ -4111,24 +4134,32 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * @throws FinderException
 	 */
 	protected <T extends Object> Collection<T> idoFindPKsByQueryUsingLoadBalance(SelectQuery sqlQuery, int prefetchSize) throws FinderException {
-		Collection pkColl = null;
-		Class interfaceClass = this.getInterfaceClass();
-		boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
-		if (queryCachingActive) {
-			pkColl = IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).getCachedFindQuery(sqlQuery.toString());
-		}
-		if (pkColl == null) {
-			pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize);
+		boolean measureSQL = CoreUtil.isSQLMeasurementOn();
+		long start = measureSQL ? System.currentTimeMillis() : 0;
+		try {
+			Collection pkColl = null;
+			Class interfaceClass = this.getInterfaceClass();
+			boolean queryCachingActive = IDOContainer.getInstance().queryCachingActive(interfaceClass);
 			if (queryCachingActive) {
-				IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
+				pkColl = IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).getCachedFindQuery(sqlQuery.toString());
+			}
+			if (pkColl == null) {
+				pkColl = this.idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(sqlQuery, prefetchSize);
+				if (queryCachingActive) {
+					IDOContainer.getInstance().getBeanCache(getDatasource(),interfaceClass).putCachedFindQuery(sqlQuery.toString(), pkColl);
+				}
+			}
+			else {
+				if (this.isDebugActive()) {
+					logSQL("Cache hit for SQL query: " + sqlQuery);
+				}
+			}
+			return pkColl;
+		} finally {
+			if (measureSQL) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sqlQuery.toString());
 			}
 		}
-		else {
-			if (this.isDebugActive()) {
-				logSQL("Cache hit for SQL query: " + sqlQuery);
-			}
-		}
-		return pkColl;
 	}
 
 	protected Collection idoFindByPrimaryKeyCollection(Collection primaryKeys, int prefetchSize) throws FinderException {
@@ -4170,6 +4201,19 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	protected <PK> Collection<PK> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query) throws FinderException {
+		String queryTmp = null;
+		if (query != null) {
+			queryTmp = query.toString();
+		} else {
+			queryTmp = sqlQuery;
+		}
+		if (StringUtil.isEmpty(queryTmp) || "null".equals(queryTmp)) {
+			try {
+				throw new RuntimeException("Provided query is empty or null: '" + queryTmp + "'");
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Testing stack trace", e);
+			}
+		}
 		logSQL(sqlQuery);
 
 		if (startingEntry < 0) {
@@ -4181,6 +4225,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 		Connection conn = null;
 		ResultHelper rsh = null;
+
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 
 		Collection<PK> results = new ArrayList<PK>();
 		try {
@@ -4209,7 +4256,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				}
 				counter++;
 			}
-		} catch (SQLException sqle) {
+		} catch (Exception sqle) {
+			sqle.printStackTrace();
 			throw new IDOFinderException(sqle);
 		} finally {
 			if (rsh != null) {
@@ -4217,6 +4265,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
+			}
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), queryTmp);
 			}
 		}
 		return results;
@@ -4475,6 +4526,20 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * Finds returningNumberOfRecords Primary keys from the specified sqlQuery
 	 */
 	protected <PK> Collection<PK> idoFindPKsBySQL(String sqlQuery, int returningNumberOfRecords, int startingEntry, SelectQuery selectQuery) throws FinderException {
+		String query = null;
+		if (selectQuery != null) {
+			query = selectQuery.toString();
+		} else {
+			query = sqlQuery;
+		}
+		if (StringUtil.isEmpty(query) || "null".equals(query)) {
+			try {
+				throw new RuntimeException("Provided query is empty or null: '" + query + "'");
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Testing stack trace", e);
+			}
+		}
+
 		boolean measureSQL = CoreUtil.isSQLMeasurementOn();
 		long start = measureSQL ? System.currentTimeMillis() : 0;
 		try {
@@ -4498,7 +4563,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			return pkColl;
 		} finally {
 			if (measureSQL) {
-				log(Level.INFO, "Query '" + sqlQuery + "' was executed in " + (System.currentTimeMillis() - start) + " ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sqlQuery);
 			}
 		}
 	}
@@ -5476,7 +5541,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *          The message to log out
 	 */
 	protected void log(String msg) {
-		// System.out.println(string);
 		getLogger().log(getDefaultLogLevel(), msg);
 	}
 
@@ -5500,7 +5564,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *          The message to log out
 	 */
 	protected void log(Level level, String msg) {
-		// System.out.println(msg);
 		getLogger().log(level, msg);
 	}
 
