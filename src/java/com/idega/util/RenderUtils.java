@@ -12,13 +12,12 @@ package com.idega.util;
 import java.io.IOException;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.faces.context.ResponseWriter;
-
-import com.idega.presentation.IWContext;
 
 
 /**
@@ -31,7 +30,7 @@ import com.idega.presentation.IWContext;
  */
 public class RenderUtils {
 
-	public static final Logger LOGGER = Logger.getLogger(RenderUtils.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(RenderUtils.class.getName());
 
 	public static final String DIV_TAG="div";
 	public static final String STYLE_CLASS_ATTRIBUTE="class";
@@ -50,14 +49,8 @@ public class RenderUtils {
 			return;
 		}
 
-		boolean print = false;
-		String key = null;
-		Long start = null;
-		IWContext iwc = IWContext.getIWContext(context);
-		if (iwc.getIWMainApplication().getSettings().getBoolean("measure_component_performance", Boolean.FALSE)) {
-			key = "URI: " + iwc.getRequestURI() + ", session ID: " + iwc.getRequest().getSession(true).getId() + ", UI: " + child.getClass().getName();
-			start = System.currentTimeMillis();
-		}
+		boolean debug = CoreUtil.isUIRenderingMeasurementOn();
+		long start = debug ? System.currentTimeMillis() : 0;
 
 		try {
 			CoreUtil.doEnsureScopeIsSet(context);
@@ -77,12 +70,11 @@ public class RenderUtils {
 				}
 			}
 			child.encodeEnd(context);
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Some error occured while rendering " + child.getClass().getName(), e);
 		} finally {
-			if (print) {
-				long time = System.currentTimeMillis() - start;
-				if (time >= 100) {
-					LOGGER.info("### Rendered " + key + " in " + (time) + " ms");
-				}
+			if (debug) {
+				CoreUtil.doDebugUI(start, System.currentTimeMillis(), child, context);
 			}
 		}
 	}

@@ -167,7 +167,7 @@ public class SimpleQuerier {
 
             long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
-            	LOGGER.info("Query '" + sqlQuery + "' was executed in " + (end - start) + " ms.");
+            	CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sqlQuery);
             }
         }
 
@@ -384,7 +384,7 @@ public class SimpleQuerier {
 
             long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
-            	LOGGER.info("Query '" + sql + "' was executed in " + (end - start) + " ms.");
+            	CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sql);
             }
         }
         return value;

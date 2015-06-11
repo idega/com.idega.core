@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.jcr.RepositoryException;
 import javax.servlet.http.HttpServletRequest;
@@ -214,14 +215,10 @@ public class CoreUtil {
 				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 
 		    	Writer writer = null;
-		    	PrintWriter printWriter = null;
 		    	StringBuffer notification = null;
 		    	try {
-		    		if (exception != null) {
-			    		writer = new StringWriter();
-			    		printWriter = new PrintWriter(writer);
-			    		exception.printStackTrace(printWriter);
-		    		}
+		    		writer = new StringWriter();
+		    		doPrintStackTrace(exception, writer);
 
 		    		notification = new StringBuffer("Requested uri: ").append(requestedUri).append("\n");
 		    		notification.append("User: ").append(userFullName).append("\n");
@@ -253,13 +250,22 @@ public class CoreUtil {
 		        	LOGGER.log(Level.WARNING, "Error sending notification: " + notification, e);
 		        } finally {
 		        	IOUtil.closeWriter(writer);
-		        	IOUtil.closeWriter(printWriter);
 		        }
 			}
 		});
 		sender.start();
 
     	return true;
+	}
+
+	private static void doPrintStackTrace(Throwable e, Writer writer) {
+		if (e == null) {
+			return;
+		}
+
+		PrintWriter printer = new PrintWriter(writer);
+		e.printStackTrace(printer);
+		IOUtil.close(printer);
 	}
 
 	public static final Locale getCurrentLocale() {
@@ -305,6 +311,104 @@ public class CoreUtil {
 
 	public static final boolean isSQLMeasurementOn() {
 		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_sql_queries", Boolean.FALSE);
+	}
+
+	public static final boolean isUIRenderingMeasurementOn() {
+		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_ui_rendering", Boolean.FALSE);
+	}
+
+	public static final void doDebugSQL(long start, long end, String query) {
+		doDebugSQL(start, end, query, null);
+	}
+	public static final void doDebugSQL(long start, long end, String query, Collection<?> params) {
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		long minExecutionTime = Long.valueOf(settings.getProperty("sql_debug_min_exec_time", String.valueOf(100)));
+
+		long executionTime = end - start;
+		if (executionTime < minExecutionTime) {
+			return;
+		}
+
+		IWContext iwc = getIWContext();
+		String request = iwc == null ? "unknown" : iwc.getRequestURI();
+		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
+
+		StringBuffer message = new StringBuffer("Query '").append(query).append("' ");
+		if (!ListUtil.isEmpty(params)) {
+			message.append("with parameters ").append(params).append(" ");
+		}
+
+		message.append("executed in ").append(executionTime).append(" ms");
+		boolean printStackTrace = settings.getBoolean("print_stack_trace_for_sql_debug", Boolean.FALSE);
+		if (printStackTrace) {
+			try {
+				throw new RuntimeException("Testing stack trace for SQL query: " + query + (ListUtil.isEmpty(params) ? CoreConstants.EMPTY : ". Parameters: " + params));
+			} catch (Exception e) {
+				StringWriter writer = new StringWriter();
+				doPrintStackTrace(e, writer);
+				message.append(". Stack trace:\n").append(writer.toString());
+				IOUtil.close(writer);
+			}
+		}
+
+		if (request != null) {
+			message.append("\nRequest URI: ").append(request);
+		}
+		if (!MapUtil.isEmpty(parameters)) {
+			message.append("\nParameters: ").append(parameters);
+		}
+
+		LOGGER.info(message.toString());
+		if (settings.getBoolean("email_sql_debug_message", false)) {
+			sendExceptionNotification(message.toString(), null);
+		}
+	}
+
+	public static final void doDebugUI(long start, long end, UIComponent component, FacesContext context) {
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		long minExecutionTime = Long.valueOf(settings.getProperty("ui_debug_min_exec_time", String.valueOf(100)));
+
+		long executionTime = end - start;
+		if (executionTime < minExecutionTime) {
+			return;
+		}
+
+		IWContext iwc = IWContext.getIWContext(context);
+		String request = iwc == null ? "unknown" : iwc.getRequestURI();
+		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
+		String sessionId = iwc == null ? "unknown" : iwc.getRequest().getSession(true).getId();
+		User user = iwc == null ? null : iwc.isLoggedOn() ? iwc.getLoggedInUser() : null;
+
+		StringBuffer message = new StringBuffer("UI component '").append(component.getClass().getName()).append("' ");
+
+		message.append("rendered into HTML in ").append(executionTime).append(" ms");
+		boolean printStackTrace = settings.getBoolean("print_stack_trace_for_ui_debug", Boolean.FALSE);
+		if (printStackTrace) {
+			try {
+				throw new RuntimeException("Testing stack trace for UI rendering: " + component.getClass().getName());
+			} catch (Exception e) {
+				StringWriter writer = new StringWriter();
+				doPrintStackTrace(e, writer);
+				message.append(". Stack trace:\n").append(writer.toString());
+				IOUtil.close(writer);
+			}
+		}
+
+		if (request != null) {
+			message.append("\nRequest URI: ").append(request);
+		}
+		if (!MapUtil.isEmpty(parameters)) {
+			message.append("\nParameters: ").append(parameters);
+		}
+		message.append("\nHTTP session ID: ").append(sessionId);
+		if (user != null) {
+			message.append("\nUser: ").append(user.getName()).append(", ID: ").append(user.getId()).append(", personal ID: ").append(user.getPersonalID());
+		}
+
+		LOGGER.info(message.toString());
+		if (settings.getBoolean("email_ui_debug_message", false)) {
+			sendExceptionNotification(message.toString(), null);
+		}
 	}
 
 	public static final boolean isMobileClient(IWContext iwc) {
@@ -361,16 +465,16 @@ public class CoreUtil {
 				((JSFUtil) bean).setFacesScope(context);
 		}
     }
-	
+
 	public static File getFileFromRepository(String pathInRepository) throws IOException {
 		if (StringUtil.isEmpty(pathInRepository)) {
 			return null;
 		}
-		
+
 		if (pathInRepository.endsWith("_1.0")) {
 			pathInRepository = StringHandler.replace(pathInRepository, "_1.0", CoreConstants.EMPTY);
 		}
-		
+
 		try {
 			RepositoryService service = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
 			return service.getRepositoryItemAsRootUser(pathInRepository);

@@ -16,7 +16,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Vector;
-import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -983,7 +982,7 @@ public class EntityFinder implements Singleton {
 			}
 
 			if (measureSQL) {
-				Logger.getLogger(EntityFinder.class.getName()).info("Query '" + SQLString + "' was executed in " + (System.currentTimeMillis() - start) + " ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), SQLString);
 			}
 		}
 

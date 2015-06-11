@@ -60,8 +60,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} finally {
 			if (measure) {
-				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) + " ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
 			}
 		}
 	}
@@ -81,9 +80,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			throw new RuntimeException(e);
 		} finally {
 			if (measure) {
-				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) +
-						" ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
 			}
 		}
 	}
@@ -103,7 +100,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		} finally {
 			if (measure) {
 				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) + " ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
 			}
 		}
 	}
@@ -131,9 +128,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return null;
 		} finally {
 			if (measure) {
-				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + Arrays.asList(params) + " executed in " + (end - start) +
-						" ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
 			}
 		}
 	}
@@ -226,8 +221,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} finally {
 			if (measure) {
-				long end = System.currentTimeMillis();
-				getLogger().info("Query '" + getQueryExpression() + "' with parameters " + params + " executed in " + (end - start) + " ms");
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), params);
 			}
 		}
 	}
