@@ -6,6 +6,7 @@ import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -355,7 +356,13 @@ public class CoreUtil {
 			message.append("\nRequest URI: ").append(request);
 		}
 		if (!MapUtil.isEmpty(parameters)) {
-			message.append("\nParameters: ").append(parameters);
+			message.append("\nParameters: ");
+			for (String param: parameters.keySet()) {
+				String[] values = parameters.get(param);
+				if (!ArrayUtil.isEmpty(values)) {
+					message.append(param).append(CoreConstants.EQ).append(Arrays.asList(values));
+				}
+			}
 		}
 
 		LOGGER.info(message.toString());
@@ -398,7 +405,13 @@ public class CoreUtil {
 			message.append("\nRequest URI: ").append(request);
 		}
 		if (!MapUtil.isEmpty(parameters)) {
-			message.append("\nParameters: ").append(parameters);
+			message.append("\nParameters: ");
+			for (String param: parameters.keySet()) {
+				String[] values = parameters.get(param);
+				if (!ArrayUtil.isEmpty(values)) {
+					message.append(param).append(CoreConstants.EQ).append(Arrays.asList(values));
+				}
+			}
 		}
 		message.append("\nHTTP session ID: ").append(sessionId);
 		if (user != null) {
