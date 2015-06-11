@@ -46,8 +46,9 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	private static final String CACHED_RESOURCES = "cached_resources";
 
 	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
-		if (bundleIdentifier == null)
+		if (bundleIdentifier == null) {
 			bundleIdentifier = MessageResource.NO_BUNDLE;
+		}
 
 		Map<String, Map<Locale, List<MessageResource>>> cachedResources = getCache();
 
@@ -58,7 +59,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		}
 
 		if (bundleResources.containsKey(locale)) {
-			List<MessageResource> resources = bundleResources.get(locale);
+			List<MessageResource> resources = new ArrayList<MessageResource>(bundleResources.get(locale));
 			sortResourcesByImportance(resources);
 			return resources;
 		}
