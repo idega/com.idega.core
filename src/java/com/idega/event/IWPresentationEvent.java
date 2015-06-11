@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.EventObject;
 import java.util.Iterator;
 import java.util.List;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.idega.core.component.data.ICObjectInstance;
@@ -215,16 +214,14 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
           ok = event.initializeEvent(iwc);
         } catch(ClassCastException cce) {
           ok = false;
-          LOGGER.log(Level.WARNING, "Class cast exception for: " + className, cce);
         } catch(ClassNotFoundException cnfe) {
           ok = false;
-          LOGGER.log(Level.WARNING, "Class not found exception for: " + className, cnfe);
         } catch(IllegalAccessException iae) {
           ok = false;
-          LOGGER.log(Level.WARNING, "Illegal access exception for: " + className, iae);
         } catch(InstantiationException ie) {
           ok = false;
-          LOGGER.log(Level.WARNING, "Instantiation exception for: " + className, ie);
+        } catch (Exception e) {
+        	ok = false;
         }
 
         if (ok) {
