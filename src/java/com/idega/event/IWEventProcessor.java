@@ -113,9 +113,7 @@ public class IWEventProcessor implements Singleton {
 				Class<?> eventClass = RefactorClassRegistry.forName(eventListenerClass);
 				IWPageEventListener listener = (IWPageEventListener) eventClass.newInstance();
 				listener.actionPerformed(iwc);
-			} catch (ClassNotFoundException cnfe){
-				log.warning(cnfe.getMessage());
-			}
+			} catch (ClassNotFoundException cnfe) {}
 		}
 	}
 
@@ -315,7 +313,7 @@ public class IWEventProcessor implements Singleton {
 		pathToFile.append(sep);
 		FileUtil.createFolder(pathToFile.toString());
 		int maxSize = iwc.getRequest().getContentLength();
-		Logger.getLogger(getClass().getName()).info("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
+		log.info("content length of request is " + maxSize + ", max size of multipart data is " + (maxSize*=1.3));
 
 		if(iwc.getRequest() instanceof MultipartWrapper){
 			//oreilly This ONLY supports one file
