@@ -31,40 +31,40 @@ import com.idega.util.ArrayUtil;
 public abstract class IWPresentationEvent extends EventObject implements Cloneable {
 
 	private static final long serialVersionUID = 3008125680698742615L;
-	
+
 	public final static String PRM_IW_EVENT = "iw_event_type";
 	public final static String PRM_IW_EVENT_SOURCE = "iw_ev_src";
-	
+
 	private static String IW_EVENT_HANDLER_SERVLET_URL = "/servlet/IWEventHandler";
-	
+
 	private String eventHandlerURL = null;
-	
+
 	public static String DEFAULT_IW_EVENT_TARGET="iw_event_frame";
 	private String eventTarget = null;
-  
+
 	private static final Logger LOGGER = Logger.getLogger(IWPresentationEvent.class.getName());
-	
+
 	/**
-	 * 
+	 *
 	 * @uml.property name="_parameters"
 	 * @uml.associationEnd multiplicity="(0 -1)" elementType="com.idega.presentation.ui.Parameter"
 	 */
 	private List<Parameter> _parameters = new ArrayList<Parameter>();
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="_page"
 	 * @uml.associationEnd multiplicity="(0 1)"
 	 */
 	private Page _page = null;
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="_iwc"
 	 * @uml.associationEnd multiplicity="(0 1)"
 	 */
 	private IWContext _iwc = null;
-	
+
 	private String sourceParameterValue = null;
 
   public IWPresentationEvent(){
@@ -118,7 +118,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     }
     //this.source = source;*/
   }
-  
+
   public String getSourceParameterValue() {
   	return this.sourceParameterValue;
   }
@@ -174,14 +174,14 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
   public Iterator<Parameter> getParameters(){
     return this._parameters.iterator();
   }
-  
+
   public abstract boolean initializeEvent(IWContext iwc);
-  
+
   @SuppressWarnings("unchecked")
   @Override
   public Object clone() {
 	  IWPresentationEvent model = null;
-	  
+
 	  try {
 		  model = (IWPresentationEvent) super.clone();
 		  if (this._parameters != null) {
@@ -198,11 +198,11 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 
   public static IWPresentationEvent[] getCurrentEvents(IWContext iwc){
 	  String[] classNames = iwc.getParameterValues(PRM_IW_EVENT);
-	  
+
 	  if (ArrayUtil.isEmpty(classNames)) {
 		  return new IWPresentationEvent[0];
 	  }
-    
+
       IWPresentationEvent[] events = new IWPresentationEvent[classNames.length];
       int index = 0;
       for (int i = 0; i < classNames.length; i++) {
@@ -215,23 +215,23 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
           ok = event.initializeEvent(iwc);
         } catch(ClassCastException cce) {
           ok = false;
-          LOGGER.log(Level.WARNING, "IWPresentationEvent ClassCastException for :"+className , cce);
+          LOGGER.log(Level.WARNING, "Class cast exception for: " + className, cce);
         } catch(ClassNotFoundException cnfe) {
           ok = false;
-          LOGGER.log(Level.WARNING, "IWPresentationEvent ClassCastException for :"+className, cnfe);
+          LOGGER.log(Level.WARNING, "Class not found exception for: " + className, cnfe);
         } catch(IllegalAccessException iae) {
           ok = false;
-          LOGGER.log(Level.WARNING, "IWPresentationEvent IllegalAccessException for :"+className, iae);
+          LOGGER.log(Level.WARNING, "Illegal access exception for: " + className, iae);
         } catch(InstantiationException ie) {
           ok = false;
-          LOGGER.log(Level.WARNING, "IWPresentationEvent InstantiationException for :"+className, ie);
+          LOGGER.log(Level.WARNING, "Instantiation exception for: " + className, ie);
         }
 
         if (ok) {
           events[index++] = event;
         }
       }
-      
+
       if (index < classNames.length) {
         IWPresentationEvent[] newEvents = new IWPresentationEvent[index];
         System.arraycopy(events,0,newEvents,0,index);
@@ -276,7 +276,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 		}
 		return this.eventHandlerURL;
 	}
-	
+
 	/**
 	 * Returns the URL to the Event handling frame prefixed with the servlet context path if any.
 	 * @return String
@@ -292,7 +292,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	/**
 	 * Sets the eventHandlerURL.
 	 * @param eventHandlerURL The eventHandlerURL to set
-	 * 
+	 *
 	 * @uml.property name="eventHandlerURL"
 	 */
 	public void setEventHandlerURL(String eventHandlerURL) {
@@ -302,7 +302,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	/**
 	 * Returns the eventTarget.
 	 * @return String
-	 * 
+	 *
 	 * @uml.property name="eventTarget"
 	 */
 	public String getEventTarget() {
@@ -315,7 +315,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
 	/**
 	 * Sets the eventTarget.
 	 * @param eventTarget The eventTarget to set
-	 * 
+	 *
 	 * @uml.property name="eventTarget"
 	 */
 	public void setEventTarget(String eventTarget) {
