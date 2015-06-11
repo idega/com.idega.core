@@ -26,6 +26,7 @@ import javax.persistence.Table;
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.data.UniqueIDCapable;
+import com.idega.util.DBUtil;
 import com.idega.util.LocaleUtil;
 
 @Entity
@@ -72,11 +73,11 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	@Column(name = COLUMN_UNIQUE_ID, length = 36, nullable = false, unique = true)
 	private String uniqueID;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_START_PAGE)
 	private ICPage startPage;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_START_TEMPLATE)
 	private ICPage startTemplate;
 
@@ -162,6 +163,7 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	 * @return the startPage
 	 */
 	public ICPage getStartPage() {
+		DBUtil.getInstance().lazyLoad(startPage);
 		return this.startPage;
 	}
 
@@ -177,6 +179,7 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	 * @return the startTemplate
 	 */
 	public ICPage getStartTemplate() {
+		DBUtil.getInstance().lazyLoad(startTemplate);
 		return this.startTemplate;
 	}
 
@@ -328,6 +331,13 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	 * @return the pages
 	 */
 	public List<ICPage> getPages() {
+		DBUtil.getInstance().lazyLoad(pages);
 		return this.pages;
 	}
+
+	@Override
+	public String toString() {
+		return "Domain ID: " + getId();
+	}
+
 }
