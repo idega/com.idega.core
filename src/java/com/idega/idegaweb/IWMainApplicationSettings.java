@@ -393,15 +393,9 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	/**
-<<<<<<< HEAD
-	 * Gets the default locale which is assigned to all users if they have not
-	 * chosen a locale.
-=======
 	 * Gets the default locale which is assigned to all users if they have not chosen a locale.
->>>>>>> e985a190b3270919ad15d235fc793501e7d9a683
 	 *
-	 * @return The set application default locale. If not set it returns the
-	 *         english locale.
+	 * @return The set application default locale. If not set it returns the English locale.
 	 **/
 	public Locale getDefaultLocale() {
 		if (this.cachedDefaultLocale == null) {
