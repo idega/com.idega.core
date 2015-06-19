@@ -45,38 +45,39 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 
 	private static final String CACHED_RESOURCES = "cached_resources";
 
-	private synchronized List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
+	private List<MessageResource> getInitializedResourceList(Locale locale, String bundleIdentifier) {
 		if (bundleIdentifier == null) {
 			bundleIdentifier = MessageResource.NO_BUNDLE;
 		}
 
-		Map<String, Map<Locale, List<MessageResource>>> cachedResources = getCache();
+		Map<String, Map<Locale, Map<String, MessageResource>>> cachedResources = getCache();
 
-		Map<Locale, List<MessageResource>> bundleResources = cachedResources.get(bundleIdentifier);
+		Map<Locale, Map<String, MessageResource>> bundleResources = cachedResources.get(bundleIdentifier);
 		if (bundleResources == null) {
-			bundleResources = new ConcurrentHashMap<Locale, List<MessageResource>>();
+			bundleResources = new ConcurrentHashMap<Locale, Map<String, MessageResource>>();
 			cachedResources.put(bundleIdentifier, bundleResources);
 		}
 
 		if (bundleResources.containsKey(locale)) {
-			List<MessageResource> resources = /*new ArrayList<MessageResource>(*/bundleResources.get(locale)/*)*/;
+			Map<String, MessageResource> resourcesMap = bundleResources.get(locale);
+			List<MessageResource> resources = new ArrayList<MessageResource>(resourcesMap.values());
 			sortResourcesByImportance(resources);
 			return resources;
 		}
 
 		//	There is no bundle with specified bundleIdentifier and locale in cache
-		List<MessageResource> resources = getUninitializedMessageResources();
-		if (ListUtil.isEmpty(resources)) {
-			return resources;
+		List<MessageResource> uninitializedResources = getUninitializedMessageResources();
+		if (ListUtil.isEmpty(uninitializedResources)) {
+			return uninitializedResources;
 		}
 
+		Map<String, MessageResource> resourcesMap = new ConcurrentHashMap<String, MessageResource>();
 		List<MessageResource> failedInitializationResources = new ArrayList<MessageResource>();
-//		List<MessageResource> localCopyOfResources = new ArrayList<MessageResource>(resources);
-//		for (MessageResource resource: localCopyOfResources) {
-		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+		for (Iterator<MessageResource> resourcesIter = uninitializedResources.iterator(); resourcesIter.hasNext();) {
 			MessageResource resource = resourcesIter.next();
 			try {
 				resource.initialize(bundleIdentifier, locale);
+				resourcesMap.put(resource.getIdentifier(), resource);
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, "Error initializing bundle: " + bundleIdentifier, e);
 				failedInitializationResources.add(resource);
@@ -85,12 +86,12 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			}
 		}
 
-//		for (MessageResource resource: failedInitializationResources) {
 		for (Iterator<MessageResource> resourcesIter = failedInitializationResources.iterator(); resourcesIter.hasNext();) {
-			resources.remove(resourcesIter.next());
+			uninitializedResources.remove(resourcesIter.next());
 		}
 
-		bundleResources.put(locale, resources);
+		bundleResources.put(locale, resourcesMap);
+		List<MessageResource> resources = new ArrayList<MessageResource>(resourcesMap.values());
 		sortResourcesByImportance(resources);
 		return resources;
 	}
@@ -112,7 +113,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	public String getLocalizedMessage(String key, String valueIfNotFound, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 
-		for (MessageResource resource: resources) {
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			if (!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
 				String message = resource.getMessage(key);
 				if (!StringUtil.isEmpty(message)) {
@@ -126,7 +128,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		}
 
 		//	Auto inserting message in case none of resources has it
-		for (MessageResource resource: resources) {
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			if (resource.isAutoInsert()) {
 				resource.setMessage(key, valueIfNotFound);
 			}
@@ -138,7 +141,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	@Override
 	public String setLocalizedMessage(String key, String value, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
-		for (MessageResource resource: resources) {
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			resource.setMessage(key, value);
 		}
 		return value;
@@ -147,7 +151,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	@Override
 	public void setLocalizedMessages(Map<String, String> values, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
-		for (MessageResource resource: resources) {
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			resource.setMessages(values);
 		}
 	}
@@ -157,7 +162,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
 		Map<String, String> setMessages = new ConcurrentHashMap<String, String>(resources.size());
 
-		for (MessageResource resource: resources) {
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			if (resource.isAutoInsert()) {
 				String setValue = resource.setMessage(key, value);
 				resource.store();
@@ -173,7 +179,8 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 	@Override
 	public void removeLocalizedMessageFromAutoInsertRes(String key, String bundleIdentifier, Locale locale) {
 		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
-		for (MessageResource resource: resources) {
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			if (resource.isAutoInsert()) {
 				resource.removeMessage(key);
 			}
@@ -187,7 +194,9 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 
 	@Override
 	public MessageResource getResource(String identifier, String bundleIdentifier, Locale locale) {
-		for (MessageResource resource: getInitializedResourceList(locale, bundleIdentifier)) {
+		List<MessageResource> resources = getInitializedResourceList(locale, bundleIdentifier);
+		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			if (identifier.equals(resource.getIdentifier())) {
 				return resource;
 			}
@@ -202,24 +211,27 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			return Collections.emptyList();
 		}
 
-		Map<String, Map<Locale, List<MessageResource>>> cachedResources = getCache();
+		Map<String, Map<Locale, Map<String, MessageResource>>> cachedResources = getCache();
 
 		List<MessageResource> storageResources = new ArrayList<MessageResource>();
-		for (String bundleIdentifier: cachedResources.keySet()) {
-			Map<Locale, List<MessageResource>> bundleResources = cachedResources.get(bundleIdentifier);
+		for (Iterator<String> keysIter = cachedResources.keySet().iterator(); keysIter.hasNext();) {
+			String bundleIdentifier = keysIter.next();
+			Map<Locale, Map<String, MessageResource>> bundleResources = cachedResources.get(bundleIdentifier);
 			if (bundleResources == null) {
-				bundleResources = new ConcurrentHashMap<Locale, List<MessageResource>>();
+				bundleResources = new ConcurrentHashMap<Locale, Map<String, MessageResource>>();
 				cachedResources.put(bundleIdentifier, bundleResources);
 			}
 
-			for (Locale locale: bundleResources.keySet()) {
-				List<MessageResource> localizedMessages = bundleResources.get(locale);
-				if (localizedMessages == null) {
-					localizedMessages = new ArrayList<MessageResource>();
-					bundleResources.put(locale, localizedMessages);
+			for (Iterator<Locale> localesIter = bundleResources.keySet().iterator(); localesIter.hasNext();) {
+				Locale locale = localesIter.next();
+				Map<String, MessageResource> resources = bundleResources.get(locale);
+				if (resources == null) {
+					resources = new ConcurrentHashMap<String, MessageResource>();
+					bundleResources.put(locale, resources);
 				}
 
-				for (MessageResource resource: localizedMessages) {
+				for (Iterator<MessageResource> resourcesIter = resources.values().iterator(); resourcesIter.hasNext();) {
+					MessageResource resource = resourcesIter.next();
 					if (storageIdentifier.equals(resource.getIdentifier())) {
 						storageResources.add(resource);
 					}
@@ -249,14 +261,16 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		List<MessageResource> allUninitializedResources = getUninitializedMessageResources();
 
 		List<MessageResource> resourcesToRemove = new ArrayList<MessageResource>();
-		for (MessageResource resource: allUninitializedResources) {
+		for (Iterator<MessageResource> resourcesIter = allUninitializedResources.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			List<MessageResource> availableResourcesOfType = getResourceListByStorageIdentifier(resource.getIdentifier());
 
 			if (availableResourcesOfType.isEmpty()) {
 				resourcesToRemove.add(resource);
 			}
 		}
-		for (MessageResource resource: resourcesToRemove) {
+		for (Iterator<MessageResource> resourcesIter = resourcesToRemove.iterator(); resourcesIter.hasNext();) {
+			MessageResource resource = resourcesIter.next();
 			allUninitializedResources.remove(resource);
 		}
 
@@ -290,7 +304,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		return maxCacheSize;
 	}
 
-	private Map<String, Map<Locale, List<MessageResource>>> getCache() {
+	private Map<String, Map<Locale, Map<String, MessageResource>>> getCache() {
 		long time = Long.MAX_VALUE;
 		return IWCacheManager2.getInstance(getIWMainApplication()).getCache(CACHED_RESOURCES, getMaxCacheSize(), false, true, time, time);
 	}
