@@ -217,4 +217,19 @@ public class MapUtil {
 
 		return copy;
 	}
+
+	/**
+	 * 
+	 * @param source to remove elements from, not <code>null</code>;
+	 * @param elements to remove from source, not <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static <K, V> void removeAll(
+			Map<K, V> source, Map<K, V> elements) {
+		if (!MapUtil.isEmpty(source) && !MapUtil.isEmpty(elements)) {
+			for (K element : elements.keySet()) {
+				source.remove(element);
+			}
+		}
+	}
 }
