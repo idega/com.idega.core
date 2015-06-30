@@ -187,6 +187,12 @@ public class SendMail {
 			boolean simpleMessage,
 			final File... attachedFiles
 	) throws MessagingException {
+		String customTo = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("custom_mail_receiver");
+		if (EmailValidator.getInstance().isValid(customTo)) {
+			LOGGER.info("Using " + customTo + " instead of " + to);
+			to = customTo;
+		}
+
 		if (StringUtil.isEmpty(to)) {
 			LOGGER.warning("Unknown receiver. Can not send message with subject " + subject);
 			return null;
