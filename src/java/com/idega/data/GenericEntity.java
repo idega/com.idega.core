@@ -2297,6 +2297,20 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	public IDOLegacyEntity[] findAllByColumnEqualsOrdered(String columnName1, int toFind1, String columnName2, int toFind2, String orderByColumnName) throws SQLException {
 		return findAll("select * from " + getEntityName() + " where " + columnName1 + " = " + toFind1 + " and " + columnName2 + " = " + toFind2 + " order by " + orderByColumnName);
 	}
+	/**
+	 * @deprecated
+	 */
+	@Deprecated
+	public com.idega.data.IDOLegacyEntity[] findAllByColumnEqualsOrdered(String columnName1, Collection<Integer> toFind1, String columnName2, int toFind2, String orderByColumnName) throws SQLException {
+		StringBuilder ids = new StringBuilder();
+		for (Iterator<Integer> iter = toFind1.iterator(); iter.hasNext();) {
+			ids.append(iter.next());
+			if (iter.hasNext()) {
+				ids.append(CoreConstants.COMMA).append(CoreConstants.SPACE);
+			}
+		}
+		return findAll("select * from " + getEntityName() + " where " + columnName1 + " in (" + ids.toString() + ") and " + columnName2 + " = " + toFind2 + " order by " + orderByColumnName);
+	}
 
 	/**
 	 * @deprecated
