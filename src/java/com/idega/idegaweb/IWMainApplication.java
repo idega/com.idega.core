@@ -1178,7 +1178,9 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Only works when running on Tomcat
      */
     public boolean restartApplication() {
-    	String apache = getSettings().getProperty(APACHE_RESTART_PARAMETER);
+    	IWMainApplicationSettings settings = getSettings();
+    	String apache = settings.getProperty(APACHE_RESTART_PARAMETER);
+    	String actions = settings.getProperty("ePlatform_restart_actions");
 
         String restartScript = "/idega/bin/apache_restart.sh";
 
@@ -1194,7 +1196,6 @@ public class IWMainApplication	extends Application  implements MutableClass {
         log.info("IWMainApplication: restarting application server at : " + prePath);
 
         String customActions[] = null;
-        String actions = getSettings().getProperty("ePlatform_restart_actions");
         if (!StringUtil.isEmpty(actions)) {
         	customActions = actions.split(CoreConstants.COMMA);
         }
