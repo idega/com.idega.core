@@ -2,6 +2,7 @@ package com.idega.data;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+import java.util.Collection;
 import java.util.List;
 
 /**
@@ -336,6 +337,11 @@ public interface IDOLegacyEntity extends IDOEntity,MetaDataCapable {
 	*/
 	@Deprecated
 	public com.idega.data.IDOLegacyEntity[] findAllByColumnEqualsOrdered(java.lang.String p0, int p1, java.lang.String p2, int p3, java.lang.String p4) throws java.sql.SQLException;
+	/**
+	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
+	*/
+	@Deprecated
+	public com.idega.data.IDOLegacyEntity[] findAllByColumnEqualsOrdered(java.lang.String p0, Collection<Integer> ps1, java.lang.String p2, int p3, java.lang.String p4) throws java.sql.SQLException;
 	/**
 	* @deprecated this is a legacy method, you should rather use something that is also available via IDOEntity
 	*/
