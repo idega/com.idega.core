@@ -25,6 +25,7 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Enumeration;
 import java.util.HashMap;
@@ -93,6 +94,7 @@ import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.SingletonRepository;
 import com.idega.servlet.filter.BaseFilter;
 import com.idega.servlet.filter.IWWelcomeFilter;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.Executer;
@@ -1176,54 +1178,70 @@ public class IWMainApplication	extends Application  implements MutableClass {
      * Only works when running on Tomcat
      */
     public boolean restartApplication() {
-    	String apache = getSettings().getProperty(APACHE_RESTART_PARAMETER);//restart string)
-
+    	String apache = getSettings().getProperty(APACHE_RESTART_PARAMETER);
 
         String restartScript = "/idega/bin/apache_restart.sh";
 
         boolean restartApacheAlso = false;
 
         if (apache != null) {
-            restartApacheAlso = Boolean.valueOf(apache.toLowerCase())
-                    .booleanValue();
+            restartApacheAlso = Boolean.valueOf(apache.toLowerCase()).booleanValue();
         }
 
         unloadInstanceAndClass();
 
         String prePath = System.getProperty("user.dir");//return /tomcat/bin
-        log.info("IWMainApplication: restarting application server at : "
-                        + prePath);
+        log.info("IWMainApplication: restarting application server at : " + prePath);
 
-        try {//windows
+        String customActions[] = null;
+        String actions = getSettings().getProperty("ePlatform_restart_actions");
+        if (!StringUtil.isEmpty(actions)) {
+        	customActions = actions.split(CoreConstants.COMMA);
+        }
+
+        try {
+        	 String[] commands = null;
+
+        	//windows
             if (System.getProperty("os.name").toLowerCase().indexOf("win") != -1) {
-                if (!restartApacheAlso) {
-                    String[] array = { prePath + "\\shutdown.bat",
-                            prePath + "\\startup.bat"};
-                    Executer.executeInAnotherVM(array);
+            	if (!restartApacheAlso) {
+                    commands = ArrayUtil.isEmpty(customActions) ?
+                    		new String[] {
+                    			prePath + "\\shutdown.bat",
+                    			prePath + "\\startup.bat"
+                    		} : customActions;
                 } else {
-                    String[] array = { prePath + "\\shutdown.bat",
-                            prePath + "\\startup.bat", restartScript};
-                    Executer.executeInAnotherVM(array);
+                	commands = ArrayUtil.isEmpty(customActions) ?
+                			new String[] {
+                    			prePath + "\\shutdown.bat",
+                    			prePath + "\\startup.bat",
+                    			restartScript
+                			} : customActions;
                 }
-            } else {//unix
+            } else {
+            	//unix
                 if (!restartApacheAlso) {
-                    String[] array = { prePath + "/shutdown.sh",
-                            prePath + "/startup.sh"};
-                    Executer.executeInAnotherVM(array);
+                	commands = ArrayUtil.isEmpty(customActions) ?
+                    		new String[] {
+                    			prePath + "/shutdown.sh",
+                    			prePath + "/startup.sh"
+                    		} : customActions;
                 } else {
-                    String[] array = { prePath + "/shutdown.sh",
-                            prePath + "/startup.sh", restartScript};
-                    Executer.executeInAnotherVM(array);
+                	commands = ArrayUtil.isEmpty(customActions) ?
+                    		new String[] {
+                    			prePath + "/shutdown.sh",
+                    			prePath + "/startup.sh",
+                    			restartScript
+                    		} : customActions;
                 }
-
             }
-
+            log.info("Executing actions: " + Arrays.asList(commands));
+            Executer.executeInAnotherVM(commands);
             return true;
         } catch (Exception ex) {
             ex.printStackTrace();
             return false;
         }
-
     }
 
     public void startAccessController() {
