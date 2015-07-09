@@ -52,8 +52,8 @@ public class Param {
 	}
 
 	public Object getParamValue() {
-		if (CoreConstants.Y.equals(getParamValue()) || CoreConstants.N.equals(getParamValue())) {
-			Logger.getLogger(getClass().getName()).info("Changing type of parameter (name: " + getParamName() + ", value: '" + getParamValue() + "'): from " +
+		if (CoreConstants.Y.equals(paramValue) || CoreConstants.N.equals(paramValue)) {
+			Logger.getLogger(getClass().getName()).info("Changing type of parameter (name: " + getParamName() + ", value: '" + paramValue + "'): from " +
 					paramValue.getClass().getName() + " to " + Character.class.getName());
 			return Character.valueOf(paramValue.toString().charAt(0));
 		}
