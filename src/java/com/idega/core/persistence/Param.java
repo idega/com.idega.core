@@ -1,5 +1,7 @@
 package com.idega.core.persistence;
 
+import java.util.logging.Logger;
+
 import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
@@ -16,9 +18,9 @@ public class Param {
 	final private Object paramValue;
 
 	public Param(String paramName, Object paramValue) {
-
-		if(StringUtil.isEmpty(paramName) || paramValue == null)
+		if (StringUtil.isEmpty(paramName) || paramValue == null) {
 			throw new IllegalArgumentException("Empty argument(s): paramName="+paramName+", paramValue="+paramValue);
+		}
 
 		this.paramName = paramName;
 		this.paramValue = paramValue;
@@ -50,8 +52,11 @@ public class Param {
 	}
 
 	public Object getParamValue() {
-		if (CoreConstants.Y.equals(getParamName()) || CoreConstants.N.equals(getParamName()))
+		if (CoreConstants.Y.equals(getParamValue()) || CoreConstants.N.equals(getParamValue())) {
+			Logger.getLogger(getClass().getName()).info("Changing type of parameter (name: " + getParamName() + ", value: '" + getParamValue() + "'): from " +
+					paramValue.getClass().getName() + " to " + Character.class.getName());
 			return Character.valueOf(paramValue.toString().charAt(0));
+		}
 
 		return paramValue;
 	}

@@ -20,10 +20,10 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
 import com.idega.util.ArrayUtil;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
-import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
 /**
@@ -59,8 +59,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		for (Param param : params) {
 			String name = param.getParamName();
 			Object value = param.getParamValue();
-			if (value instanceof String && ((String) value).length() == 1 && !StringHandler.isNumeric((String) value))
+			if (value instanceof String && (CoreConstants.Y.equals(value) || CoreConstants.N.equals(value))) {
+				logger.info("Changing type of parameter (name: " + name + ", value: '" + value + "'): from " + value.getClass().getName() + " to " + Character.class.getName());
 				value = Character.valueOf(((String) value).charAt(0));
+			}
 
 			q.setParameter(name, value);
 		}
