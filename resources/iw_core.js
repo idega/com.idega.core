@@ -921,6 +921,13 @@ IWCORE.getFixedHrefValue = function(hrefValue) {
 	return hrefValue;
 }
 
+IWCORE.getParameterByName = function(name) {
+    name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
+    var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
+        results = regex.exec(location.search);
+    return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
+}
+
 IWCORE.createRealNode = function(element, scriptsToEval, resourcesToAdd) {
 	var DYNAMIC_HTML_ELEMENT_FUNCTION_SEPARATOR = '%idega_separator%';
 	
