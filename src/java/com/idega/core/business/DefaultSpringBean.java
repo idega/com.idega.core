@@ -207,6 +207,10 @@ public abstract class DefaultSpringBean {
 		return IWMainApplication.getDefaultIWMainApplication();
 	}
 
+	protected IWApplicationContext getIWApplicationContext() {
+		return IWMainApplication.getDefaultIWApplicationContext();
+	}
+
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
 		return getCache(cacheName, IWCacheManager2.DEFAULT_CACHE_TTL_SECONDS);
 	}
