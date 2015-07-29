@@ -66,7 +66,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getInitParameterNames()
 	 */
 	@Override
-	public Enumeration<?> getInitParameterNames() {
+	public Enumeration<String> getInitParameterNames() {
 		return this.servlet.getInitParameterNames();
 	}
 
