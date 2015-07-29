@@ -6,24 +6,23 @@ import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 public class StringUtil {
 
 	public static List<String> getValuesFromString(String value, String separator) {
-
-		if (value == null || separator == null)
-			return null;
+		if (value == null || separator == null) {
+			return Collections.emptyList();
+		}
 
 		String[] values = value.split(separator);
+		if (ArrayUtil.isEmpty(values)) {
+			return Collections.emptyList();
+		}
 
-		if (values == null)
-			return null;
-
-		List<String> extractedValues = new ArrayList<String>();
-		Collections.addAll(extractedValues, values);
-		return extractedValues;
+		return new ArrayList<String>(Arrays.asList(values));
 	}
 
 	/**
@@ -263,4 +262,19 @@ public class StringUtil {
 
 		return strings;
 	}
+
+	public static String getValueFromBrackets(String value) {
+		if (isEmpty(value)) {
+			return value;
+		}
+
+		int start = value.indexOf(CoreConstants.BRACKET_LEFT);
+		int end = value.indexOf(CoreConstants.BRACKET_RIGHT);
+		if (start != -1 && end != -1) {
+			return value.substring(start + 1, end);
+		}
+
+		return value;
+	}
+
 }
