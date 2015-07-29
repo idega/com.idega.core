@@ -94,10 +94,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	static final String META_DATA_HOME_PAGE = "homepage";
 
-	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
-	private static final String COLUMN_LAST_READ_FROM_IMPORT = "last_imported";
-	private static final String COLUMN_RESUME = "RESUME";
-	private static final String COLUMN_LANGUAGES = TABLE_NAME + "_languages";
+	public static final String	COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name",
+								COLUMN_LAST_READ_FROM_IMPORT = "last_imported",
+								COLUMN_RESUME = "RESUME",
+								COLUMN_LANGUAGES = TABLE_NAME + "_languages";
 
 	@Override
 	public String getEntityName() {

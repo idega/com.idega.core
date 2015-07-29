@@ -6,6 +6,7 @@ import java.util.Locale;
 import java.util.logging.Logger;
 
 import com.idega.util.IWTimestamp;
+import com.idega.util.LocaleUtil;
 import com.idega.util.StringUtil;
 
 /**
@@ -99,9 +100,9 @@ public class SocialSecurityNumber {
 		if (StringUtil.isEmpty(ssn) || locale == null)
 			return false;
 
-		if (ssn != null && locale.equals(new Locale("is", "IS"))) {
+		if (ssn != null && locale.equals(LocaleUtil.getIcelandicLocale())) {
 			return isValidIcelandicSocialSecurityNumber(ssn);
-		} else 	if (ssn != null && locale.equals(new Locale("sv", "SE"))) {
+		} else 	if (ssn != null && locale.equals(LocaleUtil.getSwedishLocale())) {
 			return isValidSwedishSocialSecurityNumber(ssn);
 		} else 	if (ssn != null && locale.equals(new Locale("en", "EN"))) {
 			return isValidEnglishSocialSecurityNumber(ssn);
@@ -180,7 +181,7 @@ public class SocialSecurityNumber {
 
 	public static boolean isIndividualSocialSecurityNumber(String socialSecurityNumber, Locale locale) {
 		if (isValidSocialSecurityNumber(socialSecurityNumber, locale)) {
-			if (locale.equals(new Locale("is", "IS"))) {
+			if (locale.equals(LocaleUtil.getIcelandicLocale())) {
 				return isIcelandicIndividualSocialSecurityNumber(socialSecurityNumber);
 			}
 		}
@@ -194,7 +195,7 @@ public class SocialSecurityNumber {
 
 	public static boolean isCompanySocialSecurityNumber(String socialSecurityNumber, Locale locale) {
 		if (isValidSocialSecurityNumber(socialSecurityNumber, locale)) {
-			if (locale.equals(new Locale("is", "IS"))) {
+			if (locale.equals(LocaleUtil.getIcelandicLocale())) {
 				return isIcelandicCompanySocialSecurityNumber(socialSecurityNumber);
 			}
 		}
@@ -207,6 +208,6 @@ public class SocialSecurityNumber {
 	}
 
 	public static void main(String[] arguments) throws Exception {
-		System.out.println(isCompanySocialSecurityNumber("7101002090", new Locale("is", "IS")));
+		System.out.println(isCompanySocialSecurityNumber("7101002090", LocaleUtil.getIcelandicLocale()));
 	}
 }

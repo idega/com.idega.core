@@ -3049,9 +3049,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Group targetGroup = null;
 		try {
 			groupBiz = getGroupBusiness();
-			targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
+			com.idega.user.data.bean.Group targetGroupEntity = groupBiz.getGroupDAO().findGroup(targetGroupId);
 			// check if we have editpermissions for the targetgroup
-			if (!getAccessController().hasEditPermissionFor(targetGroup, iwuc)) {
+			if (!getAccessController().hasEditPermissionFor(targetGroupEntity, iwuc)) {
 				// fill the result map
 				Iterator<String> iterator = userIds.iterator();
 				while (iterator.hasNext()) {
@@ -3061,6 +3061,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 				return result;
 			}
+
+			targetGroup = groupBiz.getGroupByGroupID(targetGroupId);
 		} catch (FinderException ex) {
 			throw new EJBException("Error getting group for id: " + targetGroupId + " Message: " + ex.getMessage());
 		} catch (RemoteException ex) {
@@ -3361,23 +3363,44 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	@Override
 	public String isUserSuitedForGroup(User user, Group targetGroup) {
 		try {
-			String grouptype = targetGroup.getGroupType();
-			Collection<UserGroupPlugInBusiness> plugins = this.pluginsForGroupTypeCachMap.get(grouptype);
-			if (plugins == null) {
-				plugins = getGroupBusiness().getUserGroupPluginsForGroupType(grouptype);
-				this.pluginsForGroupTypeCachMap.put(grouptype, plugins);
-			}
-			Iterator<UserGroupPlugInBusiness> iter = plugins.iterator();
-			while (iter.hasNext()) {
-				UserGroupPlugInBusiness pluginBiz = iter.next();
-				String message;
-				if ((message = pluginBiz.isUserSuitedForGroup(user, targetGroup)) != null) {
-					return message;
+			getLogger().info("Getting group type for " + targetGroup);
+			String groupType = targetGroup.getGroupType();
+			Collection<UserGroupPlugInBusiness> plugins = null;
+			getLogger().info("Getting plugisn for group type " + groupType);
+			try {
+				plugins = this.pluginsForGroupTypeCachMap.get(groupType);
+				if (plugins == null) {
+					plugins = getGroupBusiness().getUserGroupPluginsForGroupType(groupType);
+					this.pluginsForGroupTypeCachMap.put(groupType, plugins);
 				}
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Error getting plugins for group type " + groupType, e);
+			}
+
+			if (plugins != null) {
+				getLogger().info("Found plugins: " + plugins);
+				for (Iterator<UserGroupPlugInBusiness> iter = plugins.iterator(); iter.hasNext();) {
+					UserGroupPlugInBusiness pluginBiz = iter.next();
+					getLogger().info("Going through plugin " + pluginBiz.getClass().getName());
+					String message = null;
+					try {
+						if ((message = pluginBiz.isUserSuitedForGroup(user, targetGroup)) != null) {
+							getLogger().info("Error: " + message + " at " + pluginBiz.getClass().getName());
+							return message;
+						}
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Error checking if " + user + " is suitable in group " + targetGroup, e);
+					}
+				}
+			} else {
+				getLogger().info("No plugins for group type " + groupType);
 			}
 		} catch (Exception ex) {
+			ex.printStackTrace();
 			throw new RuntimeException(ex.getMessage());
 		}
+
+		getLogger().info("No errors");
 		return null;
 	}
 
@@ -3512,12 +3535,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public void callAllUserGroupPluginAfterUserCreateOrUpdateMethod(User user, Group parentGroup) throws CreateException, RemoteException {
-		// get plugins and call the method
-		Collection<UserGroupPlugInBusiness> allUserPlugins = getGroupBusiness().getUserGroupPlugins();
-		Iterator<UserGroupPlugInBusiness> plugs = allUserPlugins.iterator();
-		while (plugs.hasNext()) {
-			UserGroupPlugInBusiness plugBiz = plugs.next();
-			plugBiz.afterUserCreateOrUpdate(user, parentGroup);
+		try {
+			Collection<UserGroupPlugInBusiness> allUserPlugins = getGroupBusiness().getUserGroupPlugins();
+			getLogger().info("Plugins: " + allUserPlugins);
+			if (!ListUtil.isEmpty(allUserPlugins)) {
+				for (Iterator<UserGroupPlugInBusiness> plugs = allUserPlugins.iterator(); plugs.hasNext();) {
+					UserGroupPlugInBusiness plugBiz = plugs.next();
+					try {
+						getLogger().info("Going through the plugin " + plugBiz.getClass().getName());
+						plugBiz.afterUserCreateOrUpdate(user, parentGroup);
+						getLogger().info("Finished going through the plugin " + plugBiz.getClass().getName());
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Error calling " + plugBiz.getClass().getName() + " after " + user + " added into " + parentGroup, e);
+					}
+				}
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error calling user group plugins after " + user + " added into " + parentGroup, e);
 		}
 	}
 

@@ -14,7 +14,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
+import javax.ejb.EJBException;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -40,6 +43,8 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.hibernate.annotations.DiscriminatorOptions;
+
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.Phone;
@@ -54,13 +59,20 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.user.dao.GroupDAO;
+import com.idega.user.dao.UserDAO;
+import com.idega.user.data.GroupNode;
+import com.idega.user.data.User;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
+import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = Group.ENTITY_NAME)
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = Group.COLUMN_GROUP_TYPE, discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorOptions(force = true)
 @NamedQueries({
 	@NamedQuery(name = "group.findAll", query = "select g from Group g"),
 	@NamedQuery(name = "group.findAllByGroupType", query = "select g from Group g where g.groupType = :groupType"),
@@ -71,7 +83,7 @@ import com.idega.util.IWTimestamp;
 })
 @XmlTransient
 @Cacheable
-public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode<Group> {
+public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode<Group>, GroupNode<Group> {
 
 	private static final long serialVersionUID = -9014094183053434782L;
 
@@ -111,7 +123,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@Column(name = COLUMN_NAME)
 	private String name;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP_TYPE, insertable = false, updatable = false)
 	private GroupType groupType;
 
@@ -186,7 +198,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@JoinTable(name = GroupRelation.ENTITY_NAME, joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = GroupRelation.COLUMN_RELATED_GROUP, referencedColumnName = COLUMN_GROUP_ID) })
 	private List<Group> children;
 
-    @OneToMany(mappedBy = "pk.group")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.group")
     private final List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
 	@PrePersist
@@ -210,19 +222,31 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
-			return true;
-		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Group other = (Group) obj;
-		if (this.groupID == null) {
-			if (other.groupID != null)
+		try {
+			if (this == obj) {
+				return true;
+			}
+
+			if (obj == null) {
 				return false;
+			}
+
+			if (getClass() != obj.getClass()) {
+				return false;
+			}
+
+			Group other = (Group) obj;
+			if (this.groupID == null) {
+				if (other.groupID != null) {
+					return false;
+				}
+			} else if (!this.groupID.equals(other.groupID)) {
+				return false;
+			}
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error while checking if equals " + this + " and " + obj, e);
 		}
-		else if (!this.groupID.equals(other.groupID))
-			return false;
+
 		return true;
 	}
 
@@ -269,17 +293,17 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		this.name = name;
 	}
 
-	/**
-	 * @return the groupType
-	 */
-	public GroupType getGroupType() {
-		return this.groupType;
+	@Override
+	public String getType() {
+		GroupType type = getGroupType();
+		return type == null ? null : type.getGroupType();
 	}
 
-	/**
-	 * @param groupType
-	 *          the groupType to set
-	 */
+	public GroupType getGroupType() {
+		DBUtil.getInstance().lazyLoad(groupType);
+		return groupType;
+	}
+
 	public void setGroupType(GroupType groupType) {
 		this.groupType = groupType;
 	}
@@ -468,6 +492,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the networks
 	 */
 	public List<ICNetwork> getNetworks() {
+		DBUtil.getInstance().lazyLoad(networks);
 		return this.networks;
 	}
 
@@ -483,6 +508,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the protocols
 	 */
 	public List<ICProtocol> getProtocols() {
+		DBUtil.getInstance().lazyLoad(protocols);
 		return this.protocols;
 	}
 
@@ -498,6 +524,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the phones
 	 */
 	public List<Phone> getPhones() {
+		DBUtil.getInstance().lazyLoad(phones);
 		return this.phones;
 	}
 
@@ -513,6 +540,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the emails
 	 */
 	public List<Email> getEmails() {
+		DBUtil.getInstance().lazyLoad(emails);
 		return this.emails;
 	}
 
@@ -528,6 +556,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the addresses
 	 */
 	public List<Address> getAddresses() {
+		DBUtil.getInstance().lazyLoad(addresses);
 		return this.addresses;
 	}
 
@@ -543,6 +572,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
+		DBUtil.getInstance().lazyLoad(metadata);
 		return this.metadata;
 	}
 
@@ -558,6 +588,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return Returns the topNodeGroups.
 	 */
 	public List<TopNodeGroup> getTopNodeGroups() {
+		DBUtil.getInstance().lazyLoad(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -685,22 +716,32 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public Group getChildAtIndex(int childIndex) {
-		return children.get(childIndex);
+		if (!ListUtil.isEmpty(getChildren())) {
+			return getChildren().get(childIndex);
+		}
+		return null;
 	}
 
 	@Override
 	public int getChildCount() {
-		return children.size();
+		if (!ListUtil.isEmpty(getChildren())) {
+			return getChildren().size();
+		}
+		return 0;
 	}
 
 	@Override
-	public Collection<Group> getChildren() {
+	public List<Group> getChildren() {
+		DBUtil.getInstance().lazyLoad(children);
 		return children;
 	}
 
 	@Override
 	public Iterator<Group> getChildrenIterator() {
-		return children.iterator();
+		if (!ListUtil.isEmpty(getChildren())) {
+			return getChildren().iterator();
+		}
+		return null;
 	}
 
 	@Override
@@ -735,13 +776,15 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public Group getParentNode() {
-		if (parents != null && !parents.isEmpty()) {
-			return parents.iterator().next();
+		if (!ListUtil.isEmpty(getParentGroups())) {
+			return getParentGroups().iterator().next();
 		}
 		return null;
 	}
 
+	@Override
 	public List<Group> getParentGroups() {
+		DBUtil.getInstance().lazyLoad(parents);
 		return parents;
 	}
 
@@ -756,11 +799,101 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public boolean isLeaf() {
-		return children == null || children.isEmpty();
+		return ListUtil.isEmpty(getChildren());
 	}
 
 	@Override
 	public String toString() {
 		return getId();
+	}
+
+	private boolean isUser() {
+		GroupType type = getGroupType();
+		return type != null && User.USER_GROUP_TYPE.equals(type.getGroupType());
+	}
+
+	private com.idega.user.data.bean.User getUserForGroup() {
+		UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
+		return userDAO.getUser(getID());
+	}
+
+	@Override
+	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
+		List<Group> theReturn = new ArrayList<Group>();
+		try {
+			Group parent = null;
+			Collection<Group> parents = getCollectionOfParents(cachedParents, cachedGroups);
+			for (Iterator<Group> parIter = parents.iterator(); parIter.hasNext();) {
+				parent = parIter.next();
+				if (parent != null && !theReturn.contains(parent)) {
+					theReturn.add(parent);
+				}
+			}
+			if (isUser()) {
+				try {
+					com.idega.user.data.bean.User user = getUserForGroup();
+					Group usersPrimaryGroup = user.getPrimaryGroup();
+					String key = usersPrimaryGroup == null ? null : String.valueOf(usersPrimaryGroup.getID());
+					if (cachedGroups != null && key != null) {
+						if (cachedGroups.containsKey(key)) {
+							usersPrimaryGroup = cachedGroups.get(key);
+						} else {
+							cachedGroups.put(key, usersPrimaryGroup);
+						}
+					}
+					else {
+						usersPrimaryGroup = user.getPrimaryGroup();
+					}
+					if (usersPrimaryGroup != null && !theReturn.contains(usersPrimaryGroup)) {
+						theReturn.add(usersPrimaryGroup);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new EJBException(e.getMessage());
+		}
+		return theReturn;
+	}
+
+	private Collection<Group> getCollectionOfParents(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws Exception {
+		GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
+
+		Collection<Integer> col = null;
+		String key = getID().toString();
+		if (cachedParents != null) {
+			if (cachedParents.containsKey(key)) {
+				col = cachedParents.get(key);
+			} else {
+				col = groupDAO.findParentGroupsIds(getID());
+				cachedParents.put(key, col);
+			}
+		} else {
+			col = groupDAO.findParentGroupsIds(getID());
+		}
+
+		Collection<Group> returnCol = new ArrayList<Group>();
+		Group parent = null;
+		Integer parentID = null;
+		for (Iterator<Integer> iter = col.iterator(); iter.hasNext();) {
+			parentID = iter.next();
+			key = parentID.toString();
+			if (cachedGroups != null) {
+				if (cachedGroups.containsKey(key)) {
+					parent = cachedGroups.get(key);
+				} else {
+					parent = groupDAO.findGroup(parentID);
+					cachedGroups.put(key, parent);
+				}
+			}
+			else {
+				parent = groupDAO.findGroup(parentID);
+			}
+			returnCol.add(parent);
+		}
+
+		return returnCol;
 	}
 }

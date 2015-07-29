@@ -5,6 +5,7 @@ package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -48,6 +49,7 @@ import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.dao.UserDAO;
 import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -141,7 +143,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinColumn(name = COLUMN_SYSTEM_IMAGE)
 	private ICFile systemImage;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_PRIMARY_GROUP)
 	private Group primaryGroup;
 
@@ -198,14 +200,41 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private Group userRepresentative;
 
-    @OneToMany(mappedBy = "pk.user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.user")
     private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
     @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
     private String sha1;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="user")
     private List<UserLogin> logins;
+
+    @Column(name = com.idega.user.data.UserBMPBean.COLUMN_RESUME, length = 2048)
+    private String resume;
+
+    @Column(name = com.idega.user.data.UserBMPBean.COLUMN_LAST_READ_FROM_IMPORT)
+    private Timestamp lastReadFromImport;
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ICLanguage.class)
+	@JoinTable(name = com.idega.user.data.UserBMPBean.COLUMN_LANGUAGES, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = ICLanguage.COLUMN_LANGUAGE_ID) })
+    private List<ICLanguage> languages;
+
+	public Timestamp getLastReadFromImport() {
+		return lastReadFromImport;
+	}
+
+	public void setLastReadFromImport(Timestamp lastReadFromImport) {
+		this.lastReadFromImport = lastReadFromImport;
+	}
+
+	public List<ICLanguage> getLanguages() {
+		doInitialize(languages);
+		return languages;
+	}
+
+	public void setLanguages(List<ICLanguage> languages) {
+		this.languages = languages;
+	}
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -330,6 +359,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICFile getSystemImage() {
+		doInitialize(systemImage);
 		return this.systemImage;
 	}
 
@@ -338,6 +368,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Group getPrimaryGroup() {
+		doInitialize(primaryGroup);
 		return this.primaryGroup;
 	}
 
@@ -346,6 +377,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICPage getHomePage() {
+		doInitialize(homePage);
 		return this.homePage;
 	}
 
@@ -365,6 +397,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public User getDeletedBy() {
+		doInitialize(deletedBy);
 		return this.deletedBy;
 	}
 
@@ -381,6 +414,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICLanguage getNativeLanguage() {
+		doInitialize(nativeLanguage);
 		return this.nativeLanguage;
 	}
 
@@ -408,6 +442,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICRole getPreferredRole() {
+		doInitialize(preferredRole);
 		return this.preferredRole;
 	}
 
@@ -416,6 +451,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICFile getUserProperties() {
+		doInitialize(userProperties);
 		return this.userProperties;
 	}
 
@@ -424,6 +460,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Phone> getPhones() {
+		doInitialize(phones);
 		return this.phones;
 	}
 
@@ -432,6 +469,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Email> getEmails() {
+		doInitialize(emails);
 		return this.emails;
 	}
 
@@ -440,6 +478,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Address> getAddresses() {
+		doInitialize(addresses);
 		return this.addresses;
 	}
 
@@ -448,6 +487,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Set<Metadata> getMetadata() {
+		doInitialize(metadata);
 		return this.metadata;
 	}
 
@@ -456,10 +496,16 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Group getUserRepresentative() {
+		doInitialize(userRepresentative);
 		return this.userRepresentative;
 	}
 
+	private void doInitialize(Object object) {
+		DBUtil.getInstance().lazyLoad(object);
+	}
+
 	public List<TopNodeGroup> getTopNodeGroups() {
+		doInitialize(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -627,10 +673,20 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<UserLogin> getLogins() {
+		doInitialize(logins);
 		return logins;
 	}
 
 	public void setLogins(List<UserLogin> logins) {
 		this.logins = logins;
 	}
+
+	public String getResume() {
+		return resume;
+	}
+
+	public void setResume(String resume) {
+		this.resume = resume;
+	}
+
 }

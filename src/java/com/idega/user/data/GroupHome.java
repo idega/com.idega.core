@@ -92,7 +92,7 @@ public interface GroupHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
 	 */
-	public Collection<Group> findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException;
+	public Collection<? extends Group> findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbHomeGetNumberOfGroupsContained
@@ -151,9 +151,9 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroups
 	 */
 	public Collection<Group> findGroups(String[] groupIDs) throws FinderException;
-	
+
 	/**
-	 * 
+	 *
 	 * @param groupIDs is {@link Collection} of {@link Group#getPrimaryKey()}s,
 	 * not <code>null</code>;
 	 * @return entities or {@link Collections#emptyList()} on failure;

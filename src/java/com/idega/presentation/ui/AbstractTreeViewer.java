@@ -29,6 +29,7 @@ import com.idega.presentation.text.Link;
 import com.idega.presentation.text.Text;
 import com.idega.user.business.GroupTreeComparator;
 import com.idega.user.business.GroupTreeNode;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 /**
@@ -206,13 +207,15 @@ public abstract class AbstractTreeViewer<Node extends ICTreeNode<?>> extends Pre
 		this.frameTable.empty();
 		this.frameTable.resize(1, 1);
 		this.add(this.frameTable);
-		//frameTable.empty();
+
 		this.treeTableIndex = ((!this._showHeaderRow) ? 1 : 2);
 		if (this._showSuperRootNode) {
 			drawSuperRoot(iwc);
 		}
 		if (this.defaultRoot.getChildCount() > 0) {
-			drawTree(this.defaultRoot.getChildrenIterator(), null, iwc);
+			drawTree(this.defaultRoot.getChildren(), null, iwc, new HashMap<String, Boolean>());
+		} else {
+			getLogger().warning("There are no children under default root node: " + defaultRoot + ". ID: " + defaultRoot.getId());
 		}
 
 		if (this.lightRowStyle != null && this.darkRowStyle != null) {
@@ -251,89 +254,129 @@ public abstract class AbstractTreeViewer<Node extends ICTreeNode<?>> extends Pre
 		}
 
 		this.frameTable.add(nodeTable, 1, this.getRowIndex());
-
 	}
 
-	@SuppressWarnings("unchecked")
-	private synchronized  void drawTree(Iterator<Node> nodes, Image[] collectedIcons, IWContext iwc) {
-		if (nodes != null) {
-			Iterator<Node> iter = nodes;
-			for (int i = 0; iter.hasNext(); i++) {
-				Node item = iter.next();
-				boolean hasChild = (item.getChildCount() > 0);
-				boolean isOpen = false;
-				int rowIndex = getRowIndex();
-				Table treeColumns = this.getTreeTableClone();
-				String anchorName =item.getId();
-				treeColumns.add(new Anchor(anchorName), 1, 1);
-				if (hasChild) {
-					isOpen = this.openNodes.contains(item.getId());
-				}
-				boolean isRoot = (this.defaultRoot.getIndex(item) >= 0);
+	private void drawTree(Collection<Node> nodes, Image[] collectedIcons, IWContext iwc, Map<String, Boolean> alreadyDrawn) {
+		if (ListUtil.isEmpty(nodes)) {
+			getLogger().warning("No nodes provided");
+			return;
+		}
 
-				for (int k = 1; k < this._cols; k++) {
-					PresentationObject obj = this.getObjectToAddToColumn(k, item, iwc, isOpen, hasChild, isRoot);
-					if (obj != null) {
-						treeColumns.add(obj, k + 1, 1);
-						if (this._nowrap) {
-							treeColumns.setNoWrap(k + 1, 1);
-						}
+		boolean firstNode = true;
+		for (Iterator<Node> iter = nodes.iterator(); iter.hasNext();) {
+			Node item = iter.next();
+
+			String id = item.getId();
+			if (alreadyDrawn.containsKey(id)) {
+				getLogger().warning("Node already was drawn. ID: " + id);
+				continue;
+			}
+			alreadyDrawn.put(item.getId(), Boolean.TRUE);
+
+			boolean hasChild = (item.getChildCount() > 0);
+			boolean isOpen = false;
+			int rowIndex = getRowIndex();
+			Table treeColumns = this.getTreeTableClone();
+			String anchorName =item.getId();
+			treeColumns.add(new Anchor(anchorName), 1, 1);
+			if (hasChild) {
+				isOpen = this.openNodes.contains(item.getId());
+			}
+			boolean isRoot = (this.defaultRoot.getIndex(item) >= 0);
+
+			for (int k = 1; k < this._cols; k++) {
+				PresentationObject obj = this.getObjectToAddToColumn(k, item, iwc, isOpen, hasChild, isRoot);
+				if (obj != null) {
+					treeColumns.add(obj, k + 1, 1);
+					if (this._nowrap) {
+						treeColumns.setNoWrap(k + 1, 1);
 					}
 				}
+			}
 
-				for (int k = 1; k < this._extracols; k++) {
-					PresentationObject obj = this.getObjectToAddToParallelExtraColumn(k, item, iwc, isOpen, hasChild, isRoot);
-					if (obj != null) {
-						if (this._nowrap) {
-							treeColumns.setNoWrap(1, 1);
-						}
-						this.frameTable.add(obj, k + 1, rowIndex);
-					}
-				}
-
-				if (collectedIcons != null) {
-					int collectedIconslength = collectedIcons.length;
-					/* try {
-					   int width = Integer.parseInt(iconWidth)*(collectedIconslength+1);
-					   treeColumns.setWidth(1,Integer.toString(width));
-					 }
-					 catch (NumberFormatException ex) {
-					   System.err.println("AbstractTreeViewer iconWidth: "+ iconWidth);
-					   // doNothing iconWidth is x%
-					 }
-					*/
+			for (int k = 1; k < this._extracols; k++) {
+				PresentationObject obj = this.getObjectToAddToParallelExtraColumn(k, item, iwc, isOpen, hasChild, isRoot);
+				if (obj != null) {
 					if (this._nowrap) {
 						treeColumns.setNoWrap(1, 1);
 					}
-					for (int j = 0; j < collectedIconslength; j++) {
-						treeColumns.add((Image) collectedIcons[j].clone(), 1, 1);
-					}
+					this.frameTable.add(obj, k + 1, rowIndex);
 				}
-				Image[] newCollectedIcons = null;
-				if (isRoot && !this._showSuperRootNode) {
-					if (showRootNodeTreeIcons()) {
-						if (i == 0 && !iter.hasNext()) {  //If there is one and only one rootnode
+			}
+
+			if (collectedIcons != null) {
+				int collectedIconslength = collectedIcons.length;
+				/* try {
+				   int width = Integer.parseInt(iconWidth)*(collectedIconslength+1);
+				   treeColumns.setWidth(1,Integer.toString(width));
+				 }
+				 catch (NumberFormatException ex) {
+				   System.err.println("AbstractTreeViewer iconWidth: "+ iconWidth);
+				   // doNothing iconWidth is x%
+				 }
+				*/
+				if (this._nowrap) {
+					treeColumns.setNoWrap(1, 1);
+				}
+				for (int j = 0; j < collectedIconslength; j++) {
+					treeColumns.add((Image) collectedIcons[j].clone(), 1, 1);
+				}
+			}
+			Image[] newCollectedIcons = null;
+			if (isRoot && !this._showSuperRootNode) {
+				if (showRootNodeTreeIcons()) {
+					if (firstNode && !iter.hasNext()) {  //If there is one and only one rootnode
+						if (hasChild) {
+							if (isOpen) {
+								PresentationObject p = null;
+								if (this._showTreeIcons) {
+									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_ROOT_MINUS].clone(), anchorName);
+									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+								} else {
+									p = (Image) this.icons[ICONINDEX_ROOT_MINUS].clone();
+								}
+								if (this._nowrap) {
+									treeColumns.setNoWrap(1, 1);
+								}
+								treeColumns.add(p, 1, 1);
+								newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
+							} else {
+								PresentationObject p = null;
+								if (this._showTreeIcons) {
+									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_ROOT_PLUS].clone(), anchorName);
+									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+								} else {
+									p = (Image) this.icons[ICONINDEX_ROOT_PLUS].clone();
+								}
+								if (this._nowrap) {
+									treeColumns.setNoWrap(1, 1);
+								}
+								treeColumns.add(p, 1, 1);
+							}
+						} else {
+							treeColumns.add((Image) this.icons[ICONINDEX_ROOT_LINE].clone(), 1, 1);
+							//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+						}
+					} else {  // if there are more than one rootnotes
+						if (firstNode) {  // the first rootnode
 							if (hasChild) {
 								if (isOpen) {
 									PresentationObject p = null;
 									if (this._showTreeIcons) {
-										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_ROOT_MINUS].clone(), anchorName);
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_F_MINUS].clone(), anchorName);
 										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 									} else {
-										p = (Image) this.icons[ICONINDEX_ROOT_MINUS].clone();
-									}
-									if (this._nowrap) {
-										treeColumns.setNoWrap(1, 1);
+										p = (Image) this.icons[ICONINDEX_F_MINUS].clone();
 									}
 									treeColumns.add(p, 1, 1);
-									newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
+									newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
 								} else {
 									PresentationObject p = null;
 									if (this._showTreeIcons) {
-										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_ROOT_PLUS].clone(), anchorName);
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_F_PLUS].clone(), anchorName);
 										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 									} else {
-										p = (Image) this.icons[ICONINDEX_ROOT_PLUS].clone();
+										p = (Image) this.icons[ICONINDEX_F_PLUS].clone();
 									}
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
@@ -341,200 +384,171 @@ public abstract class AbstractTreeViewer<Node extends ICTreeNode<?>> extends Pre
 									treeColumns.add(p, 1, 1);
 								}
 							} else {
-								treeColumns.add((Image) this.icons[ICONINDEX_ROOT_LINE].clone(), 1, 1);
+								if (this._nowrap) {
+									treeColumns.setNoWrap(1, 1);
+								}
+								treeColumns.add((Image) this.icons[ICONINDEX_F_LINE].clone(), 1, 1);
 								//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 							}
-						} else {  // if there are more than one rootnotes
-							if (i == 0) {  // the first rootnode
-								if (hasChild) {
-									if (isOpen) {
-										PresentationObject p = null;
-										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_F_MINUS].clone(), anchorName);
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-										} else {
-											p = (Image) this.icons[ICONINDEX_F_MINUS].clone();
-										}
-										treeColumns.add(p, 1, 1);
-										newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
+						} else if(!iter.hasNext()){ // the last rootnode
+							if (hasChild) {  //if this node has a child
+								if (isOpen) { // if this node is open
+									PresentationObject p = null;
+									if (this._showTreeIcons) {
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_MINUS].clone(), anchorName);
+										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
 									} else {
-										PresentationObject p = null;
-										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_F_PLUS].clone(), anchorName);
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-										} else {
-											p = (Image) this.icons[ICONINDEX_F_PLUS].clone();
-										}
-										if (this._nowrap) {
-											treeColumns.setNoWrap(1, 1);
-										}
-										treeColumns.add(p, 1, 1);
+										p = (Image) this.icons[ICONINDEX_L_MINUS].clone();
 									}
-								} else {
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
-									treeColumns.add((Image) this.icons[ICONINDEX_F_LINE].clone(), 1, 1);
-									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-								}
-							} else if(!iter.hasNext()){ // the last rootnode
-								if (hasChild) {  //if this node has a child
-									if (isOpen) { // if this node is open
-										PresentationObject p = null;
-										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_MINUS].clone(), anchorName);
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-										} else {
-											p = (Image) this.icons[ICONINDEX_L_MINUS].clone();
-										}
-										if (this._nowrap) {
-											treeColumns.setNoWrap(1, 1);
-										}
-										treeColumns.add(p, 1, 1);
-										newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
-									} else { // if this node is closed
-										PresentationObject p = null;
-										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_PLUS].clone(), anchorName);
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-										} else {
-											p = (Image) this.icons[ICONINDEX_L_PLUS].clone();
-										}
-										if (this._nowrap) {
-											treeColumns.setNoWrap(1, 1);
-										}
-										treeColumns.add(p, 1, 1);
+									treeColumns.add(p, 1, 1);
+									newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
+								} else { // if this node is closed
+									PresentationObject p = null;
+									if (this._showTreeIcons) {
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_PLUS].clone(), anchorName);
+										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+									} else {
+										p = (Image) this.icons[ICONINDEX_L_PLUS].clone();
 									}
-								} else {  //if this node does not have any children
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
-									treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
-									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+									treeColumns.add(p, 1, 1);
 								}
+							} else {  //if this node does not have any children
+								if (this._nowrap) {
+									treeColumns.setNoWrap(1, 1);
+								}
+								treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
+								//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+							}
 
-							}else { //all but first and last rootnodes
-								if (hasChild) { // if this node has a child
-									if (isOpen) { // if this node is open
-										PresentationObject p = null;
-										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_MINUS].clone(), anchorName);
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-										} else {
-											p = (Image) this.icons[ICONINDEX_M_MINUS].clone();
-										}
-										if (this._nowrap) {
-											treeColumns.setNoWrap(1, 1);
-										}
-										treeColumns.add(p, 1, 1);
-										newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
-									} else { // if this node is closed
-										PresentationObject p = null;
-										if (this._showTreeIcons) {
-											p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_PLUS].clone(), anchorName);
-											setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-										} else {
-											p = (Image) this.icons[ICONINDEX_M_PLUS].clone();
-										}
-										if (this._nowrap) {
-											treeColumns.setNoWrap(1, 1);
-										}
-										treeColumns.add(p, 1, 1);
+						}else { //all but first and last rootnodes
+							if (hasChild) { // if this node has a child
+								if (isOpen) { // if this node is open
+									PresentationObject p = null;
+									if (this._showTreeIcons) {
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_MINUS].clone(), anchorName);
+										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+									} else {
+										p = (Image) this.icons[ICONINDEX_M_MINUS].clone();
 									}
-								} else { // if this node does not have any children
 									if (this._nowrap) {
 										treeColumns.setNoWrap(1, 1);
 									}
-									treeColumns.add((Image) this.icons[ICONINDEX_M_LINE].clone(), 1, 1);
-									//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+									treeColumns.add(p, 1, 1);
+									newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
+								} else { // if this node is closed
+									PresentationObject p = null;
+									if (this._showTreeIcons) {
+										p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_PLUS].clone(), anchorName);
+										setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+									} else {
+										p = (Image) this.icons[ICONINDEX_M_PLUS].clone();
+									}
+									if (this._nowrap) {
+										treeColumns.setNoWrap(1, 1);
+									}
+									treeColumns.add(p, 1, 1);
 								}
-							}
-						}
-					}
-				} else {  // if rootnode tree icons are not shown
-					if (!iter.hasNext()) {  //if this is the last node
-						if (hasChild) {  //if this node has a child
-							if (isOpen) { // if this node is open
-								PresentationObject p = null;
-								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_MINUS].clone(), anchorName);
-									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-								} else {
-									p = (Image) this.icons[ICONINDEX_L_MINUS].clone();
-								}
+							} else { // if this node does not have any children
 								if (this._nowrap) {
 									treeColumns.setNoWrap(1, 1);
 								}
-								treeColumns.add(p, 1, 1);
-								newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
-							} else { // if this node is closed
-								PresentationObject p = null;
-								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_PLUS].clone(), anchorName);
-									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-								} else {
-									p = (Image) this.icons[ICONINDEX_L_PLUS].clone();
-								}
-								if (this._nowrap) {
-									treeColumns.setNoWrap(1, 1);
-								}
-								treeColumns.add(p, 1, 1);
+								treeColumns.add((Image) this.icons[ICONINDEX_M_LINE].clone(), 1, 1);
+								//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 							}
-						} else {  //if this node does not have any children
-							if (this._nowrap) {
-								treeColumns.setNoWrap(1, 1);
-							}
-							treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
-							//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
-						}
-					} else {  // if this is not the last node
-						if (hasChild) { // if this node has a child
-							if (isOpen) { // if this node is open
-								PresentationObject p = null;
-								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_MINUS].clone(), anchorName);
-									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-								} else {
-									p = (Image) this.icons[ICONINDEX_M_MINUS].clone();
-								}
-								if (this._nowrap) {
-									treeColumns.setNoWrap(1, 1);
-								}
-								treeColumns.add(p, 1, 1);
-								newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
-							} else { // if this node is closed
-								PresentationObject p = null;
-								if (this._showTreeIcons) {
-									p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_PLUS].clone(), anchorName);
-									setLinkToOpenOrCloseNode((Link) p, item, isOpen);
-								} else {
-									p = (Image) this.icons[ICONINDEX_M_PLUS].clone();
-								}
-								if (this._nowrap) {
-									treeColumns.setNoWrap(1, 1);
-								}
-								treeColumns.add(p, 1, 1);
-							}
-						} else { // if this node does not have any children
-							if (this._nowrap) {
-								treeColumns.setNoWrap(1, 1);
-							}
-							treeColumns.add((Image) this.icons[ICONINDEX_M_LINE].clone(), 1, 1);
-							//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
 						}
 					}
 				}
-
-				this.frameTable.add(treeColumns, 1, rowIndex);
-
-				if (hasChild && isOpen) {
-					Collection<Node> children = (Collection<Node>) item.getChildren();
-				    if (item instanceof GroupTreeNode && children instanceof List) {
-				    	Collections.sort(((List<GroupTreeNode>) children), new GroupTreeComparator(iwc));
-				    }
-				    drawTree(children.iterator(), newCollectedIcons, iwc);
+			} else {  // if rootnode tree icons are not shown
+				if (!iter.hasNext()) {  //if this is the last node
+					if (hasChild) {  //if this node has a child
+						if (isOpen) { // if this node is open
+							PresentationObject p = null;
+							if (this._showTreeIcons) {
+								p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_MINUS].clone(), anchorName);
+								setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+							} else {
+								p = (Image) this.icons[ICONINDEX_L_MINUS].clone();
+							}
+							if (this._nowrap) {
+								treeColumns.setNoWrap(1, 1);
+							}
+							treeColumns.add(p, 1, 1);
+							newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_TRANCPARENT].clone());
+						} else { // if this node is closed
+							PresentationObject p = null;
+							if (this._showTreeIcons) {
+								p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_L_PLUS].clone(), anchorName);
+								setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+							} else {
+								p = (Image) this.icons[ICONINDEX_L_PLUS].clone();
+							}
+							if (this._nowrap) {
+								treeColumns.setNoWrap(1, 1);
+							}
+							treeColumns.add(p, 1, 1);
+						}
+					} else {  //if this node does not have any children
+						if (this._nowrap) {
+							treeColumns.setNoWrap(1, 1);
+						}
+						treeColumns.add((Image) this.icons[ICONINDEX_L_LINE].clone(), 1, 1);
+						//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+					}
+				} else {  // if this is not the last node
+					if (hasChild) { // if this node has a child
+						if (isOpen) { // if this node is open
+							PresentationObject p = null;
+							if (this._showTreeIcons) {
+								p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_MINUS].clone(), anchorName);
+								setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+							} else {
+								p = (Image) this.icons[ICONINDEX_M_MINUS].clone();
+							}
+							if (this._nowrap) {
+								treeColumns.setNoWrap(1, 1);
+							}
+							treeColumns.add(p, 1, 1);
+							newCollectedIcons = getNewCollectedIconArray(collectedIcons, (Image) this.icons[ICONINDEX_LINE].clone());
+						} else { // if this node is closed
+							PresentationObject p = null;
+							if (this._showTreeIcons) {
+								p = getOpenCloseLinkClone((Image) this.icons[ICONINDEX_M_PLUS].clone(), anchorName);
+								setLinkToOpenOrCloseNode((Link) p, item, isOpen);
+							} else {
+								p = (Image) this.icons[ICONINDEX_M_PLUS].clone();
+							}
+							if (this._nowrap) {
+								treeColumns.setNoWrap(1, 1);
+							}
+							treeColumns.add(p, 1, 1);
+						}
+					} else { // if this node does not have any children
+						if (this._nowrap) {
+							treeColumns.setNoWrap(1, 1);
+						}
+						treeColumns.add((Image) this.icons[ICONINDEX_M_LINE].clone(), 1, 1);
+						//newCollectedIcons = getNewCollectedIconArray(collectedIcons,icons[ICONINDEX_TRANCPARENT]);
+					}
 				}
 			}
+
+			this.frameTable.add(treeColumns, 1, rowIndex);
+
+			if (hasChild && isOpen) {
+				Collection<Node> children = (Collection<Node>) item.getChildren();
+			    if (item instanceof GroupTreeNode && children instanceof List) {
+			    	Collections.sort(((List<GroupTreeNode>) children), new GroupTreeComparator(iwc));
+			    }
+			    drawTree(children, newCollectedIcons, iwc, alreadyDrawn);
+			}
+
+			firstNode = false;
 		}
 	}
 

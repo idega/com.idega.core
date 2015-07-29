@@ -1,5 +1,7 @@
 package com.idega.event;
 
+import javax.swing.event.ChangeListener;
+
 public interface IWStateMachine extends com.idega.business.IBOSession
 {
  public com.idega.event.IWPresentationState getStateFor(com.idega.core.component.data.ICObjectInstance p0) throws java.rmi.RemoteException;
@@ -8,19 +10,19 @@ public interface IWStateMachine extends com.idega.business.IBOSession
  public com.idega.event.IWPresentationState getStateFor(String compoundId, Class stateClassType) throws java.rmi.RemoteException;
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="allControllers"
 	 */
 	public java.util.Collection getAllControllers()
 		throws java.rmi.RemoteException;
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="allChangeListeners"
 	 */
-	public java.util.Collection getAllChangeListeners()
+	public java.util.Collection<ChangeListener> getAllChangeListeners()
 		throws java.rmi.RemoteException;
 
-	
+
 	public void unload();
 }

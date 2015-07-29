@@ -19,6 +19,7 @@ import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
 import com.idega.core.builder.data.ICDomain;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
 import com.idega.util.ArrayUtil;
@@ -159,11 +160,19 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 }
 
 	@Override
-	public Collection<Group> findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsContained(containingGroup, groupTypeProxy);
+	public Collection<? extends Group> findGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
+		IDOEntity proxyEntity = this.idoCheckOutPooledEntity();
+
+		IDOEntity entity = (groupTypeProxy != null && (groupTypeProxy instanceof User || groupTypeProxy.getType().equals(User.USER_GROUP_TYPE))) ?
+				this.idoCheckOutPooledEntity(User.class) :
+				this.idoCheckOutPooledEntity();
+		Class<? extends IDOEntity> theClass = entity.getClass();
+		java.util.Collection<Integer> ids = ((GroupBMPBean) proxyEntity).ejbFindGroupsContained(containingGroup, groupTypeProxy, theClass);
 		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
+
+		this.idoCheckInPooledEntity(proxyEntity);
+
+		return this.getEntityCollectionForPrimaryKeys(ids, theClass);
 	}
 
 	@Override
@@ -268,12 +277,12 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		if (ListUtil.isEmpty(groupIDs)) {
 			return Collections.emptyList();
 		}
-		
+
 		try {
 			return findGroups(ArrayUtil.convertListToArray(groupIDs));
 		} catch (FinderException e) {
 			java.util.logging.Logger.getLogger(getClass().getName()).warning(
-					"Failed to get " + getEntityInterfaceClass().getSimpleName() + 
+					"Failed to get " + getEntityInterfaceClass().getSimpleName() +
 					" by id's: '" + groupIDs +  "'");
 		}
 

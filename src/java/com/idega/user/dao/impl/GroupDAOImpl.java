@@ -11,18 +11,24 @@ package com.idega.user.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.idega.core.builder.data.bean.ICDomain;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.GroupDomainRelation;
+import com.idega.user.data.bean.GroupDomainRelationType;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
@@ -37,7 +43,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Group findGroup(Integer groupID) {
-		return find(Group.class, groupID);
+		try {
+			return find(Group.class, groupID);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group by ID: " + groupID, e);
+		}
+		return null;
 	}
 
 	@Override
@@ -105,31 +116,24 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Group> getParentGroups(Group group) {
-		List<Group> parentGroups = new ArrayList<Group>();
-		if (group == null)
-			return parentGroups;
-
-		Param param = new Param("relatedGroup", group);
-		List<GroupRelation> relations = getResultList("groupRelation.findByRelatedGroup", GroupRelation.class, param);
-		for (GroupRelation groupRelation : relations) {
-			parentGroups.add(groupRelation.getGroup());
+		if (group == null) {
+			getLogger().warning("Parent group is not provided");
+			return new ArrayList<Group>();
 		}
 
-		return parentGroups;
+		return getResultList(GroupRelation.QUERY_FIND_BY_RELATED_GROUP, Group.class, new Param("relatedGroup", group));
 	}
 
 	@Override
 	public List<Group> getParentGroups(Group group, Collection<GroupType> groupTypes) {
-		List<Group> parentGroups = new ArrayList<Group>();
+		if (group == null) {
+			getLogger().warning("Parent group is not provided");
+			return new ArrayList<Group>();
+		}
 
 		Param param1 = new Param("relatedGroup", group);
 		Param param2 = new Param("groupTypes", groupTypes);
-		List<GroupRelation> relations = getResultList("groupRelation.findByRelatedGroup", GroupRelation.class, param1, param2);
-		for (GroupRelation groupRelation : relations) {
-			parentGroups.add(groupRelation.getGroup());
-		}
-
-		return parentGroups;
+		return getResultList(GroupRelation.QUERY_FIND_BY_RELATED_GROUP_AND_TYPE, Group.class, param1, param2);
 	}
 
 	@Override
@@ -143,4 +147,58 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 		persist(relation);
 	}
+
+	@Override
+	public List<Group> findTopNodeVisibleGroupsContained(ICDomain containingDomain) {
+		if (containingDomain == null) {
+			getLogger().warning("Domain is not provided");
+			return Collections.emptyList();
+		}
+
+		String query = "select distinct gdr.relatedGroup from " + GroupDomainRelation.class.getName() + " gdr where gdr.domain.id = " + containingDomain.getId() + " and gdr.relationship.type = '" +
+				GroupDomainRelationType.RELATION_TYPE_TOP_NODE + "' and gdr.status is null";
+
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("load_groups_under_domain", false)) {
+			try {
+				List<Group> groups = getResultListByInlineQuery(query, Group.class);
+				getLogger().info("Found groups under domain: " + containingDomain + ": " + query);
+				return groups;
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain + ". Query: " + query, e);
+			}
+		} else {
+			getLogger().info("$$$$$$$$$$$$ Groups not loaded under domain: " + containingDomain);
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public int getNumberOfTopNodeVisibleGroupsContained(ICDomain containingDomain) {
+		List<Group> groups = findTopNodeVisibleGroupsContained(containingDomain);
+		return ListUtil.isEmpty(groups) ? 0 : groups.size();
+	}
+
+	@Override
+	public Collection<Integer> findParentGroupsIds(Integer groupId) {
+		List<Group> parentGroups = findParentGroups(groupId);
+		if (ListUtil.isEmpty(parentGroups)) {
+			return null;
+		}
+
+		Collection<Integer> results = new ArrayList<Integer>();
+		for (Group parentGroup: parentGroups) {
+			results.add(parentGroup.getID());
+		}
+		return results;
+	}
+
+	@Override
+	public List<Group> findParentGroups(Integer groupId) {
+		String query = "select distinct gr.group from " + GroupRelation.class.getName() + " gr where gr.relatedGroup.id = " + groupId +
+				" and (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type is null) and (gr.status = '" +
+				GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')";
+		return getResultListByInlineQuery(query, Group.class);
+	}
+
 }

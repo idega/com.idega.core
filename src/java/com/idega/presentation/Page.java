@@ -794,7 +794,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	}
 
 	public String getLocalizedTitle(IWContext iwc) {
-		ICTreeNode node = null;
+		ICTreeNode<?> node = null;
 		try {
 			BuilderService bservice = getBuilderService(iwc);
 			int pageId = getPageID();

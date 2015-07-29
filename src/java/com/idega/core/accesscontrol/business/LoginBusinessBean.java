@@ -10,7 +10,6 @@ package com.idega.core.accesscontrol.business;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -46,7 +45,6 @@ import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.bean.ICLanguage;
-import com.idega.core.user.business.UserBusiness;
 import com.idega.data.IDOLookup;
 import com.idega.event.IWPageEventListener;
 import com.idega.idegaweb.IWApplicationContext;
@@ -982,9 +980,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	public static List<Group> getPermissionGroups(IWUserContext iwc) {
-		return LoginBusinessBean.getLoginSessionBean().getPermissionGroups();
-	}
+//	public static List<Group> getPermissionGroups(IWUserContext iwc) {
+//		return LoginBusinessBean.getLoginSessionBean().getPermissionGroups();
+//	}
 
 	public static UserGroupRepresentative getUserRepresentativeGroup(IWUserContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getRepresentativeGroup();
@@ -998,9 +996,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginBusinessBean.getLoginSessionBean().setUser(user);
 	}
 
-	protected static void setPermissionGroups(IWUserContext iwc, List<Group> value) throws RemoteException {
-		LoginBusinessBean.getLoginSessionBean().setPermissionGroups(value);
-	}
+//	protected static void setPermissionGroups(IWUserContext iwc, List<Group> value) throws RemoteException {
+//		LoginBusinessBean.getLoginSessionBean().setPermissionGroups(value);
+//	}
 
 	protected static void setUserRepresentativeGroup(IWUserContext iwc, UserGroupRepresentative value) throws RemoteException {
 		LoginBusinessBean.getLoginSessionBean().setRepresentativeGroup(value);
@@ -1074,36 +1072,42 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
-		List<Group> groups = null;
+//		List<Group> groups = null;
 		LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
-		if (isUsingOldUserSystem()) {
-			// Old user system
-			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
-			// LoginBusinessBean.setUser(iwc, user);
-			lSession.setUser(user);
-			groups = UserBusiness.getUserGroups(user.getId().intValue());
-			// Old user system end
-		} else {
+//		if (isUsingOldUserSystem()) {
+//			// Old user system
+//			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
+//			// LoginBusinessBean.setUser(iwc, user);
+//			lSession.setUser(user);
+//			groups = UserBusiness.getUserGroups(user.getId().intValue());
+//			// Old user system end
+//		} else {
 			// New user system
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 			// LoginBusinessBean.setUser(iwc, user);
 			lSession.setUser(user);
-			IWApplicationContext iwac = getIWApplicationContext(session);
-			com.idega.user.business.UserBusiness userbusiness = getUserBusiness(iwac);
-			com.idega.user.data.User newUser = userbusiness.getUser(user.getId());
-			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
-			if (userGroups != null) {
-				groups = new ArrayList<Group>();
-				for (com.idega.user.data.Group group: userGroups) {
-					groups.add(getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString())));
-				}
 
-			// New user system end
-			}
-		}
-		if (groups != null) {
-			lSession.setPermissionGroups(groups);
-		}
+//			IWApplicationContext iwac = getIWApplicationContext(session);
+//			com.idega.user.business.UserBusiness userbusiness = getUserBusiness(iwac);
+//			com.idega.user.data.User newUser = userbusiness.getUser(user.getId());
+//			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
+//			if (userGroups != null) {
+//				LOGGER.info("Found EJB groups for " + user + ":\n" + userGroups);
+//
+//				groups = new ArrayList<Group>();
+//				for (com.idega.user.data.Group group: userGroups) {
+//					Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
+//					if (g != null) {
+//						groups.add(g);
+//					}
+//				}
+//
+//			// New user system end
+//			}
+//		}
+//		if (groups != null) {
+//			lSession.setPermissionGroups(groups);
+//		}
 		lSession.setRepresentativeGroup(user.getGroup());
 
 		Group primaryGroup = user.getPrimaryGroup();
@@ -1793,14 +1797,21 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @throws Exception
 	 */
 	public boolean logInByUUID(HttpServletRequest request, String uuid) throws Exception {
+		User user = getUserDAO().getUserByUUID(uuid);
+		return logInUser(request, user);
+	}
+	public boolean logInUser(HttpServletRequest request, User user) throws Exception {
 		boolean returner = false;
+		if (user == null) {
+			return returner;
+		}
+
 		try {
-			User user = getUserDAO().getUserByUUID(uuid);
 			List<UserLogin> logins = getUserLoginDAO().findAllLoginsForUser(user);
 			UserLogin userLogin = this.chooseLoginRecord(request, logins, user);
 			if (userLogin == null) {
 				try {
-					throw new LoginCreateException("No login found by UUID: '" + uuid + "', request URI: " + request.getRequestURI() + request.getQueryString());
+					throw new LoginCreateException("No login found by for " + user + ", ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ", request URI: " + request.getRequestURI() + request.getQueryString());
 				} catch (LoginCreateException e1) {
 					e1.printStackTrace();
 				}

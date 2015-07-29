@@ -37,6 +37,7 @@ import com.idega.user.data.bean.User;
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION_AND_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionGroup = :group and i.permissionString in (:permissionStrings) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUPS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.DELETE_BY_CRITERIA, query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)")
@@ -56,6 +57,7 @@ public class ICPermission implements Serializable {
 								BY_PERMISSION_GROUP = "permission.findPermissionByPermissionGroupAndPermissionStringAndContextTypeAndContextValue",
 								BY_PERMISSION_GROUPS = "permission.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue",
 								BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionString",
+								BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION_AND_GROUP = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionStringAndGroup",
 								BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS = "permission.findAllPermissionsByContextTypeAndPermissionGroupsOrderedByContextValue",
 								BY_CONTEXT_TYPE_AND_PERMISSION_GROUP = "permission.findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue",
 								BY_CONTEXT_TYPE_AND_CONTEXT_VALUE = "permission.findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup",

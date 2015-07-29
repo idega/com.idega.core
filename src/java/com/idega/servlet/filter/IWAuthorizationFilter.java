@@ -10,6 +10,7 @@
 package com.idega.servlet.filter;
 
 import java.io.IOException;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.servlet.Filter;
@@ -43,22 +44,16 @@ import com.idega.util.StringUtil;
  */
 public class IWAuthorizationFilter extends BaseFilter implements Filter {
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
-	 */
+	private static final Logger LOGGER = Logger.getLogger(IWAuthorizationFilter.class.getName());
+
 	@Override
 	public void init(FilterConfig arg0) throws ServletException {
-		// TODO Auto-generated method stub
-
 	}
 
-	/* (non-Javadoc)
-	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest, javax.servlet.ServletResponse, javax.servlet.FilterChain)
-	 */
 	@Override
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
-		HttpServletRequest request = (HttpServletRequest)srequest;
-		HttpServletResponse response = (HttpServletResponse)sresponse;
+		HttpServletRequest request = (HttpServletRequest) srequest;
+		HttpServletResponse response = (HttpServletResponse) sresponse;
 
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
@@ -79,9 +74,8 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				if (StringUtil.isEmpty(redirectUri)) {
 					//by default send a 403 error
 					response.sendError(HttpServletResponse.SC_FORBIDDEN);
-				}
-				else {
-					Logger.getLogger(this.getClass().getName()).warning("Found default page for error 403, redirecting to: " + redirectUri);
+				} else {
+					LOGGER.warning("Found default page for error 403, redirecting to: " + redirectUri + ". ");
 					response.sendRedirect(redirectUri);
 				}
 			}
@@ -91,8 +85,8 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				ViewManager.getInstance(getIWMainApplication(request)).getViewNodeForRequest(request);
 				viewNodeExists = true;
 			} catch (Exception e) {
-				e.printStackTrace();
-				viewNodeExists=false;
+				LOGGER.log(Level.WARNING, "Error getting view node for request " + request.getRequestURI(), e);
+				viewNodeExists = false;
 			}
 
 			if (!viewNodeExists) {
@@ -106,20 +100,18 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 				response.sendRedirect(redirectUri);
 				return;
 			}
+
 			chain.doFilter(srequest,sresponse);
 		}
 	}
 
 	protected boolean getIfUserHasPermission(HttpServletRequest request){
-		//HttpServletRequest request = iwc.getRequest();
-		/*HttpServletResponse response = iwc.getResponse();*/
 		String uri = getURIMinusContextPath(request);
-		if(uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)){
+		if (uri.startsWith(NEW_WORKSPACE_URI_MINUSSLASH)) {
 			LoginBusinessBean loginBusiness = getLoginBusiness(request);
-			if(!loginBusiness.isLoggedOn(request)){
+			if (!loginBusiness.isLoggedOn(request)) {
 				return false;
-			}
-			else{
+			} else{
 				ViewManager vManager = ViewManager.getInstance(getIWMainApplication(request));
 				ViewNode node = vManager.getViewNodeForRequest(request);
 				IWUserContext iwuc = new IWUserContextImpl(request.getSession(),request.getSession().getServletContext());
@@ -131,9 +123,8 @@ public class IWAuthorizationFilter extends BaseFilter implements Filter {
 					return false;
 				}
 			}
-		}
-		else if(uri.startsWith(PAGES_URI)){
-			boolean pageAccess = getIWMainApplication(request).getAccessController().hasViewPermissionForPageURI(uri,request);
+		} else if (uri.startsWith(PAGES_URI)) {
+			boolean pageAccess = getIWMainApplication(request).getAccessController().hasViewPermissionForPageURI(uri, request);
 			return pageAccess;
 		}
 		return true;

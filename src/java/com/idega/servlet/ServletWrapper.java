@@ -31,9 +31,6 @@ import javax.servlet.http.HttpServlet;
  */
 public class ServletWrapper extends HttpServlet {
 
-	/**
-	 * Comment for <code>serialVersionUID</code>
-	 */
 	private static final long serialVersionUID = 6863799972247973901L;
 
 	private HttpServlet servlet;
@@ -66,7 +63,7 @@ public class ServletWrapper extends HttpServlet {
 	 * @see javax.servlet.GenericServlet#getInitParameterNames()
 	 */
 	@Override
-	public Enumeration<?> getInitParameterNames() {
+	public Enumeration<String> getInitParameterNames() {
 		return this.servlet.getInitParameterNames();
 	}
 

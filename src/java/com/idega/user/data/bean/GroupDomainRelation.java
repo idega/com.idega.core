@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
@@ -22,6 +22,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.core.builder.data.bean.ICDomain;
+import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 
 @Entity
@@ -90,6 +91,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public ICDomain getDomain() {
+		DBUtil.getInstance().lazyLoad(domain);
 		return this.domain;
 	}
 
@@ -98,6 +100,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public Group getRelatedGroup() {
+		DBUtil.getInstance().lazyLoad(relatedGroup);
 		return this.relatedGroup;
 	}
 
@@ -106,6 +109,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public GroupDomainRelationType getRelationship() {
+		DBUtil.getInstance().lazyLoad(relationship);
 		return this.relationship;
 	}
 
@@ -138,6 +142,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public User getPassiveBy() {
+		DBUtil.getInstance().lazyLoad(passiveBy);
 		return this.passiveBy;
 	}
 

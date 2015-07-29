@@ -25,24 +25,30 @@ import com.idega.user.data.bean.GroupType;
 public interface GroupDAO extends GenericDao {
 
 	public Group findGroup(Integer groupID);
-	
+
 	@Transactional(readOnly = false)
 	public GroupType createGroupType(String type, String description, boolean visibility);
-	
+
 	public GroupType findGroupType(String type);
-	
+
 	public GroupRelationType findGroupRelationType(String type);
-	
+
 	public Group findByGroupTypeAndName(GroupType type, String name);
-	
+
 	public List<Group> getGroupsByType(GroupType groupType);
 
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes);
-	
+
 	public List<Group> getParentGroups(Group group);
 
 	public List<Group> getParentGroups(Group group, Collection<GroupType> groupTypes);
-	
+
 	public void createUniqueRelation(Group group, Group relatedGroup, GroupRelationType relationType, Date initiationDate);
-	
+
+	public List<Group> findTopNodeVisibleGroupsContained(com.idega.core.builder.data.bean.ICDomain containingDomain);
+	public int getNumberOfTopNodeVisibleGroupsContained(com.idega.core.builder.data.bean.ICDomain containingDomain);
+
+	public List<Group> findParentGroups(Integer groupId);
+	public Collection<Integer> findParentGroupsIds(Integer groupId);
+
 }

@@ -52,22 +52,22 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		legacyUser = null;
 	}
 
-	/**
-	 * @return Returns the permissionGroups.
-	 */
-	@Override
-	public List<Group> getPermissionGroups() {
-		return this.sessionHelper.permissionGroups;
-	}
-
-	/**
-	 * @param permissionGroups
-	 *          The permissionGroups to set.
-	 */
-	@Override
-	public void setPermissionGroups(List<Group> permissionGroups) {
-		this.sessionHelper.permissionGroups = permissionGroups;
-	}
+//	/**
+//	 * @return Returns the permissionGroups.
+//	 */
+//	@Override
+//	public List<Group> getPermissionGroups() {
+//		return this.sessionHelper.permissionGroups;
+//	}
+//
+//	/**
+//	 * @param permissionGroups
+//	 *          The permissionGroups to set.
+//	 */
+//	@Override
+//	public void setPermissionGroups(List<Group> permissionGroups) {
+//		this.sessionHelper.permissionGroups = permissionGroups;
+//	}
 
 	/**
 	 * @return Returns the primaryGroup.

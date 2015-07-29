@@ -31,19 +31,23 @@ import javax.persistence.TemporalType;
 
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 
 @Entity
 @Table(name = GroupRelation.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "groupRelation.findByRelatedGroup", query = "select r from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
-	@NamedQuery(name = "groupRelation.findByRelatedGroupAndType", query = "select r from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP, query = "select distinct r.group from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'")
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
 
 	private static final long serialVersionUID = 5850270896539731950L;
+
+	public static final String	QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
+								QUERY_FIND_BY_RELATED_GROUP_AND_TYPE = "groupRelation.findByRelatedGroupAndType";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";
@@ -82,15 +86,15 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	@Column(name = COLUMN_GROUP_RELATION_ID)
 	private Integer groupRelationID;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP)
 	private Group group;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_RELATED_GROUP)
 	private Group relatedGroup;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_RELATIONSHIP_TYPE)
 	private GroupRelationType groupRelationType;
 
@@ -105,15 +109,15 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	@Column(name = COLUMN_TERMINATION_DATE)
 	private Date terminationDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_PASSIVE_BY)
 	private User passiveBy;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_CREATED_BY)
 	private User createdBy;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_RELATED_GROUP_TYPE)
 	private GroupType relatedGroupType;
 
@@ -134,10 +138,12 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	}
 
 	public Group getGroup() {
+		DBUtil.getInstance().lazyLoad(group);
 		return this.group;
 	}
 
 	public Group getRelatedGroup() {
+		DBUtil.getInstance().lazyLoad(relatedGroup);
 		return this.relatedGroup;
 	}
 
@@ -158,14 +164,17 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	}
 
 	public User getPassiveBy() {
+		DBUtil.getInstance().lazyLoad(passiveBy);
 		return this.passiveBy;
 	}
 
 	public User getCreatedBy() {
+		DBUtil.getInstance().lazyLoad(createdBy);
 		return this.createdBy;
 	}
 
 	public GroupType getRelatedGroupType() {
+		DBUtil.getInstance().lazyLoad(relatedGroupType);
 		return this.relatedGroupType;
 	}
 
@@ -223,6 +232,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
+		DBUtil.getInstance().lazyLoad(metadata);
 		return this.metadata;
 	}
 

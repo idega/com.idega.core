@@ -389,7 +389,7 @@ version="1.2">
 	    <property>
 	      <display-name>Keep status</display-name>
 	      <property-name>keepStatus</property-name>
-	      <property-class>boolean</property-class>
+	      <property-class>java.lang.Boolean</property-class>
 	    </property>
 	    <property>
 	      <display-name>Input name</display-name>
@@ -424,7 +424,7 @@ version="1.2">
 		<property>
 			<display-name>Show date range</display-name>
 			<property-name>dateRange</property-name>
-			<property-class>boolean</property-class>
+			<property-class>java.lang.Boolean</property-class>
 		</property>
 		<property>
 			<display-name>Calendar image URI</display-name>
@@ -434,27 +434,27 @@ version="1.2">
 		<property>
 			<display-name>Show calendar image</display-name>
 			<property-name>showCalendarImage</property-name>
-			<property-class>boolean</property-class>
+			<property-class>java.lang.Boolean</property-class>
 		</property>
 	    <property>
 	      <display-name>Show month</display-name>
 	      <property-name>showMonth</property-name>
-	      <property-class>boolean</property-class>
+	      <property-class>java.lang.Boolean</property-class>
 	    </property>
 	    <property>
 	      <display-name>Show year</display-name>
 	      <property-name>showYear</property-name>
-	      <property-class>boolean</property-class>
+	      <property-class>java.lang.Boolean</property-class>
 	    </property>
 	    <property>
 	      <display-name>Show time</display-name>
 	      <property-name>showTime</property-name>
-	      <property-class>boolean</property-class>
+	      <property-class>java.lang.Boolean</property-class>
 	    </property>
 	    <property>
 	      <display-name>Use current date if not set</display-name>
 	      <property-name>useCurrent</property-name>
-	      <property-class>boolean</property-class>
+	      <property-class>java.lang.Boolean</property-class>
 	    </property>
 	    <property>
 	      <display-name>Year range</display-name>

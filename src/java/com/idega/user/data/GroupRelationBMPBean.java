@@ -27,26 +27,26 @@ import com.idega.util.IWTimestamp;
 public class GroupRelationBMPBean extends GenericEntity implements GroupRelation {
 
 	private static final long serialVersionUID = 4570104106589251472L;
-	
-	protected static final String  TABLE_NAME="IC_GROUP_RELATION";
-	protected static final String  GROUP_ID_COLUMN="IC_GROUP_ID";
-	protected static final String  RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID";
-	protected static final String  RELATIONSHIP_TYPE_COLUMN="RELATIONSHIP_TYPE";
-	protected static final String  STATUS_COLUMN="GROUP_RELATION_STATUS";
-	protected static final String  INITIATION_DATE_COLUMN="INITIATION_DATE";
-	protected static final String  TERMINATION_DATE_COLUMN="TERMINATION_DATE";
-  protected static final String  SET_PASSIVE_BY="SET_PASSIVE_BY";
-  protected static final String CREATED_BY = "CREATED_BY";
-  protected static final String RELATED_GROUP_TYPE_COLUMN = "RELATED_GROUP_TYPE";
+
+	public static final String  TABLE_NAME="IC_GROUP_RELATION",
+								GROUP_ID_COLUMN="IC_GROUP_ID",
+								RELATED_GROUP_ID_COLUMN="RELATED_IC_GROUP_ID",
+								RELATIONSHIP_TYPE_COLUMN="RELATIONSHIP_TYPE",
+								STATUS_COLUMN="GROUP_RELATION_STATUS",
+								INITIATION_DATE_COLUMN="INITIATION_DATE",
+								TERMINATION_DATE_COLUMN="TERMINATION_DATE",
+								SET_PASSIVE_BY="SET_PASSIVE_BY",
+								CREATED_BY = "CREATED_BY",
+								RELATED_GROUP_TYPE_COLUMN = "RELATED_GROUP_TYPE";
 
   protected static final String INITIATION_MODIFICATION_DATE_COLUMN="INIT_MODIFICATION_DATE";
   protected static final String TERMINATION_MODIFICATION_DATE_COLUMN="TERM_MODIFICATION_DATE";
 
-  protected final static String STATUS_ACTIVE="ST_ACTIVE";
-  protected final static String STATUS_PASSIVE="ST_PASSIVE";
-  protected final static String STATUS_PASSIVE_PENDING="PASS_PEND";
-  protected final static String STATUS_ACTIVE_PENDING="ACT_PEND";
-	
+  public final static String	STATUS_ACTIVE="ST_ACTIVE",
+		  						STATUS_PASSIVE="ST_PASSIVE",
+		  						STATUS_PASSIVE_PENDING="PASS_PEND",
+		  						STATUS_ACTIVE_PENDING="ACT_PEND";
+
   @Override
 public void initializeAttributes() {
     this.addAttribute(getIDColumnName());
@@ -63,7 +63,7 @@ public void initializeAttributes() {
     this.addAttribute(RELATED_GROUP_TYPE_COLUMN, "Related group type", String.class);
 		this.addAttribute(TERMINATION_MODIFICATION_DATE_COLUMN, "Termination modification date", Timestamp.class);
  		this.addMetaDataRelationship();
- 		
+
  		addIndex("IDX_IC_GROUP_REL_1", RELATED_GROUP_ID_COLUMN);
  		addIndex("IDX_IC_GROUP_REL_2", GROUP_ID_COLUMN);
  		addIndex("IDX_IC_GROUP_REL_3", new String[]{GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
@@ -79,7 +79,7 @@ public void initializeAttributes() {
  		addIndex("IDX_IC_GROUP_REL_13", new String[]{GROUP_ID_COLUMN, RELATED_GROUP_ID_COLUMN, RELATIONSHIP_TYPE_COLUMN, STATUS_COLUMN});
  		addIndex("IDX_IC_GROUP_REL_14", new String[]{RELATED_GROUP_ID_COLUMN, STATUS_COLUMN});
   }
-  
+
   @Override
 public String getEntityName() {
     return TABLE_NAME;
@@ -105,7 +105,7 @@ public void setGroup(int groupID){
 public Group getGroup(){
     return (Group)getColumnValue(GROUP_ID_COLUMN);
   }
-  
+
   @Override
 public int getGroupID() {
   	return getIntColumnValue(GROUP_ID_COLUMN);
@@ -184,7 +184,7 @@ public boolean isPassive(){
     }
     return false;
   }
-  
+
 	@Override
 	public boolean isActivePending(){
 		String status = this.getStatus();
@@ -202,7 +202,7 @@ public boolean isPassive(){
 		}
 		return false;
 	}
-	
+
 	@Override
 	public boolean isPending(){
 		String status = this.getStatus();
@@ -220,7 +220,7 @@ public void setActive(){
 public void setPassive(){
     this.setStatus(STATUS_PASSIVE);
   }
-  
+
 	@Override
 	public void setPassivePending(){
 		this.setStatus(STATUS_PASSIVE_PENDING);
@@ -230,7 +230,7 @@ public void setPassive(){
 	public void setActivePending(){
 		this.setStatus(STATUS_ACTIVE_PENDING);
 	}
-	
+
   @Override
 public void setInitiationDate(Timestamp stamp){
     this.setColumn(GroupRelationBMPBean.INITIATION_DATE_COLUMN,stamp);
@@ -257,7 +257,7 @@ public void setTerminationDate(Timestamp stamp){
 public Timestamp getTerminationDate(){
     return (Timestamp)getColumnValue(GroupRelationBMPBean.TERMINATION_DATE_COLUMN);
   }
-  
+
   @Override
 public Timestamp getTerminationModificationDate(){
 		return (Timestamp)getColumnValue(GroupRelationBMPBean.TERMINATION_MODIFICATION_DATE_COLUMN);
@@ -268,35 +268,35 @@ public void setPassiveBy(int userId)  {
   }
 
   @Override
-public int getPassiveById() { 
+public int getPassiveById() {
     return getIntColumnValue(SET_PASSIVE_BY);
   }
-  
+
   @Override
 public User getPassiveBy(){
       return (User)getColumnValue(SET_PASSIVE_BY);
   }
-  
+
   @Override
 public void setCreatedBy(int userId){
       setColumn(CREATED_BY,userId);
   }
-  
+
   @Override
 public void setCreatedBy(Integer userId){
       setColumn(CREATED_BY,userId);
   }
-  
+
   @Override
 public void setCreatedBy(User user){
       setColumn(CREATED_BY,user);
   }
-  
+
   @Override
 public int getCreatedById(){
       return getIntColumnValue(CREATED_BY);
   }
-  
+
   @Override
 public User getCreatedBy(){
       return (User)getColumnValue(CREATED_BY);
@@ -307,7 +307,7 @@ public void setRelatedGroupType(String groupType)  {
     setColumn(RELATED_GROUP_TYPE_COLUMN, groupType);
   }
 
-  public String getRelatedGroupType() { 
+  public String getRelatedGroupType() {
   	return getStringColumnValue(RELATED_GROUP_TYPE_COLUMN);
   }
 
@@ -340,12 +340,12 @@ public boolean equals(Object obj) {
   public Collection ejbFindGroupsRelationshipsContaining(Group group,Group relatedGroup)throws FinderException{
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+group.getPrimaryKey().toString());
   }
-  
+
   public Collection ejbFindGroupsRelationshipsContainingGroupsAndStatus(Group group,Group relatedGroup, String status)throws FinderException{
 	return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroup.getPrimaryKey().toString()+" and "+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+group.getPrimaryKey().toString()+" and "+GroupRelationBMPBean.STATUS_COLUMN+" like '"+status+"'");
   }
-  
-  
+
+
 	/**
 	 * Finds all relationships specified only in one direction with groupID and relationType as specified ordered by initiation date
 	 */
@@ -373,7 +373,7 @@ public boolean equals(Object obj) {
   public Collection ejbFindGroupsRelationshipsContaining(int groupID,String relationType)throws FinderException{
     return this.idoFindPKsBySQL(ejbHomeGetFindGroupsRelationshipsContainingSQL(groupID,relationType));
   }
-  
+
   public Collection ejbFindGroupsRelationshipsContaining(int groupId,Collection<String> relationTypes){
 	  StringBuilder relations = new StringBuilder();
 	  for(Iterator<String> iter = relationTypes.iterator();iter.hasNext();){
@@ -399,7 +399,7 @@ public boolean equals(Object obj) {
 			return Collections.emptyList();
 		}
   }
-  
+
   public String ejbHomeGetFindGroupsRelationshipsContainingSQL(int groupId, String relationType){
   	StringBuffer sql = new StringBuffer();
   	sql.append("select " + getIDColumnName() + " from ")
@@ -415,8 +415,8 @@ public boolean equals(Object obj) {
 		//might have to or null check
   	return sql.toString();
   }
-  
-  
+
+
 	public String ejbHomeGetFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int groupId, String relationType){
 		StringBuffer sql = new StringBuffer();
 		sql.append("select ").append(RELATED_GROUP_ID_COLUMN).append(" from ")
@@ -432,7 +432,7 @@ public boolean equals(Object obj) {
   	//might have to or null check
 		return sql.toString();
 	}
-  
+
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null
    */
@@ -452,7 +452,7 @@ public boolean equals(Object obj) {
     return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID
     +" and "+GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN+"='"+relationType+"' and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
-  
+
   /**
    * Finds all active relationships specified only in one direction with groupID and relationType ether with value relationType or orRelationType, relationType and orRelationType may be null
    */
@@ -462,14 +462,14 @@ public boolean equals(Object obj) {
     return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID
     +" and ("+firstRelationTypeClause+" OR "+secondRelationTypeClause+") and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
-  
+
   protected static String getRelationTypeWhereClause(String value){
   	if(value==null){
   		return RELATIONSHIP_TYPE_COLUMN+" is null";
   	}
   	else{
   		return RELATIONSHIP_TYPE_COLUMN+"='"+value+"'";
-  	}	
+  	}
   }
 
 
@@ -518,16 +518,16 @@ public boolean equals(Object obj) {
     return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+groupID+" and "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID
     +" and "+GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN+"='"+relationshipType+"' and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
-  
+
 	/**
 		* Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
 		*/
 	 public Collection ejbFindAllPendingGroupRelationships()throws FinderException{
 		 return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+GroupRelationBMPBean.STATUS_COLUMN+" in ('"+STATUS_ACTIVE_PENDING+"','"+STATUS_PASSIVE_PENDING+"')");
 	 }
-	 
+
 	 /**
-		* Finds all relationships with null values in related_group_type column 
+		* Finds all relationships with null values in related_group_type column
 		* That is a new column in ic_group_relation that is a duplicate of the value in group_type column in ic_group for the related group
 		* Created 9.7.2004 by Sigtryggur for optimising purposes
 		*/
@@ -542,7 +542,7 @@ public boolean equals(Object obj) {
 	 }
 
   /**Finders end**/
-  
+
   /**
 <<<<<<< HEAD
 =======
@@ -550,7 +550,7 @@ public boolean equals(Object obj) {
    */
   @Deprecated
 @Override
-public void remove()  throws RemoveException  {    
+public void remove()  throws RemoveException  {
     User currentUser;
     try {
       currentUser = IWContext.getInstance().getCurrentUser();
@@ -563,14 +563,14 @@ public void remove()  throws RemoveException  {
 
   /**
 >>>>>>> fdc7351764269b322882b03abe9addf99fcd9c33
-   * 
+   *
    */
   @Override
 public void removeBy(User currentUser) throws RemoveException{
     this.removeBy(currentUser,IWTimestamp.getTimestampRightNow());
 
   }
-  
+
 
 
 	/*
@@ -586,7 +586,7 @@ public void removeBy(User currentUser) throws RemoveException{
 				userId = Integer.valueOf(primaryKey);
 			} catch (NumberFormatException e) {
 				getLogger().warning(
-						"Failed to convert " + primaryKey + 
+						"Failed to convert " + primaryKey +
 						" to " + Integer.class.getSimpleName());
 			}
 
@@ -598,7 +598,7 @@ public void removeBy(User currentUser) throws RemoveException{
 	}
 
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
-  	
+
 	//constructing query
 	IDOQuery query = idoQuery();
 	//select
@@ -619,24 +619,24 @@ public void removeBy(User currentUser) throws RemoveException{
 	query.append(TERMINATION_DATE_COLUMN);
 	query.appendLessThanOrEqualsSign();
 	query.append(lastDateInPeriod);
-	
-	
+
+
 	//and if relationstatus
 	if(relationStatus!= null){
 		//and
 		query.appendAnd();
 		query.append(STATUS_COLUMN);
-		query.appendInArrayWithSingleQuotes(relationStatus);		
+		query.appendInArrayWithSingleQuotes(relationStatus);
 	}
-  	
+
 //	System.out.println("SQL -> "+this.getClass()+":"+query);
-	return idoFindPKsByQuery(query); 
-	
+	return idoFindPKsByQuery(query);
+
 
   }
-  
+
   public Collection ejbFindAllGroupsRelationshipsValidWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
-  	
+
 		//constructing query
 		IDOQuery query = idoQuery();
 		//select
@@ -657,25 +657,25 @@ public void removeBy(User currentUser) throws RemoveException{
 		query.append(TERMINATION_DATE_COLUMN);
 		query.appendGreaterThanSign();
 		query.append(lastDateInPeriod);
-	
-	
+
+
 		//and if relationstatus
 		if(relationStatus!= null){
 			//and
 			query.appendAnd();
 			query.append(STATUS_COLUMN);
-			query.appendInArrayWithSingleQuotes(relationStatus);		
+			query.appendInArrayWithSingleQuotes(relationStatus);
 		}
-  	
+
 //		System.out.println("SQL -> "+this.getClass()+":"+query);
-		return idoFindPKsByQuery(query); 
-	
+		return idoFindPKsByQuery(query);
+
 
   }
-  
-  
+
+
 	public Collection ejbFindAllGroupsRelationshipsValidBeforeAndPastSpecifiedTime(Group group, Group relatedGroup, Timestamp time, String[] relationStatus) throws FinderException{
-  	
+
 		//constructing query
 		IDOQuery query = idoQuery();
 		//select
@@ -696,19 +696,19 @@ public void removeBy(User currentUser) throws RemoveException{
 		query.append(TERMINATION_DATE_COLUMN);
 		query.appendGreaterThanSign();
 		query.append(time);
-	
-	
+
+
 		//and if relationstatus
 		if(relationStatus!= null){
 			//and
 			query.appendAnd();
 			query.append(STATUS_COLUMN);
-			query.appendInArrayWithSingleQuotes(relationStatus);		
+			query.appendInArrayWithSingleQuotes(relationStatus);
 		}
-  	
+
 //		System.out.println("SQL -> "+this.getClass()+":"+query);
-		return idoFindPKsByQuery(query); 
-	
+		return idoFindPKsByQuery(query);
+
 
 	}
 
@@ -719,7 +719,7 @@ public void removeBy(User currentUser) throws RemoveException{
     	String subTable = "select ic_group_id, related_ic_group_id from ic_group_relation where relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE' group by ic_group_id, related_ic_group_id having count(*)>1";
 		return this.idoFindPKsBySQL("select r.ic_group_relation_id from ic_group_relation r, ("+subTable+") t where r.ic_group_id=t.ic_group_id and r.related_ic_group_id=t.related_ic_group_id and relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE'");
 	}
-  
+
 	/**
   	* Finds all duplicated aliases
 	*/

@@ -196,7 +196,10 @@ public class CoreConstants {
 			PARAMETER_CHECK_HTML_HEAD_AND_BODY = "check_html_head_and_body",
 			PROPERTIES_FOLDER_NAME_IN_JAR = "properties",
 			REPOSITORY = "repository",
-			ACTIVE_ROLE = "iw_session_user_active_role";
+			ACTIVE_ROLE = "iw_session_user_active_role",
+
+			GROUP_TREE_CACHE = "group_tree",
+			DOMAIN_GROUP_TREE_CACHE = "domain_group_tree";
 
 	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "skjalaver@reykjavik.is";
 	public static final String ACOUSTIC_PERMISSION_PROCESS_NAME = "AcousticsPermission";

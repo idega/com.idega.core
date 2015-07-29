@@ -63,12 +63,10 @@ private static <T> ArrayList<T> getEmptyVector(){
  * @return The input value coll if it is an instance of List. Else it will construct a list with the same values and return it.
  **/
   public static <T> List<T> convertCollectionToList(Collection<T> coll){
-    if(coll instanceof List){
-      return (List<T>)coll;
-    }
-    else{
-      List<T> theReturn = new ArrayList<T>(coll);
-      return theReturn;
+    if (coll instanceof List) {
+    	return (List<T>) coll;
+    } else {
+    	return new ArrayList<T>(coll);
     }
   }
 

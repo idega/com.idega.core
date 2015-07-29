@@ -10,8 +10,11 @@ public interface RequestResponseProvider {
 
 	public HttpServletRequest getRequest();
 	public void setRequest(HttpServletRequest request);
-	
+
 	public HttpServletResponse getResponse();
 	public void setResponse(HttpServletResponse response);
-	
+
+	public void addPermision(String key, Boolean permission);
+	public Boolean hasPermision(String key);
+
 }

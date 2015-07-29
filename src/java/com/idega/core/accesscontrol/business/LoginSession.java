@@ -9,7 +9,6 @@
  */
 package com.idega.core.accesscontrol.business;
 
-import java.util.List;
 import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
@@ -29,12 +28,12 @@ public interface LoginSession {
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPermissionGroups
      */
-    public List<Group> getPermissionGroups();
+//    public List<Group> getPermissionGroups();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setPermissionGroups
      */
-    public void setPermissionGroups(List<Group> permissionGroups);
+//    public void setPermissionGroups(List<Group> permissionGroups);
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPrimaryGroup

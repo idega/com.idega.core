@@ -17,6 +17,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupHome;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -44,10 +45,10 @@ public class GroupTreeNode implements ICTreeNode<GroupTreeNode> {
 	public GroupTreeNode(ICDomain domain,  IWApplicationContext iwc) {
 		setIWApplicationContext(iwc);
 		@SuppressWarnings("unchecked")
-		Map<Object, GroupTreeNode> m = (Map<Object, GroupTreeNode>) iwc.getApplicationAttribute("domain_group_tree");
+		Map<Object, GroupTreeNode> m = (Map<Object, GroupTreeNode>) iwc.getApplicationAttribute(CoreConstants.DOMAIN_GROUP_TREE_CACHE);
 		if (m == null) {
 			m = new Hashtable<Object, GroupTreeNode>();
-			iwc.setApplicationAttribute("domain_group_tree", m);
+			iwc.setApplicationAttribute(CoreConstants.DOMAIN_GROUP_TREE_CACHE, m);
 		}
 
 		GroupTreeNode node = m.get(domain.getPrimaryKey());
@@ -77,10 +78,10 @@ public class GroupTreeNode implements ICTreeNode<GroupTreeNode> {
 
 	public GroupTreeNode(Group group,  IWApplicationContext iwc) {
 		@SuppressWarnings("unchecked")
-		Map<Object, GroupTreeNode> m = (Map<Object, GroupTreeNode>) iwc.getApplicationAttribute("group_tree");
+		Map<Object, GroupTreeNode> m = (Map<Object, GroupTreeNode>) iwc.getApplicationAttribute(CoreConstants.GROUP_TREE_CACHE);
 		if (m == null) {
 			m = new Hashtable<Object, GroupTreeNode>();
-			iwc.setApplicationAttribute("group_tree", m);
+			iwc.setApplicationAttribute(CoreConstants.GROUP_TREE_CACHE, m);
 		}
 
 		GroupTreeNode node = m.get(group.getPrimaryKey());
@@ -458,4 +459,10 @@ public class GroupTreeNode implements ICTreeNode<GroupTreeNode> {
 	public String getId(){
 		return Integer.toString(getNodeID());
 	}
+
+	@Override
+	public String toString() {
+		return (getNodeType() == TYPE_DOMAIN ? "Domain" : "Group") + " node. ID: " + getId();
+	}
+
 }

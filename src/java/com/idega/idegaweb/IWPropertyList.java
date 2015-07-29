@@ -157,9 +157,9 @@ public class IWPropertyList {
 
 	XMLElement getMapElement() {
 		if (this.mapElement == null) {
-			this.mapElement = this.parentElement.getChild(mapTag);
+			this.mapElement = this.parentElement == null ? null : this.parentElement.getChild(mapTag);
 			if (this.mapElement == null) {
-				XMLElement dictElement = this.parentElement.getChild(dictTag);
+				XMLElement dictElement = this.parentElement == null ? null : this.parentElement.getChild(dictTag);
 				if (dictElement != null) {
 					this.mapElement = new XMLElement(mapTag);
 					this.mapElement.setChildren(dictElement.getChildren());

@@ -4,7 +4,7 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
-import com.idega.data.*;
+import com.idega.data.GenericEntity;
 
 
 /**
@@ -18,46 +18,56 @@ import com.idega.data.*;
 
 public class GroupRelationTypeBMPBean extends GenericEntity implements GroupRelationType{
 
-  private static String TABLE_NAME="IC_GROUP_RELATION_TYPE";
-  private static String TYPE_COLUMN="GROUP_RELATION_TYPE";
-  private static String DESCRIPTION_COLUMN="GROUP_RELATION_TYPE_DESCR";
+	private static final long serialVersionUID = 106422640019120658L;
+
+public static String	TABLE_NAME="IC_GROUP_RELATION_TYPE",
+		  				TYPE_COLUMN="GROUP_RELATION_TYPE",
+		  				DESCRIPTION_COLUMN="GROUP_RELATION_TYPE_DESCR";
 
 
-  public void initializeAttributes() {
+  @Override
+public void initializeAttributes() {
     //this.addAttribute(getIDColumnName());
     this.addAttribute(TYPE_COLUMN,"Type",String.class,15);
     this.setAsPrimaryKey(TYPE_COLUMN,true);
     this.addAttribute(DESCRIPTION_COLUMN,"Description",String.class,1000);
   }
 
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return TABLE_NAME;
   }
 
-  public void setType(String type){
+  @Override
+public void setType(String type){
     setColumn(TYPE_COLUMN,type);
   }
 
-  public String getType(){
+  @Override
+public String getType(){
     return getStringColumnValue(TYPE_COLUMN);
   }
 
-  public void setDescription(String desc){
+  @Override
+public void setDescription(String desc){
     setColumn(DESCRIPTION_COLUMN,desc);
   }
 
-  public String getDescription(){
+  @Override
+public String getDescription(){
     return getStringColumnValue(DESCRIPTION_COLUMN);
   }
 
-  public String getIDColumnName(){
+  @Override
+public String getIDColumnName(){
     return TYPE_COLUMN;
   }
 
-  public Class getPrimaryKeyClass(){
+  @Override
+public Class getPrimaryKeyClass(){
     return String.class;
   }
-  
+
   public Collection ejbFindAll() throws FinderException{
   	return super.idoFindAllIDsBySQL();
   }

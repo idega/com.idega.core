@@ -14,7 +14,6 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -46,7 +45,7 @@ import com.idega.idegaweb.IWApplicationContext;
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.51 $
  */
-public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable {
+public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable, GroupNode<Group> {
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
@@ -261,12 +260,8 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
 	 */
+	@Override
 	public List<Group> getParentGroups() throws EJBException;
-
-	/**
-	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
-	 */
-	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
@@ -286,7 +281,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
 	 */
-	public Collection<Group> getChildGroups(Group groupTypeProxy) throws EJBException;
+	public Collection<? extends Group> getChildGroups(Group groupTypeProxy) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getAllGroupsContainingUser

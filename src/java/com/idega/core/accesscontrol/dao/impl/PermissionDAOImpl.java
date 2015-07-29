@@ -6,7 +6,9 @@ package com.idega.core.accesscontrol.dao.impl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.persistence.Query;
 
@@ -26,8 +28,10 @@ import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
 import com.idega.user.data.bean.Group;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("permissionDAO")
@@ -47,7 +51,13 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public PermissionGroup findPermissionGroup(Object primaryKey) {
-		return find(PermissionGroup.class, primaryKey);
+		Group group = find(Group.class, primaryKey);
+		if (group instanceof PermissionGroup) {
+			return (PermissionGroup) group;
+		} else {
+			getLogger().warning("Group " + group + " with ID is not type of " + PermissionGroup.class.getName());
+		}
+		return null;
 	}
 
 	@Override
@@ -61,8 +71,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	@Transactional(readOnly = false)
 	public ICPermission createPermission(String contextType, String contextValue, Group group, String permissionString, boolean permissionValue) {
 		if (group == null) {
-			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ?
-					CoreConstants.Y : CoreConstants.N);
+			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ? CoreConstants.Y.charAt(0) : CoreConstants.N.charAt(0));
 			if (!ListUtil.isEmpty(permissions))
 				return permissions.iterator().next();
 		} else {
@@ -129,7 +138,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	}
 
 	@Override
-	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, String permissionValue) {
+	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, Character permissionValue) {
 		Param param1 = new Param("contextType", contextType);
 		Param param2 = new Param("contextValue", contextValue);
 		Param param3 = new Param("permissionString", permissionString);
@@ -174,12 +183,53 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public List<ICPermission> findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup(String contextType, String contextValue, Collection<String> permissionStrings, Group group) {
-		Param param1 = new Param("contextType", contextType);
-		Param param2 = new Param("contextValue", contextValue);
-		Param param3 = new Param("permissionStrings", permissionStrings);
-		Param param4 = new Param("group", group);
+		List<Param> params = new ArrayList<Param>();
+		if (StringUtil.isEmpty(contextType)) {
+			try {
+				throw new RuntimeException("Context type is not provided! Context value: " + contextValue + ", permission strings: " + permissionStrings + ", group: " + group);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, e.getLocalizedMessage(), e);
+			}
+			return Collections.emptyList();
+		} else {
+			params.add(new Param("contextType", contextType));
+		}
 
-		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE, ICPermission.class, param1, param2, param3, param4);
+		if (StringUtil.isEmpty(contextValue)) {
+			try {
+				throw new RuntimeException("Context value is not provided! Context type: " + contextType + ", permission strings: " + permissionStrings + ", group: " + group);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, e.getLocalizedMessage(), e);
+			}
+			getLogger().warning("Context value not provided, using method 'findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue'");
+			return findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group, permissionStrings, contextType);
+		} else {
+			params.add(new Param("contextValue", contextValue));
+		}
+
+		if (permissionStrings == null) {
+			try {
+				throw new RuntimeException("Permission strings are not provided! Context type: " + contextType + ", context value: " + contextValue + ", group: " + group);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, e.getLocalizedMessage(), e);
+			}
+			return Collections.emptyList();
+		} else {
+			params.add(new Param("permissionStrings", permissionStrings));
+		}
+
+		if (group == null) {
+			try {
+				throw new RuntimeException("Group is not provided! Context type: " + contextType + ", context value: " + contextValue + ", permission strings: " + permissionStrings);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, e.getLocalizedMessage(), e);
+			}
+			return Collections.emptyList();
+		} else {
+			params.add(new Param("group", group));
+		}
+
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION_AND_GROUP, ICPermission.class, ArrayUtil.convertListToArray(params));
 	}
 
 	@Override

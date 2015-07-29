@@ -12,6 +12,7 @@ package com.idega.core.accesscontrol.business;
 import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -61,6 +62,7 @@ import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
@@ -233,10 +235,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					return true;
 				}
 
-				List<Group> groups = LoginBusinessBean.getPermissionGroups(iwc);
+				com.idega.user.business.UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), com.idega.user.business.UserBusiness.class);
+				Collection<com.idega.user.data.Group> groups = iwc.isLoggedOn() ? userBusiness.getUserGroups(iwc.getCurrentUser()) : null;
 				if (groups != null) {
-					for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
-						Group item = iter.next();
+					for (Iterator<com.idega.user.data.Group> iter = groups.iterator(); iter.hasNext();) {
+						com.idega.user.data.Group item = iter.next();
 						if (item == null) {
 							continue;
 						}
@@ -351,24 +354,20 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		boolean value = isOwner(group, iwc);
 
 		if (!value) { //check parents to see if user is an owner of them
-			Collection parents = getGroupDAO().getParentGroups(group); //little at at time not all groups recursive
+			Collection<Group> parents = getGroupDAO().getParentGroups(group); //little at at time not all groups recursive
 
 			if (parents != null && !parents.isEmpty()) {
-				Iterator parentIter = parents.iterator();
+				Iterator<Group> parentIter = parents.iterator();
 				while (parentIter.hasNext() && !value) {
-					Group parent = (Group) parentIter.next();
+					Group parent = parentIter.next();
 					value = isGroupOwnerRecursively(parent, iwc);
 				}
 
 				return value;
-
-			}
-			else {
+			} else {
 				return false; //ran out of parents to check
 			}
-
-		}
-		else {
+		} else {
 			return true;
 		}
 
@@ -413,6 +412,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Deprecated
 	public boolean hasPermission(String permissionKey, int category, String identifier, IWUserContext iwuc) throws Exception {
+		long start = System.currentTimeMillis();
+		try {
 		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
@@ -432,15 +433,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		else {
 
-			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if ( !"true".equalsIgnoreCase(recurseParents) ) { //old crap
-				//			TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
-				groups = LoginBusinessBean.getPermissionGroups(iwuc);
-			}
-			else { //the correct version
+//			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
+//			if ( !"true".equalsIgnoreCase(recurseParents) ) { //old crap
+//				//			TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
+//				groups = LoginBusinessBean.getPermissionGroups(iwuc);
+//			}
+//			else { //the correct version
 				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getLoggedInUser());
-
-			}
+//			}
 
 			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
@@ -480,7 +480,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 			return false;
 		}
-
+		} finally {
+			getLogger().info("Permission key: " + permissionKey + ", category: " + category + ", identifier: " + identifier + ". Took time: " + (System.currentTimeMillis() - start) + " ms");
+		}
 	}
 
 	private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionKey, IWApplicationContext iwc)
@@ -600,14 +602,39 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public boolean hasPermission(String permissionKey, Object obj, IWUserContext iwuc) throws Exception {
-		Boolean myPermission = null;
-		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
-
 		if (isAdmin(iwuc)) { //this is almost a security hole - eiki
 			return true;
 		}
 
+		RequestResponseProvider rrProvider = null;
+		try {
+			rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+		} catch (Exception e) {}
+
 		User user = LoginBusinessBean.getUser(iwuc);
+
+		String key = "permission_" + permissionKey + "_" + (obj == null ? "null" : obj.getClass().getName()) + "_" + (user == null ? "null" : user.getId());
+		if (rrProvider != null) {
+			Boolean permission = rrProvider.hasPermision(key);
+			if (permission != null) {
+				return permission;
+			}
+		}
+
+		boolean permission = false;
+		try {
+			permission = hasPermission(permissionKey, obj, user, iwuc.isLoggedOn() ? iwuc.getLoggedInUser() : null, iwuc);
+			return permission;
+		} finally {
+			if (rrProvider != null) {
+				rrProvider.addPermision(key, permission);
+			}
+		}
+	}
+
+	private boolean hasPermission(String permissionKey, Object obj, User user, User loggedInUser, IWUserContext iwuc) throws Exception {
+		Boolean myPermission = null;
+		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 
 		Collection<Group> groups = null;
 		//The order that is checked for : Everyone Group, Logged on users group, user, primaryGroup, otherGroups
@@ -621,13 +648,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			usersGroupsToCheckAgainstPermissions[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
 		}
 		else { //user check
-			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
-			if (!Boolean.TRUE.toString().equalsIgnoreCase(recurseParents))  { //old crap
-				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
-				groups = LoginBusinessBean.getPermissionGroups(iwuc);
-			} else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getLoggedInUser());
-			}
+//			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
+//			if (!Boolean.TRUE.toString().equalsIgnoreCase(recurseParents))  { //old crap
+//				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
+//				groups = LoginBusinessBean.getPermissionGroups(iwuc);
+//			} else { //the correct version
+				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, loggedInUser);
+//			}
 
 			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
@@ -703,6 +730,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			groups.addAll(groupsToCheckForPermissions);
 		}
 
+		getLogger().info("Parent groups (" + groups + ") for " + user + ", ID: " + user.getId());
 		return groups;
 	}
 
@@ -714,6 +742,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@SuppressWarnings("unchecked")
 	@Override
 	public boolean hasPermission(List<Integer> groupIds, String permissionKey, Object obj, IWUserContext iwc) throws Exception {
+		long start = System.currentTimeMillis();
+		try {
 		Boolean myPermission = null;
 		// Returned if one has permission for obj instance, true or false. If no instancepermission glopalpermission is checked
 		//TODO Eiki make one universal haspermission method
@@ -780,7 +810,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		if (permissionKey.equals(AccessController.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessController.PERMISSION_KEY_VIEW)) {
 			if (obj instanceof Group) {
-				return isGroupOwnerRecursively((Group) obj, iwc); //because owners parents groups always get read/write access
+				boolean owner = isGroupOwnerRecursively((Group) obj, iwc); //because owners parents groups always get read/write access
+				getLogger().info("Current user owner of " + ((Group) obj).getId() + ": " + owner);
+				return owner;
 			}
 			else {
 				return isOwner(obj, iwc);
@@ -789,8 +821,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		else {
 			return false;
 		}
-
-	} // method hasPermission
+		} finally {
+			getLogger().info("Groups ids: " + groupIds + ", permission key: " + permissionKey + ", object: " + obj + " (class: " + obj.getClass().getName() + "). Took time: " + (System.currentTimeMillis() - start) + " ms");
+		}
+	}
 
 	private static Boolean checkForPermission(List<String>[] permissionGroupLists, Object obj, String permissionKey, IWUserContext iwc) throws Exception {
 		Boolean myPermission = Boolean.FALSE;
@@ -1339,22 +1373,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		switch (permissionCategory) {
 			case AccessController.CATEGORY_OBJECT_INSTANCE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, CoreConstants.Y);
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, CoreConstants.Y.charAt(0));
 				break;
 			case AccessController.CATEGORY_OBJECT :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, CoreConstants.Y);
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, CoreConstants.Y.charAt(0));
 				break;
 			case AccessController.CATEGORY_BUNDLE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, CoreConstants.Y);
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, CoreConstants.Y.charAt(0));
 				break;
 			case AccessController.CATEGORY_PAGE_INSTANCE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, CoreConstants.Y);
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, CoreConstants.Y.charAt(0));
 				break;
 			case AccessController.CATEGORY_PAGE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE, identifier, permissionKey, CoreConstants.Y);
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_PAGE, identifier, permissionKey, CoreConstants.Y.charAt(0));
 				break;
 			case AccessController.CATEGORY_JSP_PAGE :
-				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, CoreConstants.Y);
+				permissions = getPermissionDAO().findPermissions(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, CoreConstants.Y.charAt(0));
 				break;
 		}
 
@@ -1733,6 +1767,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    //context_value=permissionKey, permission_string=collection of the current users roles, group_id = group.getPrimaryKey()
 	    //If something is found then we return true, otherwise false
 
+		long start = System.currentTimeMillis();
+		try {
 	    //get the parent groups
 	    List<Group> permissionControllingGroups = new ArrayList<Group>();
 	    Collection<Group> parents = getGroupDAO().getParentGroups(iwuc.getLoggedInUser().getUserRepresentative());
@@ -1779,6 +1815,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
         //has no roles or does not have the correct role
 	    return false;
+		} finally {
+			getLogger().info("Permission key: " + permissionKey + ", group: " + group + ". Took time: " + (System.currentTimeMillis() - start) + " ms");
+		}
 	}
 
 
@@ -1801,6 +1840,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public boolean hasEditPermissionFor(com.idega.user.data.Group group, IWUserContext iwuc) {
+		return hasEditPermissionForLegacyGroup(group, iwuc);
+	}
+	@Override
+	@Deprecated
+	public boolean hasEditPermissionForLegacyGroup(com.idega.user.data.Group group, IWUserContext iwuc) {
 		Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
 		return hasEditPermissionFor(g, iwuc);
 	}
@@ -1853,8 +1897,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public boolean hasPermitPermissionFor(com.idega.user.data.Group group, IWUserContext iwuc) {
+		long start = System.currentTimeMillis();
+		try {
 		Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
 		return hasPermitPermissionFor(g, iwuc);
+		} finally {
+			getLogger().info("Legacy group: " + group + ". Took time: " + (System.currentTimeMillis() - start) + " ms");
+		}
 	}
 
 	/**
@@ -2078,20 +2127,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	public Set<String> getAllRolesForUser(User user) {
 		Set<String> s = new HashSet<String>();
 
-		
-		
 		Group userGroup = user.getGroup();
 		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(userGroup);
-		
-		GroupBusiness groupBussiness = getGroupBusiness(
-				IWMainApplication.getDefaultIWApplicationContext());
+
+		GroupBusiness groupBussiness = getGroupBusiness(IWMainApplication.getDefaultIWApplicationContext());
 		if (groupBussiness != null) {
 			Collection<com.idega.user.data.Group> allGroups = null;
 			try {
 				allGroups = groupBussiness.getParentGroups(userGroup.getID());
 			} catch (Exception e) {
-				getLogger().log(Level.WARNING, 
-						"Failed to fetch parent groups for user: " + user + 
+				getLogger().log(Level.WARNING,
+						"Failed to fetch parent groups for user: " + user +
 						" cause of: ", e);
 			}
 
@@ -2951,28 +2997,25 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		 * @param pageUri the URI for a page request e.g. '/pages/1234'
 		 */
 	  @Override
-	public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request){
-
+	public boolean hasViewPermissionForPageURI(String pageUri, HttpServletRequest request) {
 	  	HttpSession session = request.getSession();
 	  	ServletContext sc = session.getServletContext();
 
 	  	//TODO: Optimize this since this has to be done for each request:
-	  	IWUserContext iwuc = new IWUserContextImpl(session,sc);
+	  	IWUserContext iwuc = new IWUserContextImpl(session, sc);
 
 	  	try {
 	  		String serverName = request.getServerName();
 	  		BuilderService bs = BuilderServiceFactory.getBuilderService(iwuc.getApplicationContext());
-	  		String pageKey = bs.getPageKeyByRequestURIAndServerName(pageUri,serverName);
-	  		if(pageKey!=null){
-	  			return hasViewPermissionForPageKey(pageKey,iwuc);
-	  		}
-	  		else{
-	  			//getLogger().warning("No pageKey found for : "+pageUri);
+	  		String pageKey = bs.getPageKeyByRequestURIAndServerName(pageUri, serverName);
+	  		if (pageKey != null) {
+	  			return hasViewPermissionForPageKey(pageKey, iwuc);
+	  		} else {
+	  			getLogger().warning("No pageKey found for URI: " + pageUri);
 	  			return false;
 	  		}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error while checking if has view permission: " + pageUri, e);
 		}
 	  	return false;
 	  }
@@ -2990,13 +3033,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			boolean permission = hasPermission(PERMISSION_KEY_VIEW, pageKeyObject, iwuc);
 			if (!permission) {
 				//if regular user check fails do extra check for content roles
-				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
+				boolean authorOrEditorRole = hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
+				if (!authorOrEditorRole) {
+					getLogger().warning("Current user either does not have roles (" + Arrays.asList(StandardRoles.ROLE_KEY_AUTHOR, StandardRoles.ROLE_KEY_EDITOR) +
+							") or user is not logged in. Can not view page (with view permission) with ID: " + pageKey);
+				}
+				return authorOrEditorRole;
 			}
 
 			//even if you have the view rights the page might not be published yet. Extra check for unpublished pages
 			if (iwuc.getApplicationContext().getApplicationSettings().getBoolean("iw_check_page_published", Boolean.TRUE) && !getPageDAO().isPagePublished(Integer.valueOf(pageKey))) {
 				//only editors can view unpublished pages.
-				return hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
+				boolean authorOrEditorRole = hasRole(StandardRoles.ROLE_KEY_AUTHOR, iwuc) || hasRole(StandardRoles.ROLE_KEY_EDITOR, iwuc);
+				if (!authorOrEditorRole) {
+					getLogger().warning("Current user either does not have roles (" + Arrays.asList(StandardRoles.ROLE_KEY_AUTHOR, StandardRoles.ROLE_KEY_EDITOR) +
+							") or user is not logged in. Can not view un-published page with ID: " + pageKey);
+				}
+				return authorOrEditorRole;
 			}
 
 			return permission;
@@ -3006,9 +3059,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	  }
 
-	  private String getRecurseParentsSettings(IWApplicationContext iwac) {
-		  return iwac.getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
-	  }
+//	  private String getRecurseParentsSettings(IWApplicationContext iwac) {
+//		  return iwac.getApplicationSettings().getProperty("TEMP_ACCESS_CONTROL_DO_NOT_RECURSE_PARENTS");
+//	  }
 
 	public UserLoginDAO getUserLoginDAO() {
 		if (userLoginDAO == null) {

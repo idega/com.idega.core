@@ -127,28 +127,31 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
   }
 
   @Override
-  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException {
+	  return findByPrimaryKeyIDO(primaryKey, null);
+  }
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey, Class<? extends IDOEntity> interfaceClass) throws FinderException {
     Object realPK = primaryKey;
-    if(primaryKey instanceof IDOEntity){
-    	try{
-    		throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
-    	}
-    	catch(FinderException fe){
+    if (primaryKey instanceof IDOEntity) {
+    	try {
+    		throw new FinderException("Argument of type: " + primaryKey.getClass() +
+    				" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
+    	} catch(FinderException fe){
     		fe.printStackTrace(System.err);
     	}
-    	realPK = ((IDOEntity)primaryKey).getPrimaryKey();
+    	realPK = ((IDOEntity) primaryKey).getPrimaryKey();
     }
-    Class<T> interfaceClass = getEntityInterfaceClass();
-    return idoFindByPrimaryKey(interfaceClass, realPK);
+    interfaceClass = interfaceClass == null ? getEntityInterfaceClass() : interfaceClass;
+    return (T) idoFindByPrimaryKey(interfaceClass, realPK);
   }
 
-  
+
 	/**
-	 * 
+	 *
 	 * <p>Makes a search for entity with primary key in all hierarchy.</p>
-	 * @param primaryKeys is {@link Collection} of 
+	 * @param primaryKeys is {@link Collection} of
 	 * {@link EJBLocalObject#getPrimaryKey()}, not <code>null</code>;
-	 * @return entities, extending this entity by given primary key or 
+	 * @return entities, extending this entity by given primary key or
 	 * entities of this type by primary key;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -169,10 +172,10 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 	}
 
 	/**
-	 * 
+	 *
 	 * @param primaryKey is {@link IDOEntity#getPrimaryKey()} to search by,
 	 * not <code>null</code>;
-	 * @return entity itself or a sub-type which has given id or 
+	 * @return entity itself or a sub-type which has given id or
 	 * <code>null</code> failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -225,13 +228,13 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 								+ "' proceeding to next one! ");
 			}
 		}
-		
+
 		return null;
 	}
 
 	/**
-	 * 
-	 * @return {@link Set} of different {@link IDOHome}s or 
+	 *
+	 * @return {@link Set} of different {@link IDOHome}s or
 	 * {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -244,12 +247,12 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 
 		return Collections.emptySet();
 	}
-	
+
 	/**
-	 * 
-	 * @param subTypes is {@link IDOEntity}s to get {@link IDOHome}s for, 
+	 *
+	 * @param subTypes is {@link IDOEntity}s to get {@link IDOHome}s for,
 	 * not <code>null</code>;
-	 * @return {@link Set} of different {@link IDOHome}s or 
+	 * @return {@link Set} of different {@link IDOHome}s or
 	 * {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -266,8 +269,8 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 				home = IDOLookup.getHome(subType);
 			} catch (IDOLookupException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
-						"Failed to get home for " + subType.getSimpleName() + 
+						Level.WARNING,
+						"Failed to get home for " + subType.getSimpleName() +
 						" cause of: ", e);
 			}
 
@@ -332,17 +335,21 @@ public void remove(Object primaryKey){
    * @throws FinderException
    */
   @Override
-public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException {
+  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException {
+	  return getEntityCollectionForPrimaryKeys(collectionOfPrimaryKeys, null);
+  }
+
+  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys, Class<? extends IDOEntity> theClass) throws FinderException {
   	if (collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
   		return getIDOEntityListForPrimaryKeys(collectionOfPrimaryKeys);
   	} else {
 	  	Collection<T> theReturn = new ArrayList<T>();
 	    if (collectionOfPrimaryKeys != null){
 		    for (Object pk: collectionOfPrimaryKeys) {
-		      if(pk instanceof IDOEntity){
+		      if (pk instanceof IDOEntity) {
 		      	theReturn.add((T) pk);
 		      } else {
-			      T entityObject = this.findByPrimaryKeyIDO(pk);
+			      T entityObject = this.findByPrimaryKeyIDO(pk, theClass);
 			      theReturn.add(entityObject);
 		      }
 		    }
@@ -362,15 +369,15 @@ public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Col
     return theReturn;
   }
 
-  protected IDOEntity idoCheckOutPooledEntity(){
-    /**
-     * @todo: Change implementation
-     */
-	 GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(this.getEntityInterfaceClass(),this.dataSource);
+  protected IDOEntity idoCheckOutPooledEntity() {
+	  return idoCheckOutPooledEntity(this.getEntityInterfaceClass());
+  }
+
+  protected <T extends IDOEntity> IDOEntity idoCheckOutPooledEntity(Class<T> interfaceClass) {
+	 GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(interfaceClass, this.dataSource);
 	 ent.setDatasource(this.dataSource, false);
 	 return ent;
   }
-
 
   protected void idoCheckInPooledEntity(IDOEntity entity){
     /**

@@ -138,6 +138,10 @@
           <groupId>commons-codec</groupId>
           <artifactId>commons-codec</artifactId>
         </exclusion>
+      	<exclusion>
+      		<artifactId>xmlParserAPIs</artifactId>
+      		<groupId>xml-apis</groupId>
+      	</exclusion>
       </exclusions>
     </dependency>
     <dependency>
@@ -285,6 +289,10 @@
       <type>jar</type>
     </dependency>
     <dependency>
+		<groupId>org.hibernate</groupId>
+		<artifactId>hibernate-core</artifactId>
+	</dependency>
+    <dependency>
         <groupId>org.hibernate.common</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
         <version>${org.hibernate-hibernate-annotations-version}</version>
@@ -312,6 +320,11 @@
      	<groupId>org.apache.poi</groupId>
      	<artifactId>poi-ooxml</artifactId>
      	<version>3.7</version>
+     </dependency>
+     <dependency>
+     	<groupId>javax.servlet</groupId>
+		<artifactId>javax.servlet-api</artifactId>
+		<version>${javax.servlet.javax.servlet-api-version}</version>
      </dependency>
   </dependencies>
 </project>

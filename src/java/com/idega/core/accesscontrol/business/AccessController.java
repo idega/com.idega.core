@@ -146,6 +146,8 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 
 	@Deprecated
 	public boolean hasEditPermissionFor(com.idega.user.data.Group group,IWUserContext iwuc);
+	@Deprecated
+	public boolean hasEditPermissionForLegacyGroup(com.idega.user.data.Group group,IWUserContext iwuc);
 	public boolean hasEditPermissionFor(Group group,IWUserContext iwuc);
 
 	@Deprecated

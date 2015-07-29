@@ -1224,14 +1224,14 @@ public class IWMainApplication	extends Application  implements MutableClass {
                 if (!restartApacheAlso) {
                 	commands = ArrayUtil.isEmpty(customActions) ?
                     		new String[] {
-                    			prePath + "/shutdown.sh",
-                    			prePath + "/startup.sh"
+                    			prePath + "./shutdown.sh",
+                    			prePath + "./startup.sh"
                     		} : customActions;
                 } else {
                 	commands = ArrayUtil.isEmpty(customActions) ?
                     		new String[] {
-                    			prePath + "/shutdown.sh",
-                    			prePath + "/startup.sh",
+                    			prePath + "./shutdown.sh",
+                    			prePath + "./startup.sh",
                     			restartScript
                     		} : customActions;
                 }
