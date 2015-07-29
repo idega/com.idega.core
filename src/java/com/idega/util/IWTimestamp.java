@@ -294,6 +294,24 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 	/**
+	 * 
+	 * <p>The same as {@link IWTimestamp#isBetween(IWTimestamp, IWTimestamp)},
+	 * but does not check equals option</p>
+	 * @param stampBefore to compare with this object, not <code>null</code>
+	 * @param stampAfter to compare with this object, not <code>null</code>;
+	 * @return <code>true</code> if this object is between the given objects, 
+	 * <code>false</code> otherwise
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public boolean isBetweenStrict(IWTimestamp stampBefore, IWTimestamp stampAfter) {
+		if (isLaterThan(stampBefore) && isEarlierThan(stampAfter)) {
+			return true;
+		}
+
+		return false;
+	}
+
+	/**
 	 * Returns true if this <code>IWTimestamp</code> object only contains a date setting.
 	 * @return boolean
 	 */
