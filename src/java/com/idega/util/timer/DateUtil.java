@@ -99,9 +99,6 @@ public class DateUtil {
 
 	public static LocalDate getDate(Date date) {
 		if (date != null) {
-//			Instant instant = input.toInstant();
-//			ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
-//			return LocalDate.parse(input.toString());
 			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 
