@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.ServletOutputStream;
+import javax.servlet.WriteListener;
 import javax.servlet.http.HttpServletResponse;
 
 import com.idega.util.CoreConstants;
@@ -22,6 +23,7 @@ public class GZIPResponseStream extends ServletOutputStream {
 	protected boolean closed = false;
 	protected HttpServletResponse response = null;
 	protected ServletOutputStream output = null;
+	protected WriteListener writeListener = null;
 
 	public GZIPResponseStream(HttpServletResponse response) throws IOException {
 		super();
@@ -85,5 +87,15 @@ public class GZIPResponseStream extends ServletOutputStream {
 
 	public void reset() {
 		//noop
+	}
+
+	@Override
+	public boolean isReady() {
+		return !closed();
+	}
+
+	@Override
+	public void setWriteListener(WriteListener writeListener) {
+		this.writeListener = writeListener;
 	}
 }
