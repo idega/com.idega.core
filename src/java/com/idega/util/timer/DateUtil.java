@@ -82,7 +82,9 @@
  */
 package com.idega.util.timer;
 
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.util.Date;
 
 /**
@@ -95,11 +97,12 @@ import java.util.Date;
  */
 public class DateUtil {
 
-	public static LocalDate getDate(Date input) {
-		if (input != null) {
+	public static LocalDate getDate(Date date) {
+		if (date != null) {
 //			Instant instant = input.toInstant();
 //			ZonedDateTime zdt = instant.atZone(ZoneId.systemDefault());
-			return LocalDate.parse(input.toString());
+//			return LocalDate.parse(input.toString());
+			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
 		}
 
 		return null;
