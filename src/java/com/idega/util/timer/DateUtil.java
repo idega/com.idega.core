@@ -84,6 +84,8 @@ package com.idega.util.timer;
 
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
@@ -97,9 +99,54 @@ import java.util.Date;
  */
 public class DateUtil {
 
+	/**
+	 * 
+	 * @param date to convert, not <code>null</code>;
+	 * @return converted date or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
 	public static LocalDate getDate(Date date) {
 		if (date != null) {
 			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param date to convert, not <code>null</code>;
+	 * @return converted date or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static LocalDateTime getDateTime(Date date) {
+		if (date != null) {
+			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param date to convert, not <code>null</code>;
+	 * @return converted date or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static LocalTime getTime(Date date) {
+		if (date != null) {
+			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalTime();
+		}
+
+		return null;
+	}
+
+	public static Date getDate(LocalTime time, LocalDate date) {
+		if (time != null && date != null) {
+			LocalDateTime dateTime = time.atDate(date);
+			if (dateTime != null) {
+				return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+			}
 		}
 
 		return null;
