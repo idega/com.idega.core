@@ -89,6 +89,8 @@ import java.time.LocalTime;
 import java.time.ZoneId;
 import java.util.Date;
 
+import com.idega.util.StringUtil;
+
 /**
  * <p>Quick conversion betwwen different formats</p>
  * <p>You can report about problems to: 
@@ -101,13 +103,33 @@ public class DateUtil {
 
 	/**
 	 * 
-	 * @param date to convert, not <code>null</code>;
-	 * @return converted date or <code>null</code> on failure;
+	 * <p>Obtains an instance of LocalDate from a text string such as 2007-12-03. 
+	 * The string must represent a valid date and is parsed using 
+	 * java.time.format.DateTimeFormatter.ISO_LOCAL_DATE.</p>
+	 * @param date the text to parse such as "2007-12-03", not null;
+	 * @return the parsed local date, or <code>null</code>;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public static LocalDate getDate(Date date) {
-		if (date != null) {
-			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+	public static LocalDate getDate(String date) {
+		if (!StringUtil.isEmpty(date)) {
+			return LocalDate.parse(date);
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * <p>Obtains an instance of LocalTime from a text string such as 10:15. 
+	 * The string must represent a valid time and is parsed using 
+	 * java.time.format.DateTimeFormatter.ISO_LOCAL_TIME.</p>
+	 * @param time the text to parse such as "10:15:30", not <code>null</code>;
+	 * @return the parsed local time or <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static LocalTime getTime(String time) {
+		if (!StringUtil.isEmpty(time)) {
+			return LocalTime.parse(time);
 		}
 
 		return null;
@@ -133,22 +155,76 @@ public class DateUtil {
 	 * @return converted date or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public static LocalTime getTime(Date date) {
-		if (date != null) {
-			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalTime();
+	public static LocalDate getDate(Date date) {
+		LocalDateTime dateTime = getDateTime(date);
+		if (dateTime != null) {
+			return dateTime.toLocalDate();
 		}
 
 		return null;
 	}
 
-	public static Date getDate(LocalTime time, LocalDate date) {
-		if (time != null && date != null) {
-			LocalDateTime dateTime = time.atDate(date);
-			if (dateTime != null) {
-				return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
-			}
+	/**
+	 * 
+	 * @param date to convert, not <code>null</code>;
+	 * @return converted date or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static LocalTime getTime(Date date) {
+		LocalDateTime dateTime = getDateTime(date);
+		if (dateTime != null) {
+			return dateTime.toLocalTime();
 		}
 
 		return null;
+	}
+
+	/**
+	 * 
+	 * @param dateTime to convert, not <code>null</code>;
+	 * @return converted date or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static Date getDate(LocalDateTime dateTime) {	
+		if (dateTime != null) {
+			return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param time to convert, not <code>null</code>;
+	 * @param date to convert, not <code>null</code>;
+	 * @return converted date or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static Date getDate(LocalTime time, LocalDate date) {	
+		if (time != null && date != null) {
+			return getDate(time.atDate(date));
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @param date to convert, not <code>null</code>;
+	 * @return converted date at 0 second of day or <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static Date getDate(LocalDate date) {
+		return getDate(LocalTime.ofSecondOfDay(0), date);
+	}
+
+	/**
+	 * 
+	 * @param time to convert, not <code>null</code>;
+	 * @return converted date at 0 date of epoch or <code>null</code>;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static Date getDate(LocalTime time) {
+		return getDate(time, LocalDate.ofEpochDay(0));
 	}
 }
