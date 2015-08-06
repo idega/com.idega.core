@@ -87,7 +87,10 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
+
+import com.idega.util.IWTimestamp;
 
 /**
  * <p>Quick conversion betwwen different formats</p>
@@ -108,6 +111,15 @@ public class DateUtil {
 	public static LocalDate getDate(Date date) {
 		if (date != null) {
 			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDate();
+		}
+
+		return null;
+	}
+
+	public static LocalDate getDate(String date) {
+		if (date != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+			return LocalDate.parse(date, formatter);
 		}
 
 		return null;
@@ -141,6 +153,15 @@ public class DateUtil {
 		return null;
 	}
 
+	public static LocalTime getTime(String time) {
+		if (time != null) {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+			return LocalTime.parse(time, formatter);
+		}
+
+		return null;
+	}
+
 	public static Date getDate(LocalTime time, LocalDate date) {
 		if (time != null && date != null) {
 			LocalDateTime dateTime = time.atDate(date);
@@ -152,7 +173,21 @@ public class DateUtil {
 		return null;
 	}
 
+	public static Date getDate(LocalTime time) {
+		if (time == null) {
+			return null;
+		}
+
+		IWTimestamp now = IWTimestamp.RightNow();
+		Instant instant = time.atDate(LocalDate.of(now.getYear(), now.getMonth(), now.getDay())). atZone(ZoneId.systemDefault()).toInstant();
+		return Date.from(instant);
+	}
+
 	public static Date getDate(LocalDate date) {
+		if (date == null) {
+			return null;
+		}
+
 		return Date.from(date.atStartOfDay(ZoneId.systemDefault()).toInstant());
 	}
 
