@@ -171,11 +171,27 @@ public class ICLocaleBusiness implements MutableClass {
       LocaleHashInUseById = new Hashtable<Object, ICLocale>();
       for (int i = 0; i < len; i++) {
         ICLocale ICL = L.get(i);
-        LocaleHashById.put(ICL.getPrimaryKey(),ICL);
-        LocaleHashByString.put(ICL.getLocale(),ICL);
-        if(ICL.getInUse()){
-          LocaleHashInUseById.put(ICL.getPrimaryKey(),ICL);
-          LocaleHashInUseByString.put(ICL.getLocale(),ICL);
+        if (ICL == null) {
+        	continue;
+        }
+
+        Object pk = ICL.getPrimaryKey();
+        if (pk != null) {
+        	LocaleHashById.put(pk, ICL);
+        }
+
+        String locale = ICL.getLocale();
+        if (locale != null) {
+        	LocaleHashByString.put(locale, ICL);
+        }
+
+        if (ICL.getInUse()) {
+        	if (pk != null) {
+        		LocaleHashInUseById.put(pk, ICL);
+        	}
+        	if (locale != null) {
+        		LocaleHashInUseByString.put(locale, ICL);
+        	}
         }
       }
     }

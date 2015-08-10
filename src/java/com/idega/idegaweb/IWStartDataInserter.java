@@ -60,6 +60,7 @@ import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -284,10 +285,17 @@ public class IWStartDataInserter implements Singleton {
 	}
 
 	private void doCreateMissingLocale(ICLocaleHome home, String localeString) {
+		if (StringUtil.isEmpty(localeString)) {
+			return;
+		}
+
 		Logger logger= Logger.getLogger(getClass().getName());
 		logger.info("Creating locale '" + localeString + "'");
 		try {
 			ICLocale icLocale = home.create();
+			if (localeString.length() > 20) {
+				localeString = localeString.substring(0, 20);
+			}
 			icLocale.setLocale(localeString);
 			icLocale.setInUse(localeString.equals(Locale.ENGLISH.toString()));
 			icLocale.store();
