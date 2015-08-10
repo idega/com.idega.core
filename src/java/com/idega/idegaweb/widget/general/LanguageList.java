@@ -29,6 +29,8 @@ import com.idega.util.ListUtil;
  */
 public class LanguageList extends Widget {
 
+	private boolean showCurrent = true;
+	
 	public LanguageList() {
 		super();
 		setStyleClass("languageList");
@@ -45,6 +47,8 @@ public class LanguageList extends Widget {
 			ICLocale icLocale = iter.next();
 			Locale locale = icLocale.getLocaleObject();
 
+			if (!isShowCurrent() && locale.equals(getLocale())) continue;
+			
 			Link link = new Link(locale.getDisplayLanguage(locale));
 			link.setLocale(locale);
 
@@ -53,10 +57,19 @@ public class LanguageList extends Widget {
 			if (locale.equals(getLocale())) {
 				item.setStyleClass("current");
 			}
+			
 			item.add(link);
 			list.add(item);
 		}
 
 		return list;
+	}
+
+	public boolean isShowCurrent() {
+		return showCurrent;
+	}
+
+	public void setShowCurrent(boolean showCurrent) {
+		this.showCurrent = showCurrent;
 	}
 }
