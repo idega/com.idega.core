@@ -25,8 +25,6 @@ public class GZIPResponseStream extends ServletOutputStream {
 	protected ServletOutputStream output = null;
 	protected WriteListener writeListener = null;
 
-	private WriteListener writeListener;
-
 	public GZIPResponseStream(HttpServletResponse response) throws IOException {
 		super();
 		this.closed = false;
