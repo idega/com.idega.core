@@ -229,6 +229,15 @@ public class GenericSelect extends InterfaceObject {
 		}
 	}
 
+	public void addOptionAt(int index, SelectOption option) {
+		if (!getChildren().contains(option)) {
+			getChildren().add(index, option);
+		}
+		if (option.getSelected()) {
+			setSelectedOption(option.getValueAsString());
+		}
+	}
+
 	/**
 	 * Adds a <code>SelectOption</code> to the select object.
 	 * @param option	The <code>SelectOption</code> to add.

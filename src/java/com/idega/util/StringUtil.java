@@ -6,6 +6,7 @@ import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
@@ -263,6 +264,27 @@ public class StringUtil {
 		return strings;
 	}
 
+	/**
+	 * 
+	 * @param strings of {@link Integer}s to convert, not <code>null</code>;
+	 * @return {@link ArrayList} of converted {@link Integer}s 
+	 * or {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	public static ArrayList<Integer> toIntegers(Collection<String> strings) {
+		ArrayList<Integer> integers = new ArrayList<Integer>();
+
+		if (!ListUtil.isEmpty(strings)) {
+			for(String string : strings) {
+				try {
+					integers.add(Integer.valueOf(string));
+				} catch (Exception e) {}
+			}
+		}
+
+		return integers;
+	}
+
 	public static String getValueFromBrackets(String value) {
 		if (isEmpty(value)) {
 			return value;
@@ -276,5 +298,4 @@ public class StringUtil {
 
 		return value;
 	}
-
 }

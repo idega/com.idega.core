@@ -76,11 +76,13 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 
 	public Integer getUsersGroupID();
 	public Integer getEveryoneGroupID();
+	public Integer getLoggedOutGroupID();
 
 	public PermissionGroup getPermissionGroupEveryOne() throws Exception;
 	public PermissionGroup getPermissionGroupUsers() throws Exception;
 	public PermissionGroup getPermissionGroupAdministrator() throws Exception;
-
+	public PermissionGroup getPermissionGroupLoggedOut() throws Exception;
+	
 	public boolean isAdmin(IWUserContext iwc)throws Exception;
 	public boolean isOwner(Object obj, IWUserContext iwc) throws Exception;
 	public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception;

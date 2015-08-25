@@ -98,16 +98,21 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private PermissionGroup AdministratorPermissionGroup = null;
 	private PermissionGroup PermissionGroupEveryOne = null;
 	private PermissionGroup PermissionGroupUsers = null;
+	private PermissionGroup PermissionGroupLoggedOut = null;
+	
 	private List<Group> standardGroups = null;
 
 	private static final String _APPADDRESS_ADMINISTRATOR_USER = "ic_super_admin";
 
 	private static final String PROPERTY_USERS_GROUP_ID = "accesscontrol.users.id";
 	private static final String PROPERTY_EVERYONE_GROUP_ID = "accesscontrol.everyone.id";
+	private static final String PROPERTY_LOGGEDOUT_GROUP_ID = "accesscontrol.loggedout.id";
+	
 
 	public static final int _GROUP_ID_EVERYONE = -7913;
 	public static final int _GROUP_ID_USERS = -1906;
-
+	public static final int _GROUP_ID_LOGGEDOUT = -5968;
+	
 	private static final int _notBuilderPageID = -1;
 	private PermissionCacher permissionCacher;
 
@@ -151,6 +156,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return null;
 	}
 
+	@Override
+	public Integer getLoggedOutGroupID() {
+		String key = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty(PROPERTY_LOGGEDOUT_GROUP_ID, String.valueOf(_GROUP_ID_LOGGEDOUT));
+		if (key != null) {
+			return new Integer(key);
+		}
+		return null;
+	}
+	
   protected Logger getLogger(){
   	return Logger.getLogger(this.getClass().getName());
   }
@@ -188,6 +202,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		this.PermissionGroupEveryOne = permission;
 	}
 
+	private void initPermissionGroupLoggedOut() {
+		PermissionGroup permission = getPermissionDAO().findPermissionGroup(getLoggedOutGroupID());
+		if (permission == null) {
+			permission = getPermissionDAO().createPermissionGroup("LoggedOut", "Permission only if not logged on");
+			IWMainApplication.getDefaultIWMainApplication().getSettings().setProperty(PROPERTY_LOGGEDOUT_GROUP_ID, permission.getID().toString());
+		}
+		this.PermissionGroupLoggedOut = permission;
+	}
+	
 	private void initPermissionGroupUsers() {
 		PermissionGroup permission = getPermissionDAO().findPermissionGroup(getUsersGroupID());
 		if (permission == null) {
@@ -197,6 +220,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		this.PermissionGroupUsers = permission;
 	}
 
+	@Override
+	public PermissionGroup getPermissionGroupLoggedOut() throws Exception {
+		if (this.PermissionGroupLoggedOut == null) {
+			initPermissionGroupEveryone();
+		}
+		return this.PermissionGroupLoggedOut;
+	}
+	
 	@Override
 	public PermissionGroup getPermissionGroupEveryOne() throws Exception {
 		if (this.PermissionGroupEveryOne == null) {
@@ -427,9 +458,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		List[] permissionOrder = null; // Everyone, users, user, primaryGroup, otherGroups
 
 		if (user == null) {
-			permissionOrder = new List[1];
+			permissionOrder = new List[2];
 			permissionOrder[0] = new ArrayList();
 			permissionOrder[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
+			permissionOrder[1] = new ArrayList();
+			permissionOrder[1].add(Integer.toString(getPermissionGroupLoggedOut().getID()));
 		}
 		else {
 
@@ -643,9 +676,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		//
 
 		if (user == null) { //everyone group check
-			usersGroupsToCheckAgainstPermissions = new List[1];
+			usersGroupsToCheckAgainstPermissions = new List[2];
 			usersGroupsToCheckAgainstPermissions[0] = new ArrayList<String>();
 			usersGroupsToCheckAgainstPermissions[0].add(Integer.toString(getPermissionGroupEveryOne().getID()));
+			usersGroupsToCheckAgainstPermissions[1] = new ArrayList<String>();
+			usersGroupsToCheckAgainstPermissions[1].add(Integer.toString(getPermissionGroupLoggedOut().getID()));
 		}
 		else { //user check
 //			String recurseParents = getRecurseParentsSettings(iwuc.getApplicationContext());
@@ -1433,6 +1468,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		this.standardGroups = new ArrayList<Group>();
 		this.standardGroups.add(this.getPermissionGroupEveryOne());
 		this.standardGroups.add(this.getPermissionGroupUsers());
+		this.standardGroups.add(this.getPermissionGroupLoggedOut());
 	}
 
 	@Override
@@ -1525,6 +1561,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		initPermissionGroupEveryone();
 		initPermissionGroupUsers();
+		initPermissionGroupLoggedOut();
 
 		try {
 			initAdministratorUser();

@@ -153,6 +153,9 @@ public class EntityFinder implements Singleton {
 	 * Returns null if there was no match
 	 */
 	public static List findAllLegacy(GenericEntity entity, String SQLString, int returningNumberOfRecords) throws SQLException {
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+
 		Connection conn = null;
 		Statement Stmt = null;
 		ResultSetMetaData metaData;
@@ -223,6 +226,10 @@ public class EntityFinder implements Singleton {
 			}
 			if (conn != null) {
 				entity.freeConnection(conn);
+			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), SQLString);
 			}
 		}
 		/*

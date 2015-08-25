@@ -26,7 +26,6 @@ public class NamespaceContextImpl implements NamespaceContext {
 
 	@Override
 	public String getNamespaceURI(String prefix) {
-
 		return prefixMap.containsKey(prefix) ? prefixMap.get(prefix) : XMLConstants.DEFAULT_NS_PREFIX;
 	}
 

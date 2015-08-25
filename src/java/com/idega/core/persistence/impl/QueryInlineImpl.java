@@ -99,7 +99,6 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return null;
 		} finally {
 			if (measure) {
-				long end = System.currentTimeMillis();
 				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
 			}
 		}
@@ -154,7 +153,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		this.query = query;
 	}
 
-	EntityManager getEntityManager() {
+	protected EntityManager getEntityManager() {
 		return entityManager;
 	}
 

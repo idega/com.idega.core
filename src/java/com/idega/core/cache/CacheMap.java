@@ -285,14 +285,21 @@ public class CacheMap<K extends Serializable, V> extends ConcurrentHashMap<K, V>
 		}
 	}
 
-	@Override
-	public Set<K> keySet() {
-		Set<K> set = new HashSet<K>();
+	public java.util.concurrent.ConcurrentHashMap.KeySetView<K, V> keySet() {
+		ConcurrentHashMap<K, V> map = new ConcurrentHashMap<K, V>();
 		List<K> keys;
 		try {
 			keys = getCache().getKeys();
-			set.addAll(keys);
-			return set;
+			for (K key: keys) {
+				try {
+					Object obj = new Object();
+					map.put(key, (V) obj);
+				} catch (NullPointerException e) {
+					LOGGER.warning("NullPointerException for key: '" + key + "'");
+				}
+			}
+
+			return map.keySet();
 		} catch (IllegalStateException e) {
 			throw new RuntimeException(e);
 		} catch (CacheException e) {

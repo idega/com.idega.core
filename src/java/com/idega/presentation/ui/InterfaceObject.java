@@ -17,6 +17,7 @@ import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
+import com.idega.util.CoreConstants;
 
 /**
  * <p>
@@ -340,7 +341,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (isMarkupAttributeSet("value")) {
 			return getMarkupAttribute("value");
 		}
-		return "";
+		return CoreConstants.EMPTY;
 	}
 
 	/**

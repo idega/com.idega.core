@@ -23,6 +23,7 @@ public class GZIPResponseStream extends ServletOutputStream {
 	protected boolean closed = false;
 	protected HttpServletResponse response = null;
 	protected ServletOutputStream output = null;
+	protected WriteListener writeListener = null;
 
 	private WriteListener writeListener;
 
