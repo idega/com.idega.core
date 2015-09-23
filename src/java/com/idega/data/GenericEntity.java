@@ -4512,7 +4512,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	/**
 	 * Finds one primary key by an SQL query
 	 */
-	private <PK> PK idoFindOnePKBySQL(String sqlQuery, SelectQuery selectQuery) throws FinderException {
+	protected <PK> PK idoFindOnePKBySQL(String sqlQuery, SelectQuery selectQuery) throws FinderException {
 		Collection<PK> coll = idoFindPKsBySQL(sqlQuery, 1, -1, selectQuery);
 		try {
 			if (!ListUtil.isEmpty(coll)) {
