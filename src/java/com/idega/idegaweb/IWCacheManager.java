@@ -340,7 +340,16 @@ private boolean isBlobCached(Cache cache){
 
 /** caches a single entity of type IDOEntity **/
   public void cacheEntity(IDOEntity entity, String cacheKey){
-    if( this.entityMaps == null ){
+	  if (cacheKey == null) {
+		  log.warning("Cache key is not provided. Value: " + entity);
+		  return;
+	  }
+	  if (entity == null) {
+		  log.warning("Cache value is not provided. Key: " + cacheKey);
+		  return;
+	  }
+
+	  if( this.entityMaps == null ){
       this.entityMaps = new ConcurrentHashMap<Object, Object>();
     }
     this.entityMaps.put(cacheKey, entity);
