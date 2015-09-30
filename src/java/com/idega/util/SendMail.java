@@ -65,9 +65,22 @@ public class SendMail {
 	 * @param attachedFiles
 	 * @throws MessagingException
 	 */
-	public static Message send(String from, String to, String cc, String bcc, String replyTo, String host, String subject, String text, String mailType,
-			List headers, final boolean useThread, final boolean deleteFiles, final File[] attachedFiles) throws MessagingException {
-
+	public static Message send(
+			String from,
+			final String to,
+			String cc,
+			String bcc,
+			String replyTo,
+			String host,
+			final String subject,
+			final String text,
+			String mailType,
+			List headers,
+			final boolean useThread,
+			final boolean deleteFiles,
+			final File[] attachedFiles
+	) throws MessagingException {
+		
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
@@ -139,10 +152,11 @@ public class SendMail {
 			MimeMultipart multipart = new MimeMultipart();
 			multipart.addBodyPart(body);
 
-			for(int i = 0;i < attachedFiles.length;i++){
+			for (int i = 0; i < attachedFiles.length; i++) {
 				File attachedFile = attachedFiles[i];
-				if (attachedFile == null)
+				if (attachedFile == null) {
 					continue;
+				}
 				if (!attachedFile.exists()) {
 					Logger.getLogger(SendMail.class.getName()).warning("File '" + attachedFile + "' does not exist!");
 					continue;
@@ -184,8 +198,11 @@ public class SendMail {
 							filesNames.append(attachment.getName()).append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 						}
 					}
-					Logger.getLogger(SendMail.class.getName()).log(Level.WARNING,
-							"Error sending mail " + mail + ". Attachments: '" + filesNames.toString() + "'", e);
+					Logger.getLogger(SendMail.class.getName()).log(
+							Level.WARNING,
+							"Error sending mail to " + to + " with subject '" + subject + "' and text '" +  text + "'. Attachments: '" + filesNames.toString() + "'",
+							e
+					);
 				} finally {
 					if (attachedFiles != null) {
 						for(int i = 0;i < attachedFiles.length;i++){
@@ -197,11 +214,12 @@ public class SendMail {
 				}
 			}
 		});
-		if (useThread)
+		if (useThread) {
 			transporter.start();
-		else
+		} else {
 			transporter.run();
-
+		}
+		
 		return message;
 	}
 	
