@@ -14,15 +14,15 @@ import javax.activation.FileDataSource;
 import javax.mail.Authenticator;
 import javax.mail.BodyPart;
 import javax.mail.Message;
+import javax.mail.Message.RecipientType;
 import javax.mail.MessagingException;
 import javax.mail.Session;
 import javax.mail.Transport;
 import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeBodyPart;
 import javax.mail.internet.MimeMessage;
-import javax.mail.internet.MimePart;
-import javax.mail.Message.RecipientType;
 import javax.mail.internet.MimeMultipart;
+import javax.mail.internet.MimePart;
 
 import com.idega.builder.bean.AdvancedProperty;
 import com.idega.core.file.util.MimeTypeUtil;
@@ -30,6 +30,7 @@ import com.idega.core.messaging.MessagingSettings;
 import com.idega.core.messaging.SMTPAuthenticator;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.util.mail.Attachment;
 
 /**
  * <p>
@@ -79,6 +80,31 @@ public class SendMail {
 			final boolean useThread,
 			final boolean deleteFiles,
 			final File[] attachedFiles
+	) throws MessagingException {
+		boolean attachmentsProvided = attachedFiles != null && attachedFiles.length > 0;
+		Attachment[] attachments = attachmentsProvided ? new Attachment[attachedFiles.length] : null;
+		if (attachmentsProvided) {
+			for (int i = 0; i < attachedFiles.length; i++) {
+				attachments[i] = new Attachment(attachedFiles[i]);
+			}
+		}
+		return send(from, to, cc, bcc, replyTo, host, subject, text, mailType, headers, useThread, attachments, deleteFiles);
+	}
+	
+	public static Message send(
+			String from,
+			final String to,
+			String cc,
+			String bcc,
+			String replyTo,
+			String host,
+			final String subject,
+			final String text,
+			String mailType,
+			List headers,
+			final boolean useThread,
+			final Attachment[] attachments,
+			final boolean deleteFiles
 	) throws MessagingException {
 		
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
@@ -143,7 +169,7 @@ public class SendMail {
 		message.setSubject(subject, charset);
 
 		//	Attachments
-		if ((attachedFiles == null) || (attachedFiles.length == 0)) {
+		if ((attachments == null) || (attachments.length == 0)) {
 			setMessageContent(message, text, mailType, charset);
 		} else {
 			MimeBodyPart body = new MimeBodyPart();
@@ -152,23 +178,31 @@ public class SendMail {
 			MimeMultipart multipart = new MimeMultipart();
 			multipart.addBodyPart(body);
 
-			for (int i = 0; i < attachedFiles.length; i++) {
-				File attachedFile = attachedFiles[i];
-				if (attachedFile == null) {
+			for (int i = 0; i < attachments.length; i++) {
+				Attachment attachment = attachments[i];
+				if (attachment == null || attachment.getAttachment() == null) {
 					continue;
 				}
+				
+				File attachedFile = attachment.getAttachment();
 				if (!attachedFile.exists()) {
 					Logger.getLogger(SendMail.class.getName()).warning("File '" + attachedFile + "' does not exist!");
 					continue;
 				}
 
-				BodyPart attachment = new MimeBodyPart();
+				BodyPart mailAttachment = new MimeBodyPart();
 				DataSource attachmentSource = new FileDataSource(attachedFile);
 				DataHandler attachmentHandler = new DataHandler(attachmentSource);
-				attachment.setDataHandler(attachmentHandler);
-				attachment.setFileName(attachedFile.getName());
-				attachment.setDescription("Attached file: " + attachment.getFileName());
-				multipart.addBodyPart(attachment);
+				mailAttachment.setDataHandler(attachmentHandler);
+				mailAttachment.setFileName(attachedFile.getName());
+				if (!StringUtil.isEmpty(attachment.getCid())) {
+					((MimeBodyPart) mailAttachment).setContentID("<" + attachment.getCid() + ">");
+				}
+				if (!StringUtil.isEmpty(attachment.getDisposition())) {
+					((MimeBodyPart) mailAttachment).setDisposition(attachment.getDisposition());
+				}
+				mailAttachment.setDescription("Attached file: " + mailAttachment.getFileName());
+				multipart.addBodyPart(mailAttachment);
 			}
 
 			message.setContent(multipart);
@@ -190,12 +224,13 @@ public class SendMail {
 					Transport.send(mail);
 				} catch (Exception e) {
 					StringBuilder filesNames = new StringBuilder();
-					if (attachedFiles != null) {
-						for(int i = 0;i < attachedFiles.length;i++){
-							File attachment = attachedFiles[i];
-							if (attachment == null)
+					if (attachments != null) {
+						for (int i = 0; i < attachments.length; i++) {
+							Attachment attachment = attachments[i];
+							if (attachment == null || attachment.getAttachment() == null) {
 								continue;
-							filesNames.append(attachment.getName()).append(CoreConstants.COMMA).append(CoreConstants.SPACE);
+							}
+							filesNames.append(attachment.getAttachment().getName()).append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 						}
 					}
 					Logger.getLogger(SendMail.class.getName()).log(
@@ -204,11 +239,12 @@ public class SendMail {
 							e
 					);
 				} finally {
-					if (attachedFiles != null) {
-						for(int i = 0;i < attachedFiles.length;i++){
-							File attachment = attachedFiles[i];
-							if (attachment != null && attachment.exists())
-								attachment.delete();
+					if (deleteFiles && attachments != null) {
+						for (int i = 0; i < attachments.length; i++) {
+							Attachment attachment = attachments[i];
+							if (attachment != null && attachment.getAttachment() != null && attachment.getAttachment().exists()) {
+								attachment.getAttachment().delete();
+							}
 						}
 					}
 				}
