@@ -205,6 +205,10 @@ public class SendMail {
 			return null;
 		}
 
+		if (StringHandler.isHTML(text)) {
+			mailType = MimeTypeUtil.MIME_TYPE_HTML;
+		}
+
 		if (simpleMessage) {
 			sendSimpleMail(from, to, subject, text);
 			return null;
