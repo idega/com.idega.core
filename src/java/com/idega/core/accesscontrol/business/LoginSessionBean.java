@@ -273,8 +273,14 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	public boolean isSuperAdmin() {
 		try {
 			User user = getUserEntity();
-			if (user != null)
-				return user.equals(this.getAccessController().getAdministratorUser());
+			if (user != null) {
+				if (user.equals(this.getAccessController().getAdministratorUser())) {
+					return true;
+				}
+
+				UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+				return userBusiness.isMemberOfGroup(getAccessController().getPermissionGroupAdministrator().getID(), userBusiness.getUser(user.getId()));
+			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
 		}
