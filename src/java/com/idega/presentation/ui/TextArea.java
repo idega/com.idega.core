@@ -12,6 +12,7 @@ import java.io.IOException;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 import com.idega.util.text.TextSoap;
 
@@ -22,7 +23,7 @@ import com.idega.util.text.TextSoap;
  * Class that renders out a textarea input element.
  * </p>
  *  Last modified: $Date: 2006/05/10 08:13:33 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.21 $
  */
@@ -43,18 +44,19 @@ public class TextArea extends InterfaceObject {
 	private String _content = EMPTY_STRING;
 	private int maximum = -1;
 	private boolean asMaximum = false;
-	
+
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(MAX_CHARACTERS_PROPERTY);
     	if (ve != null) {
 	    	int index = Integer.parseInt(ve.getValue(context.getELContext()).toString());
     		setMaximumCharacters(index);
-    	}    
-    	
+    	}
+
     	super.encodeBegin(context);
     }
-    
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[6];
 		values[0] = super.saveState(ctx);
@@ -66,6 +68,7 @@ public class TextArea extends InterfaceObject {
 		return values;
 	}
 
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -82,7 +85,7 @@ public class TextArea extends InterfaceObject {
 	public TextArea() {
 		this(UNTITLED_STRING);
 	}
-	
+
 	/**
 	 * Constructs a new <code>TextArea</code> with the name specified and no contents.
 	 * @param name	The name of the <code>TextArea</code>
@@ -90,7 +93,7 @@ public class TextArea extends InterfaceObject {
 	public TextArea(String name) {
 		this(name, EMPTY_STRING);
 	}
-	
+
 	/**
 	 * Constructs a new <code>TextArea</code> with the parameters specified.
 	 * @param name	The name of the <code>TextArea</code>
@@ -126,6 +129,7 @@ public class TextArea extends InterfaceObject {
 		setRows(rows);
 	}
 
+	@Override
 	public void _main(IWContext iwc) throws Exception {
 		if (isEnclosedByForm()) {
 			if (this.asMaximum) {
@@ -143,6 +147,7 @@ public class TextArea extends InterfaceObject {
 		}
 	}
 
+	@Override
 	public void print(IWContext iwc) throws IOException {
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<textarea name=\"" + getName() + "\"" + getMarkupAttributesString() + " >");
@@ -161,7 +166,7 @@ public class TextArea extends InterfaceObject {
 	public void setColumns(int cols) {
 		setMarkupAttribute(COLS_ATTRIBUTE, Integer.toString(cols));
 	}
-	
+
 	/**
 	 * Sets the number of character rows in this text area
 	 */
@@ -195,6 +200,7 @@ public class TextArea extends InterfaceObject {
 	 * Sets the width in columns
 	 * @deprecated Replaced with setWidth(String) or setColumnn(int)
 	 */
+	@Deprecated
 	public void setWidth(int columns) {
 		setColumns(columns);
 	}
@@ -203,6 +209,7 @@ public class TextArea extends InterfaceObject {
 	 * Sets the height in rows
 	 * @deprecated Replaced with setHeight(String) or setRows(int)
 	 */
+	@Deprecated
 	public void setHeight(int rows) {
 		setRows(rows);
 	}
@@ -210,23 +217,31 @@ public class TextArea extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
-  	if (getIndex() > 0) {
-  		String[] parameters = iwc.getParameterValues(getName());
-  		if (parameters != null && parameters.length >= getIndex()) {
-  			setContent(parameters[getIndex()]);
-  		}
-  	}
-  	else {
-      if (iwc.getParameter(getName()) != null) {
-          setContent(iwc.getParameter(getName()));
-      }
-  	}
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
+	  	if (getIndex() > 0) {
+	  		String[] parameters = iwc.getParameterValues(getName());
+	  		if (parameters != null && parameters.length >= getIndex()) {
+	  			setContent(parameters[getIndex()]);
+	  		}
+	  	}
+	  	else {
+	      if (iwc.getParameter(getName()) != null) {
+	          setContent(iwc.getParameter(getName()));
+	      }
+	  	}
 	}
 
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#getContent()
 	 */
+	@Override
 	public String getContent() {
 		return this._content;
 	}
@@ -234,12 +249,13 @@ public class TextArea extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#setContent(String)
 	 */
+	@Override
 	public void setContent(String content) {
 		this._content = content;
 	}
 
 	/**
-	 * Sets the text input so that it can not be empty, displays an alert with the given 
+	 * Sets the text input so that it can not be empty, displays an alert with the given
 	 * error message if the "error" occurs.  Uses Javascript.
 	 * @param errorMessage	The error message to display.
 	 */
@@ -247,10 +263,11 @@ public class TextArea extends InterfaceObject {
 		this.isSetAsNotEmpty = true;
 		this.notEmptyErrorMessage = TextSoap.removeLineBreaks(errorMessage);
 	}
-	
+
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#setValue(java.lang.String)
 	 */
+	@Override
 	public void setValue(String value) {
 		setContent(value);
 	}
@@ -258,6 +275,7 @@ public class TextArea extends InterfaceObject {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#setValue(int)
 	 */
+	@Override
 	public void setValue(int value) {
 		setContent(String.valueOf(value));
 	}
@@ -265,10 +283,11 @@ public class TextArea extends InterfaceObject {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
-	
+
 	/**
 	 * Sets the accesskey html attribute so you can activate this element (causes a "click" on it) with a keyboard command
 	 * @param accessKey
@@ -276,9 +295,9 @@ public class TextArea extends InterfaceObject {
 	public void setAccessKey(String accessKey){
 		setMarkupAttribute("accesskey",accessKey);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return The access key that has been set for this element
 	 */
 	public String getAccessKey(){

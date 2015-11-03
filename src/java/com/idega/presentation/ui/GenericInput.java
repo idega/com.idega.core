@@ -1,6 +1,7 @@
 package com.idega.presentation.ui;
 
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWConstants;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
@@ -25,21 +26,23 @@ public abstract class GenericInput extends InterfaceObject {
 	public static final String INPUT_TYPE_HIDDEN = "hidden";
 	public static final String INPUT_TYPE_IMAGE = "image";
 	public static final String INPUT_TYPE_BUTTON = "button";
-	
+
 	private String inputType = INPUT_TYPE_TEXT;
 
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[2];
 		values[0] = super.saveState(ctx);
 		values[1] = this.inputType;
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
 		this.inputType = ((String) values[1]);
-	}	
-	
+	}
+
 	public GenericInput() {
 		super();
 		setTransient(false);
@@ -48,11 +51,12 @@ public abstract class GenericInput extends InterfaceObject {
 	public String getInputType() {
 		return this.inputType;
 	}
-	
+
 	public void setInputType(String inputType) {
 		this.inputType = inputType;
 	}
-	
+
+	@Override
 	public void print(IWContext main) throws Exception {
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML)) {
 			String markup = main.getApplicationSettings().getDefaultMarkupLanguage();
@@ -94,22 +98,18 @@ public abstract class GenericInput extends InterfaceObject {
 			if(isMarkupAttributeSet(definedAttributes[i])) {
 				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");
 			}
-		} 		
+		}
 		print("/>");
 	}
-
-	/**
-	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
-	 */
-	public abstract void handleKeepStatus(IWContext iwc);
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
-	
+
 	/**
 	 * Sets the accesskey html attribute so you can activate this element (causes a "click" on it) with a keyboard command
 	 * @param accessKey
@@ -117,9 +117,9 @@ public abstract class GenericInput extends InterfaceObject {
 	public void setAccessKey(String accessKey){
 		setMarkupAttribute("accesskey",accessKey);
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * @return The access key that has been set for this element
 	 */
 	public String getAccessKey(){

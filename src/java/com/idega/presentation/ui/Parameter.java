@@ -17,7 +17,7 @@ import com.idega.presentation.IWContext;
  * This parameter has a name/value that has only a meaning inside a Form and is submitted with the form in a POST or GET.
  * </p>
  *  Last modified: $Date: 2005/03/08 20:39:42 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.10 $
  */
@@ -51,12 +51,20 @@ public class Parameter extends GenericInput {
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
 		if (iwc.getParameter(getName()) != null) {
 			setContent(iwc.getParameter(getName()));
 		}
 	}
-	
+
+	@Override
 	public boolean equals(Object obj){
 		if(obj instanceof Parameter){
 			Parameter pObj = (Parameter)obj;
@@ -68,12 +76,14 @@ public class Parameter extends GenericInput {
 			return super.equals(obj);
 		}
 	}
-	
+
+	@Override
 	public String[] getDefinedWmlAttributes() {
 		String[] definedAttributes = {"value"};//,"class","id"};
 		return definedAttributes;
 	}
-	
+
+	@Override
 	public void printWML(IWContext main) {
 		String[] definedAttributes = getDefinedWmlAttributes();
 		print("<postfield name=\"" + getName() + "\" ");
@@ -81,13 +91,14 @@ public class Parameter extends GenericInput {
 			if(isMarkupAttributeSet(definedAttributes[i])) {
 				print(definedAttributes[i]+"=\"" + getMarkupAttribute(definedAttributes[i]) + "\" ");
 			}
-		} 		
+		}
 		print("/>");
 	}
-	
+
 	/**
 	 * @return
 	 */
+	@Override
 	public boolean normalPrintSequence() {
 		return false;
 	}

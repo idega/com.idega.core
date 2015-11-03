@@ -1,11 +1,11 @@
 /*
  * $Id: TimeInput.java,v 1.12 2006/04/09 12:13:15 laddi Exp $
- * 
+ *
  * Copyright (C) 2001 Idega hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
- * 
+ *
  */
 package com.idega.presentation.ui;
 
@@ -25,7 +25,7 @@ public class TimeInput extends InterfaceObject {
 	private Script script;
 	private DropdownMenu theHour;
 	private DropdownMenu theMinute;
-	
+
 	private Parameter theWholeTime;
 	private boolean setCheck = false;
 	private boolean isDisabled = false;
@@ -33,7 +33,7 @@ public class TimeInput extends InterfaceObject {
 	private int iMinuteInterval = 1;
 	private int iFromHour = 0;
 	private int iToHour = 23;
-	
+
 	final static String HOUR_KEY = "timeinput.hour";
 	final static String MINUTE_KEY = "timeinput.minute";
 	final static String HOUR_KEY_S = "timeinput.hour_short";
@@ -47,7 +47,7 @@ public class TimeInput extends InterfaceObject {
 		super();
 		this.theHour = new DropdownMenu(name + "_hour");
 		this.theMinute = new DropdownMenu(name + "_minute");
-		
+
 		this.theWholeTime = new Parameter(name, "");
 		this.script = new Script();
 		super.add(this.theHour);
@@ -83,6 +83,7 @@ public class TimeInput extends InterfaceObject {
 		}
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		this.theHour.setOnChange("setValueOfHiddenTime(this.form." + this.theHour.getName() + ",this.form." + this.theMinute.getName() + ",this.form." + this.theWholeTime.getName()+ ")");
 		this.theMinute.setOnChange("setValueOfHiddenTime(this.form." + this.theHour.getName() + ",this.form." + this.theMinute.getName() + ",this.form." + this.theWholeTime.getName() + ")");
@@ -96,7 +97,7 @@ public class TimeInput extends InterfaceObject {
 		for (int a = 0; a < 60; a = a + this.iMinuteInterval) {
 			this.theMinute.addMenuElement(TextSoap.addZero(a), TextSoap.addZero(a));
 		}
-		
+
 		getJavaScript().addFunction("setValueOfHiddenTime", "function setValueOfHiddenTime(hourInput,minuteInput,hiddenInput){\r\r	var hourValue='00';\r	var minuteValue='00';\r	var secondValue='00';\r	var millisecondValue='000000';\r	\r	\r	if(hourInput.selectedIndex != 0){\r		hourValue=hourInput.options[hourInput.selectedIndex].value;\r	}\r	if(minuteInput.selectedIndex != 0){\r		minuteValue=minuteInput.options[minuteInput.selectedIndex].value;\r	}\r\r\r	if ((hourInput.selectedIndex == 0) || (minuteInput.selectedIndex == 0) ){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = hourValue+':'+minuteValue+':'+secondValue+'.'+millisecondValue;\r	}\r}");
 
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
@@ -131,11 +132,13 @@ public class TimeInput extends InterfaceObject {
 		return this.script;
 	}
 
+	@Override
 	public void setStyleAttribute(String style) {
 		this.theHour.setStyleAttribute(style);
 		this.theMinute.setStyleAttribute(style);
 	}
 
+	@Override
 	public void setStyleClass(String styleName) {
 		this.theHour.setStyleClass(styleName);
 		this.theMinute.setStyleClass(styleName);
@@ -144,10 +147,12 @@ public class TimeInput extends InterfaceObject {
 	/**
 	 * *Does nothing - overrides function in superclass
 	 */
+	@Override
 	public void add(PresentationObject mo) {
 		// does nothing
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (this.setCheck == true) {
 			this.theWholeTime.setValue(this.theHour.getSelectedElementValue() + ":" + this.theMinute.getSelectedElementValue() + ":00.000000");
@@ -157,10 +162,17 @@ public class TimeInput extends InterfaceObject {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
 		String lastValue = iwc.getParameter(this.theWholeTime.getName());
 		if (lastValue != null) {
 			setContent(lastValue);
@@ -171,6 +183,7 @@ public class TimeInput extends InterfaceObject {
 	 * (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
@@ -179,6 +192,7 @@ public class TimeInput extends InterfaceObject {
 	 * (non-Javadoc)
 	 * @see com.idega.presentation.ui.InterfaceObject#setContent(java.lang.String)
 	 */
+	@Override
 	public void setContent(String content) {
 		if (!"".equals(content)) {
 			String dummyDate = "2005-01-01 ";
@@ -191,6 +205,7 @@ public class TimeInput extends InterfaceObject {
 		}
 	}
 
+	@Override
 	public void setDisabled(boolean disabled) {
 		this.isDisabled = disabled;
 	}
@@ -198,11 +213,11 @@ public class TimeInput extends InterfaceObject {
 	public void setFromHour(int fromHour) {
 		this.iFromHour = fromHour;
 	}
-	
+
 	public void setMinuteInterval(int minuteInterval) {
 		this.iMinuteInterval = minuteInterval;
 	}
-	
+
 	public void setToHour(int toHour) {
 		this.iToHour = toHour;
 	}

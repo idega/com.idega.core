@@ -17,7 +17,10 @@ import javax.faces.context.FacesContext;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -714,8 +717,33 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 	 * object on performed actions.  Override if interface object can keep its status on
 	 * actions.
 	 * @param iwc
+	 * @throws AssertionError
 	 */
-	public abstract void handleKeepStatus(IWContext iwc);
+	public void handleKeepStatus(IWContext iwc) throws AssertionError {
+		String name = getName();
+		if (StringUtil.isEmpty(name) || !iwc.isParameterSet(name)) {
+			return;
+		}
+
+		String value = iwc.getParameter(name);
+		String property = iwc.getApplicationSettings().getProperty("cross_site_scripting_checks", "src,script,http://,https://,wwww.");
+		if (StringUtil.isEmpty(property)) {
+			return;
+		}
+
+		String[] valuesToCheck = property.split(CoreConstants.COMMA);
+		if (!ArrayUtil.isEmpty(valuesToCheck)) {
+			for (String toCheck: valuesToCheck) {
+				if (value.indexOf(toCheck) != -1) {
+					String message = "Invalid value for input '" + getName() + "': '" + value + "'. Failed to pass cross site scripting check '" + toCheck + "'";
+					getLogger().warning(message);
+					AssertionError error = new AssertionError(message);
+					CoreUtil.sendExceptionNotification(message, error);
+					throw error;
+				}
+			}
+		}
+	}
 
 	/**
 	 * Returns true if interface object is to keep its status when an action is performed.
