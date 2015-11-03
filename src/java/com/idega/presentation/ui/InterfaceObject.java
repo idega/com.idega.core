@@ -19,7 +19,6 @@ import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Script;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.StringUtil;
 
 /**
@@ -735,11 +734,11 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		if (!ArrayUtil.isEmpty(valuesToCheck)) {
 			for (String toCheck: valuesToCheck) {
 				if (value.indexOf(toCheck) != -1) {
+					setContent(CoreConstants.EMPTY);
+
 					String message = "Invalid value for input '" + getName() + "': '" + value + "'. Failed to pass cross site scripting check '" + toCheck + "'";
 					getLogger().warning(message);
-					AssertionError error = new AssertionError(message);
-					CoreUtil.sendExceptionNotification(message, error);
-					throw error;
+					throw new AssertionError(message);
 				}
 			}
 		}
