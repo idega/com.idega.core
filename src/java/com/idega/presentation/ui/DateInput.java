@@ -725,6 +725,12 @@ public class DateInput extends InterfaceObject implements InputHandler {
 	 */
 	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
 		initilizeValues();
 		String name = iwc.getParameter(getName());
 

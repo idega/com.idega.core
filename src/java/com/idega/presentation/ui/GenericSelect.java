@@ -499,6 +499,12 @@ public class GenericSelect extends InterfaceObject {
 	 */
 	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
 		if (this._isMultiple) {
 			if (iwc.isParameterSet(getName())) {
 				String[] values = iwc.getParameterValues(getName());

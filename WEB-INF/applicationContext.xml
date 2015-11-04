@@ -27,7 +27,16 @@
 	<bean id="coreConstants" class="com.idega.util.CoreConstants" scope="singleton">
 		<property name="articleConstantsInstance" ref="articleConstants" />
 	</bean>
-    
+
+	<!-- Initial data source configuration -->
+	<bean 
+		id="dataSource" 
+		class="org.springframework.jndi.JndiObjectFactoryBean">
+        <property 
+        	name="jndiName" 
+        	value="java:comp/env/jdbc/DefaultDS"/>
+    </bean>
+
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="idegaHibernate" />
         <property name="persistenceXmlLocation" value="classpath:META-INF/persistence.xml" />

@@ -19,16 +19,16 @@ import com.idega.presentation.IWContext;
  * This class renders out a input of type file, used to upload files.
  * </p>
  *  Last modified: $Date: 2005/03/08 18:58:45 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.12 $
  */
 public class FileInput extends InterfaceObject {
 
 	public static final String FILE_INPUT_DEFAULT_PARAMETER_NAME = "fileupload";
-	
+
 	private boolean multiple;
-	
+
 	public FileInput() {
 		this(FILE_INPUT_DEFAULT_PARAMETER_NAME);
 	}
@@ -51,14 +51,19 @@ public class FileInput extends InterfaceObject {
 			println("<input type=\"file\" name=\"" + getName() + "\" " + getMarkupAttributesString() + " ></input>");
 		}
 	}
-	
+
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
 	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
 	}
-	
+
 	@Override
 	public void main(IWContext iwc) throws Exception {
 		super.main(iwc);
@@ -67,7 +72,7 @@ public class FileInput extends InterfaceObject {
 			parentForm.setMultiPart();
 		}
 	}
-	
+
 	@Override
 	public boolean isContainer() {
 		return false;
@@ -79,11 +84,11 @@ public class FileInput extends InterfaceObject {
 
 	public void setMultiple(boolean multiple) {
 		this.multiple = multiple;
-		
+
 		if (multiple)
 			setMarkupAttribute("multiple", "multiple");
 		else
 			removeMarkupAttribute("multiple");
 	}
-	
+
 }

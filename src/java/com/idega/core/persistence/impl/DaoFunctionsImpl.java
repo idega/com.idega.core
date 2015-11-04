@@ -81,20 +81,102 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	@Override
-	@Transactional(readOnly = true)
-	@SuppressWarnings("unchecked")
 	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
-		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
-		setParameters(q, params);
+		return getResultListByQuery(new ArrayList<Expected>(), q, expectedReturnType, cachedRegionName, params);
+	}
 
-		final List<Expected> fresult;
-		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
-			fresult = getRealResults(q.getResultList(), expectedReturnType);
-		} else {
-			fresult = q.getResultList();
+	private class QueryParams<Expected> {
+
+		private Collection<Param> paramsForNextLoadingStep = null, tmpParams = null;
+		private boolean loadInMultipleSteps = false;
+
+		private Param[] params;
+
+		private QueryParams(Param... params) {
+			this.params = params;
+		}
+		private QueryParams(Collection<Param> params) {
+			this.params = ArrayUtil.convertListToArray(params);
 		}
 
-		return fresult;
+		private <V> void doPrepareParameters() {
+			if (ArrayUtil.isEmpty(params)) {
+				return;
+			}
+
+			paramsForNextLoadingStep = new ArrayList<Param>();
+			tmpParams = new ArrayList<Param>();
+			for (Param param: params) {
+				Object value = param.getParamValue();
+				if (value instanceof Collection<?>) {
+					Collection<V> usedParamValue = null;
+					@SuppressWarnings("unchecked")
+					List<V> originalParamValue = new ArrayList<V>((Collection<V>) value);
+					if (originalParamValue.size() > 1000) {
+						loadInMultipleSteps = true;
+						usedParamValue = new ArrayList<V>(originalParamValue.subList(0, 1000));
+						originalParamValue = new ArrayList<V>(originalParamValue.subList(1000, originalParamValue.size()));
+					} else {
+						usedParamValue = originalParamValue;
+					}
+
+					tmpParams.add(new Param(param.getParamName(), usedParamValue));
+					paramsForNextLoadingStep.add(new Param(param.getParamName(), originalParamValue));
+				} else {
+					tmpParams.add(param);
+					paramsForNextLoadingStep.add(param);
+				}
+			}
+		}
+
+		public Collection<Param> getParamsForNextLoadingStep() {
+			return paramsForNextLoadingStep;
+		}
+
+		public Collection<Param> getTmpParams() {
+			return tmpParams;
+		}
+
+		public boolean isLoadInMultipleSteps() {
+			return loadInMultipleSteps;
+		}
+
+	}
+
+	@Transactional(readOnly = true)
+	@SuppressWarnings("unchecked")
+	private <Expected, V> List<Expected> getResultListByQuery(List<Expected> results, Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
+		QueryParams<Expected> queryParams = new QueryParams<>(params);
+		queryParams.doPrepareParameters();
+
+		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
+		setParameters(q, queryParams.isLoadInMultipleSteps() ? ArrayUtil.convertListToArray(queryParams.getTmpParams()) : params);
+
+		List<Expected> tmpResults = null;
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
+			tmpResults = getRealResults(q.getResultList(), expectedReturnType);
+		} else {
+			tmpResults = q.getResultList();
+		}
+
+		if (!queryParams.isLoadInMultipleSteps()) {
+			return tmpResults;
+		}
+
+		if (ListUtil.isEmpty(tmpResults)) {
+			return results;
+		}
+
+		if (results == null) {
+			results = new ArrayList<Expected>();
+		}
+		results.addAll(tmpResults);
+
+		if (queryParams.isLoadInMultipleSteps()) {
+			return getResultListByQuery(results, q, expectedReturnType, cachedRegionName, ArrayUtil.convertListToArray(queryParams.getParamsForNextLoadingStep()));
+		}
+
+		return results;
 	}
 
 	@SuppressWarnings("unchecked")
@@ -134,8 +216,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					        .shortValue()));
 				}
 			} else {
-				String message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType +
-						": such converter is not implemented yet!";
+				String message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
 				logger.warning(message);
 				CoreUtil.sendExceptionNotification(message, null);
 			}
@@ -157,19 +238,39 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	@Override
+	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
+		return getResultListByQuery(new ArrayList<Expected>(), q, expectedReturnType, cachedRegionName, params);
+	}
+
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
-		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
-		setParameters(q, params);
+	private <Expected> List<Expected> getResultListByQuery(List<Expected> results, Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
+		QueryParams<Expected> queryParams = new QueryParams<>(params);
+		queryParams.doPrepareParameters();
 
-		final List<Expected> fresult;
+		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
+		setParameters(q, queryParams.isLoadInMultipleSteps() ? queryParams.getTmpParams() : params);
+
+		List<Expected> tmpResults = null;
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
-			fresult = getRealResults(q.getResultList(), expectedReturnType);
+			tmpResults = getRealResults(q.getResultList(), expectedReturnType);
 		} else {
-			fresult = q.getResultList();
+			tmpResults = q.getResultList();
 		}
 
-		return fresult;
+		if (ListUtil.isEmpty(tmpResults)) {
+			return results;
+		}
+
+		if (results == null) {
+			results = new ArrayList<Expected>();
+		}
+		results.addAll(tmpResults);
+
+		if (queryParams.isLoadInMultipleSteps()) {
+			return getResultListByQuery(results, q, expectedReturnType, cachedRegionName, queryParams.getParamsForNextLoadingStep());
+		}
+
+		return results;
 	}
 }

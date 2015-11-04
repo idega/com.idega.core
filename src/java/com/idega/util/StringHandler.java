@@ -777,6 +777,10 @@ public class StringHandler {
 		return !StringUtil.isEmpty(value) && value.matches("[+-]?\\d*(\\.\\d+)?");
 	}
 
+	public static boolean isHTML(String value) {
+		return !StringUtil.isEmpty(value) && value.matches("<\\s*\\w.*?>");
+	}
+
 	/**
 	 * Gets the words that are contained in a string corresponding to a list of
 	 * allowed words. If the string contains a non allowed word an empty list

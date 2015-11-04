@@ -187,15 +187,26 @@ public class SendMail {
 			boolean simpleMessage,
 			final File... attachedFiles
 	) throws MessagingException {
-		String customTo = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("custom_mail_receiver");
+
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		String customTo = settings.getProperty("custom_mail_receiver");
 		if (EmailValidator.getInstance().isValid(customTo)) {
 			LOGGER.info("Using " + customTo + " instead of " + to);
 			to = customTo;
 		}
 
+		String alwaysBCC = settings.getProperty("custom_mail_bcc_receiver");
+		if (EmailValidator.getInstance().isValid(alwaysBCC)) {
+			bcc = EmailValidator.getInstance().isValid(bcc) ? bcc.concat(CoreConstants.COMMA).concat(alwaysBCC) : alwaysBCC;
+		}
+
 		if (StringUtil.isEmpty(to)) {
 			LOGGER.warning("Unknown receiver. Can not send message with subject " + subject);
 			return null;
+		}
+
+		if (settings.getBoolean("always_use_html_mail", false) || StringHandler.isHTML(text)) {
+			mailType = MimeTypeUtil.MIME_TYPE_HTML;
 		}
 
 		if (simpleMessage) {
@@ -209,7 +220,6 @@ public class SendMail {
 		}
 
 		// Charset usually either "UTF-8" or "ISO-8859-1". If not set the system default set is taken
-		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings();
 		String charset = settings.getCharSetForSendMail();
 		boolean useSmtpAuthentication = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_AUTHENTICATION, Boolean.TRUE);
 		boolean useSSL = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_SSL, Boolean.TRUE);
@@ -283,8 +293,9 @@ public class SendMail {
 			multipart.addBodyPart(body);
 
 			for (File attachedFile: attachedFiles) {
-				if (attachedFile == null)
+				if (attachedFile == null) {
 					continue;
+				}
 				if (!attachedFile.exists()) {
 					LOGGER.warning("File '" + attachedFile + "' does not exist!");
 					continue;

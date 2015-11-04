@@ -27,7 +27,7 @@ import com.idega.util.text.TextSoap;
  * Class that renders out a input element of type text
  * </p>
  *  Last modified: $Date: 2007/07/20 11:38:20 $ by $Author: gimmi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.45 $
  */
@@ -59,13 +59,14 @@ public class TextInput extends GenericInput {
     private String nextInputID;
     private int minimumLength;
     private int decimals = -1;
-	
+
 	private static final String LENGTH_PROPERTY = "length";
 	private static final String MAX_LENGTH_PROPERTY = "maxLength";
 	private static final String AUTOFOCUS_PROPERTY = "autofocus";
 	private static final String PATTERN_PROPERTY = "pattern";
 	private static final String PLACEHOLDER_PROPERTY = "placeholder";
-    
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[28];
 		values[0] = super.saveState(ctx);
@@ -98,6 +99,7 @@ public class TextInput extends GenericInput {
 		values[27] = nextInputID;
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -128,43 +130,43 @@ public class TextInput extends GenericInput {
 		this.decimals = ((Integer)values[22]).intValue();
 		this.isNextInputSet = ((Boolean) values[26]).booleanValue();
 		this.nextInputID = (String) values[27];
-	}	
-	
+	}
+
 	@Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(LENGTH_PROPERTY);
     	if (ve != null) {
 	    	int length = Integer.parseInt(ve.getValue(context.getELContext()).toString());
     		setLength(length);
-    	}    
-    	
+    	}
+
 		ve = getValueExpression(MAX_LENGTH_PROPERTY);
     	if (ve != null) {
 	    	int maxLength = Integer.parseInt(ve.getValue(context.getELContext()).toString());
     		setMaxlength(maxLength);
-    	}    
-    	    	
+    	}
+
 		ve = getValueExpression(AUTOFOCUS_PROPERTY);
     	if (ve != null) {
 	    	boolean autofocus = Boolean.valueOf(ve.getValue(context.getELContext()).toString());
     		setAutofocus(autofocus);
-    	}    
-    	    	
+    	}
+
 		ve = getValueExpression(PATTERN_PROPERTY);
     	if (ve != null) {
 	    	String pattern = ve.getValue(context.getELContext()).toString();
     		setPattern(pattern);
-    	}    
-    	    	
+    	}
+
 		ve = getValueExpression(PLACEHOLDER_PROPERTY);
     	if (ve != null) {
 	    	String placeholder = ve.getValue(context.getELContext()).toString();
     		setPlaceholder(placeholder);
-    	}    
-    	    	
+    	}
+
     	super.encodeBegin(context);
     }
- 		
+
     /**
      * Constructs a new <code>TextInput</code> with the name "untitled".
      */
@@ -205,7 +207,7 @@ public class TextInput extends GenericInput {
 
     /**
      * Sets the length (characters) of the text input.
-     * 
+     *
      * @param length
      *            The length to set.
      */
@@ -215,7 +217,7 @@ public class TextInput extends GenericInput {
 
     /**
      * Sets the size (characters) of the text input.
-     * 
+     *
      * @param size
      *            The size to set.
      */
@@ -226,7 +228,7 @@ public class TextInput extends GenericInput {
 
     /**
      * Sets the maximum allowed length (characters) of the text input.
-     * 
+     *
      * @param length
      *            The maxlength to set.
      */
@@ -236,7 +238,7 @@ public class TextInput extends GenericInput {
 
     /**
      * Sets the allowed pattern (regex) that the input allows.
-     * 
+     *
      * @param pattern
      *            The pattern to set.
      */
@@ -246,7 +248,7 @@ public class TextInput extends GenericInput {
 
     /**
      * Sets the placeholder for the input.
-     * 
+     *
      * @param placeholder
      *            The placeholder to set.
      */
@@ -259,14 +261,15 @@ public class TextInput extends GenericInput {
      *             that it can not be empty, displays an alert if the "error"
      *             occurs. Uses Javascript.
      */
-    public void setAsNotEmpty() {
+    @Deprecated
+	public void setAsNotEmpty() {
         this.setAsNotEmpty("Please fill in the box " + this.getName());
     }
 
     /**
      * Sets the text input so that it can not be empty, displays an alert with
      * the given error message if the "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -277,7 +280,7 @@ public class TextInput extends GenericInput {
 
     /**
      * Sets the text input so that if empty a javascript confirmation is shown. Uses Javascript.
-     * 
+     *
      * @param confirmMessage
      *            The confirm message to display.
      */
@@ -290,7 +293,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that its contents's length can not have less
      * characters than specified, displays an alert with the given error message
      * if the "error" occurs. Uses Javascript.
-     * 
+     *
      * @param length
      *            The minimum length of the content.
      * @param errorMessage
@@ -307,7 +310,8 @@ public class TextInput extends GenericInput {
      *             input so that it must contain a valid credit card number,
      *             displays an alert if the "error" occurs. Uses Javascript.
      */
-    public void setAsCreditCardNumber() {
+    @Deprecated
+	public void setAsCreditCardNumber() {
         this.setAsCreditCardNumber("Please enter a valid creditcard number in "
                 + this.getName());
     }
@@ -316,7 +320,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain a valid credit card number,
      * displays an alert with the given error message if the "error" occurs.
      * Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -330,7 +334,8 @@ public class TextInput extends GenericInput {
      *             that it must contain a valid e-mail address, displays an
      *             alert if the "error" occurs. Uses Javascript.
      */
-    public void setAsEmail() {
+    @Deprecated
+	public void setAsEmail() {
         this.setAsEmail("This is not an email");
     }
 
@@ -338,7 +343,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain a valid e-mail address,
      * displays an alert with the given error message if the "error" occurs.
      * Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -352,14 +357,15 @@ public class TextInput extends GenericInput {
      *             that it must contain an integer, displays an alert if the
      *             "error" occurs. Uses Javascript.
      */
-    public void setAsIntegers() {
+    @Deprecated
+	public void setAsIntegers() {
         this.setAsIntegers("Please use only numbers in " + this.getName());
     }
 
     /**
      * Sets the text input so that it must contain an integer, displays an alert
      * with the given error message if the "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -372,7 +378,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain a positive integer, displays
      * an alert with the given error message if the "error" occurs. Uses
      * Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -385,7 +391,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain a positive or negative
      * integer or zero, displays an alert with the given error message if the
      * "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -399,14 +405,15 @@ public class TextInput extends GenericInput {
      *             that it must contain a float, displays an alert if the
      *             "error" occurs. Uses Javascript.
      */
-    public void setAsFloat() {
+    @Deprecated
+	public void setAsFloat() {
         this.setAsFloat("Please use only numbers in " + this.getName());
     }
 
     /**
      * Sets the text input so that it must contain a float, displays an alert
      * with the given error message if the "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -419,7 +426,7 @@ public class TextInput extends GenericInput {
      * with the given error message if the "error" occurs. Also, sets the
      * (exact) number of decimal to be displayed for a float field. If set to
      * negative number, the value is ignored. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      * @param dec
@@ -436,14 +443,15 @@ public class TextInput extends GenericInput {
      *             that it must contain a double, displays an alert if the
      *             "error" occurs. Uses Javascript.
      */
-    public void setAsDouble() {
+    @Deprecated
+	public void setAsDouble() {
         setAsDouble("Please use only numbers in " + getName());
     }
 
     /**
      * Sets the text input so that it must contain a double, displays an alert
      * with the given error message if the "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -456,7 +464,7 @@ public class TextInput extends GenericInput {
      * with the given error message if the "error" occurs. Also, sets the
      * (exact) number of decimal to be displayed for a double field. If set to
      * negative number, the value is ignored. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      * @param dec
@@ -471,7 +479,7 @@ public class TextInput extends GenericInput {
     /**
      * Sets the (exact) number of decimal to be displayed for a float field. If
      * set to negative number, the value is ignored.
-     * 
+     *
      * @param dec
      *            The number of decimals
      */
@@ -485,7 +493,8 @@ public class TextInput extends GenericInput {
      *             security number, displays an alert if the "error" occurs.
      *             Uses Javascript. Uses Javascript.
      */
-    public void setAsIcelandicSSNumber() {
+    @Deprecated
+	public void setAsIcelandicSSNumber() {
         setAsIcelandicSSNumber("Please only a Icelandic social security number in "
                 + this.getName());
     }
@@ -494,7 +503,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain a valid Icelandic social
      * security number, displays an alert with the given error message if the
      * "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -507,7 +516,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain a valid personal ID for
      * the Locale given, displays an alert with the given error message if the
      * "error" occurs. Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -522,7 +531,8 @@ public class TextInput extends GenericInput {
      *             input so that it must contain alphabetic characters, displays
      *             an alert if the "error" occurs. Uses Javascript.
      */
-    public void setAsAlphabetictext() {
+    @Deprecated
+	public void setAsAlphabetictext() {
         this.setAsAlphabeticText("Please use only alpabetical characters in "
                 + this.getName());
     }
@@ -531,7 +541,7 @@ public class TextInput extends GenericInput {
      * Sets the text input so that it must contain alphabetic characters,
      * displays an alert with the given error message if the "error" occurs.
      * Uses Javascript.
-     * 
+     *
      * @param errorMessage
      *            The error message to display.
      */
@@ -540,7 +550,8 @@ public class TextInput extends GenericInput {
         this.alphabetErrorMessage = TextSoap.removeLineBreaks(errorMessage);
     }
 
-    public void main(IWContext iwc) throws Exception {
+    @Override
+	public void main(IWContext iwc) throws Exception {
         if (this.isSetAsNotEmpty) {
 					setOnSubmitFunction(
 					        "warnIfEmpty",
@@ -641,16 +652,16 @@ public class TextInput extends GenericInput {
 					        "function warnIfNotEmail (inputbox,message) {\n \tvar strng = inputbox.value;\n \tif (strng.length == 0)\n \t\treturn true;\n\n \tvar emailFilter=/^.+@.+\\..{2,3}$/;\n \tif (!(emailFilter.test(strng))) {\n \t\talert(message);\n \t\treturn false;\n \t}\n\n \tvar illegalChars= /[\\(\\)\\<\\>\\,\\;\\:\\\\\\/\\\"\\[\\]]/;\n \tif (strng.match(illegalChars)) {\n \t\talert(message);\n \t\treturn false;\n \t}\n \treturn true;\n}",
 					        this.emailErrorMessage);
 				}
-        
+
         if (this.isSetToDisableWhenNotEmpty) {
   					getScript().addFunction("disableObjectWhenNotEmpty", "function disableObjectWhenNotEmpty(input, otherInput) {\n	if (input.value.length() > 1) {	otherInput[i].disabled=true; }\n	else	otherInput.disabled=false;\n}");
         }
-        
+
         if (this.isNextInputSet) {
-        	getScript().addFunction("gotoNextInput","function gotoNextInput(event,source,destination) {\n\tif(((event.keyCode > 31 && event.keyCode < 128) || event.keyCode == 9) \t&& (event.keyCode != 37\t&& event.keyCode != 39) ) {\n\t\tif ((source.value).length == source.maxLength) {\n\t\t\tif(event.keyCode == 9)\t{\n\t\t\t\tsource.focus();\n\t\t\t\tsource.select();\n\t\t\t} else {\n\t\t\t\tdestination.focus();\n\t\t\t\tdestination.select();\n\t\t\t}\n\t\t\treturn 0;\n\t\t}\n\t}\n\treturn 1;\n};");            
-        	this.setOnKeyUp("gotoNextInput(event,this,"+ nextInputID +")"); 
+        	getScript().addFunction("gotoNextInput","function gotoNextInput(event,source,destination) {\n\tif(((event.keyCode > 31 && event.keyCode < 128) || event.keyCode == 9) \t&& (event.keyCode != 37\t&& event.keyCode != 39) ) {\n\t\tif ((source.value).length == source.maxLength) {\n\t\t\tif(event.keyCode == 9)\t{\n\t\t\t\tsource.focus();\n\t\t\t\tsource.select();\n\t\t\t} else {\n\t\t\t\tdestination.focus();\n\t\t\t\tdestination.select();\n\t\t\t}\n\t\t\treturn 0;\n\t\t}\n\t}\n\treturn 1;\n};");
+        	this.setOnKeyUp("gotoNextInput(event,this,"+ nextInputID +")");
         }
-        
+
     }
 
   	/**
@@ -666,7 +677,8 @@ public class TextInput extends GenericInput {
   		setOnKeyDown("disableObjectWhenNotEmpty(findObj(this, '" + object.getName() + "'))");
   	}
 
-    public synchronized Object clone() {
+    @Override
+	public synchronized Object clone() {
         TextInput obj = null;
         try {
             obj = (TextInput) super.clone();
@@ -692,7 +704,14 @@ public class TextInput extends GenericInput {
     /**
      * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
      */
-    public void handleKeepStatus(IWContext iwc) {
+    @Override
+	public void handleKeepStatus(IWContext iwc) {
+    	try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
     	if (getIndex() > -1) {
     		String[] parameters = iwc.getParameterValues(getName());
     		if (parameters != null && parameters.length >= getIndex() + 1) {
@@ -700,15 +719,15 @@ public class TextInput extends GenericInput {
     		}
     	}
     	else {
-        if (iwc.getParameter(getName()) != null) {
-            setContent(iwc.getParameter(getName()));
-        }
+	        if (iwc.getParameter(getName()) != null) {
+	            setContent(iwc.getParameter(getName()));
+	        }
     	}
     }
 
     /**
      * Sets the <code>TextInput</code> as a password input.
-     * 
+     *
      * @param asPasswordInput
      *            To set as password, set as true, false otherwise.
      */
@@ -720,7 +739,7 @@ public class TextInput extends GenericInput {
 					setInputType(INPUT_TYPE_TEXT);
 				}
     }
-    
+
     public void setNextInput(GenericInput input) {
     	if (input != null) {
 	    	this.isNextInputSet = true;

@@ -10,7 +10,6 @@
  */
 package com.idega.idegaweb;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.net.URLEncoder;
 import java.util.ArrayList;
@@ -18,19 +17,25 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import com.idega.core.file.data.ICFile;
 import com.idega.data.CacheableEntity;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDOLookup;
+import com.idega.repository.RepositoryService;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
+import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.caching.Cache;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -272,7 +277,9 @@ private boolean isBlobCached(Cache cache){
   private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma, String datasource){
     InputStream input = null;
     Cache cacheObject = null;
-    try{
+    String fileName = null;
+    String realPath = null;
+    try {
     	Class<? extends IDOEntity> entityClass = RefactorClassRegistry.forName(entityClassString);
     	IDOHome home = IDOLookup.getHome(entityClass);
     	if (datasource != null) {
@@ -281,48 +288,47 @@ private boolean isBlobCached(Cache cache){
     	}
     	GenericEntity ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
 
-    	input = ent.getInputStreamColumnValue(ent.getLobColumnName());
-    	String realPath = iwma.getApplicationRealPath()+FileUtil.getFileSeparator()+IW_ROOT_CACHE_DIRECTORY;
+    	try {
+    		input = ent.getInputStreamColumnValue(ent.getLobColumnName());
+    	} catch (Exception e) {}
+    	if (input == null && ent instanceof ICFile) {
+    		ICFile file = (ICFile) ent;
+    		RepositoryService repository = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
+    		input = repository.getInputStreamAsRoot(file.getFileUri());
+    	}
+    	if (input == null) {
+    		log.warning("Unable to resolve input stream for " + ent + ". DB entity: " +	entityClassString + ", ID " + id + ", datasource " + datasource);
+    	}
+
+    	realPath = iwma.getApplicationRealPath() + FileUtil.getFileSeparator() + IW_ROOT_CACHE_DIRECTORY;
     	String appVPath = iwma.getApplicationContextURI();
 
+    	String virtualPath;
+    	if (appVPath.endsWith(CoreConstants.SLASH)) {
+			virtualPath = appVPath + IW_ROOT_CACHE_DIRECTORY;
+		} else {
+			virtualPath = appVPath + CoreConstants.SLASH + IW_ROOT_CACHE_DIRECTORY;
+		}
 
-      String virtualPath;
-      if( appVPath.endsWith("/")) {
-				virtualPath = appVPath +IW_ROOT_CACHE_DIRECTORY;
-			}
-			else {
-				virtualPath = appVPath +"/"+IW_ROOT_CACHE_DIRECTORY;
-			}
+    	fileName = ent.getID() + CoreConstants.UNDER + ent.getName();
+    	fileName = TextSoap.findAndCut(fileName,CoreConstants.SPACE);
+    	fileName = StringHandler.stripNonRomanCharacters(fileName, new char[] {'_', '.', '0', '1','2','3','4','5','6','7','8','9'});
 
-
-      String fileName = ent.getID()+"_"+ent.getName();
-      fileName = TextSoap.findAndCut(fileName," ");//remove spaces
-      fileName = StringHandler.stripNonRomanCharacters(fileName, new char[] {'_', '.', '0', '1','2','3','4','5','6','7','8','9' });
-
-      if(input != null ){
-        FileUtil.streamToFile(input,realPath,fileName);
-        cacheObject = new Cache();
-        cacheObject.setEntity(ent);
-        cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
-        cacheObject.setVirtualPathToFile(virtualPath+"/"+URLEncoder.encode(fileName));//used to url encode here
-        setObject(entityClassString+id+datasource,cacheObject,0);
-      }
-
-    }
-    catch( Exception e ){
-     log.severe(e.getMessage());
-     log.severe("IWCacheManager : error getting stream from blob");
-    }
-    finally{
-      try{
-       if (input != null ) {
-				input.close();
-			}
-      }
-      catch(IOException e){
-        log.severe(e.getMessage());
-        log.severe("IWCacheManager : error closing stream");
-      }
+    	if (input == null) {
+    		log.warning("Unable to write file " + fileName + " to " + realPath + " because input stream for " +
+    				entityClassString + ", ID " + id + ", datasource " + datasource + " is not defined");
+    	} else {
+    		FileUtil.streamToFile(input, realPath, fileName);
+    		cacheObject = new Cache();
+    		cacheObject.setEntity(ent);
+    		cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
+    		cacheObject.setVirtualPathToFile(virtualPath+CoreConstants.SLASH+URLEncoder.encode(fileName));//used to url encode here
+    		setObject(entityClassString+id+datasource,cacheObject,0);
+    	}
+    } catch (Exception e) {
+    	log.log(Level.WARNING, "Some error occured while writing file " + fileName + " to " + realPath + ". DB entity: " + entityClassString + ", ID " + id + ", datasource " + datasource, e);
+    } finally {
+    	IOUtil.close(input);
     }
 
     return cacheObject;
@@ -330,7 +336,7 @@ private boolean isBlobCached(Cache cache){
 
   public static void deleteCachedBlobs(IWMainApplication iwma){
     String realPath = iwma.getApplicationRealPath();
-    FileUtil.deleteAllFilesInDirectory( realPath+IW_ROOT_CACHE_DIRECTORY );
+    FileUtil.deleteAllFilesInDirectory(realPath + IW_ROOT_CACHE_DIRECTORY);
   }
 
 /** caches a whole table. Must be of type CacheableEntity**/
@@ -340,7 +346,16 @@ private boolean isBlobCached(Cache cache){
 
 /** caches a single entity of type IDOEntity **/
   public void cacheEntity(IDOEntity entity, String cacheKey){
-    if( this.entityMaps == null ){
+	  if (cacheKey == null) {
+		  log.warning("Cache key is not provided. Value: " + entity);
+		  return;
+	  }
+	  if (entity == null) {
+		  log.warning("Cache value is not provided. Key: " + cacheKey);
+		  return;
+	  }
+
+	  if( this.entityMaps == null ){
       this.entityMaps = new ConcurrentHashMap<Object, Object>();
     }
     this.entityMaps.put(cacheKey, entity);

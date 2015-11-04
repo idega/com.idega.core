@@ -161,6 +161,7 @@ public class GenericList extends InterfaceObject {
 		setList(this.entity);
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		beforePrint(iwc);
 		if (this.theTable != null) {
@@ -169,16 +170,23 @@ public class GenericList extends InterfaceObject {
 		}
 		super.print(iwc);
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
