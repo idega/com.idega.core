@@ -725,7 +725,7 @@ public abstract class InterfaceObject extends PresentationObjectContainer {
 		}
 
 		String value = iwc.getParameter(name);
-		String property = iwc.getApplicationSettings().getProperty("cross_site_scripting_checks", "src,script,http://,https://,wwww.");
+		String property = iwc.getApplicationSettings().getProperty("cross_site_scripting_checks", "src=,<script>,http://,https://,wwww.");
 		if (StringUtil.isEmpty(property)) {
 			return;
 		}
