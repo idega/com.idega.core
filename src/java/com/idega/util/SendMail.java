@@ -205,7 +205,7 @@ public class SendMail {
 			return null;
 		}
 
-		if (StringHandler.isHTML(text)) {
+		if (settings.getBoolean("always_use_html_mail", false) || StringHandler.isHTML(text)) {
 			mailType = MimeTypeUtil.MIME_TYPE_HTML;
 		}
 
@@ -293,8 +293,9 @@ public class SendMail {
 			multipart.addBodyPart(body);
 
 			for (File attachedFile: attachedFiles) {
-				if (attachedFile == null)
+				if (attachedFile == null) {
 					continue;
+				}
 				if (!attachedFile.exists()) {
 					LOGGER.warning("File '" + attachedFile + "' does not exist!");
 					continue;
