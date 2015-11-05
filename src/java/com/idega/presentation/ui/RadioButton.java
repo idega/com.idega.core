@@ -21,7 +21,7 @@ import com.idega.presentation.IWContext;
  * This component renders out an input of type radiobutton.
  * </p>
  *  Last modified: $Date: 2007/04/19 13:26:28 $ by $Author: valdas $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.15 $
  */
@@ -29,9 +29,10 @@ public class RadioButton extends GenericInput {
 
 	private boolean _mustBeSelected = false;
 	private String _errorMessage;
-	
+
 	public static final String SELECTED_PROPERTY = "selected";
 
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
@@ -39,7 +40,8 @@ public class RadioButton extends GenericInput {
 		values[2] = this._errorMessage;
 		return values;
 	}
-	
+
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -48,16 +50,16 @@ public class RadioButton extends GenericInput {
 	}
 
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
 		ValueExpression ve = getValueExpression(SELECTED_PROPERTY);
     	if (ve != null) {
 	    	boolean selected = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
     		setSelected(selected);
-    	}    
-    	
+    	}
+
     	super.encodeBegin(context);
     }
-    
+
 	/**
 	 * Constructs a new <code>RadioButton</code> with the name "untitled" and the value
 	 * "unspecified".
@@ -114,6 +116,7 @@ public class RadioButton extends GenericInput {
 		return false;
 	}
 
+	@Override
 	public void main(IWContext iwc) {
 		if (isEnclosedByForm()) {
 			if (this._mustBeSelected) {
@@ -139,8 +142,15 @@ public class RadioButton extends GenericInput {
 		this._mustBeSelected = true;
 		this._errorMessage = errorMessage;
 	}
-	
+
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
 		String[] parameters = iwc.getParameterValues(getName());
 		if (parameters != null) {
 			for (int i = 0; i < parameters.length; i++) {
@@ -150,7 +160,8 @@ public class RadioButton extends GenericInput {
 			}
 		}
 	}
-	
+
+	@Override
 	public void printWML(IWContext main) {
 		print("<option value=\""+getValueAsString()+"\">"+getContent()+"</option>");
 	}

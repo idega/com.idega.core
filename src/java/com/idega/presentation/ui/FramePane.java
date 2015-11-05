@@ -168,6 +168,7 @@ public FramePane(String headerText){
 
 
 
+@Override
 public void main(IWContext iwc){
 
   com.idega.idegaweb.IWBundle bundle = this.getBundle(iwc);
@@ -214,6 +215,7 @@ public void main(IWContext iwc){
 
 
 
+@Override
 public void add(PresentationObject obj){
 
   this.table.add(obj,2,2);
@@ -242,7 +244,8 @@ public void setHeight(int height){
 
 
 
-  public synchronized Object clone() {
+  @Override
+public synchronized Object clone() {
 
     FramePane obj = null;
 
@@ -281,12 +284,19 @@ public void setHeight(int height){
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(com.idega.presentation.IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}

@@ -23,10 +23,10 @@ import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-import bsh.Interpreter;
-
 import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
+
+import bsh.Interpreter;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -143,8 +143,6 @@ public class ELUtil implements ApplicationContextAware {
 	 * @throws Exception
 	 */
 	public Object evaluateExpression(String exp) throws Exception{
-		//TODO: use unified EL resolvers???
-
 		String beanName = getBeanName(exp);
 		String methodName = getMethodName(exp);
 		List<String> argsList = getArgs(exp);
@@ -164,7 +162,7 @@ public class ELUtil implements ApplicationContextAware {
 			Method method = obj.getClass().getMethod(methodName, classParams);
 			returnedObj = method.invoke(obj, strParams);
 		} catch (Exception e) {
-			throw new Exception("Exeption accured while trying to invoke method " + methodName, e);
+			throw new Exception("Exeption occured while trying to invoke method " + methodName, e);
 		}
 
 		returnedObj = getPostConditionValue(exp, returnedObj, "==");
@@ -219,24 +217,24 @@ public class ELUtil implements ApplicationContextAware {
 	private String getMethodName(String exp){
 		String beanName = getBeanName(exp);
 		String methodName = cleanupExp(exp);
-		int index = methodName.indexOf("(");
-		if(index >= 0){
-			methodName = methodName.substring(beanName.length()+1, index);
+		int index = methodName.indexOf(CoreConstants.BRACKET_LEFT);
+		if (index >= 0) {
+			methodName = methodName.substring(beanName.length() + 1, index);
 		} else {
-			methodName = methodName.substring(beanName.length()+1);
-			methodName = "get"+Character.toUpperCase(methodName.charAt(0))+methodName.substring(1);
+			methodName = methodName.substring(beanName.length() + 1);
+			methodName = "get" + Character.toUpperCase(methodName.charAt(0)) + methodName.substring(1);
 		}
 		return methodName;
 	}
 
-	private List<String> getArgs(String exp){
+	private List<String> getArgs(String exp) {
 		List<String> returnArray = new ArrayList<String>();
-		int pre = exp.indexOf("(");
-		if(pre >= 0){
-			String argsList = exp.substring( pre+1, exp.lastIndexOf(")"));
-			String removedApo = argsList.replaceAll("'", "");
-			StringTokenizer tokenizer = new  StringTokenizer(removedApo,",");
-			while(tokenizer.hasMoreTokens()){
+		int pre = exp.indexOf(CoreConstants.BRACKET_LEFT);
+		if (pre >= 0) {
+			String argsList = exp.substring( pre+1, exp.lastIndexOf(CoreConstants.BRACKET_RIGHT));
+			String removedApo = argsList.replaceAll(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
+			StringTokenizer tokenizer = new  StringTokenizer(removedApo, CoreConstants.COMMA);
+			while (tokenizer.hasMoreTokens()) {
 				String token = tokenizer.nextToken();
 				returnArray.add(token.trim());
 			}
@@ -273,11 +271,11 @@ public class ELUtil implements ApplicationContextAware {
 		return exprFactory.createValueExpression(elContext, expression, expectedReturnType);
 	}
 
-	public static MethodExpression createMethodExpression(FacesContext context, String expression, Class<?> expectedReturnType,
-			Class<?>[] expectedParamTypes) {
+	public static MethodExpression createMethodExpression(FacesContext context, String expression, Class<?> expectedReturnType, Class<?>[] expectedParamTypes) {
 		Application app = context.getApplication();
 		ExpressionFactory exprFactory = app.getExpressionFactory();
 		ELContext elContext = context.getELContext();
 		return exprFactory.createMethodExpression(elContext, expression, expectedReturnType, expectedParamTypes);
 	}
+
 }

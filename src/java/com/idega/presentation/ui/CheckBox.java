@@ -8,6 +8,7 @@ import java.io.IOException;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
+
 import com.idega.presentation.IWContext;
 
 /**
@@ -15,7 +16,7 @@ import com.idega.presentation.IWContext;
 *@version 1.2
 */
 public class CheckBox extends GenericInput {
-	
+
 	private boolean _mustBeChecked = false;
 	private boolean _enableWhenChecked = false;
 	private boolean _disableWhenUnchecked = false;
@@ -25,7 +26,8 @@ public class CheckBox extends GenericInput {
 	private String _errorMessage;
 
 	public static final String CHECKED_PROPERTY = "checked";
-	
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[3];
 		values[0] = super.saveState(ctx);
@@ -34,24 +36,25 @@ public class CheckBox extends GenericInput {
 		return values;
 	}
 
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
 		this._mustBeChecked = ((Boolean) values[1]).booleanValue();
 		this._errorMessage = (String)values[2];
-	}		
-	
+	}
+
     @Override
-	public void encodeBegin(FacesContext context) throws IOException { 
+	public void encodeBegin(FacesContext context) throws IOException {
 		ValueExpression ve = getValueExpression(CHECKED_PROPERTY);
     	if (ve != null) {
 	    	boolean checked = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
     		setChecked(checked);
-    	}    
-    	
+    	}
+
     	super.encodeBegin(context);
     }
-    
+
 	/**
 	 * Constructs a new <code>CheckBox</code> with name set as "untitled" and value as
 	 * "unspecified".
@@ -59,14 +62,14 @@ public class CheckBox extends GenericInput {
 	public CheckBox() {
 		this("untitled");
 	}
-	
+
 	/**
 	 * Constructs a new <code>CheckBox</code> with the given name and value as "unspecified".
 	 */
 	public CheckBox(String name) {
 		this(name, "unspecified");
 	}
-	
+
 	/**
 	 * Constructs a new <code>CheckBox</code> with the given name and value.
 	 */
@@ -77,7 +80,7 @@ public class CheckBox extends GenericInput {
 		setChecked(false);
 		setInputType(INPUT_TYPE_CHECKBOX);
 	}
-	
+
 	/**
 	 * Sets whether the checkbox is checked or not.
 	 * @param ifChecked
@@ -90,7 +93,7 @@ public class CheckBox extends GenericInput {
 			removeMarkupAttribute("checked");
 		}
 	}
-	
+
 	/**
 	 * Sets whether the checkbox is checked or not.
 	 * @param ifChecked
@@ -105,7 +108,8 @@ public class CheckBox extends GenericInput {
 		}
 		setChecked(ifChecked);
 	}
-	
+
+	@Override
 	public void main(IWContext iwc) {
 		if (isEnclosedByForm()) {
 			if (this._mustBeChecked) {
@@ -143,45 +147,52 @@ public class CheckBox extends GenericInput {
 			}
 		}
 	}
-	
+
 	public void setMustBeChecked(String errorMessage) {
 		this._mustBeChecked = true;
 		this._errorMessage = errorMessage;
 	}
-	
+
 	public void setToEnableWhenChecked(InterfaceObject object) {
 		this._enableWhenChecked = true;
 		setOnAction(ACTION_ON_CLICK, "enableWhenChecked(this, findObj('" + object.getName() + "'))");
 	}
-	
+
 	public void setToDisableWhenUnchecked(InterfaceObject object) {
 		this._disableWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "disableWhenUnchecked(this, findObj('" + object.getName() + "'))");
 	}
-	
+
 	public void setToDisableWhenChecked(InterfaceObject object) {
 		this._disableWhenChecked = true;
 		setOnAction(ACTION_ON_CLICK, "disableWhenChecked(this, findObj('" + object.getName() + "'))");
 	}
-	
+
 	public void setToEnableWhenUnchecked(InterfaceObject object) {
 		this._enableWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "enableWhenUnchecked(this, findObj('" + object.getName() + "'))");
 	}
-	
+
 	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(InterfaceObject object) {
 		setToCheckWhenCheckedAndUncheckWhenUnchecked(object.getName());
 	}
-	
+
 	public void setToCheckWhenCheckedAndUncheckWhenUnchecked(String objectName) {
 		this._checkWhenCheckedUncheckWhenUnchecked = true;
 		setOnAction(ACTION_ON_CLICK, "toggleOnChange(this, findObj('" + objectName + "'))");
 	}
-	
+
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
+
 		if (iwc.isParameterSet(this.getName())) {
 			String[] values = iwc.getParameterValues(getName());
 			for (int i = 0; i < values.length; i++) {
@@ -192,7 +203,8 @@ public class CheckBox extends GenericInput {
 			}
 		}
 	}
-	
+
+	@Override
 	public void printWML(IWContext main) {
 		print("<option value=\""+getValueAsString()+"\">"+getContent()+"</option>");
 	}

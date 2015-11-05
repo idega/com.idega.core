@@ -1092,6 +1092,11 @@ public class Form
 	 */
 	@Override
 	public void handleKeepStatus(IWContext iwc) {
+		try {
+			super.handleKeepStatus(iwc);
+		} catch (AssertionError e) {
+			return;
+		}
 	}
 
 	/*

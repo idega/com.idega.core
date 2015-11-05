@@ -1,9 +1,9 @@
 /*
  * $Id: ComponentRegistry.java,v 1.17 2008/11/05 16:39:41 laddi Exp $ Created on 8.9.2005
  * in project com.idega.core
- * 
+ *
  * Copyright (C) 2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -37,14 +37,14 @@ import com.idega.idegaweb.IWModuleLoader;
  * non UI components such as business beans, JSF Managed beans etc.
  * </p>
  * Last modified: $Date: 2008/11/05 16:39:41 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.17 $
  */
 public class ComponentRegistry {
 
 	private Logger logger = Logger.getLogger(this.getClass().getName());
-	
+
 	public final static String BEAN_KEY = "ComponentRegistry";
 	private List<ComponentInfo> allComponents;
 	private boolean loadedOldIWComponents=false;
@@ -58,8 +58,8 @@ public class ComponentRegistry {
 	public static final String COMPONENT_TYPE_JSF_UICOMPONENT = ICObjectBMPBean.COMPONENT_TYPE_JSFUICOMPONENT;
 
 	/**
-	 * @param iwma 
-	 * 
+	 * @param iwma
+	 *
 	 */
 	public ComponentRegistry(IWMainApplication iwma,ServletContext context) {
 		this.iwma=iwma;
@@ -77,7 +77,7 @@ public class ComponentRegistry {
 		//}
 		return registry;
 	}
-	
+
 	public static ComponentRegistry getInstance(IWMainApplication iwma) {
 		//IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
 		ComponentRegistry registry = (ComponentRegistry) iwma.getAttribute(BEAN_KEY);
@@ -87,18 +87,18 @@ public class ComponentRegistry {
 		}
 		return registry;
 	}
-	
+
 	public void initialize(){
 		this.initializeModuleLoader();
 	}
-	
+
 	public List<ComponentInfo> getAllComponents(){
 		//this method sees to it to load first all components:
 		loadOldIWComponents();
 		loadFacesConfig();
-		
+
 		return internalGetComponentList();
-		
+
 	}
 
 	/**
@@ -111,7 +111,7 @@ public class ComponentRegistry {
 			this.loadedFacesConfig=true;
 			IWModuleLoader loader = initializeModuleLoader();
 			loader.loadBundlesFromJars();
-			
+
 		}
 	}
 
@@ -162,9 +162,9 @@ public class ComponentRegistry {
 			// this is so that the components list is loaded lazily
 			try {
 				ICObjectHome icoHome = getICObjectHome();
-				Collection objects = icoHome.findAll();
-				for (Iterator iter = objects.iterator(); iter.hasNext();) {
-					ICObject component = (ICObject) iter.next();					
+				Collection<ICObject> objects = icoHome.findAll();
+				for (Iterator<ICObject> iter = objects.iterator(); iter.hasNext();) {
+					ICObject component = iter.next();
 					registerComponent(component);
 				}
 			}
@@ -174,7 +174,7 @@ public class ComponentRegistry {
 			this.loadedOldIWComponents = true;
 		}
 	}
-	
+
 	protected ICObjectHome getICObjectHome(){
 		ICObjectHome icoHome;
 		try {
@@ -194,15 +194,10 @@ public class ComponentRegistry {
 	 */
 	protected ComponentInfo registerComponent(ICObject ico) {
 		try {
-			//Class clazz = ico.getObjectClass();
-			//String name = ico.getName();
-			//String type = ico.getObjectType();
-			//int icObjectId = ((Integer)ico.getPrimaryKey()).intValue();
 			ICObjectComponentInfo info = new ICObjectComponentInfo(ico);
 			registerComponent(info);
-						
 			return info;
-		} 
+		}
 		catch (ClassNotFoundException e) {
 			logger.warning("[ComponentRegistry] Class not found : "+ico.getClassName());
 			if (!hasReferenceToICObjectInstance(ico)) {
@@ -220,7 +215,7 @@ public class ComponentRegistry {
 		}
 		return null;
 	}
-	
+
 	private boolean hasReferenceToICObjectInstance(ICObject ico) {
 		ICObjectInstanceHome home = (ICObjectInstanceHome) IDOLookup.getHomeLegacy(ICObjectInstance.class);
 		try {
@@ -257,7 +252,7 @@ public class ComponentRegistry {
 	 * @param componentClass
 	 * @param componentType
 	 * @param objectType
-	 * @param bundleIdentifier 
+	 * @param bundleIdentifier
 	 * @return
 	 */
 	public ComponentInfo registerComponentPersistent(String name,String componentClass, String componentType, String objectType, String bundleIdentifier) {
@@ -269,7 +264,7 @@ public class ComponentRegistry {
 			ico.setClassName(componentClass);
 			ico.setName(name);
 			ico.store();
-			
+
 			return registerComponent(ico);
 		}
 		catch(Exception e){
