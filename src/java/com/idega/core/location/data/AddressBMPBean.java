@@ -20,23 +20,23 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 	private static final long serialVersionUID = 4314572105071916583L;
 
-	private static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
-	private static final String ENTITY_NAME = "IC_ADDRESS";
-	private static final String STREET_NAME = "STREET_NAME";
-	private static final String ORIGINAL_STREET_NAME = "STREET_NAME_ORIGINAL";
-	private static final String STREET_NUMBER = "STREET_NUMBER";
-	private static final String CITY = "CITY";
-	private static final String PROVINCE = "PROVINCE";
-	private static final String P_O_BOX = "P_O_BOX";
-	private static final String POSTAL_CODE_ID = "POSTAL_CODE_ID";
-	private static final String IC_ADDRESS_TYPE_ID = "IC_ADDRESS_TYPE_ID";
-	private static final String IC_COUNTRY_ID = "IC_COUNTRY_ID";
-	private static final String COORDINATE = "COORDINATE";
-	private static final String COORDINATE_ID = "IC_ADDRESS_COORDINATE_ID";
+	public static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
+	public static final String ENTITY_NAME = "IC_ADDRESS";
+	public static final String STREET_NAME = "STREET_NAME";
+	public static final String ORIGINAL_STREET_NAME = "STREET_NAME_ORIGINAL";
+	public static final String STREET_NUMBER = "STREET_NUMBER";
+	public static final String CITY = "CITY";
+	public static final String PROVINCE = "PROVINCE";
+	public static final String P_O_BOX = "P_O_BOX";
+	public static final String POSTAL_CODE_ID = "POSTAL_CODE_ID";
+	public static final String IC_ADDRESS_TYPE_ID = "IC_ADDRESS_TYPE_ID";
+	public static final String IC_COUNTRY_ID = "IC_COUNTRY_ID";
+	public static final String COORDINATE = "COORDINATE";
+	public static final String COORDINATE_ID = "IC_ADDRESS_COORDINATE_ID";
 	private transient AddressTypeHome addressTypeHome;
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
-	private static final String STREET_ADDRESS_NOMINATIVE = "street_address_nominative";
+	public static final String STREET_ADDRESS_NOMINATIVE = "street_address_nominative";
 
 	public AddressBMPBean() {
 		super();
