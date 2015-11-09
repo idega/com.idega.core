@@ -254,8 +254,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of direct parent groups
 	 */
 	@Override
-	public Collection<Group> getParentGroups(int uGroupId) throws EJBException, FinderException {
-		// public Collection getGroupsContainingDirectlyRelated(int uGroupId){
+	public List<Group> getParentGroups(int uGroupId) throws EJBException, FinderException {
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			return getParentGroups(group);
@@ -272,7 +271,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of direct parent groups
 	 */
 	@Override
-	public Collection<Group> getParentGroups(Group group) {
+	public List<Group> getParentGroups(Group group) {
 		// public Collection getGroupsContainingDirectlyRelated(Group group){
 		try {
 			return group.getParentGroups();
