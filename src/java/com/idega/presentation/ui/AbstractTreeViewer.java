@@ -262,8 +262,10 @@ public abstract class AbstractTreeViewer<Node extends ICTreeNode<?>> extends Pre
 			return;
 		}
 
+
+		List<Node> copy = new ArrayList<Node>(nodes);
 		boolean firstNode = true;
-		for (Iterator<Node> iter = nodes.iterator(); iter.hasNext();) {
+		for (Iterator<Node> iter = copy.iterator(); iter.hasNext();) {
 			Node item = iter.next();
 
 			String id = item.getId();
