@@ -33,11 +33,14 @@ import com.idega.core.contact.data.Email;
 import com.idega.core.contact.data.EmailHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.localisation.data.ICLanguage;
+import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
 import com.idega.core.location.data.AddressType;
 import com.idega.core.location.data.Country;
+import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.data.IDOQuery;
 import com.idega.data.IDOStoreException;
@@ -971,4 +974,17 @@ public interface UserBusiness extends IBOService {
 	public boolean changeUserCurrentPassword(IWContext iwc,String newPassword);
 
 	public Gender getGenderFromPersonalId(String personalId);
+
+	public void setBirthCountry(User user, Country country);
+	public Country getBirthCountry(User user);
+
+	public void setUserLanguages(User user, ICLanguage primaryLanguage, ICLanguage secondaryLanguage, ICLanguage thirdLanguage, ICLanguage fourthLanguage);
+	public ICLanguage getUserPrimaryLanguage(User user);
+	public ICLanguage getUserSecondaryLanguage(User user);
+	public ICLanguage getUserThirdLanguage(User user);
+	public ICLanguage getUserFourthLanguage(User user);
+
+	public ICLanguageHome getICLanguageHome();
+	public CountryHome getCountryHome();
+
 }

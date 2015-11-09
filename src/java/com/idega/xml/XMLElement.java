@@ -579,4 +579,10 @@ public synchronized Object clone() {
 	  xmlString = ret.toString();
 	  return ret.toString();
   }
+
+  @Override
+  public String toString() {
+	  return "Name: " + getName() + "; value: " + getValue();
+  }
+
 }

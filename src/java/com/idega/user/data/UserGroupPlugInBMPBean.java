@@ -22,10 +22,13 @@ import com.idega.data.IDORelationshipException;
 
 public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPlugIn{
 
+	private static final long serialVersionUID = -7794040323399145228L;
+
   public UserGroupPlugInBMPBean() {
   }
 
-  public void initializeAttributes() {
+  @Override
+public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
 	this.addAttribute("plug_in_name","Plug-In name",String.class);
     this.addAttribute("plug_in_desc","Plug-In desc",String.class);
@@ -33,21 +36,24 @@ public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPl
     this.addManyToOneRelationship("business_ic_object",ICObject.class);
     this.addManyToOneRelationship("presentation_ic_object",ICObject.class);
     this.addManyToManyRelationShip(GroupType.class);
-    
+
     getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return "ic_user_plugin";
   }
-  
-  public ICObject getBusinessICObject(){
+
+  @Override
+public ICObject getBusinessICObject(){
   	return (ICObject) getColumnValue("business_ic_object");
   }
- 
-  public ICObject getPresentationICObject(){
+
+  @Override
+public ICObject getPresentationICObject(){
   	return (ICObject) getColumnValue("presentation_ic_object");
-  } 
+  }
 
   public Collection ejbFindAllPlugIns()throws FinderException{
     return super.idoFindAllIDsBySQL();
@@ -60,33 +66,37 @@ public class UserGroupPlugInBMPBean extends GenericEntity implements UserGroupPl
 
   public Collection ejbFindRegisteredPlugInsForGroup(Group group)throws FinderException{
   	//get all grouptypes the group is associated with and find all plugins connected to them
-  	  	
+
     return ejbFindAllPlugIns();
   }
-  
+
   public Collection ejbFindRegisteredPlugInsForGroupType(GroupType groupType)throws FinderException, IDORelationshipException{
     return this.idoGetReverseRelatedEntities(groupType);
   }
-  
+
   public Collection ejbFindRegisteredPlugInsForGroupType(String groupType)throws RemoteException, FinderException, IDORelationshipException{
     GroupTypeHome gHome = (GroupTypeHome) IDOLookup.getHome(GroupType.class);
     return this.ejbFindRegisteredPlugInsForGroupType(gHome.findGroupTypeByGroupTypeString(groupType) );
   }
 
-  public void setDescription(String description){
+  @Override
+public void setDescription(String description){
     setColumn("plug_in_desc",description);
   }
 
 
-  public String getDescription(){
+  @Override
+public String getDescription(){
     return super.getStringColumnValue("plug_in_desc");
   }
 
-  public String getDefaultDisplayName(){
+  @Override
+public String getDefaultDisplayName(){
     return getDescription();
   }
 
-  public String getLocalizedDisplayName(Locale locale){
+  @Override
+public String getLocalizedDisplayName(Locale locale){
     return getDescription();
   }
 

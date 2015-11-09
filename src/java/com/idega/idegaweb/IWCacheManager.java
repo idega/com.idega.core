@@ -258,7 +258,7 @@ public class IWCacheManager implements Singleton {
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma, String datasource){
     //check if this blob has already been cached
     Cache cache = (Cache) getObject(entityClassString+id+datasource);
-    if( cache == null || !isBlobCached(cache)) {//if null cache it for next time
+    if (cache == null || !isBlobCached(cache)) {//if null cache it for next time
      cache = cacheBlob(entityClassString,id,iwma, datasource);
     }
     return cache;
@@ -271,7 +271,7 @@ public class IWCacheManager implements Singleton {
  */
 private boolean isBlobCached(Cache cache){
   	java.io.File f = new java.io.File(cache.getRealPathToFile());
-    return f.exists();
+    return f.exists() && f.canRead() && f.length() > 0;
   }
 
   private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma, String datasource){

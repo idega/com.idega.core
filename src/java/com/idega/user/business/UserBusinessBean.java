@@ -68,6 +68,8 @@ import com.idega.core.contact.data.EmailTypeHome;
 import com.idega.core.contact.data.Phone;
 import com.idega.core.contact.data.PhoneBMPBean;
 import com.idega.core.contact.data.PhoneHome;
+import com.idega.core.localisation.data.ICLanguage;
+import com.idega.core.localisation.data.ICLanguageHome;
 import com.idega.core.location.business.AddressBusiness;
 import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressHome;
@@ -148,6 +150,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private static final String NULL = "null";
 
 	private static final String JOB_META_DATA_KEY = "job";
+	private static final String USER_BIRTH_COUNTRY_META_DATA_KEY = "birth_country";
+	private static final String USER_PRIMARY_LANGUAGE_META_DATA_KEY = "primary_language";
+	private static final String USER_SECONDARY_LANGUAGE_META_DATA_KEY = "secondary_language";
+	private static final String USER_THIRD_LANGUAGE_META_DATA_KEY = "third_language";
+	private static final String USER_FOURTH_LANGUAGE_META_DATA_KEY = "fourth_language";
 
 	private static final String WORKPLACE_META_DATA_KEY = "workplace";
 
@@ -156,6 +163,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private static final int NUMBER_OF_PERMISSIONS_CACHING_LIMIT = 800;
 
 	private GroupHome groupHome;
+
+	private ICLanguageHome icLanguageHome;
+
+	private CountryHome countryHome;
 
 	private UserHome userHome;
 
@@ -215,6 +226,31 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		return this.groupHome;
+	}
+
+	@Override
+	public ICLanguageHome getICLanguageHome() {
+		if (this.icLanguageHome  == null) {
+			try {
+				this.icLanguageHome = (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
+			} catch (RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return this.icLanguageHome;
+	}
+
+
+	@Override
+	public CountryHome getCountryHome() {
+		if (this.countryHome  == null) {
+			try {
+				this.countryHome = (CountryHome) IDOLookup.getHome(Country.class);
+			} catch (RemoteException rme) {
+				throw new RuntimeException(rme.getMessage());
+			}
+		}
+		return this.countryHome;
 	}
 
 	@Override
@@ -5019,5 +5055,138 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return gender;
 	}
+
+
+	/**
+	 * Saves the user birth country into the METADATA as country's ISO
+	 */
+	@Override
+	public void setBirthCountry(User user, Country country) {
+		if (user != null && country != null && !StringUtil.isEmpty(country.getIsoAbbreviation())) {
+			user.setMetaData(USER_BIRTH_COUNTRY_META_DATA_KEY, country.getIsoAbbreviation());
+			user.store();
+		}
+	}
+
+	/**
+	 * Finds and returns user's birth country
+	 */
+	@Override
+	public Country getBirthCountry(User user) {
+		if (user != null) {
+			String countryISO = user.getMetaData(USER_BIRTH_COUNTRY_META_DATA_KEY);
+			if (!StringUtil.isEmpty(countryISO)) {
+				try {
+					return getCountryHome().findByIsoAbbreviation(countryISO);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the country: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Saves the user languages into the METADATA as language ISO
+	 */
+	@Override
+	public void setUserLanguages(User user, ICLanguage primaryLanguage, ICLanguage secondaryLanguage, ICLanguage thirdLanguage, ICLanguage fourthLanguage) {
+		if (user != null) {
+			if (primaryLanguage != null && !StringUtil.isEmpty(primaryLanguage.getIsoAbbreviation())) {
+				user.setMetaData(USER_PRIMARY_LANGUAGE_META_DATA_KEY, primaryLanguage.getIsoAbbreviation());
+			} else {
+				user.removeMetaData(USER_PRIMARY_LANGUAGE_META_DATA_KEY);
+			}
+			if (secondaryLanguage != null && !StringUtil.isEmpty(secondaryLanguage.getIsoAbbreviation())) {
+				user.setMetaData(USER_SECONDARY_LANGUAGE_META_DATA_KEY, secondaryLanguage.getIsoAbbreviation());
+			} else {
+				user.removeMetaData(USER_SECONDARY_LANGUAGE_META_DATA_KEY);
+			}
+			if (thirdLanguage != null && !StringUtil.isEmpty(thirdLanguage.getIsoAbbreviation())) {
+				user.setMetaData(USER_THIRD_LANGUAGE_META_DATA_KEY, thirdLanguage.getIsoAbbreviation());
+			} else {
+				user.removeMetaData(USER_THIRD_LANGUAGE_META_DATA_KEY);
+			}
+			if (fourthLanguage != null && !StringUtil.isEmpty(fourthLanguage.getIsoAbbreviation())) {
+				user.setMetaData(USER_FOURTH_LANGUAGE_META_DATA_KEY, fourthLanguage.getIsoAbbreviation());
+			} else {
+				user.removeMetaData(USER_FOURTH_LANGUAGE_META_DATA_KEY);
+			}
+			user.store();
+		}
+	}
+
+	/**
+	 * Finds and returns user's primary language
+	 */
+	@Override
+	public ICLanguage getUserPrimaryLanguage(User user) {
+		if (user != null) {
+			String languageISO = user.getMetaData(USER_PRIMARY_LANGUAGE_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageISO)) {
+				try {
+					return getICLanguageHome().findByISOAbbreviation(languageISO);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns user's secondary
+	 */
+	@Override
+	public ICLanguage getUserSecondaryLanguage(User user) {
+		if (user != null) {
+			String languageISO = user.getMetaData(USER_SECONDARY_LANGUAGE_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageISO)) {
+				try {
+					return getICLanguageHome().findByISOAbbreviation(languageISO);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns user's third language
+	 */
+	@Override
+	public ICLanguage getUserThirdLanguage(User user) {
+		if (user != null) {
+			String languageISO = user.getMetaData(USER_THIRD_LANGUAGE_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageISO)) {
+				try {
+					return getICLanguageHome().findByISOAbbreviation(languageISO);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns user's fourth language
+	 */
+	@Override
+	public ICLanguage getUserFourthLanguage(User user) {
+		if (user != null) {
+			String languageISO = user.getMetaData(USER_FOURTH_LANGUAGE_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageISO)) {
+				try {
+					return getICLanguageHome().findByISOAbbreviation(languageISO);
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
 
 } // Class UserBusiness
