@@ -100,7 +100,7 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups
 	 */
-	public Collection<Group> getParentGroups(int uGroupId) throws EJBException, FinderException, java.rmi.RemoteException;
+	public List<Group> getParentGroups(int uGroupId) throws EJBException, FinderException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroups

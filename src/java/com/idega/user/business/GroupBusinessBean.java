@@ -251,8 +251,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of direct parent groups
 	 */
 	@Override
-	public Collection<Group> getParentGroups(int uGroupId) throws EJBException, FinderException {
-		// public Collection getGroupsContainingDirectlyRelated(int uGroupId){
+	public List<Group> getParentGroups(int uGroupId) throws EJBException, FinderException {
 		try {
 			Group group = this.getGroupByGroupID(uGroupId);
 			return getParentGroups(group);
@@ -269,7 +268,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * @return Collection of direct parent groups
 	 */
 	@Override
-	public Collection<Group> getParentGroups(Group group) {
+	public List<Group> getParentGroups(Group group) {
 		// public Collection getGroupsContainingDirectlyRelated(Group group){
 		try {
 			return group.getParentGroups();
@@ -2878,7 +2877,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	@Override
 	public List<Group> update(String groupId, String name, String description,
-			String city, 
+			String city,
 			Collection<String> roles) {
 		List<Group> groups = new ArrayList<Group>();
 
@@ -2941,10 +2940,10 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			if (!StringUtil.isEmpty(city)) {
 				try {
 					updateGroupMainAddressOrCreateIfDoesNotExist(
-							Integer.valueOf(group.getPrimaryKey().toString()), 
+							Integer.valueOf(group.getPrimaryKey().toString()),
 							null, null, null, city, null, null);
 				} catch (Exception e) {
-					getLogger().log(Level.WARNING, 
+					getLogger().log(Level.WARNING,
 							"Failed to update group main address cause of: ", e);
 				}
 			}
