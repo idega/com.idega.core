@@ -15,16 +15,16 @@ import org.jdom2.DocType;
 import org.jdom2.Document;
 import org.jdom2.Element;
 
+import com.idega.util.xml.XmlUtil;
+
 /**
  * @author <a href="mail:palli@idega.is">Pall Helgason</a>
  * @version 1.0
  */
 public class XMLDocument implements Serializable {
-  /**
-	 * Comment for <code>serialVersionUID</code>
-	 */
+
 	private static final long serialVersionUID = -7635890602981794914L;
-Document _doc = null;
+	Document _doc = null;
 
   public XMLDocument(XMLElement element) {
     Element el = (Element)element.getElement();
@@ -98,6 +98,15 @@ Document _doc = null;
   	if(this._doc != null){
   		this._doc.setDocType(docType);
   	}
+  }
+
+  @Override
+  public String toString() {
+	  Object doc = getDocument();
+	  if (doc instanceof Document) {
+		  return XmlUtil.getPrettyJDOMDocument((Document) doc);
+	  }
+	  return "null";
   }
 
 }
