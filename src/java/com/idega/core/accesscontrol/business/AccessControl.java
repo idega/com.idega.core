@@ -2176,7 +2176,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return filteredGroups.count() > 0;
 	}
 
-	private List<com.idega.user.data.Group> getUserGroups(User user) {
+	public List<com.idega.user.data.Group> getUserGroups(User user) {
 		if (user == null) {
 			return Collections.emptyList();
 		}

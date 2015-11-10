@@ -243,6 +243,8 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 
   public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey);
 
+  public List<com.idega.user.data.Group> getUserGroups(User user);
+
   public boolean isMemberOfGroupWithTypes(User user, List<String> groupTypes);
 
 }
