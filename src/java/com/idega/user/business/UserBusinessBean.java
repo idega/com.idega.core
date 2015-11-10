@@ -151,6 +151,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	private static final String JOB_META_DATA_KEY = "job";
 	private static final String USER_BIRTH_COUNTRY_META_DATA_KEY = "birth_country";
+	private static final String USER_YEAR_WHEN_USER_CAME_TO_ICELAND_META_DATA_KEY = "year_when_came_to_iceland";
 	private static final String USER_PRIMARY_LANGUAGE_META_DATA_KEY = "primary_language";
 	private static final String USER_SECONDARY_LANGUAGE_META_DATA_KEY = "secondary_language";
 	private static final String USER_THIRD_LANGUAGE_META_DATA_KEY = "third_language";
@@ -5149,6 +5150,36 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				} catch (Exception e) {
 					getLogger().log(Level.WARNING, "Could not find the language: ", e);
 				}
+			}
+		}
+		return null;
+	}
+
+
+	/**
+	 * Saves the year when user came to Iceland into the METADATA
+	 */
+	@Override
+	public void setYearWhenUserCameToIceland(User user, String year) {
+		if (user != null) {
+			if (!StringUtil.isEmpty(year)) {
+				user.setMetaData(USER_YEAR_WHEN_USER_CAME_TO_ICELAND_META_DATA_KEY, year);
+			} else {
+				user.removeMetaData(USER_YEAR_WHEN_USER_CAME_TO_ICELAND_META_DATA_KEY);
+			}
+			user.store();
+		}
+	}
+
+	/**
+	 * Finds and returns the year when user came to Iceland
+	 */
+	@Override
+	public String getYearWhenUserCameToIceland(User user) {
+		if (user != null) {
+			String year = user.getMetaData(USER_YEAR_WHEN_USER_CAME_TO_ICELAND_META_DATA_KEY);
+			if (!StringUtil.isEmpty(year)) {
+				return year;
 			}
 		}
 		return null;
