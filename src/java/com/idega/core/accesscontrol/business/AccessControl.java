@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 import javax.ejb.FinderException;
 import javax.servlet.ServletContext;
@@ -99,7 +100,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private PermissionGroup PermissionGroupEveryOne = null;
 	private PermissionGroup PermissionGroupUsers = null;
 	private PermissionGroup PermissionGroupLoggedOut = null;
-	
+
 	private List<Group> standardGroups = null;
 
 	private static final String _APPADDRESS_ADMINISTRATOR_USER = "ic_super_admin";
@@ -107,12 +108,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	private static final String PROPERTY_USERS_GROUP_ID = "accesscontrol.users.id";
 	private static final String PROPERTY_EVERYONE_GROUP_ID = "accesscontrol.everyone.id";
 	private static final String PROPERTY_LOGGEDOUT_GROUP_ID = "accesscontrol.loggedout.id";
-	
+
 
 	public static final int _GROUP_ID_EVERYONE = -7913;
 	public static final int _GROUP_ID_USERS = -1906;
 	public static final int _GROUP_ID_LOGGEDOUT = -5968;
-	
+
 	private static final int _notBuilderPageID = -1;
 	private PermissionCacher permissionCacher;
 
@@ -164,7 +165,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		return null;
 	}
-	
+
   protected Logger getLogger(){
   	return Logger.getLogger(this.getClass().getName());
   }
@@ -210,7 +211,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		this.PermissionGroupLoggedOut = permission;
 	}
-	
+
 	private void initPermissionGroupUsers() {
 		PermissionGroup permission = getPermissionDAO().findPermissionGroup(getUsersGroupID());
 		if (permission == null) {
@@ -227,7 +228,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 		return this.PermissionGroupLoggedOut;
 	}
-	
+
 	@Override
 	public PermissionGroup getPermissionGroupEveryOne() throws Exception {
 		if (this.PermissionGroupEveryOne == null) {
@@ -2161,42 +2162,63 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	@Override
+	public boolean isMemberOfGroupWithTypes(User user, List<String> groupTypes) {
+		if (user == null || ListUtil.isEmpty(groupTypes)) {
+			return false;
+		}
+
+		List<com.idega.user.data.Group> allGroups = getUserGroups(user);
+		if (ListUtil.isEmpty(allGroups)) {
+			return false;
+		}
+
+		Stream<com.idega.user.data.Group> filteredGroups = allGroups.parallelStream().filter(group -> !StringUtil.isEmpty(group.getGroupType()) && groupTypes.contains(group.getGroupType()));
+		return filteredGroups.count() > 0;
+	}
+
+	public List<com.idega.user.data.Group> getUserGroups(User user) {
+		if (user == null) {
+			return Collections.emptyList();
+		}
+
+		List<com.idega.user.data.Group> allGroups = null;
+		try {
+			GroupBusiness groupBussiness = getGroupBusiness(IWMainApplication.getDefaultIWApplicationContext());
+			allGroups = groupBussiness.getParentGroups(user.getGroup().getID());
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Failed to fetch parent groups for user: " + user, e);
+		}
+		return allGroups;
+	}
+
+	@Override
 	public Set<String> getAllRolesForUser(User user) {
 		Set<String> s = new HashSet<String>();
 
 		Group userGroup = user.getGroup();
 		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(userGroup);
 
-		GroupBusiness groupBussiness = getGroupBusiness(IWMainApplication.getDefaultIWApplicationContext());
-		if (groupBussiness != null) {
-			Collection<com.idega.user.data.Group> allGroups = null;
-			try {
-				allGroups = groupBussiness.getParentGroups(userGroup.getID());
-			} catch (Exception e) {
-				getLogger().log(Level.WARNING,
-						"Failed to fetch parent groups for user: " + user +
-						" cause of: ", e);
-			}
-
-			if (!ListUtil.isEmpty(allGroups)) {
-				for (com.idega.user.data.Group group: allGroups) {
-					Collection<String> tmpRoles = getAllRolesKeysForGroup(group);
-					if (!ListUtil.isEmpty(tmpRoles)) {
-						userRolesFromGroup.addAll(tmpRoles);
-					}
+		List<com.idega.user.data.Group> allGroups = getUserGroups(user);
+		if (!ListUtil.isEmpty(allGroups)) {
+			for (com.idega.user.data.Group group: allGroups) {
+				Collection<String> tmpRoles = getAllRolesKeysForGroup(group);
+				if (!ListUtil.isEmpty(tmpRoles)) {
+					userRolesFromGroup.addAll(tmpRoles);
 				}
 			}
 		}
 
 		if (!ListUtil.isEmpty(userRolesFromGroup)) {
-			for (String key: userRolesFromGroup)
+			for (String key: userRolesFromGroup) {
 				s.add(key);
+			}
 		}
 
 		try {
 			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
-			if (c == null)
+			if (c == null) {
 				return s;
+			}
 
 			for (ICPermission p: c) {
 				if (p.isActive()) {

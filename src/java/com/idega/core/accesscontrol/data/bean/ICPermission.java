@@ -40,7 +40,8 @@ import com.idega.user.data.bean.User;
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION_AND_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionGroup = :group and i.permissionString in (:permissionStrings) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUPS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
-		@NamedQuery(name = ICPermission.DELETE_BY_CRITERIA, query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)")
+		@NamedQuery(name = ICPermission.DELETE_BY_CRITERIA, query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString = :permissionString")
 })
 @Cacheable
 public class ICPermission implements Serializable {
@@ -68,6 +69,7 @@ public class ICPermission implements Serializable {
 								BY_GROUP_AND_CONTEXT = "permission.findByGroupAndContext",
 								BY_VALUES = "permission.findByValues",
 								BY_CRITERIA = "permission.findByCriteria",
+								BY_CONTEXT_TYPE_AND_PERMISSION = "permission.findByContextTypeAndPermission",
 
 								COLUMN_CONTEXT_VALUE = "permission_context_value";
 

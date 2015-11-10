@@ -34,6 +34,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 import com.idega.util.caching.Cache;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.text.TextSoap;
@@ -258,7 +259,7 @@ public class IWCacheManager implements Singleton {
   public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma, String datasource){
     //check if this blob has already been cached
     Cache cache = (Cache) getObject(entityClassString+id+datasource);
-    if( cache == null || !isBlobCached(cache)) {//if null cache it for next time
+    if (cache == null || !isBlobCached(cache)) {//if null cache it for next time
      cache = cacheBlob(entityClassString,id,iwma, datasource);
     }
     return cache;
@@ -271,7 +272,7 @@ public class IWCacheManager implements Singleton {
  */
 private boolean isBlobCached(Cache cache){
   	java.io.File f = new java.io.File(cache.getRealPathToFile());
-    return f.exists();
+    return f.exists() && f.canRead() && f.length() > 0;
   }
 
   private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma, String datasource){
@@ -288,13 +289,21 @@ private boolean isBlobCached(Cache cache){
     	}
     	GenericEntity ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
 
-    	try {
-    		input = ent.getInputStreamColumnValue(ent.getLobColumnName());
-    	} catch (Exception e) {}
-    	if (input == null && ent instanceof ICFile) {
+    	if (ent instanceof ICFile) {
     		ICFile file = (ICFile) ent;
-    		RepositoryService repository = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
-    		input = repository.getInputStreamAsRoot(file.getFileUri());
+    		String uri = file.getFileUri();
+    		if (!StringUtil.isEmpty(uri)) {
+    			RepositoryService repository = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
+    			input = repository.getInputStreamAsRoot(uri);
+    		}
+    	}
+
+    	if (input == null) {
+	    	try {
+	    		input = ent.getInputStreamColumnValue(ent.getLobColumnName());
+	    	} catch (Exception e) {
+	    		log.log(Level.WARNING, "Error getting input stream for " + entityClassString + ", ID: " + id, e);
+	    	}
     	}
     	if (input == null) {
     		log.warning("Unable to resolve input stream for " + ent + ". DB entity: " +	entityClassString + ", ID " + id + ", datasource " + datasource);

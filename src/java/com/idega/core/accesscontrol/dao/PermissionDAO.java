@@ -37,6 +37,7 @@ public interface PermissionDAO extends GenericDao {
 	public List<ICPermission> findPermissions(String contextType, String contextValue);
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString);
+	public List<ICPermission> findPermissionsByContextTypeAndPermission(String contextType, String permissionString);
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues, Group group);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, Character permissionValue);
 	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, String permissionString, String contextType);

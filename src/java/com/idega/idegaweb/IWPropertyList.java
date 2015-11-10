@@ -45,6 +45,7 @@ import com.idega.xml.XMLParser;
  * @version $Revision: 1.37 $
  */
 public class IWPropertyList {
+
 	protected XMLDocument xmlDocument;
 	protected File xmlFile;
 	private XMLElement parentElement;
@@ -77,14 +78,23 @@ public class IWPropertyList {
 	/**
 	 * @param parentElement
 	 */
-	void setParentElement(XMLElement parentElement)
-	{
+	void setParentElement(XMLElement parentElement) {
 		this.parentElement = parentElement;
 	}
+
 	void setMapElement(XMLElement mapElement){
-		getParentElement().removeContent(this.mapElement);
-		this.mapElement=mapElement;
-		this.getParentElement().addContent(mapElement);
+		XMLElement parent = getParentElement();
+		if (parent != null) {
+			parent.removeContent(this.mapElement);
+		} else {
+			logger.warning("Parent element is unknown in file " + xmlFile + " for element " + mapElement + ". XML document:\n" + xmlDocument);
+		}
+
+		this.mapElement = mapElement;
+
+		if (parent != null) {
+			parent.addContent(mapElement);
+		}
 	}
 
 	public IWPropertyList(String fileNameWithPath) {

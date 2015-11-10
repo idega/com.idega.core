@@ -82,7 +82,7 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 	public PermissionGroup getPermissionGroupUsers() throws Exception;
 	public PermissionGroup getPermissionGroupAdministrator() throws Exception;
 	public PermissionGroup getPermissionGroupLoggedOut() throws Exception;
-	
+
 	public boolean isAdmin(IWUserContext iwc)throws Exception;
 	public boolean isOwner(Object obj, IWUserContext iwc) throws Exception;
 	public boolean isOwner(ICFile file, IWUserContext iwc)throws Exception;
@@ -242,4 +242,9 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public boolean hasViewPermissionForPageKey(String pageKey,IWUserContext iwuc);
 
   public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey);
+
+  public List<com.idega.user.data.Group> getUserGroups(User user);
+
+  public boolean isMemberOfGroupWithTypes(User user, List<String> groupTypes);
+
 }

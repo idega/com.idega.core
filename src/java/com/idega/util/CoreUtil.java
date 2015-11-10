@@ -81,9 +81,9 @@ public class CoreUtil {
 		List<String> resources = new ArrayList<String>();
 
 		//	DWR
+		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
 		resources.add("/dwr/interface/ChooserService.js");
 		resources.add(CoreConstants.GROUP_SERVICE_DWR_INTERFACE_SCRIPT);
-		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
 
 		//	Chooser
 		resources.add(iwb.getVirtualPathWithFileNameString("javascript/ChooserHelper.js"));
