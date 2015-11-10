@@ -299,16 +299,21 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public void onApplicationEvent(IWMainApplicationStartedEvent event) {
-			IWMainApplicationSettings settings = event.getIWMA().getSettings();
-			if (settings.getBoolean("enlarge_perm_cntxt_column", Boolean.TRUE)) {
-				try {
-					SimpleQuerier.executeUpdate("ALTER TABLE " + ICPermission.ENTITY_NAME + " modify " + ICPermission.COLUMN_CONTEXT_VALUE +
-							" varchar(" + ICRole.ROLE_KEY_MAX_LENGTH + ");", true);
-					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
-				} catch (SQLException e) {
-					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
-				}
+		IWMainApplicationSettings settings = event.getIWMA().getSettings();
+		if (settings.getBoolean("enlarge_perm_cntxt_column", Boolean.TRUE)) {
+			try {
+				SimpleQuerier.executeUpdate("ALTER TABLE " + ICPermission.ENTITY_NAME + " modify " + ICPermission.COLUMN_CONTEXT_VALUE +
+						" varchar(" + ICRole.ROLE_KEY_MAX_LENGTH + ");", true);
+				settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
+			} catch (SQLException e) {
+				settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
 			}
+		}
+	}
+
+	@Override
+	public List<ICPermission> findPermissionsByContextTypeAndPermission(String contextType, String permissionString) {
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, ICPermission.class, new Param("contextType", contextType), new Param("permissionString", permissionString));
 	}
 
 }
