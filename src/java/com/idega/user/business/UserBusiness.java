@@ -984,6 +984,9 @@ public interface UserBusiness extends IBOService {
 	public ICLanguage getUserThirdLanguage(User user);
 	public ICLanguage getUserFourthLanguage(User user);
 
+	public void setYearWhenUserCameToIceland(User user, String year);
+	public String getYearWhenUserCameToIceland(User user);
+
 	public ICLanguageHome getICLanguageHome();
 	public CountryHome getCountryHome();
 
