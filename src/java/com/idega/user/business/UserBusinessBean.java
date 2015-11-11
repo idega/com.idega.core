@@ -157,6 +157,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	private static final String USER_THIRD_LANGUAGE_META_DATA_KEY = "third_language";
 	private static final String USER_FOURTH_LANGUAGE_META_DATA_KEY = "fourth_language";
 
+	private static final String USER_BIRTH_COUNTRY_NAME_META_DATA_KEY = "birth_country_name";
+	private static final String USER_PRIMARY_LANGUAGE_NAME_META_DATA_KEY = "primary_language_name";
+	private static final String USER_SECONDARY_LANGUAGE_NAME_META_DATA_KEY = "secondary_language_name";
+	private static final String USER_THIRD_LANGUAGE_NAME_META_DATA_KEY = "third_language_name";
+	private static final String USER_FOURTH_LANGUAGE_NAME_META_DATA_KEY = "fourth_language_name";
+
 	private static final String WORKPLACE_META_DATA_KEY = "workplace";
 
 	private static final String SESSION_KEY_TOP_NODES = "top_nodes_for_user";
@@ -5180,6 +5186,141 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			String year = user.getMetaData(USER_YEAR_WHEN_USER_CAME_TO_ICELAND_META_DATA_KEY);
 			if (!StringUtil.isEmpty(year)) {
 				return year;
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Saves the user birth country into the METADATA as country's name
+	 */
+	@Override
+	public void setBirthCountryName(User user, String countryName) {
+		if (user != null) {
+			if (!StringUtil.isEmpty(countryName)) {
+				user.setMetaData(USER_BIRTH_COUNTRY_NAME_META_DATA_KEY, countryName);
+			} else {
+				user.removeMetaData(USER_BIRTH_COUNTRY_NAME_META_DATA_KEY);
+			}
+			user.store();
+		}
+	}
+
+	/**
+	 * Finds and returns user's birth country
+	 */
+	@Override
+	public String getBirthCountryName(User user) {
+		if (user != null) {
+			String countryName = user.getMetaData(USER_BIRTH_COUNTRY_NAME_META_DATA_KEY);
+			if (!StringUtil.isEmpty(countryName)) {
+				try {
+					return countryName;
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the country: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Saves the user languages into the METADATA as language name
+	 */
+	@Override
+	public void setUserLanguageNames(User user, String primaryLanguageName, String secondaryLanguageName, String thirdLanguageName, String fourthLanguageName) {
+		if (user != null) {
+			if (!StringUtil.isEmpty(primaryLanguageName)) {
+				user.setMetaData(USER_PRIMARY_LANGUAGE_NAME_META_DATA_KEY, primaryLanguageName);
+			} else {
+				user.removeMetaData(USER_PRIMARY_LANGUAGE_NAME_META_DATA_KEY);
+			}
+			if (!StringUtil.isEmpty(secondaryLanguageName)) {
+				user.setMetaData(USER_SECONDARY_LANGUAGE_NAME_META_DATA_KEY, secondaryLanguageName);
+			} else {
+				user.removeMetaData(USER_SECONDARY_LANGUAGE_NAME_META_DATA_KEY);
+			}
+			if (!StringUtil.isEmpty(thirdLanguageName)) {
+				user.setMetaData(USER_THIRD_LANGUAGE_NAME_META_DATA_KEY, thirdLanguageName);
+			} else {
+				user.removeMetaData(USER_THIRD_LANGUAGE_NAME_META_DATA_KEY);
+			}
+			if (!StringUtil.isEmpty(fourthLanguageName)) {
+				user.setMetaData(USER_FOURTH_LANGUAGE_NAME_META_DATA_KEY, fourthLanguageName);
+			} else {
+				user.removeMetaData(USER_FOURTH_LANGUAGE_NAME_META_DATA_KEY);
+			}
+			user.store();
+		}
+	}
+
+	/**
+	 * Finds and returns user's primary language
+	 */
+	@Override
+	public String getUserPrimaryLanguageName(User user) {
+		if (user != null) {
+			String languageName = user.getMetaData(USER_PRIMARY_LANGUAGE_NAME_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageName)) {
+				try {
+					return languageName;
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns user's secondary language
+	 */
+	@Override
+	public String getUserSecondaryLanguageName(User user) {
+		if (user != null) {
+			String languageName = user.getMetaData(USER_SECONDARY_LANGUAGE_NAME_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageName)) {
+				try {
+					return languageName;
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns user's third language
+	 */
+	@Override
+	public String getUserThirdLanguageName(User user) {
+		if (user != null) {
+			String languageName = user.getMetaData(USER_THIRD_LANGUAGE_NAME_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageName)) {
+				try {
+					return languageName;
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
+			}
+		}
+		return null;
+	}
+
+	/**
+	 * Finds and returns user's fourth language
+	 */
+	@Override
+	public String getUserFourthLanguageName(User user) {
+		if (user != null) {
+			String languageName = user.getMetaData(USER_FOURTH_LANGUAGE_NAME_META_DATA_KEY);
+			if (!StringUtil.isEmpty(languageName)) {
+				try {
+					return languageName;
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Could not find the language: ", e);
+				}
 			}
 		}
 		return null;
