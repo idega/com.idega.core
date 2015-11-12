@@ -977,12 +977,22 @@ public interface UserBusiness extends IBOService {
 
 	public void setBirthCountry(User user, Country country);
 	public Country getBirthCountry(User user);
+	public void setBirthCountryName(User user, String countryName);
+	public String getBirthCountryName(User user);
 
 	public void setUserLanguages(User user, ICLanguage primaryLanguage, ICLanguage secondaryLanguage, ICLanguage thirdLanguage, ICLanguage fourthLanguage);
 	public ICLanguage getUserPrimaryLanguage(User user);
 	public ICLanguage getUserSecondaryLanguage(User user);
 	public ICLanguage getUserThirdLanguage(User user);
 	public ICLanguage getUserFourthLanguage(User user);
+	public void setUserLanguageNames(User user, String primaryLanguageName, String secondaryLanguageName, String thirdLanguageName, String fourthLanguageName);
+	public String getUserPrimaryLanguageName(User user);
+	public String getUserSecondaryLanguageName(User user);
+	public String getUserThirdLanguageName(User user);
+	public String getUserFourthLanguageName(User user);
+
+	public void setYearWhenUserCameToIceland(User user, String year);
+	public String getYearWhenUserCameToIceland(User user);
 
 	public ICLanguageHome getICLanguageHome();
 	public CountryHome getCountryHome();

@@ -175,6 +175,18 @@ private static <T> ArrayList<T> getEmptyVector(){
 		return filtered;
 	}
 
+	public static <T> List<T> getConcatinatedLists(List<List<T>> lists) {
+		if (isEmpty(lists)) {
+			return Collections.emptyList();
+		}
+
+		List<T> results = new ArrayList<T>();
+		lists.forEach(list -> {
+			results.addAll(list);
+		});
+		return results;
+	}
+
   protected static class EmptyList<T> extends ArrayList<T>{
 	private static final long serialVersionUID = 4998333443520433621L;
 
