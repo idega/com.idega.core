@@ -379,6 +379,8 @@ public class DefaultIWBundle implements IWBundle, Serializable {
 	  		return starterClass.newInstance();
 	  	} catch (ClassNotFoundException ex) {
 	  		// nothing to worry about, some bundles don't have a starter class
+	  	} catch (ClassCastException ex) {
+	  		LOGGER.warning(className + " is not type of " + IWBundleStartable.class.getName());
 	  	} catch (InstantiationException ex) {
 	  		LOGGER.warning("Instantiation of bundle starter class failed: "+ className);
 	  	} catch (IllegalAccessException ex) {
