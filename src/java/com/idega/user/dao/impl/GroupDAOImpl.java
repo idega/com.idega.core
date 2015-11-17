@@ -204,8 +204,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, Integer from, Integer to) {
-		List<Integer> ids = getChildGroupsIds(parentGroupsIds, municipalities, unions, years, from, to);
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to) {
+		List<Integer> ids = getChildGroupsIds(parentGroupsIds, municipalities, unions, years, notContainingTypes, from, to);
 		if (ListUtil.isEmpty(ids)) {
 			return null;
 		}
@@ -220,19 +220,24 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, Integer from, Integer to) {
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to) {
 		StringBuilder query = null;
 		try {
 			List<Param> params = new ArrayList<>();
 			params.add(new Param("ids", parentGroupsIds));
 
 			query = new StringBuilder("select distinct gr.group.id from ");
-			query.append(GroupRelation.class.getName()).append(" gr inner join gr.group as g ");
+			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup as g ");
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" inner join gr.group.addresses a");
 			}
-			query.append(" where gr.relatedGroup.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
+			query.append(" where gr.group.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
 			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
+
+			if (!ListUtil.isEmpty(notContainingTypes)) {
+				query.append(" and g.groupType.groupType not in (:notContainingTypes) ");
+				params.add(new Param("notContainingTypes", notContainingTypes));
+			}
 
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" and a.city in (:municipalities)");
@@ -241,7 +246,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			query.append(" order by g.name");
 
-			return getResultListByInlineQuery(query.toString(), Integer.class, from, to, "groupChildGroupsWithFilterAndPaging", ArrayUtil.convertListToArray(params));
+			List<Integer> ids = getResultListByInlineQuery(query.toString(), Integer.class, from, to, "groupChildGroupsWithFilterAndPaging", ArrayUtil.convertListToArray(params));
+			return ids;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + ", municipalities: " + municipalities + ", unions: " + unions +
 					", years: " + years + ", from: " + from + ", to: " + to + ". Query: " + query.toString());
