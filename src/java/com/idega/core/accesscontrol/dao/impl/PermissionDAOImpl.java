@@ -64,7 +64,13 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	public PermissionGroup getPermissionGroup(String name) {
 		Param param = new Param("name", name);
 
-		return getSingleResult("permissionGroup.findByName", PermissionGroup.class, param);
+		List<PermissionGroup> results = null;
+		try {
+			results = getResultListByInlineQuery("permissionGroup.findByName", PermissionGroup.class, param);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting permission group by name " + name, e);
+		}
+		return ListUtil.isEmpty(results) ? null : results.get(0);
 	}
 
 	@Override
