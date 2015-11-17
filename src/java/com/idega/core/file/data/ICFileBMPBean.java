@@ -76,7 +76,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 	public static String IC_ROOT_FOLDER_CACHE_KEY = "IC_ROOT_FOLDER";
 	public static String IC_ROOT_FOLDER_NAME = "ICROOT";
 	public static String IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER = "system_folder";
-	private static final String FILE_URI_IN_SLIDE = "FILE_URI_IN_SLIDE";
+	public static final String FILE_URI_IN_REPO = "FILE_URI_IN_SLIDE";
 
 	public static final int NODETYPE_FOLDER = 0;
 	public static final int NODETYPE_FILE = 1;
@@ -120,7 +120,7 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
 		addAttribute(getColumnDeletedWhen(), "Deleted when", true, true, Timestamp.class);
 		addAttribute(getColumnNameLocalizationKey(), "Localization key", true, true, String.class, 255);
-		addAttribute(FILE_URI_IN_SLIDE, "File URI", true, true, String.class, 1000);
+		addAttribute(FILE_URI_IN_REPO, "File URI", true, true, String.class, 1000);
 
 		addManyToManyRelationShip(ICItem.class, TABLENAME_ICFILE_ICITEM);
 		addManyToManyRelationShip(ICVersion.class, TABLENAME_ICFILE_ICVERSION);
@@ -666,12 +666,12 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 
 	@Override
 	public void setFileUri(String uri) {
-		setColumn(FILE_URI_IN_SLIDE, uri);
+		setColumn(FILE_URI_IN_REPO, uri);
 	}
 
 	@Override
 	public String getFileUri() {
-		return getStringColumnValue(FILE_URI_IN_SLIDE);
+		return getStringColumnValue(FILE_URI_IN_REPO);
 	}
 
 	@Override
