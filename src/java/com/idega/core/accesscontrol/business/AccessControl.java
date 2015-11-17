@@ -749,25 +749,29 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	private Collection<Group> getParentGroupsAndPermissionControllingParentGroups(String permissionKey, User user) throws RemoteException {
-		Collection<Group> groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
+		long start = System.currentTimeMillis();
+		try {
+			Collection<Group> groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
 
-		List<Group> groupsToCheckForPermissions = new ArrayList<Group>();
-		if (!ListUtil.isEmpty(groups)) {
-			for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
-				Group parent = iter.next();
-				Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
-				if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
-					groupsToCheckForPermissions.add(permissionControllingParentGroup);
+			List<Group> groupsToCheckForPermissions = new ArrayList<Group>();
+			if (!ListUtil.isEmpty(groups)) {
+				for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
+					Group parent = iter.next();
+					Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
+					if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
+						groupsToCheckForPermissions.add(permissionControllingParentGroup);
+					}
 				}
 			}
-		}
 
-		if (groups != null && groupsToCheckForPermissions != null) {
-			groups.addAll(groupsToCheckForPermissions);
-		}
+			if (groups != null && groupsToCheckForPermissions != null) {
+				groups.addAll(groupsToCheckForPermissions);
+			}
 
-		getLogger().info("Parent groups (" + groups + ") for " + user + ", ID: " + user.getId());
-		return groups;
+			return groups;
+		} finally {
+			CoreUtil.doDebug(start, System.currentTimeMillis(), getClass().getName() + ".getParentGroupsAndPermissionControllingParentGroups");
+		}
 	}
 
 	/**
@@ -2176,6 +2180,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return filteredGroups.count() > 0;
 	}
 
+	@Override
 	public List<com.idega.user.data.Group> getUserGroups(User user) {
 		if (user == null) {
 			return Collections.emptyList();
