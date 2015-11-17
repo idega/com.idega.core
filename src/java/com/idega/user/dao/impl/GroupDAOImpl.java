@@ -26,6 +26,8 @@ import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.dao.GroupDAO;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupDomainRelation;
 import com.idega.user.data.bean.GroupDomainRelationType;
@@ -199,6 +201,36 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				" and (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type is null) and (gr.status = '" +
 				GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')";
 		return getResultListByInlineQuery(query, Group.class);
+	}
+
+	@Override
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, Integer from, Integer to) {
+		StringBuilder query = null;
+		try {
+			List<Param> params = new ArrayList<>();
+			params.add(new Param("ids", parentGroupsIds));
+
+			query = new StringBuilder("select distinct gr.group from ");
+			query.append(GroupRelation.class.getName()).append(" gr inner join gr.group as g ");
+			if (!ListUtil.isEmpty(municipalities)) {
+				query.append(" inner join gr.group.addresses a");
+			}
+			query.append(" where gr.relatedGroup.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
+			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
+
+			if (!ListUtil.isEmpty(municipalities)) {
+				query.append(" and a.city in (:municipalities)");
+				params.add(new Param("municipalities", municipalities));
+			}
+
+			query.append(" order by g.name");
+
+			return getResultListByInlineQuery(query.toString(), Group.class, from, to, "groupChildGroupsWithFilterAndPaging", ArrayUtil.convertListToArray(params));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + ", municipalities: " + municipalities + ", unions: " + unions +
+					", years: " + years + ", from: " + from + ", to: " + to + ". Query: " + query.toString());
+		}
+		return null;
 	}
 
 }

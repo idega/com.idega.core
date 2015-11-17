@@ -51,4 +51,6 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> findParentGroups(Integer groupId);
 	public Collection<Integer> findParentGroupsIds(Integer groupId);
 
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, Integer from, Integer to);
+
 }
