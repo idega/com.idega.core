@@ -2504,6 +2504,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public Collection<Group> getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc) throws RemoteException {
+		long start = System.currentTimeMillis();
+		try {
 		Collection<Group> topNodes = new ArrayList<Group>();
 		// check for the super user case first
 		boolean isSuperUser = iwuc.isSuperAdmin();
@@ -2819,6 +2821,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
 		}
 		return topNodes;
+		} finally {
+			CoreUtil.doDebug(start, System.currentTimeMillis(), getClass().getName() + ".getUsersTopGroupNodesByViewAndOwnerPermissions");
+		}
 	}
 
 	@Override
