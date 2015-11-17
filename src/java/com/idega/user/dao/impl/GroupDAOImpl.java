@@ -169,7 +169,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain + ". Query: " + query, e);
 			}
 		} else {
-			getLogger().info("$$$$$$$$$$$$ Groups not loaded under domain: " + containingDomain);
+			getLogger().warning("Groups not loaded under domain: " + containingDomain);
 		}
 
 		return Collections.emptyList();
@@ -235,7 +235,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
 
 			if (!ListUtil.isEmpty(notContainingTypes)) {
-				query.append(" and g.groupType.groupType not in (:notContainingTypes) ");
+				query.append(" and gr.group.groupType.groupType not in (:notContainingTypes) ");
 				params.add(new Param("notContainingTypes", notContainingTypes));
 			}
 
