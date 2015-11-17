@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.data.bean;
 
@@ -49,6 +49,7 @@ public class Address implements Serializable {
 	private static final String COLUMN_POSTAL_CODE = "postal_code_id";
 	private static final String COLUMN_COUNTRY = "ic_country_id";
 	private static final String COLUMN_ADDRESS_COORDINATE = "ic_address_coordinate_id";
+	private static final String COLUMN_CITY = "city";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -67,18 +68,21 @@ public class Address implements Serializable {
 
 	@Column(name = COLUMN_STREET_NUMBER, length = 30)
 	private String streetNumber;
-	
+
 	@Column(name = COLUMN_ROAD_NUMBER, length = 30)
 	private String roadNumber;
-	
+
 	@Column(name = COLUMN_ROOM_NUMBER, length = 30)
 	private String roomNumber;
-	
+
 	@Column(name = COLUMN_STREET_ADDRESS_NOMINATIVE)
 	private String streetAddressNominative;
 
 	@Column(name = COLUMN_PO_BOX, length = 50)
 	private String postalBox;
+
+	@Column(name = COLUMN_CITY, length = 50)
+	private String city;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_COMMUNE)
@@ -95,7 +99,7 @@ public class Address implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_ADDRESS_COORDINATE)
 	private AddressCoordinate addressCoordinate;
-	
+
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = User.class)
 	@JoinTable(name = "ic_user_address", joinColumns = { @JoinColumn(name = COLUMN_ADDRESS_ID) }, inverseJoinColumns = { @JoinColumn(name = User.COLUMN_USER_ID) })
 	private List<User> users;

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.file.data.bean;
 
@@ -31,6 +31,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.idega.core.file.data.ICFileBMPBean;
 import com.idega.core.localisation.data.bean.ICLocale;
 import com.idega.core.version.data.bean.ICItem;
 import com.idega.core.version.data.bean.ICVersion;
@@ -112,7 +113,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = COLUMN_DELETED_WHEN)
 	private Date deletedWhen;
-	
+
 	@Column(name = COLUMN_HASH)
 	private Integer hashValue;
 
@@ -131,7 +132,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.ALL }, targetEntity = Metadata.class)
 	@JoinTable(name = "ic_file_ic_metadata", joinColumns = { @JoinColumn(name = COLUMN_FILE_ID) }, inverseJoinColumns = { @JoinColumn(name = Metadata.COLUMN_METADATA_ID) })
 	private Set<Metadata> metadata;
-	
+
 	@ManyToOne(optional = true)
 	@JoinTable(name = TREE_TABLE_NAME, joinColumns = { @JoinColumn(name = "child_" + COLUMN_FILE_ID, referencedColumnName = COLUMN_FILE_ID) }, inverseJoinColumns = { @JoinColumn(name = COLUMN_FILE_ID) })
 	private ICFile parent;
@@ -139,6 +140,9 @@ public class ICFile implements Serializable, MetaDataCapable {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ICFile.class)
 	@JoinTable(name = TREE_TABLE_NAME, joinColumns = { @JoinColumn(name = COLUMN_FILE_ID) }, inverseJoinColumns = { @JoinColumn(name = "child_" + COLUMN_FILE_ID, referencedColumnName = COLUMN_FILE_ID) })
 	private List<ICFile> children;
+
+	@Column(name = ICFileBMPBean.FILE_URI_IN_REPO, length = 1000)
+	private String uriInRepo;
 
 	/**
 	 * @return the fileID
@@ -337,11 +341,11 @@ public class ICFile implements Serializable, MetaDataCapable {
 	public void setDeletedWhen(Date deletedWhen) {
 		this.deletedWhen = deletedWhen;
 	}
-	
+
 	public Integer getHash() {
 		return this.hashValue;
 	}
-	
+
 	public void setHash(Integer hashValue) {
 		this.hashValue = hashValue;
 	}
@@ -382,14 +386,14 @@ public class ICFile implements Serializable, MetaDataCapable {
 	public ICFile getParent() {
 		return this.parent;
 	}
-	
+
 	/**
 	 * @param parent The parent to set.
 	 */
 	public void setParent(ICFile parent) {
 		this.parent = parent;
 	}
-	
+
 	/**
 	 * @return Returns the children.
 	 */
@@ -439,10 +443,11 @@ public class ICFile implements Serializable, MetaDataCapable {
 				return metaData;
 			}
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -450,10 +455,11 @@ public class ICFile implements Serializable, MetaDataCapable {
 				return metaData.getValue();
 			}
 		}
-		
+
 		return null;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataAttributes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -461,10 +467,11 @@ public class ICFile implements Serializable, MetaDataCapable {
 		for (Metadata metaData : list) {
 			map.put(metaData.getKey(), metaData.getValue());
 		}
-		
+
 		return map;
 	}
 
+	@Override
 	public Map<String, String> getMetaDataTypes() {
 		Map<String, String> map = new HashMap<String, String>();
 
@@ -472,19 +479,21 @@ public class ICFile implements Serializable, MetaDataCapable {
 		for (Metadata metaData : list) {
 			map.put(metaData.getKey(), metaData.getType());
 		}
-		
+
 		return map;
 	}
 
+	@Override
 	public boolean removeMetaData(String metaDataKey) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata != null) {
 			getMetadata().remove(metadata);
 		}
-		
+
 		return false;
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName, String value) {
 		Metadata metadata = getMetadata(oldKeyName);
 		if (metadata != null) {
@@ -495,10 +504,12 @@ public class ICFile implements Serializable, MetaDataCapable {
 		}
 	}
 
+	@Override
 	public void renameMetaData(String oldKeyName, String newKeyName) {
 		renameMetaData(oldKeyName, newKeyName, null);
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value, String type) {
 		Metadata metadata = getMetadata(metaDataKey);
 		if (metadata == null) {
@@ -509,31 +520,43 @@ public class ICFile implements Serializable, MetaDataCapable {
 		if (type != null) {
 			metadata.setType(type);
 		}
-		
+
 		getMetadata().add(metadata);
-		
+
 	}
 
+	@Override
 	public void setMetaData(String metaDataKey, String value) {
 		setMetaData(metaDataKey, value, null);
 	}
 
+	@Override
 	public void setMetaDataAttributes(Map<String, String> map) {
 		for (String key : map.keySet()) {
 			String value = map.get(key);
-			
+
 			Metadata metadata = getMetadata(key);
 			if (metadata == null) {
 				metadata = new Metadata();
 				metadata.setKey(key);
 			}
 			metadata.setValue(value);
-			
+
 			getMetadata().add(metadata);
 		}
 	}
 
+	@Override
 	public void updateMetaData() throws SQLException {
 		//Does nothing...
 	}
+
+	public String getUriInRepo() {
+		return uriInRepo;
+	}
+
+	public void setUriInRepo(String uriInRepo) {
+		this.uriInRepo = uriInRepo;
+	}
+
 }

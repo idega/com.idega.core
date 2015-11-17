@@ -106,9 +106,8 @@ public class ViewManager implements Singleton {
 			}
 
 			node.setViewId(CoreConstants.WORKSPACE_VIEW_MANAGER_ID);
-			//getApplicationRoot().addChildViewNode(node);
 			node.setParent(getApplicationRoot());
-			node.setJspUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.workspace").getJSPURI("welcome.jsp"));
+			node.setFaceletUri(IWMainApplication.getDefaultIWMainApplication().getBundle("com.idega.workspace").getFaceletURI("welcome.xhtml"));
 			this.workspaceNode = node;
 		}
 		return this.workspaceNode;
@@ -273,7 +272,7 @@ public class ViewManager implements Singleton {
 		if(roles!=null){
 			if(roles.size()>0){
 				for (Iterator<String> iter = roles.iterator(); iter.hasNext();) {
-					String roleKey = (String) iter.next();
+					String roleKey = iter.next();
 					if(getIWMainApplication().getAccessController().hasRole(roleKey,userContext)){
 						return true;
 					}
