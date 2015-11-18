@@ -17,9 +17,11 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.business.SpringBeanName;
 import com.idega.core.persistence.GenericDao;
+import com.idega.idegaweb.IWUserContext;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
+import com.idega.user.data.bean.User;
 
 @SpringBeanName("groupDAO")
 public interface GroupDAO extends GenericDao {
@@ -50,6 +52,8 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> findParentGroups(Integer groupId);
 	public Collection<Integer> findParentGroupsIds(Integer groupId);
+
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc);
 
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to);
 	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to);

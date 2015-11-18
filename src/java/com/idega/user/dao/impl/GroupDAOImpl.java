@@ -13,6 +13,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 
@@ -21,10 +22,13 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.bean.ICDomain;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.GroupRelationBMPBean;
@@ -34,6 +38,7 @@ import com.idega.user.data.bean.GroupDomainRelationType;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
+import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -226,18 +231,22 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<Param> params = new ArrayList<>();
 			params.add(new Param("ids", parentGroupsIds));
 
-			query = new StringBuilder("select distinct gr.group.id from ");
-			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup as g ");
+			query = new StringBuilder("select distinct g.id from ");
+			query.append(GroupRelation.class.getName()).append(" gr, ").append(Group.class.getName()).append(" g");
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" inner join gr.group.addresses a");
 			}
-			query.append(" where gr.group.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
+			query.append(" where gr.group.id in (:ids) and g.id = gr.relatedGroup.id and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
 			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
 
-			if (!ListUtil.isEmpty(notContainingTypes)) {
-				query.append(" and gr.group.groupType.groupType not in (:notContainingTypes) ");
-				params.add(new Param("notContainingTypes", notContainingTypes));
+			if (ListUtil.isEmpty(notContainingTypes)) {
+				notContainingTypes = new ArrayList<>();
 			}
+			if (!notContainingTypes.contains(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE)) {
+				notContainingTypes.add(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE);
+			}
+			query.append(" and g.groupType.groupType not in (:notContainingTypes) ");
+			params.add(new Param("notContainingTypes", notContainingTypes));
 
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" and a.city in (:municipalities)");
@@ -252,6 +261,39 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + ", municipalities: " + municipalities + ", unions: " + unions +
 					", years: " + years + ", from: " + from + ", to: " + to + ". Query: " + query.toString());
 		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc) {
+		if (user == null) {
+			getLogger().warning("User is not provided");
+			return null;
+		}
+
+		try {
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+
+			List<Integer> ids = new ArrayList<>();
+
+			Collection<com.idega.user.data.Group> userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+			List<Integer> parentGroupsIds = new ArrayList<>();
+			for (Iterator<com.idega.user.data.Group> groupsIter = userTopGroups.iterator(); groupsIter.hasNext();) {
+				parentGroupsIds.add(Integer.valueOf(groupsIter.next().getId()));
+			}
+			ids.addAll(parentGroupsIds);
+
+			List<Integer> childrenIds = null;
+			while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null))) {
+				ids.addAll(childrenIds);
+				parentGroupsIds = childrenIds;
+			}
+
+			return ids;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting all groups for " + user, e);
+		}
+
 		return null;
 	}
 
