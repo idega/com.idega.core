@@ -2507,6 +2507,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		long start = System.currentTimeMillis();
 		try {
 		Collection<Group> topNodes = new ArrayList<Group>();
+		if (iwuc == null) {
+			getLogger().warning(IWUserContext.class.getName() + " is not provided");
+			return topNodes;
+		}
+
 		// check for the super user case first
 		boolean isSuperUser = iwuc.isSuperAdmin();
 		if ((isSuperUser && user == null) || (isSuperUser && iwuc.getCurrentUser().equals(user))) {
