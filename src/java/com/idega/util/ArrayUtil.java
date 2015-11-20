@@ -7,7 +7,7 @@ import java.util.Collection;
 /**
  * <p>Title: idegaWeb</p>
  * <p>Description:
- * Collection of some useful methods regarding arrays. 
+ * Collection of some useful methods regarding arrays.
  * </p>
  * <p>Copyright: Copyright (c) 2003</p>
  * <p>Company: idega Software</p>
@@ -19,7 +19,7 @@ public class ArrayUtil  {
 
 	private ArrayUtil() {
 	}
-		
+
 	public static boolean contains(Object[] array, Object object) {
 		if (array == null) {
 			return false;
@@ -32,28 +32,32 @@ public class ArrayUtil  {
 		}
 		return false;
 	}
-	
+
 	@SuppressWarnings("unchecked")
 	public static final <T>T[] convertListToArray(Collection<T> collection) {
 		if (ListUtil.isEmpty(collection)) {
 			return null;
 		}
-		
+
 		int index = 0;
 		T[] array = (T[]) Array.newInstance(collection.iterator().next().getClass(), collection.size());
 		for (T collectionItem: collection) {
+			if (collectionItem == null) {
+				continue;
+			}
+
 			array[index] = collectionItem;
 			index++;
 		}
-		
+
 		return array;
 	}
-	
+
 	public static final boolean isEmpty(Object[] array) {
 		if (array == null || array.length == 0) {
 			return true;
 		}
-		
+
 		return false;
 	}
 }
