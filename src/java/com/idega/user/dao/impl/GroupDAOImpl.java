@@ -59,6 +59,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> findGroups(List<Integer> groupsIds, Integer from, Integer to) {
+		if (ListUtil.isEmpty(groupsIds)) {
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_BY_IDS, Group.class, from, to, null, new Param("ids", groupsIds));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds, e);
+		}
+		return null;
+	}
+
+	@Override
 	@Transactional(readOnly = false)
 	public GroupType createGroupType(String type, String description, boolean visibility) {
 		GroupType groupType = new GroupType();

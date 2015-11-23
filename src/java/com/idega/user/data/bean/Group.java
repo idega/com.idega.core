@@ -79,7 +79,8 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findAllByGroupTypes", query = "select g from Group g where g.groupType in (:groupTypes)"),
 	@NamedQuery(name = "group.findByGroupTypeAndName", query = "select g from Group g where g.groupType = :groupType and g.name = :name"),
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
-	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID")
+	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)")
 })
 @XmlTransient
 @Cacheable
@@ -87,9 +88,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	private static final long serialVersionUID = -9014094183053434782L;
 
-	public static final String ENTITY_NAME = "ic_group";
-	public static final String COLUMN_GROUP_ID = "ic_group_id";
-	public static final String COLUMN_GROUP_TYPE = "group_type";
+	public static final String	QUERY_FIND_BY_IDS = "group.findByIDs",
+
+								ENTITY_NAME = "ic_group",
+								COLUMN_GROUP_ID = "ic_group_id",
+								COLUMN_GROUP_TYPE = "group_type";
 
 	private static final String COLUMN_UNIQUE_ID = "unique_id";
 	private static final String COLUMN_NAME = "name";
