@@ -278,6 +278,35 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	private List<Integer> getParentGroupsIds(List<Integer> ids, Collection<GroupType> groupTypes) {
+		try {
+			StringBuilder query = new StringBuilder("select distinct r.group.id from GroupRelation r join r.group g where r.relatedGroup.id in (:ids)");
+			query.append(") and g.groupType in (:groupTypes) and r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
+			return getResultListByInlineQuery(query.toString(), Integer.class, new Param("ids", ids), new Param("groupTypes", groupTypes));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + ids + " and group types " + groupTypes, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<GroupType> groupTypes) {
+		try {
+			List<Integer> ids = new ArrayList<>();
+
+			List<Integer> parentIds = null;
+			while (!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds, groupTypes))) {
+				ids.addAll(parentIds);
+				groupsIds = parentIds;
+			}
+
+			return ids;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + groupsIds + " and group types " + groupTypes, e);
+		}
+		return null;
+	}
+
 	@Override
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc) {
 		if (user == null) {
