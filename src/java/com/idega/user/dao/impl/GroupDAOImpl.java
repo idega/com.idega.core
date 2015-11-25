@@ -340,4 +340,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	@Override
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
+		// TODO Auto-generated method stub
+		return null;
+	}
+
 }
