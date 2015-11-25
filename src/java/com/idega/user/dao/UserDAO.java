@@ -45,4 +45,6 @@ public interface UserDAO extends GenericDao {
 
 	public User getByEmailAddress(String emailAddress);
 
+	public List<User> getUsersByParentGroupsAndChildGroupTypes(List<Integer> parentGroupIds, List<String> childGroupTypes, Integer from, Integer to);
+
 }

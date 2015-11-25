@@ -155,4 +155,10 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 		return null;
 	}
+
+	@Override
+	public List<User> getUsersByParentGroupsAndChildGroupTypes(List<Integer> parentGroupIds, List<String> childGroupTypes, Integer from, Integer to) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }
