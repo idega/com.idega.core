@@ -41,6 +41,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.DiscriminatorOptions;
@@ -203,6 +204,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.group")
     private final List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+
+    @Transient
+    private boolean hasUsers;
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -899,4 +903,13 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 		return returnCol;
 	}
+
+	public void setHasUsers(boolean hasUsers) {
+		this.hasUsers = hasUsers;
+	}
+
+	public boolean hasUsers() {
+		return hasUsers;
+	}
+
 }
