@@ -29,11 +29,13 @@ import com.idega.user.data.bean.User;
 @Table(name = Address.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "address.findByPostalCode", query = "select a from Address a where a.postalCode = :postalCode"),
-	@NamedQuery(name = "address.findByUserAndAddressType", query = "select a from Address a join a.users u where u.userID = :userID and a.addressType = :addressType")
+	@NamedQuery(name = Address.QUERY_FIND_BY_USER_AND_ADDRESS_TYPE, query = "select a from Address a join a.users u where u.userID = :userID and a.addressType = :addressType")
 })
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = 2192075177636648876L;
+
+	public static final String QUERY_FIND_BY_USER_AND_ADDRESS_TYPE = "address.findByUserAndAddressType";
 
 	public static final String ENTITY_NAME = "ic_address";
 	public static final String COLUMN_ADDRESS_ID = "ic_address_id";

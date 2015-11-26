@@ -667,6 +667,16 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return null;
 	}
 
+	public Address getMainAddress() {
+		try {
+			UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
+			return userDAO.getUsersMainAddress(this);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+
 	@Override
 	public String toString() {
 		return getName();

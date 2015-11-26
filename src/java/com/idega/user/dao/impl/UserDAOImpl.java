@@ -16,6 +16,9 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.core.contact.dao.ContactDAO;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.EmailType;
+import com.idega.core.location.dao.AddressDAO;
+import com.idega.core.location.data.bean.Address;
+import com.idega.core.location.data.bean.AddressType;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.dao.UserDAO;
@@ -32,7 +35,10 @@ import com.idega.util.StringUtil;
 public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Autowired
-	ContactDAO contactDAO;
+	private ContactDAO contactDAO;
+
+	@Autowired
+	private AddressDAO addressDAO;
 
 	@Override
 	@Transactional(readOnly = false)
@@ -157,8 +163,17 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	}
 
 	@Override
-	public List<User> getUsersByParentGroupsAndChildGroupTypes(List<Integer> parentGroupIds, List<String> childGroupTypes, Integer from, Integer to) {
-		// TODO Auto-generated method stub
-		return null;
+	public Address getUsersMainAddress(User user) {
+		if (user == null) {
+			return null;
+		}
+
+		AddressType mainAddressType = addressDAO.getMainAddressType();
+		if (mainAddressType == null) {
+			return null;
+		}
+
+		return getSingleResult(Address.QUERY_FIND_BY_USER_AND_ADDRESS_TYPE, Address.class, new Param("userID", user.getId()), new Param("addressType", mainAddressType));
 	}
+
 }

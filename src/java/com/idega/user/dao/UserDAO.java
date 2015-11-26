@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.business.SpringBeanName;
 import com.idega.core.contact.data.bean.Email;
+import com.idega.core.location.data.bean.Address;
 import com.idega.core.persistence.GenericDao;
 import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
@@ -45,6 +46,6 @@ public interface UserDAO extends GenericDao {
 
 	public User getByEmailAddress(String emailAddress);
 
-	public List<User> getUsersByParentGroupsAndChildGroupTypes(List<Integer> parentGroupIds, List<String> childGroupTypes, Integer from, Integer to);
+	public Address getUsersMainAddress(User user);
 
 }
