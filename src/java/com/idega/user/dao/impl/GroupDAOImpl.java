@@ -15,6 +15,8 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -32,6 +34,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.GroupRelationBMPBean;
+import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupDomainRelation;
 import com.idega.user.data.bean.GroupDomainRelationType;
@@ -223,44 +226,60 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to) {
-		List<Integer> ids = getChildGroupsIds(parentGroupsIds, municipalities, unions, years, notContainingTypes, from, to);
-		if (ListUtil.isEmpty(ids)) {
-			return null;
-		}
-
-		try {
-			return getResultListByInlineQuery("select g from " + Group.class.getName() + " g where g.id in (:ids)", Group.class, new Param("ids", ids));
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting child groups by IDs (" + ids + ") for group(s) " + parentGroupsIds + ", municipalities: " + municipalities + ", unions: " + unions +
-					", years: " + years + ", from: " + from + ", to: " + to);
-		}
-		return null;
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
+		return getChildGroups(Group.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to);
 	}
 
 	@Override
-	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to) {
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
+		return getChildGroups(Integer.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to);
+	}
+
+	private <T> List<T> getChildGroups(
+			Class<T> resultType,
+			List<Integer> parentGroupsIds,
+			List<String> municipalities,
+			List<String> unions,
+			List<String> years,
+			List<String> notHavingTypes,
+			List<String> havingTypes,
+			Integer from,
+			Integer to
+	) {
+		if (ListUtil.isEmpty(parentGroupsIds)) {
+			return null;
+		}
+
 		StringBuilder query = null;
 		try {
 			List<Param> params = new ArrayList<>();
 			params.add(new Param("ids", parentGroupsIds));
 
-			query = new StringBuilder("select distinct g.id from ");
-			query.append(GroupRelation.class.getName()).append(" gr, ").append(Group.class.getName()).append(" g");
+			query = new StringBuilder("select ").append(resultType.getName().equals(Integer.class.getName()) ?
+					"distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
+					"g")
+			.append(" from ");
+			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" inner join gr.group.addresses a");
 			}
-			query.append(" where gr.group.id in (:ids) and g.id = gr.relatedGroup.id and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
+			query.append(" where gr.group.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
 			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
 
-			if (ListUtil.isEmpty(notContainingTypes)) {
-				notContainingTypes = new ArrayList<>();
+			if (ListUtil.isEmpty(havingTypes)) {
+				//	Making sure only groups will be selected
+				if (ListUtil.isEmpty(notHavingTypes)) {
+					notHavingTypes = new ArrayList<>();
+				}
+				if (!notHavingTypes.contains(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE)) {
+					notHavingTypes.add(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE);
+				}
+				query.append(" and g.groupType.groupType not in (:notHavingTypes) ");
+				params.add(new Param("notHavingTypes", notHavingTypes));
+			} else {
+				query.append(" and g.groupType.groupType in (:havingTypes) ");
+				params.add(new Param("havingTypes", havingTypes));
 			}
-			if (!notContainingTypes.contains(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE)) {
-				notContainingTypes.add(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE);
-			}
-			query.append(" and g.groupType.groupType not in (:notContainingTypes) ");
-			params.add(new Param("notContainingTypes", notContainingTypes));
 
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" and a.city in (:municipalities)");
@@ -269,20 +288,21 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			query.append(" order by g.name");
 
-			List<Integer> ids = getResultListByInlineQuery(query.toString(), Integer.class, from, to, "groupChildGroupsWithFilterAndPaging", ArrayUtil.convertListToArray(params));
-			return ids;
+			List<T> results = getResultListByInlineQuery(query.toString(), resultType, from, to, "groupChildGroupsWithFilterAndTypesAndPaging", ArrayUtil.convertListToArray(params));
+			return results;
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + ", municipalities: " + municipalities + ", unions: " + unions +
-					", years: " + years + ", from: " + from + ", to: " + to + ". Query: " + query.toString());
+			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + " by query: " + query.toString(), e);
 		}
 		return null;
 	}
 
-	private List<Integer> getParentGroupsIds(List<Integer> ids, Collection<GroupType> groupTypes) {
+	private List<Integer> getParentGroupsIds(List<Integer> ids, Collection<String> groupTypes) {
 		try {
 			StringBuilder query = new StringBuilder("select distinct r.group.id from GroupRelation r join r.group g where r.relatedGroup.id in (:ids)");
-			query.append(") and g.groupType in (:groupTypes) and r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
-			return getResultListByInlineQuery(query.toString(), Integer.class, new Param("ids", ids), new Param("groupTypes", groupTypes));
+			query.append(") and g.groupType.groupType in (:groupTypes) and r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' and r.groupRelationType = '");
+			query.append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
+			List<Integer> results = getResultListByInlineQuery(query.toString(), Integer.class, new Param("ids", ids), new Param("groupTypes", groupTypes));
+			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + ids + " and group types " + groupTypes, e);
 		}
@@ -290,7 +310,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<GroupType> groupTypes) {
+	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<String> groupTypes) {
 		try {
 			List<Integer> ids = new ArrayList<>();
 
@@ -341,9 +361,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
-		// TODO Auto-generated method stub
-		return null;
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
+		Map<Integer, List<Group>> results = new TreeMap<Integer, List<Group>>();
+		int currentLevel = 1;
+		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
+		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
+			List<Group> levelGroups = getChildGroups(Group.class, parentGroupsIds, null, null, null, null, childGroupTypes, null, null);
+			if (!ListUtil.isEmpty(levelGroups)) {
+				results.put(currentLevel, levelGroups);
+			}
+			currentLevel++;
+
+			parentGroupsIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null);
+		}
+		return results;
 	}
 
 }

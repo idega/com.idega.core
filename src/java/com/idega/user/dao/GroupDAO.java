@@ -12,6 +12,7 @@ package com.idega.user.dao;
 import java.util.Collection;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -47,7 +48,7 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> getParentGroups(Group group, Collection<GroupType> groupTypes);
 
-	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<GroupType> groupTypes);
+	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<String> groupTypes);
 
 	public void createUniqueRelation(Group group, Group relatedGroup, GroupRelationType relationType, Date initiationDate);
 
@@ -62,6 +63,13 @@ public interface GroupDAO extends GenericDao {
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to);
 	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to);
 
-	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
+	/**
+	 *
+	 * @param parentGroupsIds
+	 * @param childGroupTypes
+	 * @param levels - how much recursive steps to make
+	 * @return map where key is identifying level number
+	 */
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 
 }
