@@ -9,10 +9,12 @@
  */
 package com.idega.user.dao.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -28,6 +30,7 @@ import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.bean.ICDomain;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.business.UserBusiness;
@@ -257,8 +260,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			query = new StringBuilder("select ").append(resultType.getName().equals(Integer.class.getName()) ?
 					"distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
-					"g")
-			.append(" from ");
+					"g"
+			).append(" from ");
 			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
 			if (!ListUtil.isEmpty(municipalities)) {
 				query.append(" inner join gr.group.addresses a");
@@ -375,6 +378,60 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			parentGroupsIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null);
 		}
 		return results;
+	}
+
+	@Override
+	public Map<Integer, Boolean> hasUsers(List<Group> groups) {
+		if (ListUtil.isEmpty(groups)) {
+			return null;
+		}
+
+		List<Integer> ids = new ArrayList<>();
+		groups.parallelStream().forEach(group -> {
+			if (group != null) {
+				Integer id = group.getID();
+				if (id != null) {
+					ids.add(group.getID());
+				}
+			}
+		});
+
+		try {
+			StringBuilder query = new StringBuilder("SELECT gr.ic_group_id, count(gr.related_ic_group_id) FROM IC_GROUP_RELATION gr WHERE gr.IC_GROUP_ID in (");
+			for (Iterator<Integer> idsIter = ids.iterator(); idsIter.hasNext();) {
+				Integer id = idsIter.next();
+				if (id != null) {
+					query.append(id);
+					if (idsIter.hasNext()) {
+						query.append(", ");
+					}
+				}
+			}
+			query.append(") and gr.RELATIONSHIP_TYPE = 'GROUP_PARENT' and (gr.GROUP_RELATION_STATUS = 'ST_ACTIVE' or gr.GROUP_RELATION_STATUS = 'PASS_PEND') ")
+				.append("and gr.related_GROUP_TYPE = 'ic_user_representative' group by gr.ic_group_id");
+			List<Serializable[]> dbResults = SimpleQuerier.executeQuery(query.toString(), 2);
+			if (ListUtil.isEmpty(dbResults)) {
+				return null;
+			}
+
+			Map<Integer, Boolean> results = new HashMap<>();
+			for (Serializable[] data: dbResults) {
+				if (ArrayUtil.isEmpty(data) || data.length != 2) {
+					continue;
+				}
+
+				Serializable id = data[0];
+				Serializable count = data[0];
+				if (id instanceof Number && count instanceof Number) {
+					results.put(((Number) id).intValue(), ((Number) count).intValue() > 0);
+				}
+			}
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error checking if groups " + groups + " have users");
+		}
+
+		return null;
 	}
 
 }

@@ -72,4 +72,12 @@ public interface GroupDAO extends GenericDao {
 	 */
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 
+	/**
+	 * Checks if groups have users
+	 *
+	 * @param groups
+	 * @return Group ID => flag if has users
+	 */
+	public Map<Integer, Boolean> hasUsers(List<Group> groups);
+
 }
