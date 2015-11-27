@@ -49,6 +49,7 @@
     <entity class="com.idega.data.bean.Metadata" />
     <entity class="com.idega.user.data.bean.Gender" />
     <entity class="com.idega.user.data.bean.Group" />
+    <entity class="com.idega.user.data.bean.GroupAlias" />
     <entity class="com.idega.user.data.bean.GroupDomainRelation" />
     <entity class="com.idega.user.data.bean.GroupDomainRelationType" />
     <entity class="com.idega.user.data.bean.GroupEvent" />
