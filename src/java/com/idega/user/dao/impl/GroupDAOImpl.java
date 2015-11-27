@@ -370,11 +370,19 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
-		Map<Integer, List<Group>> results = new TreeMap<Integer, List<Group>>();
+		return getChildGroups(parentGroupsIds, childGroupTypes, levels, Group.class);
+	}
+
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class);
+	}
+
+	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels, Class<T> resultType) {
+		Map<Integer, List<T>> results = new TreeMap<Integer, List<T>>();
 		int currentLevel = 1;
 		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
 		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
-			List<Group> levelGroups = getChildGroups(Group.class, parentGroupsIds, null, null, null, null, childGroupTypes, null, null);
+			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, null, childGroupTypes, null, null);
 			if (!ListUtil.isEmpty(levelGroups)) {
 				results.put(currentLevel, levelGroups);
 			}
