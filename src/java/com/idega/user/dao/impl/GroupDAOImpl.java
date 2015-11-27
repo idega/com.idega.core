@@ -38,6 +38,7 @@ import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupTypeBMPBean;
+import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupDomainRelation;
 import com.idega.user.data.bean.GroupDomainRelationType;
@@ -280,7 +281,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				query.append(" and g.groupType.groupType not in (:notHavingTypes) ");
 				params.add(new Param("notHavingTypes", notHavingTypes));
 			} else {
-				query.append(" and g.groupType.groupType in (:havingTypes) ");
+				if (havingTypes.contains(GroupTypeConstants.GROUP_TYPE_ALIAS)) {
+					query.append(" and gr.relatedGroupType.groupType in (:havingTypes) ");
+				} else {
+					query.append(" and g.groupType.groupType in (:havingTypes) ");
+				}
 				params.add(new Param("havingTypes", havingTypes));
 			}
 
