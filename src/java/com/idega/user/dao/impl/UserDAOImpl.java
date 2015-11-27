@@ -64,7 +64,11 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public User getUser(Integer userID) {
-		return find(User.class, userID);
+		if (userID != null) {
+			return find(User.class, userID);
+		}
+
+		return null;
 	}
 
 	@Override
