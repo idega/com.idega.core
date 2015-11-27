@@ -18,6 +18,7 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 
@@ -127,7 +128,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return null;
 		} finally {
 			if (measure) {
-				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), ArrayUtil.isEmpty(params) ? null: Arrays.asList(params));
 			}
 		}
 	}
