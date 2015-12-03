@@ -216,7 +216,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					        .shortValue()));
 				}
 			} else {
-				String message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
+				
+				String message = null;
+				if (result != null ) message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
+				else message = "Can not convert null to: " + expectedReturnType + ": such converter is not implemented yet!";
 				logger.warning(message);
 				CoreUtil.sendExceptionNotification(message, null);
 			}
