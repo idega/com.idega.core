@@ -293,6 +293,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				query.append(" and a.city in (:municipalities)");
 				params.add(new Param("municipalities", municipalities));
 			}
+			
+			if (resultType.getName().equals(Integer.class.getName())) query.append(" and ((g.groupType.groupType = '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' and g.alias.id is not null) or (g.id is not null and g.groupType.groupType <> '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("'))")));
 
 			query.append(" order by g.name");
 
