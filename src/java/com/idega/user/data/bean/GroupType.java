@@ -4,7 +4,6 @@
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -316,7 +315,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public GroupType getParentNode() {
-		parent = DBUtil.getInstance().lazyLoad(parent);
+		DBUtil.getInstance().lazyLoad(parent);
 		return parent;
 	}
 
@@ -332,15 +331,6 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 	@Override
 	public boolean isLeaf() {
 		return ListUtil.isEmpty(getChildren());
-	}
-
-
-	public void setParentNode(GroupType parent) {
-		this.parent = parent;
-	}
-
-	public void setChildren(List<GroupType> children) {
-		this.children = children;
 	}
 
 	@Override
