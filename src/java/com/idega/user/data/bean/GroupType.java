@@ -4,7 +4,6 @@
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
-import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -25,6 +24,8 @@ import javax.persistence.Table;
 
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.util.DBUtil;
+import com.idega.util.ListUtil;
 
 @Entity
 @Table(name = GroupType.ENTITY_NAME)
@@ -83,7 +84,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 	@Column(name = COLUMN_SAME_CHILD_TYPE_ONLY, length = 1)
 	private Character onlySupportsSameChildType;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = GroupType.class)
 	@JoinTable(name = ENTITY_NAME + "_tree", joinColumns = { @JoinColumn(name = "child_" + COLUMN_TYPE, referencedColumnName = COLUMN_TYPE) }, inverseJoinColumns = { @JoinColumn(name = COLUMN_TYPE) })
 	private GroupType parent;
 
@@ -261,22 +262,25 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public GroupType getChildAtIndex(int childIndex) {
-		return children.get(childIndex);
+		return getChildren().get(childIndex);
 	}
 
 	@Override
 	public int getChildCount() {
-		return children.size();
+		return getChildren().size();
 	}
 
 	@Override
-	public Collection<GroupType> getChildren() {
+	public List<GroupType> getChildren() {
+		if (!DBUtil.getInstance().isInitialized(children)) {
+			DBUtil.getInstance().lazyLoad(children);
+		}
 		return children;
 	}
 
 	@Override
 	public Iterator<GroupType> getChildrenIterator() {
-		return children.iterator();
+		return getChildren().iterator();
 	}
 
 	@Override
@@ -311,6 +315,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public GroupType getParentNode() {
+		DBUtil.getInstance().lazyLoad(parent);
 		return parent;
 	}
 
@@ -325,7 +330,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public boolean isLeaf() {
-		return children == null || children.isEmpty();
+		return ListUtil.isEmpty(getChildren());
 	}
 
 	@Override
