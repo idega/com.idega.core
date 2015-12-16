@@ -13,34 +13,38 @@ import com.idega.presentation.PresentationObject;
  * @author Sigtryggur
  */
 public class CheckBoxInputHandler extends CheckBox implements InputHandler {
-    
+
     protected static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-    private static final String CHECKED = "checked";
-    
+    public static final String CHECKED = "checked";
+
 	public CheckBoxInputHandler() {
 		super();
 	}
-	
+
 	public CheckBoxInputHandler(String name) {
 		super(name);
 	}
-    
-    public Object convertSingleResultingObjectToType(Object value, String className) {
+
+    @Override
+	public Object convertSingleResultingObjectToType(Object value, String className) {
         return value;
     }
 
-    public String getDisplayForResultingObject(Object value, IWContext iwc) {
+    @Override
+	public String getDisplayForResultingObject(Object value, IWContext iwc) {
         if (value != null && value.equals(CHECKED)) {
             return getResourceBundle(iwc).getLocalizedString("CheckBoxInputHandler.yes","Yes");
         }
         return getResourceBundle(iwc).getLocalizedString("CheckBoxInputHandler.no","No");
     }
 
-    public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
+    @Override
+	public PresentationObject getHandlerObject(String name, Collection values, IWContext iwc) {
         return null;
     }
 
-    public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
+    @Override
+	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
         this.setName(name);
 		if (value != null && value.equals(CHECKED)) {
 			this.setChecked(true);
@@ -48,14 +52,16 @@ public class CheckBoxInputHandler extends CheckBox implements InputHandler {
 		return this;
     }
 
-    public Object getResultingObject(String[] value, IWContext iwc) throws Exception {
+    @Override
+	public Object getResultingObject(String[] value, IWContext iwc) throws Exception {
         String ret = null;
         if (value != null && value.length != 0) {
 					ret = CHECKED;
 				}
         return ret;
     }
-    
+
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}

@@ -13,14 +13,14 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 /**
  * A presentation object for dynamic reports to genders. Both,male or female. both is default.
- * 
+ *
  * @author <a href="mailto:eiki@idega.is">Eirikur S. Hrafnsson</a>
  */
 public class GenderDropDownMenu extends DropDownMenuInputHandler {
 
 	private static final String MALE = "m"; //same as in workreportmember
 	private static final String FEMALE = "f"; //same as in workreportmember
-	private static final String BOTH = "b";
+	public static final String BOTH = "b";
 
 	protected static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
@@ -28,6 +28,7 @@ public class GenderDropDownMenu extends DropDownMenuInputHandler {
 		super();
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		this.addMenuElement(MALE, iwrb.getLocalizedString("GenderDropdownmenu.male", "Male"));
@@ -38,11 +39,12 @@ public class GenderDropDownMenu extends DropDownMenuInputHandler {
 			this.setSelectedElement(BOTH);
 		}
 	}
-	
+
 	/**
 	 * @return the year, Integer
-	 *  
+	 *
 	 */
+	@Override
 	public Object getResultingObject(String[] values, IWContext iwc) throws Exception {
 		if (values != null && values.length > 0) {
 			String gender = values[0];
@@ -60,13 +62,14 @@ public class GenderDropDownMenu extends DropDownMenuInputHandler {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.business.InputHandler#getDisplayNameOfValue(java.lang.String, com.idega.presentation.IWContext)
 	 */
+	@Override
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		if (value != null) {
-			
+
 			String displayName = "";
 			if (BOTH.equals(value)) {
 				displayName = iwrb.getLocalizedString("GenderDropdownmenu.both", "Both");
@@ -87,6 +90,7 @@ public class GenderDropDownMenu extends DropDownMenuInputHandler {
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#getBundleIdentifier()
 	 */
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
