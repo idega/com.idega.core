@@ -9,6 +9,10 @@
  */
 package com.idega.presentation.ui;
 
+import java.util.Arrays;
+import java.util.List;
+
+import com.idega.builder.bean.AdvancedProperty;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
@@ -18,32 +22,42 @@ import com.idega.presentation.PresentationObject;
  * TODO sigtryggur Describe Type OrderByUserDetailsDropDownMenu
  * </p>
  *  Last modified: $Date: 2007/01/26 06:36:37 $ by $Author: idegaweb $
- * 
+ *
  * @author <a href="mailto:sigtryggur@idega.com">sigtryggur</a>
  * @version $Revision: 1.2 $
  */
 public class OrderByUserDetailsDropDownMenu extends DropDownMenuInputHandler {
 
-	private static final String ORDER_BY_GROUP_PATH = "group_path_order";
-	private static final String ORDER_BY_NAME = "name_order";
-	private static final String ORDER_BY_USER_STATUS = "user_status_order";
-	private static final String ORDER_BY_ADDRESS = "address_order";
-	private static final String ORDER_BY_POSTAL_ADDRESS = "postal_address_order";
-	
+	public static final String	ORDER_BY_GROUP_PATH = "group_path_order",
+								ORDER_BY_NAME = "name_order",
+								ORDER_BY_USER_STATUS = "user_status_order",
+								ORDER_BY_ADDRESS = "address_order",
+								ORDER_BY_POSTAL_ADDRESS = "postal_address_order";
+
 	protected static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 	private static final String CLASS_NAME_PREFIX = "OrderByUserDetailsDropDownMenu.";
 
+	@Override
 	public PresentationObject getHandlerObject(String name, String value, IWContext iwc) {
 		IWResourceBundle iwrb = getResourceBundle(iwc);
 		this.setName(name);
-		this.addMenuElement(ORDER_BY_GROUP_PATH, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_GROUP_PATH, "Group path"));
-		this.addMenuElement(ORDER_BY_NAME, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_NAME, "Name"));
-		this.addMenuElement(ORDER_BY_USER_STATUS, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_USER_STATUS, "User status"));
-		this.addMenuElement(ORDER_BY_ADDRESS, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_ADDRESS, "Address"));
-		this.addMenuElement(ORDER_BY_POSTAL_ADDRESS, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_POSTAL_ADDRESS, "Postal address"));
+		for (AdvancedProperty element: getOrderings(iwrb)) {
+			this.addMenuElement(element.getId(), element.getValue());
+		}
 		return this;
 	}
 
+	public static List<AdvancedProperty> getOrderings(IWResourceBundle iwrb) {
+		return Arrays.asList(
+				new AdvancedProperty(ORDER_BY_GROUP_PATH, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_GROUP_PATH, "Group path")),
+				new AdvancedProperty(ORDER_BY_NAME, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_NAME, "Name")),
+				new AdvancedProperty(ORDER_BY_USER_STATUS, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_USER_STATUS, "User status")),
+				new AdvancedProperty(ORDER_BY_ADDRESS, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_ADDRESS, "Address")),
+				new AdvancedProperty(ORDER_BY_POSTAL_ADDRESS, iwrb.getLocalizedString(CLASS_NAME_PREFIX + ORDER_BY_POSTAL_ADDRESS, "Postal address"))
+		);
+	}
+
+	@Override
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		if (value != null) {
 			IWResourceBundle iwrb = getResourceBundle(iwc);
@@ -54,6 +68,7 @@ public class OrderByUserDetailsDropDownMenu extends DropDownMenuInputHandler {
 		}
 	}
 
+	@Override
 	public String getBundleIdentifier() {
 		return IW_BUNDLE_IDENTIFIER;
 	}
