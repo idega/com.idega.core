@@ -97,7 +97,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 		return null;
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public GroupType createGroupType(String type, String description, boolean visibility) {
@@ -312,8 +312,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				query.append(" and a.city in (:municipalities)");
 				params.add(new Param("municipalities", municipalities));
 			}
-			
-			if (resultType.getName().equals(Integer.class.getName())) query.append(" and ((g.groupType.groupType = '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' and g.alias.id is not null) or (g.id is not null and g.groupType.groupType <> '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("'))")));
+
+			if (resultType.getName().equals(Integer.class.getName())) {
+				query.append(" and ((g.groupType.groupType = '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' and g.alias.id is not null) or (g.id is not null and g.groupType.groupType <> '"
+						.concat(GroupTypeBMPBean.TYPE_ALIAS).concat("'))")));
+			}
 
 			query.append(" order by g.name");
 
@@ -394,6 +397,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return getChildGroups(parentGroupsIds, childGroupTypes, levels, Group.class);
 	}
 
+	@Override
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
 		return getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class);
 	}
