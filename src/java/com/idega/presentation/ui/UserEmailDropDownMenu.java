@@ -11,6 +11,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.data.User;
+import com.idega.util.EmailValidator;
 
 public class UserEmailDropDownMenu extends DropDownMenuInputHandler {
 	protected static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
@@ -57,6 +58,10 @@ public class UserEmailDropDownMenu extends DropDownMenuInputHandler {
 	public String getDisplayForResultingObject(Object value, IWContext iwc) {
 		if (value == null) {
 			return "";
+		}
+
+		if (value instanceof String && EmailValidator.getInstance().isValid((String) value)) {
+			return (String) value;
 		}
 
 		Integer key = new Integer((String) value);
