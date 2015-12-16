@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -30,13 +31,16 @@ import com.idega.idegaweb.IWApplicationContext;
 @NamedQueries({
 	@NamedQuery(name = "groupType.findAll", query = "select t from GroupType t"),
 	@NamedQuery(name = "groupType.findByType", query = "select t from GroupType t where t.groupType = :groupType"),
-	@NamedQuery(name = "groupType.findAllVisibleTypes", query = "select t from GroupType t where t.isVisible != 'N'")
+	@NamedQuery(name = GroupType.QUERY_FIND_ALL_VISIBLE, query = "select t from GroupType t where t.isVisible != 'N' group by t.groupType")
 })
+@Cacheable
 public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	private static final long serialVersionUID = 3574509217562528319L;
 
-	public static final String ENTITY_NAME = "ic_group_type";
+	public static final String	ENTITY_NAME = "ic_group_type",
+								QUERY_FIND_ALL_VISIBLE = "groupType.findAllVisibleTypes";
+
 	public static final String COLUMN_TYPE = "group_type";
 	private static final String COLUMN_DESCRIPTION = "description";
 	private static final String COLUMN_DEFAULT_GROUP_NAME = "default_group_name";
@@ -323,4 +327,10 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 	public boolean isLeaf() {
 		return children == null || children.isEmpty();
 	}
+
+	@Override
+	public String toString() {
+		return "Type: " + getGroupType();
+	}
+
 }

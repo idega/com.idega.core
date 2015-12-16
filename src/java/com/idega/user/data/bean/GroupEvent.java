@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -20,6 +21,7 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = GroupEvent.ENTITY_NAME)
+@Cacheable
 public class GroupEvent implements Serializable {
 
 	private static final long serialVersionUID = 5935195065979066119L;

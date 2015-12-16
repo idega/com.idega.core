@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -18,6 +19,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = UserInfoColumns.ENTITY_NAME)
 @NamedQuery(name = "userInfoColumns.findAllByUserAndGroup", query = "select uic from UserInfoColumns uic where uic.user = :user and uic.group = :group")
+@Cacheable
 public class UserInfoColumns implements Serializable {
 
 	private static final long serialVersionUID = 2934493674581851825L;

@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -22,7 +23,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = UserStatus.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "userStatus.findAll", query = "select us from UserStatus us"),
+	@NamedQuery(name = UserStatus.QUERY_FIND_ALL, query = "select us from UserStatus us"),
 	@NamedQuery(name = "userStatus.findAllByUser", query = "select us from UserStatus us where us.user = :user order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllActiveByUser", query = "select us from UserStatus us where us.user = :user and us.dateTo is null order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllByGroup", query = "select us from UserStatus us where us.group = :group order by us.dateFrom"),
@@ -34,11 +35,14 @@ import javax.persistence.TemporalType;
 	@NamedQuery(name = "userStatus.findAllByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllActiveByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status and us.dateTo is null order by us.dateFrom")
 })
+@Cacheable
 public class UserStatus implements Serializable {
 
 	private static final long serialVersionUID = 2044595478957579919L;
 
-	public static final String ENTITY_NAME = "ic_usergroup_status";
+	public static final String	ENTITY_NAME = "ic_usergroup_status",
+								QUERY_FIND_ALL = "userStatus.findAll";
+
 	public static final String COLUMN_USER_STATUS_ID = "ic_usergroup_status_id";
 	private static final String COLUMN_STATUS = "status_id";
 	private static final String COLUMN_USER = "ic_user_id";

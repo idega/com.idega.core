@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -12,6 +13,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = GroupDomainRelationType.ENTITY_NAME)
+@Cacheable
 public class GroupDomainRelationType implements Serializable {
 
 	private static final long serialVersionUID = -8706670995707213582L;

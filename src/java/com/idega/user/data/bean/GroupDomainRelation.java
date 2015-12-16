@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.ejb.RemoveException;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -34,6 +35,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "groupDomainRelation.findAllByGroupAndType", query = "select gdr from GroupDomainRelation gdr where gdr.relatedGroup = :group and gdr.relationship = :type and gdr.status is null"),
 	@NamedQuery(name = "groupDomainRelation.findAllByDomainAndGroup", query = "select gdr from GroupDomainRelation gdr where gdr.domain = :domain and gdr.relatedGroup = :group and gdr.status is null")
 })
+@Cacheable
 public class GroupDomainRelation implements Serializable {
 
 	private static final long serialVersionUID = 5391461126198416175L;

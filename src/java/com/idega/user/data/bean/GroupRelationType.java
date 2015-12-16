@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 @Entity
 @Table(name = GroupRelationType.ENTITY_NAME)
 @NamedQuery(name = "groupRelationType.findAll", query = "select t from GroupRelationType t")
+@Cacheable
 public class GroupRelationType implements Serializable {
 
 	private static final long serialVersionUID = -5974678086532632952L;

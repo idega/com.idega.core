@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -29,6 +30,7 @@ import com.idega.core.component.data.bean.ICObject;
 	@NamedQuery(name = "userGroupPlugin.findAll", query = "select ugp from UserGroupPlugin ugp"),
 	@NamedQuery(name = "userGroupPlugin.findAllByGroupType", query = "select ugp from UserGroupPlugin ugp join ugp.groupTypes gt where gt.groupType = :groupType")
 })
+@Cacheable
 public class UserGroupPlugin implements Serializable {
 
 	private static final long serialVersionUID = 278160785639317656L;
