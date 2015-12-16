@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.data.bean;
 
@@ -22,7 +22,7 @@ import javax.persistence.Table;
 @Cacheable
 @Table(name = PostalCode.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "postalCode.findAll", query = "select p from PostalCode p order by p.postalCode"),
+	@NamedQuery(name = PostalCode.QUERY_FIND_ALL, query = "select p from PostalCode p where p.postalCode is not null order by p.postalCode"),
 	@NamedQuery(name = "postalCode.findAllByCountry", query = "select p from PostalCode p where p.country = :country order by p.postalCode"),
 	@NamedQuery(name = "postalCode.findByPostalCode", query = "select p from PostalCode p where p.postalCode = :postalCode")
 })
@@ -30,8 +30,10 @@ public class PostalCode implements Serializable {
 
 	private static final long serialVersionUID = -7559508364224794919L;
 
-	public static final String ENTITY_NAME = "ic_postal_code";
-	public static final String COLUMN_POSTAL_CODE_ID = "ic_postal_code_id";
+	public static final String	ENTITY_NAME = "ic_postal_code",
+								COLUMN_POSTAL_CODE_ID = "ic_postal_code_id",
+								QUERY_FIND_ALL = "postalCode.findAll";
+
 	private static final String COLUMN_POSTAL_CODE = "postal_code";
 	private static final String COLUMN_NAME = "name";
 	private static final String COLUMN_POSTAL_ADDRESS = "postal_address";
