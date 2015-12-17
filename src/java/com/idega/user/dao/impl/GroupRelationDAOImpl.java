@@ -40,15 +40,15 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
 
 			query = new StringBuilder("select r from GroupRelation r where r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			query.append(" order by ");
-			query.append("CASE ");
-			query.append("WHEN r.initiationModificationDate >= r.terminationDate AND r.initiationModificationDate >= r.initiationDate ");
-			query.append("THEN r.initiationModificationDate ");
-			query.append("WHEN r.terminationDate >= r.initiationDate ");
-			query.append("THEN r.terminationDate ");
-			query.append("ELSE r.initiationDate ");
-			query.append("END ");
-			query.append("desc ");
+			query.append(" order by r.terminationDate, r.groupRelationID desc ");
+//			query.append("CASE ");
+//			query.append("WHEN r.initiationModificationDate >= r.terminationDate AND r.initiationModificationDate >= r.initiationDate ");
+//			query.append("THEN r.initiationModificationDate ");
+//			query.append("WHEN r.terminationDate >= r.initiationDate ");
+//			query.append("THEN r.terminationDate ");
+//			query.append("ELSE r.initiationDate ");
+//			query.append("END ");
+//			query.append("desc ");
 
 			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, firstResult, maxResults, "groupRelationsByRelatedGroupTypeOrderedByDate", ArrayUtil.convertListToArray(params));
 			return results;
@@ -72,7 +72,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			}
 
 			query = new StringBuilder("SELECT r FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			query.append(" AND r.relatedGroup.groupID IN (:" + GroupRelation.PARAM_RELATED_GROUP_IDS + ") ");
+			query.append(" AND r.group.groupID IN (:" + GroupRelation.PARAM_RELATED_GROUP_IDS + ") ");
 			if (dateFrom != null && dateTo != null) {
 				query.append(" AND (");
 				query.append(" (r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
