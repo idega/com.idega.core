@@ -71,11 +71,13 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 
 			query = new StringBuilder("SELECT r FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
 			query.append(" AND r.relatedGroup.groupID IN (:" + GroupRelation.PARAM_RELATED_GROUP_IDS + ") ");
-			query.append(" AND (");
-			query.append(" (r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
-			query.append(" OR (r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
-			query.append(" OR (r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
-			query.append(") ");
+			if (dateFrom != null && dateTo != null) {
+				query.append(" AND (");
+				query.append(" (r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(") ");
+			}
 
 			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, ArrayUtil.convertListToArray(params));
 			return results;
@@ -98,5 +100,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		}
 		return 0;
 	}
+
 
 }
