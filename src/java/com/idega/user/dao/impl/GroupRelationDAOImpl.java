@@ -66,8 +66,10 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			List<Param> params = new ArrayList<Param>();
 			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
 			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_IDS, relatedGroupIds));
-			params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
-			params.add(new Param(GroupRelation.PARAM_DATE_TO, dateTo));
+			if (dateFrom != null && dateTo != null) {
+				params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
+				params.add(new Param(GroupRelation.PARAM_DATE_TO, dateTo));
+			}
 
 			query = new StringBuilder("SELECT r FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
 			query.append(" AND r.relatedGroup.groupID IN (:" + GroupRelation.PARAM_RELATED_GROUP_IDS + ") ");
