@@ -75,9 +75,9 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			query.append(" AND r.group.groupID IN (:" + GroupRelation.PARAM_RELATED_GROUP_IDS + ") ");
 			if (dateFrom != null && dateTo != null) {
 				query.append(" AND (");
-				query.append(" (r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
-				query.append(" OR (r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
-				query.append(" OR (r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" (r.terminationDate IS NOT NULL AND r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL AND r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL AND r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
 				query.append(") ");
 			}
 
