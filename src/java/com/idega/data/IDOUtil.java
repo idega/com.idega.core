@@ -235,20 +235,39 @@ public class IDOUtil implements Singleton {
 	 * @param entities to get primary keys for;
 	 * @return {@link List} of {@link IDOEntity#getPrimaryKey()} or
 	 * {@link Collections#emptyList()} on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public List<String> getPrimaryKeys(Collection<? extends IDOEntity> entities){
 		if(!ListUtil.isEmpty(entities)){
 			List<String> returnList = new ArrayList<String>(entities.size());
+		
 			for (Iterator<? extends IDOEntity> iter = entities.iterator(); iter.hasNext();) {
 				returnList.add(iter.next().getPrimaryKey().toString());
 			}
 
 			return returnList;
 		}
-		else {
-			return Collections.emptyList();
+	
+		return Collections.emptyList();
+	}
+
+	/**
+	 *
+	 * @param entities to get primary keys for;
+	 * @return {@link List} of {@link IDOEntity#getPrimaryKey()} or
+	 * {@link Collections#emptyList()} on failure;
+	 */
+	public List<Integer> getIntegerPrimaryKeys(Collection<? extends IDOEntity> entities) {
+		if(!ListUtil.isEmpty(entities)){
+			List<Integer> returnList = new ArrayList<Integer>(entities.size());
+
+			for (Iterator<? extends IDOEntity> iter = entities.iterator(); iter.hasNext();) {
+				returnList.add((Integer) iter.next().getPrimaryKey());
+			}
+
+			return returnList;
 		}
+
+		return Collections.emptyList();
 	}
 
 	/**

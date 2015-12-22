@@ -61,7 +61,10 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID"),
 	@NamedQuery(name = "user.findByUniqueID", query = "select u from User u where u.uniqueId = :uniqueId"),
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
-	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName")
+	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_PRIMARY_KEYS, 
+			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)")
 })
 @XmlTransient
 @Cacheable
@@ -100,6 +103,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String ADMINISTRATOR_DEFAULT_NAME = "Administrator";
 
+	public static final String QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys";
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
@@ -698,5 +702,4 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	public void setResume(String resume) {
 		this.resume = resume;
 	}
-
 }

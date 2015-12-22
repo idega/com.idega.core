@@ -4,6 +4,7 @@
 package com.idega.user.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
@@ -180,4 +181,19 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return getSingleResult(Address.QUERY_FIND_BY_USER_AND_ADDRESS_TYPE, Address.class, new Param("userID", user.getId()), new Param("addressType", mainAddressType));
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#findAll(java.util.Collection)
+	 */
+	@Override
+	public List<User> findAll(Collection<Integer> primaryKeys) {
+		ArrayList<User> users = new ArrayList<User>();
+
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			return getResultList(User.QUERY_FIND_BY_PRIMARY_KEYS, User.class, 
+					new Param("primaryKeys", primaryKeys));
+		}
+
+		return users;
+	}
 }

@@ -4,6 +4,7 @@ import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -65,6 +66,7 @@ import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.text.Name;
 import com.idega.util.text.TextSoap;
+import com.idega.util.timer.DateUtil;
 
 
 /**
@@ -3191,5 +3193,17 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public GroupType getGroupTypeEntity() {
 		throw new java.lang.UnsupportedOperationException("Method getGroupTypeEntity() not yet implemented.");
+	}
+
+	@Override
+	public Long getAge() {
+		LocalDate dateOfBirth = DateUtil.getDate(getDateOfBirth());
+		if (dateOfBirth == null) {
+			return null;
+		}
+
+		LocalDate dateToday = DateUtil.getDate(new Date(System.currentTimeMillis()));
+
+		return (dateToday.toEpochDay() - dateOfBirth.toEpochDay()) / 365;
 	}
 }

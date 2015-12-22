@@ -3,6 +3,8 @@
  */
 package com.idega.user.dao;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -48,4 +50,11 @@ public interface UserDAO extends GenericDao {
 
 	public Address getUsersMainAddress(User user);
 
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link User#getId()}, 
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	public List<User> findAll(Collection<Integer> primaryKeys);
 }
