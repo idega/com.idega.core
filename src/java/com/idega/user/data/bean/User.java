@@ -188,8 +188,14 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinTable(name = SQL_RELATION_PHONE, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Phone.COLUMN_PHONE_ID) })
 	private List<Phone> phones;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Email.class)
-	@JoinTable(name = SQL_RELATION_EMAIL, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Email.COLUMN_EMAIL_ID) })
+	@ManyToMany(
+			fetch = FetchType.EAGER, 
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE}, 
+			targetEntity = Email.class)
+	@JoinTable(
+			name = SQL_RELATION_EMAIL, 
+			joinColumns = {@JoinColumn(name = COLUMN_USER_ID)}, 
+			inverseJoinColumns = {@JoinColumn(name = Email.COLUMN_EMAIL_ID)})
 	private List<Email> emails;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Address.class)
@@ -473,7 +479,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Email> getEmails() {
-		doInitialize(emails);
+//		doInitialize(emails);
 		return this.emails;
 	}
 
