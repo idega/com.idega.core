@@ -4,12 +4,14 @@ import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
+import java.util.List;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDOUtil;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.presentation.IWContext;
@@ -727,4 +729,62 @@ public void removeBy(User currentUser) throws RemoveException{
 		String subTable = "select r.ic_group_id, g.alias_id from ic_group_relation r, ic_group g where r.related_ic_group_id=g.ic_group_id and r.relationship_type='GROUP_PARENT' and r.group_relation_status='ST_ACTIVE' and g.group_type='alias' and alias_id is not null group by r.ic_group_id, g.alias_id having count(*)>1";
 		return this.idoFindPKsBySQL("select r.ic_group_relation_id from ic_group_relation r, ic_group g, ("+subTable+") t where r.related_ic_group_id=g.ic_group_id and r.ic_group_id=t.ic_group_id and g.alias_id=t.alias_id and relationship_type='GROUP_PARENT' and group_relation_status='ST_ACTIVE'");
 	}
+
+	public Collection ejbFindGroupRelationsByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<String> relatedGroupIds, java.sql.Date dateFrom, java.sql.Date dateTo) throws FinderException{
+		IDOUtil util = IDOUtil.getInstance();
+
+		//constructing query
+		IDOQuery query = idoQuery();
+		//select
+		query.appendSelectAllFrom(this);
+		//where
+		query.appendWhere();
+		query.appendEquals(RELATED_GROUP_TYPE_COLUMN, "'" + relatedGroupType + "'");
+		//and
+		query.appendAnd();
+		query.append(GROUP_ID_COLUMN);
+		query.appendInForStringCollectionWithSingleQuotes(relatedGroupIds);
+		//and
+		query.appendAnd();
+		query.append("(");
+		//dates
+		query.append("(");
+		query.append(TERMINATION_DATE_COLUMN);
+		query.appendIsNotNull();
+		query.appendAnd();
+		query.appendBetweenDates(TERMINATION_DATE_COLUMN, dateFrom, dateTo);
+		query.append(")");
+		//or
+		query.appendOr();
+		query.append("(");
+		query.append(TERMINATION_DATE_COLUMN);
+		query.appendIsNull();
+		query.appendAnd();
+		query.append(INITIATION_MODIFICATION_DATE_COLUMN);
+		query.appendIsNotNull();
+		query.appendAnd();
+		query.appendBetweenDates(INITIATION_MODIFICATION_DATE_COLUMN, dateFrom, dateTo);
+		query.append(")");
+		//or
+		query.appendOr();
+		query.append("(");
+		query.append(TERMINATION_DATE_COLUMN);
+		query.appendIsNull();
+		query.appendAnd();
+		query.append(INITIATION_MODIFICATION_DATE_COLUMN);
+		query.appendIsNull();
+		query.appendAnd();
+		query.append(INITIATION_DATE_COLUMN);
+		query.appendIsNotNull();
+		query.appendAnd();
+		query.appendBetweenDates(INITIATION_DATE_COLUMN, dateFrom, dateTo);
+		query.append(")");
+		//end
+		query.append(")");
+		//System.out.println("SQL -> "+this.getClass()+":"+query);
+		return idoFindPKsByQuery(query);
+
+
+	}
+
 }

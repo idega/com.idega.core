@@ -20,6 +20,8 @@ import com.idega.user.data.bean.GroupRelation;
 public interface GroupRelationDAO extends GenericDao {
 	public static final String BEAN_NAME = "groupRelationDAO";
 
+	public GroupRelation getById(Integer groupRelationId);
+
 	public Long getCountByRelatedGroupType(String relatedGroupType);
 
 	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeOrderedByDate(String relatedGroupType, Integer from, Integer to);
@@ -29,5 +31,12 @@ public interface GroupRelationDAO extends GenericDao {
 	public Integer getGroupRelationsCountByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<Integer> relatedGroupIds, Date dateFrom, Date dateTo);
 
 	public List<Object[]> getGroupRelationsCountForPeriod(String relatedGroupType, List<Integer> relatedGroupIds, Date dateFrom, Date dateTo);
+
+	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupTypeAndDate(String relatedGroupType, String groupType, Date dateFrom, Date dateTo);
+
+	public Long getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo);
+
+	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo);
+
 
 }

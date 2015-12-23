@@ -2,6 +2,7 @@ package com.idega.user.data;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 import javax.ejb.FinderException;
 
@@ -247,6 +248,13 @@ public java.util.Collection findAllDuplicatedGroupRelations() throws javax.ejb.F
 public java.util.Collection findAllDuplicatedAliases() throws javax.ejb.FinderException {
    	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
    	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindAllDuplicatedAliases();
+   	this.idoCheckInPooledEntity(entity);
+   	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+@Override
+public java.util.Collection findGroupRelationsByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<String> relatedGroupIds, java.sql.Date dateFrom, java.sql.Date dateTo) throws javax.ejb.FinderException {
+   	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+   	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupRelationsByRelatedGroupTypeAndRelatedGroupIdsAndDate(relatedGroupType, relatedGroupIds, dateFrom, dateTo);
    	this.idoCheckInPooledEntity(entity);
    	return this.getEntityCollectionForPrimaryKeys(ids);
 }
