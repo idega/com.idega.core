@@ -51,6 +51,7 @@ import com.idega.data.query.WildCardColumn;
 import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.events.GroupUserRemovedEvent;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -1847,6 +1848,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			for (Iterator<GroupRelation> iter = rels.iterator(); iter.hasNext();) {
 				iter.next().removeBy(currentUser, time);
 			}
+
+			ELUtil.getInstance().publishEvent(new GroupUserRemovedEvent(
+					(Integer) currentUser.getPrimaryKey(), 
+					relatedGroupId));
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
