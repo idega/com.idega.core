@@ -5,6 +5,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.hsqldb.lib.StringUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -22,6 +23,17 @@ import com.idega.util.ArrayUtil;
 public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelationDAO {
 
 	@Override
+	public GroupRelation getById(Integer groupRelationId) {
+		try {
+			return getSingleResult(GroupRelation.QUERY_FIND_BY_ID, GroupRelation.class, new Param(GroupRelation.PARAM_GROUP_RELATION_ID, groupRelationId));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relation by id.", e);
+		}
+
+		return null;
+	}
+
+	@Override
 	public Long getCountByRelatedGroupType(String relatedGroupType) {
 		try {
 			return getSingleResult(GroupRelation.QUERY_COUNT_BY_RELATED_GROUP_TYPE, Long.class, new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
@@ -29,32 +41,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			getLogger().log(Level.WARNING, "Error getting count of group relations by related group type.", e);
 		}
 
-		return null;
-	}
-
-	@Override
-	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeOrderedByDate(String relatedGroupType, Integer firstResult, Integer maxResults) {
-		StringBuilder query = null;
-		try {
-			List<Param> params = new ArrayList<>();
-			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
-
-			query = new StringBuilder("select r from GroupRelation r where r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			query.append(" order by r.terminationDate, r.groupRelationID desc ");
-//			query.append("CASE ");
-//			query.append("WHEN r.initiationModificationDate >= r.terminationDate AND r.initiationModificationDate >= r.initiationDate ");
-//			query.append("THEN r.initiationModificationDate ");
-//			query.append("WHEN r.terminationDate >= r.initiationDate ");
-//			query.append("THEN r.terminationDate ");
-//			query.append("ELSE r.initiationDate ");
-//			query.append("END ");
-//			query.append("desc ");
-
-			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, firstResult, maxResults, "groupRelationsByRelatedGroupTypeOrderedByDate", ArrayUtil.convertListToArray(params));
-			return results;
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting group relations: ", e);
-		}
 		return null;
 	}
 
@@ -89,6 +75,111 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
+	@Override
+	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupTypeAndDate(String relatedGroupType, String groupType, Date dateFrom, Date dateTo) {
+		StringBuilder query = null;
+		try {
+			List<Param> params = new ArrayList<Param>();
+			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
+			if (!StringUtil.isEmpty(groupType)) {
+				params.add(new Param(GroupRelation.PARAM_GROUP_TYPE, groupType));
+			}
+			if (dateFrom != null && dateTo != null) {
+				params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
+				params.add(new Param(GroupRelation.PARAM_DATE_TO, dateTo));
+			}
+
+			query = new StringBuilder("SELECT r FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+			if (!StringUtil.isEmpty(groupType)) {
+				query.append(" AND r.group.groupType.groupType = :" + GroupRelation.PARAM_GROUP_TYPE);
+			}
+			if (dateFrom != null && dateTo != null) {
+				query.append(" AND (");
+				query.append(" (r.terminationDate IS NOT NULL AND r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL AND r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL AND r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(") ");
+			}
+			query.append(" ORDER BY r.terminationDate, r.initiationModificationDate DESC");
+
+			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, ArrayUtil.convertListToArray(params));
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations: ", e);
+		}
+		return null;
+	}
+
+
+	@Override
+	public Long getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo) {
+		StringBuilder query = null;
+		try {
+			List<Param> params = new ArrayList<Param>();
+			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
+			if (groupId != null) {
+				params.add(new Param(GroupRelation.PARAM_GROUP_ID, groupId));
+			}
+			if (dateFrom != null && dateTo != null) {
+				params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
+				params.add(new Param(GroupRelation.PARAM_DATE_TO, dateTo));
+			}
+
+			query = new StringBuilder("SELECT count(r) FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+			if (groupId != null) {
+				query.append(" AND r.group.groupID = :" + GroupRelation.PARAM_GROUP_ID);
+			}
+			if (dateFrom != null && dateTo != null) {
+				query.append(" AND (");
+				query.append(" (r.terminationDate IS NOT NULL AND r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL AND r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL AND r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(") ");
+			}
+
+			Long count = getSingleResultByInlineQuery(query.toString(), Long.class, ArrayUtil.convertListToArray(params));
+			return count;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error counting group relations: ", e);
+		}
+		return null;
+	}
+
+
+	@Override
+	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo) {
+		StringBuilder query = null;
+		try {
+			List<Param> params = new ArrayList<Param>();
+			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
+			if (groupId != null) {
+				params.add(new Param(GroupRelation.PARAM_GROUP_ID, groupId));
+			}
+			if (dateFrom != null && dateTo != null) {
+				params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
+				params.add(new Param(GroupRelation.PARAM_DATE_TO, dateTo));
+			}
+
+			query = new StringBuilder("SELECT r FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+			if (groupId != null) {
+				query.append(" AND r.group.groupID = :" + GroupRelation.PARAM_GROUP_ID);
+			}
+			if (dateFrom != null && dateTo != null) {
+				query.append(" AND (");
+				query.append(" (r.terminationDate IS NOT NULL AND r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL AND r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(" OR (r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL AND r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + ") ");
+				query.append(") ");
+			}
+
+			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, ArrayUtil.convertListToArray(params));
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations: ", e);
+		}
+		return null;
+	}
+
 
 	@Override
 	public Integer getGroupRelationsCountByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<Integer> relatedGroupIds, Date dateFrom, Date dateTo) {
@@ -102,6 +193,37 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		}
 		return 0;
 	}
+
+
+
+
+	@Override
+	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeOrderedByDate(String relatedGroupType, Integer firstResult, Integer maxResults) {
+		StringBuilder query = null;
+		try {
+			List<Param> params = new ArrayList<>();
+			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
+
+			query = new StringBuilder("select r from GroupRelation r where r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+			query.append(" order by r.terminationDate, r.groupRelationID desc ");
+//			query.append("CASE ");
+//			query.append("WHEN r.initiationModificationDate >= r.terminationDate AND r.initiationModificationDate >= r.initiationDate ");
+//			query.append("THEN r.initiationModificationDate ");
+//			query.append("WHEN r.terminationDate >= r.initiationDate ");
+//			query.append("THEN r.terminationDate ");
+//			query.append("ELSE r.initiationDate ");
+//			query.append("END ");
+//			query.append("desc ");
+
+			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, firstResult, maxResults, "groupRelationsByRelatedGroupTypeOrderedByDate", ArrayUtil.convertListToArray(params));
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations: ", e);
+		}
+		return null;
+	}
+
+
 
 
 	@Override

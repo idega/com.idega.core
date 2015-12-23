@@ -37,6 +37,7 @@ import com.idega.util.IWTimestamp;
 @Entity
 @Table(name = GroupRelation.ENTITY_NAME)
 @NamedQueries({
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_ID, query = "select r from GroupRelation r where r.groupRelationID = :" + GroupRelation.PARAM_GROUP_RELATION_ID),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP, query = "select distinct r.group from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_GET_HISTORY, query = "select r from GroupRelation r join r.group g where r.relatedGroup.groupID = :"+GroupRelation.PARAM_RELATED_GROUP_ID+" and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
@@ -49,15 +50,19 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	private static final long serialVersionUID = 5850270896539731950L;
 
 	public static final String	QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
+								QUERY_FIND_BY_ID = "groupRelation.findById",
 								QUERY_FIND_BY_RELATED_GROUP_AND_TYPE = "groupRelation.findByRelatedGroupAndType",
 								QUERY_GET_HISTORY = "groupRelation.getHistory",
 								QUERY_COUNT_BY_RELATED_GROUP_TYPE = "groupRelation.countByRelatedGroupType";
 
+	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
 	public static final String PARAM_RELATED_GROUP_TYPE = "relatedGroupType";
 	public static final String PARAM_RELATED_GROUP_IDS = "relatedGroupIds";
+	public static final String PARAM_GROUP_TYPE = "groupType";
 	public static final String PARAM_DATE_FROM = "dateFrom";
 	public static final String PARAM_DATE_TO = "dateTo";
+	public static final String PARAM_GROUP_ID = "groupId";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";

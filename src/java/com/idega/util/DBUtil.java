@@ -1,5 +1,7 @@
 package com.idega.util;
 
+import java.util.List;
+
 import javax.persistence.Query;
 
 import com.idega.business.SpringBeanName;
@@ -39,5 +41,9 @@ public abstract class DBUtil {
 	public abstract <T> T lazyLoad(T entity);
 
 	public abstract void doInitializeCaching(Query query, String cacheRegion);
+
+	public abstract <T> void setCache(String name, List<T> entities);
+
+	public abstract <T> List<T> getCachedEntities(String name);
 
 }
