@@ -62,6 +62,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public static final String PARAM_RELATED_GROUP_TYPE = "relatedGroupType";
 	public static final String PARAM_RELATED_GROUP_IDS = "relatedGroupIds";
 	public static final String PARAM_GROUP_TYPE = "groupType";
+	public static final String PARAM_GROUP_TYPES = "groupTypes";
 	public static final String PARAM_DATE_FROM = "dateFrom";
 	public static final String PARAM_DATE_TO = "dateTo";
 	public static final String PARAM_GROUP_ID = "groupId";
