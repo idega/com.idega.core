@@ -157,6 +157,11 @@ public class IWPropertyList {
 
 	XMLElement getMapElement() {
 		if (this.mapElement == null) {
+			if (parentElement == null) {
+				logger.warning("Parent element is unknown, can not get element '" + mapTag + "' for file " + xmlFile);
+				return new XMLElement(mapTag);
+			}
+
 			this.mapElement = this.parentElement.getChild(mapTag);
 			if (this.mapElement == null) {
 				XMLElement dictElement = this.parentElement.getChild(dictTag);
@@ -322,6 +327,15 @@ public class IWPropertyList {
 	 * @return null if no match
 	 */
 	static XMLElement findKeyElement(XMLElement startElement, String key) {
+		if (startElement == null) {
+			logger.warning("Start element is not provided. Key: " + key);
+			return null;
+		}
+		if (key == null) {
+			logger.warning("Key element is not provided. Start element: " + startElement);
+			return null;
+		}
+
 		List<XMLElement> list = startElement.getChildren();
 		for (Iterator<XMLElement> iter = list.iterator(); iter.hasNext();) {
 			XMLElement keyElement = iter.next();
