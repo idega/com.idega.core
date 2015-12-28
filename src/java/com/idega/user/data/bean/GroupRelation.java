@@ -37,6 +37,7 @@ import com.idega.util.IWTimestamp;
 @Entity
 @Table(name = GroupRelation.ENTITY_NAME)
 @NamedQueries({
+	@NamedQuery(name = GroupRelation.QUERY_FIND_ALL, query = "select r from GroupRelation r"),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_ID, query = "select r from GroupRelation r where r.groupRelationID = :" + GroupRelation.PARAM_GROUP_RELATION_ID),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP, query = "select distinct r.group from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
@@ -49,7 +50,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 
 	private static final long serialVersionUID = 5850270896539731950L;
 
-	public static final String	QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
+	public static final String	QUERY_FIND_ALL = "groupRelation.findAll",
+								QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
 								QUERY_FIND_BY_ID = "groupRelation.findById",
 								QUERY_FIND_BY_RELATED_GROUP_AND_TYPE = "groupRelation.findByRelatedGroupAndType",
 								QUERY_GET_HISTORY = "groupRelation.getHistory",
