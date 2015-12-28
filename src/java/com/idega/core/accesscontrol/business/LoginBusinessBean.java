@@ -1140,13 +1140,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return iwma.getIWApplicationContext();
 	}
 
-	/**
-	 * @return
-	 */
-	private boolean isUsingOldUserSystem() {
-		return LoginBusinessBean.USING_OLD_USER_SYSTEM;
-	}
-
 	protected void storeLoggedOnInfoInSession(
 			HttpServletRequest request,
 			HttpSession session,
@@ -1707,19 +1700,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		try {
-			storeUserAndGroupInformationInSession(request.getSession(), user);
-			LoginRecord loginRecord = LoginDBHandler.recordLogin(login, request.getRemoteAddr());
-			storeLoggedOnInfoInSession(
-					request,
-					request.getSession(),
-					login,
-					login != null ? login.getUserLogin() : null,
-					user,
-					loginRecord,
-					login != null ? login.getLoginType() : null
-			);
-
 			if (logIn(request, login)) {
+				storeUserAndGroupInformationInSession(request.getSession(), user);
+				LoginRecord loginRecord = LoginDBHandler.recordLogin(login, request.getRemoteAddr());
+				storeLoggedOnInfoInSession(
+						request,
+						request.getSession(),
+						login,
+						login != null ? login.getUserLogin() : null,
+						user,
+						loginRecord,
+						login != null ? login.getLoginType() : null
+				);
+
 				onLoginSuccessful(request);
 				return Boolean.TRUE;
 			}
@@ -1801,32 +1794,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 	public boolean logInByUUID(HttpServletRequest request, String uuid) throws Exception {
 		User user = getUserDAO().getUserByUUID(uuid);
 		return logInUser(request, user);
-	}
-	public boolean logInUser(HttpServletRequest request, User user) throws Exception {
-		boolean returner = false;
-		if (user == null) {
-			return returner;
-		}
-
-		try {
-			List<UserLogin> logins = getUserLoginDAO().findAllLoginsForUser(user);
-			UserLogin userLogin = this.chooseLoginRecord(request, logins, user);
-			if (userLogin == null) {
-				try {
-					throw new LoginCreateException("No login found by for " + user + ", ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ", request URI: " + request.getRequestURI() + request.getQueryString());
-				} catch (LoginCreateException e1) {
-					e1.printStackTrace();
-				}
-			} else {
-				returner = logIn(request, userLogin);
-				if (returner) {
-					onLoginSuccessful(request);
-				}
-			}
-		} catch (EJBException e) {
-			returner = false;
-		}
-		return returner;
 	}
 
 	/**
