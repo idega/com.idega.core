@@ -192,7 +192,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@JoinTable(name = SQL_RELATION_ADDRESS, joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Address.COLUMN_ADDRESS_ID) })
 	private List<Address> addresses;
 
-	@ManyToMany(fetch = FetchType.EAGER, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Metadata.class)
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Metadata.class)
 	@JoinTable(name = SQL_RELATION_METADATA, joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = Metadata.COLUMN_METADATA_ID) })
 	private Set<Metadata> metadata;
 
@@ -581,8 +581,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	/**
 	 * @return the metadata
 	 */
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	public Set<Metadata> getMetadata() {
-//		DBUtil.getInstance().lazyLoad(metadata);
+		DBUtil.getInstance().lazyLoad(metadata);
 		return this.metadata;
 	}
 
