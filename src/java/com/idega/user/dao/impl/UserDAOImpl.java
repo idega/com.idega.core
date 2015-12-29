@@ -6,7 +6,9 @@ package com.idega.user.dao.impl;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -27,6 +29,7 @@ import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
+import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
@@ -195,5 +198,32 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		}
 
 		return users;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#getEmailAddresses(com.idega.user.data.bean.User)
+	 */
+	@Override
+	public Set<String> getEmailAddresses(User user) {
+		Set<String> emailAddresses = new HashSet<String>();
+
+		if (user != null) {
+			List<Email> emails = user.getEmails();
+			if (!ListUtil.isEmpty(emails)) {
+				for (Email email : emails) {
+					String emailAddress = email.getEmailAddress();
+
+					String[] splittedAddresses = emailAddress.split("[\\s,;]+");
+					for (String splittedAddress : splittedAddresses) {
+						if (splittedAddress.contains(CoreConstants.DOT) && splittedAddress.contains(CoreConstants.AT)) {
+							emailAddresses.add(splittedAddress);
+						}
+					}
+				}
+			}
+		}
+
+		return emailAddresses;
 	}
 }

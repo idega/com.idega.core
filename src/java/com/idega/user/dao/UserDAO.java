@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 import org.springframework.transaction.annotation.Transactional;
 
@@ -57,4 +58,12 @@ public interface UserDAO extends GenericDao {
 	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
 	public List<User> findAll(Collection<Integer> primaryKeys);
+
+	/**
+	 * 
+	 * <p>A workaround to solve problems of bad emails in data source</p>
+	 * @param user
+	 * @return {@link Set} of correct email addresses
+	 */
+	Set<String> getEmailAddresses(User user);
 }
