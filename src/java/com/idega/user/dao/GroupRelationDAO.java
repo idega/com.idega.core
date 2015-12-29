@@ -38,5 +38,7 @@ public interface GroupRelationDAO extends GenericDao {
 
 	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo);
 
+	public List<Object[]> getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriodGroupedByDate(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo);
+
 
 }
