@@ -1,5 +1,6 @@
 package com.idega.core;
 
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -12,6 +13,9 @@ import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.user.dao.GroupRelationDAO;
+import com.idega.user.data.bean.GroupRelation;
+import com.idega.util.DBUtil;
 import com.idega.util.expression.ELUtil;
 
 public class IWBundleStarter implements IWBundleStartable {
@@ -35,6 +39,12 @@ public class IWBundleStarter implements IWBundleStartable {
 
 		if (settings.getBoolean("iw_cache_pages", Boolean.FALSE)) {
 			getPagesCacher().doCachePages();
+		}
+
+		if (starterBundle.getApplication().getSettings().getBoolean("cache_group_relations", false)) {
+			GroupRelationDAO groupRelationDAO = ELUtil.getInstance().getBean(GroupRelationDAO.class);
+			List<GroupRelation> relations = groupRelationDAO.getResultList(GroupRelation.QUERY_FIND_ALL, GroupRelation.class);
+			DBUtil.getInstance().setCache("group_relations_cache", relations);
 		}
 	}
 
