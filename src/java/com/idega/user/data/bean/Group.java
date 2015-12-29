@@ -45,6 +45,8 @@ import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.hibernate.annotations.DiscriminatorOptions;
+import org.hibernate.annotations.LazyCollection;
+import org.hibernate.annotations.LazyCollectionOption;
 
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.contact.data.bean.Email;
@@ -562,6 +564,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	/**
 	 * @return the addresses
 	 */
+	@LazyCollection(LazyCollectionOption.EXTRA)
 	public List<Address> getAddresses() {
 		DBUtil.getInstance().lazyLoad(addresses);
 		return this.addresses;
