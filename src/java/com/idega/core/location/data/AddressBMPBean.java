@@ -354,16 +354,16 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	 */
 	@Override
 	public String getStreetAddress() {
-		StringBuffer addr = new StringBuffer();
+		StringBuilder addr = new StringBuilder();
 		String street = getStreetName();
 		if (street != null) {
-			addr.append(street).append(" ");
+			addr.append(street).append(CoreConstants.SPACE);
 		}
 		String number = this.getStreetNumber();
 		if (number != null) {
 			addr.append(number);
 		}
-		return TextSoap.capitalize(addr.toString(), " ");
+		return TextSoap.capitalize(addr.toString(), CoreConstants.SPACE);
 	}
 
 	/**
