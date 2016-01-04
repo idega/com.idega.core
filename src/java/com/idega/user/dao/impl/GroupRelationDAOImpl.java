@@ -85,7 +85,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 				params.add(new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes));
 			}
 
-			query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, r.group ");
+			query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, r.group, r.groupRelationID ");
 			query.append(" FROM GroupRelation r");
 			query.append(" WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
 			if (!ListUtil.isEmpty(groupTypes)) {
@@ -240,7 +240,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 //			query.append("desc ");
 //			query.append(" LIMIT 1 ");
 
-			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, null, 1, null, ArrayUtil.convertListToArray(params));
+			List<GroupRelation> results = getResultListByInlineQuery(query.toString(), GroupRelation.class, null, 5, null, ArrayUtil.convertListToArray(params));
 			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting group relations: ", e);
