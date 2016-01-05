@@ -9,6 +9,7 @@
  */
 package com.idega.user.data;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Locale;
@@ -35,20 +36,6 @@ import com.idega.util.ListUtil;
 public class GroupHomeImpl extends IDOFactory implements GroupHome {
 
 	private static final long serialVersionUID = -2368235582273397196L;
-
-	@Override
-	public Collection<Integer> getParentGroups(int groupId) {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection <Integer> ids = null;
-		try{
-			 ids = ((GroupBMPBean) entity).ejbFindParentGroups(groupId);
-		} catch(FinderException e) {
-			Logger.getLogger(GroupHomeImpl.class.getName()).log(Level.WARNING,
-					"failed getting parent groups of group " + String.valueOf(groupId), e);
-			return Collections.emptyList();
-		}
-		return ids;
-	}
 
 	@Override
 	protected Class<Group> getEntityInterfaceClass() {
@@ -323,12 +310,76 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupHome#findParentGroupKeys(int)
+	 */
 	@Override
-	public Collection<Group> findParentGroups(int groupID) throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindParentGroups(groupID);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
+	public Collection<Integer> findParentGroupKeys(int groupID) {
+		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
+		return ((GroupBMPBean) entity).ejbFindParentGroups(Arrays.asList(groupID));
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupHome#findParentGroups(int)
+	 */
+	@Override
+	public Collection<Group> findParentGroups(int groupID) {
+		java.util.Collection<Integer> ids = findParentGroupKeys(groupID);
+		if (ListUtil.isEmpty(ids)) {
+			return Collections.emptyList();
+		}
+
+		try {
+			return getEntityCollectionForPrimaryKeys(ids);
+		} catch (FinderException e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					"Failed to get groups by primary keys: " + ids);
+		}
+
+		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupHome#findParentGroupsPrimaryKeysRecursively(java.util.Collection)
+	 */
+	@Override
+	public Collection<Integer> findParentGroupsPrimaryKeysRecursively(
+			Collection<Integer> primaryKeys) {
+		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
+
+		return ((GroupBMPBean) entity)
+				.ejbFindParentGroupsRecursively(primaryKeys);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupHome#findParentGroupsRecursively(java.util.Collection)
+	 */
+	@Override
+	public Collection<Group> findParentGroupsRecursively(Collection<Integer> primaryKeys) {
+		java.util.Collection<Integer> ids = findParentGroupsPrimaryKeysRecursively(primaryKeys);
+		if (ListUtil.isEmpty(ids)) {
+			return Collections.emptyList();
+		}
+
+		try {
+			return getEntityCollectionForPrimaryKeys(ids);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					"Failed to get groups by primary keys: " + ids);
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<Integer> findPermissionGroupPrimaryKeys(
+			Collection<Integer> primaryKeys) {
+		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
+		return ((GroupBMPBean) entity).ejbFindPermissionGroups(primaryKeys);		
 	}
 
 	@Override

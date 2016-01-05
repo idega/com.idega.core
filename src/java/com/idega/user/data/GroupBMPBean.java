@@ -10,6 +10,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 import java.util.logging.Level;
 
 import javax.ejb.CreateException;
@@ -466,95 +468,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		} catch (Exception e) {
 			throw new EJBException(e);
 		}
-	}
-
-	/**
-	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database
-	 * access is minimized by passing a Map of cached groupParents and Map of
-	 * cached groups to the method
-	 */
-	@Override
-	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
-		List<Group> theReturn = new ArrayList<Group>();
-		try {
-			Group parent = null;
-			Collection<Group> parents = getCollectionOfParents(cachedParents, cachedGroups);
-			for (Iterator<Group> parIter = parents.iterator(); parIter.hasNext();) {
-				parent = parIter.next();
-				if (parent != null && !theReturn.contains(parent)) {
-					theReturn.add(parent);
-				}
-			}
-			if (isUser()) {
-				try {
-					User user = getUserForGroup();
-					Group usersPrimaryGroup = null;
-					String key = String.valueOf(user.getPrimaryGroupID());
-					if (cachedGroups != null) {
-						if (cachedGroups.containsKey(key)) {
-							usersPrimaryGroup = cachedGroups.get(key);
-						}
-						else {
-							usersPrimaryGroup = user.getPrimaryGroup();
-							cachedGroups.put(key, usersPrimaryGroup);
-						}
-					}
-					else {
-						usersPrimaryGroup = user.getPrimaryGroup();
-					}
-					if (usersPrimaryGroup != null && !theReturn.contains(usersPrimaryGroup)) {
-						theReturn.add(usersPrimaryGroup);
-					}
-				}
-				catch (FinderException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new EJBException(e.getMessage());
-		}
-		return theReturn;
-	}
-
-	private Collection<Group> getCollectionOfParents(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws FinderException {
-		Collection<Integer> col = null;
-		String key = this.getPrimaryKey().toString();
-		if (cachedParents != null) {
-			if (cachedParents.containsKey(key)) {
-				col = cachedParents.get(key);
-			}
-			else {
-				col = ejbFindParentGroups(this.getID());
-				cachedParents.put(key, col);
-			}
-		}
-		else {
-			col = ejbFindParentGroups(this.getID());
-		}
-
-		Collection<Group> returnCol = new ArrayList<Group>();
-		Group parent = null;
-		Integer parentID = null;
-		for (Iterator<Integer> iter = col.iterator(); iter.hasNext();) {
-			parentID = iter.next();
-			key = parentID.toString();
-			if (cachedGroups != null) {
-				if (cachedGroups.containsKey(key)) {
-					parent = cachedGroups.get(key);
-				}
-				else {
-					parent = getGroupHome().findByPrimaryKey(parentID);
-					cachedGroups.put(key, parent);
-				}
-			}
-			else {
-				parent = getGroupHome().findByPrimaryKey(parentID);
-			}
-			returnCol.add(parent);
-		}
-		return returnCol;
 	}
 
 	protected Collection getChildGroupRelationships() throws FinderException {
@@ -1492,9 +1405,57 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		return this.idoFindPKsBySQL(sql);
 	}
 
-	public Collection<Integer> ejbFindParentGroups(int groupID) throws FinderException {
-		String sql = "select " + getIDColumnName() + " from " + GroupRelationBMPBean.TABLE_NAME + " where " + GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + "=" + groupID + " and (" + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + "='GROUP_PARENT' OR " + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " is null) and ( " + GroupRelationBMPBean.STATUS_COLUMN + "='" + GroupRelation.STATUS_ACTIVE + "' OR " + GroupRelationBMPBean.STATUS_COLUMN + "='" + GroupRelation.STATUS_PASSIVE_PENDING + "' ) ";
-		return this.idoFindPKsBySQL(sql);
+	/**
+	 * 
+	 * @param groups is {@link Group#getPrimaryKey()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} of parent {@link Group}s
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindParentGroups(Collection<Integer> groups) {
+		if (!ListUtil.isEmpty(groups)) {
+			String primaryKeys = IDOUtil.getInstance()
+					.convertCollectionOfIntegersToCommaseparatedString(groups);
+
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT IC_GROUP_ID FROM IC_GROUP_RELATION ");
+			query.append("WHERE RELATED_IC_GROUP_ID IN (").append(primaryKeys).append(") ");
+			query.append("AND (");
+				query.append("RELATIONSHIP_TYPE = 'GROUP_PARENT' ");
+				query.append("OR ");
+				query.append("RELATIONSHIP_TYPE IS NULL");
+			query.append(") AND (");
+				query.append("GROUP_RELATION_STATUS = 'ST_ACTIVE' ");
+				query.append("OR ");
+				query.append("GROUP_RELATION_STATUS = 'PASS_PEND' ");
+			query.append(")");
+
+			try {
+				return this.idoFindPKsBySQL(query.toString());
+			} catch (FinderException e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to get primary keys by query: '" + query.toString() + "'");
+			}
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * 
+	 * <p>Searches whole {@link Group} tree to find it all</p>
+	 * @param groups is {@link Group#getPrimaryKey()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} of parent {@link Group}s
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindParentGroupsRecursively(Collection<Integer> groups) {
+		Set<Integer> parentGroupsTree = new TreeSet<Integer>();
+
+		while (!ListUtil.isEmpty(groups)) {
+			parentGroupsTree.addAll(groups);
+			groups = ejbFindParentGroups(groups);
+		}
+
+		return parentGroupsTree;
 	}
 
 	private UserHome getUserHome() {
@@ -2043,6 +2004,52 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 		return this.idoFindPKsByQuery(query);
 
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupNode#getParentGroups(java.util.Map, java.util.Map)
+	 */
+	@Override
+	public List<Group> getParentGroups(
+			Map<String, Collection<Integer>> cachedParents,
+			Map<String, Group> cachedGroups) throws EJBException {
+		Collection<Group> groups = getGroupHome().findParentGroups((Integer) getPrimaryKey());
+		if (!ListUtil.isEmpty(groups)) {
+			return new ArrayList<Group>(groups);
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 * 
+	 * @param primaryKeys {@link Collection} of {@link Group#getPrimaryKey()}, 
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPermissionControllingGroupID()}
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindPermissionGroups(
+			Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			String criteria = IDOUtil.getInstance()
+					.convertCollectionOfIntegersToCommaseparatedString(primaryKeys);
+			
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT icg.PERM_GROUP_ID ");
+			query.append("FROM ic_group icg ");
+			query.append("WHERE icg.IC_GROUP_ID IN (").append(criteria).append(") ");
+			query.append("AND icg.PERM_GROUP_ID IS NOT NULL ");
+
+			try {
+				return idoFindPKsBySQL(query.toString());
+			} catch (FinderException e) {
+				getLogger().log(Level.WARNING, 
+						"Failed to get primary keys by query: '" + query.toString() + "'");
+			}
+		}
+
+		return Collections.emptyList();
 	}
 
 }
