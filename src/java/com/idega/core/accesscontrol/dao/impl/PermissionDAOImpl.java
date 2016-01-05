@@ -246,6 +246,24 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, ICPermission.class, param1, param2);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.accesscontrol.dao.PermissionDAO#findAll(java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	public List<ICPermission> findAll(String contextType, Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys) && !StringUtil.isEmpty(contextType)) {
+			return getResultList(
+					ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID, 
+					ICPermission.class, 
+					new Param("contextType", contextType), 
+					new Param("group", primaryKeys));
+		}
+
+		return Collections.emptyList();
+	}
+
+
 	@Override
 	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Collection<Group> groups) {
 		Param param1 = new Param("contextType", contextType);
