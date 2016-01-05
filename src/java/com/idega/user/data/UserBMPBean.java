@@ -4,7 +4,6 @@ import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -60,13 +59,13 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.text.Name;
 import com.idega.util.text.TextSoap;
-import com.idega.util.timer.DateUtil;
 
 
 /**
@@ -3197,13 +3196,6 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 
 	@Override
 	public Long getAge() {
-		LocalDate dateOfBirth = DateUtil.getDate(getDateOfBirth());
-		if (dateOfBirth == null) {
-			return null;
-		}
-
-		LocalDate dateToday = DateUtil.getDate(new Date(System.currentTimeMillis()));
-
-		return (dateToday.toEpochDay() - dateOfBirth.toEpochDay()) / 365;
+		return CoreUtil.getAge(getDateOfBirth());
 	}
 }
