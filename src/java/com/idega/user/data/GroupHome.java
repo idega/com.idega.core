@@ -30,8 +30,6 @@ import com.idega.data.IDOHome;
  */
 public interface GroupHome extends IDOHome {
 
-	public Collection <Integer> getParentGroups(int groupId);
-
 	public Group create() throws javax.ejb.CreateException;
 
 	public Group findByPrimaryKey(Object pk) throws javax.ejb.FinderException;
@@ -183,9 +181,51 @@ public interface GroupHome extends IDOHome {
 			throws FinderException;
 
 	/**
-	 * @see com.idega.user.data.GroupBMPBean#ejbFindParentGroups
+	 * 
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by, 
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} or entities 
+	 * found or {@link Collections#emptyList()} on failure;
 	 */
-	public Collection<Group> findParentGroups(int groupID) throws FinderException;
+	Collection<Integer> findParentGroupKeys(int groupID);
+
+	/**
+	 * 
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by, 
+	 * not <code>null</code>;
+	 * @return parents without ancestors  of this {@link Group} or 
+	 * {@link Collections#emptyList()} on failure;
+	 */
+	Collection<Group> findParentGroups(int groupID);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link Group#getPrimaryKey()}
+	 * to search by, not <code>null</code>;
+	 * @return all ancestors of this {@link Group} or 
+	 * {@link Collections#emptyList()} on failure;
+	 */
+	Collection<Group> findParentGroupsRecursively(
+			Collection<Integer> primaryKeys);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link Group#getPrimaryKey()}
+	 * to search by, not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} or entities 
+	 * found or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<Integer> findParentGroupsPrimaryKeysRecursively(
+			Collection<Integer> primaryKeys);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link Group#getPrimaryKey()}
+	 * to search by, not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPermissionControllingGroupID()}
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<Integer> findPermissionGroupPrimaryKeys(Collection<Integer> primaryKeys);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindByHomePageID
@@ -234,5 +274,4 @@ public interface GroupHome extends IDOHome {
 	 * @return
 	 */
 	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount) throws FinderException ;
-
 }
