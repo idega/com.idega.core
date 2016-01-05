@@ -12,6 +12,7 @@
 package com.idega.core.accesscontrol.business;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -162,18 +163,27 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc);
   public boolean hasRole(String roleKey, IWUserContext iwuc);
   public boolean hasRole(String roleKey, Group group, IWUserContext iwuc);
-  public boolean hasRole(User user, String roleKey);
 
-  /**
-   *
-   * @param user to check access for, not <code>null</code>;
-   * @param roleKeys is {@link ICRole}s of {@link Group}s, which should be
-   * checked for, not <code>null</code>;
-   * @return <code>true</code> if user has at least one of these roles,
-   * <code>false</code> otherwise;
-   * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
-   */
-  public boolean hasRole(User user, Collection<String> roleKeys);
+	/**
+	 * 
+	 * @param user to check permissions for, not <code>null</code>;
+	 * @param roleKey is {@link ICPermission#getPermissionString()}, not
+	 * <code>null</code>;
+	 * @return <code>true</code> if {@link User} has role, <code>false</code>
+	 * otherwise;
+	 */
+	public boolean hasRole(User user, String roleKey);
+
+	/**
+	 *
+	 * @param user to check access for, not <code>null</code>;
+	 * @param roleKeys
+	 *            is {@link ICRole}s of {@link Group}s, which should be checked
+	 *            for, not <code>null</code>;
+	 * @return <code>true</code> if user has at least one of these roles,
+	 *         <code>false</code> otherwise;
+	 */
+	public boolean hasRole(User user, Collection<String> roleKeys);
   public boolean isRoleMaster(IWUserContext iwuc);
 
   @Deprecated
@@ -206,7 +216,14 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public ICRole getRoleByRoleKey(String roleKey);
   public String getRoleIdentifier();
   public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
-  public Set<String> getAllRolesForUser(User user);
+
+	/**
+	 * @param user
+	 * @return {@link Collection} of {@link ICPermission#getPermissionString()}
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Set<String> getAllRolesForUser(User user);
+
   public Collection<Group> getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user);
   public Collection<String> getAllRolesKeysForGroup(Group group);
 
@@ -243,8 +260,42 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 
   public boolean checkIfRoleExistsInDataBaseAndCreateIfMissing(String roleKey);
 
-  public List<com.idega.user.data.Group> getUserGroups(User user);
+	/**
+	 * 
+	 * @param user
+	 * @return all parent {@link com.idega.user.data.Group}s of {@link User} or
+	 *         {@link Collections#emptyList()} on failure;
+	 */
+	public List<com.idega.user.data.Group> getUserGroups(User user);
 
   public boolean isMemberOfGroupWithTypes(User user, List<String> groupTypes);
 
+	/**
+	 * @param groupId is {@link Group#getId()}, not <code>null</code>;
+	 * @return permission entities or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<ICPermission> getAllRolesForGroup(Collection<Integer> groupId);
+
+	/**
+	 * @param groupId is {@link Group#getId()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link ICPermission#getPermissionString()}
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<String> getAllRolesKeysForGroup(Collection<Integer> groupId);
+
+	/**
+	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
+	 */
+	Collection<ICPermission> getAllRolesForGroupCollection(
+			Collection<Group> groups);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link Group#getId()}, 
+	 * not <code>null</code>;
+	 * @return {@link Collection} of entities or {@link Collections#emptyList()}
+	 * on failure.
+	 */
+	Collection<ICPermission> getAllRolesForGroupPrimaryKeys(
+			Collection<Integer> primaryKeys);
 }
