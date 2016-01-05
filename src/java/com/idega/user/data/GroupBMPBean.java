@@ -1121,10 +1121,14 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public Collection<Group> getReverseRelatedBy(String relationType) throws FinderException {
+		return getReverseRelatedBy(Integer.valueOf(getId()), relationType);
+	}
+
+	protected Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException {
 		GroupRelation rel = null;
 		Collection<Group> theReturn = new ArrayList<Group>();
 		Collection<GroupRelation> rels = null;
-		rels = this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(this.getID(), relationType);
+		rels = this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(groupId, relationType);
 		Iterator<GroupRelation> iter = rels.iterator();
 		while (iter.hasNext()) {
 			rel = iter.next();
@@ -1406,7 +1410,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	/**
-	 * 
+	 *
 	 * @param groups is {@link Group#getPrimaryKey()}, not <code>null</code>;
 	 * @return {@link Collection} of {@link Group#getPrimaryKey()} of parent {@link Group}s
 	 * or {@link Collections#emptyList()} on failure;
@@ -1432,7 +1436,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			try {
 				return this.idoFindPKsBySQL(query.toString());
 			} catch (FinderException e) {
-				getLogger().log(Level.WARNING, 
+				getLogger().log(Level.WARNING,
 						"Failed to get primary keys by query: '" + query.toString() + "'");
 			}
 		}
@@ -1441,7 +1445,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Searches whole {@link Group} tree to find it all</p>
 	 * @param groups is {@link Group#getPrimaryKey()}, not <code>null</code>;
 	 * @return {@link Collection} of {@link Group#getPrimaryKey()} of parent {@link Group}s
@@ -1811,7 +1815,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			}
 
 			ELUtil.getInstance().publishEvent(new GroupUserRemovedEvent(
-					(Integer) currentUser.getPrimaryKey(), 
+					(Integer) currentUser.getPrimaryKey(),
 					relatedGroupId));
 		}
 		catch (Exception e) {
@@ -2023,8 +2027,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	/**
-	 * 
-	 * @param primaryKeys {@link Collection} of {@link Group#getPrimaryKey()}, 
+	 *
+	 * @param primaryKeys {@link Collection} of {@link Group#getPrimaryKey()},
 	 * not <code>null</code>;
 	 * @return {@link Collection} of {@link Group#getPermissionControllingGroupID()}
 	 * or {@link Collections#emptyList()} on failure;
@@ -2034,7 +2038,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		if (!ListUtil.isEmpty(primaryKeys)) {
 			String criteria = IDOUtil.getInstance()
 					.convertCollectionOfIntegersToCommaseparatedString(primaryKeys);
-			
+
 			StringBuilder query = new StringBuilder();
 			query.append("SELECT icg.PERM_GROUP_ID ");
 			query.append("FROM ic_group icg ");
@@ -2044,7 +2048,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			try {
 				return idoFindPKsBySQL(query.toString());
 			} catch (FinderException e) {
-				getLogger().log(Level.WARNING, 
+				getLogger().log(Level.WARNING,
 						"Failed to get primary keys by query: '" + query.toString() + "'");
 			}
 		}

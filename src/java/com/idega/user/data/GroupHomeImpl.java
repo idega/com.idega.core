@@ -317,7 +317,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	@Override
 	public Collection<Integer> findParentGroupKeys(int groupID) {
 		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
-		return ((GroupBMPBean) entity).ejbFindParentGroups(Arrays.asList(groupID));
+		return entity.ejbFindParentGroups(Arrays.asList(groupID));
 	}
 
 	/*
@@ -334,7 +334,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		try {
 			return getEntityCollectionForPrimaryKeys(ids);
 		} catch (FinderException e) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+			Logger.getLogger(getClass().getName()).log(Level.WARNING,
 					"Failed to get groups by primary keys: " + ids);
 		}
 
@@ -350,7 +350,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 			Collection<Integer> primaryKeys) {
 		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
 
-		return ((GroupBMPBean) entity)
+		return entity
 				.ejbFindParentGroupsRecursively(primaryKeys);
 	}
 
@@ -368,7 +368,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		try {
 			return getEntityCollectionForPrimaryKeys(ids);
 		} catch (FinderException e) {
-			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING,
 					"Failed to get groups by primary keys: " + ids);
 		}
 
@@ -379,7 +379,7 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	public Collection<Integer> findPermissionGroupPrimaryKeys(
 			Collection<Integer> primaryKeys) {
 		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
-		return ((GroupBMPBean) entity).ejbFindPermissionGroups(primaryKeys);		
+		return entity.ejbFindPermissionGroups(primaryKeys);
 	}
 
 	@Override
@@ -439,6 +439,14 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		Collection ids  = ((GroupBMPBean) entity).getGroupsBySearchRequest(request,types,amount);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	@Override
+	public Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<Group> groups = ((GroupBMPBean) entity).getReverseRelatedBy(groupId, relationType);
+		this.idoCheckInPooledEntity(entity);
+		return groups;
 	}
 
 }

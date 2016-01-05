@@ -181,45 +181,45 @@ public interface GroupHome extends IDOHome {
 			throws FinderException;
 
 	/**
-	 * 
-	 * @param groupID is {@link Group#getPrimaryKey()} to search by, 
+	 *
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by,
 	 * not <code>null</code>;
-	 * @return {@link Collection} of {@link Group#getPrimaryKey()} or entities 
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} or entities
 	 * found or {@link Collections#emptyList()} on failure;
 	 */
 	Collection<Integer> findParentGroupKeys(int groupID);
 
 	/**
-	 * 
-	 * @param groupID is {@link Group#getPrimaryKey()} to search by, 
+	 *
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by,
 	 * not <code>null</code>;
-	 * @return parents without ancestors  of this {@link Group} or 
+	 * @return parents without ancestors  of this {@link Group} or
 	 * {@link Collections#emptyList()} on failure;
 	 */
 	Collection<Group> findParentGroups(int groupID);
 
 	/**
-	 * 
+	 *
 	 * @param primaryKeys is {@link Collection} of {@link Group#getPrimaryKey()}
 	 * to search by, not <code>null</code>;
-	 * @return all ancestors of this {@link Group} or 
+	 * @return all ancestors of this {@link Group} or
 	 * {@link Collections#emptyList()} on failure;
 	 */
 	Collection<Group> findParentGroupsRecursively(
 			Collection<Integer> primaryKeys);
 
 	/**
-	 * 
+	 *
 	 * @param primaryKeys is {@link Collection} of {@link Group#getPrimaryKey()}
 	 * to search by, not <code>null</code>;
-	 * @return {@link Collection} of {@link Group#getPrimaryKey()} or entities 
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} or entities
 	 * found or {@link Collections#emptyList()} on failure;
 	 */
 	Collection<Integer> findParentGroupsPrimaryKeysRecursively(
 			Collection<Integer> primaryKeys);
 
 	/**
-	 * 
+	 *
 	 * @param primaryKeys is {@link Collection} of {@link Group#getPrimaryKey()}
 	 * to search by, not <code>null</code>;
 	 * @return {@link Collection} of {@link Group#getPermissionControllingGroupID()}
@@ -273,5 +273,8 @@ public interface GroupHome extends IDOHome {
 	 * @param types group types that will be returned if empty groups of all types will be returned.
 	 * @return
 	 */
-	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount) throws FinderException ;
+	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount) throws FinderException;
+
+	public Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException;
+
 }
