@@ -23,6 +23,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreConstants;
+import com.idega.util.text.TextSoap;
 
 @Entity
 @Cacheable
@@ -293,4 +295,26 @@ public class Address implements Serializable {
 	public void setUsers(List<User> users) {
 		this.users = users;
 	}
+
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
+
+	public String getStreetAddress() {
+		StringBuilder addr = new StringBuilder();
+		String street = getStreetName();
+		if (street != null) {
+			addr.append(street).append(CoreConstants.SPACE);
+		}
+		String number = this.getStreetNumber();
+		if (number != null) {
+			addr.append(number);
+		}
+		return TextSoap.capitalize(addr.toString(), CoreConstants.SPACE);
+	}
+
 }
