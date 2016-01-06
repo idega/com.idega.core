@@ -792,12 +792,16 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public Object getSessionAttribute(String attributeName) {
-		return getSession().getAttribute(attributeName);
+		HttpSession session = getSession();
+		return session == null ? null : session.getAttribute(attributeName);
 	}
 
 	@Override
 	public void setSessionAttribute(String attributeName, Object attribute) {
-		getSession().setAttribute(attributeName, attribute);
+		HttpSession session = getSession();
+		if (session != null) {
+			getSession().setAttribute(attributeName, attribute);
+		}
 	}
 
 	@Override

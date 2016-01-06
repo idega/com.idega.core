@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +49,7 @@ import com.idega.user.data.bean.User;
 import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.presentation.JSFUtil;
+import com.idega.util.timer.DateUtil;
 
 @SuppressWarnings("deprecation")
 public class CoreUtil {
@@ -638,4 +641,19 @@ public class CoreUtil {
 		cache.put(key, subInterfaces);
 		return subInterfaces;
 	}
+
+	public static Long getAge(Date dateOfBirth) {
+		if (dateOfBirth == null) {
+			return null;
+		}
+
+		LocalDate localeDateOfBirth = DateUtil.getDate(dateOfBirth);
+		if (localeDateOfBirth == null) {
+			return null;
+		}
+
+		LocalDate dateToday = DateUtil.getDate(new Date(System.currentTimeMillis()));
+		return (dateToday.toEpochDay() - localeDateOfBirth.toEpochDay()) / 365;
+	}
+
 }

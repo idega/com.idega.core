@@ -49,6 +49,7 @@ import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.dao.UserDAO;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -63,7 +64,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(
-			name = User.QUERY_FIND_BY_PRIMARY_KEYS, 
+			name = User.QUERY_FIND_BY_PRIMARY_KEYS,
 			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)")
 })
 @XmlTransient
@@ -189,12 +190,12 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	private List<Phone> phones;
 
 	@ManyToMany(
-			fetch = FetchType.EAGER, 
-			cascade = {CascadeType.PERSIST, CascadeType.MERGE}, 
+			fetch = FetchType.EAGER,
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE},
 			targetEntity = Email.class)
 	@JoinTable(
-			name = SQL_RELATION_EMAIL, 
-			joinColumns = {@JoinColumn(name = COLUMN_USER_ID)}, 
+			name = SQL_RELATION_EMAIL,
+			joinColumns = {@JoinColumn(name = COLUMN_USER_ID)},
 			inverseJoinColumns = {@JoinColumn(name = Email.COLUMN_EMAIL_ID)})
 	private List<Email> emails;
 
@@ -707,5 +708,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public void setResume(String resume) {
 		this.resume = resume;
+	}
+
+	public Long getAge() {
+		return CoreUtil.getAge(getDateOfBirth());
 	}
 }
