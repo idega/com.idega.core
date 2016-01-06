@@ -2524,10 +2524,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		if (user != null) {
-			topNodes = (Collection<Group>) iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString());
-			if (topNodes != null && !topNodes.isEmpty()) {
+			Object cachedTopNodes = user == null || iwuc == null ? null : iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString());
+			if (cachedTopNodes instanceof Collection) {
+				topNodes = (Collection<Group>) cachedTopNodes;
+			}
+			if (!ListUtil.isEmpty(topNodes)) {
 				return topNodes;
 			}
+
 			topNodes = getStoredTopNodeGroups(user);
 			if (topNodes != null && !topNodes.isEmpty()) {
 				iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
