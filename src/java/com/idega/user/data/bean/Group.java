@@ -83,7 +83,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
 	@NamedQuery(
-			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS, 
+			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS,
 			query = "SELECT g.permissionControllingGroup FROM Group g "
 					+ "WHERE g.groupID in (:ids) "
 					+ "AND g.permissionControllingGroup IS NOT NULL"),
