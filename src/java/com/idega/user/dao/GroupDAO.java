@@ -46,6 +46,7 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes);
 
 	public List<Group> getParentGroups(Group group);
+	public List<Integer> getParentGroupsIds(List<Integer> ids);
 
 	public List<Group> getParentGroups(Group group, Collection<GroupType> groupTypes);
 
@@ -61,6 +62,9 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc);
 
+	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes);
+
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to);
 	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notContainingTypes, Integer from, Integer to);
 
@@ -74,6 +78,7 @@ public interface GroupDAO extends GenericDao {
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases);
 
 	/**
 	 * Checks if groups have users
@@ -82,7 +87,7 @@ public interface GroupDAO extends GenericDao {
 	 * @return Group ID => flag if has users
 	 */
 	public Map<Integer, Boolean> hasUsers(List<Group> groups);
-	
+
 	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes);
 
 	/**
