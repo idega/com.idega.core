@@ -9,6 +9,7 @@ import java.util.Date;
 import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -19,6 +20,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = UserStatus.ENTITY_NAME)
@@ -33,7 +36,8 @@ import javax.persistence.TemporalType;
 	@NamedQuery(name = "userStatus.findAllByUserAndGroup", query = "select us from UserStatus us where us.user = :user and us.group = :group order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllActiveByUserAndGroup", query = "select us from UserStatus us where us.user = :user and us.group = :group and us.dateTo is null order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status order by us.dateFrom"),
-	@NamedQuery(name = "userStatus.findAllActiveByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status and us.dateTo is null order by us.dateFrom")
+	@NamedQuery(name = "userStatus.findAllActiveByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status and us.dateTo is null order by us.dateFrom"),
+	@NamedQuery(name = UserStatus.QUERY_FIND_STATUSES_IN_GROUPS, query = "select us from UserStatus us where us.status.statusKey in (:statusKeys) and (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.dateFrom desc")
 })
 @Cacheable
 public class UserStatus implements Serializable {
@@ -41,7 +45,8 @@ public class UserStatus implements Serializable {
 	private static final long serialVersionUID = 2044595478957579919L;
 
 	public static final String	ENTITY_NAME = "ic_usergroup_status",
-								QUERY_FIND_ALL = "userStatus.findAll";
+								QUERY_FIND_ALL = "userStatus.findAll",
+								QUERY_FIND_STATUSES_IN_GROUPS = "userStatus.findStatusesInGroup";
 
 	public static final String COLUMN_USER_STATUS_ID = "ic_usergroup_status_id";
 	private static final String COLUMN_STATUS = "status_id";
@@ -56,15 +61,15 @@ public class UserStatus implements Serializable {
 	@Column(name = COLUMN_USER_STATUS_ID)
 	private Integer id;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_STATUS)
 	private Status status;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_USER)
 	private User user;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP)
 	private Group group;
 
@@ -76,7 +81,7 @@ public class UserStatus implements Serializable {
 	@Column(name = COLUMN_DATE_TO)
 	private Date dateTo;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_CREATED_BY)
 	private User createdBy;
 
@@ -89,6 +94,9 @@ public class UserStatus implements Serializable {
 	}
 
 	public Status getStatus() {
+		if (!DBUtil.getInstance().isInitialized(status)) {
+			DBUtil.getInstance().lazyLoad(status);
+		}
 		return this.status;
 	}
 
@@ -97,6 +105,9 @@ public class UserStatus implements Serializable {
 	}
 
 	public User getUser() {
+		if (!DBUtil.getInstance().isInitialized(user)) {
+			DBUtil.getInstance().lazyLoad(user);
+		}
 		return this.user;
 	}
 
@@ -105,6 +116,9 @@ public class UserStatus implements Serializable {
 	}
 
 	public Group getGroup() {
+		if (!DBUtil.getInstance().isInitialized(group)) {
+			DBUtil.getInstance().lazyLoad(group);
+		}
 		return this.group;
 	}
 
@@ -129,6 +143,9 @@ public class UserStatus implements Serializable {
 	}
 
 	public User getCreatedBy() {
+		if (!DBUtil.getInstance().isInitialized(createdBy)) {
+			DBUtil.getInstance().lazyLoad(createdBy);
+		}
 		return this.createdBy;
 	}
 
