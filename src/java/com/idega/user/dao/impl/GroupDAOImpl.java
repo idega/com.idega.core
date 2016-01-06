@@ -273,9 +273,24 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			return null;
 		}
 
+		if (!ListUtil.isEmpty(havingTypes)) {
+			ArrayList<String> types = new ArrayList<String>();
+			for (String havingType: havingTypes) {
+				if (havingType != null && !havingType.equals("null")) {
+					types.add(havingType);
+				}
+			}
+
+			if (!ListUtil.isEmpty(types)) {
+				havingTypes = types;
+			} else {
+				havingTypes = null;
+			}
+		}
+
+		List<Param> params = new ArrayList<>();
 		StringBuilder query = null;
 		try {
-			List<Param> params = new ArrayList<>();
 			params.add(new Param("ids", parentGroupsIds));
 
 			query = new StringBuilder("select ").append(resultType.getName().equals(Integer.class.getName()) ?
@@ -283,15 +298,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 					"g"
 			).append(" from ");
 			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
-			if (!ListUtil.isEmpty(municipalities)) {
+			if (!ListUtil.isEmpty(municipalities) && !municipalities.contains("null")) {
 				query.append(" inner join gr.group.addresses a");
 			}
 			query.append(" where gr.group.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
 			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
 
-			if (ListUtil.isEmpty(havingTypes)) {
+			if (ListUtil.isEmpty(havingTypes) || havingTypes.contains("null")) {
 				//	Making sure only groups will be selected
-				if (ListUtil.isEmpty(notHavingTypes)) {
+				if (ListUtil.isEmpty(notHavingTypes) || notHavingTypes.contains("null")) {
 					notHavingTypes = new ArrayList<>();
 				}
 				if (!notHavingTypes.contains(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE)) {
@@ -308,7 +323,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				params.add(new Param("havingTypes", havingTypes));
 			}
 
-			if (!ListUtil.isEmpty(municipalities)) {
+			if (!ListUtil.isEmpty(municipalities) && !municipalities.contains("null")) {
 				query.append(" and a.city in (:municipalities)");
 				params.add(new Param("municipalities", municipalities));
 			}
@@ -320,7 +335,24 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			query.append(" order by g.name");
 
-			List<T> results = getResultListByInlineQuery(query.toString(), resultType, from, to, "groupChildGroupsWithFilterAndTypesAndPaging", ArrayUtil.convertListToArray(params));
+			List<T> results = null;
+			if (!ListUtil.isEmpty(params)) {
+				results = getResultListByInlineQuery(
+						query.toString(), 
+						resultType, 
+						from, 
+						to, 
+						"groupChildGroupsWithFilterAndTypesAndPaging", 
+						ArrayUtil.convertListToArray(params));
+			} else {
+				results = getResultListByInlineQuery(
+						query.toString(), 
+						resultType, 
+						from, 
+						to, 
+						"groupChildGroupsWithFilterAndTypesAndPaging");
+			}
+			
 			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + " by query: " + query.toString(), e);
