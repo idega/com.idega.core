@@ -764,8 +764,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (user != null) {
 			Group userGroup = user.getUserRepresentative();
 			if (userGroup != null && !AccessController.PERMISSION_KEY_OWNER.equals(permissionKey)) {
-				Collection<Integer> groupIds = getGroupHome()
-						.findParentGroupKeys(userGroup.getID());
+				Collection<Integer> groupIds = getGroupDAO()
+						.findParentGroupsIds(userGroup.getID());
 				return getGroupHome()
 						.findPermissionGroupPrimaryKeys(groupIds);
 			}
@@ -2250,11 +2250,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (user != null) {
 			UserGroupRepresentative group = user.getGroup();
 			if (group != null) {
-				Collection<Integer> parentGroups = getGroupHome()
-						.findParentGroupKeys(group.getID());
+				Collection<Integer> parentGroups = getGroupDAO()
+						.findParentGroupsIds(group.getID());
 
-				Collection<Integer> permissiveGroups = getGroupHome()
-						.findPermissionGroupPrimaryKeys(parentGroups);
+				Collection<Integer> permissiveGroups = getGroupDAO()
+						.findPermissionGroupPrimaryKeys(parentGroups);;
 				if (!ListUtil.isEmpty(permissiveGroups)) {
 					parentGroups.addAll(permissiveGroups);
 				}
