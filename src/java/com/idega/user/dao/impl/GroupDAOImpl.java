@@ -49,6 +49,7 @@ import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("groupDAO")
@@ -80,7 +81,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes){
+	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes) {
 		if ((ListUtil.isEmpty(groupsIds)) || (ListUtil.isEmpty(groupTypes))){
 			return null;
 		}
@@ -250,12 +251,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
-		return getChildGroups(Group.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to);
+		return getChildGroups(parentGroupsIds, municipalities, unions, years, notHavingTypes, from, to, false);
+	}
+	private List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to, boolean loadAliases) {
+		return getChildGroups(Group.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to, loadAliases);
 	}
 
 	@Override
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
-		return getChildGroups(Integer.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to);
+		return getChildGroups(Integer.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to, false);
 	}
 
 	private <T> List<T> getChildGroups(
@@ -267,7 +271,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<String> notHavingTypes,
 			List<String> havingTypes,
 			Integer from,
-			Integer to
+			Integer to,
+			boolean loadAliases
 	) {
 		if (ListUtil.isEmpty(parentGroupsIds)) {
 			return null;
@@ -279,7 +284,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			params.add(new Param("ids", parentGroupsIds));
 
 			query = new StringBuilder("select ").append(resultType.getName().equals(Integer.class.getName()) ?
-					"distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
+					loadAliases ? "distinct g.id as id" : "distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
 					"g"
 			).append(" from ");
 			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
@@ -314,8 +319,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			}
 
 			if (resultType.getName().equals(Integer.class.getName())) {
-				query.append(" and ((g.groupType.groupType = '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' and g.alias.id is not null) or (g.id is not null and g.groupType.groupType <> '"
+				if (!loadAliases) {
+					query.append(" and ((g.groupType.groupType = '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' and g.alias.id is not null) or (g.id is not null and g.groupType.groupType <> '"
 						.concat(GroupTypeBMPBean.TYPE_ALIAS).concat("'))")));
+				}
 			}
 
 			query.append(" order by g.name");
@@ -328,12 +335,25 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	@Override
+	public List<Integer> getParentGroupsIds(List<Integer> ids) {
+		return getParentGroupsIds(ids, null);
+	}
+
 	private List<Integer> getParentGroupsIds(List<Integer> ids, Collection<String> groupTypes) {
 		try {
-			StringBuilder query = new StringBuilder("select distinct r.group.id from GroupRelation r join r.group g where r.relatedGroup.id in (:ids)");
-			query.append(") and g.groupType.groupType in (:groupTypes) and r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' and r.groupRelationType = '");
-			query.append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
-			List<Integer> results = getResultListByInlineQuery(query.toString(), Integer.class, new Param("ids", ids), new Param("groupTypes", groupTypes));
+			List<Param> params = new ArrayList<Param>();
+			StringBuilder query = new StringBuilder("select distinct r.group.id from ");
+			query.append(GroupRelation.class.getName()).append(" r join r.group g where r.relatedGroup.id in (:ids) ");
+			query.append(" and (r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' or r.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING);
+			query.append("') and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
+			if (!ListUtil.isEmpty(groupTypes)) {
+				query.append(" and g.groupType.groupType in (:groupTypes)");
+				params.add(new Param("groupTypes", groupTypes));
+			}
+			params.add(new Param("ids", ids));
+
+			List<Integer> results = getResultListByInlineQuery(query.toString(), Integer.class, ArrayUtil.convertListToArray(params));
 			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + ids + " and group types " + groupTypes, e);
@@ -394,20 +414,52 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
-		return getChildGroups(parentGroupsIds, childGroupTypes, levels, Group.class);
+		return getChildGroups(parentGroupsIds, childGroupTypes, levels, Group.class, false);
 	}
 
 	@Override
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
-		return getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class);
+		return getChildGroupsIds(parentGroupsIds, childGroupTypes, false);
+	}
+	@Override
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class, loadAliases);
 	}
 
-	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels, Class<T> resultType) {
+	@Override
+	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
+		Map<Integer, List<Integer>> data = getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class, false);
+		if (MapUtil.isEmpty(data)) {
+			return Collections.emptyList();
+		}
+
+		List<Integer> ids = new ArrayList<>();
+		for (List<Integer> childGroupsIds: data.values()) {
+			ids.addAll(childGroupsIds);
+		}
+		return ids;
+	}
+
+	@Override
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
+		Map<Integer, List<Group>> data = getChildGroups(parentGroupsIds, childGroupTypes, null, Group.class, false);
+		if (MapUtil.isEmpty(data)) {
+			return Collections.emptyList();
+		}
+
+		List<Group> groups = new ArrayList<>();
+		for (List<Group> childGroups: data.values()) {
+			groups.addAll(childGroups);
+		}
+		return groups;
+	}
+
+	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
 		Map<Integer, List<T>> results = new TreeMap<Integer, List<T>>();
 		int currentLevel = 1;
 		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
 		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
-			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, null, childGroupTypes, null, null);
+			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, null, childGroupTypes, null, null, loadAliases);
 			if (!ListUtil.isEmpty(levelGroups)) {
 				results.put(currentLevel, levelGroups);
 			}
