@@ -100,9 +100,9 @@ public interface UserStatusBusiness extends IBOService {
 
     public Status getStatusByStatusId(int statusId) throws RemoteException;
 
-	public Collection getAllUserStatuses(int userId) throws RemoteException;
+	public Collection<Status> getAllUserStatuses(int userId) throws RemoteException;
 
-	public Collection getAllUsersWithStatus(int statusId);
+	public Collection<User> getAllUsersWithStatus(int statusId);
 
 	public boolean isDeceased(User user);
 
