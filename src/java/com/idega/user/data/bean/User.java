@@ -110,7 +110,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@Column(name = User.COLUMN_USER_ID)
 	private Integer userID;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
 	@PrimaryKeyJoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private UserGroupRepresentative group;
 
@@ -190,7 +190,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	private List<Phone> phones;
 
 	@ManyToMany(
-			fetch = FetchType.EAGER,
+			fetch = FetchType.LAZY,
 			cascade = {CascadeType.PERSIST, CascadeType.MERGE},
 			targetEntity = Email.class)
 	@JoinTable(
@@ -480,7 +480,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Email> getEmails() {
-//		doInitialize(emails);
+		doInitialize(emails);
 		return this.emails;
 	}
 

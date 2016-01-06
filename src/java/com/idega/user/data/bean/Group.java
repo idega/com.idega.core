@@ -311,7 +311,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	public GroupType getGroupType() {
-		DBUtil.getInstance().lazyLoad(groupType);
+		getInitialized(groupType);
 		return groupType;
 	}
 
@@ -368,9 +368,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the homePage
 	 */
 	public ICPage getHomePage() {
-		if (!DBUtil.getInstance().isInitialized(homePage)) {
-			homePage = DBUtil.getInstance().lazyLoad(homePage);
-		}
+		homePage = getInitialized(homePage);
 		return this.homePage;
 	}
 
@@ -386,9 +384,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the homeFolder
 	 */
 	public ICFile getHomeFolder() {
-		if (!DBUtil.getInstance().isInitialized(homeFolder)) {
-			homeFolder = DBUtil.getInstance().lazyLoad(homeFolder);
-		}
+		homeFolder = getInitialized(homeFolder);
 		return this.homeFolder;
 	}
 
@@ -404,9 +400,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the alias
 	 */
 	public Group getAlias() {
-		if (!DBUtil.getInstance().isInitialized(alias)) {
-			alias = DBUtil.getInstance().lazyLoad(alias);
-		}
+		alias = getInitialized(alias);
 		return this.alias;
 	}
 
@@ -422,9 +416,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the permissionControllingGroup
 	 */
 	public Group getPermissionControllingGroup() {
-		if (!DBUtil.getInstance().isInitialized(permissionControllingGroup)) {
-			permissionControllingGroup = DBUtil.getInstance().lazyLoad(permissionControllingGroup);
-		}
+		permissionControllingGroup = getInitialized(permissionControllingGroup);
 		return this.permissionControllingGroup;
 	}
 
@@ -485,9 +477,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the groupModerator
 	 */
 	public Group getGroupModerator() {
-		if (!DBUtil.getInstance().isInitialized(groupModerator)) {
-			groupModerator = DBUtil.getInstance().lazyLoad(groupModerator);
-		}
+		groupModerator = getInitialized(groupModerator);
 		return this.groupModerator;
 	}
 
@@ -503,7 +493,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the networks
 	 */
 	public List<ICNetwork> getNetworks() {
-		DBUtil.getInstance().lazyLoad(networks);
+		getInitialized(networks);
 		return this.networks;
 	}
 
@@ -519,7 +509,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the protocols
 	 */
 	public List<ICProtocol> getProtocols() {
-		DBUtil.getInstance().lazyLoad(protocols);
+		getInitialized(protocols);
 		return this.protocols;
 	}
 
@@ -535,7 +525,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the phones
 	 */
 	public List<Phone> getPhones() {
-		DBUtil.getInstance().lazyLoad(phones);
+		getInitialized(phones);
 		return this.phones;
 	}
 
@@ -551,7 +541,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the emails
 	 */
 	public List<Email> getEmails() {
-		DBUtil.getInstance().lazyLoad(emails);
+		getInitialized(emails);
 		return this.emails;
 	}
 
@@ -567,7 +557,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the addresses
 	 */
 	public List<Address> getAddresses() {
-		DBUtil.getInstance().lazyLoad(addresses);
+		getInitialized(addresses);
 		return this.addresses;
 	}
 
@@ -583,8 +573,13 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
-		DBUtil.getInstance().lazyLoad(metadata);
+		getInitialized(metadata);
 		return this.metadata;
+	}
+
+	private <T> T getInitialized(T object) {
+		DBUtil.getInstance().lazyLoad(object);
+		return object;
 	}
 
 	/**
@@ -599,7 +594,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return Returns the topNodeGroups.
 	 */
 	public List<TopNodeGroup> getTopNodeGroups() {
-		DBUtil.getInstance().lazyLoad(topNodeGroups);
+		getInitialized(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -743,7 +738,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public List<Group> getChildren() {
-		DBUtil.getInstance().lazyLoad(children);
+		getInitialized(children);
 		return children;
 	}
 
@@ -795,7 +790,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public List<Group> getParentGroups() {
-		DBUtil.getInstance().lazyLoad(parents);
+		getInitialized(parents);
 		return parents;
 	}
 
