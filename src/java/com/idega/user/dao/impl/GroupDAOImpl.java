@@ -229,16 +229,27 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Collection<Integer> findParentGroupsIds(Integer groupId) {
-		List<Group> parentGroups = findParentGroups(groupId);
-		if (ListUtil.isEmpty(parentGroups)) {
-			return null;
+		if (groupId != null) {
+			return getResultList(
+					GroupRelation.QUERY_FIND_PARENT_IDS, 
+					Integer.class, 
+					new Param("ids", groupId));
 		}
 
-		Collection<Integer> results = new ArrayList<Integer>();
-		for (Group parentGroup: parentGroups) {
-			results.add(parentGroup.getID());
+		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<Integer> findPermissionGroupPrimaryKeys(
+			Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			return getResultList(
+					Group.QUERY_FIND_PERMISSION_GROUP_IDS, 
+					Integer.class, 
+					new Param("ids", primaryKeys));
 		}
-		return results;
+
+		return Collections.emptyList();
 	}
 
 	@Override

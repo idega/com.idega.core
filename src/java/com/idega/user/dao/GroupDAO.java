@@ -10,6 +10,7 @@
 package com.idega.user.dao;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -88,5 +89,15 @@ public interface GroupDAO extends GenericDao {
 	public Map<Integer, Boolean> hasUsers(List<Group> groups);
 
 	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes);
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link Group#getId()},
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPermissionControllingGroup()}
+	 * or {@link Collections#emptyList()};
+	 */
+	Collection<Integer> findPermissionGroupPrimaryKeys(
+			Collection<Integer> primaryKeys);
 
 }

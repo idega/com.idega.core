@@ -82,6 +82,11 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
+	@NamedQuery(
+			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS, 
+			query = "SELECT g.permissionControllingGroup FROM Group g "
+					+ "WHERE g.groupID in (:ids) "
+					+ "AND g.permissionControllingGroup IS NOT NULL"),
 	@NamedQuery(name = Group.QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES, query = "select distinct g.alias from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID")
 })
@@ -92,6 +97,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private static final long serialVersionUID = -9014094183053434782L;
 
 	public static final String	QUERY_FIND_BY_IDS = "group.findByIDs",
+								QUERY_FIND_PERMISSION_GROUP_IDS = "group.findPermissionGroupIds",
 								QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES = "group.findAliasesByTypesFromAliases",
 								QUERY_FIND_BY_TYPES_FROM_ALIASES = "group.findByTypesFromAliases",
 
