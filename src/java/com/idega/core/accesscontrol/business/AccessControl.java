@@ -75,6 +75,7 @@ import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
 import com.idega.user.data.bean.User;
+import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -764,8 +765,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			Group userGroup = user.getUserRepresentative();
 			if (userGroup != null && !AccessController.PERMISSION_KEY_OWNER.equals(permissionKey)) {
 				Collection<Integer> groupIds = getGroupHome()
-						.findParentGroupsPrimaryKeysRecursively(
-								Arrays.asList(userGroup.getID()));
+						.findParentGroupKeys(userGroup.getID());
 				return getGroupHome()
 						.findPermissionGroupPrimaryKeys(groupIds);
 			}
@@ -2226,10 +2226,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public List<com.idega.user.data.Group> getUserGroups(User user) {
 		if (user != null) {
-			Collection<com.idega.user.data.Group> groupsFound = getGroupHome()
-					.findParentGroupsRecursively(Arrays.asList(user.getGroup().getID()));
-			if (groupsFound != null) {
-				return new ArrayList<com.idega.user.data.Group>(groupsFound);
+			UserGroupRepresentative group = user.getGroup();
+			if (group != null) {
+				Collection<com.idega.user.data.Group> groupsFound = getGroupHome()
+						.findParentGroups(group.getID());
+				if (groupsFound != null) {
+					return new ArrayList<com.idega.user.data.Group>(groupsFound);
+				}
 			}
 		}
 
@@ -2245,19 +2248,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Set<String> permissionsSet = new HashSet<String>();
 
 		if (user != null) {
-			Collection<Integer> parentGroups = getGroupHome()
-					.findParentGroupsPrimaryKeysRecursively(Arrays.asList(user.getGroup().getID()));
+			UserGroupRepresentative group = user.getGroup();
+			if (group != null) {
+				Collection<Integer> parentGroups = getGroupHome()
+						.findParentGroupKeys(group.getID());
 
-			Collection<Integer> permissiveGroups = getGroupHome()
-					.findPermissionGroupPrimaryKeys(parentGroups);
-			if (!ListUtil.isEmpty(permissiveGroups)) {
-				parentGroups.addAll(permissiveGroups);
-			}
+				Collection<Integer> permissiveGroups = getGroupHome()
+						.findPermissionGroupPrimaryKeys(parentGroups);
+				if (!ListUtil.isEmpty(permissiveGroups)) {
+					parentGroups.addAll(permissiveGroups);
+				}
 
-			Collection<ICPermission> permissions = getAllRolesForGroupPrimaryKeys(parentGroups);
-			for (ICPermission permission: permissions) {
-				if (permission.isActive()) {
-					permissionsSet.add(permission.getPermissionString());
+				Collection<ICPermission> permissions = getAllRolesForGroupPrimaryKeys(parentGroups);
+				for (ICPermission permission: permissions) {
+					if (permission.isActive()) {
+						permissionsSet.add(permission.getPermissionString());
+					}
 				}
 			}
 		}
