@@ -66,7 +66,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 		List<PermissionGroup> results = null;
 		try {
-			results = getResultListByInlineQuery("permissionGroup.findByName", PermissionGroup.class, param);
+			results = getResultList("permissionGroup.findByName", PermissionGroup.class, param);
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting permission group by name " + name, e);
 		}
@@ -254,9 +254,9 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	public List<ICPermission> findAll(String contextType, Collection<Integer> primaryKeys) {
 		if (!ListUtil.isEmpty(primaryKeys) && !StringUtil.isEmpty(contextType)) {
 			return getResultList(
-					ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID, 
-					ICPermission.class, 
-					new Param("contextType", contextType), 
+					ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID,
+					ICPermission.class,
+					new Param("contextType", contextType),
 					new Param("group", primaryKeys));
 		}
 
