@@ -47,7 +47,7 @@ public class LoginRecord implements Serializable {
 	private static final String COLUMN_USER = "user_id";
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@Column(name = COLUMN_LOGIN_RECORD_ID)
 	private Integer loginRecordID;
 

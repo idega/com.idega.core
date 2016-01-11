@@ -216,9 +216,9 @@
     	<type>jar</type>
     </dependency> 
     <dependency>
-      <groupId>org.hibernate.javax.persistence</groupId>
-      <artifactId>hibernate-jpa-2.0-api</artifactId>
-      <version>1.0.1.Final</version>
+    	<groupId>org.hibernate.javax.persistence</groupId>
+		<artifactId>hibernate-jpa-2.1-api</artifactId>
+		<version>1.0.0.Final</version>
     </dependency>
 	<dependency>
 	  <groupId>org.springframework</groupId>
@@ -295,7 +295,7 @@
     <dependency>
         <groupId>org.hibernate.common</groupId>
         <artifactId>hibernate-commons-annotations</artifactId>
-        <version>${org.hibernate-hibernate-annotations-version}</version>
+        <version>${org.hibernate.common-hibernate-commons-annotations-version}</version>
     </dependency>
     <dependency>
     	<groupId>org.beanshell</groupId>
