@@ -231,8 +231,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	public Collection<Integer> findParentGroupsIds(Integer groupId) {
 		if (groupId != null) {
 			return getResultList(
-					GroupRelation.QUERY_FIND_PARENT_IDS, 
-					Integer.class, 
+					GroupRelation.QUERY_FIND_PARENT_IDS,
+					Integer.class,
 					new Param("ids", groupId));
 		}
 
@@ -244,8 +244,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			Collection<Integer> primaryKeys) {
 		if (!ListUtil.isEmpty(primaryKeys)) {
 			return getResultList(
-					Group.QUERY_FIND_PERMISSION_GROUP_IDS, 
-					Integer.class, 
+					Group.QUERY_FIND_PERMISSION_GROUP_IDS,
+					Integer.class,
 					new Param("ids", primaryKeys));
 		}
 
@@ -356,21 +356,21 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<T> results = null;
 			if (!ListUtil.isEmpty(params)) {
 				results = getResultListByInlineQuery(
-						query.toString(), 
-						resultType, 
-						from, 
-						to, 
-						"groupChildGroupsWithFilterAndTypesAndPaging", 
+						query.toString(),
+						resultType,
+						from,
+						to,
+						"groupChildGroupsWithFilterAndTypesAndPaging",
 						ArrayUtil.convertListToArray(params));
 			} else {
 				results = getResultListByInlineQuery(
-						query.toString(), 
-						resultType, 
-						from, 
-						to, 
+						query.toString(),
+						resultType,
+						from,
+						to,
 						"groupChildGroupsWithFilterAndTypesAndPaging");
 			}
-			
+
 			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + " by query: " + query.toString(), e);
@@ -456,6 +456,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, notHavingChildGroupTypes, levels, Group.class, false);
+	}
+
+	@Override
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
 		return getChildGroups(parentGroupsIds, childGroupTypes, levels, Group.class, false);
 	}
@@ -497,12 +502,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return groups;
 	}
 
-	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
+	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
 		Map<Integer, List<T>> results = new TreeMap<Integer, List<T>>();
 		int currentLevel = 1;
 		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
 		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
-			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, null, childGroupTypes, null, null, loadAliases);
+			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, notHavingChildGroupTypes, childGroupTypes, null, null, loadAliases);
 			if (!ListUtil.isEmpty(levelGroups)) {
 				results.put(currentLevel, levelGroups);
 			}
@@ -513,18 +518,26 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return results;
 	}
 
+	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, levels, resultType, loadAliases);
+	}
+
 	@Override
 	public Map<Integer, Boolean> hasUsers(List<Group> groups) {
 		if (ListUtil.isEmpty(groups)) {
 			return null;
 		}
 
-		List<Integer> ids = new ArrayList<>();
+		List<Integer> ids = new ArrayList<Integer>();
 		groups.parallelStream().forEach(group -> {
 			if (group != null) {
 				Integer id = group.getID();
 				if (id != null) {
-					ids.add(group.getID());
+					try {
+						ids.add(group.getID());
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Could not add the group " + group.getID() + " into the list");
+					}
 				}
 			}
 		});
@@ -564,6 +577,41 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			getLogger().log(Level.WARNING, "Error checking if groups " + groups + " have users");
 		}
 
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroupsByAlias(Group aliasGroup) {
+		if (aliasGroup == null) {
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_BY_ALIAS, Group.class, new Param("alias", aliasGroup));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by alias: " + aliasGroup, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroupsByAliasAndName(Group aliasGroup, String groupName) {
+		if (aliasGroup == null) {
+			return null;
+		}
+
+		try {
+			Param param1 = new Param("alias", aliasGroup);
+			Param param2 = StringUtil.isEmpty(groupName) ? null : new Param("name", groupName);
+
+			if (param1 != null && param2 != null) {
+				return getResultList(Group.QUERY_FIND_BY_ALIAS_AND_NAME, Group.class, param1, param2);
+			} else {
+				getResultList(Group.QUERY_FIND_BY_ALIAS, Group.class, param1);
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by alias: " + aliasGroup, e);
+		}
 		return null;
 	}
 

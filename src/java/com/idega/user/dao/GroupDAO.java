@@ -91,7 +91,7 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes);
 
 	/**
-	 * 
+	 *
 	 * @param primaryKeys is {@link Collection} of {@link Group#getId()},
 	 * not <code>null</code>;
 	 * @return {@link Collection} of {@link Group#getPermissionControllingGroup()}
@@ -99,5 +99,12 @@ public interface GroupDAO extends GenericDao {
 	 */
 	Collection<Integer> findPermissionGroupPrimaryKeys(
 			Collection<Integer> primaryKeys);
+
+	public List<Group> findGroupsByAlias(Group aliasGroup);
+
+	public List<Group> findGroupsByAliasAndName(Group aliasGroup, String groupName);
+
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
+
 
 }
