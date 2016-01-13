@@ -34,11 +34,6 @@ public class StandardRoles {
 	public static final String ROLE_KEY_EDITOR="content_editor";
 	public static final String ROLE_KEY_AUTHOR="content_author";
 
-	public static final String ROLE_KEY_ISI_USER = "isi_user";
-	public static final String ROLE_KEY_UMFI_USER = "umfi_user";
-	public static final String ROLE_KEY_REG_UNION_USER = "reg_union_user";
-	public static final String ROLE_KEY_SPORT_UNION_USER = "sport_union_user";
-
 	public static final String ROLE_KEY_COMPANY = "company_role";
 	public static final String ROLE_KEY_CUSTOMER = "customer_role";
 
