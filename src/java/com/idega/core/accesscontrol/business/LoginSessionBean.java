@@ -18,6 +18,7 @@ import java.util.Stack;
 import java.util.logging.Logger;
 
 import com.idega.business.IBOLookup;
+import com.idega.core.accesscontrol.data.bean.PermissionGroup;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
@@ -278,8 +279,13 @@ public class LoginSessionBean implements LoginSession, Serializable {
 					return true;
 				}
 
+				PermissionGroup adminsGroup = getAccessController().getPermissionGroupAdministrator();
+				if (adminsGroup == null) {
+					return false;
+				}
+
 				UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-				return userBusiness.isMemberOfGroup(getAccessController().getPermissionGroupAdministrator().getID(), userBusiness.getUser(user.getId()));
+				return userBusiness.isMemberOfGroup(adminsGroup.getID(), userBusiness.getUser(user.getId()));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
