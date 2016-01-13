@@ -93,7 +93,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public ICDomain getDomain() {
-		DBUtil.getInstance().lazyLoad(domain);
+		domain = DBUtil.getInstance().lazyLoad(domain);
 		return this.domain;
 	}
 
@@ -102,7 +102,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public Group getRelatedGroup() {
-		DBUtil.getInstance().lazyLoad(relatedGroup);
+		relatedGroup = DBUtil.getInstance().lazyLoad(relatedGroup);
 		return this.relatedGroup;
 	}
 
@@ -111,7 +111,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public GroupDomainRelationType getRelationship() {
-		DBUtil.getInstance().lazyLoad(relationship);
+		relationship = DBUtil.getInstance().lazyLoad(relationship);
 		return this.relationship;
 	}
 
@@ -144,7 +144,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public User getPassiveBy() {
-		DBUtil.getInstance().lazyLoad(passiveBy);
+		passiveBy = DBUtil.getInstance().lazyLoad(passiveBy);
 		return this.passiveBy;
 	}
 

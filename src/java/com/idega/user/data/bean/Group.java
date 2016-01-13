@@ -213,7 +213,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private List<Group> children;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.group")
-    private final List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+    private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
     @Transient
     private boolean hasUsers;
@@ -317,7 +317,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	public GroupType getGroupType() {
-		getInitialized(groupType);
+		groupType = getInitialized(groupType);
 		return groupType;
 	}
 
@@ -499,7 +499,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the networks
 	 */
 	public List<ICNetwork> getNetworks() {
-		getInitialized(networks);
+		networks = getInitialized(networks);
 		return this.networks;
 	}
 
@@ -515,7 +515,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the protocols
 	 */
 	public List<ICProtocol> getProtocols() {
-		getInitialized(protocols);
+		protocols = getInitialized(protocols);
 		return this.protocols;
 	}
 
@@ -531,7 +531,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the phones
 	 */
 	public List<Phone> getPhones() {
-		getInitialized(phones);
+		phones = getInitialized(phones);
 		return this.phones;
 	}
 
@@ -547,7 +547,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the emails
 	 */
 	public List<Email> getEmails() {
-		getInitialized(emails);
+		emails = getInitialized(emails);
 		return this.emails;
 	}
 
@@ -563,7 +563,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the addresses
 	 */
 	public List<Address> getAddresses() {
-		getInitialized(addresses);
+		addresses = getInitialized(addresses);
 		return this.addresses;
 	}
 
@@ -579,12 +579,12 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
-		getInitialized(metadata);
+		metadata = getInitialized(metadata);
 		return this.metadata;
 	}
 
 	private <T> T getInitialized(T object) {
-		DBUtil.getInstance().lazyLoad(object);
+		object = DBUtil.getInstance().lazyLoad(object);
 		return object;
 	}
 
@@ -600,7 +600,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return Returns the topNodeGroups.
 	 */
 	public List<TopNodeGroup> getTopNodeGroups() {
-		getInitialized(topNodeGroups);
+		topNodeGroups = getInitialized(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -744,7 +744,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public List<Group> getChildren() {
-		getInitialized(children);
+		children = getInitialized(children);
 		return children;
 	}
 
@@ -796,7 +796,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public List<Group> getParentGroups() {
-		getInitialized(parents);
+		parents = getInitialized(parents);
 		return parents;
 	}
 

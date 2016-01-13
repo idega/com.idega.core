@@ -45,7 +45,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_COUNT_BY_RELATED_GROUP_TYPE, query = "select count(r) from GroupRelation r where r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE),
 	@NamedQuery(
-			name = GroupRelation.QUERY_FIND_PARENT_IDS, 
+			name = GroupRelation.QUERY_FIND_PARENT_IDS,
 			query = "SELECT DISTINCT gr.group.id FROM GroupRelation gr "
 					+ "WHERE gr.relatedGroup.id in (:ids) "
 					+ "AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) "
@@ -163,16 +163,17 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	}
 
 	public Group getGroup() {
-		DBUtil.getInstance().lazyLoad(group);
+		group = DBUtil.getInstance().lazyLoad(group);
 		return this.group;
 	}
 
 	public Group getRelatedGroup() {
-		DBUtil.getInstance().lazyLoad(relatedGroup);
+		relatedGroup = DBUtil.getInstance().lazyLoad(relatedGroup);
 		return this.relatedGroup;
 	}
 
 	public GroupRelationType getGroupRelationType() {
+		groupRelationType = DBUtil.getInstance().lazyLoad(groupRelationType);
 		return this.groupRelationType;
 	}
 
@@ -189,17 +190,17 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	}
 
 	public User getPassiveBy() {
-		DBUtil.getInstance().lazyLoad(passiveBy);
+		passiveBy = DBUtil.getInstance().lazyLoad(passiveBy);
 		return this.passiveBy;
 	}
 
 	public User getCreatedBy() {
-		DBUtil.getInstance().lazyLoad(createdBy);
+		createdBy = DBUtil.getInstance().lazyLoad(createdBy);
 		return this.createdBy;
 	}
 
 	public GroupType getRelatedGroupType() {
-		DBUtil.getInstance().lazyLoad(relatedGroupType);
+		relatedGroupType = DBUtil.getInstance().lazyLoad(relatedGroupType);
 		return this.relatedGroupType;
 	}
 
@@ -257,7 +258,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
-		DBUtil.getInstance().lazyLoad(metadata);
+		metadata = DBUtil.getInstance().lazyLoad(metadata);
 		return this.metadata;
 	}
 

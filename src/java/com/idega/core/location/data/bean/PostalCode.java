@@ -18,6 +18,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.idega.util.DBUtil;
+
 @Entity
 @Cacheable
 @Table(name = PostalCode.ENTITY_NAME)
@@ -126,6 +128,7 @@ public class PostalCode implements Serializable {
 	 * @return the country
 	 */
 	public Country getCountry() {
+		country = DBUtil.getInstance().lazyLoad(country);
 		return this.country;
 	}
 
@@ -141,6 +144,7 @@ public class PostalCode implements Serializable {
 	 * @return the commune
 	 */
 	public Commune getCommune() {
+		commune = DBUtil.getInstance().lazyLoad(commune);
 		return this.commune;
 	}
 

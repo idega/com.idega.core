@@ -239,7 +239,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<ICLanguage> getLanguages() {
-		doInitialize(languages);
+		languages = getInitialized(languages);
 		return languages;
 	}
 
@@ -370,7 +370,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICFile getSystemImage() {
-		doInitialize(systemImage);
+		systemImage = getInitialized(systemImage);
 		return this.systemImage;
 	}
 
@@ -379,7 +379,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Group getPrimaryGroup() {
-		doInitialize(primaryGroup);
+		primaryGroup = getInitialized(primaryGroup);
 		return this.primaryGroup;
 	}
 
@@ -388,7 +388,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICPage getHomePage() {
-		doInitialize(homePage);
+		homePage = getInitialized(homePage);
 		return this.homePage;
 	}
 
@@ -408,7 +408,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public User getDeletedBy() {
-		doInitialize(deletedBy);
+		deletedBy = getInitialized(deletedBy);
 		return this.deletedBy;
 	}
 
@@ -425,7 +425,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICLanguage getNativeLanguage() {
-		doInitialize(nativeLanguage);
+		nativeLanguage = getInitialized(nativeLanguage);
 		return this.nativeLanguage;
 	}
 
@@ -453,7 +453,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICRole getPreferredRole() {
-		doInitialize(preferredRole);
+		preferredRole = getInitialized(preferredRole);
 		return this.preferredRole;
 	}
 
@@ -462,7 +462,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICFile getUserProperties() {
-		doInitialize(userProperties);
+		userProperties = getInitialized(userProperties);
 		return this.userProperties;
 	}
 
@@ -471,7 +471,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Phone> getPhones() {
-		doInitialize(phones);
+		phones = getInitialized(phones);
 		return this.phones;
 	}
 
@@ -480,7 +480,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Email> getEmails() {
-		doInitialize(emails);
+		emails = getInitialized(emails);
 		return this.emails;
 	}
 
@@ -489,7 +489,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Address> getAddresses() {
-		doInitialize(addresses);
+		addresses = getInitialized(addresses);
 		return this.addresses;
 	}
 
@@ -498,7 +498,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Set<Metadata> getMetadata() {
-		doInitialize(metadata);
+		metadata = getInitialized(metadata);
 		return this.metadata;
 	}
 
@@ -507,16 +507,17 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Group getUserRepresentative() {
-		doInitialize(userRepresentative);
+		userRepresentative = getInitialized(userRepresentative);
 		return this.userRepresentative;
 	}
 
-	private void doInitialize(Object object) {
-		DBUtil.getInstance().lazyLoad(object);
+	private <T> T getInitialized(T notInitialized) {
+		T initialized = DBUtil.getInstance().lazyLoad(notInitialized);
+		return initialized;
 	}
 
 	public List<TopNodeGroup> getTopNodeGroups() {
-		doInitialize(topNodeGroups);
+		topNodeGroups = getInitialized(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -694,7 +695,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<UserLogin> getLogins() {
-		doInitialize(logins);
+		logins = getInitialized(logins);
 		return logins;
 	}
 

@@ -47,11 +47,6 @@
                 </property>
             </bean>
         </property>
-        <property name="jpaProperties">
-	        <props>
-	            <prop key="hibernate.enable_lazy_load_no_trans">true</prop>
-	        </props>
-	    </property>
     </bean>
 
   <tx:annotation-driven />

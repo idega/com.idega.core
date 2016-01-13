@@ -20,6 +20,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.idega.util.DBUtil;
+
 @Entity
 @Table(name = ICRole.ENTITY_NAME)
 @NamedQueries({
@@ -103,6 +105,7 @@ public class ICRole implements Serializable {
 	}
 
 	public List<ICRole> getChildren() {
+		children = DBUtil.getInstance().lazyLoad(children);
 		return this.children;
 	}
 

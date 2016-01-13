@@ -19,6 +19,8 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.idega.util.DBUtil;
+
 @Entity
 @Table(name = GroupEvent.ENTITY_NAME)
 @Cacheable
@@ -72,6 +74,7 @@ public class GroupEvent implements Serializable {
 	}
 
 	public Group getGroup() {
+		group = DBUtil.getInstance().lazyLoad(group);
 		return this.group;
 	}
 
@@ -80,6 +83,7 @@ public class GroupEvent implements Serializable {
 	}
 
 	public GroupEventType getEventType() {
+		eventType = DBUtil.getInstance().lazyLoad(eventType);
 		return this.eventType;
 	}
 
@@ -112,6 +116,7 @@ public class GroupEvent implements Serializable {
 	}
 
 	public Group getRegistrant() {
+		registrant = DBUtil.getInstance().lazyLoad(registrant);
 		return this.registrant;
 	}
 

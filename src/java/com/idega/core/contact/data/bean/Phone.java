@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.contact.data.bean;
 
@@ -23,6 +23,7 @@ import javax.persistence.Table;
 
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = Phone.ENTITY_NAME)
@@ -131,6 +132,7 @@ public class Phone implements Serializable {
 	 * @return the users
 	 */
 	public List<User> getUsers() {
+		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
 	}
 
@@ -138,6 +140,7 @@ public class Phone implements Serializable {
 	 * @return the users
 	 */
 	public List<Group> getGroups() {
+		groups = DBUtil.getInstance().lazyLoad(groups);
 		return this.groups;
 	}
 }

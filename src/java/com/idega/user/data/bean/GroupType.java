@@ -315,7 +315,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public GroupType getParentNode() {
-		DBUtil.getInstance().lazyLoad(parent);
+		parent = DBUtil.getInstance().lazyLoad(parent);
 		return parent;
 	}
 

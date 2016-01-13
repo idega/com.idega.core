@@ -24,6 +24,7 @@ import javax.persistence.Table;
 
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
 import com.idega.util.text.TextSoap;
 
 @Entity
@@ -127,6 +128,7 @@ public class Address implements Serializable {
 	 * @return the addressType
 	 */
 	public AddressType getAddressType() {
+		addressType = DBUtil.getInstance().lazyLoad(addressType);
 		return this.addressType;
 	}
 
@@ -226,6 +228,7 @@ public class Address implements Serializable {
 	 * @return the commune
 	 */
 	public Commune getCommune() {
+		commune = DBUtil.getInstance().lazyLoad(commune);
 		return this.commune;
 	}
 
@@ -241,6 +244,7 @@ public class Address implements Serializable {
 	 * @return the postalCode
 	 */
 	public PostalCode getPostalCode() {
+		postalCode = DBUtil.getInstance().lazyLoad(postalCode);
 		return this.postalCode;
 	}
 
@@ -256,6 +260,7 @@ public class Address implements Serializable {
 	 * @return the country
 	 */
 	public Country getCountry() {
+		country = DBUtil.getInstance().lazyLoad(country);
 		return this.country;
 	}
 
@@ -271,6 +276,7 @@ public class Address implements Serializable {
 	 * @return the addressCoordinate
 	 */
 	public AddressCoordinate getAddressCoordinate() {
+		addressCoordinate = DBUtil.getInstance().lazyLoad(addressCoordinate);
 		return this.addressCoordinate;
 	}
 
@@ -286,6 +292,7 @@ public class Address implements Serializable {
 	 * @return the users
 	 */
 	public List<User> getUsers() {
+		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
 	}
 

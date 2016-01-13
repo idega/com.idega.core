@@ -94,9 +94,7 @@ public class UserStatus implements Serializable {
 	}
 
 	public Status getStatus() {
-		if (!DBUtil.getInstance().isInitialized(status)) {
-			DBUtil.getInstance().lazyLoad(status);
-		}
+		status = DBUtil.getInstance().lazyLoad(status);
 		return this.status;
 	}
 
@@ -105,9 +103,7 @@ public class UserStatus implements Serializable {
 	}
 
 	public User getUser() {
-		if (!DBUtil.getInstance().isInitialized(user)) {
-			DBUtil.getInstance().lazyLoad(user);
-		}
+		user = DBUtil.getInstance().lazyLoad(user);
 		return this.user;
 	}
 
@@ -116,9 +112,7 @@ public class UserStatus implements Serializable {
 	}
 
 	public Group getGroup() {
-		if (!DBUtil.getInstance().isInitialized(group)) {
-			DBUtil.getInstance().lazyLoad(group);
-		}
+		group = DBUtil.getInstance().lazyLoad(group);
 		return this.group;
 	}
 
@@ -143,9 +137,7 @@ public class UserStatus implements Serializable {
 	}
 
 	public User getCreatedBy() {
-		if (!DBUtil.getInstance().isInitialized(createdBy)) {
-			DBUtil.getInstance().lazyLoad(createdBy);
-		}
+		createdBy = DBUtil.getInstance().lazyLoad(createdBy);
 		return this.createdBy;
 	}
 

@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.version.data.bean;
 
@@ -19,6 +19,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = ICItem.ENTITY_NAME)
@@ -121,6 +122,7 @@ public class ICItem implements Serializable {
 	 * @return the createdBy
 	 */
 	public User getCreatedBy() {
+		createdBy = DBUtil.getInstance().lazyLoad(createdBy);
 		return this.createdBy;
 	}
 
@@ -136,6 +138,7 @@ public class ICItem implements Serializable {
 	 * @return the currentVersion
 	 */
 	public ICVersion getCurrentVersion() {
+		currentVersion = DBUtil.getInstance().lazyLoad(currentVersion);
 		return this.currentVersion;
 	}
 

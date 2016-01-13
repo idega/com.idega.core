@@ -24,6 +24,7 @@ import javax.persistence.Table;
 import com.idega.core.contact.data.EmailDataView;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = Email.ENTITY_NAME)
@@ -119,6 +120,7 @@ public class Email implements Serializable, EmailDataView {
 	 * @return the users
 	 */
 	public List<User> getUsers() {
+		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
 	}
 
@@ -126,6 +128,7 @@ public class Email implements Serializable, EmailDataView {
 	 * @return the users
 	 */
 	public List<Group> getGroups() {
+		groups = DBUtil.getInstance().lazyLoad(groups);
 		return this.groups;
 	}
 }

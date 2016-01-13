@@ -23,6 +23,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import com.idega.core.component.data.bean.ICObject;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = UserGroupPlugin.ENTITY_NAME)
@@ -118,6 +119,7 @@ public class UserGroupPlugin implements Serializable {
 	}
 
 	public List<GroupType> getGroupTypes() {
+		groupTypes = DBUtil.getInstance().lazyLoad(groupTypes);
 		return this.groupTypes;
 	}
 
