@@ -11,16 +11,17 @@ package com.idega.user.data;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2004/09/17 14:49:33 $ by $Author: thomas $
- * 
+ *
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.1 $
  */
 public class GroupTypeConstants {
-	
-	public static final String GROUP_TYPE_LEAGUE= "iwme_league";
-	public static final String GROUP_TYPE_CLUB = "iwme_club";
-	public static final String GROUP_TYPE_GENERAL = "general";
-	
+
+	public static final String	GROUP_TYPE_LEAGUE= "iwme_league",
+								GROUP_TYPE_CLUB = "iwme_club",
+								GROUP_TYPE_GENERAL = "general",
+								GROUP_TYPE_ALIAS = "alias";
+
 }
