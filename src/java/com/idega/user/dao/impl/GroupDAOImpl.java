@@ -11,6 +11,7 @@ package com.idega.user.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 
@@ -143,4 +144,17 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 		persist(relation);
 	}
+
+	@Override
+	public Collection<Integer> findParentGroupsIds(Integer groupId) {
+		if (groupId != null) {
+			return getResultList(
+					GroupRelation.QUERY_FIND_PARENT_IDS,
+					Integer.class,
+					new Param("ids", groupId));
+		}
+
+		return Collections.emptyList();
+	}
+
 }

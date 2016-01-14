@@ -151,9 +151,9 @@ public interface GroupHome extends IDOHome {
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroups
 	 */
 	public Collection<Group> findGroups(String[] groupIDs) throws FinderException;
-	
+
 	/**
-	 * 
+	 *
 	 * @param groupIDs is {@link Collection} of {@link Group#getPrimaryKey()}s,
 	 * not <code>null</code>;
 	 * @return entities or {@link Collections#emptyList()} on failure;
@@ -233,6 +233,8 @@ public interface GroupHome extends IDOHome {
 	 * @param types group types that will be returned if empty groups of all types will be returned.
 	 * @return
 	 */
-	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount) throws FinderException ;
+	public Collection<Group> getGroupsBySearchRequest(String request, Collection <String> types,int amount) throws FinderException;
+
+	public Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException;
 
 }

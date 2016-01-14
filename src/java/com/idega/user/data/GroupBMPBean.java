@@ -64,7 +64,7 @@ import com.idega.util.expression.ELUtil;
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * @version 1.0
  */
-public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaDataCapable, UniqueIDCapable {
+public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaDataCapable, UniqueIDCapable, GroupNode<Group> {
 
 	private static final long serialVersionUID = -5276962419455614341L;
 
@@ -1196,10 +1196,14 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public Collection<Group> getReverseRelatedBy(String relationType) throws FinderException {
+		return getReverseRelatedBy(Integer.valueOf(getId()), relationType);
+	}
+
+	protected Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException {
 		GroupRelation rel = null;
 		Collection<Group> theReturn = new ArrayList<Group>();
 		Collection<GroupRelation> rels = null;
-		rels = this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(this.getID(), relationType);
+		rels = this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(groupId, relationType);
 		Iterator<GroupRelation> iter = rels.iterator();
 		while (iter.hasNext()) {
 			rel = iter.next();
@@ -2027,6 +2031,11 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 		return this.idoFindPKsByQuery(query);
 
+	}
+
+	@Override
+	public String getType() {
+		return getGroupType();
 	}
 
 }

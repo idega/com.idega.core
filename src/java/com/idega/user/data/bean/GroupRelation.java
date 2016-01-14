@@ -38,12 +38,20 @@ import com.idega.util.IWTimestamp;
 @NamedQueries({
 	@NamedQuery(name = "groupRelation.findByRelatedGroup", query = "select r from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = "groupRelation.findByRelatedGroupAndType", query = "select r from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
-	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'")
+	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'"),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_PARENT_IDS,
+			query = "SELECT DISTINCT gr.group.id FROM GroupRelation gr "
+					+ "WHERE gr.relatedGroup.id in (:ids) "
+					+ "AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) "
+					+ "AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')")
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
 
 	private static final long serialVersionUID = 5850270896539731950L;
+
+	public static final String QUERY_FIND_PARENT_IDS = "groupRelation.findParentIds";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";

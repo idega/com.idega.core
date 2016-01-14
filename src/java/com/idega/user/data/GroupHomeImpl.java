@@ -268,12 +268,12 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		if (ListUtil.isEmpty(groupIDs)) {
 			return Collections.emptyList();
 		}
-		
+
 		try {
 			return findGroups(ArrayUtil.convertListToArray(groupIDs));
 		} catch (FinderException e) {
 			java.util.logging.Logger.getLogger(getClass().getName()).warning(
-					"Failed to get " + getEntityInterfaceClass().getSimpleName() + 
+					"Failed to get " + getEntityInterfaceClass().getSimpleName() +
 					" by id's: '" + groupIDs +  "'");
 		}
 
@@ -379,6 +379,14 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		Collection ids  = ((GroupBMPBean) entity).getGroupsBySearchRequest(request,types,amount);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	@Override
+	public Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<Group> groups = ((GroupBMPBean) entity).getReverseRelatedBy(groupId, relationType);
+		this.idoCheckInPooledEntity(entity);
+		return groups;
 	}
 
 }

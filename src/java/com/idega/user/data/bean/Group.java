@@ -15,6 +15,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import javax.ejb.EJBException;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
@@ -54,8 +55,12 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.user.dao.GroupDAO;
+import com.idega.user.dao.UserDAO;
+import com.idega.user.data.GroupNode;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = Group.ENTITY_NAME)
@@ -71,7 +76,7 @@ import com.idega.util.IWTimestamp;
 })
 @XmlTransient
 @Cacheable
-public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode<Group> {
+public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCapable, ICTreeNode<Group>, GroupNode<Group> {
 
 	private static final long serialVersionUID = -9014094183053434782L;
 
@@ -741,6 +746,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		return null;
 	}
 
+	@Override
 	public List<Group> getParentGroups() {
 		return parents;
 	}
@@ -763,4 +769,101 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	public String toString() {
 		return getId();
 	}
+
+	@Override
+	public String getType() {
+		GroupType groupType = getGroupType();
+		return groupType == null ? null : groupType.getGroupType();
+	}
+
+	private boolean isUser() {
+		GroupType type = getGroupType();
+		return type != null && com.idega.user.data.User.USER_GROUP_TYPE.equals(type.getGroupType());
+	}
+
+	private com.idega.user.data.bean.User getUserForGroup() {
+		UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
+		return userDAO.getUser(getID());
+	}
+
+	@Override
+	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
+		List<Group> theReturn = new ArrayList<Group>();
+		try {
+			Group parent = null;
+			Collection<Group> parents = getCollectionOfParents(cachedParents, cachedGroups);
+			for (Iterator<Group> parIter = parents.iterator(); parIter.hasNext();) {
+				parent = parIter.next();
+				if (parent != null && !theReturn.contains(parent)) {
+					theReturn.add(parent);
+				}
+			}
+			if (isUser()) {
+				try {
+					com.idega.user.data.bean.User user = getUserForGroup();
+					Group usersPrimaryGroup = user.getPrimaryGroup();
+					String key = usersPrimaryGroup == null ? null : String.valueOf(usersPrimaryGroup.getID());
+					if (cachedGroups != null && key != null) {
+						if (cachedGroups.containsKey(key)) {
+							usersPrimaryGroup = cachedGroups.get(key);
+						} else {
+							cachedGroups.put(key, usersPrimaryGroup);
+						}
+					}
+					else {
+						usersPrimaryGroup = user.getPrimaryGroup();
+					}
+					if (usersPrimaryGroup != null && !theReturn.contains(usersPrimaryGroup)) {
+						theReturn.add(usersPrimaryGroup);
+					}
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+			throw new EJBException(e.getMessage());
+		}
+		return theReturn;
+	}
+
+	private Collection<Group> getCollectionOfParents(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws Exception {
+		GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
+
+		Collection<Integer> col = null;
+		String key = getID().toString();
+		if (cachedParents != null) {
+			if (cachedParents.containsKey(key)) {
+				col = cachedParents.get(key);
+			} else {
+				col = groupDAO.findParentGroupsIds(getID());
+				cachedParents.put(key, col);
+			}
+		} else {
+			col = groupDAO.findParentGroupsIds(getID());
+		}
+
+		Collection<Group> returnCol = new ArrayList<Group>();
+		Group parent = null;
+		Integer parentID = null;
+		for (Iterator<Integer> iter = col.iterator(); iter.hasNext();) {
+			parentID = iter.next();
+			key = parentID.toString();
+			if (cachedGroups != null) {
+				if (cachedGroups.containsKey(key)) {
+					parent = cachedGroups.get(key);
+				} else {
+					parent = groupDAO.findGroup(parentID);
+					cachedGroups.put(key, parent);
+				}
+			}
+			else {
+				parent = groupDAO.findGroup(parentID);
+			}
+			returnCol.add(parent);
+		}
+
+		return returnCol;
+	}
+
 }
