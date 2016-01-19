@@ -2112,6 +2112,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return getAllRolesForUser(u);
 	}
 
+	@Override
 	public boolean isMemberOfGroupWithTypes(User user, List<String> groupTypes) {
 		if (user == null || ListUtil.isEmpty(groupTypes)) {
 			return false;
@@ -2805,6 +2806,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public boolean hasRole(String roleKey, Group group, IWUserContext iwuc){
+		if (group == null) {
+			getLogger().warning("Group is not provided!");
+			return false;
+		}
 
 		@SuppressWarnings("unchecked")
 		List<String>[] usersGroupsToCheckAgainstPermissions = new List[1];
