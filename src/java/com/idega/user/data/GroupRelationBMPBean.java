@@ -11,12 +11,15 @@ import javax.ejb.RemoveException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
+import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.presentation.IWContext;
+import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
+import com.idega.util.expression.ELUtil;
 
 /**
  * Description: This bean is used to connect groups together and to keep track of their relations
@@ -599,6 +602,12 @@ public void removeBy(User currentUser) throws RemoveException{
 		}
 	}
 
+	@Override
+	public void store() throws IDOStoreException{
+		super.store();
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent("Changed"));
+	}
+	
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
 
 	//constructing query

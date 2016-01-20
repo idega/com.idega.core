@@ -24,6 +24,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -31,8 +34,11 @@ import javax.persistence.TemporalType;
 
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupUserRemovedEvent;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = GroupRelation.ENTITY_NAME)
@@ -106,6 +112,14 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		}
 	}
 
+	
+	@PostPersist
+	@PostUpdate
+	@PostRemove
+	public void onChange(){
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent("Changed"));
+	}
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_GROUP_RELATION_ID)
