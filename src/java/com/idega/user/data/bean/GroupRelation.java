@@ -35,7 +35,6 @@ import javax.persistence.TemporalType;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.events.GroupRelationChangedEvent;
-import com.idega.user.events.GroupUserRemovedEvent;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.expression.ELUtil;
@@ -112,14 +111,14 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		}
 	}
 
-	
+
 	@PostPersist
 	@PostUpdate
 	@PostRemove
 	public void onChange(){
 		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent("Changed"));
 	}
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_GROUP_RELATION_ID)

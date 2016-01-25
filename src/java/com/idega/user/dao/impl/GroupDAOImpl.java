@@ -9,7 +9,6 @@
  */
 package com.idega.user.dao.impl;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -30,7 +29,6 @@ import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.bean.ICDomain;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
-import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.business.UserBusiness;
@@ -41,7 +39,6 @@ import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupDomainRelation;
-import com.idega.user.data.bean.GroupDomainRelationType;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
@@ -203,19 +200,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			return Collections.emptyList();
 		}
 
-		String query = "select distinct gdr.relatedGroup from " + GroupDomainRelation.class.getName() + " gdr where gdr.domain.id = " + containingDomain.getId() + " and gdr.relationship.type = '" +
-				GroupDomainRelationType.RELATION_TYPE_TOP_NODE + "' and gdr.status is null";
-
-		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("load_groups_under_domain", false)) {
-			try {
-				List<Group> groups = getResultListByInlineQuery(query, Group.class);
-				getLogger().info("Found groups under domain: " + containingDomain + ": " + query);
-				return groups;
-			} catch (Exception e) {
-				getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain + ". Query: " + query, e);
-			}
-		} else {
-			getLogger().warning("Groups not loaded under domain: " + containingDomain);
+		try {
+			List<Group> groups = getResultList(GroupDomainRelation.QUERY_FIND_TOP_NODES_UNDER_DOMAIN, Group.class, new Param("domainId", containingDomain.getId()));
+			return groups;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain, e);
 		}
 
 		return Collections.emptyList();
@@ -223,8 +212,19 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public int getNumberOfTopNodeVisibleGroupsContained(ICDomain containingDomain) {
-		List<Group> groups = findTopNodeVisibleGroupsContained(containingDomain);
-		return ListUtil.isEmpty(groups) ? 0 : groups.size();
+		if (containingDomain == null) {
+			getLogger().warning("Domain is not provided");
+			return 0;
+		}
+
+		try {
+			Integer number = getSingleResult(GroupDomainRelation.QUERY_COUNT_TOP_NODES_UNDER_DOMAIN, Integer.class, new Param("domainId", containingDomain.getId()));
+			return number;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain, e);
+		}
+
+		return 0;
 	}
 
 	@Override
@@ -528,53 +528,41 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			return null;
 		}
 
-		List<Integer> ids = new ArrayList<Integer>();
-		groups.parallelStream().forEach(group -> {
-			if (group != null) {
+		StringBuilder query = new StringBuilder();
+		try {
+			query.append("SELECT gr.group.id, count(gr.relatedGroup.id) FROM ").append(GroupRelation.class.getName()).append("  gr WHERE gr.group.id in (");
+			for (Iterator<Group> groupsIter = groups.iterator(); groupsIter.hasNext();) {
+				Group group = groupsIter.next();
 				Integer id = group.getID();
 				if (id != null) {
-					try {
-						ids.add(group.getID());
-					} catch (Exception e) {
-						getLogger().log(Level.WARNING, "Could not add the group " + group.getID() + " into the list");
-					}
-				}
-			}
-		});
-
-		try {
-			StringBuilder query = new StringBuilder("SELECT gr.ic_group_id, count(gr.related_ic_group_id) FROM IC_GROUP_RELATION gr WHERE gr.IC_GROUP_ID in (");
-			for (Iterator<Integer> idsIter = ids.iterator(); idsIter.hasNext();) {
-				Integer id = idsIter.next();
-				if (id != null) {
 					query.append(id);
-					if (idsIter.hasNext()) {
+					if (groupsIter.hasNext()) {
 						query.append(", ");
 					}
 				}
 			}
-			query.append(") and gr.RELATIONSHIP_TYPE = 'GROUP_PARENT' and (gr.GROUP_RELATION_STATUS = 'ST_ACTIVE' or gr.GROUP_RELATION_STATUS = 'PASS_PEND') ")
-				.append("and gr.related_GROUP_TYPE = 'ic_user_representative' group by gr.ic_group_id");
-			List<Serializable[]> dbResults = SimpleQuerier.executeQuery(query.toString(), 2);
+			query.append(") and gr.groupRelationType.type = 'GROUP_PARENT' and (gr.status = 'ST_ACTIVE' or gr.status = 'PASS_PEND') ")
+				.append("and gr.relatedGroupType.groupType = 'ic_user_representative' group by gr.group.id");
+			List<Object[]> dbResults = getResultListByInlineQuery(query.toString(), Object[].class);
 			if (ListUtil.isEmpty(dbResults)) {
 				return null;
 			}
 
 			Map<Integer, Boolean> results = new HashMap<>();
-			for (Serializable[] data: dbResults) {
+			for (Object[] data: dbResults) {
 				if (ArrayUtil.isEmpty(data) || data.length != 2) {
 					continue;
 				}
 
-				Serializable id = data[0];
-				Serializable count = data[0];
+				Object id = data[0];
+				Object count = data[0];
 				if (id instanceof Number && count instanceof Number) {
 					results.put(((Number) id).intValue(), ((Number) count).intValue() > 0);
 				}
 			}
 			return results;
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error checking if groups " + groups + " have users");
+			getLogger().log(Level.WARNING, "Error checking if groups " + groups + " have users. Query: " + query.toString(), e);
 		}
 
 		return null;
