@@ -58,7 +58,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 			cachedResources.put(bundleIdentifier, bundleResources);
 		}
 
-		if (bundleResources.containsKey(locale)) {
+		if (bundleResources != null && bundleResources.containsKey(locale)) {
 			Map<String, MessageResource> resourcesMap = bundleResources.get(locale);
 			List<MessageResource> resources = new ArrayList<MessageResource>(resourcesMap.values());
 			sortResourcesByImportance(resources);
