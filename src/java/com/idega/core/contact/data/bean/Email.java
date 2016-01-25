@@ -31,7 +31,7 @@ import com.idega.util.DBUtil;
 @NamedQueries({
 	@NamedQuery(name = "email.findAll", query = "select e from Email e"),
 	@NamedQuery(name = "email.findAllByUser", query = "select e from Email e join e.users u where u.userID = :userID"),
-	@NamedQuery(name = "email.findByUserAndType", query = "select e from Email e join e.users u join e.emailType t where t.uniqueName = :uniqueName and u.userID = :userID"),
+	@NamedQuery(name = Email.QUERY_FIND_BY_USER_AND_TYPE, query = "select e from Email e inner join e.users u where u.id = :id"),
 	@NamedQuery(name = "email.findAllByGroup", query = "select e from Email e join e.groups g where g.groupID = :groupID"),
 	@NamedQuery(name = "email.findByAddress", query = "select e from Email e where e.address = :address"),
 	@NamedQuery(name = "email.findByGroupAndType", query = "select e from Email e join e.groups g join e.emailType t where t.uniqueName = :uniqueName and g.groupID = :groupID")
@@ -40,8 +40,10 @@ public class Email implements Serializable, EmailDataView {
 
 	private static final long serialVersionUID = 2434545685633792727L;
 
-	public static final String ENTITY_NAME = "ic_email";
-	public static final String COLUMN_EMAIL_ID = "ic_email_id";
+	public static final String	ENTITY_NAME = "ic_email",
+								COLUMN_EMAIL_ID = "ic_email_id",
+								QUERY_FIND_BY_USER_AND_TYPE = "email.findByUserAndType";
+
 	private static final String COLUMN_ADDRESS = "address";
 	private static final String COLUMN_EMAIL_TYPE_ID = "ic_email_type_id";
 

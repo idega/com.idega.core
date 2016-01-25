@@ -102,8 +102,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public Email getUsersMainEmail(User user) {
-		EmailType mainEmailType = contactDAO.getMainEmailType();
-		return contactDAO.findEmailForUserByType(user, mainEmailType);
+		return contactDAO.findEmailForUserByType(user, EmailType.MAIN_EMAIL);
 	}
 
 	@Override
@@ -193,7 +192,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		ArrayList<User> users = new ArrayList<User>();
 
 		if (!ListUtil.isEmpty(primaryKeys)) {
-			return getResultList(User.QUERY_FIND_BY_PRIMARY_KEYS, User.class, 
+			return getResultList(User.QUERY_FIND_BY_PRIMARY_KEYS, User.class,
 					new Param("primaryKeys", primaryKeys));
 		}
 

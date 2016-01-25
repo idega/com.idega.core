@@ -20,6 +20,7 @@ import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.User;
+import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("contactDAO")
@@ -39,15 +40,21 @@ public class ContactDAOImpl extends GenericDaoImpl implements ContactDAO {
 
 	@Override
 	public Email findEmailForUserByType(User user, EmailType type) {
-		Param param1 = new Param("userID", user.getId());
-		Param param2 = new Param("uniqueName", type.getUniqueName());
+		return type == null ? null : findEmailForUserByType(user, type.getUniqueName());
+	}
 
-		return getSingleResult("email.findByUserAndType", Email.class, param1, param2);
+	@Override
+	public Email findEmailForUserByType(User user, String type) {
+		if (user == null || StringUtil.isEmpty(type)) {
+			return null;
+		}
+
+		return getSingleResult(Email.QUERY_FIND_BY_USER_AND_TYPE, Email.class, new Param("id", user.getId()));
 	}
 
 	@Override
 	public EmailType getMainEmailType() {
 		return getSingleResult("emailType.findByUniqueType", EmailType.class, new Param("uniqueName", EmailType.MAIN_EMAIL));
 	}
-	
+
 }
