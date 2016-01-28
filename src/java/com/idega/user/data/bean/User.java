@@ -38,21 +38,22 @@ import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.contact.data.bean.Email;
+import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.contact.data.bean.Phone;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.localisation.data.bean.ICLanguage;
 import com.idega.core.location.data.bean.Address;
+import com.idega.core.location.data.bean.AddressType;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
-import com.idega.user.dao.UserDAO;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
-import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = User.ENTITY_NAME)
@@ -188,6 +189,10 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Phone.class)
 	@JoinTable(name = SQL_RELATION_PHONE, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Phone.COLUMN_PHONE_ID) })
 	private List<Phone> phones;
+
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = UserStatus.class)
+	@JoinTable(name = UserStatus.ENTITY_NAME, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = UserStatus.COLUMN_USER_STATUS_ID) })
+	private List<UserStatus> statuses;
 
 	@ManyToMany(
 			fetch = FetchType.LAZY,
@@ -669,23 +674,42 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public String getEmailAddress() {
-		try {
-			UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
-			Email mainEmail = userDAO.getUsersMainEmail(this);
-			return mainEmail == null ? null : mainEmail.getEmailAddress();
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<Email> emails = getEmails();
+		if (ListUtil.isEmpty(emails)) {
+			return null;
 		}
+
+		for (Email email: emails) {
+			EmailType emailType = email.getEmailType();
+			if (emailType == null) {
+				continue;
+			}
+
+			if (EmailType.MAIN_EMAIL.equals(emailType.getUniqueName())) {
+				return email.getAddress();
+			}
+		}
+
 		return null;
 	}
 
 	public Address getMainAddress() {
-		try {
-			UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
-			return userDAO.getUsersMainAddress(this);
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<Address> addresses = getAddresses();
+		if (ListUtil.isEmpty(addresses)) {
+			return null;
 		}
+
+		for (Address address: addresses) {
+			AddressType addressType = address.getAddressType();
+			if (addressType == null) {
+				continue;
+			}
+
+			if (AddressType.MAIN_ADDRESS_TYPE.equals(addressType.getUniqueName())) {
+				return address;
+			}
+		}
+
 		return null;
 	}
 
@@ -714,4 +738,13 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	public Long getAge() {
 		return CoreUtil.getAge(getDateOfBirth());
 	}
+
+	public List<UserStatus> getStatuses() {
+		return statuses;
+	}
+
+	public void setStatuses(List<UserStatus> statuses) {
+		this.statuses = statuses;
+	}
+
 }
