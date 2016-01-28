@@ -1,7 +1,9 @@
 package com.idega.servlet.filter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -14,7 +16,10 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
+
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -34,10 +39,39 @@ public class IWEncodingFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(IWEncodingFilter.class.getName());
 
+	private IWMainApplicationSettings getSettings() {
+		IWMainApplication application = IWMainApplication.getDefaultIWMainApplication();
+		if (application != null) {
+			return application.getSettings();
+		}
+
+		return null;
+	}
+
+	private boolean isGZIPEnabled() {
+		IWMainApplicationSettings settings = getSettings();
+		if (settings != null) {
+			return settings.getBoolean("GZIP_compression_enabled", Boolean.FALSE);
+		}
+
+		return false;
+	}
+
 	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
+
+		ByteArrayOutputStream compressed = null;
+		GZIPOutputStream gzout = null;
+		if (isGZIPEnabled()) {
+			/* Create a gzip stream */
+			compressed = new ByteArrayOutputStream();
+			gzout = new GZIPOutputStream(compressed);
+
+			/* Handle the request */
+			response = new GenericResponseWrapper(response, gzout);
+		}
 
 		String requestURI = request.getRequestURI();
 		boolean print = requestURI.indexOf(CoreConstants.DOT) == -1 && IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_page_performance", Boolean.FALSE);
@@ -82,6 +116,38 @@ public class IWEncodingFilter implements Filter {
 			if (time >= 100) {
 				LOGGER.info("### served " + key + " in " + time + " ms");
 			}
+		}
+
+		if (gzout != null && compressed != null) {
+
+			if (response instanceof GenericResponseWrapper) {
+				((GenericResponseWrapper) response).flush();
+			}
+
+			gzout.close();
+
+			// return on error or redirect code, because response is already
+			// committed
+			int statusCode = response.getStatus();
+			if (statusCode != HttpServletResponse.SC_OK) {
+				return;
+			}
+
+			// Saneness checks
+			byte[] compressedBytes = compressed.toByteArray();
+//			boolean shouldGzippedBodyBeZero = ResponseUtil.shouldGzippedBodyBeZero(
+//					compressedBytes, request);
+//			boolean shouldBodyBeZero = ResponseUtil.shouldBodyBeZero(request,
+//					wrapper.getStatus());
+//			if (shouldGzippedBodyBeZero || shouldBodyBeZero) {
+//				compressedBytes = new byte[0];
+//			}
+
+			// Write the zipped body
+			HttpServletResponse responseToCompress = (HttpServletResponse) myResponse;
+			responseToCompress.setHeader("Content-Encoding", "gzip");
+			responseToCompress.setContentLength(compressedBytes.length);
+			responseToCompress.getOutputStream().write(compressedBytes);
 		}
 	}
 
