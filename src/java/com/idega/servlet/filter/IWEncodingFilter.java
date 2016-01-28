@@ -21,6 +21,7 @@ import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.IFrame;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.RequestUtil;
@@ -57,20 +58,32 @@ public class IWEncodingFilter implements Filter {
 		return false;
 	}
 
+	/**
+	 * 
+	 * <p>Checks if this {@link IWEncodingFilter} was called by IWJspViewHandler.
+	 * If true, it is possible, that {@link IFrame} is rendered, so we don't need
+	 * to encode part, we need to encode whole page.</p>
+	 */
+	public boolean isJSPRenderProcess() {
+		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+		for (StackTraceElement stackTraceElement : stackTraceElements) {
+			String className = stackTraceElement.getClassName();
+			if (className.contains("IWJspViewHandler")) {
+				return Boolean.TRUE;
+			}
+		}
+
+		return Boolean.FALSE;
+	}
+
 	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
 
-		ByteArrayOutputStream compressed = null;
-		GZIPOutputStream gzout = null;
-		if (isGZIPEnabled()) {
-			/* Create a gzip stream */
-			compressed = new ByteArrayOutputStream();
-			gzout = new GZIPOutputStream(compressed);
-
-			/* Handle the request */
-			response = new GenericResponseWrapper(response, gzout);
+		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+		if (isGZIPEnabled() && !isJSPRenderProcess()) {
+			response = new GenericResponseWrapper(response, bytes);
 		}
 
 		String requestURI = request.getRequestURI();
@@ -118,14 +131,13 @@ public class IWEncodingFilter implements Filter {
 			}
 		}
 
-		if (gzout != null && compressed != null) {
-
+		if (isGZIPEnabled() && !isJSPRenderProcess()) {
 			if (response instanceof GenericResponseWrapper) {
 				((GenericResponseWrapper) response).flush();
 			}
 
-			gzout.close();
-
+			bytes.close();
+			
 			// return on error or redirect code, because response is already
 			// committed
 			int statusCode = response.getStatus();
@@ -133,15 +145,12 @@ public class IWEncodingFilter implements Filter {
 				return;
 			}
 
-			// Saneness checks
+			ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+			GZIPOutputStream gzout = new GZIPOutputStream(compressed);
+			gzout.write(bytes.toByteArray());
+			gzout.close();
+
 			byte[] compressedBytes = compressed.toByteArray();
-//			boolean shouldGzippedBodyBeZero = ResponseUtil.shouldGzippedBodyBeZero(
-//					compressedBytes, request);
-//			boolean shouldBodyBeZero = ResponseUtil.shouldBodyBeZero(request,
-//					wrapper.getStatus());
-//			if (shouldGzippedBodyBeZero || shouldBodyBeZero) {
-//				compressedBytes = new byte[0];
-//			}
 
 			// Write the zipped body
 			HttpServletResponse responseToCompress = (HttpServletResponse) myResponse;
