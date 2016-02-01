@@ -16,17 +16,18 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import net.sf.ehcache.constructs.web.GenericResponseWrapper;
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.IFrame;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
+
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
 /**
  *
@@ -59,7 +60,7 @@ public class IWEncodingFilter implements Filter {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Checks if this {@link IWEncodingFilter} was called by IWJspViewHandler.
 	 * If true, it is possible, that {@link IFrame} is rendered, so we don't need
 	 * to encode part, we need to encode whole page.</p>
@@ -76,13 +77,32 @@ public class IWEncodingFilter implements Filter {
 		return Boolean.FALSE;
 	}
 
+	private boolean isUIBeingRendered(HttpServletRequest request) {
+		if (request == null) {
+			return false;
+		}
+
+		String requestURI = request.getRequestURI();
+		if (StringUtil.isEmpty(requestURI)) {
+			return false;
+		}
+
+		if (requestURI.startsWith(CoreConstants.PAGES_URI_PREFIX) || requestURI.startsWith("/idegaweb") || requestURI.startsWith("/workspace") || requestURI.startsWith("/dwr")) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
 
-		ByteArrayOutputStream bytes = new ByteArrayOutputStream();
-		if (isGZIPEnabled() && !isJSPRenderProcess()) {
+		ByteArrayOutputStream bytes = null;
+		boolean gzip = isGZIPEnabled() && !isJSPRenderProcess() && isUIBeingRendered(request);
+		if (gzip) {
+			bytes = new ByteArrayOutputStream();
 			response = new GenericResponseWrapper(response, bytes);
 		}
 
@@ -124,20 +144,13 @@ public class IWEncodingFilter implements Filter {
 
 		chain.doFilter(request, response);
 
-		if (print) {
-			long time = System.currentTimeMillis() - start;
-			if (time >= 100) {
-				LOGGER.info("### served " + key + " in " + time + " ms");
-			}
-		}
-
-		if (isGZIPEnabled() && !isJSPRenderProcess()) {
+		if (gzip) {
 			if (response instanceof GenericResponseWrapper) {
 				((GenericResponseWrapper) response).flush();
 			}
 
-			bytes.close();
-			
+			IOUtil.close(bytes);
+
 			// return on error or redirect code, because response is already
 			// committed
 			int statusCode = response.getStatus();
@@ -157,6 +170,13 @@ public class IWEncodingFilter implements Filter {
 			responseToCompress.setHeader("Content-Encoding", "gzip");
 			responseToCompress.setContentLength(compressedBytes.length);
 			responseToCompress.getOutputStream().write(compressedBytes);
+		}
+
+		if (print) {
+			long time = System.currentTimeMillis() - start;
+			if (time >= 100) {
+				LOGGER.info("### served " + key + " in " + time + " ms");
+			}
 		}
 	}
 
