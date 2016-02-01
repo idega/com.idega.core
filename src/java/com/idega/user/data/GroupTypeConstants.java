@@ -19,7 +19,7 @@ package com.idega.user.data;
  */
 public class GroupTypeConstants {
 
-	public static final String	GROUP_TYPE_LEAGUE = "iwme_league",
+	public static final String	GROUP_TYPE_LEAGUE= "iwme_league",
 								GROUP_TYPE_CLUB = "iwme_club",
 								GROUP_TYPE_GENERAL = "general",
 								GROUP_TYPE_ALIAS = "alias";

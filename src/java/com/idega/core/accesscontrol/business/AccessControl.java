@@ -2899,6 +2899,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public boolean hasRole(String roleKey, Group group, IWUserContext iwuc){
+		if (group == null) {
+			getLogger().warning("Group is not provided!");
+			return false;
+		}
 
 		@SuppressWarnings("unchecked")
 		List<String>[] usersGroupsToCheckAgainstPermissions = new List[1];

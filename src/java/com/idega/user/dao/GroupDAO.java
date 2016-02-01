@@ -106,5 +106,4 @@ public interface GroupDAO extends GenericDao {
 
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
 
-
 }
