@@ -60,6 +60,7 @@ import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeHome;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -129,9 +130,9 @@ public class IWStartDataInserter implements Singleton {
 	}
 
 	private void insertDefaultGroupTypes() {
-		insertGroupType(GroupTypeBMPBean.TYPE_GENERAL_GROUP, "", true);
-		insertGroupType(GroupTypeBMPBean.TYPE_PERMISSION_GROUP, "", true);
-		insertGroupType(GroupTypeBMPBean.TYPE_USER_REPRESENTATIVE, "", false);
+		insertGroupType(GroupTypeBMPBean.TYPE_GENERAL_GROUP, CoreConstants.EMPTY, true);
+		insertGroupType(GroupTypeBMPBean.TYPE_PERMISSION_GROUP, CoreConstants.EMPTY, true);
+		insertGroupType(GroupTypeBMPBean.TYPE_USER_REPRESENTATIVE, CoreConstants.EMPTY, false);
 		insertGroupType(GroupTypeBMPBean.TYPE_ALIAS, "Alias group, points to another group", true);
 	}
 
@@ -244,27 +245,29 @@ public class IWStartDataInserter implements Singleton {
 	private void insertDefaultLanguages() {
 		try {
 			ICLanguageHome home = (ICLanguageHome) IDOLookup.getHome(ICLanguage.class);
-			String[] JavaLocales = Locale.getISOLanguages();
-			for (String iso : JavaLocales) {
+			String[] javaLocales = Locale.getISOLanguages();
+			for (String iso: javaLocales) {
 				try {
 					home.findByISOAbbreviation(iso);
-				}
-				catch (FinderException e) {
-					Locale locale = new Locale(iso, "");
-
-					ICLanguage language = home.create();
-					language.setName(locale.getDisplayLanguage(locale));
-					language.setIsoAbbreviation(iso);
-					language.store();
+				} catch (FinderException fe) {
+					Locale locale = new Locale(iso, CoreConstants.EMPTY);
+					try {
+						doCreateMissingLanguage(locale, home, iso);
+					} catch (Exception e) {
+						Logger.getLogger(getClass().getName()).warning("Error creating language from locale " + locale);
+					}
 				}
 			}
-		}
-		catch (CreateException ex) {
-			ex.printStackTrace();
-		}
-		catch (IDOLookupException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+
+	private void doCreateMissingLanguage(Locale locale, ICLanguageHome home, String iso) throws Exception {
+		ICLanguage language = home.create();
+		language.setName(locale.getDisplayLanguage(locale));
+		language.setIsoAbbreviation(iso);
+		language.store();
 	}
 
 	private void insertDefaultLocales() {
@@ -337,7 +340,7 @@ public class IWStartDataInserter implements Singleton {
 			catch (FinderException e) {
 				GroupDomainRelationType type = home.create();
 				type.setType(GroupDomainRelationTypeBMPBean.RELATION_TYPE_TOP_NODE);
-				type.setDescription("");
+				type.setDescription(CoreConstants.EMPTY);
 				type.store();
 			}
 		}
