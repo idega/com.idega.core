@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.ejb.FinderException;
 
 import com.idega.data.IDOQuery;
+import com.idega.util.LocaleUtil;
 import com.idega.util.StringUtil;
 
 
@@ -119,10 +120,12 @@ public void setIsoAbbreviation(String IsoAbbreviation){
 	public String getLocalizedName() {
 		String abbreviation = getIsoAbbreviation();
 		if (!StringUtil.isEmpty(abbreviation)) {
-			Locale locale = new Locale(abbreviation);
-			return locale.getDisplayCountry(locale);
+			Locale locale = LocaleUtil.getLocaleByCountry(abbreviation);
+			if (locale != null) {
+				return locale.getDisplayLanguage(locale);
+			}
 		}
 
-		return null;
+		return getName();
 	}
 }

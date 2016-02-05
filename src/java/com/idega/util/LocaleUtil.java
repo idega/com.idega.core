@@ -94,7 +94,7 @@ public class LocaleUtil {
 	 */
 	public static Locale getLocaleByCountry(String countryCode) {
 		if (!StringUtil.isEmpty(countryCode)) {
-			return getLocales().get(countryCode);
+			return getLocales().get(countryCode.toUpperCase());
 		}
 
 		return null;
