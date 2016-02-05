@@ -7,6 +7,7 @@ import java.util.Locale;
 import javax.ejb.FinderException;
 
 import com.idega.data.IDOQuery;
+import com.idega.util.StringUtil;
 
 
 /**
@@ -112,5 +113,16 @@ public void setIsoAbbreviation(String IsoAbbreviation){
 		IDOQuery query = idoQuery();
 		query.appendSelectAllFrom(this).appendWhereEqualsWithSingleQuotes(_COLUMN_ISOabbreviation, ISOAbbreviation);
 		return (Integer) idoFindOnePKByQuery(query);
+	}
+
+	@Override
+	public String getLocalizedName() {
+		String abbreviation = getIsoAbbreviation();
+		if (!StringUtil.isEmpty(abbreviation)) {
+			Locale locale = new Locale(abbreviation);
+			return locale.getDisplayCountry(locale);
+		}
+
+		return null;
 	}
 }

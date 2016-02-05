@@ -1,8 +1,11 @@
 package com.idega.util;
 
 import java.util.Locale;
+import java.util.Map;
+import java.util.TreeMap;
 
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  * Title: idega Framework Description: Copyright: Copyright (c) 2001 Company:
@@ -12,6 +15,8 @@ import com.idega.core.localisation.business.ICLocaleBusiness;
  * @version 1.0
  */
 public class LocaleUtil {
+	
+	private static Map<String, Locale> locales = new TreeMap<String, Locale>();
 
 	private static Locale icelandicLocale;
 	private static Locale swedishLocale;
@@ -55,5 +60,43 @@ public class LocaleUtil {
 		} else {
 			return ICLocaleBusiness.getLocaleFromLocaleString(localeIdentifier);
 		}
+	}
+
+	/**
+	 * 
+	 * @return {@link Map} of {@link Locale#getCountry()} and {@link Locale};
+	 */
+	public static Map<String, Locale> getLocales() {
+		if (MapUtil.isEmpty(locales)) {
+			Locale[] localesArray = Locale.getAvailableLocales();
+			for (Locale locale: localesArray) {
+				if (locale != null && !StringUtil.isEmpty(locale.getCountry())) {
+					locales.put(locale.getCountry(), locale);
+				}
+			}
+		}
+
+		return locales;
+	}
+
+	/**
+	 * 
+	 * @param locales {@link Map} of {@link Locale#getCountry()} and {@link Locale};
+	 */
+	public static void setLocales(Map<String, Locale> locales) {
+		LocaleUtil.locales = locales;
+	}
+
+	/**
+	 * 
+	 * @param countryCode is {@link Locale#getCountry()}, not <code>null</code>;
+	 * @return {@link Locale} or <code>null</code> on failure;
+	 */
+	public static Locale getLocaleByCountry(String countryCode) {
+		if (!StringUtil.isEmpty(countryCode)) {
+			return getLocales().get(countryCode);
+		}
+
+		return null;
 	}
 }
