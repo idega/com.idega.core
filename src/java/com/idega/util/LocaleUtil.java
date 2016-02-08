@@ -74,6 +74,8 @@ public class LocaleUtil {
 					locales.put(locale.getCountry(), locale);
 				}
 			}
+
+			locales.put(Locale.US.getCountry(), Locale.US);
 		}
 
 		return locales;
