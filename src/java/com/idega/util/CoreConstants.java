@@ -167,6 +167,8 @@ public class CoreConstants {
 
 	public static final String BUILDER = "builder";
 	public static final String BUILDER_APPLICATION = "builderApplication";
+	public static final Character CHAR_Y = 'Y';
+	public static final Character CHAR_N = 'N';
 	public static final String Y = "Y";
 	public static final String BUILDER_MODULE_PROPERTY_YES_VALUE = Y;
 	public static final String N = "N";
