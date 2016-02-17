@@ -6,6 +6,7 @@ package com.idega.core.localisation.data.bean;
 import java.io.Serializable;
 import java.util.Locale;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -25,6 +26,7 @@ import com.idega.util.StringUtil;
 @Entity
 @Table(name = ICLocale.ENTITY_NAME)
 @XmlTransient
+@Cacheable
 public class ICLocale implements Serializable {
 
 	private static final long serialVersionUID = -6482804106633989994L;
