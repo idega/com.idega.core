@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.core.localisation.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = ICLanguage.ENTITY_NAME)
+@Cacheable
 public class ICLanguage implements Serializable {
 
 	private static final long serialVersionUID = 2677403944146484634L;
