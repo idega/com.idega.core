@@ -20,6 +20,8 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ejb.FinderException;
+
 import com.idega.core.file.data.ICFile;
 import com.idega.data.CacheableEntity;
 import com.idega.data.GenericEntity;
@@ -287,7 +289,18 @@ private boolean isBlobCached(Cache cache){
     		entityClass = RefactorClassRegistry.forName(entityClassString);
     		home = IDOLookup.getHome(entityClass, datasource);
     	}
-    	GenericEntity ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
+    	GenericEntity ent = null;
+    	if (home != null) {
+	    	try {
+	    		ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
+	    	} catch (FinderException e) {
+	    		log.warning("Error getting entity by ID " + id);
+	    	}
+    	}
+
+    	if (ent == null) {
+    		return cacheObject;
+    	}
 
     	if (ent instanceof ICFile) {
     		ICFile file = (ICFile) ent;
