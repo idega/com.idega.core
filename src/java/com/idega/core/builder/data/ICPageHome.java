@@ -40,4 +40,7 @@ public interface ICPageHome extends com.idega.data.IDOHome {
 	public Collection<ICPage> findAllPagesAndTemplates() throws FinderException;
 
 	public Collection<ICPage> findAllTemplatesWithWebDavUri() throws FinderException;
+
+	public Collection<ICPage> findAll();
+ 
 }
