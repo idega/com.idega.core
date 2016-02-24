@@ -66,7 +66,8 @@ import com.idega.util.StringUtil;
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(
 			name = User.QUERY_FIND_BY_PRIMARY_KEYS,
-			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)")
+			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)"),
+	@NamedQuery(name = User.QUERY_FIND_BY_PHONE_NUMBER, query = "select distinct u from User u join u.phones up where up.number = :number")
 })
 @XmlTransient
 @Cacheable
@@ -105,8 +106,11 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String ADMINISTRATOR_DEFAULT_NAME = "Administrator";
 
-	public static final String QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys";
+	public static final String	QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys",
+								QUERY_FIND_BY_PHONE_NUMBER = "user.findByPhoneNumber";
+
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
+
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
 	private Integer userID;

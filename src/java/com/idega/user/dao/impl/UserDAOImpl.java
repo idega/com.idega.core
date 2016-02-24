@@ -225,4 +225,13 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 		return emailAddresses;
 	}
+
+	@Override
+	public List<User> findByPhoneNumber(String phoneNumber) {
+		if (StringUtil.isEmpty(phoneNumber)) {
+			return null;
+		}
+
+		return getResultList(User.QUERY_FIND_BY_PHONE_NUMBER, User.class, new Param("number", phoneNumber));
+	}
 }
