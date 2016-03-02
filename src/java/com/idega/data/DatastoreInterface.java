@@ -137,7 +137,7 @@ public abstract class DatastoreInterface implements MutableClass {
 
 	public static String getDatastoreType(String datasourceName) {
 		Connection conn = null;
-		String theReturn = "";
+		String theReturn = CoreConstants.EMPTY;
 		try {
 			conn = ConnectionBroker.getConnection(datasourceName);
 			theReturn = getDataStoreType(conn);
@@ -670,7 +670,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	protected String getCreateUniqueIDQuery(GenericEntity entity) throws Exception {
-		return "";
+		return CoreConstants.EMPTY;
 	}
 
 	protected void executeBeforeInsert(GenericEntity entity) throws Exception {
@@ -791,7 +791,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		InputStream instream = null;
 		PreparedStatement PS = null;
 		try {
-			statement = new StringBuffer("");
+			statement = new StringBuffer(CoreConstants.EMPTY);
 			statement.append("update ");
 			statement.append(entity.getTableName());
 			statement.append(" set ");
@@ -866,7 +866,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	}
 
 	protected String setForPreparedStatement(int insertOrUpdate, PreparedStatement statement, GenericEntity entity,IDOEntityField[] fields) throws SQLException {
-		String returnString = "";
+		String returnString = CoreConstants.EMPTY;
 		String[] names = entity.getColumnNames();
 		int questionmarkCount = 1;
 		if (insertOrUpdate == STATEMENT_UPDATE) {
@@ -910,7 +910,7 @@ public abstract class DatastoreInterface implements MutableClass {
     	PreparedStatement Stmt = null;
     	ResultSet RS = null;
     	try {
-    		StringBuffer statement = new StringBuffer("");
+    		StringBuffer statement = new StringBuffer(CoreConstants.EMPTY);
     		statement.append("insert into ");
     		statement.append(entity.getTableName());
     		statement.append("(");
@@ -1148,7 +1148,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		executeBeforeUpdate(entity);
 		PreparedStatement Stmt = null;
 		try {
-			StringBuffer statement = new StringBuffer("");
+			StringBuffer statement = new StringBuffer(CoreConstants.EMPTY);
 			statement.append("update ");
 			statement.append(entity.getTableName());
 			statement.append(" set ");
@@ -1195,7 +1195,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		PreparedStatement Stmt = null;
 		try {
 		    //Stmt = conn.createStatement();
-			StringBuffer statement = new StringBuffer("");
+			StringBuffer statement = new StringBuffer(CoreConstants.EMPTY);
 			statement.append("delete from  ");
 			statement.append(entity.getTableName());
 			IDOEntityField[] fields = entity.getEntityDefinition().getPrimaryKeyDefinition().getFields();
@@ -1235,7 +1235,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			String metadataIdColumn = metadata.getEntityDefinition().getPrimaryKeyDefinition().getField().getSQLFieldName();
 			String metadataname = metadata.getEntityDefinition().getSQLTableName();
 			//get all the id's of the metadata
-			StringBuffer statement = new StringBuffer("");
+			StringBuffer statement = new StringBuffer(CoreConstants.EMPTY);
 			statement.append("select ");
 			statement.append(middletable);
 			statement.append('.');
@@ -1263,7 +1263,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			StringBuffer statement2;
 			//delete thos id's
 			while (RS.next()) {
-				statement2 = new StringBuffer("");
+				statement2 = new StringBuffer(CoreConstants.EMPTY);
 				statement2.append("delete from ");
 				statement2.append(metadataname);
 				statement2.append(" where ");
@@ -1277,7 +1277,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			}
 			//delete from the middle table
 			Stmt = conn.createStatement();
-			statement = new StringBuffer("");
+			statement = new StringBuffer(CoreConstants.EMPTY);
 			statement.append("delete from ");
 			statement.append(middletable);
 			statement.append(" where ");
@@ -1321,12 +1321,12 @@ public abstract class DatastoreInterface implements MutableClass {
 	 *
 	 */
 	protected String getQuestionmarksForColumns(GenericEntity entity) {
-		String returnString = "";
+		String returnString = CoreConstants.EMPTY;
 		String[] names = entity.getColumnNames();
 		for (int i = 0; i < names.length; i++) {
 			if (isValidColumnForInsertList(entity, names[i])) {
 				//if (!isNull(names[i])){
-				if (returnString.equals("")) {
+				if (returnString.equals(CoreConstants.EMPTY)) {
 					returnString = "?";
 				}
 				else {
@@ -1413,7 +1413,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			for (int i = 0; i < names.length; i++) {
 				if (isValidColumnForSelectList(entity, names[i])) {
 					if (returnString == null) {
-						returnString = new StringBuffer("");
+						returnString = new StringBuffer(CoreConstants.EMPTY);
 						returnString.append(getColumnStringForSelectList(entity, names[i]));
 					}
 					else {
@@ -1443,7 +1443,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			for (int i = 0; i < names.length; i++) {
 				if (isValidColumnForInsertList(entity, names[i])) {
 					if (returnString == null) {
-						returnString = new StringBuffer("");
+						returnString = new StringBuffer(CoreConstants.EMPTY);
 						returnString.append(names[i]);
 					}
 					else {
@@ -1462,7 +1462,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			 * is invoked. The problem is: what should be returned if the returnString
 			 * is null? An empty string or a null value causes a wrong SQLStatement.
 			 */
-			newCachedColumnNameList = returnString.toString();
+			newCachedColumnNameList = returnString == null ? CoreConstants.EMPTY : returnString.toString();
 		}
 		return newCachedColumnNameList;
 	}
@@ -1473,7 +1473,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		for (int i = 0; i < names.length; i++) {
 			if (isValidColumnForInsertList(entity, names[i])) {
 				if (returnString == null) {
-					returnString = new StringBuffer("");
+					returnString = new StringBuffer(CoreConstants.EMPTY);
 					returnString.append("'");
 					returnString.append(entity.getStringColumnValue(names[i]));
 					returnString.append("'");
@@ -1499,7 +1499,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			String ColumnName = names[i];
 			if (isValidColumnForUpdateList(entity, ColumnName)) {
 				if (returnString == null) {
-					returnString = new StringBuffer("");
+					returnString = new StringBuffer(CoreConstants.EMPTY);
 					returnString.append(ColumnName);
 					returnString.append(questionmark);
 				}
@@ -1511,7 +1511,7 @@ public abstract class DatastoreInterface implements MutableClass {
 			}
 			else if (entity.hasBeenSetNull(ColumnName)) {
 				if (returnString == null) {
-					returnString = new StringBuffer("");
+					returnString = new StringBuffer(CoreConstants.EMPTY);
 				}
 				else {
 					returnString.append(',');
@@ -1751,7 +1751,7 @@ public abstract class DatastoreInterface implements MutableClass {
 	 */
 	public void onConnectionCreate(Connection newConn) {
 		/*
-		 * try{ Statement stmt = newConn.createStatement(); stmt.execute("") }
+		 * try{ Statement stmt = newConn.createStatement(); stmt.execute(CoreConstants.EMPTY) }
 		 * catch(SQLException sqle){ }
 		 */
 	}
@@ -2348,7 +2348,7 @@ public abstract class DatastoreInterface implements MutableClass {
 		Object theReturn = null;
 		try {
 			conn = ConnectionBroker.getConnection(dataSourceName);
-			String prepareArgString = "";
+			String prepareArgString = CoreConstants.EMPTY;
 			if(parameters !=null&&parameters.length>0){
 				prepareArgString = " (";
 				for (int i = 0; i < parameters.length; i++) {
@@ -2356,7 +2356,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				}
 				prepareArgString += " )";
 			}
-			String sql = "{"+((!returnCollection)?" ? =":"")+" call "+procedure.getName()+prepareArgString+" }";
+			String sql = "{"+((!returnCollection)?" ? =":CoreConstants.EMPTY)+" call "+procedure.getName()+prepareArgString+" }";
 			//System.out.println("[DatastorInterface]: "+sql);
 			Stmt = conn.prepareCall(sql);
 
