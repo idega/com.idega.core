@@ -478,7 +478,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Invoked when the login was succesful Can be overrided in subclasses to
 	 * alter behaviour By default this sets the state to "logged on"
 	 */
-	private void onLoginSuccessful(HttpServletRequest request, String username, String password) {
+	protected void onLoginSuccessful(HttpServletRequest request, String username, String password) {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
