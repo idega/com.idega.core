@@ -44,6 +44,7 @@ import com.idega.core.accesscontrol.data.LoginTableHome;
 import com.idega.core.accesscontrol.data.bean.LoginInfo;
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
+import com.idega.core.accesscontrol.event.LoggedInUserCredentials;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.bean.ICLanguage;
 import com.idega.core.user.business.UserBusiness;
@@ -223,7 +224,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return getLoginSessionBean().getUser() != null;
 	}
 
-	// public static void internalSetState(IWContext iwc, int state) {
 	public static void internalSetState(IWContext iwc, LoginState state) throws RemoteException {
 		LoginBusinessBean.getLoginSessionBean().setLoginState(state);
 	}
@@ -389,7 +389,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			 */
 			LoginState didLogin = verifyPasswordAndLogin(request, username, password);
 			if (didLogin.equals(LoginState.LOGGED_ON)) {
-				onLoginSuccessful(request);
+				onLoginSuccessful(request, username, password);
 				return true;
 			}
 			return false;
@@ -478,22 +478,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * Invoked when the login was succesful Can be overrided in subclasses to
 	 * alter behaviour By default this sets the state to "logged on"
 	 */
-	protected void onLoginSuccessful(HttpServletRequest request) {
+	private void onLoginSuccessful(HttpServletRequest request, String username, String password) {
 		internalSetState(request, LoginState.LOGGED_ON);
-	}
 
-	/**
-	 * This method is called to remain backwards compatible, it may be removed in
-	 * future versions.
-	 *
-	 * @deprecated Replaced with onLoginSuccesful(HttpServletRequest);
-	 */
-	@Deprecated
-	protected void onLoginSuccessful(IWContext iwc) throws RemoteException {
-		// internalSetState(iwc, "loggedon");
-		// internalSetState(iwc, STATE_LOGGED_ON);
-		// internalSetState(iwc,LoginState.LoggedOn);
-		onLoginSuccessful(iwc.getRequest());
+		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
+			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password));
+		}
 	}
 
 	public static boolean isLogOnAction(IWContext iwc) {
@@ -571,7 +561,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 					LoggedOnInfo info = getLoggedOnInfo(session);
 					if (LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())) {
 						this.logOutAsAnotherUser(request);
-						onLoginSuccessful(request);
+
+						UserLogin login = info.getUserLogin();
+						onLoginSuccessful(request, login == null ? null : login.getUserLogin(), login == null ? null : login.getUserPassword());
 					}
 					else {
 						logOutUser(request, info.getLogin());
@@ -598,7 +590,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 							 * BuilderLogic.getInstance().setCurrentPriorityPageID(iwc,
 							 * iwc.getParameter(LoginRedirectPageParameter)); }
 							 */
-							onLoginSuccessful(request);
+							onLoginSuccessful(request, username, password);
 						} else {
 							// logOut(iwc);
 							// internalSetState(iwc,"loginfailed");
@@ -706,7 +698,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 									//Login
 									if (canLogin.equals(LoginState.LOGGED_ON)) {
-										onLoginSuccessful(request);
+										onLoginSuccessful(request, username, password);
 									} else {
 										onLoginFailed(request, canLogin, username);
 									}
@@ -881,13 +873,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 						// TODO: some more variables need to be set in LoginSession if this
 						// is supposed to work for clients with more capability than just
 						// webdav-ing. Needs more refactoring than I have time for now.
-						onLoginSuccessful(request);
+						onLoginSuccessful(request, username, password);
 						return true;
 					}
 					else {
 						canLogin = verifyPasswordAndLogin(request, username, password);
 						if (canLogin.equals(LoginState.LOGGED_ON)) {
-							onLoginSuccessful(request);
+							onLoginSuccessful(request, username, password);
 							return true;
 						}
 						else {
@@ -1508,7 +1500,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (userLogin != null) {
 			returner = logIn(request, userLogin);
 			if (returner) {
-				onLoginSuccessful(request);
+				onLoginSuccessful(request, login, userLogin.getUserPassword());
 			}
 		}
 
@@ -1628,7 +1620,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			storeUserAndGroupInformationInSession(session, user);
 			LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 			storeLoggedOnInfoInSession(request, session, userLogin, login, user, loginRecord, LOGINTYPE_AS_ANOTHER_USER);
-			onLoginSuccessful(request);
+			onLoginSuccessful(request, login, userLogin.getUserPassword());
 			return true;
 		}
 		return false;
@@ -1716,7 +1708,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			);
 
 			if (logIn(request, login)) {
-				onLoginSuccessful(request);
+				onLoginSuccessful(request, login != null ? login.getUserLogin() : null, login == null ? null : login.getUserPassword());
 				return Boolean.TRUE;
 			}
 		} catch (Exception e) {
@@ -1748,10 +1740,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 			User user = getUserDAO().getUser(personalId);
 			List<UserLogin> logins = getUserLoginDAO().findAllLoginsForUser(user);
 			UserLogin userLogin;
-			if (loginType==null) {
+			if (loginType == null) {
 				userLogin = this.chooseLoginRecord(request, logins, user);
 			} else {
-				userLogin = this.chooseLoginRecord(request, logins, user,loginType);
+				userLogin = this.chooseLoginRecord(request, logins, user, loginType);
 			}
 
 			if (userLogin != null) {
@@ -1769,7 +1761,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 				returner = logIn(request, userLogin);
 				if (returner) {
-					onLoginSuccessful(request);
+					onLoginSuccessful(request, userName, StringUtil.isEmpty(password) ? userLogin.getUserPassword() : password);
 				}
 			} else {
 				try {
@@ -1809,7 +1801,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			} else {
 				returner = logIn(request, userLogin);
 				if (returner) {
-					onLoginSuccessful(request);
+					onLoginSuccessful(request, userLogin.getUserLogin(), userLogin.getUserPassword());
 				}
 			}
 		} catch (EJBException e) {
