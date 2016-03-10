@@ -70,7 +70,6 @@ public interface UserHome extends com.idega.data.IDOHome
 	 * @param email is {@link Email#getEmailAddress()}, not <code>null</code>;
 	 * @return {@link User}s in data source by given criteria or
 	 * {@link Collections#emptyList()} on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<User> findAllByNameAndEmail(String name, String email);
 
@@ -80,7 +79,6 @@ public interface UserHome extends com.idega.data.IDOHome
 	 * @param personalID is part of {@link User#getPersonalID()} to search by,
 	 * not <code>null</code>;
 	 * @return
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	Collection<User> findByFirstPersonalIDLetters(String personalID);
 }

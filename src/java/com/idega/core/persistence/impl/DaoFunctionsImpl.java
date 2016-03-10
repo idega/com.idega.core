@@ -87,8 +87,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 
 	private class QueryParams<Expected> {
 
-		private Collection<Param> paramsForNextLoadingStep = null, tmpParams = null;
-		private boolean loadInMultipleSteps = false;
+		private Collection<Param> unusedParams = null, usableParams = null;
 
 		private Param[] params;
 
@@ -100,57 +99,63 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		}
 
 		private <V> void doPrepareParameters() {
-			if (ArrayUtil.isEmpty(params)) {
-				return;
-			}
+			if (!ArrayUtil.isEmpty(params)) {
+				unusedParams = new ArrayList<Param>();
+				usableParams = new ArrayList<Param>();
+				for (Param param: params) {
+					Object value = param.getParamValue();
+					if (value instanceof Collection) {
+						@SuppressWarnings("unchecked")
+						List<V> paramValue = new ArrayList<V>((Collection<V>) value);
+						if (paramValue.size() > 1000) {
+							usableParams.add(new Param(
+									param.getParamName(), 
+									paramValue.subList(0, 1000)));
+							unusedParams.add(new Param(
+									param.getParamName(), 
+									paramValue.subList(1000, paramValue.size())));
+						} else {
+							usableParams.add(param);
+						}
 
-			paramsForNextLoadingStep = new ArrayList<Param>();
-			tmpParams = new ArrayList<Param>();
-			for (Param param: params) {
-				Object value = param.getParamValue();
-				if (value instanceof Collection<?>) {
-					Collection<V> usedParamValue = null;
-					@SuppressWarnings("unchecked")
-					List<V> originalParamValue = new ArrayList<V>((Collection<V>) value);
-					if (originalParamValue.size() > 1000) {
-						loadInMultipleSteps = true;
-						usedParamValue = new ArrayList<V>(originalParamValue.subList(0, 1000));
-						originalParamValue = new ArrayList<V>(originalParamValue.subList(1000, originalParamValue.size()));
 					} else {
-						usedParamValue = originalParamValue;
+						usableParams.add(param);
 					}
-
-					tmpParams.add(new Param(param.getParamName(), usedParamValue));
-					paramsForNextLoadingStep.add(new Param(param.getParamName(), originalParamValue));
-				} else {
-					tmpParams.add(param);
-					paramsForNextLoadingStep.add(param);
 				}
 			}
 		}
 
-		public Collection<Param> getParamsForNextLoadingStep() {
-			return paramsForNextLoadingStep;
+		public Collection<Param> getUnusedParams() {
+			return unusedParams;
 		}
 
-		public Collection<Param> getTmpParams() {
-			return tmpParams;
+		public Param[] getUsableParams() {
+			return ArrayUtil.convertListToArray(usableParams);
 		}
 
 		public boolean isLoadInMultipleSteps() {
-			return loadInMultipleSteps;
+			return !ListUtil.isEmpty(unusedParams);
 		}
 
 	}
 
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	private <Expected, V> List<Expected> getResultListByQuery(List<Expected> results, Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
+	private <Expected, V> List<Expected> getResultListByQuery(
+			List<Expected> results, 
+			Query q, 
+			Class<Expected> expectedReturnType, 
+			String cachedRegionName, 
+			Param... params) {
+		if (results == null) {
+			results = new ArrayList<Expected>();
+		}
+		
 		QueryParams<Expected> queryParams = new QueryParams<>(params);
 		queryParams.doPrepareParameters();
 
 		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
-		setParameters(q, queryParams.isLoadInMultipleSteps() ? ArrayUtil.convertListToArray(queryParams.getTmpParams()) : params);
+		setParameters(q, queryParams.getUsableParams());
 
 		List<Expected> tmpResults = null;
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
@@ -159,21 +164,17 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			tmpResults = q.getResultList();
 		}
 
-		if (!queryParams.isLoadInMultipleSteps()) {
-			return tmpResults;
-		}
-
 		if (ListUtil.isEmpty(tmpResults)) {
 			return results;
 		}
 
-		if (results == null) {
-			results = new ArrayList<Expected>();
-		}
 		results.addAll(tmpResults);
-
 		if (queryParams.isLoadInMultipleSteps()) {
-			return getResultListByQuery(results, q, expectedReturnType, cachedRegionName, ArrayUtil.convertListToArray(queryParams.getParamsForNextLoadingStep()));
+			return getResultListByQuery(
+					results, q, 
+					expectedReturnType, 
+					cachedRegionName, 
+					ArrayUtil.convertListToArray(queryParams.getUnusedParams()));
 		}
 
 		return results;
@@ -248,11 +249,15 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	private <Expected> List<Expected> getResultListByQuery(List<Expected> results, Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
+		if (results == null) {
+			results = new ArrayList<Expected>();
+		}
+
 		QueryParams<Expected> queryParams = new QueryParams<>(params);
 		queryParams.doPrepareParameters();
 
 		doPrepareForCaching(q, expectedReturnType, cachedRegionName);
-		setParameters(q, queryParams.isLoadInMultipleSteps() ? queryParams.getTmpParams() : params);
+		setParameters(q, queryParams.getUsableParams());
 
 		List<Expected> tmpResults = null;
 		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
@@ -265,13 +270,9 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			return results;
 		}
 
-		if (results == null) {
-			results = new ArrayList<Expected>();
-		}
 		results.addAll(tmpResults);
-
 		if (queryParams.isLoadInMultipleSteps()) {
-			return getResultListByQuery(results, q, expectedReturnType, cachedRegionName, queryParams.getParamsForNextLoadingStep());
+			return getResultListByQuery(results, q, expectedReturnType, cachedRegionName, queryParams.getUnusedParams());
 		}
 
 		return results;

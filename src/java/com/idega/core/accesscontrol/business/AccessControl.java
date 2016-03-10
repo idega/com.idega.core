@@ -1231,6 +1231,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				break;
 		}
 
+		boolean created = false;
 		if (permission == null) {
 			String contextType = null;
 			switch (permissionCategory) {
@@ -1264,9 +1265,15 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 
 			permission = getPermissionDAO().createPermission(contextType, identifier, group, permissionKey, permissionValue);
-		} else {
-			//	Updating
-			permission.setPermissionValue(permissionValue);
+			created = permission != null;
+		}
+
+		if (permission != null) {
+			if (!created) {
+				//	Updating
+				permission.setPermissionValue(permissionValue);
+			}
+
 			if (PERMISSION_KEY_OWNER.equals(permission.getPermissionString()) || PERMISSION_KEY_ROLE.equals(identifier)) {
 				if (permissionValue.booleanValue()) {
 					permission.setActive();

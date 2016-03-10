@@ -4,6 +4,7 @@
 package com.idega.core.accesscontrol.dao.impl;
 
 import java.util.List;
+import java.util.logging.Level;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -20,6 +21,7 @@ import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.User;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("userLoginDAO")
@@ -195,5 +197,20 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		UserLogin userLogin = findLogin(loginID);
 		userLogin.setUserPassword(password);
 		merge(userLogin);
+	}
+
+	@Override
+	public UserLogin findByPassword(String password) {
+		if (StringUtil.isEmpty(password)) {
+			return null;
+		}
+
+		try {
+			return getSingleResult(UserLogin.QUERY_FIND_BY_PASSWORD, UserLogin.class, new Param("password", password));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting login by password " + password, e);
+		}
+
+		return null;
 	}
 }
