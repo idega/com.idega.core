@@ -333,6 +333,15 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 		return ListUtil.isEmpty(getChildren());
 	}
 
+
+	public void setParentNode(GroupType parent) {
+		this.parent = parent;
+	}
+
+	public void setChildren(List<GroupType> children) {
+		this.children = children;
+	}
+
 	@Override
 	public String toString() {
 		return "Type: " + getGroupType();

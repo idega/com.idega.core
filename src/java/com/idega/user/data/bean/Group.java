@@ -81,6 +81,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findByGroupTypeAndName", query = "select g from Group g where g.groupType = :groupType and g.name = :name"),
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_ID, query = "select g from Group g where g.groupID = :groupId"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
@@ -104,6 +105,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_BY_TYPES_FROM_ALIASES = "group.findByTypesFromAliases",
 								QUERY_FIND_BY_ALIAS = "group.findByAlias",
 								QUERY_FIND_BY_ALIAS_AND_NAME = "group.findByAliasAndName",
+								QUERY_FIND_BY_GROUP_ID = "group.findByGroupId",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",
@@ -122,6 +124,10 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private static final String COLUMN_SHORT_NAME = "short_name";
 	private static final String COLUMN_ABBREVIATION = "abbr";
 	private static final String COLUMN_GROUP_MODERATOR_ID = "group_moderator_id";
+	private static final String COLUMN_PERSONAL_ID = "group_personal_id";
+	private static final String COLUMN_WEB_PAGE = "group_web_page";
+	private static final String COLUMN_VAT_NUMBER = "group_vat_number";
+	private static final String COLUMN_BANK_ACCOUNT = "group_bank_acc";
 
 	public static final String SQL_RELATION_EMAIL = "ic_group_email";
 	public static final String SQL_RELATION_ADDRESS = "ic_group_address";
@@ -180,6 +186,18 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@Column(name = COLUMN_ABBREVIATION)
 	private String abbreviation;
 
+	@Column(name = COLUMN_PERSONAL_ID)
+	private String personalId;
+
+	@Column(name = COLUMN_WEB_PAGE)
+	private String webPage;
+
+	@Column(name = COLUMN_VAT_NUMBER)
+	private String vatNumber;
+
+	@Column(name = COLUMN_BANK_ACCOUNT)
+	private String bankAccount;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP_MODERATOR_ID)
 	private Group groupModerator;
@@ -221,6 +239,8 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
     @Transient
     private boolean hasUsers;
+
+
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -920,5 +940,39 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	public boolean hasUsers() {
 		return hasUsers;
 	}
+
+	public String getPersonalId() {
+		return personalId;
+	}
+
+	public void setPersonalId(String personalId) {
+		this.personalId = personalId;
+	}
+
+	public String getWebPage() {
+		return webPage;
+	}
+
+	public void setWebPage(String webPage) {
+		this.webPage = webPage;
+	}
+
+	public String getVatNumber() {
+		return vatNumber;
+	}
+
+	public void setVatNumber(String vatNumber) {
+		this.vatNumber = vatNumber;
+	}
+
+	public String getBankAccount() {
+		return bankAccount;
+	}
+
+	public void setBankAccount(String bankAccount) {
+		this.bankAccount = bankAccount;
+	}
+
+
 
 }

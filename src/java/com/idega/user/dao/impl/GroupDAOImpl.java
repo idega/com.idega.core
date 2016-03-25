@@ -603,4 +603,26 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+
+	@Override
+	@Transactional(readOnly = false)
+	public void removeGroup(Integer groupId) {
+		if (groupId == null) {
+			getLogger().warning("Group ID is not provided");
+			return;
+		}
+
+		try {
+			Group group = findGroup(groupId);
+			if (group != null) {
+				remove(group);
+			} else {
+				throw new Exception("Group is not found.");
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not remove the group with ID " + groupId + ". Error message was: " + e.getLocalizedMessage(), e);
+		}
+	}
+
+
 }
