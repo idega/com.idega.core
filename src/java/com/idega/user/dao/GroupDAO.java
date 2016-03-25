@@ -108,5 +108,4 @@ public interface GroupDAO extends GenericDao {
 
 	public void removeGroup(Integer groupId);
 
-
 }

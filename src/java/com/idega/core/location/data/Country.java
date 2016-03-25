@@ -37,4 +37,6 @@ public interface Country extends IDOEntity {
 	 * @see com.idega.core.location.data.CountryBMPBean#setIsoAbbreviation
 	 */
 	public void setIsoAbbreviation(String IsoAbbreviation);
+
+	public String getLocalizedName();
 }

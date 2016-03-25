@@ -50,7 +50,7 @@ public class UserStatus implements Serializable {
 
 	public static final String COLUMN_USER_STATUS_ID = "ic_usergroup_status_id";
 	private static final String COLUMN_STATUS = "status_id";
-	private static final String COLUMN_USER = "ic_user_id";
+	public static final String COLUMN_USER = "ic_user_id";
 	private static final String COLUMN_GROUP = "ic_group_id";
 	private static final String COLUMN_DATE_FROM = "date_from";
 	private static final String COLUMN_DATE_TO = "date_to";

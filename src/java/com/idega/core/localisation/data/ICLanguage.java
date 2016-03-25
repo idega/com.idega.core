@@ -10,4 +10,6 @@ public interface ICLanguage extends com.idega.data.IDOEntity
  public void setDescription(java.lang.String p0);
  public void setIsoAbbreviation(java.lang.String p0);
  public void setName(java.lang.String p0);
+
+	public String getLocalizedName();
 }

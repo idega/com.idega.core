@@ -1,7 +1,9 @@
 package com.idega.servlet.filter;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.logging.Logger;
+import java.util.zip.GZIPOutputStream;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -15,12 +17,17 @@ import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.IFrame;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.IOUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
+
+import net.sf.ehcache.constructs.web.GenericResponseWrapper;
 
 /**
  *
@@ -34,10 +41,70 @@ public class IWEncodingFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(IWEncodingFilter.class.getName());
 
+	private IWMainApplicationSettings getSettings() {
+		IWMainApplication application = IWMainApplication.getDefaultIWMainApplication();
+		if (application != null) {
+			return application.getSettings();
+		}
+
+		return null;
+	}
+
+	private boolean isGZIPEnabled() {
+		IWMainApplicationSettings settings = getSettings();
+		if (settings != null) {
+			return settings.getBoolean("GZIP_compression_enabled", Boolean.FALSE);
+		}
+
+		return false;
+	}
+
+	/**
+	 *
+	 * <p>Checks if this {@link IWEncodingFilter} was called by IWJspViewHandler.
+	 * If true, it is possible, that {@link IFrame} is rendered, so we don't need
+	 * to encode part, we need to encode whole page.</p>
+	 */
+	public boolean isJSPRenderProcess() {
+		StackTraceElement[] stackTraceElements = Thread.currentThread().getStackTrace();
+		for (StackTraceElement stackTraceElement : stackTraceElements) {
+			String className = stackTraceElement.getClassName();
+			if (className.contains("IWJspViewHandler")) {
+				return Boolean.TRUE;
+			}
+		}
+
+		return Boolean.FALSE;
+	}
+
+	private boolean isUIBeingRendered(HttpServletRequest request) {
+		if (request == null) {
+			return false;
+		}
+
+		String requestURI = request.getRequestURI();
+		if (StringUtil.isEmpty(requestURI)) {
+			return false;
+		}
+
+		if (requestURI.startsWith(CoreConstants.PAGES_URI_PREFIX) || requestURI.startsWith("/idegaweb") || requestURI.startsWith("/workspace") || requestURI.startsWith("/dwr")) {
+			return true;
+		}
+
+		return false;
+	}
+
 	@Override
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
+
+		ByteArrayOutputStream bytes = null;
+		boolean gzip = isGZIPEnabled() && !isJSPRenderProcess() && isUIBeingRendered(request);
+		if (gzip) {
+			bytes = new ByteArrayOutputStream();
+			response = new GenericResponseWrapper(response, bytes);
+		}
 
 		String requestURI = request.getRequestURI();
 		boolean print = requestURI.indexOf(CoreConstants.DOT) == -1 && IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_page_performance", Boolean.FALSE);
@@ -76,6 +143,34 @@ public class IWEncodingFilter implements Filter {
 		doDetectMobileBrowser(request);
 
 		chain.doFilter(request, response);
+
+		if (gzip) {
+			if (response instanceof GenericResponseWrapper) {
+				((GenericResponseWrapper) response).flush();
+			}
+
+			IOUtil.close(bytes);
+
+			// return on error or redirect code, because response is already
+			// committed
+			int statusCode = response.getStatus();
+			if (statusCode != HttpServletResponse.SC_OK) {
+				return;
+			}
+
+			ByteArrayOutputStream compressed = new ByteArrayOutputStream();
+			GZIPOutputStream gzout = new GZIPOutputStream(compressed);
+			gzout.write(bytes.toByteArray());
+			gzout.close();
+
+			byte[] compressedBytes = compressed.toByteArray();
+
+			// Write the zipped body
+			HttpServletResponse responseToCompress = (HttpServletResponse) myResponse;
+			responseToCompress.setHeader("Content-Encoding", "gzip");
+			responseToCompress.setContentLength(compressedBytes.length);
+			responseToCompress.getOutputStream().write(compressedBytes);
+		}
 
 		if (print) {
 			long time = System.currentTimeMillis() - start;

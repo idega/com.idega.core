@@ -67,7 +67,7 @@ import com.idega.util.expression.ELUtil;
  * @author <a href="mailto:gummi@idega.is">Gudmundur Agust Saemundsson</a>,
  * @version 1.0
  */
-public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaDataCapable, UniqueIDCapable {
+public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaDataCapable, UniqueIDCapable, GroupNode<Group> {
 
 	private static final long serialVersionUID = -5276962419455614341L;
 

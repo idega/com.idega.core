@@ -43,6 +43,7 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "login.findByUserAndLogin", query = "select l from UserLogin l where l.user = :user and l.userLogin = :userLogin"),
 	@NamedQuery(name = "login.findByUserAndType", query = "select l from UserLogin l where l.user = :user and l.loginType = :loginType"),
 	@NamedQuery(name = "login.findDefaultLoginForUser", query = "select l from UserLogin l where l.user = :user and l.loginType is null"),
+	@NamedQuery(name = UserLogin.QUERY_FIND_BY_PASSWORD, query = "select l from UserLogin l where l.userPassword = :password"),
 	@NamedQuery(name = UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, query = "SELECT l FROM UserLogin l JOIN l.user u WHERE (u.uniqueId = :"
 		+User.PROP_UNIQUE_ID+") AND l.loginType IS null")
 })
@@ -51,8 +52,12 @@ public class UserLogin implements Serializable {
 
 	private static final long serialVersionUID = -2164709920312090204L;
 
-	public static final String ENTITY_NAME = "ic_login";
-	public static final String COLUMN_LOGIN_ID = "ic_login_id";
+	public static final String	ENTITY_NAME = "ic_login",
+								COLUMN_LOGIN_ID = ENTITY_NAME + "_id",
+
+								QUERY_FIND_BY_PASSWORD = "login.findByPassword",
+								QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId";
+
 	private static final String COLUMN_USER = "ic_user_id";
 	private static final String COLUMN_USER_LOGIN = "user_login";
 	private static final String COLUMN_USER_PASSWORD = "usr_password";
@@ -62,7 +67,6 @@ public class UserLogin implements Serializable {
 	private static final String COLUMN_LOGIN_TYPE = "login_type";
 	private static final String COLUMN_COUNT_SENT_TO_BANK = "bank_count";
 
-	public static final String QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_LOGIN_ID)

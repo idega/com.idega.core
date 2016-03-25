@@ -3,7 +3,9 @@ package com.idega.core.location.data;
 import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Locale;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
@@ -11,6 +13,8 @@ import com.idega.data.query.Column;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
+import com.idega.util.LocaleUtil;
+import com.idega.util.StringUtil;
 
 /**
  * Title:        IW Core
@@ -133,4 +137,17 @@ public class CountryBMPBean extends GenericEntity implements Country{
   	
   	return this.idoFindPKsByQuery(query); 
   }
+
+	@Override
+	public String getLocalizedName() {
+		String abbreviation = getIsoAbbreviation();
+		if (!StringUtil.isEmpty(abbreviation)) {
+			Locale locale = LocaleUtil.getLocaleByCountry(abbreviation);
+			if (locale != null) {
+				return locale.getDisplayCountry(locale);
+			}
+		}
+
+		return getName();
+	}
 }

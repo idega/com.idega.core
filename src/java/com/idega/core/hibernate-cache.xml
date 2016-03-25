@@ -23,12 +23,6 @@
         timeToLiveSeconds="86400"
     />
     <cache
-        maxElementsInMemory="5000"
-        name="com.idega.core.localisation.data.bean.LocalizedText"
-        timeToIdleSeconds="86400"
-        timeToLiveSeconds="86400"
-    />
-    <cache
         maxElementsInMemory="20000"
         name="com.idega.core.builder.data.bean.ICPage"
         timeToIdleSeconds="86400"

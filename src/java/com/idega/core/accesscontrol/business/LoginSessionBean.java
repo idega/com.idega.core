@@ -279,13 +279,13 @@ public class LoginSessionBean implements LoginSession, Serializable {
 					return true;
 				}
 
-				PermissionGroup adminsGroup = getAccessController().getPermissionGroupAdministrator();
-				if (adminsGroup == null) {
+				PermissionGroup permGroup = getAccessController().getPermissionGroupAdministrator();
+				if (permGroup == null) {
 					return false;
 				}
 
 				UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-				return userBusiness.isMemberOfGroup(adminsGroup.getID(), userBusiness.getUser(user.getId()));
+				return userBusiness.isMemberOfGroup(permGroup.getID(), userBusiness.getUser(user.getId()));
 			}
 		} catch (Exception ex) {
 			ex.printStackTrace();
