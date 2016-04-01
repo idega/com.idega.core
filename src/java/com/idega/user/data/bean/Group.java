@@ -128,6 +128,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private static final String COLUMN_WEB_PAGE = "group_web_page";
 	private static final String COLUMN_VAT_NUMBER = "group_vat_number";
 	private static final String COLUMN_BANK_ACCOUNT = "group_bank_acc";
+	private static final String COLUMN_MERCHANT_ID = "merchant_id";
 
 	public static final String SQL_RELATION_EMAIL = "ic_group_email";
 	public static final String SQL_RELATION_ADDRESS = "ic_group_address";
@@ -197,6 +198,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Column(name = COLUMN_BANK_ACCOUNT)
 	private String bankAccount;
+
+	@Column(name = COLUMN_MERCHANT_ID)
+	private String merchantId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP_MODERATOR_ID)
@@ -971,6 +975,14 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	public void setBankAccount(String bankAccount) {
 		this.bankAccount = bankAccount;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
 	}
 
 
