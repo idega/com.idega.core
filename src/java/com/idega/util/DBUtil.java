@@ -4,6 +4,8 @@ import java.util.List;
 
 import javax.persistence.Query;
 
+import org.hibernate.Session;
+
 import com.idega.business.SpringBeanName;
 import com.idega.util.expression.ELUtil;
 
@@ -45,5 +47,7 @@ public abstract class DBUtil {
 	public abstract <T> void setCache(String name, List<T> entities);
 
 	public abstract <T> List<T> getCachedEntities(String name);
+
+	public abstract Session getCurrentSession();
 
 }
