@@ -24,8 +24,6 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 		this.serverURL = serverURL;
 	}
 
-
-
 	public String getUserName() {
 		return userName;
 	}

@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Query;
@@ -45,5 +46,7 @@ public abstract class DBUtil {
 	public abstract <T> void setCache(String name, List<T> entities);
 
 	public abstract <T> List<T> getCachedEntities(String name);
+
+	public abstract <S extends Serializable> S getCurrentSession();
 
 }
