@@ -21,6 +21,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.bean.Group;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -342,11 +343,9 @@ class PermissionCacher {
 	 * @return Boolean
 	 * @throws SQLException
 	 */
-	private Boolean hasPermission(String permissionMapKey, String identifier, IWApplicationContext iwac, String permissionKey,
-			List groups) throws SQLException {
-		if (identifier != null) {
-			PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(
-					permissionMapKey);
+	private Boolean hasPermission(String permissionMapKey, String identifier, IWApplicationContext iwac, String permissionKey, List groups) throws SQLException {
+		if (!StringUtil.isEmpty(identifier)) {
+			PermissionMap permissionMap = (PermissionMap) iwac.getApplicationAttribute(permissionMapKey);
 			if (permissionMap == null) {
 				updatePermissions(permissionMapKey, identifier, permissionKey, iwac);
 				permissionMap = (PermissionMap) iwac.getApplicationAttribute(permissionMapKey);
@@ -374,8 +373,7 @@ class PermissionCacher {
 		}
 	}
 
-	public Boolean hasPermission(ICObject obj, IWApplicationContext iwac, String permissionKey, List groups)
-			throws SQLException {
+	public Boolean hasPermission(ICObject obj, IWApplicationContext iwac, String permissionKey, List groups) throws SQLException {
 		String permissionMapKey = this.PERMISSION_MAP_OBJECT;
 		String identifier="-1";
 		Object primaryKey = obj.getId();
