@@ -39,11 +39,11 @@ public class IDOUtil implements Singleton {
 	 *
 	 * @returns a String with comma separated list of primary keys for the IDOEntities
 	 */
-	public String convertListToCommaseparatedString(Collection<IDOEntity> list) {
+	public String convertListToCommaseparatedString(Collection<? extends IDOEntity> list) {
 		StringBuffer sList = new StringBuffer();
 		if (list != null && !list.isEmpty()) {
 			//String sGroupList = "";
-			Iterator<IDOEntity> iter = list.iterator();
+			Iterator<? extends IDOEntity> iter = list.iterator();
 			for (int g = 0; iter.hasNext(); g++) {
 				IDOEntity item = iter.next();
 				if (g > 0) {
