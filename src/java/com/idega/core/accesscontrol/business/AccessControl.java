@@ -162,12 +162,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (this.groupBusiness == null) {
 			try {
 				this.groupBusiness = IBOLookup.getServiceInstance(
-						IWMainApplication.getDefaultIWApplicationContext(), 
+						IWMainApplication.getDefaultIWApplicationContext(),
 						GroupBusiness.class);
 			} catch (IBOLookupException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
-						"Failed to get " + GroupBusiness.class + 
+						Level.WARNING,
+						"Failed to get " + GroupBusiness.class +
 						", cause of:", e);
 			}
 		}
@@ -370,8 +370,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			List<String>[] permissionOrder = new ArrayList[2];
 			permissionOrder[0] = new ArrayList<String>();
 			permissionOrder[0].add(user.getId().toString());
+
 			permissionOrder[1] = new ArrayList<String>();
-			permissionOrder[1].add(user.getPrimaryGroup().getID().toString());
+			Group primaryGroup = user.getPrimaryGroup();
+			permissionOrder[1].add(primaryGroup == null ? "-1" : primaryGroup.getID().toString());
 
 			returnVal = checkForPermission(permissionOrder, category, identifier, AccessController.PERMISSION_KEY_OWNER,  IWMainApplication.getDefaultIWApplicationContext());
 		}
@@ -533,7 +535,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 
-	private static Boolean checkForPermission(List[] permissionGroupLists, int category, String identifier, String permissionKey, IWApplicationContext iwc)
+	private static Boolean checkForPermission(List<?>[] permissionGroupLists, int category, String identifier, String permissionKey, IWApplicationContext iwc)
 		throws Exception {
 		Boolean myPermission = null;
 		if (permissionGroupLists != null) {
@@ -753,11 +755,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	}
 
 	/**
-	 * 
-	 * @param permissionKey 
+	 *
+	 * @param permissionKey
 	 * @param user to get permission groups for, not <code>null</code>;
-	 * @return {@link Collection} of {@link Group#getId()} of 
-	 * {@link Group#getPermissionControllingGroup()} or 
+	 * @return {@link Collection} of {@link Group#getId()} of
+	 * {@link Group#getPermissionControllingGroup()} or
 	 * {@link Collections#emptyList()} on failure;
 	 */
 	private Collection<Integer> getPermissionControllingGroups(String permissionKey, User user) {
@@ -2084,13 +2086,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		Collection<ICPermission> groupPermissions = new ArrayList<ICPermission>(); //empty
 
 		Collection<ICPermission> permissions = getPermissionDAO().findAll(
-				RoleHelperObject.getStaticInstance().toString(), 
+				RoleHelperObject.getStaticInstance().toString(),
 				groupId);
 		for (ICPermission perm: permissions) {
 
-			/* 
-			 * true if it is a marker for an active role for a group if not it 
-			 * is a role for a permission key 
+			/*
+			 * true if it is a marker for an active role for a group if not it
+			 * is a role for a permission key
 			 */
 			if (perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())) {
 				groupPermissions.add(perm);
@@ -2167,9 +2169,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
         for ( Iterator<ICPermission> permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
             ICPermission perm = permissionsIter.next();
 
-            /* 
-             * perm.getPermissionString().equals(perm.getContextValue()) is true 
-             * if it is a marker for an active role for a group if not it is a 
+            /*
+             * perm.getPermissionString().equals(perm.getContextValue()) is true
+             * if it is a marker for an active role for a group if not it is a
              * role for a permission key
              */
             if(perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())){
