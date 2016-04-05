@@ -477,6 +477,10 @@ public class DefaultViewNode implements ViewNode {
 	 */
 	@Override
 	public void setParent(ViewNode parent) {
+		if (parent == null) {
+			throw new RuntimeException("Provided parent view node is unknown!");
+		}
+
 		parent.addChildViewNode(this);
 		this.parent = parent;
 	}

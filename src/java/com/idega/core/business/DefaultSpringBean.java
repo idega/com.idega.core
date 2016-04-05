@@ -250,18 +250,22 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected IWResourceBundle getResourceBundle(IWBundle bundle) {
-		Locale locale = getCurrentLocale();
-		IWContext iwc = null;
-		if (locale == null) {
-			iwc = CoreUtil.getIWContext();
+		if (bundle != null) {
+			Locale locale = getCurrentLocale();
+			IWContext iwc = null;
+			if (locale == null) {
+				iwc = CoreUtil.getIWContext();
+			}
+
+			if (locale == null && iwc == null) {
+				locale = Locale.ENGLISH;
+				LOGGER.warning("Will use default locale (" + locale + ") for resource bundle, because was unable to resolve both - IWContext and current locale");
+			}
+
+			return locale == null ? bundle.getResourceBundle(iwc) : bundle.getResourceBundle(locale);
 		}
 
-		if (locale == null && iwc == null) {
-			locale = Locale.ENGLISH;
-			LOGGER.warning("Will use default locale (" + locale + ") for resource bundle, because was unable to resolve both - IWContext and current locale");
-		}
-
-		return locale == null ? bundle.getResourceBundle(iwc) : bundle.getResourceBundle(locale);
+		return null;
 	}
 
 	protected HttpSession getSession() {

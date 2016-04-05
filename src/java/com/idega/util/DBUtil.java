@@ -1,10 +1,9 @@
 package com.idega.util;
 
+import java.io.Serializable;
 import java.util.List;
 
 import javax.persistence.Query;
-
-import org.hibernate.Session;
 
 import com.idega.business.SpringBeanName;
 import com.idega.util.expression.ELUtil;
@@ -48,6 +47,6 @@ public abstract class DBUtil {
 
 	public abstract <T> List<T> getCachedEntities(String name);
 
-	public abstract Session getCurrentSession();
+	public abstract <S extends Serializable> S getCurrentSession();
 
 }
