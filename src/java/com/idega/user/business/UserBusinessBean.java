@@ -1555,9 +1555,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		try {
 			return getUserHome().findByPrimaryKey(iUserId);
 		} catch (Exception ex) {
-			throw new EJBException("Error getting user for id: " + iUserId.toString() + " Message: " + ex.getMessage());
+			String message = "Error getting user by ID: " + iUserId.toString();
+			getLogger().log(Level.WARNING, message, ex);
+			throw new EJBException(message + " Message: " + ex.getMessage());
 		}
-		// return null;
 	}
 
 	/**
