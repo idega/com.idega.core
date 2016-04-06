@@ -575,12 +575,16 @@ public class IWMainApplication	extends Application  implements MutableClass {
         return getHashCode(classToInstanciate);
     }
 
-    public static String getEncryptedClassName(Class classToInstanciate) {
+    public static String getEncryptedClassName(Class<?> classToInstanciate) {
         return getHashCode(classToInstanciate);
     }
 
     public static String decryptClassName(String encryptedClassName) {
-        return getHashCodedClassName(encryptedClassName);
+        String decryptedClassName = getHashCodedClassName(encryptedClassName);
+        if (StringUtil.isEmpty(decryptedClassName)) {
+        	log.warning("Unable to resolve class name from provided encryption: '" + encryptedClassName + "'");
+        }
+        return decryptedClassName;
     }
 
     public int getMajorVersion() {
