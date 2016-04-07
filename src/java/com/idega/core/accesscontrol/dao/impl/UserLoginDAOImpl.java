@@ -21,6 +21,7 @@ import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.User;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
@@ -206,7 +207,8 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		}
 
 		try {
-			return getSingleResult(UserLogin.QUERY_FIND_BY_PASSWORD, UserLogin.class, new Param("password", password));
+			List<UserLogin> logins = getResultList(UserLogin.QUERY_FIND_BY_PASSWORD, UserLogin.class, new Param("password", password));
+			return ListUtil.isEmpty(logins) ? null : logins.get(0);
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting login by password " + password, e);
 		}
