@@ -68,7 +68,7 @@ import com.idega.util.StringUtil;
 			name = User.QUERY_FIND_BY_PRIMARY_KEYS,
 			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)"),
 	@NamedQuery(name = User.QUERY_FIND_BY_PHONE_NUMBER, query = "select distinct u from User u join u.phones up where up.number = :number"),
-	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :metadataKey")
+	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :key and um.value = :value")
 })
 @XmlTransient
 @Cacheable
