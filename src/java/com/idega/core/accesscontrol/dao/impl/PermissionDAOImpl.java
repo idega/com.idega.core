@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
 import com.idega.core.accesscontrol.data.bean.ICPermission;
 import com.idega.core.accesscontrol.data.bean.ICRole;
@@ -338,6 +339,20 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	@Override
 	public List<ICPermission> findPermissionsByContextTypeAndPermission(String contextType, String permissionString) {
 		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, ICPermission.class, new Param("contextType", contextType), new Param("permissionString", permissionString));
+	}
+
+	@Override
+	public List<ICPermission> findPermissionsByRoles(List<String> roles) {
+		if (ListUtil.isEmpty(roles)) {
+			return null;
+		}
+
+		return getResultList(
+				ICPermission.BY_CONTEXT_TYPE_AND_PERMISSIONS,
+				ICPermission.class,
+				new Param("contextType", AccessController.PERMISSION_KEY_ROLE),
+				new Param("permissionStrings", roles)
+		);
 	}
 
 }

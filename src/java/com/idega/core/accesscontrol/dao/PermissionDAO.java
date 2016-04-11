@@ -40,6 +40,7 @@ public interface PermissionDAO extends GenericDao {
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString);
 	public List<ICPermission> findPermissionsByContextTypeAndPermission(String contextType, String permissionString);
+	public List<ICPermission> findPermissionsByRoles(List<String> roles);
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues, Group group);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, Character permissionValue);
 	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, String permissionString, String contextType);
@@ -58,8 +59,8 @@ public interface PermissionDAO extends GenericDao {
 	public List<ICRole> findAllRoles();
 
 	/**
-	 * 
-	 * @param contextType is {@link RoleHelperObject#getStaticInstance()}, 
+	 *
+	 * @param contextType is {@link RoleHelperObject#getStaticInstance()},
 	 * not <code>null</code>;
 	 * @param primaryKeys is {@link Collection} of {@link Group#getId()}, not <code>null</code>;
 	 * @return {@link Collection} of permissions or {@link Collections#emptyList()}

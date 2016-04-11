@@ -36,7 +36,7 @@ import com.idega.user.data.bean.User;
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionValue = 'Y' and i.permissionGroup = :group and i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null"),
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null) order by i.contextValue"),
 		@NamedQuery(
-				name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID, 
+				name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID,
 				query =   "SELECT i FROM ICPermission i "
 						+ "INNER JOIN i.permissionGroup g "
 						+ "WHERE i.contextType = :contextType "
@@ -49,7 +49,8 @@ import com.idega.user.data.bean.User;
 		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUPS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups) and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.BY_PERMISSION_GROUP, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group and (i.status = '" + ICPermission.STATUS_ACTIVE + "' or i.status is null)"),
 		@NamedQuery(name = ICPermission.DELETE_BY_CRITERIA, query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)"),
-		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString = :permissionString")
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString = :permissionString"),
+		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSIONS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings)")
 })
 @Cacheable
 public class ICPermission implements Serializable {
@@ -79,6 +80,7 @@ public class ICPermission implements Serializable {
 								BY_VALUES = "permission.findByValues",
 								BY_CRITERIA = "permission.findByCriteria",
 								BY_CONTEXT_TYPE_AND_PERMISSION = "permission.findByContextTypeAndPermission",
+								BY_CONTEXT_TYPE_AND_PERMISSIONS = "permission.findByContextTypeAndPermissions",
 
 								COLUMN_CONTEXT_VALUE = "permission_context_value";
 
