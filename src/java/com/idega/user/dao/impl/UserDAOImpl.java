@@ -24,6 +24,7 @@ import com.idega.core.location.data.bean.Address;
 import com.idega.core.location.data.bean.AddressType;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.bean.Metadata;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
@@ -233,5 +234,28 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		}
 
 		return getResultList(User.QUERY_FIND_BY_PHONE_NUMBER, User.class, new Param("number", phoneNumber));
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public Metadata setMetadata(User user, String key, String value, String type) {
+		if (user == null || StringUtil.isEmpty(key)) {
+			return null;
+		}
+
+		Metadata metadata = user.setMetadata(key, value, type);
+		if (metadata.getId() == null) {
+			persist(metadata);
+		} else {
+			merge(metadata);
+		}
+
+		if (metadata.getId() == null) {
+			return null;
+		}
+
+		merge(user);
+
+		return metadata;
 	}
 }

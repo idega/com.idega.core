@@ -15,6 +15,7 @@ import com.idega.business.SpringBeanName;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.location.data.bean.Address;
 import com.idega.core.persistence.GenericDao;
+import com.idega.data.bean.Metadata;
 import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -68,5 +69,7 @@ public interface UserDAO extends GenericDao {
 	Set<String> getEmailAddresses(User user);
 
 	List<User> findByPhoneNumber(String phoneNumber);
+
+	Metadata setMetadata(User user, String key, String value, String type);
 
 }
