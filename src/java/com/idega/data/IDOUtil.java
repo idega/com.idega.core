@@ -15,6 +15,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.ejb.EJBLocalObject;
+
 import com.idega.repository.data.Instantiator;
 import com.idega.repository.data.Singleton;
 import com.idega.repository.data.SingletonRepository;
@@ -235,7 +237,6 @@ public class IDOUtil implements Singleton {
 	 * @param entities to get primary keys for;
 	 * @return {@link List} of {@link IDOEntity#getPrimaryKey()} or
 	 * {@link Collections#emptyList()} on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public List<String> getPrimaryKeys(Collection<? extends IDOEntity> entities){
 		if(!ListUtil.isEmpty(entities)){
@@ -259,7 +260,6 @@ public class IDOUtil implements Singleton {
 	 * @return {@link String} of {@link Collection} of
 	 * {@link IDOEntity#getPrimaryKey()} separated by quotes or {@link CoreConstants#EMPTY}
 	 * on failure;
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public String convertListToCommaseparatedString(Collection<? extends IDOEntity> coll, boolean whithSimpleQuoteMarks) {
 		StringBuffer sList = new StringBuffer();
@@ -283,6 +283,21 @@ public class IDOUtil implements Singleton {
 		return sList.toString();
 	}
 
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link EJBLocalObject#getPrimaryKey()},
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link Integer}s or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> convert(Collection<?> primaryKeys) {
+		ArrayList<Integer> list = new ArrayList<Integer>();
 
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			for (Object primaryKey : primaryKeys) {
+				list.add(Integer.valueOf(primaryKey.toString()));
+			}
+		}
 
+		return list;
+	}
 }
