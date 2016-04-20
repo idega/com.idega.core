@@ -27,6 +27,7 @@ import com.idega.user.data.bean.User;
 @Entity
 @Table(name = Phone.ENTITY_NAME)
 @NamedQueries({
+	@NamedQuery(name = Phone.QUERY_FIND_BY_ID, query = "FROM Phone p WHERE p.phoneID = :" + Phone.phoneIdProp),
 	@NamedQuery(name = "phone.findAll", query = "select p from Phone p"),
 	@NamedQuery(name = "phone.findUsersFaxPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_FAX_NUMBER + " and u.userID = :userID"),
 	@NamedQuery(name = "phone.findUsersHomePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_HOME_PHONE + " and u.userID = :userID"),
@@ -43,6 +44,8 @@ public class Phone implements Serializable {
 	private static final String COLUMN_AREA_CODE_ID = "ic_area_code_id";
 	private static final String COLUMN_PHONE_TYPE_ID = "ic_phone_type_id";
 
+	public static final String QUERY_FIND_BY_ID = "phone.findById";
+	public static final String phoneIdProp = "phoneID";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_PHONE_ID)
