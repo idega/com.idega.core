@@ -5,6 +5,7 @@ package com.idega.user.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -257,5 +258,75 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		merge(user);
 
 		return metadata;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#update(com.idega.user.data.bean.User)
+	 */
+	@Override
+	public User update(User entity) {
+		if (entity != null) {
+			if (getUser(entity.getId()) == null) {
+				persist(entity);
+				if (entity.getId() != null) {
+					getLogger().fine("Entity: " + entity + " created!");
+					return entity;
+				}
+			} else {
+				entity = merge(entity);
+				if (entity != null) {
+					getLogger().fine("Entity: " + entity + " updated");
+					return entity;
+				}
+			}
+		}
+
+		getLogger().warning("Failed to create/update entity: " + entity);
+		return null;
+	}
+
+	@Override
+	public List<User> findByPrimaryKeys(Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			return getResultListByInlineQuery(
+					"FROM " + User.class.getName() + " u "
+							+ "WHERE u.userID IN (:primaryKeys)" ,
+							User.class, new Param("primaryKeys", primaryKeys));
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName) {
+		ArrayList<Param> parameters = new ArrayList<Param>();
+		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
+		query.append("WHERE u.deletedWhen IS NULL ");
+
+		if (!StringUtil.isEmpty(firstName)) {
+			parameters.add(new Param("firstName", firstName));
+			query.append("AND u.firstName like :firstName ");
+		}
+
+		if (!StringUtil.isEmpty(middleName)) {
+			parameters.add(new Param("middleName", middleName));
+			query.append("AND u.middleName like :middleName ");
+		}
+
+		if (!StringUtil.isEmpty(lastName)) {
+			parameters.add(new Param("lastName", lastName));
+			query.append("AND u.lastName like :lastName ");
+		}
+
+		if (!StringUtil.isEmpty(personalId)) {
+			parameters.add(new Param("personalId", personalId));
+			query.append("AND u.personalID like :personalId ");
+		}
+
+		return getResultListByInlineQuery(
+				query.toString(),
+				User.class,
+				parameters.toArray(new Param[parameters.size()]));
 	}
 }

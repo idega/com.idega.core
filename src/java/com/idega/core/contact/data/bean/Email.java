@@ -30,10 +30,11 @@ import com.idega.util.DBUtil;
 @Table(name = Email.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "email.findAll", query = "select e from Email e"),
+	@NamedQuery(name = Email.FIND_BY_ID, query = "FROM Email e WHERE e.emailID = :emailID"),
 	@NamedQuery(name = "email.findAllByUser", query = "select e from Email e join e.users u where u.userID = :userID"),
 	@NamedQuery(name = Email.QUERY_FIND_BY_USER_AND_TYPE, query = "select e from Email e inner join e.users u where u.id = :id"),
 	@NamedQuery(name = "email.findAllByGroup", query = "select e from Email e join e.groups g where g.groupID = :groupID"),
-	@NamedQuery(name = "email.findByAddress", query = "select e from Email e where e.address = :address"),
+	@NamedQuery(name = Email.FIND_BY_E_MAIL_ADDRESS, query = "select e from Email e where e.address = :address"),
 	@NamedQuery(name = "email.findByGroupAndType", query = "select e from Email e join e.groups g join e.emailType t where t.uniqueName = :uniqueName and g.groupID = :groupID")
 })
 public class Email implements Serializable, EmailDataView {
@@ -47,11 +48,15 @@ public class Email implements Serializable, EmailDataView {
 	private static final String COLUMN_ADDRESS = "address";
 	private static final String COLUMN_EMAIL_TYPE_ID = "ic_email_type_id";
 
+	public static final String FIND_BY_ID = "email.findById";
+	public static final String eMailIdProp = "emailID";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_EMAIL_ID)
 	private Integer emailID;
 
+	public static final String FIND_BY_E_MAIL_ADDRESS = "email.findByAddress";
+	public static final String eMailAddressProp = "address";
 	@Column(name = COLUMN_ADDRESS)
 	private String address;
 
