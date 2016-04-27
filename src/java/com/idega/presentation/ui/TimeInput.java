@@ -13,6 +13,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
+import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.text.TextSoap;
 
@@ -34,8 +35,9 @@ public class TimeInput extends InterfaceObject {
 	private int iFromHour = 0;
 	private int iToHour = 23;
 
-	final static String HOUR_KEY = "timeinput.hour";
-	final static String MINUTE_KEY = "timeinput.minute";
+	public final static String	HOUR_KEY = "timeinput.hour",
+								MINUTE_KEY = "timeinput.minute";
+
 	final static String HOUR_KEY_S = "timeinput.hour_short";
 	final static String MINUTE_KEY_S = "timeinput.minute_short";
 
@@ -101,7 +103,7 @@ public class TimeInput extends InterfaceObject {
 		getJavaScript().addFunction("setValueOfHiddenTime", "function setValueOfHiddenTime(hourInput,minuteInput,hiddenInput){\r\r	var hourValue='00';\r	var minuteValue='00';\r	var secondValue='00';\r	var millisecondValue='000000';\r	\r	\r	if(hourInput.selectedIndex != 0){\r		hourValue=hourInput.options[hourInput.selectedIndex].value;\r	}\r	if(minuteInput.selectedIndex != 0){\r		minuteValue=minuteInput.options[minuteInput.selectedIndex].value;\r	}\r\r\r	if ((hourInput.selectedIndex == 0) || (minuteInput.selectedIndex == 0) ){\r		hiddenInput.value = '';\r	}\r	else{\r		hiddenInput.value = hourValue+':'+minuteValue+':'+secondValue+'.'+millisecondValue;\r	}\r}");
 
 		IWResourceBundle iwrb = getBundle(iwc).getResourceBundle(iwc);
-		String emptyString = "";
+		String emptyString = CoreConstants.EMPTY;
 		this.theHour.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.HOUR_KEY));
 		this.theMinute.addMenuElementFirst(emptyString, iwrb.getLocalizedString(TimeInput.MINUTE_KEY));
 		if (this.isDisabled) {
