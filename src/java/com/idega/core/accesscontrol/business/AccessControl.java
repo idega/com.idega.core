@@ -2795,8 +2795,24 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
 
 	    Collection<Group> permGroups = new ArrayList<Group>();
-	    for (Group group: groups)
-			permGroups.add(groupDAO.findGroup(group.getID()));
+	    try {
+	    	Iterator iter = groups.iterator();
+	    	while (iter.hasNext()) {
+	    		Object groupObj = iter.next();
+	    		if (groupObj != null) {
+	    			if (groupObj instanceof Group) {
+						permGroups.add(groupDAO.findGroup(((Group)groupObj).getID()));
+	    			} else if (groupObj instanceof com.idega.user.data.Group) {
+						permGroups.add(groupDAO.findGroup(Integer.valueOf(((com.idega.user.data.Group)groupObj).getId())));
+	    			}
+	    		}
+	    	}
+//		    for (Group group: groups)
+//				permGroups.add(groupDAO.findGroup(group.getID()));
+	    } catch (Exception e) {
+	    	e.printStackTrace();
+	    }
+
 
 		Collection<ICPermission> returnCol = permissionDAO.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					permGroups,
