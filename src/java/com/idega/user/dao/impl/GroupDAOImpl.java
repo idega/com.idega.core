@@ -153,6 +153,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> getGroupsByPersonalId(String personalId) {
+		Param param = new Param("personalId", personalId);
+
+		return getResultList(Group.QUERY_FIND_BY_PERSONAL_ID, Group.class, param);
+	}
+
+	@Override
+	public List<Group> getGroupsByName(String name) {
+		Param param = new Param("name", name);
+
+		return getResultList(Group.QUERY_FIND_BY_NAME, Group.class, param);
+	}
+
+	@Override
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes) {
 		Param param = new Param("groupTypes", groupTypes);
 

@@ -93,6 +93,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	static final String COLUMN_SHORT_NAME = "SHORT_NAME";
 	static final String COLUMN_ABBREVATION = "ABBR";
 	static final String COLUMN_GROUP_MODERATOR_ID = "GROUP_MODERATOR_ID";
+//	static final String COLUMN_GROUP_PERSONAL_ID = "GROUP_PERSONAL_ID";
 
 	static final String META_DATA_HOME_PAGE = "homepage";
 
@@ -109,6 +110,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		setNullable(getColumnNameHomePageID(), true);
 		addAttribute(COLUMN_SHORT_NAME, "Short name", true, true, String.class);
 		addAttribute(COLUMN_ABBREVATION, "Abbrevation", true, true, String.class);
+//		addAttribute(COLUMN_GROUP_PERSONAL_ID, "Personal id", true, true, String.class);
 
 		//addAttribute(COLUMN_GROUP_MODERATOR_ID,"Moderator Id", true,true, Integer.class);
 
@@ -346,6 +348,17 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		setColumn(COLUMN_ABBREVATION, abbr);
 	}
 
+
+//	@Override
+//	public void setGroupPersonalId(String groupPersonalId) {
+//		setColumn(COLUMN_GROUP_PERSONAL_ID, groupPersonalId);
+//	}
+//
+//	@Override
+//	public String getGroupPersonalId() {
+//		return (String) getColumnValue(COLUMN_GROUP_PERSONAL_ID);
+//	}
+//
 	@Override
 	public String getDescription() {
 		return (String) getColumnValue(getGroupDescriptionColumnName());

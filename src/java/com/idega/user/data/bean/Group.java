@@ -85,6 +85,8 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g where g.personalId = :personalId"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_NAME, query = "select g from Group g where g.name = :name"),
 	@NamedQuery(
 			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS,
 			query = "SELECT g.permissionControllingGroup FROM Group g "
@@ -106,6 +108,8 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_BY_ALIAS = "group.findByAlias",
 								QUERY_FIND_BY_ALIAS_AND_NAME = "group.findByAliasAndName",
 								QUERY_FIND_BY_GROUP_ID = "group.findByGroupId",
+								QUERY_FIND_BY_PERSONAL_ID = "group.findByPersonalId",
+								QUERY_FIND_BY_NAME = "group.findByName",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",
