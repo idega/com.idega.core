@@ -46,5 +46,7 @@ public interface GroupDAO extends GenericDao {
 	public void createUniqueRelation(Group group, Group relatedGroup, GroupRelationType relationType, Date initiationDate);
 
 	public Collection<Integer> findParentGroupsIds(Integer groupId);
+	
+	public Group findGroupByName(String name);
 
 }
