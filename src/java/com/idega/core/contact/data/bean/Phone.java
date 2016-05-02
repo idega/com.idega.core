@@ -32,6 +32,7 @@ import com.idega.user.data.bean.User;
 	@NamedQuery(name = "phone.findUsersFaxPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_FAX_NUMBER + " and u.userID = :userID"),
 	@NamedQuery(name = "phone.findUsersHomePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_HOME_PHONE + " and u.userID = :userID"),
 	@NamedQuery(name = "phone.findUsersMobilePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_MOBILE_PHONE + " and u.userID = :userID"),
+	@NamedQuery(name = "phone.findPhoneByNumber", query = "select p from Phone p where p.number = :phoneNumber"),
 	@NamedQuery(name = "phone.findUsersWorkPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_WORK_PHONE + " and u.userID = :userID")
 })
 public class Phone implements Serializable {
