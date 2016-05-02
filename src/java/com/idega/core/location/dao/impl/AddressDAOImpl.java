@@ -222,4 +222,27 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 		Param param = new Param("isoAbbreviation", isoAbbreviation);
 		return getSingleResult("country.findByISOAbbreviation", Country.class, param);
 	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public Address update(Address entity) {
+		if (entity != null) {
+			if (getAddress(entity.getId()) == null) {
+				persist(entity);
+				if (entity.getId() != null) {
+					getLogger().fine("Entity: " + entity + " created!");
+					return entity;
+				}
+			} else {
+				entity = merge(entity);
+				if (entity != null) {
+					getLogger().fine("Entity: " + entity + " updated");
+					return entity;
+				}
+			}
+		}
+
+		getLogger().warning("Failed to create/update entity: " + entity);
+		return null;
+	}
 }

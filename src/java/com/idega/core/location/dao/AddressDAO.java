@@ -66,5 +66,7 @@ public interface AddressDAO {
 	public Country getCountryByName(String name);
 
 	public Country getCountryByISOAbbreviation(String isoAbbreviation);
+	
+	public Address update(Address entity);
 
 }
