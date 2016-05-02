@@ -227,4 +227,23 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 				User.class, 
 				parameters.toArray(new Param[parameters.size()]));
 	}
+	
+	@Override
+	public List<User> getUsersByEmailAddress(String emailAddress) {
+		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
+		if (ListUtil.isEmpty(emails))
+			return null;
+
+		List<User> usersList = new ArrayList<User>();
+		
+		for (Email email: emails) {
+			List<User> users = email.getUsers();
+			initialize(users);
+			if (!ListUtil.isEmpty(users)) {
+				usersList.addAll(users);
+			}
+		}
+
+		return usersList;
+	}
 }

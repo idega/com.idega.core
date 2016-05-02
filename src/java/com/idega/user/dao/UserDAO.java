@@ -54,6 +54,8 @@ public interface UserDAO extends GenericDao {
 	public Gender getFemaleGender();
 
 	public User getByEmailAddress(String emailAddress);
+	
+	List<User> getUsersByEmailAddress(String emailAddress);
 
 	/**
 	 * 
