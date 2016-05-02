@@ -11,6 +11,7 @@ package com.idega.core.contact.dao.impl;
 
 import java.util.List;
 
+import org.hsqldb.lib.StringUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -75,7 +76,14 @@ public class ContactDAOImpl extends GenericDaoImpl implements ContactDAO {
 
 	@Override
 	public Phone findPhoneByNumber(String number) {
-		return getSingleResult("phone.findPhoneByNumber", Phone.class, new Param("phoneNumber", number));
+		if(StringUtil.isEmpty(number)) {
+			return null;
+		}
+		List<Phone> phones = getResultList("phone.findPhoneByNumber", Phone.class, new Param("phoneNumber", number));
+		if(ListUtil.isEmpty(phones)) {
+			return null;
+		}
+		return phones.get(0);
 	}
 	
 }
