@@ -291,4 +291,12 @@ public class Address implements Serializable {
 	public void setUsers(List<User> users) {
 		this.users = users;
 	}
+	
+	public String getCity() {
+		return city;
+	}
+
+	public void setCity(String city) {
+		this.city = city;
+	}
 }
