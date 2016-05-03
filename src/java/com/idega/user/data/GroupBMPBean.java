@@ -638,7 +638,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			}
 			query += ")";
 		}
-		query += " order by g." + COLUMN_NAME;
+//		query += " order by g." + COLUMN_NAME;
 		return idoFindPKsBySQL(query, PREFETCH_SIZE);
 	}
 
