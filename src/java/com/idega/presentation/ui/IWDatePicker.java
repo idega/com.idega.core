@@ -45,7 +45,10 @@ public class IWDatePicker extends TextInput {
 	private Date date = null;
 	private Date dateTo = null;
 
+	private static final String MAX_DATE_PROPERTY = "maxDate";
 	private Date maxDate = null;
+	
+	private static final String MIN_DATE_PROPERTY = "minDate";
 	private Date minDate = null;
 
 	private boolean dateRange = false;
@@ -66,10 +69,14 @@ public class IWDatePicker extends TextInput {
 
 	private String alternateFieldId = null;
 
+	private static final String COMPOSITE_ID_PROPERTY = "compositeId";
+	private String compositeId = null;
+
+	private static final String NAME_PROPERTY = "name";
+	private String name = null;
+
 	private static final String INITIAL_DATE_PROPERTY = "initialDate";
 	private static final String INITIAL_DATE_TO_PROPERTY = "initialDateTo";
-	private static final String MAX_DATE_PROPERTY = "maxDate";
-	private static final String MIN_DATE_PROPERTY = "minDate";
 	private static final String INPUT_NAME_PROPERTY = "inputName";
 	private static final String DATE_RANGE_SEPARATOR_PROPERTY = "dateRangeSeparator";
 	private static final String SHOW_DATE_RANGE_PROPERTY = "showDateRange";
@@ -100,12 +107,17 @@ public class IWDatePicker extends TextInput {
 		setInputName(name);
 	}
 
-    @Override
-	public void encodeBegin(FacesContext context) throws IOException {
-    	ValueExpression ve = getValueExpression(INITIAL_DATE_PROPERTY);
+	private void initializeProperties(FacesContext context) {
+		ValueExpression ve = getValueExpression(INITIAL_DATE_PROPERTY);
     	if (ve != null) {
 	    	Date date = (Date) ve.getValue(context.getELContext());
 	    	setDate(date);
+    	}
+
+    	ve = getValueExpression(COMPOSITE_ID_PROPERTY);
+    	if (ve != null) {
+    		String compositeId = (String) ve.getValue(context.getELContext());
+	    	setCompositeId(compositeId);
     	}
 
     	ve = getValueExpression(INITIAL_DATE_TO_PROPERTY);
@@ -129,6 +141,13 @@ public class IWDatePicker extends TextInput {
 		ve = getValueExpression(INPUT_NAME_PROPERTY);
     	if (ve != null) {
 	    	String name = (String) ve.getValue(context.getELContext());
+	    	setInputName(name);
+    	}
+
+    	ve = getValueExpression(NAME_PROPERTY);
+    	if (ve != null) {
+	    	String name = (String) ve.getValue(context.getELContext());
+	    	setName(name);
 	    	setInputName(name);
     	}
 
@@ -201,12 +220,17 @@ public class IWDatePicker extends TextInput {
 	    		setAlternateFieldId(version);
 	    	}
     	}
+	}
 
+    @Override
+	public void encodeBegin(FacesContext context) throws IOException {
+    	initializeProperties(context);
     	super.encodeBegin(context);
     }
 
 	@Override
 	public void main(IWContext iwc) {
+		initializeProperties(iwc);
 		if (inputName == null) {
 			inputName = this.getId();
 		}
@@ -260,7 +284,7 @@ public class IWDatePicker extends TextInput {
 //			"datepicker";
 			VERSION_1_8_17.equals(version) ? isShowTime() ? "datetimepicker" : "datepicker" : "iwDatePicker";
 //			isShowTime() ? "datetimepicker" : "datepicker";
-		StringBuffer initAction = new StringBuffer("jQuery('#").append(this.getId()).append("').").append(function).append("({");
+		StringBuffer initAction = new StringBuffer("jQuery('#").append(!StringUtil.isEmpty(getCompositeId()) ? getCompositeId() : this.getId()).append("').").append(function).append("({");
 
 		initAction.append("iwdp:{id:'").append(getId()).append("',lang:'").append(locale.getLanguage()).append("'},");
 		// Is date range?
@@ -487,6 +511,14 @@ public class IWDatePicker extends TextInput {
 		this.onSelectAction = onSelectAction;
 	}
 
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
+	}
+
 	public String getInputName() {
 		return inputName;
 	}
@@ -581,4 +613,11 @@ public class IWDatePicker extends TextInput {
 		this.alternateFieldId = alternateFieldId;
 	}
 
+	public String getCompositeId() {
+		return compositeId;
+	}
+
+	public void setCompositeId(String compositeId) {
+		this.compositeId = compositeId;
+	}
 }
