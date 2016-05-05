@@ -65,8 +65,12 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public User getUser(String personalID) {
-		Param param = new Param("personalID", personalID);
-		return getSingleResult("user.findByPersonalID", User.class, param);
+		if (!StringUtil.isEmpty(personalID)) {
+			Param param = new Param("personalID", personalID);
+			return getSingleResult("user.findByPersonalID", User.class, param);
+		}
+
+		return null;
 	}
 
 	@Override
