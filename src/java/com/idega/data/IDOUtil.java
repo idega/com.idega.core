@@ -238,10 +238,10 @@ public class IDOUtil implements Singleton {
 	 * @return {@link List} of {@link IDOEntity#getPrimaryKey()} or
 	 * {@link Collections#emptyList()} on failure;
 	 */
-	public List<String> getPrimaryKeys(Collection<? extends IDOEntity> entities){
+	public List<String> getPrimaryKeys(Collection<? extends EJBLocalObject> entities){
 		if(!ListUtil.isEmpty(entities)){
 			List<String> returnList = new ArrayList<String>(entities.size());
-			for (Iterator<? extends IDOEntity> iter = entities.iterator(); iter.hasNext();) {
+			for (Iterator<? extends EJBLocalObject> iter = entities.iterator(); iter.hasNext();) {
 				returnList.add(iter.next().getPrimaryKey().toString());
 			}
 
@@ -250,6 +250,19 @@ public class IDOUtil implements Singleton {
 		else {
 			return Collections.emptyList();
 		}
+	}
+
+	public List<Integer> getPrimaryKeyIntegers(Collection<? extends EJBLocalObject> entities){
+		ArrayList<Integer> integers = new ArrayList<Integer>();
+		
+		List<String> primaryKeys = getPrimaryKeys(entities);
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			for (String primaryKey : primaryKeys) {
+				integers.add(Integer.valueOf(primaryKey));
+			}
+		}
+
+		return integers;
 	}
 
 	/**
