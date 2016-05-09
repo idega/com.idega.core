@@ -230,19 +230,16 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 			if (getAddress(entity.getId()) == null) {
 				persist(entity);
 				if (entity.getId() != null) {
-					getLogger().fine("Entity: " + entity + " created!");
 					return entity;
 				}
 			} else {
 				entity = merge(entity);
 				if (entity != null) {
-					getLogger().fine("Entity: " + entity + " updated");
 					return entity;
 				}
 			}
 		}
 
-		getLogger().warning("Failed to create/update entity: " + entity);
 		return null;
 	}
 }
