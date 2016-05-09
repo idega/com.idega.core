@@ -10,6 +10,7 @@
 package com.idega.core.builder.business;
 
 import java.io.InputStream;
+import java.net.URL;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.List;
@@ -393,4 +394,11 @@ public interface BuilderService extends IBOService
 	public List<com.idega.core.component.business.ComponentProperty> getComponentProperties(IWContext iwc, String instanceId);
 
 	public ICPage getUsersHomePage(User user);
+
+	/**
+	 * 
+	 * @param objectClass is {@link UIComponent} to find, not <code>null</code>;
+	 * @return {@link URL} to page, having provided or <code>null</code> on failure;
+	 */
+	public String getPageUrlByComponent(Class<? extends UIComponent> objectClass);
 }

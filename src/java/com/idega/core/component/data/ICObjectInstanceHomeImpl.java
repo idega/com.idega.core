@@ -2,6 +2,7 @@ package com.idega.core.component.data;
 
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 
 import javax.ejb.CreateException;
@@ -12,6 +13,7 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDOException;
 import com.idega.data.IDOFactory;
 import com.idega.data.IDORemoveRelationshipException;
+import com.idega.util.ListUtil;
 
 public class ICObjectInstanceHomeImpl extends IDOFactory implements ICObjectInstanceHome {
 
@@ -97,9 +99,19 @@ public class ICObjectInstanceHomeImpl extends IDOFactory implements ICObjectInst
 	@Override
 	public Collection<ICObjectInstance> getByICObject(ICObject ico) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
-		Collection<?> ids = ((ICObjectInstanceBMPBean) entity).ejbFindByICObject(ico);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
+		
+		Collection<ICObjectInstance> entities = new ArrayList<ICObjectInstance>();
+		
+		Collection<Integer> ids = ((ICObjectInstanceBMPBean) entity).ejbFindByICObject(ico);
+		if (!ListUtil.isEmpty(ids)) {
+			for (Integer id : ids) {
+				ICObjectInstance foundEntity = findByPrimaryKey(id);
+				if (foundEntity != null) {
+					entities.add(foundEntity);
+				}
+			}
+		}
+		return entities;
 	}
 
 }
