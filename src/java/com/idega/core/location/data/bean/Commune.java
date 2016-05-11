@@ -4,8 +4,10 @@
 package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.idega.user.data.bean.Group;
@@ -27,7 +30,10 @@ import com.idega.user.data.bean.Group;
 	@NamedQuery(name = "commune.findAll", query = "select c from Commune c order by c.name"),
 	@NamedQuery(name = "commune.findByName", query = "select c from Commune c where c.commune = :commune"),
 	@NamedQuery(name = "commune.findByCode", query = "select c from Commune c where c.code = :code"),
-	@NamedQuery(name = "commune.findDefaultCommune", query = "select c from Commune c where c.isDefault = 'Y'")
+	@NamedQuery(name = "commune.findDefaultCommune", query = "select c from Commune c where c.isDefault = 'Y'"),
+	@NamedQuery(
+			name = Commune.QUERY_FIND_BY_ADDRESS_ID, 
+			query="SELECT DISTINCT c FROM Commune c JOIN c.addresses a ON a.id = :id")
 })
 public class Commune implements Serializable {
 
@@ -74,6 +80,18 @@ public class Commune implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = Commune.COLUMN_GROUP_ID)
 	private Group group;
+
+	public static final String QUERY_FIND_BY_ADDRESS_ID = "commune.findByAddressId";
+	@OneToMany(
+			mappedBy = "commune",
+			fetch = FetchType.LAZY,
+			orphanRemoval = false,
+			cascade = {
+					CascadeType.PERSIST, 
+					CascadeType.MERGE,
+					CascadeType.DETACH,
+					CascadeType.REFRESH})
+	private List<Address> addresses;
 
 	public Commune() {
 		setValid(true);
@@ -218,5 +236,13 @@ public class Commune implements Serializable {
 	 */
 	public void setGroup(Group group) {
 		this.group = group;
+	}
+
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
 	}
 }
