@@ -31,7 +31,11 @@ import com.idega.user.data.bean.User;
 	@NamedQuery(name = "phone.findAll", query = "select p from Phone p"),
 	@NamedQuery(name = "phone.findUsersFaxPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_FAX_NUMBER + " and u.userID = :userID"),
 	@NamedQuery(name = "phone.findUsersHomePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_HOME_PHONE + " and u.userID = :userID"),
-	@NamedQuery(name = "phone.findUsersMobilePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_MOBILE_PHONE + " and u.userID = :userID"),
+	@NamedQuery(
+			name = Phone.QUERY_FIND_MOBILE_BY_USER_ID, 
+			query = 	"SELECT DISTINCT p FROM Phone p "
+					+ 	"JOIN p.users u ON u.userID = :userID " 
+					+ 	"JOIN p.phoneType t ON t.uniqueName = :uniqueName"),
 	@NamedQuery(name = "phone.findPhoneByNumber", query = "select p from Phone p where p.number = :phoneNumber"),
 	@NamedQuery(name = "phone.findUsersWorkPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_WORK_PHONE + " and u.userID = :userID")
 })
@@ -46,6 +50,7 @@ public class Phone implements Serializable {
 	private static final String COLUMN_PHONE_TYPE_ID = "ic_phone_type_id";
 
 	public static final String QUERY_FIND_BY_ID = "phone.findById";
+	public static final String QUERY_FIND_MOBILE_BY_USER_ID = "phone.findUsersMobilePhone";
 	public static final String phoneIdProp = "phoneID";
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

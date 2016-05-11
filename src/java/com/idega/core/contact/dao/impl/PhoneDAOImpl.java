@@ -82,6 +82,9 @@
  */
 package com.idega.core.contact.dao.impl;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -118,4 +121,20 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.dao.PhoneDAO#findByUserId(java.lang.Integer)
+	 */
+	@Override
+	public Collection<Phone> findByUserId(Integer userId, String uniqueName) {
+		if (userId != null) {
+			return getResultList(
+					Phone.QUERY_FIND_MOBILE_BY_USER_ID, 
+					Phone.class, 
+					new Param("userID", userId),
+					new Param("uniqueName", uniqueName));
+		}
+
+		return Collections.emptyList();
+	}
 }
