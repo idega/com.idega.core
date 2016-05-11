@@ -74,7 +74,9 @@ public class PostalCode implements Serializable {
 			orphanRemoval = false,
 			cascade = {
 					CascadeType.PERSIST, 
-					CascadeType.MERGE })
+					CascadeType.MERGE,
+					CascadeType.DETACH,
+					CascadeType.REFRESH})
 	private List<Address> addresses;
 
 	/**
