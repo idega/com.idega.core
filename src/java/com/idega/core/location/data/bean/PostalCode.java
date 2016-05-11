@@ -4,8 +4,10 @@
 package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -16,6 +18,7 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 @Entity
@@ -24,7 +27,10 @@ import javax.persistence.Table;
 @NamedQueries({
 	@NamedQuery(name = "postalCode.findAll", query = "select p from PostalCode p order by p.postalCode"),
 	@NamedQuery(name = "postalCode.findAllByCountry", query = "select p from PostalCode p where p.country = :country order by p.postalCode"),
-	@NamedQuery(name = "postalCode.findByPostalCode", query = "select p from PostalCode p where p.postalCode = :postalCode")
+	@NamedQuery(name = "postalCode.findByPostalCode", query = "select p from PostalCode p where p.postalCode = :postalCode"),
+	@NamedQuery(name = PostalCode.QUERY_FIND_BY_ADDRESS, 
+		query =		"SELECT DISTINCT p FROM PostalCode p "
+				+	"JOIN p.addresses a ON a.id = :id")
 })
 public class PostalCode implements Serializable {
 
@@ -59,6 +65,17 @@ public class PostalCode implements Serializable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_COMMUNE_ID)
 	private Commune commune;
+
+	public static final String QUERY_FIND_BY_ADDRESS = "postalCode.findByAddress";
+	public static final String addressesProp = "addresses";
+	@OneToMany(
+			mappedBy = "postalCode", 
+			fetch = FetchType.LAZY,
+			orphanRemoval = false,
+			cascade = {
+					CascadeType.PERSIST, 
+					CascadeType.MERGE })
+	private List<Address> addresses;
 
 	/**
 	 * @return the postalCodeID
@@ -148,5 +165,13 @@ public class PostalCode implements Serializable {
 	 */
 	public void setCommune(Commune commune) {
 		this.commune = commune;
+	}
+
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
 	}
 }
