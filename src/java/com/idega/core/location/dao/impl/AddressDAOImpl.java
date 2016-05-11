@@ -3,6 +3,8 @@
  */
 package com.idega.core.location.dao.impl;
 
+import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -20,11 +22,26 @@ import com.idega.core.location.data.bean.Province;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.Group;
+import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("addressDAO")
 @Transactional(readOnly = true)
 public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
+
+	@Override
+	public Collection<Address> findBy(Integer userId, String addressTypeName) {
+		if (userId != null && !StringUtil.isEmpty(addressTypeName)) {
+			return getResultList(
+					Address.QUERY_FIND_BY_USER_AND_TYPE, 
+					Address.class, 
+					new Param("userID", userId), 
+					new Param("uniqueName", addressTypeName));
+		}
+
+		return Collections.emptyList();
+	}
+	
 
 	@Override
 	@Transactional(readOnly = false)
