@@ -14,6 +14,8 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.business.SpringBeanName;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.EmailType;
+import com.idega.core.contact.data.bean.Phone;
+import com.idega.core.contact.data.bean.PhoneType;
 import com.idega.core.persistence.GenericDao;
 import com.idega.user.data.bean.User;
 
@@ -27,4 +29,10 @@ public interface ContactDAO extends GenericDao {
 	public Email findEmailForUserByType(User user, EmailType type);
 
 	public EmailType getMainEmailType();
+	
+	public Email findEmailByAddress(String address);
+	
+	public Phone createPhone(String number, PhoneType type);
+	
+	public Phone findPhoneByNumber(String number);
 }

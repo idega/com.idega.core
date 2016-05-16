@@ -1449,7 +1449,6 @@ public void delete(int userId) throws SQLException {
 	 * not <code>null</code>;
 	 * @return {@link Collection} of {@link User#getPrimaryKey()} or
 	 * {@link Collections#emptyList()};
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<Object> ejbFindByFirstPersonalIDLetters(String personalID) {
 		if (StringUtil.isEmpty(personalID)) {

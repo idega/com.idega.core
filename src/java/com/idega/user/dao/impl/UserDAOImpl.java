@@ -79,8 +79,12 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public User getUser(String personalID) {
-		Param param = new Param("personalID", personalID);
-		return getSingleResult("user.findByPersonalID", User.class, param);
+		if (!StringUtil.isEmpty(personalID)) {
+			Param param = new Param("personalID", personalID);
+			return getSingleResult("user.findByPersonalID", User.class, param);
+		}
+
+		return null;
 	}
 
 	@Override
@@ -328,5 +332,24 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 				query.toString(),
 				User.class,
 				parameters.toArray(new Param[parameters.size()]));
+	}
+	
+	@Override
+	public List<User> getUsersByEmailAddress(String emailAddress) {
+		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
+		if (ListUtil.isEmpty(emails))
+			return null;
+
+		List<User> usersList = new ArrayList<User>();
+		
+		for (Email email: emails) {
+			List<User> users = email.getUsers();
+			initialize(users);
+			if (!ListUtil.isEmpty(users)) {
+				usersList.addAll(users);
+			}
+		}
+
+		return usersList;
 	}
 }

@@ -9,6 +9,9 @@
  */
 package com.idega.core.contact.dao.impl;
 
+import java.util.List;
+
+import org.hsqldb.lib.StringUtil;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -17,10 +20,12 @@ import org.springframework.transaction.annotation.Transactional;
 import com.idega.core.contact.dao.ContactDAO;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.EmailType;
+import com.idega.core.contact.data.bean.Phone;
+import com.idega.core.contact.data.bean.PhoneType;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.User;
-import com.idega.util.StringUtil;
+import com.idega.util.ListUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("contactDAO")
@@ -55,6 +60,36 @@ public class ContactDAOImpl extends GenericDaoImpl implements ContactDAO {
 	@Override
 	public EmailType getMainEmailType() {
 		return getSingleResult("emailType.findByUniqueType", EmailType.class, new Param("uniqueName", EmailType.MAIN_EMAIL));
+	}
+
+	@Override
+	public Email findEmailByAddress(String address) {
+		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", address));
+		if(ListUtil.isEmpty(emails)) {
+			return null;
+		}
+		return emails.get(0);
+	}
+
+	@Override
+	public Phone createPhone(String number, PhoneType type) {
+		Phone phone = new Phone();
+		phone.setNumber(number);
+		phone.setPhoneType(type);
+		persist(phone);
+		return phone;
+	}
+
+	@Override
+	public Phone findPhoneByNumber(String number) {
+		if(StringUtil.isEmpty(number)) {
+			return null;
+		}
+		List<Phone> phones = getResultList("phone.findPhoneByNumber", Phone.class, new Param("phoneNumber", number));
+		if(ListUtil.isEmpty(phones)) {
+			return null;
+		}
+		return phones.get(0);
 	}
 
 }

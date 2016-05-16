@@ -82,7 +82,12 @@
  */
 package com.idega.core.contact.dao;
 
+import java.util.Collection;
+import java.util.Collections;
+
 import com.idega.core.contact.data.bean.Phone;
+import com.idega.core.contact.data.bean.PhoneType;
+import com.idega.user.data.bean.User;
 
 /**
  * <p>Data access object for {@link Phone}</p>
@@ -100,4 +105,12 @@ public interface PhoneDAO {
 	 * @return entity or <code>null</code> on failure;
 	 */
 	Phone findByPrimaryKey(Integer primaryKey);
+
+	/**
+	 * 
+	 * @param userId is {@link User#getId()}, not <code>null</code>;
+	 * @param uniqueName is {@link PhoneType#getUniqueName()}, not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure; 
+	 */
+	Collection<Phone> findByUserId(Integer userId, String uniqueName);
 }

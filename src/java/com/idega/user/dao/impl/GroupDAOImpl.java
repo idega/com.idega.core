@@ -638,5 +638,16 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 	}
 
+	@Override
+	public Group findGroupByName(String name) {
+		if(StringUtil.isEmpty(name)) {
+			return null;
+		}
+		List<Group> groups = getResultList("group.findByName", Group.class, new Param("name", name));
+		if(ListUtil.isEmpty(groups)) {
+			return null;
+		}
+		return groups.get(0);
+	}
 
 }

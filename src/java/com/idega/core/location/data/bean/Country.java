@@ -4,15 +4,19 @@
 package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
+import java.util.List;
 
 import javax.persistence.Cacheable;
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -22,7 +26,11 @@ import javax.xml.bind.annotation.XmlTransient;
 @NamedQueries({
 	@NamedQuery(name="country.findAll", query="select c from Country c order by c.name"),
 	@NamedQuery(name="country.findByISOAbbreviation", query="select c from Country c where c.ISOAbbreviation = :isoAbbreviation"),
-	@NamedQuery(name="country.findByName", query="select c from Country c where c.name = :name")
+	@NamedQuery(name="country.findByName", query="select c from Country c where c.name = :name"),
+	@NamedQuery(
+			name = Country.QUERY_FIND_BY_ADDRESS_ID, 
+			query="SELECT DISTINCT c FROM Country c JOIN c.addresses a ON a.id = :id")
+
 })
 @XmlTransient
 public class Country implements Serializable {
@@ -48,6 +56,18 @@ public class Country implements Serializable {
 
 	@Column(name = Country.COLUMN_ISO_ABBREVIATION, unique = true, nullable = false)
 	private String ISOAbbreviation;
+
+	public static final String QUERY_FIND_BY_ADDRESS_ID = "country.findByAddressId";
+	@OneToMany(
+			mappedBy = "country",
+			fetch = FetchType.LAZY,
+			orphanRemoval = false,
+			cascade = {
+					CascadeType.PERSIST, 
+					CascadeType.MERGE,
+					CascadeType.DETACH,
+					CascadeType.REFRESH})
+	private List<Address> addresses;
 
 	/**
 	 * @return the countryID
@@ -103,6 +123,14 @@ public class Country implements Serializable {
 	 */
 	public void setISOAbbreviation(String abbreviation) {
 		this.ISOAbbreviation = abbreviation;
+	}
+
+	public List<Address> getAddresses() {
+		return addresses;
+	}
+
+	public void setAddresses(List<Address> addresses) {
+		this.addresses = addresses;
 	}
 
 	@Override

@@ -25,6 +25,7 @@ import javax.persistence.Table;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.DBUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
 @Entity
@@ -32,7 +33,13 @@ import com.idega.util.text.TextSoap;
 @Table(name = Address.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "address.findByPostalCode", query = "select a from Address a where a.postalCode = :postalCode"),
-	@NamedQuery(name = Address.QUERY_FIND_BY_USER_AND_ADDRESS_TYPE, query = "select a from Address a join a.users u where u.userID = :userID and a.addressType = :addressType")
+	@NamedQuery(name = Address.QUERY_FIND_BY_USER_AND_ADDRESS_TYPE, query = "select a from Address a join a.users u where u.userID = :userID and a.addressType = :addressType"),
+	@NamedQuery(
+			name = Address.QUERY_FIND_BY_USER_AND_TYPE,
+			query = 	"SELECT DISTINCT a FROM Address a "
+					+ 	"JOIN a.users u "
+					+ 	"ON u.userID = :userID "
+					+ 	"JOIN a.addressType t ON t.uniqueName = :uniqueName")
 })
 public class Address implements Serializable {
 
@@ -56,10 +63,12 @@ public class Address implements Serializable {
 	private static final String COLUMN_ADDRESS_COORDINATE = "ic_address_coordinate_id";
 	private static final String COLUMN_CITY = "city";
 
+	public static final String QUERY_FIND_BY_USER_AND_TYPE = "address.findByUserAndType";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_ADDRESS_ID)
-	private Integer addressID;
+	private Integer id;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_ADDRESS_TYPE)
@@ -113,7 +122,7 @@ public class Address implements Serializable {
 	 * @return the addressID
 	 */
 	public Integer getId() {
-		return this.addressID;
+		return this.id;
 	}
 
 	/**
@@ -121,7 +130,7 @@ public class Address implements Serializable {
 	 *          the addressID to set
 	 */
 	public void setId(Integer addressID) {
-		this.addressID = addressID;
+		this.id = addressID;
 	}
 
 	/**
@@ -322,6 +331,22 @@ public class Address implements Serializable {
 			addr.append(number);
 		}
 		return TextSoap.capitalize(addr.toString(), CoreConstants.SPACE);
+	}
+
+	public String getAddress() {
+		String name = getStreetNameOriginal();
+		String number = getStreetNumber();
+		StringBuilder address = new StringBuilder();
+		if (name != null) {
+			address.append(name);
+		}
+		if (!StringUtil.isEmpty(number)) {
+			if (name != null) {
+				address.append(CoreConstants.SPACE);
+			}
+			address.append(number);
+		}
+		return address.toString();
 	}
 
 }

@@ -192,7 +192,7 @@ public class IWBundleResourceFilter extends BaseFilter {
 		if (index != -1) {
 			rest = requestUriWithoutContextPath.substring(index + BUNDLE_SUFFIX.length() + 1);
 		} else {
-			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length()+1);
+			String URIWithoutBundlesURI = requestUriWithoutContextPath.substring(BUNDLES_STANDARD_DIR.length());
 			index = URIWithoutBundlesURI.indexOf(CoreConstants.SLASH);
 			rest = URIWithoutBundlesURI.substring(index);
 		}

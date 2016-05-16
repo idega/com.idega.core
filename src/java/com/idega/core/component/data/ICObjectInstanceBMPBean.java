@@ -196,7 +196,7 @@ public class ICObjectInstanceBMPBean extends com.idega.data.GenericEntity implem
 		return idoGetNumberOfRecords(query);
 	}
 
-	public Collection<?> ejbFindByICObject(ICObject ico) throws FinderException {
+	public Collection<Integer> ejbFindByICObject(ICObject ico) throws FinderException {
 		Table thisTable = new Table(this);
 
 		SelectQuery query = new SelectQuery(thisTable);

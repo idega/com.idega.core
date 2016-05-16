@@ -1,5 +1,5 @@
 /**
- * @(#)PhoneDAOImpl.java    1.0.0 13:49:44
+ * @(#)PostalCodeDAOimpl.java    1.0.0 12:18:33
  *
  * Idega Software hf. Source Code Licence Agreement x
  *
@@ -80,18 +80,15 @@
  *     License that was purchased to become eligible to receive the Source 
  *     Code after Licensee receives the source code. 
  */
-package com.idega.core.contact.dao.impl;
-
-import java.util.Collection;
-import java.util.Collections;
+package com.idega.core.location.dao.impl;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.idega.core.contact.dao.PhoneDAO;
-import com.idega.core.contact.data.bean.Phone;
+import com.idega.core.location.dao.PostalCodeDAO;
+import com.idega.core.location.data.bean.PostalCode;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 
@@ -99,42 +96,27 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
  * <p>You can report about problems to: 
  * <a href="mailto:martynas@idega.is">Martynas Stakė</a></p>
  *
- * @version 1.0.0 2016 bal. 18
+ * @version 1.0.0 2016 geg. 11
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
-@Repository(PhoneDAOImpl.BEAN_NAME)
+@Repository
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Transactional(readOnly = false)
-public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
-	
-	public static final String BEAN_NAME = "phoneDAO";
+public class PostalCodeDAOimpl extends GenericDaoImpl implements PostalCodeDAO {
 
-	/* (non-Javadoc)
-	 * @see com.idega.core.contact.dao.PhoneDAO#findByPrimaryKey(java.lang.Integer)
+	/* 
+	 * (non-Javadoc)
+	 * @see com.idega.core.location.dao.PostalCodeDAO#findByAddress(java.lang.Integer)
 	 */
 	@Override
-	public Phone findByPrimaryKey(Integer primaryKey) {
-		if (primaryKey != null) {
-			getSingleResult(Phone.QUERY_FIND_BY_ID, Phone.class, new Param(Phone.phoneIdProp, primaryKey));
+	public PostalCode findByAddress(Integer addressId) {
+		if (addressId != null) {
+			return getSingleResult(
+					PostalCode.QUERY_FIND_BY_ADDRESS, 
+					PostalCode.class, 
+					new Param("id", addressId));
 		}
 
 		return null;
-	}
-
-	/*
-	 * (non-Javadoc)
-	 * @see com.idega.core.contact.dao.PhoneDAO#findByUserId(java.lang.Integer)
-	 */
-	@Override
-	public Collection<Phone> findByUserId(Integer userId, String uniqueName) {
-		if (userId != null) {
-			return getResultList(
-					Phone.QUERY_FIND_MOBILE_BY_USER_ID, 
-					Phone.class, 
-					new Param("userID", userId),
-					new Param("uniqueName", uniqueName));
-		}
-
-		return Collections.emptyList();
 	}
 }
