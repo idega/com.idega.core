@@ -127,6 +127,10 @@ public class Email implements Serializable, EmailDataView {
 		return this.users;
 	}
 
+	public void setUsers(List<User> users) {
+		this.users = users;
+	}
+
 	/**
 	 * @return the users
 	 */

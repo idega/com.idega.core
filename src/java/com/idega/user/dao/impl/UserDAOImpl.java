@@ -16,6 +16,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.contact.dao.ContactDAO;
+import com.idega.core.contact.dao.EMailDAO;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.persistence.Param;
@@ -27,6 +28,7 @@ import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 @Repository("userDAO")
 @Transactional(readOnly = true)
@@ -35,6 +37,17 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Autowired
 	ContactDAO contactDAO;
+
+	@Autowired
+	private EMailDAO eMailDAO;
+
+	private EMailDAO getEMailDAO() {
+		if (this.eMailDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.eMailDAO;
+	}
 
 	@Override
 	@Transactional(readOnly = false)
@@ -98,26 +111,21 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return contactDAO.findEmailForUserByType(user, mainEmailType);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#updateUserMainEmail(com.idega.user.data.bean.User, java.lang.String)
+	 */
 	@Override
 	public Email updateUserMainEmail(User user, String address) {
 		Email email = getUsersMainEmail(user);
-		if (email == null) {
-			email = contactDAO.createEmail(address, contactDAO.getMainEmailType());
-			persist(email);
-		} else {
-			email.setAddress(address);
-			merge(email);
+		if (email != null) {
+			getEMailDAO().update(email.getId(), null, null,	"sub", null);
 		}
 
-		List<Email> emails = user.getEmails();
-		if (emails == null) {
-			emails = new ArrayList<Email>();
-		}
-		emails.add(email);
-		user.setEmails(emails);
-		merge(user);
-
-		return email;
+		return getEMailDAO().update(null, 
+				user.getId(), 
+				address, 
+				contactDAO.getMainEmailType());
 	}
 
 	@Override
