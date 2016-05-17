@@ -82,6 +82,7 @@
  */
 package com.idega.core.contact.dao.impl;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -213,7 +214,7 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 			 */
 			User user = find(User.class, userId);
 			if (user != null) {
-				entity.setUsers(Arrays.asList(user));
+				entity.setUsers(new ArrayList<User>(Arrays.asList(user)));
 			}
 		}
 
