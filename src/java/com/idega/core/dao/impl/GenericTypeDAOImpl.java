@@ -145,7 +145,11 @@ public class GenericTypeDAOImpl extends GenericDaoImpl implements
 					clazz);
 
 			query.setParameter("uniqueName", name);
-			return query.getSingleResult();
+			try {
+				return query.getSingleResult();
+			} catch (Exception e) {
+				getLogger().warning("Nothing found by name: " + name + " and class: " + clazz );
+			}
 		}
 
 		return null;
