@@ -48,6 +48,7 @@ import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.dao.UserDAO;
 import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -424,6 +425,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Phone> getPhones() {
+		phones = DBUtil.getInstance().lazyLoad(phones);
 		return this.phones;
 	}
 
@@ -627,6 +629,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<UserLogin> getLogins() {
+		logins = DBUtil.getInstance().lazyLoad(logins);
 		return logins;
 	}
 
