@@ -36,7 +36,9 @@ import com.idega.user.data.bean.User;
 			query = 	"SELECT DISTINCT p FROM Phone p "
 					+ 	"JOIN p.users u ON u.userID = :userID " 
 					+ 	"JOIN p.phoneType t ON t.uniqueName = :uniqueName"),
-	@NamedQuery(name = "phone.findPhoneByNumber", query = "select p from Phone p where p.number = :phoneNumber"),
+	@NamedQuery(
+			name = Phone.QUERY_FIND_BY_NUMBER, 
+			query = 	"SELECT p FROM Phone p WHERE p.number = :phoneNumber"),
 	@NamedQuery(name = "phone.findUsersWorkPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_WORK_PHONE + " and u.userID = :userID")
 })
 public class Phone implements Serializable {
@@ -57,6 +59,7 @@ public class Phone implements Serializable {
 	@Column(name = COLUMN_PHONE_ID)
 	private Integer phoneID;
 
+	public static final String QUERY_FIND_BY_NUMBER = "phone.findPhoneByNumber";
 	@Column(name = COLUMN_NUMBER)
 	private String number;
 
@@ -141,6 +144,10 @@ public class Phone implements Serializable {
 	 */
 	public List<User> getUsers() {
 		return this.users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	/**

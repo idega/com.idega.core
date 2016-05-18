@@ -82,9 +82,12 @@
  */
 package com.idega.core.contact.dao.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -92,8 +95,14 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.contact.dao.PhoneDAO;
 import com.idega.core.contact.data.bean.Phone;
+import com.idega.core.contact.data.bean.PhoneType;
+import com.idega.core.dao.GenericTypeDAO;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.user.data.bean.User;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  * <p>You can report about problems to: 
@@ -108,6 +117,17 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
 public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 	
 	public static final String BEAN_NAME = "phoneDAO";
+
+	@Autowired
+	private GenericTypeDAO genericTypeDAO;
+
+	private GenericTypeDAO getGenericTypeDAO() {
+		if (this.genericTypeDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+
+		return this.genericTypeDAO;
+	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.core.contact.dao.PhoneDAO#findByPrimaryKey(java.lang.Integer)
@@ -124,7 +144,7 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.core.contact.dao.PhoneDAO#findByUserId(java.lang.Integer)
-	 */
+	 */ 
 	@Override
 	public Collection<Phone> findByUserId(Integer userId, String uniqueName) {
 		if (userId != null) {
@@ -136,5 +156,105 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 		}
 
 		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.dao.PhoneDAO#findByPhoneNumber(java.lang.String)
+	 */
+	@Override
+	public Phone findByPhoneNumber(String phoneNumber) {
+		if (!StringUtil.isEmpty(phoneNumber)) {
+			return getSingleResult(
+					Phone.QUERY_FIND_BY_NUMBER, 
+					Phone.class, 
+					new Param("phoneNumber", phoneNumber));
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.dao.PhoneDAO#update(com.idega.core.contact.data.bean.Phone)
+	 */
+	@Override
+	public Phone update(Phone entity) {
+		if (entity != null) {
+			if (findByPrimaryKey(entity.getId()) == null) {
+				persist(entity);
+				if (entity.getId() != null) {
+					getLogger().fine("Entity: " + entity + " created!");
+					return entity;
+				}
+			} else {
+				entity = merge(entity);
+				if (entity != null) {
+					getLogger().fine("Entity: " + entity + " updated");
+					return entity;
+				}
+			}		
+		}
+
+		getLogger().warning("Failed to create/update entity: " + entity);
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.dao.PhoneDAO#update(java.lang.Integer, java.lang.Integer, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public Phone update(Integer id, Integer userId, String phoneNumber, String phoneType) {
+		Phone entity = findByPrimaryKey(id);
+		if (entity == null) {
+			entity = findByPhoneNumber(phoneNumber);
+		}
+
+		if (entity == null) {
+			entity = new Phone();
+		}
+
+		if (!StringUtil.isEmpty(phoneNumber)) {
+			entity.setNumber(phoneNumber);
+		}
+
+		if (!StringUtil.isEmpty(phoneType)) {
+			entity.setPhoneType(getGenericTypeDAO().update(null, phoneType, 
+					null, null, PhoneType.class));
+		}
+
+		if (userId != null) {
+			User user = find(User.class, userId);
+			if (user != null) {
+
+				/*
+				 * Allowing only one user to have this particular phone number
+				 */
+				entity.setUsers(new ArrayList<User>(Arrays.asList(user)));
+			}
+		}
+
+		return update(entity);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.contact.dao.PhoneDAO#update(java.lang.Integer, java.util.Collection)
+	 */
+	@Override
+	public Collection<Phone> update(Integer userId, Collection<String> phoneNumbers) {
+		ArrayList<Phone> entities = new ArrayList<Phone>();
+
+		if (!ListUtil.isEmpty(phoneNumbers)) {
+			for (String phoneNumber : phoneNumbers) {
+				Phone entity = update(null, userId, phoneNumber, null);
+				if (entity != null) {
+					entities.add(entity);
+				}
+			}
+		}
+
+		return entities;
 	}
 }
