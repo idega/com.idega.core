@@ -671,7 +671,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 				GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + " WHERE gr." + COLUMN_GROUP_ID + " = " + containingGroup.getPrimaryKey() + " and gr." + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " = '" +
 				RELATION_TYPE_GROUP_PARENT + "' and ( gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" + GroupRelationBMPBean.STATUS_ACTIVE + "' or gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" +
 				GroupRelationBMPBean.STATUS_PASSIVE_PENDING + "' ) and g." + COLUMN_GROUP_TYPE + " like '" + groupTypeProxy.getGroupTypeKey() + "' ";
-		query += order;
+//		query += order;
 
 		return idoFindPKsBySQLIgnoringCache(query, -1, -1, null, theClass, idColumn);
 	}
