@@ -24,16 +24,18 @@ import javax.persistence.Table;
 
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.text.TextSoap;
 
 @Entity
 @Cacheable
 @Table(name = Address.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "address.findByPostalCode", query = "select a from Address a where a.postalCode = :postalCode"),
-	@NamedQuery(name = "address.findByUserAndAddressType", query = "select a from Address a join a.users u where u.userID = :userID and a.addressType = :addressType"),
+	@NamedQuery(name = Address.QUERY_FIND_BY_USER_AND_ADDRESS_TYPE, query = "select a from Address a join a.users u where u.userID = :userID and a.addressType = :addressType"),
 	@NamedQuery(
-			name = Address.QUERY_FIND_BY_USER_AND_TYPE, 
+			name = Address.QUERY_FIND_BY_USER_AND_TYPE,
 			query = 	"SELECT DISTINCT a FROM Address a "
 					+ 	"JOIN a.users u "
 					+ 	"ON u.userID = :userID "
@@ -42,6 +44,8 @@ import com.idega.util.StringUtil;
 public class Address implements Serializable {
 
 	private static final long serialVersionUID = 2192075177636648876L;
+
+	public static final String QUERY_FIND_BY_USER_AND_ADDRESS_TYPE = "address.findByUserAndAddressType";
 
 	public static final String ENTITY_NAME = "ic_address";
 	public static final String COLUMN_ADDRESS_ID = "ic_address_id";
@@ -58,7 +62,7 @@ public class Address implements Serializable {
 	private static final String COLUMN_COUNTRY = "ic_country_id";
 	private static final String COLUMN_ADDRESS_COORDINATE = "ic_address_coordinate_id";
 	private static final String COLUMN_CITY = "city";
-	
+
 	public static final String QUERY_FIND_BY_USER_AND_TYPE = "address.findByUserAndType";
 
 	@Id
@@ -133,6 +137,7 @@ public class Address implements Serializable {
 	 * @return the addressType
 	 */
 	public AddressType getAddressType() {
+		addressType = DBUtil.getInstance().lazyLoad(addressType);
 		return this.addressType;
 	}
 
@@ -232,6 +237,7 @@ public class Address implements Serializable {
 	 * @return the commune
 	 */
 	public Commune getCommune() {
+		commune = DBUtil.getInstance().lazyLoad(commune);
 		return this.commune;
 	}
 
@@ -247,6 +253,7 @@ public class Address implements Serializable {
 	 * @return the postalCode
 	 */
 	public PostalCode getPostalCode() {
+		postalCode = DBUtil.getInstance().lazyLoad(postalCode);
 		return this.postalCode;
 	}
 
@@ -262,6 +269,7 @@ public class Address implements Serializable {
 	 * @return the country
 	 */
 	public Country getCountry() {
+		country = DBUtil.getInstance().lazyLoad(country);
 		return this.country;
 	}
 
@@ -277,6 +285,7 @@ public class Address implements Serializable {
 	 * @return the addressCoordinate
 	 */
 	public AddressCoordinate getAddressCoordinate() {
+		addressCoordinate = DBUtil.getInstance().lazyLoad(addressCoordinate);
 		return this.addressCoordinate;
 	}
 
@@ -292,6 +301,7 @@ public class Address implements Serializable {
 	 * @return the users
 	 */
 	public List<User> getUsers() {
+		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
 	}
 
@@ -301,7 +311,7 @@ public class Address implements Serializable {
 	public void setUsers(List<User> users) {
 		this.users = users;
 	}
-	
+
 	public String getCity() {
 		return city;
 	}
@@ -309,7 +319,20 @@ public class Address implements Serializable {
 	public void setCity(String city) {
 		this.city = city;
 	}
-	
+
+	public String getStreetAddress() {
+		StringBuilder addr = new StringBuilder();
+		String street = getStreetName();
+		if (street != null) {
+			addr.append(street).append(CoreConstants.SPACE);
+		}
+		String number = this.getStreetNumber();
+		if (number != null) {
+			addr.append(number);
+		}
+		return TextSoap.capitalize(addr.toString(), CoreConstants.SPACE);
+	}
+
 	public String getAddress() {
 		String name = getStreetNameOriginal();
 		String number = getStreetNumber();
@@ -325,4 +348,5 @@ public class Address implements Serializable {
 		}
 		return address.toString();
 	}
+
 }

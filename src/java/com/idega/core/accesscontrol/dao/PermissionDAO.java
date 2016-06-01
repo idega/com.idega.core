@@ -4,11 +4,13 @@
 package com.idega.core.accesscontrol.dao;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.business.SpringBeanName;
+import com.idega.core.accesscontrol.business.RoleHelperObject;
 import com.idega.core.accesscontrol.data.bean.ICPermission;
 import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.PermissionGroup;
@@ -37,6 +39,8 @@ public interface PermissionDAO extends GenericDao {
 	public List<ICPermission> findPermissions(String contextType, String contextValue);
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString);
+	public List<ICPermission> findPermissionsByContextTypeAndPermission(String contextType, String permissionString);
+	public List<ICPermission> findPermissionsByRoles(List<String> roles);
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues, Group group);
 	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, String permissionValue);
 	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, String permissionString, String contextType);
@@ -53,4 +57,14 @@ public interface PermissionDAO extends GenericDao {
 
 	public ICRole findRole(String roleKey);
 	public List<ICRole> findAllRoles();
+
+	/**
+	 *
+	 * @param contextType is {@link RoleHelperObject#getStaticInstance()},
+	 * not <code>null</code>;
+	 * @param primaryKeys is {@link Collection} of {@link Group#getId()}, not <code>null</code>;
+	 * @return {@link Collection} of permissions or {@link Collections#emptyList()}
+	 * on failure;
+	 */
+	List<ICPermission> findAll(String contextType, Collection<Integer> primaryKeys);
 }

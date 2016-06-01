@@ -20,10 +20,13 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.idega.util.DBUtil;
+
 @Entity
 @Table(name = ICRole.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "role.findAll", query = "select r from ICRole r")
+	@NamedQuery(name = "role.findAll", query = "select r from ICRole r"),
+	@NamedQuery(name = ICRole.QUERY_FIND_ROLE_BY_KEY, query = "select r from ICRole r where r.roleKey = :key")
 })
 @Cacheable
 public class ICRole implements Serializable {
@@ -38,6 +41,8 @@ public class ICRole implements Serializable {
 	private static final String TREE_TABLE_NAME = ENTITY_NAME + "_tree";
 
 	public static final int ROLE_KEY_MAX_LENGTH = 50;
+
+	public static final String QUERY_FIND_ROLE_BY_KEY = "role.findByKey";
 
 	@Id
 	@Column(name = COLUMN_ROLE_KEY, length = ROLE_KEY_MAX_LENGTH)
@@ -103,6 +108,7 @@ public class ICRole implements Serializable {
 	}
 
 	public List<ICRole> getChildren() {
+		children = DBUtil.getInstance().lazyLoad(children);
 		return this.children;
 	}
 

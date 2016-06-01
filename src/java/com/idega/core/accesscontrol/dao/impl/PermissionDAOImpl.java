@@ -6,7 +6,9 @@ package com.idega.core.accesscontrol.dao.impl;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.persistence.Query;
 
@@ -16,6 +18,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
 import com.idega.core.accesscontrol.data.bean.ICPermission;
 import com.idega.core.accesscontrol.data.bean.ICRole;
@@ -26,8 +29,10 @@ import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
 import com.idega.user.data.bean.Group;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("permissionDAO")
@@ -190,6 +195,24 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, ICPermission.class, param1, param2);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.accesscontrol.dao.PermissionDAO#findAll(java.lang.String, java.lang.Integer)
+	 */
+	@Override
+	public List<ICPermission> findAll(String contextType, Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys) && !StringUtil.isEmpty(contextType)) {
+			return getResultList(
+					ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID,
+					ICPermission.class,
+					new Param("contextType", contextType),
+					new Param("group", primaryKeys));
+		}
+
+		return Collections.emptyList();
+	}
+
+
 	@Override
 	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Collection<Group> groups) {
 		Param param1 = new Param("contextType", contextType);
@@ -249,16 +272,35 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public void onApplicationEvent(IWMainApplicationStartedEvent event) {
-			IWMainApplicationSettings settings = event.getIWMA().getSettings();
-			if (settings.getBoolean("enlarge_perm_cntxt_column", Boolean.TRUE)) {
-				try {
-					SimpleQuerier.executeUpdate("ALTER TABLE " + ICPermission.ENTITY_NAME + " modify " + ICPermission.COLUMN_CONTEXT_VALUE +
-							" varchar(" + ICRole.ROLE_KEY_MAX_LENGTH + ");", true);
-					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
-				} catch (SQLException e) {
-					settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
-				}
+		IWMainApplicationSettings settings = event.getIWMA().getSettings();
+		if (settings.getBoolean("enlarge_perm_cntxt_column", Boolean.TRUE)) {
+			try {
+				SimpleQuerier.executeUpdate("ALTER TABLE " + ICPermission.ENTITY_NAME + " modify " + ICPermission.COLUMN_CONTEXT_VALUE +
+						" varchar(" + ICRole.ROLE_KEY_MAX_LENGTH + ");", true);
+				settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
+			} catch (SQLException e) {
+				settings.getBoolean("enlarge_perm_cntxt_column", Boolean.FALSE);
 			}
+		}
+	}
+
+	@Override
+	public List<ICPermission> findPermissionsByContextTypeAndPermission(String contextType, String permissionString) {
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, ICPermission.class, new Param("contextType", contextType), new Param("permissionString", permissionString));
+	}
+
+	@Override
+	public List<ICPermission> findPermissionsByRoles(List<String> roles) {
+		if (ListUtil.isEmpty(roles)) {
+			return null;
+		}
+
+		return getResultList(
+				ICPermission.BY_CONTEXT_TYPE_AND_PERMISSIONS,
+				ICPermission.class,
+				new Param("contextType", AccessController.PERMISSION_KEY_ROLE),
+				new Param("permissionStrings", roles)
+		);
 	}
 
 }

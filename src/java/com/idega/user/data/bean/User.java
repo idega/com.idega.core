@@ -5,6 +5,7 @@ package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -37,20 +38,22 @@ import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.builder.data.bean.ICPage;
 import com.idega.core.contact.data.bean.Email;
+import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.contact.data.bean.Phone;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.localisation.data.bean.ICLanguage;
 import com.idega.core.location.data.bean.Address;
+import com.idega.core.location.data.bean.AddressType;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
-import com.idega.user.dao.UserDAO;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
-import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = User.ENTITY_NAME)
@@ -60,7 +63,12 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID"),
 	@NamedQuery(name = "user.findByUniqueID", query = "select u from User u where u.uniqueId = :uniqueId"),
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
-	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName")
+	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_PRIMARY_KEYS,
+			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)"),
+	@NamedQuery(name = User.QUERY_FIND_BY_PHONE_NUMBER, query = "select distinct u from User u join u.phones up where up.number = :number"),
+	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :key and um.value = :value")
 })
 @XmlTransient
 @Cacheable
@@ -99,12 +107,17 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String ADMINISTRATOR_DEFAULT_NAME = "Administrator";
 
+	public static final String	QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys",
+								QUERY_FIND_BY_PHONE_NUMBER = "user.findByPhoneNumber",
+								QUERY_FIND_BY_METADATA = "user.findByMetadata";
+
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
+
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
 	private Integer userID;
 
-	@OneToOne(fetch = FetchType.EAGER, cascade = { CascadeType.ALL })
+	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
 	@PrimaryKeyJoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private UserGroupRepresentative group;
 
@@ -142,7 +155,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinColumn(name = COLUMN_SYSTEM_IMAGE)
 	private ICFile systemImage;
 
-	@ManyToOne(fetch = FetchType.EAGER)
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_PRIMARY_GROUP)
 	private Group primaryGroup;
 
@@ -199,13 +212,13 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private Group userRepresentative;
 
-    @OneToMany(mappedBy = "pk.user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.user")
     private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
     @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
     private String sha1;
 
-    @OneToMany(mappedBy="user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="user")
     private List<UserLogin> logins;
 
 	@PrePersist
@@ -331,6 +344,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICFile getSystemImage() {
+		systemImage = getInitialized(systemImage);
 		return this.systemImage;
 	}
 
@@ -339,6 +353,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Group getPrimaryGroup() {
+		primaryGroup = getInitialized(primaryGroup);
 		return this.primaryGroup;
 	}
 
@@ -347,6 +362,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICPage getHomePage() {
+		homePage = getInitialized(homePage);
 		return this.homePage;
 	}
 
@@ -366,6 +382,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public User getDeletedBy() {
+		deletedBy = getInitialized(deletedBy);
 		return this.deletedBy;
 	}
 
@@ -382,6 +399,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICLanguage getNativeLanguage() {
+		nativeLanguage = getInitialized(nativeLanguage);
 		return this.nativeLanguage;
 	}
 
@@ -409,6 +427,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICRole getPreferredRole() {
+		preferredRole = getInitialized(preferredRole);
 		return this.preferredRole;
 	}
 
@@ -417,6 +436,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public ICFile getUserProperties() {
+		userProperties = getInitialized(userProperties);
 		return this.userProperties;
 	}
 
@@ -425,7 +445,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Phone> getPhones() {
-		phones = DBUtil.getInstance().lazyLoad(phones);
+		phones = getInitialized(phones);
 		return this.phones;
 	}
 
@@ -434,6 +454,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Email> getEmails() {
+		emails = getInitialized(emails);
 		return this.emails;
 	}
 
@@ -442,6 +463,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<Address> getAddresses() {
+		addresses = getInitialized(addresses);
 		return this.addresses;
 	}
 
@@ -450,6 +472,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Set<Metadata> getMetadata() {
+		metadata = getInitialized(metadata);
 		return this.metadata;
 	}
 
@@ -458,10 +481,17 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Group getUserRepresentative() {
+		userRepresentative = getInitialized(userRepresentative);
 		return this.userRepresentative;
 	}
 
+	private <T> T getInitialized(T notInitialized) {
+		T initialized = DBUtil.getInstance().lazyLoad(notInitialized);
+		return initialized;
+	}
+
 	public List<TopNodeGroup> getTopNodeGroups() {
+		topNodeGroups = getInitialized(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -540,11 +570,15 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	@Override
-	public void setMetaData(String metaDataKey, String value, String type) {
-		Metadata metadata = getMetadata(metaDataKey);
+	public void setMetaData(String key, String value, String type) {
+		setMetadata(key, value, type);
+	}
+
+	public Metadata setMetadata(String key, String value, String type) {
+		Metadata metadata = getMetadata(key);
 		if (metadata == null) {
 			metadata = new Metadata();
-			metadata.setKey(metaDataKey);
+			metadata.setKey(key);
 		}
 		metadata.setValue(value);
 		if (type != null) {
@@ -553,6 +587,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 		getMetadata().add(metadata);
 
+		return metadata;
 	}
 
 	@Override
@@ -562,17 +597,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Override
 	public void setMetaDataAttributes(Map<String, String> map) {
-		for (String key : map.keySet()) {
-			String value = map.get(key);
-
-			Metadata metadata = getMetadata(key);
-			if (metadata == null) {
-				metadata = new Metadata();
-				metadata.setKey(key);
-			}
-			metadata.setValue(value);
-
-			getMetadata().add(metadata);
+		for (String key: map.keySet()) {
+			setMetaData(key, map.get(key), null);
 		}
 	}
 
@@ -613,13 +639,42 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public String getEmailAddress() {
-		try {
-			UserDAO userDAO = ELUtil.getInstance().getBean(UserDAO.class);
-			Email mainEmail = userDAO.getUsersMainEmail(this);
-			return mainEmail == null ? null : mainEmail.getEmailAddress();
-		} catch (Exception e) {
-			e.printStackTrace();
+		List<Email> emails = getEmails();
+		if (ListUtil.isEmpty(emails)) {
+			return null;
 		}
+
+		for (Email email: emails) {
+			EmailType emailType = email.getEmailType();
+			if (emailType == null) {
+				continue;
+			}
+
+			if (EmailType.MAIN_EMAIL.equals(emailType.getUniqueName())) {
+				return email.getAddress();
+			}
+		}
+
+		return null;
+	}
+
+	public Address getMainAddress() {
+		List<Address> addresses = getAddresses();
+		if (ListUtil.isEmpty(addresses)) {
+			return null;
+		}
+
+		for (Address address: addresses) {
+			AddressType addressType = address.getAddressType();
+			if (addressType == null) {
+				continue;
+			}
+
+			if (AddressType.MAIN_ADDRESS_TYPE.equals(addressType.getUniqueName())) {
+				return address;
+			}
+		}
+
 		return null;
 	}
 
@@ -629,7 +684,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public List<UserLogin> getLogins() {
-		logins = DBUtil.getInstance().lazyLoad(logins);
+		logins = getInitialized(logins);
 		return logins;
 	}
 
