@@ -5,10 +5,12 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
@@ -47,6 +49,7 @@ import com.idega.user.data.bean.User;
 import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.presentation.JSFUtil;
+import com.idega.util.timer.DateUtil;
 
 @SuppressWarnings("deprecation")
 public class CoreUtil {
@@ -371,6 +374,53 @@ public class CoreUtil {
 		}
 	}
 
+	public static final void doDebug(long start, long end, String method) {
+		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		long minExecutionTime = Long.valueOf(settings.getProperty("debug_min_exec_time", String.valueOf(100)));
+
+		long executionTime = end - start;
+		if (executionTime < minExecutionTime) {
+			return;
+		}
+
+		IWContext iwc = getIWContext();
+		String request = iwc == null ? "unknown" : iwc.getRequestURI();
+		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
+
+		StringBuffer message = new StringBuffer("Method '").append(method).append("' ");
+
+		message.append("executed in ").append(executionTime).append(" ms");
+		boolean printStackTrace = settings.getBoolean("print_stack_trace_for_debug", Boolean.FALSE);
+		if (printStackTrace) {
+			try {
+				throw new RuntimeException("Testing stack trace for method: " + method);
+			} catch (Exception e) {
+				StringWriter writer = new StringWriter();
+				doPrintStackTrace(e, writer);
+				message.append(". Stack trace:\n").append(writer.toString());
+				IOUtil.close(writer);
+			}
+		}
+
+		if (request != null) {
+			message.append("\nRequest URI: ").append(request);
+		}
+		if (!MapUtil.isEmpty(parameters)) {
+			message.append("\nParameters: ");
+			for (String param: parameters.keySet()) {
+				String[] values = parameters.get(param);
+				if (!ArrayUtil.isEmpty(values)) {
+					message.append(param).append(CoreConstants.EQ).append(Arrays.asList(values));
+				}
+			}
+		}
+
+		LOGGER.info(message.toString());
+		if (settings.getBoolean("email_debug_message", false)) {
+			sendExceptionNotification(message.toString(), null);
+		}
+	}
+
 	public static final void doDebugUI(long start, long end, UIComponent component, FacesContext context) {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 		long minExecutionTime = Long.valueOf(settings.getProperty("ui_debug_min_exec_time", String.valueOf(100)));
@@ -591,4 +641,19 @@ public class CoreUtil {
 		cache.put(key, subInterfaces);
 		return subInterfaces;
 	}
+
+	public static Long getAge(Date dateOfBirth) {
+		if (dateOfBirth == null) {
+			return null;
+		}
+
+		LocalDate localeDateOfBirth = DateUtil.getDate(dateOfBirth);
+		if (localeDateOfBirth == null) {
+			return null;
+		}
+
+		LocalDate dateToday = DateUtil.getDate(new Date(System.currentTimeMillis()));
+		return (dateToday.toEpochDay() - localeDateOfBirth.toEpochDay()) / 365;
+	}
+
 }

@@ -82,6 +82,7 @@
  */
 package com.idega.util.timer;
 
+import java.sql.Timestamp;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -226,5 +227,31 @@ public class DateUtil {
 	 */
 	public static Date getDate(LocalTime time) {
 		return getDate(time, LocalDate.ofEpochDay(0));
+	}
+
+	public static LocalDateTime getLocalDateTime(String dateTimeString) {
+		if (!StringUtil.isEmpty(dateTimeString)) {
+			String[] splittedString = dateTimeString.split("T");
+			LocalDate date = DateUtil.getDate(splittedString[0]);
+			LocalTime time = DateUtil.getTime(splittedString[1].substring(0, splittedString[1].indexOf("Z")));
+			return LocalDateTime.of(date, time);
+		}
+
+
+		return null;
+	}
+
+	public static Timestamp getDateTime(String dateTimeString) {
+		if (!StringUtil.isEmpty(dateTimeString)) {
+			String[] splittedString = dateTimeString.split("T");
+			LocalDate date = DateUtil.getDate(splittedString[0]);
+			LocalTime time = DateUtil.getTime(splittedString[1].substring(0, splittedString[1].indexOf("Z")));
+			LocalDateTime dateTime = LocalDateTime.of(date, time);
+			Date javaDate = DateUtil.getDate(dateTime);
+			return new Timestamp(javaDate.getTime());
+		}
+
+
+		return null;
 	}
 }
