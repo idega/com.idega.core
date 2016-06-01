@@ -4,7 +4,9 @@
 package com.idega.core.builder.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 
@@ -175,4 +177,22 @@ public ICPage findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
     	return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.builder.data.ICPageHome#findAll()
+	 */
+	@Override
+	public Collection<ICPage> findAll() {
+		ICPageBMPBean entity = (ICPageBMPBean) this.idoCheckOutPooledEntity();
+        Collection<Integer> ids = entity.ejbFindAll();
+
+    	try {
+			return getEntityCollectionForPrimaryKeys(ids);
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					"Failed to get ICPages by primary keys: " + ids);
+		}
+
+    	return Collections.emptyList();
+	}
 }

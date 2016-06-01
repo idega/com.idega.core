@@ -15,8 +15,10 @@ import java.rmi.RemoteException;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -1022,5 +1024,41 @@ public class ICPageBMPBean extends TreeableEntityBMPBean<ICPage> implements ICPa
     	SelectQuery query = new SelectQuery(table);
     	query.addColumn(new Column(table, getIDColumnName()));
     	return idoFindPKsByQuery(query);
+	}
+
+	/**
+	 * 
+	 * @return all {@link ICPage}s, that is not deleted or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindAll() {
+		StringBuffer sql = new StringBuffer("select * from ");
+		sql.append(getEntityName());
+		sql.append(" where (");
+		sql.append(ICPageBMPBean.getColumnType());
+		sql.append(" = '");
+		sql.append(ICPageBMPBean.PAGE);
+		sql.append("' or ");
+		sql.append(ICPageBMPBean.getColumnType());
+		sql.append(" = '");
+		sql.append(ICPageBMPBean.DPT_PAGE);
+		sql.append("') and (");
+		sql.append(ICPageBMPBean.getColumnDeleted());
+		sql.append(" = '");
+		sql.append(ICPageBMPBean.NOT_DELETED);
+		sql.append("' or ");
+		sql.append(ICPageBMPBean.getColumnDeleted());
+		sql.append(" is null)");
+
+		sql.append(" order by ").append(ICPageBMPBean.getColumnTreeOrder())
+		.append(", ").append(getIDColumnName()).append(" desc");
+
+		try {
+			return idoFindPKsBySQL(sql.toString());
+		} catch (FinderException e) {
+			java.util.logging.Logger.getLogger(getClass().getName()).log(
+					Level.WARNING, "Failed to get results by query: '" + sql.toString() + "'");
+		}
+
+		return Collections.emptyList();
 	}
 }
