@@ -9,6 +9,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 
+import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -24,19 +25,24 @@ import javax.persistence.Table;
 
 import com.idega.core.data.ICTreeNode;
 import com.idega.idegaweb.IWApplicationContext;
+import com.idega.util.DBUtil;
+import com.idega.util.ListUtil;
 
 @Entity
 @Table(name = GroupType.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "groupType.findAll", query = "select t from GroupType t"),
 	@NamedQuery(name = "groupType.findByType", query = "select t from GroupType t where t.groupType = :groupType"),
-	@NamedQuery(name = "groupType.findAllVisibleTypes", query = "select t from GroupType t where t.isVisible != 'N'")
+	@NamedQuery(name = GroupType.QUERY_FIND_ALL_VISIBLE, query = "select t from GroupType t where t.isVisible != 'N' group by t.groupType")
 })
+@Cacheable
 public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	private static final long serialVersionUID = 3574509217562528319L;
 
-	public static final String ENTITY_NAME = "ic_group_type";
+	public static final String	ENTITY_NAME = "ic_group_type",
+								QUERY_FIND_ALL_VISIBLE = "groupType.findAllVisibleTypes";
+
 	public static final String COLUMN_TYPE = "group_type";
 	private static final String COLUMN_DESCRIPTION = "description";
 	private static final String COLUMN_DEFAULT_GROUP_NAME = "default_group_name";
@@ -79,7 +85,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 	@Column(name = COLUMN_SAME_CHILD_TYPE_ONLY, length = 1)
 	private Character onlySupportsSameChildType;
 
-	@ManyToOne(optional = true)
+	@ManyToOne(fetch = FetchType.LAZY, optional = true, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = GroupType.class)
 	@JoinTable(name = ENTITY_NAME + "_tree", joinColumns = { @JoinColumn(name = "child_" + COLUMN_TYPE, referencedColumnName = COLUMN_TYPE) }, inverseJoinColumns = { @JoinColumn(name = COLUMN_TYPE) })
 	private GroupType parent;
 
@@ -257,22 +263,25 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public GroupType getChildAtIndex(int childIndex) {
-		return children.get(childIndex);
+		return getChildren().get(childIndex);
 	}
 
 	@Override
 	public int getChildCount() {
-		return children.size();
+		return getChildren().size();
 	}
 
 	@Override
-	public Collection<GroupType> getChildren() {
+	public List<GroupType> getChildren() {
+		if (!DBUtil.getInstance().isInitialized(children)) {
+			DBUtil.getInstance().lazyLoad(children);
+		}
 		return children;
 	}
 
 	@Override
 	public Iterator<GroupType> getChildrenIterator() {
-		return children.iterator();
+		return getChildren().iterator();
 	}
 
 	@Override
@@ -307,6 +316,7 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public GroupType getParentNode() {
+		parent = DBUtil.getInstance().lazyLoad(parent);
 		return parent;
 	}
 
@@ -321,6 +331,21 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 
 	@Override
 	public boolean isLeaf() {
-		return children == null || children.isEmpty();
+		return ListUtil.isEmpty(getChildren());
 	}
+
+
+	public void setParentNode(GroupType parent) {
+		this.parent = parent;
+	}
+
+	public void setChildren(List<GroupType> children) {
+		this.children = children;
+	}
+
+	@Override
+	public String toString() {
+		return "Type: " + getGroupType();
+	}
+
 }

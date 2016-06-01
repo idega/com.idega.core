@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.file.data.bean;
 
@@ -16,6 +16,8 @@ import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = ICFileType.ENTITY_NAME)
@@ -41,60 +43,61 @@ public class ICFileType implements Serializable {
   private static final String COLUMN_DESCRIPTION = "type_description";
   private static final String COLUMN_DISPLAY_NAME = "type_display_name";
   private static final String COLUMN_UNIQUE_NAME = "unique_name";
-  
+
   @Id
   @GeneratedValue(strategy = GenerationType.AUTO)
   @Column(name = COLUMN_FILE_TYPE_ID)
   private Integer fileTypeID;
-  
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = COLUMN_FILE_TYPE_HANDLER_ID)
   private ICFileTypeHandler handler;
-  
+
   @Column(name = COLUMN_DESCRIPTION, length = 500)
   private String description;
-  
+
   @Column(name = COLUMN_DISPLAY_NAME)
   private String displayName;
-  
+
   @Column(name = COLUMN_UNIQUE_NAME, unique = true)
   private String uniqueName;
-	
+
 	/**
 	 * @return the fileTypeHandlerID
 	 */
 	public Integer getId() {
 		return this.fileTypeID;
 	}
-	
+
 	/**
 	 * @param fileTypeHandlerID the fileTypeHandlerID to set
 	 */
 	public void setId(Integer fileTypeID) {
 		this.fileTypeID = fileTypeID;
 	}
-	
+
 	/**
 	 * @return the handler
 	 */
 	public ICFileTypeHandler getHandler() {
+		handler = DBUtil.getInstance().lazyLoad(handler);
 		return this.handler;
 	}
-	
+
 	/**
 	 * @param handler the handler to set
 	 */
 	public void setHandler(ICFileTypeHandler handler) {
 		this.handler = handler;
 	}
-	
+
 	/**
 	 * @return the description
 	 */
 	public String getDescription() {
 		return this.description;
 	}
-	
+
 	/**
 	 * @param description the description to set
 	 */
@@ -108,7 +111,7 @@ public class ICFileType implements Serializable {
 	public String getDisplayName() {
 		return this.displayName;
 	}
-	
+
 	/**
 	 * @param displayName the displayName to set
 	 */
@@ -122,7 +125,7 @@ public class ICFileType implements Serializable {
 	public String getUniqueName() {
 		return this.uniqueName;
 	}
-	
+
 	/**
 	 * @param uniqueName the uniqueName to set
 	 */

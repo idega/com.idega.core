@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,12 +16,13 @@ import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = TopNodeGroup.ENTITY_NAME)
+@Cacheable
 public class TopNodeGroup implements Serializable {
 
 	private static final long serialVersionUID = -441349910603306044L;
 
 	public final static String ENTITY_NAME = "ic_user_topnodes";
-	
+
 	public static final String COLUMN_USER = "user_id";
 	public static final String COLUMN_GROUP = "group_id";
 	private static final String COLUMN_LOGIN_DURATION = "login_duration";
@@ -43,13 +45,13 @@ public class TopNodeGroup implements Serializable {
 
 	@Column(name = COLUMN_COMMENT)
 	private String comment;
-	
+
 	public TopNodeGroup(User user, Group group) {
 		this.pk = new TopNodeGroupPK(user, group);
 	}
-	
+
 	public TopNodeGroup() {}
-	
+
 	public TopNodeGroupPK getID() {
 		return pk;
 	}
@@ -57,7 +59,7 @@ public class TopNodeGroup implements Serializable {
 	public Integer getUserID() {
 		return this.pk.getUser().getId();
 	}
-	
+
 	public User getUser() {
 		return this.pk.getUser();
 	}
@@ -65,7 +67,7 @@ public class TopNodeGroup implements Serializable {
 	public void setUser(User user) {
 		this.pk.setUser(user);
 	}
-	
+
 	public Integer getGroupID() {
 		return this.pk.getGroup().getID();
 	}

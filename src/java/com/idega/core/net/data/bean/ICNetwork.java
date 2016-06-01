@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.net.data.bean;
 
@@ -20,6 +20,8 @@ import javax.persistence.ManyToMany;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = ICNetwork.ENTITY_NAME)
@@ -62,19 +64,27 @@ public class ICNetwork implements Serializable {
 		this.IPAddress = IPAddress;
 	}
 
-	public List getProtocols() {
+	public List<ICProtocol> getProtocols() {
+		if (!DBUtil.getInstance().isInitialized(protocols)) {
+			protocols = DBUtil.getInstance().lazyLoad(protocols);
+			if (protocols == null) {
+				protocols = new ArrayList<>();
+			} else {
+				protocols = new ArrayList<>(protocols);
+			}
+		}
 		return protocols;
 	}
 
 	public void addProtocol(ICProtocol protocol) {
-		protocols.add(protocol);
+		getProtocols().add(protocol);
 	}
 
 	public void removeProtocol(ICProtocol protocol) {
-		protocols.remove(protocol);
+		getProtocols().remove(protocol);
 	}
 
 	public void removeAllProtocols() {
-		protocols.clear();
+		getProtocols().clear();
 	}
 }

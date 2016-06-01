@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.net.data.bean;
 
@@ -22,6 +22,7 @@ import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 import com.idega.core.data.bean.GenericType;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name=ICProtocol.ENTITY_NAME)
@@ -31,7 +32,7 @@ import com.idega.core.data.bean.GenericType;
 public class ICProtocol extends GenericType implements Serializable {
 
 	private static final long serialVersionUID = -515213446676555283L;
-	
+
 	public static final String ENTITY_NAME = "ic_protocol";
 	public static final String COLUMN_PROTOCOL_ID = "ic_protocol_id";
 
@@ -39,31 +40,35 @@ public class ICProtocol extends GenericType implements Serializable {
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_PROTOCOL_ID)
   private Integer id;
-  
+
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = ICNetwork.class)
-	@JoinTable(name = "ib_protocol_network", joinColumns = { @JoinColumn(name = ICProtocol.COLUMN_PROTOCOL_ID) }, inverseJoinColumns = { @JoinColumn(name = ICNetwork.COLUMN_NETWORK_ID) }) 
+	@JoinTable(name = "ib_protocol_network", joinColumns = { @JoinColumn(name = ICProtocol.COLUMN_PROTOCOL_ID) }, inverseJoinColumns = { @JoinColumn(name = ICNetwork.COLUMN_NETWORK_ID) })
 	private List<ICNetwork> networks = new ArrayList<ICNetwork>();
 
 	public Integer getId() {
 		return id;
 	}
-	
+
 	public void setId(Integer id) {
 		this.id = id;
 	}
-	
-	public List getNetworks() {
+
+	public List<ICNetwork> getNetworks() {
+		if (!DBUtil.getInstance().isInitialized(networks)) {
+			networks = DBUtil.getInstance().lazyLoad(networks);
+			networks = networks == null ? new ArrayList<>() : new ArrayList<>(networks);
+		}
 		return networks;
 	}
-	
+
 	public void addNetwork(ICNetwork network) {
 		networks.add(network);
 	}
-	
+
 	public void removeNetwork(ICNetwork network) {
 		networks.remove(network);
 	}
-	
+
 	public void removeAllNetworks() {
 		networks.clear();
 	}

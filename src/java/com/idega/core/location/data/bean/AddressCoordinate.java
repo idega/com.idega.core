@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.data.bean;
 
@@ -15,6 +15,8 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
+
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = AddressCoordinate.ENTITY_NAME)
@@ -63,6 +65,7 @@ public class AddressCoordinate implements Serializable {
 	 * @return the commune
 	 */
 	public Commune getCommune() {
+		commune = DBUtil.getInstance().lazyLoad(commune);
 		return this.commune;
 	}
 

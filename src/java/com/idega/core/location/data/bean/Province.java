@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.data.bean;
 
@@ -22,6 +22,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.OrderBy;
 import javax.persistence.Table;
 
+import com.idega.util.DBUtil;
+
 @Entity
 @Cacheable
 @Table(name=Province.ENTITY_NAME)
@@ -38,7 +40,7 @@ public class Province implements Serializable {
 	public static final String COLUMN_PROVINCE_ID = "ic_province_id";
 	private static final String COLUMN_NAME = "province_name";
 	private static final String COLUMN_COUNTRY_ID = "ic_country_id";
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name=Province.COLUMN_PROVINCE_ID)
@@ -46,11 +48,11 @@ public class Province implements Serializable {
 
 	@Column(name=Province.COLUMN_NAME, length = 50)
 	private String name;
-	
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = Province.COLUMN_COUNTRY_ID)
 	private Country country;
-	
+
 	@OneToMany(mappedBy="province", cascade = { CascadeType.REMOVE })
 	@OrderBy("name")
 	private List<Commune> communes;
@@ -61,42 +63,43 @@ public class Province implements Serializable {
 	public Integer getId() {
 		return this.provinceID;
 	}
-	
+
 	/**
 	 * @param provinceID the provinceID to set
 	 */
 	public void setId(Integer provinceID) {
 		this.provinceID = provinceID;
 	}
-	
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
 		return this.name;
 	}
-	
+
 	/**
 	 * @param name the name to set
 	 */
 	public void setName(String name) {
 		this.name = name;
 	}
-	
+
 	/**
 	 * @return the country
 	 */
 	public Country getCountry() {
+		country = DBUtil.getInstance().lazyLoad(country);
 		return this.country;
 	}
-	
+
 	/**
 	 * @param country the country to set
 	 */
 	public void setCountry(Country country) {
 		this.country = country;
 	}
-	
+
 	/**
 	 * @return the communes
 	 */

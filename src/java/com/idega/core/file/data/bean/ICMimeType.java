@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.file.data.bean;
 
@@ -15,6 +15,8 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.idega.util.DBUtil;
+
 @Entity
 @Table(name = ICMimeType.ENTITY_NAME)
 @NamedQueries({
@@ -26,20 +28,20 @@ public class ICMimeType implements Serializable {
   public static String IC_MIME_TYPE_XML = "text/xml";//for ibxml this should be application/vnd.iw-ibxml"
 
   private static final long serialVersionUID = -8503656387275969919L;
-	
+
   public static final String ENTITY_NAME = "ic_mime_type";
   private static final String COLUMN_MIME_TYPE = "mime_type";
   private static final String COLUMN_FILE_TYPE = "ic_file_type_id";
   private static final String COLUMN_DESCRIPTION = "description";
-  
+
   @Id
   @Column(name = COLUMN_MIME_TYPE, length = 100, nullable = false)
   private String mimeType;
-  
+
   @ManyToOne(fetch = FetchType.LAZY)
   @JoinColumn(name = COLUMN_FILE_TYPE)
   private ICFileType fileType;
-  
+
   @Column(name = COLUMN_DESCRIPTION)
   private String description;
 
@@ -61,6 +63,7 @@ public class ICMimeType implements Serializable {
 	 * @return the fileType
 	 */
 	public ICFileType getFileType() {
+		fileType = DBUtil.getInstance().lazyLoad(fileType);
 		return this.fileType;
 	}
 

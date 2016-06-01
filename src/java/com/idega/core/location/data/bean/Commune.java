@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.data.bean;
 
@@ -22,6 +22,7 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import com.idega.user.data.bean.Group;
+import com.idega.util.DBUtil;
 
 @Entity
 @Cacheable
@@ -96,7 +97,7 @@ public class Commune implements Serializable {
 	public Commune() {
 		setValid(true);
 	}
-	
+
 	/**
 	 * @return the communeID
 	 */
@@ -212,6 +213,7 @@ public class Commune implements Serializable {
 	 * @return the province
 	 */
 	public Province getProvince() {
+		province = DBUtil.getInstance().lazyLoad(province);
 		return this.province;
 	}
 
@@ -227,6 +229,7 @@ public class Commune implements Serializable {
 	 * @return the group
 	 */
 	public Group getGroup() {
+		group = DBUtil.getInstance().lazyLoad(group);
 		return this.group;
 	}
 

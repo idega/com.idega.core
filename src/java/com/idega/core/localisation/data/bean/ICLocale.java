@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.location.data.bean.Country;
 import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
 import com.idega.util.StringUtil;
 
 @Entity
@@ -91,6 +92,7 @@ public class ICLocale implements Serializable {
 	 * @return the language
 	 */
 	public ICLanguage getLanguage() {
+		language = DBUtil.getInstance().lazyLoad(language);
 		return this.language;
 	}
 
@@ -127,6 +129,7 @@ public class ICLocale implements Serializable {
 	 * @return the country
 	 */
 	public Country getCountry() {
+		country = DBUtil.getInstance().lazyLoad(country);
 		return this.country;
 	}
 

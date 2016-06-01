@@ -6,6 +6,7 @@ package com.idega.core.file.data.bean;
 import java.io.Serializable;
 import java.sql.Blob;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,6 +39,7 @@ import com.idega.core.version.data.bean.ICVersion;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = ICFile.ENTITY_NAME)
@@ -268,6 +270,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 * @return the locale
 	 */
 	public ICLocale getLocale() {
+		locale = DBUtil.getInstance().lazyLoad(locale);
 		return this.locale;
 	}
 
@@ -316,6 +319,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 * @return the deletedBy
 	 */
 	public User getDeletedBy() {
+		deletedBy = DBUtil.getInstance().lazyLoad(deletedBy);
 		return this.deletedBy;
 	}
 
@@ -353,7 +357,8 @@ public class ICFile implements Serializable, MetaDataCapable {
 	/**
 	 * @return the items
 	 */
-	public List getItems() {
+	public List<ICItem> getItems() {
+		items = DBUtil.getInstance().lazyLoad(items);
 		return this.items;
 	}
 
@@ -361,14 +366,15 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 * @param items
 	 *          the items to set
 	 */
-	public void setItems(List items) {
+	public void setItems(List<ICItem> items) {
 		this.items = items;
 	}
 
 	/**
 	 * @return the versions
 	 */
-	public List getVersions() {
+	public List<ICVersion> getVersions() {
+		versions = DBUtil.getInstance().lazyLoad(versions);
 		return this.versions;
 	}
 
@@ -376,7 +382,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 * @param versions
 	 *          the versions to set
 	 */
-	public void setVersions(List versions) {
+	public void setVersions(List<ICVersion> versions) {
 		this.versions = versions;
 	}
 
@@ -398,6 +404,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 * @return Returns the children.
 	 */
 	public List<ICFile> getChildren() {
+		children = DBUtil.getInstance().lazyLoad(children);
 		return this.children;
 	}
 
@@ -412,6 +419,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
+		metadata = DBUtil.getInstance().lazyLoad(metadata);
 		return this.metadata;
 	}
 
@@ -424,15 +432,23 @@ public class ICFile implements Serializable, MetaDataCapable {
 	}
 
 	public void addDownloadedBy(User downloader) {
-		downloaders.add(downloader);
+		getDownloadedBy().add(downloader);
 	}
 
 	public Collection<User> getDownloadedBy() {
+		if (!DBUtil.getInstance().isInitialized(downloaders)) {
+			downloaders = DBUtil.getInstance().lazyLoad(downloaders);
+			if (downloaders == null) {
+				downloaders = new ArrayList<>();
+			} else {
+				downloaders = new ArrayList<>(downloaders);
+			}
+		}
 		return downloaders;
 	}
 
 	public void removeDownloadedBy(User downloader) {
-		downloaders.remove(downloader);
+		getDownloadedBy().remove(downloader);
 	}
 
 	/* MetaDataCapable implementation */

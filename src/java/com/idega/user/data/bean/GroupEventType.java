@@ -1,10 +1,11 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -14,6 +15,7 @@ import javax.persistence.Table;
 
 @Entity
 @Table(name = GroupEventType.ENTITY_NAME)
+@Cacheable
 public class GroupEventType implements Serializable {
 
 	private static final long serialVersionUID = -6248390005127333195L;

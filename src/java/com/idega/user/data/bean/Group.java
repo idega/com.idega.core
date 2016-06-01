@@ -60,6 +60,7 @@ import com.idega.user.dao.UserDAO;
 import com.idega.user.data.GroupNode;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
 
 @Entity
@@ -72,8 +73,20 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findAllByGroupTypes", query = "select g from Group g where g.groupType in (:groupTypes)"),
 	@NamedQuery(name = "group.findByGroupTypeAndName", query = "select g from Group g where g.groupType = :groupType and g.name = :name"),
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
-	@NamedQuery(name = "group.findByName", query = "select g from Group g where g.name = :name"),
-	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID")
+	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_ID, query = "select g from Group g where g.groupID = :groupId"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g where g.personalId = :personalId"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_NAME, query = "select g from Group g where g.name = :name"),
+	@NamedQuery(
+			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS,
+			query = "SELECT g.permissionControllingGroup FROM Group g "
+					+ "WHERE g.groupID in (:ids) "
+					+ "AND g.permissionControllingGroup IS NOT NULL"),
+	@NamedQuery(name = Group.QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES, query = "select distinct g.alias from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types)"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID")
 })
 @XmlTransient
 @Cacheable
@@ -81,9 +94,19 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	private static final long serialVersionUID = -9014094183053434782L;
 
-	public static final String ENTITY_NAME = "ic_group";
-	public static final String COLUMN_GROUP_ID = "ic_group_id";
-	public static final String COLUMN_GROUP_TYPE = "group_type";
+	public static final String	QUERY_FIND_BY_IDS = "group.findByIDs",
+								QUERY_FIND_PERMISSION_GROUP_IDS = "group.findPermissionGroupIds",
+								QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES = "group.findAliasesByTypesFromAliases",
+								QUERY_FIND_BY_TYPES_FROM_ALIASES = "group.findByTypesFromAliases",
+								QUERY_FIND_BY_ALIAS = "group.findByAlias",
+								QUERY_FIND_BY_ALIAS_AND_NAME = "group.findByAliasAndName",
+								QUERY_FIND_BY_GROUP_ID = "group.findByGroupId",
+								QUERY_FIND_BY_PERSONAL_ID = "group.findByPersonalId",
+								QUERY_FIND_BY_NAME = "group.findByName",
+
+								ENTITY_NAME = "ic_group",
+								COLUMN_GROUP_ID = "ic_group_id",
+								COLUMN_GROUP_TYPE = "group_type";
 
 	private static final String COLUMN_UNIQUE_ID = "unique_id";
 	private static final String COLUMN_NAME = "name";
@@ -98,6 +121,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private static final String COLUMN_SHORT_NAME = "short_name";
 	private static final String COLUMN_ABBREVIATION = "abbr";
 	private static final String COLUMN_GROUP_MODERATOR_ID = "group_moderator_id";
+	private static final String COLUMN_PERSONAL_ID = "group_personal_id";
+	private static final String COLUMN_WEB_PAGE = "group_web_page";
+	private static final String COLUMN_VAT_NUMBER = "group_vat_number";
+	private static final String COLUMN_BANK_ACCOUNT = "group_bank_acc";
+	private static final String COLUMN_MERCHANT_ID = "merchant_id";
 
 	public static final String SQL_RELATION_EMAIL = "ic_group_email";
 	public static final String SQL_RELATION_ADDRESS = "ic_group_address";
@@ -117,7 +145,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@Column(name = COLUMN_NAME)
 	private String name;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP_TYPE, insertable = false, updatable = false)
 	private GroupType groupType;
 
@@ -193,7 +221,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private List<Group> children;
 
     @OneToMany(mappedBy = "pk.group")
-    private final List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+    private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -217,18 +245,18 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@Override
 	public boolean equals(Object obj) {
 		if (this == obj)
-			return true;
+				return true;
 		if (obj == null)
-			return false;
-		if (getClass() != obj.getClass())
-			return false;
-		Group other = (Group) obj;
-		if (this.groupID == null) {
-			if (other.groupID != null)
 				return false;
-		}
+		if (getClass() != obj.getClass())
+				return false;
+			Group other = (Group) obj;
+			if (this.groupID == null) {
+			if (other.groupID != null)
+					return false;
+				}
 		else if (!this.groupID.equals(other.groupID))
-			return false;
+				return false;
 		return true;
 	}
 
@@ -275,11 +303,15 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		this.name = name;
 	}
 
-	/**
-	 * @return the groupType
-	 */
+	@Override
+	public String getType() {
+		GroupType type = getGroupType();
+		return type == null ? null : type.getGroupType();
+	}
+
 	public GroupType getGroupType() {
-		return this.groupType;
+		groupType = getInitialized(groupType);
+		return groupType;
 	}
 
 	/**
@@ -339,9 +371,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the homePage
 	 */
 	public ICPage getHomePage() {
-		if (!DBUtil.getInstance().isInitialized(homePage)) {
-			homePage = DBUtil.getInstance().lazyLoad(homePage);
-		}
+		homePage = getInitialized(homePage);
 		return this.homePage;
 	}
 
@@ -357,9 +387,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the homeFolder
 	 */
 	public ICFile getHomeFolder() {
-		if (!DBUtil.getInstance().isInitialized(homeFolder)) {
-			homeFolder = DBUtil.getInstance().lazyLoad(homeFolder);
-		}
+		homeFolder = getInitialized(homeFolder);
 		return this.homeFolder;
 	}
 
@@ -375,9 +403,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the alias
 	 */
 	public Group getAlias() {
-		if (!DBUtil.getInstance().isInitialized(alias)) {
-			alias = DBUtil.getInstance().lazyLoad(alias);
-		}
+		alias = getInitialized(alias);
 		return this.alias;
 	}
 
@@ -393,9 +419,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the permissionControllingGroup
 	 */
 	public Group getPermissionControllingGroup() {
-		if (!DBUtil.getInstance().isInitialized(permissionControllingGroup)) {
-			permissionControllingGroup = DBUtil.getInstance().lazyLoad(permissionControllingGroup);
-		}
+		permissionControllingGroup = getInitialized(permissionControllingGroup);
 		return this.permissionControllingGroup;
 	}
 
@@ -456,9 +480,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the groupModerator
 	 */
 	public Group getGroupModerator() {
-		if (!DBUtil.getInstance().isInitialized(groupModerator)) {
-			groupModerator = DBUtil.getInstance().lazyLoad(groupModerator);
-		}
+		groupModerator = getInitialized(groupModerator);
 		return this.groupModerator;
 	}
 
@@ -474,6 +496,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the networks
 	 */
 	public List<ICNetwork> getNetworks() {
+		networks = getInitialized(networks);
 		return this.networks;
 	}
 
@@ -489,6 +512,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the protocols
 	 */
 	public List<ICProtocol> getProtocols() {
+		protocols = getInitialized(protocols);
 		return this.protocols;
 	}
 
@@ -504,6 +528,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the phones
 	 */
 	public List<Phone> getPhones() {
+		phones = getInitialized(phones);
 		return this.phones;
 	}
 
@@ -519,6 +544,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the emails
 	 */
 	public List<Email> getEmails() {
+		emails = getInitialized(emails);
 		return this.emails;
 	}
 
@@ -534,6 +560,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the addresses
 	 */
 	public List<Address> getAddresses() {
+		addresses = getInitialized(addresses);
 		return this.addresses;
 	}
 
@@ -549,7 +576,13 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
+		metadata = getInitialized(metadata);
 		return this.metadata;
+	}
+
+	private <T> T getInitialized(T object) {
+		object = DBUtil.getInstance().lazyLoad(object);
+		return object;
 	}
 
 	/**
@@ -564,6 +597,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 * @return Returns the topNodeGroups.
 	 */
 	public List<TopNodeGroup> getTopNodeGroups() {
+		topNodeGroups = getInitialized(topNodeGroups);
 		return this.topNodeGroups;
 	}
 
@@ -691,22 +725,32 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public Group getChildAtIndex(int childIndex) {
-		return children.get(childIndex);
+		if (!ListUtil.isEmpty(getChildren())) {
+			return getChildren().get(childIndex);
+		}
+		return null;
 	}
 
 	@Override
 	public int getChildCount() {
-		return children.size();
+		if (!ListUtil.isEmpty(getChildren())) {
+			return getChildren().size();
+		}
+		return 0;
 	}
 
 	@Override
-	public Collection<Group> getChildren() {
+	public List<Group> getChildren() {
+		children = getInitialized(children);
 		return children;
 	}
 
 	@Override
 	public Iterator<Group> getChildrenIterator() {
-		return children.iterator();
+		if (!ListUtil.isEmpty(getChildren())) {
+			return getChildren().iterator();
+		}
+		return null;
 	}
 
 	@Override
@@ -741,14 +785,15 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public Group getParentNode() {
-		if (parents != null && !parents.isEmpty()) {
-			return parents.iterator().next();
+		if (!ListUtil.isEmpty(getParentGroups())) {
+			return getParentGroups().iterator().next();
 		}
 		return null;
 	}
 
 	@Override
 	public List<Group> getParentGroups() {
+		parents = getInitialized(parents);
 		return parents;
 	}
 
@@ -763,18 +808,12 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public boolean isLeaf() {
-		return children == null || children.isEmpty();
+		return ListUtil.isEmpty(getChildren());
 	}
 
 	@Override
 	public String toString() {
 		return getId();
-	}
-
-	@Override
-	public String getType() {
-		GroupType groupType = getGroupType();
-		return groupType == null ? null : groupType.getGroupType();
 	}
 
 	private boolean isUser() {

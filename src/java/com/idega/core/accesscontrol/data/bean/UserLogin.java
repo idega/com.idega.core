@@ -31,6 +31,7 @@ import javax.persistence.Transient;
 import com.idega.core.accesscontrol.data.PasswordNotKnown;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 
@@ -207,6 +208,7 @@ public class UserLogin implements Serializable {
 	}
 
 	public List<LoginRecord> getLoginRecords() {
+		loginRecords = DBUtil.getInstance().lazyLoad(loginRecords);
 		return this.loginRecords;
 	}
 

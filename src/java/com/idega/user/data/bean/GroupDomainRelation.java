@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.util.Date;
 
 import javax.ejb.RemoveException;
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -22,6 +23,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.core.builder.data.bean.ICDomain;
+import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 
 @Entity
@@ -31,14 +33,22 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "groupDomainRelation.findAllByDomainAndType", query = "select gdr from GroupDomainRelation gdr where gdr.domain = :domain and gdr.relationship = :type and gdr.status is null"),
 	@NamedQuery(name = "groupDomainRelation.findAllByGroup", query = "select gdr from GroupDomainRelation gdr where gdr.relatedGroup = :group and gdr.status is null"),
 	@NamedQuery(name = "groupDomainRelation.findAllByGroupAndType", query = "select gdr from GroupDomainRelation gdr where gdr.relatedGroup = :group and gdr.relationship = :type and gdr.status is null"),
-	@NamedQuery(name = "groupDomainRelation.findAllByDomainAndGroup", query = "select gdr from GroupDomainRelation gdr where gdr.domain = :domain and gdr.relatedGroup = :group and gdr.status is null")
+	@NamedQuery(name = "groupDomainRelation.findAllByDomainAndGroup", query = "select gdr from GroupDomainRelation gdr where gdr.domain = :domain and gdr.relatedGroup = :group and gdr.status is null"),
+	@NamedQuery(name = GroupDomainRelation.QUERY_FIND_TOP_NODES_UNDER_DOMAIN, query = "select distinct gdr.relatedGroup from GroupDomainRelation gdr where gdr.domain.id = :domainId and gdr.relationship.type = '" +
+			GroupDomainRelationType.RELATION_TYPE_TOP_NODE + "' and gdr.status is null"),
+	@NamedQuery(name = GroupDomainRelation.QUERY_COUNT_TOP_NODES_UNDER_DOMAIN, query = "select count(distinct gdr.relatedGroup) from GroupDomainRelation gdr where gdr.domain.id = :domainId and " +
+						"gdr.relationship.type = '" + GroupDomainRelationType.RELATION_TYPE_TOP_NODE + "' and gdr.status is null")
 })
+@Cacheable
 public class GroupDomainRelation implements Serializable {
 
 	private static final long serialVersionUID = 5391461126198416175L;
 
-	public static final String ENTITY_NAME = "ic_group_domain_relation";
-	public static final String COLUMN_GROUP_DOMAIN_RELATION_ID = "ic_group_domain_relation_id";
+	public static final String	ENTITY_NAME = "ic_group_domain_relation",
+								COLUMN_GROUP_DOMAIN_RELATION_ID = "ic_group_domain_relation_id",
+								QUERY_FIND_TOP_NODES_UNDER_DOMAIN = "groupDomainRelation.findTopNodesUnderDomain",
+								QUERY_COUNT_TOP_NODES_UNDER_DOMAIN = "groupDomainRelation.getCountedTopNodesUnderDomain";
+
 	private static final String COLUMN_DOMAIN = "ib_domain_id";
 	private static final String COLUMN_RELATED_GROUP = "related_ic_group_id";
 	private static final String COLUMN_RELATIONSHIP_TYPE = "relationship_type";
@@ -90,6 +100,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public ICDomain getDomain() {
+		domain = DBUtil.getInstance().lazyLoad(domain);
 		return this.domain;
 	}
 
@@ -98,6 +109,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public Group getRelatedGroup() {
+		relatedGroup = DBUtil.getInstance().lazyLoad(relatedGroup);
 		return this.relatedGroup;
 	}
 
@@ -106,6 +118,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public GroupDomainRelationType getRelationship() {
+		relationship = DBUtil.getInstance().lazyLoad(relationship);
 		return this.relationship;
 	}
 
@@ -138,6 +151,7 @@ public class GroupDomainRelation implements Serializable {
 	}
 
 	public User getPassiveBy() {
+		passiveBy = DBUtil.getInstance().lazyLoad(passiveBy);
 		return this.passiveBy;
 	}
 

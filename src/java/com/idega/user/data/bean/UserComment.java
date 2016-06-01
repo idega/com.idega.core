@@ -1,11 +1,12 @@
 /**
- * 
+ *
  */
 package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.util.Date;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -21,6 +22,7 @@ import javax.persistence.TemporalType;
 @Entity
 @Table(name = UserComment.ENTITY_NAME)
 @NamedQuery(name = "userComment.findAllByUser", query = "select uc from UserComment uc where uc.user = :user order by uc.created desc")
+@Cacheable
 public class UserComment implements Serializable {
 
 	private static final long serialVersionUID = -1060566573127705141L;

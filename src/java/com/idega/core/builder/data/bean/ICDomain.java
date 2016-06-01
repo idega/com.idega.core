@@ -163,7 +163,7 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	 * @return the startPage
 	 */
 	public ICPage getStartPage() {
-		DBUtil.getInstance().lazyLoad(startPage);
+		startPage = DBUtil.getInstance().lazyLoad(startPage);
 		return this.startPage;
 	}
 
@@ -179,7 +179,7 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	 * @return the startTemplate
 	 */
 	public ICPage getStartTemplate() {
-		DBUtil.getInstance().lazyLoad(startTemplate);
+		startTemplate = DBUtil.getInstance().lazyLoad(startTemplate);
 		return this.startTemplate;
 	}
 
@@ -331,7 +331,7 @@ public class ICDomain implements Serializable, UniqueIDCapable {
 	 * @return the pages
 	 */
 	public List<ICPage> getPages() {
-		DBUtil.getInstance().lazyLoad(pages);
+		pages = DBUtil.getInstance().lazyLoad(pages);
 		return this.pages;
 	}
 

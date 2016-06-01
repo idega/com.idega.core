@@ -239,6 +239,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the template
 	 */
 	public ICPage getTemplate() {
+		template = DBUtil.getInstance().lazyLoad(template);
 		return this.template;
 	}
 
@@ -284,6 +285,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the lockedBy
 	 */
 	public User getLockedBy() {
+		lockedBy = DBUtil.getInstance().lazyLoad(lockedBy);
 		return this.lockedBy;
 	}
 
@@ -317,6 +319,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the deletedBy
 	 */
 	public User getDeletedBy() {
+		deletedBy = DBUtil.getInstance().lazyLoad(deletedBy);
 		return this.deletedBy;
 	}
 
@@ -479,6 +482,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the domain
 	 */
 	public ICDomain getDomain() {
+		domain = DBUtil.getInstance().lazyLoad(domain);
 		return this.domain;
 	}
 
@@ -494,6 +498,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the protocols
 	 */
 	public List<ICProtocol> getProtocols() {
+		protocols = DBUtil.getInstance().lazyLoad(protocols);
 		return this.protocols;
 	}
 
