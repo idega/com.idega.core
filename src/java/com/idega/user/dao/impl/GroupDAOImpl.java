@@ -13,23 +13,40 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.idega.business.IBOLookup;
+import com.idega.core.builder.data.bean.ICDomain;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWUserContext;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
+import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.GroupRelationBMPBean;
+import com.idega.user.data.GroupTypeBMPBean;
+import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.GroupDomainRelation;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
+import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("groupDAO")
@@ -38,7 +55,45 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Group findGroup(Integer groupID) {
-		return find(Group.class, groupID);
+		try {
+			return find(Group.class, groupID);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group by ID: " + groupID, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroups(List<Integer> groupsIds, Integer from, Integer to) {
+		if (ListUtil.isEmpty(groupsIds)) {
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_BY_IDS, Group.class, from, to, null, new Param("ids", groupsIds));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes) {
+		if ((ListUtil.isEmpty(groupsIds)) || (ListUtil.isEmpty(groupTypes))){
+			return null;
+		}
+
+		try {
+			List<Param> params = new ArrayList<Param>();
+			String query = "select g from " + Group.class.getName() + " g where g.id in (:groupids) and g.groupType.groupType in (:groupTypes)";
+			params.add(new Param("groupids", groupsIds));
+			params.add(new Param("groupTypes", groupTypes));
+			List<Group> groups = getResultListByInlineQuery(query, Group.class, ArrayUtil.convertListToArray(params));
+			return ListUtil.isEmpty(groups) ? null : groups;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds, e);
+		}
+		return null;
 	}
 
 	@Override
@@ -98,6 +153,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> getGroupsByPersonalId(String personalId) {
+		Param param = new Param("personalId", personalId);
+
+		return getResultList(Group.QUERY_FIND_BY_PERSONAL_ID, Group.class, param);
+	}
+
+	@Override
+	public List<Group> getGroupsByName(String name) {
+		Param param = new Param("name", name);
+
+		return getResultList(Group.QUERY_FIND_BY_NAME, Group.class, param);
+	}
+
+	@Override
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes) {
 		Param param = new Param("groupTypes", groupTypes);
 
@@ -146,6 +215,40 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> findTopNodeVisibleGroupsContained(ICDomain containingDomain) {
+		if (containingDomain == null) {
+			getLogger().warning("Domain is not provided");
+			return Collections.emptyList();
+		}
+
+		try {
+			List<Group> groups = getResultList(GroupDomainRelation.QUERY_FIND_TOP_NODES_UNDER_DOMAIN, Group.class, new Param("domainId", containingDomain.getId()));
+			return groups;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain, e);
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public int getNumberOfTopNodeVisibleGroupsContained(ICDomain containingDomain) {
+		if (containingDomain == null) {
+			getLogger().warning("Domain is not provided");
+			return 0;
+		}
+
+		try {
+			Integer number = getSingleResult(GroupDomainRelation.QUERY_COUNT_TOP_NODES_UNDER_DOMAIN, Integer.class, new Param("domainId", containingDomain.getId()));
+			return number;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting top visible nodes in domain " + containingDomain, e);
+		}
+
+		return 0;
+	}
+
+	@Override
 	public Collection<Integer> findParentGroupsIds(Integer groupId) {
 		if (groupId != null) {
 			return getResultList(
@@ -155,6 +258,391 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 
 		return Collections.emptyList();
+	}
+
+	@Override
+	public Collection<Integer> findPermissionGroupPrimaryKeys(
+			Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			return getResultList(
+					Group.QUERY_FIND_PERMISSION_GROUP_IDS,
+					Integer.class,
+					new Param("ids", primaryKeys));
+		}
+
+		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Group> findParentGroups(Integer groupId) {
+		String query = "select distinct gr.group from " + GroupRelation.class.getName() + " gr where gr.relatedGroup.id = " + groupId +
+				" and (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type is null) and (gr.status = '" +
+				GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')";
+		return getResultListByInlineQuery(query, Group.class);
+	}
+
+	@Override
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
+		return getChildGroups(parentGroupsIds, municipalities, unions, years, notHavingTypes, from, to, false);
+	}
+	private List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to, boolean loadAliases) {
+		return getChildGroups(Group.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to, loadAliases);
+	}
+
+	@Override
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
+		return getChildGroups(Integer.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to, false);
+	}
+
+	private <T> List<T> getChildGroups(
+			Class<T> resultType,
+			List<Integer> parentGroupsIds,
+			List<String> municipalities,
+			List<String> unions,
+			List<String> years,
+			List<String> notHavingTypes,
+			List<String> havingTypes,
+			Integer from,
+			Integer to,
+			boolean loadAliases
+	) {
+		if (ListUtil.isEmpty(parentGroupsIds)) {
+			return null;
+		}
+
+		if (!ListUtil.isEmpty(havingTypes)) {
+			ArrayList<String> types = new ArrayList<String>();
+			for (String havingType: havingTypes) {
+				if (havingType != null && !havingType.equals("null")) {
+					types.add(havingType);
+				}
+			}
+
+			if (!ListUtil.isEmpty(types)) {
+				havingTypes = types;
+			} else {
+				havingTypes = null;
+			}
+		}
+
+		List<Param> params = new ArrayList<>();
+		StringBuilder query = null;
+		try {
+			params.add(new Param("ids", parentGroupsIds));
+
+			query = new StringBuilder("select ").append(resultType.getName().equals(Integer.class.getName()) ?
+					loadAliases ? "distinct g.id as id" : "distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
+					"g"
+			).append(" from ");
+			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
+			if (!ListUtil.isEmpty(municipalities) && !municipalities.contains("null")) {
+				query.append(" inner join gr.group.addresses a");
+			}
+			query.append(" where gr.group.id in (:ids) and (gr.groupRelationType.type = '").append(GroupBMPBean.RELATION_TYPE_GROUP_PARENT).append("' or gr.groupRelationType is null) ");
+			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
+
+			if (ListUtil.isEmpty(havingTypes) || havingTypes.contains("null")) {
+				//	Making sure only groups will be selected
+				if (ListUtil.isEmpty(notHavingTypes) || notHavingTypes.contains("null")) {
+					notHavingTypes = new ArrayList<>();
+				}
+				if (!notHavingTypes.contains(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE)) {
+					notHavingTypes.add(com.idega.user.data.bean.UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE);
+				}
+				query.append(" and g.groupType.groupType not in (:notHavingTypes) ");
+				params.add(new Param("notHavingTypes", notHavingTypes));
+			} else {
+				if (havingTypes.contains(GroupTypeConstants.GROUP_TYPE_ALIAS)) {
+					query.append(" and gr.relatedGroupType.groupType in (:havingTypes) ");
+				} else {
+					query.append(" and g.groupType.groupType in (:havingTypes) ");
+				}
+				params.add(new Param("havingTypes", havingTypes));
+			}
+
+			if (!ListUtil.isEmpty(municipalities) && !municipalities.contains("null")) {
+				query.append(" and a.city in (:municipalities)");
+				params.add(new Param("municipalities", municipalities));
+			}
+
+			if (resultType.getName().equals(Integer.class.getName())) {
+				if (!loadAliases) {
+					query.append(" and ((g.groupType.groupType = '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' and g.alias.id is not null) or (g.id is not null and g.groupType.groupType <> '"
+						.concat(GroupTypeBMPBean.TYPE_ALIAS).concat("'))")));
+				}
+			}
+
+			query.append(" order by g.name");
+
+			List<T> results = null;
+			if (!ListUtil.isEmpty(params)) {
+				results = getResultListByInlineQuery(
+						query.toString(),
+						resultType,
+						from,
+						to,
+						"groupChildGroupsWithFilterAndTypesAndPaging",
+						ArrayUtil.convertListToArray(params));
+			} else {
+				results = getResultListByInlineQuery(
+						query.toString(),
+						resultType,
+						from,
+						to,
+						"groupChildGroupsWithFilterAndTypesAndPaging");
+			}
+
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + " by query: " + query.toString(), e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getParentGroupsIds(List<Integer> ids) {
+		return getParentGroupsIds(ids, null);
+	}
+
+	private List<Integer> getParentGroupsIds(List<Integer> ids, Collection<String> groupTypes) {
+		try {
+			List<Param> params = new ArrayList<Param>();
+			StringBuilder query = new StringBuilder("select distinct r.group.id from ");
+			query.append(GroupRelation.class.getName()).append(" r join r.group g where r.relatedGroup.id in (:ids) ");
+			query.append(" and (r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' or r.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING);
+			query.append("') and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
+			if (!ListUtil.isEmpty(groupTypes)) {
+				query.append(" and g.groupType.groupType in (:groupTypes)");
+				params.add(new Param("groupTypes", groupTypes));
+			}
+			params.add(new Param("ids", ids));
+
+			List<Integer> results = getResultListByInlineQuery(query.toString(), Integer.class, ArrayUtil.convertListToArray(params));
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + ids + " and group types " + groupTypes, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<String> groupTypes) {
+		try {
+			List<Integer> ids = new ArrayList<>();
+
+			List<Integer> parentIds = null;
+			while (!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds, groupTypes))) {
+				ids.addAll(parentIds);
+				groupsIds = parentIds;
+			}
+
+			return ids;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + groupsIds + " and group types " + groupTypes, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc) {
+		if (user == null) {
+			getLogger().warning("User is not provided");
+			return null;
+		}
+
+		try {
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+
+			List<Integer> ids = new ArrayList<>();
+
+			Collection<com.idega.user.data.Group> userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+			List<Integer> parentGroupsIds = new ArrayList<>();
+			for (Iterator<com.idega.user.data.Group> groupsIter = userTopGroups.iterator(); groupsIter.hasNext();) {
+				parentGroupsIds.add(Integer.valueOf(groupsIter.next().getId()));
+			}
+			ids.addAll(parentGroupsIds);
+
+			List<Integer> childrenIds = null;
+			while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null))) {
+				ids.addAll(childrenIds);
+				parentGroupsIds = childrenIds;
+			}
+
+			return ids;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting all groups for " + user, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, notHavingChildGroupTypes, levels, Group.class, false);
+	}
+
+	@Override
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, levels, Group.class, false);
+	}
+
+	@Override
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
+		return getChildGroupsIds(parentGroupsIds, childGroupTypes, false);
+	}
+	@Override
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class, loadAliases);
+	}
+
+	@Override
+	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
+		Map<Integer, List<Integer>> data = getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class, false);
+		if (MapUtil.isEmpty(data)) {
+			return Collections.emptyList();
+		}
+
+		List<Integer> ids = new ArrayList<>();
+		for (List<Integer> childGroupsIds: data.values()) {
+			ids.addAll(childGroupsIds);
+		}
+		return ids;
+	}
+
+	@Override
+	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
+		Map<Integer, List<Group>> data = getChildGroups(parentGroupsIds, childGroupTypes, null, Group.class, false);
+		if (MapUtil.isEmpty(data)) {
+			return Collections.emptyList();
+		}
+
+		List<Group> groups = new ArrayList<>();
+		for (List<Group> childGroups: data.values()) {
+			groups.addAll(childGroups);
+		}
+		return groups;
+	}
+
+	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
+		Map<Integer, List<T>> results = new TreeMap<Integer, List<T>>();
+		int currentLevel = 1;
+		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
+		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
+			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, notHavingChildGroupTypes, childGroupTypes, null, null, loadAliases);
+			if (!ListUtil.isEmpty(levelGroups)) {
+				results.put(currentLevel, levelGroups);
+			}
+			currentLevel++;
+
+			parentGroupsIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null);
+		}
+		return results;
+	}
+
+	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, levels, resultType, loadAliases);
+	}
+
+	@Override
+	public Map<Integer, Boolean> hasUsers(List<Group> groups) {
+		if (ListUtil.isEmpty(groups)) {
+			return null;
+		}
+
+		StringBuilder query = new StringBuilder();
+		try {
+			query.append("SELECT gr.group.id, count(gr.relatedGroup.id) FROM ").append(GroupRelation.class.getName()).append("  gr WHERE gr.group.id in (");
+			for (Iterator<Group> groupsIter = groups.iterator(); groupsIter.hasNext();) {
+				Group group = groupsIter.next();
+				Integer id = group.getID();
+				if (id != null) {
+					query.append(id);
+					if (groupsIter.hasNext()) {
+						query.append(", ");
+					}
+				}
+			}
+			query.append(") and gr.groupRelationType.type = 'GROUP_PARENT' and (gr.status = 'ST_ACTIVE' or gr.status = 'PASS_PEND') ")
+				.append("and gr.relatedGroupType.groupType = 'ic_user_representative' group by gr.group.id");
+			List<Object[]> dbResults = getResultListByInlineQuery(query.toString(), Object[].class);
+			if (ListUtil.isEmpty(dbResults)) {
+				return null;
+			}
+
+			Map<Integer, Boolean> results = new HashMap<>();
+			for (Object[] data: dbResults) {
+				if (ArrayUtil.isEmpty(data) || data.length != 2) {
+					continue;
+				}
+
+				Object id = data[0];
+				Object count = data[0];
+				if (id instanceof Number && count instanceof Number) {
+					results.put(((Number) id).intValue(), ((Number) count).intValue() > 0);
+				}
+			}
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error checking if groups " + groups + " have users. Query: " + query.toString(), e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroupsByAlias(Group aliasGroup) {
+		if (aliasGroup == null) {
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_BY_ALIAS, Group.class, new Param("alias", aliasGroup));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by alias: " + aliasGroup, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroupsByAliasAndName(Group aliasGroup, String groupName) {
+		if (aliasGroup == null) {
+			return null;
+		}
+
+		try {
+			Param param1 = new Param("alias", aliasGroup);
+			Param param2 = StringUtil.isEmpty(groupName) ? null : new Param("name", groupName);
+
+			if (param1 != null && param2 != null) {
+				return getResultList(Group.QUERY_FIND_BY_ALIAS_AND_NAME, Group.class, param1, param2);
+			} else {
+				getResultList(Group.QUERY_FIND_BY_ALIAS, Group.class, param1);
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by alias: " + aliasGroup, e);
+		}
+		return null;
+	}
+
+
+	@Override
+	@Transactional(readOnly = false)
+	public void removeGroup(Integer groupId) {
+		if (groupId == null) {
+			getLogger().warning("Group ID is not provided");
+			return;
+		}
+
+		try {
+			Group group = findGroup(groupId);
+			if (group != null) {
+				remove(group);
+			} else {
+				throw new Exception("Group is not found.");
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not remove the group with ID " + groupId + ". Error message was: " + e.getLocalizedMessage(), e);
+		}
 	}
 
 	@Override

@@ -59,6 +59,7 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
@@ -94,10 +95,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	static final String META_DATA_HOME_PAGE = "homepage";
 
-	private static final String COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name";
-	private static final String COLUMN_LAST_READ_FROM_IMPORT = "last_imported";
-	private static final String COLUMN_RESUME = "RESUME";
-	private static final String COLUMN_LANGUAGES = TABLE_NAME + "_languages";
+	public static final String	COLUMN_DISPLAY_NAME_SET_MANUALLY = "manual_display_name",
+								COLUMN_LAST_READ_FROM_IMPORT = "last_imported",
+								COLUMN_RESUME = "RESUME",
+								COLUMN_LANGUAGES = TABLE_NAME + "_languages";
 
 	@Override
 	public String getEntityName() {
@@ -3190,5 +3191,9 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public GroupType getGroupTypeEntity() {
 		throw new java.lang.UnsupportedOperationException("Method getGroupTypeEntity() not yet implemented.");
+	}
+
+	public Long getAge() {
+		return CoreUtil.getAge(getDateOfBirth());
 	}
 }

@@ -5,10 +5,14 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -30,6 +34,7 @@ import com.idega.core.net.data.ICProtocol;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -70,7 +75,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	private static final int PREFETCH_SIZE = 100;
 
-	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
+	public static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final String SQL_RELATION_ADDRESS = "IC_GROUP_ADDRESS";
 	public final static String SQL_RELATION_EMAIL = "IC_GROUP_EMAIL";
 	public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";
@@ -456,8 +461,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public List<Group> getParentGroups() throws EJBException {
-		return getParentGroups(null, null);
-	}
+			return getParentGroups(null, null);
+		}
 
 	/**
 	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database
@@ -701,13 +706,13 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		Criteria theCriteria = null;
 		if (groupTypes != null && !groupTypes.isEmpty()) {
 			theCriteria = new InCriteria(idoQueryTable(), COLUMN_GROUP_TYPE, groupTypes, !returnTypes);
-		}
+				}
 
 		Criteria inCr = new InCriteria(idoQueryTable(), COLUMN_GROUP_ID, findGroupRelationsSQL);
 
 		if (theCriteria == null) {
 			theCriteria = inCr;
-		}
+			}
 		else {
 			theCriteria = new AND(theCriteria, inCr);
 		}
@@ -888,8 +893,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		}
 		catch (FinderException e) {
 			e.printStackTrace();
-			return theReturn;
-		}
+		return theReturn;
+	}
 	}
 
 	@Override

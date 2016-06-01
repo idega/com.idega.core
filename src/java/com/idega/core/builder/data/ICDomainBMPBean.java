@@ -10,10 +10,10 @@
 package com.idega.core.builder.data;
 
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Vector;
 
 import javax.ejb.FinderException;
 
@@ -26,6 +26,7 @@ import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
+import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationHome;
 import com.idega.user.data.GroupDomainRelationTypeBMPBean;
@@ -37,7 +38,7 @@ import com.idega.util.LocaleUtil;
  * Default implementation of ICDomain and mapping of the IB_DOMAIN Table.
  * </p>
  *  Last modified: $Date: 2007/04/09 22:17:59 $ by $Author: tryggvil $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">tryggvil</a>
  * @version $Revision: 1.4 $
  */
@@ -59,7 +60,7 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  public static final String COLUMNNAME_DEFAULT_LOCALE= "DEFAULT_LOCALE";
 	  public static final String COLUMNNAME_TYPE= "DOMAIN_TYPE";
 	  public static final String COLUMNNAME_SERVER_ALIASES= "SERVER_ALIASES";
-	  
+
 	  //private static Map cachedDomains;
 
 	  public ICDomainBMPBean() {
@@ -67,7 +68,8 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  }
 
 
-	  public void initializeAttributes() {
+	  @Override
+	public void initializeAttributes() {
 	    addAttribute(getIDColumnName());
 
 	    addAttribute(getColumnDomainName(),"Domain name",true,true,String.class);
@@ -83,11 +85,11 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	    addAttribute(COLUMNNAME_SERVER_PORT,"Server port",Integer.class);
 	    addAttribute(COLUMNNAME_SERVER_PROTOCOL,"Server protocol",String.class,30);
 	    addAttribute(COLUMNNAME_SERVER_CONTEXT_PATH,"Server context path",String.class);
-	    
+
 	    addAttribute(COLUMNNAME_DEFAULT_LOCALE,"Domain Default Locale",String.class,5);
 	    addAttribute(COLUMNNAME_TYPE,"Domain Type",String.class,20);
 	    addAttribute(COLUMNNAME_SERVER_ALIASES,"Server Aliases",String.class,255);
-	    
+
 	  }
 
 	  /*public static ICDomain getDomain(int id)throws SQLException {
@@ -114,7 +116,8 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	    return(cachedDomains);
 	  }*/
 
-	  public void insertStartData() throws Exception {
+	  @Override
+	public void insertStartData() throws Exception {
 	    //BuilderLogic instance = BuilderLogic.getInstance();
 	    ICDomainHome dHome = (ICDomainHome)getIDOHome(ICDomain.class);
 	    ICDomain domain = dHome.create();
@@ -149,12 +152,13 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 
 	    instance.setTemplateId(page.getPrimaryKey().toString(),page2.getPrimaryKey().toString());
 	    instance.getIBXMLPage(page2.getPrimaryKey().toString()).addPageUsingThisTemplate(page.getPrimaryKey().toString());
-*/	    
-	    
+*/
+
 	    domain.store();
 	  }
 
-	  public String getEntityName() {
+	  @Override
+	public String getEntityName() {
 	    return(tableName);
 	  }
 
@@ -174,19 +178,23 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	    return(start_template);
 	  }
 
-	  public ICPage getStartPage() {
+	  @Override
+	public ICPage getStartPage() {
 	    return((ICPage)getColumnValue(getColumnStartPage()));
 	  }
 
-	  public int getStartPageID() {
+	  @Override
+	public int getStartPageID() {
 	    return(getIntColumnValue(getColumnStartPage()));
 	  }
 
-	  public ICPage getStartTemplate() {
+	  @Override
+	public ICPage getStartTemplate() {
 	    return((ICPage)getColumnValue(getColumnStartTemplate()));
 	  }
 
-	  public int getStartTemplateID() {
+	  @Override
+	public int getStartTemplateID() {
 	    return(getIntColumnValue(getColumnStartTemplate()));
 	  }
 
@@ -197,51 +205,62 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 //	  public int getGroupID() {
 //	    return(getIntColumnValue(COLUMNNAME_GROUP_ID));
 //	  }
-	  
+
 	  // thomas is asking: why are there two methods (getName and  getDomainName) for the same attribute?
-	  public String getName() {
+	  @Override
+	public String getName() {
 	    return(getDomainName());
 	  }
-	  
-	  public void setName(String name) {
+
+	  @Override
+	public void setName(String name) {
 	    setColumn(getColumnDomainName(),name);
 	  }
-	  
-	  public String getDomainName() {
+
+	  @Override
+	public String getDomainName() {
 	    return(getStringColumnValue(getColumnDomainName()));
 	  }
-	  
-	  public void setDomainName(String domainName){
+
+	  @Override
+	public void setDomainName(String domainName){
 		  setColumn(getColumnDomainName(),domainName);
 	  }
 
-	  public String getURL() {
+	  @Override
+	public String getURL() {
 	    return(getStringColumnValue(getColumnURL()));
 	  }
-	  
-	  public void setURL(String url){
+
+	  @Override
+	public void setURL(String url){
 		  setColumn(getColumnURL(),url);
 	  }
 
-	  public Collection getTopLevelGroupsUnderDomain() throws IDORelationshipException, RemoteException, FinderException{
+	  @Override
+	public Collection getTopLevelGroupsUnderDomain() throws IDORelationshipException, RemoteException, FinderException{
+	    Collection<GroupDomainRelation> relations = ((GroupDomainRelationHome)IDOLookup.getHome(GroupDomainRelation.class)).findGroupsRelationshipsUnderDomainByRelationshipType(this.getID(),GroupDomainRelationTypeBMPBean.RELATION_TYPE_TOP_NODE);
+	    getLogger().info("Relations: " + relations);
 
-	    Collection relations = ((GroupDomainRelationHome)IDOLookup.getHome(GroupDomainRelation.class)).findGroupsRelationshipsUnderDomainByRelationshipType(this.getID(),GroupDomainRelationTypeBMPBean.RELATION_TYPE_TOP_NODE);
 	    //TODO do this in one sql command like in groupbmpbean and grouprelation
-	    Iterator iter = relations.iterator();
-	    Collection groups = new Vector();
+	    Iterator<GroupDomainRelation> iter = relations.iterator();
+	    Collection<Group> groups = new ArrayList<Group>();
 	    while (iter.hasNext()) {
-	      GroupDomainRelation item = (GroupDomainRelation)iter.next();
+	      GroupDomainRelation item = iter.next();
 	        groups.add(item.getRelatedGroup());
 	    }
 
+	    getLogger().info("Related groups: " + groups);
 	    return groups;
 	  }
 
-	  public void setIBPage(ICPage page) {
+	  @Override
+	public void setIBPage(ICPage page) {
 	     setColumn(getColumnStartPage(),page);
 	  }
 
-	  public void setStartTemplate(ICPage template) {
+	  @Override
+	public void setStartTemplate(ICPage template) {
 	    setColumn(getColumnStartTemplate(),template);
 	  }
 
@@ -250,56 +269,68 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 //	  }
 
 
-	  
-	  public void setServerName(String serverName){
+
+	  @Override
+	public void setServerName(String serverName){
 	      setColumn(COLUMNNAME_SERVER_NAME,serverName);
 	  }
-	  
-	  public String getServerName(){
+
+	  @Override
+	public String getServerName(){
 	      return getStringColumnValue(COLUMNNAME_SERVER_NAME);
 	  }
-	  
-	  
-	  public void setServerPort(int serverPort){
+
+
+	  @Override
+	public void setServerPort(int serverPort){
 	      setColumn(COLUMNNAME_SERVER_PORT,serverPort);
 	  }
-	  
-	  public int getServerPort(){
+
+	  @Override
+	public int getServerPort(){
 	      return getIntColumnValue(COLUMNNAME_SERVER_PORT);
-	  } 
-	  
-	  
-	  public void setServerContextPath(String serverContextPath){
+	  }
+
+
+	  @Override
+	public void setServerContextPath(String serverContextPath){
 	      setColumn(COLUMNNAME_SERVER_CONTEXT_PATH,serverContextPath);
 	  }
-	  
-	  public String getServerContextPath(){
+
+	  @Override
+	public String getServerContextPath(){
 	      return getStringColumnValue(COLUMNNAME_SERVER_CONTEXT_PATH);
 	  }
-	  
-	  public void setServerProtocol(String serverProtocol){
+
+	  @Override
+	public void setServerProtocol(String serverProtocol){
 	      setColumn(COLUMNNAME_SERVER_PROTOCOL,serverProtocol);
 	  }
-	  
-	  public String getServerProtocol(){
+
+	  @Override
+	public String getServerProtocol(){
 	      return getStringColumnValue(COLUMNNAME_SERVER_PROTOCOL);
 	  }
-	  
-	  public void setDefaultLocale(Locale locale){
+
+	  @Override
+	public void setDefaultLocale(Locale locale){
 		  if(locale!=null){
 			  setDefaultLocaleString(locale.toString());
 		  }
 	  }
-	  
-	  public void setDefaultLocaleString(String serverName){
+
+	  @Override
+	public void setDefaultLocaleString(String serverName){
 	      setColumn(COLUMNNAME_DEFAULT_LOCALE,serverName);
 	  }
-	  
-	  public String getDefaultLocaleString(){
+
+	  @Override
+	public String getDefaultLocaleString(){
 	      return getStringColumnValue(COLUMNNAME_DEFAULT_LOCALE);
 	  }
-	  
-	  public Locale getDefaultLocale(){
+
+	  @Override
+	public Locale getDefaultLocale(){
 		  String localeString = getDefaultLocaleString();
 		  if(localeString!=null){
 			  return LocaleUtil.getLocale(localeString);
@@ -311,15 +342,16 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	    String sql = "select * from " + getTableName();
 	    return super.idoFindPKsBySQL(sql);
 	  }
-	  
+
 	  public Collection ejbFindAllDomainsByServerName(String serverName) throws FinderException{
 	  	IDOQuery query = idoQueryGetSelect();
 	  	query.appendWhereEqualsWithSingleQuotes(COLUMNNAME_SERVER_NAME,serverName);
 	  	System.out.println(query.toString());
 	  	return idoFindPKsByQuery(query);
 	  }
-	  
-	  public String getURLWithoutLastSlash(){
+
+	  @Override
+	public String getURLWithoutLastSlash(){
 		  String url = getURL();
 		  if(url!=null){
 			  if(url.endsWith("/")){
@@ -331,11 +363,12 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 			  return null;
 		  }
 	  }
-	  
+
 	  /**
 	   * Get the UUID for the domain:
 	   */
-	  public String getUniqueId(){
+	  @Override
+	public String getUniqueId(){
 	  	return super.getUniqueId();
 	  }
 
@@ -365,7 +398,7 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  	query.addCriteria(new MatchCriteria(t,COLUMNNAME_TYPE,MatchCriteria.EQUALS,TYPE_DEFAULT));
 	  	return idoFindOnePKByQuery(query);
 	}
-	
+
 	/**
 	 * <p>
 	 * Finds the domain that has the given serverName if any, else it gets the one marked as default (Default Domain) in the table.
@@ -376,14 +409,14 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  	try{
 	  		SelectQuery query = idoSelectPKQuery();
 	  		Table t = new Table(this);
-	  		
+
 	  		Criteria serverNameCriteria = new MatchCriteria(t,COLUMNNAME_SERVER_NAME,MatchCriteria.EQUALS,serverName);
 	  		Criteria aliasesCriteria = new MatchCriteria(t,COLUMNNAME_SERVER_ALIASES,MatchCriteria.LIKE,serverName);
 
 	  		OR orCriteria = new OR(serverNameCriteria,aliasesCriteria);
-	  		
+
 	  		query.addCriteria(orCriteria);
-	  		
+
 	  		return idoFindOnePKByQuery(query);
 	  	}
 	  	catch(FinderException fe){
@@ -391,25 +424,30 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  		return ejbFindDefaultDomain();
 	  	}
 	}
-	
+
+	@Override
 	public String getType() {
 		return getStringColumnValue(COLUMNNAME_TYPE);
 	}
 
 
+	@Override
 	public void setType(String type) {
 		setColumn(COLUMNNAME_TYPE, type);
 	}
-	
+
+	@Override
 	public String getServerAliases() {
 		return getStringColumnValue(COLUMNNAME_SERVER_ALIASES);
 	}
 
 
+	@Override
 	public void setServerAliases(String aliases) {
 		setColumn(COLUMNNAME_SERVER_ALIASES, aliases);
 	}
 
+	@Override
 	public boolean isDefaultDomain() {
 		String type = getType();
 		if(type!=null&&type.equals(TYPE_DEFAULT)){

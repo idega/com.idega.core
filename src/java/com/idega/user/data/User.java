@@ -234,4 +234,9 @@ public java.lang.String getIDColumnName();
  public void setSHA1(String sha1);
 
  public Collection<User> getRelatedUsers(Collection<String> relationTypes);
+
+	/**
+	 * @return age of user in years or <code>null</code> on failure;
+	 */
+	Long getAge();
 }
