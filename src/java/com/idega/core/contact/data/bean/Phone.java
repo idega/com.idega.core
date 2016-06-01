@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.contact.data.bean;
 
@@ -23,6 +23,7 @@ import javax.persistence.Table;
 
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.util.DBUtil;
 
 @Entity
 @Table(name = Phone.ENTITY_NAME)
@@ -36,9 +37,7 @@ import com.idega.user.data.bean.User;
 			query = 	"SELECT DISTINCT p FROM Phone p "
 					+ 	"JOIN p.users u ON u.userID = :userID " 
 					+ 	"JOIN p.phoneType t ON t.uniqueName = :uniqueName"),
-	@NamedQuery(
-			name = Phone.QUERY_FIND_BY_NUMBER, 
-			query = 	"SELECT p FROM Phone p WHERE p.number = :phoneNumber"),
+	@NamedQuery(name = "phone.findPhoneByNumber", query = "select p from Phone p where p.number = :phoneNumber"),
 	@NamedQuery(name = "phone.findUsersWorkPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_WORK_PHONE + " and u.userID = :userID")
 })
 public class Phone implements Serializable {
@@ -143,6 +142,7 @@ public class Phone implements Serializable {
 	 * @return the users
 	 */
 	public List<User> getUsers() {
+		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
 	}
 
@@ -154,6 +154,7 @@ public class Phone implements Serializable {
 	 * @return the users
 	 */
 	public List<Group> getGroups() {
+		groups = DBUtil.getInstance().lazyLoad(groups);
 		return this.groups;
 	}
 }

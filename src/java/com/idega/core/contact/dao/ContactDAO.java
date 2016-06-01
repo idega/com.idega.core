@@ -24,9 +24,10 @@ public interface ContactDAO extends GenericDao {
 
 	@Transactional(readOnly = false)
 	public Email createEmail(String address, EmailType type);
-	
+
+	public Email findEmailForUserByType(User user, String type);
 	public Email findEmailForUserByType(User user, EmailType type);
-	
+
 	public EmailType getMainEmailType();
 	
 	public Email findEmailByAddress(String address);

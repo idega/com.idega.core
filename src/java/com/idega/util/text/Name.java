@@ -1,14 +1,16 @@
 package com.idega.util.text;
 
-import java.util.*;
+import java.util.Locale;
+import java.util.StringTokenizer;
 
+import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
 
 /**
  * Title: com.idega.util.text.Name Description: A helper class for splitting up
  * a fullname into first,middle and lastnames. Copyright: Copyright (c) 2002
  * Company:
- * 
+ *
  * @author Eirikur Hrafnsson
  * @version 1.1
  */
@@ -123,7 +125,7 @@ public class Name {
 						middleName.append(token.nextToken());
 
 						if (i != (countWithoutFirstAndLast - 1)) {
-							middleName.append(" ");
+							middleName.append(CoreConstants.SPACE);
 						}
 
 					}
@@ -146,7 +148,7 @@ public class Name {
 
 	/**
 	 * Capitalizes every part of a Name
-	 * 
+	 *
 	 * @return
 	 */
 	public Name capitalize() {
@@ -162,7 +164,7 @@ public class Name {
 		this.fullName = getName();
 		return this;
 	}
-	
+
 	public static void main(String[] arguments) {
 		Name name = new Name("George L. Henry");
 		System.out.println(name.getFirstName() + "  " + name.getMiddleName() + " " + name.getLastName());

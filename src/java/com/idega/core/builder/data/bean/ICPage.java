@@ -224,6 +224,7 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 	 * @return the file
 	 */
 	public ICFile getFile() {
+		file = DBUtil.getInstance().lazyLoad(file);
 		return this.file;
 	}
 

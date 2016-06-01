@@ -85,5 +85,10 @@ public class ContactDAOImpl extends GenericDaoImpl implements ContactDAO {
 		}
 		return phones.get(0);
 	}
+
+	@Override
+	public Email findEmailForUserByType(User user, String type) {
+		return null;
+	}
 	
 }
