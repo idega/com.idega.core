@@ -2263,10 +2263,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 						.findParentGroupsIds(group.getID());
 
 				Collection<Integer> permissiveGroups = getGroupDAO()
-						.findPermissionGroupPrimaryKeys(parentGroups);;
+						.findPermissionGroupPrimaryKeys(parentGroups);
 				if (!ListUtil.isEmpty(permissiveGroups)) {
 					parentGroups.addAll(permissiveGroups);
 				}
+
+				//Adding the user group
+				parentGroups.add(user.getId());
 
 				Collection<ICPermission> permissions = getAllRolesForGroupPrimaryKeys(parentGroups);
 				for (ICPermission permission: permissions) {
