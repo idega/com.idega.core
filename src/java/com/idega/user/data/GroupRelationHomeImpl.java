@@ -2,6 +2,8 @@ package com.idega.user.data;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 
@@ -250,4 +252,24 @@ public java.util.Collection findAllDuplicatedAliases() throws javax.ejb.FinderEx
    	this.idoCheckInPooledEntity(entity);
    	return this.getEntityCollectionForPrimaryKeys(ids);
 }
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.data.GroupRelationHome#findAllOrderedByDate(int, int)
+	 */
+	@Override
+	public Collection<GroupRelation> findAllOrderedByDate(int groupID, int relatedGroupID) {
+		GroupRelationBMPBean entity = (GroupRelationBMPBean) this.idoCheckOutPooledEntity();
+	   	Collection<Object> ids = ((GroupRelationBMPBean)entity).ejbFindAllOrderedByDate(groupID, relatedGroupID);
+	   	if (!ListUtil.isEmpty(ids)) {
+	   		try {
+				return this.getEntityCollectionForPrimaryKeys(ids);
+			} catch (FinderException e) {
+				Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+						"Failed to get entities by primary keys: " + ids);
+			}
+	   	}
+
+	   	return Collections.emptyList();
+	}
 }

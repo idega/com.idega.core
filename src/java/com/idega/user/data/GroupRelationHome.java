@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import java.util.Collection;
+import java.util.Collections;
 
 
 public interface GroupRelationHome extends com.idega.data.IDOHome
@@ -34,5 +35,15 @@ public interface GroupRelationHome extends com.idega.data.IDOHome
  public java.lang.String getFindGroupsRelationshipsContainingSQL(int p0,java.lang.String p1);
  public java.lang.String getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int p0,java.lang.String p1);
  public Collection<GroupRelation> findGroupsRelationshipsContaining(int groupId,Collection<String> relationTypes);
+
+	/**
+	 * <p>Bidirectional, all data included</p>
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by, 
+	 * not <code>null</code>;
+	 * @param relatedGroupID is {@link Group#getPrimaryKey()} to search by, 
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<GroupRelation> findAllOrderedByDate(int groupID, int relatedGroupID);
 
 }
