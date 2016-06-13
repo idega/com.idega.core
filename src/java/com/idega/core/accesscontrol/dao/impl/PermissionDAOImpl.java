@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
-import java.util.logging.Level;
 
 import javax.persistence.Query;
 
@@ -29,7 +28,6 @@ import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
 import com.idega.user.data.bean.Group;
-import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -190,9 +188,9 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	@Override
 	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Group group) {
 		Param param1 = new Param("contextType", contextType);
-		Param param2 = new Param("group", group);
+		Param param2 = new Param("group", group.getID());
 
-		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP, ICPermission.class, param1, param2);
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUP_ID, ICPermission.class, param1, param2);
 	}
 
 	/*
