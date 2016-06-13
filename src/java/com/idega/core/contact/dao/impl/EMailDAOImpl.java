@@ -84,6 +84,7 @@ package com.idega.core.contact.dao.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -97,6 +98,7 @@ import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.dao.GenericTypeDAO;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.User;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -150,11 +152,22 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 	@Override
 	public Email findByEMailAddress(String eMailAddress) {
 		if (!StringUtil.isEmpty(eMailAddress)) {
-			return getSingleResult(
-					Email.FIND_BY_E_MAIL_ADDRESS,
-					Email.class, 
-					new com.idega.core.persistence.Param(
-							Email.eMailAddressProp, eMailAddress));
+			try {
+				return getSingleResult(
+						Email.FIND_BY_E_MAIL_ADDRESS,
+						Email.class, 
+						new com.idega.core.persistence.Param(
+								Email.eMailAddressProp, eMailAddress));
+			} catch (Exception e) {
+				List<Email> results = getResultList(
+						Email.FIND_BY_E_MAIL_ADDRESS,
+						Email.class, 
+						new com.idega.core.persistence.Param(
+								Email.eMailAddressProp, eMailAddress));
+				if (!ListUtil.isEmpty(results)) {
+					return results.iterator().next();
+				}
+			}
 		}
 
 		return null;
