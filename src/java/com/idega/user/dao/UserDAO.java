@@ -100,4 +100,11 @@ public interface UserDAO extends GenericDao {
 	 */
 	List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName);
 
+	/**
+	 * 
+	 * @param anyColumn is {@link User#getPersonalID()} or {@link User#getFirstName()} or ...
+	 * @return {@link Collection} on entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<User> findFilteredBy(String anyColumn);
+
 }

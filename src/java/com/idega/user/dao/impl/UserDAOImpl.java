@@ -344,6 +344,36 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 				User.class,
 				parameters.toArray(new Param[parameters.size()]));
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String)
+	 */
+	@Override
+	public List<User> findFilteredBy(String anyColumn) {
+		if (!StringUtil.isEmpty(anyColumn)) {
+			ArrayList<Param> parameters = new ArrayList<Param>();
+			StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
+			parameters.add(new Param("firstName", anyColumn));
+			query.append("WHERE u.firstName like :firstName ");
+
+			parameters.add(new Param("middleName", anyColumn));
+			query.append("OR u.middleName like :middleName ");
+
+			parameters.add(new Param("lastName", anyColumn));
+			query.append("OR u.lastName like :lastName ");
+
+			parameters.add(new Param("personalId", anyColumn));
+			query.append("OR u.personalID like :personalId ");
+			
+			return getResultListByInlineQuery(
+					query.toString(),
+					User.class,
+					parameters.toArray(new Param[parameters.size()]));
+		}
+
+		return Collections.emptyList();
+	}
 	
 	@Override
 	public List<User> getUsersByEmailAddress(String emailAddress) {
