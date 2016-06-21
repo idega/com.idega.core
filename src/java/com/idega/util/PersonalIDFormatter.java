@@ -12,7 +12,7 @@ import java.util.Locale;
 
 public class PersonalIDFormatter {
 
-	private static String DASH = "-";
+	private static String DASH = CoreConstants.MINUS;
 
 	private PersonalIDFormatter() {
 	}
@@ -47,7 +47,7 @@ public class PersonalIDFormatter {
 		}
 		return originalString;
 	}
-	
+
 	/**
 	 * Strips all non-digit characters from the given id and puts a database wildcard in front of it
 	 * @param personalID
@@ -56,7 +56,7 @@ public class PersonalIDFormatter {
 	public static String stripForDatabaseSearch(String personalID){
 		return stripForDatabaseSearch(personalID,false);
 	}
-	
+
 	/**
 	 * Strips all non-digit characters from the given id and puts a database wildcard in front and back of it
 	 * @param personalID
@@ -77,9 +77,9 @@ public class PersonalIDFormatter {
 		}
 		//System.err.println("changing "+s+" to "+sb.toString());
 		return sb.toString();
-		
+
 	}
-	
+
 	public static void main(String[] args){
 			test(args);
 	}
@@ -93,13 +93,13 @@ public class PersonalIDFormatter {
 			localeString=args[1];
 		}
 		catch(RuntimeException rme){}
-			
-		
+
+
 		if(personalID==null){
-			personalID="197811103433";	
+			personalID="197811103433";
 		}
 		if(localeString==null){
-			localeString="sv_SE";	
+			localeString="sv_SE";
 		}
 		System.out.println("Output: "+format(personalID,LocaleUtil.getLocale(localeString)));
 	}
