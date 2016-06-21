@@ -321,6 +321,7 @@ public class SendMail {
 		}
 
 		// Send the message and close the connection
+		final String receiver = to;
 		final Message mail = message;
 		Thread transporter = new Thread(new Runnable() {
 			@Override
@@ -337,7 +338,7 @@ public class SendMail {
 							filesNames.append(attachment.getName()).append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 						}
 					}
-					LOGGER.log(Level.WARNING, "Error sending mail " + mail + " - Attachments: '" + filesNames.toString() + "': " + e.getMessage());
+					LOGGER.log(Level.WARNING, "Error sending mail to " + receiver + ", message: " + mail + " ; attachments: '" + filesNames.toString() + "': " + e.getMessage(), e);
 				} finally {
 					if (deleteFiles && !ArrayUtil.isEmpty(attachedFiles)) {
 						for (File attachment: attachedFiles) {
