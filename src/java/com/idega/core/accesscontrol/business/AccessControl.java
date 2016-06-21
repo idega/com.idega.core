@@ -33,7 +33,6 @@ import javax.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.business.IBOLookup;
-import com.idega.business.IBOLookupException;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
 import com.idega.core.accesscontrol.dao.UserLoginDAO;
 import com.idega.core.accesscontrol.dao.UsernameExistsException;
@@ -141,8 +140,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Autowired
 	ICObjectDAO objectDAO;
 
-	private GroupBusiness groupBusiness;
-
 	private GroupHome groupHome;
 
 	private GroupHome getGroupHome() {
@@ -157,23 +154,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		return this.groupHome;
  	}
-
-	private GroupBusiness getGroupBusiness() {
-		if (this.groupBusiness == null) {
-			try {
-				this.groupBusiness = IBOLookup.getServiceInstance(
-						IWMainApplication.getDefaultIWApplicationContext(),
-						GroupBusiness.class);
-			} catch (IBOLookupException e) {
-				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING,
-						"Failed to get " + GroupBusiness.class +
-						", cause of:", e);
-			}
-		}
-
-		return this.groupBusiness;
-	}
 
 	@Override
 	public Integer getUsersGroupID() {
@@ -766,10 +746,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (user != null) {
 			Group userGroup = user.getUserRepresentative();
 			if (userGroup != null && !AccessController.PERMISSION_KEY_OWNER.equals(permissionKey)) {
-				Collection<Integer> groupIds = getGroupDAO()
-						.findParentGroupsIds(userGroup.getID());
-				return getGroupHome()
-						.findPermissionGroupPrimaryKeys(groupIds);
+				Collection<Integer> groupsIds = getGroupDAO().findParentGroupsIds(userGroup.getID());
+				Collection<Integer> permissionGroupsIds = getGroupHome().findPermissionGroupPrimaryKeys(groupsIds);
+				if (ListUtil.isEmpty(permissionGroupsIds) && groupsIds != null) {
+					permissionGroupsIds = new ArrayList<>(groupsIds);
+				}
+
+				return permissionGroupsIds;
 			}
 		}
 
@@ -2237,8 +2220,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (user != null) {
 			UserGroupRepresentative group = user.getGroup();
 			if (group != null) {
-				Collection<com.idega.user.data.Group> groupsFound = getGroupHome()
-						.findParentGroups(group.getID());
+				Collection<com.idega.user.data.Group> groupsFound = getGroupHome().findParentGroups(group.getID());
 				if (groupsFound != null) {
 					return new ArrayList<com.idega.user.data.Group>(groupsFound);
 				}
@@ -2259,11 +2241,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (user != null) {
 			UserGroupRepresentative group = user.getGroup();
 			if (group != null) {
-				Collection<Integer> parentGroups = getGroupDAO()
-						.findParentGroupsIds(group.getID());
+				Collection<Integer> parentGroups = getGroupDAO().findParentGroupsIds(group.getID());
+				if (parentGroups == null) {
+					return permissionsSet;
+				}
 
-				Collection<Integer> permissiveGroups = getGroupDAO()
-						.findPermissionGroupPrimaryKeys(parentGroups);;
+				Collection<Integer> permissiveGroups = getGroupDAO().findPermissionGroupPrimaryKeys(parentGroups);
 				if (!ListUtil.isEmpty(permissiveGroups)) {
 					parentGroups.addAll(permissiveGroups);
 				}
