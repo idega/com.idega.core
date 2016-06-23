@@ -3,6 +3,7 @@ package com.idega.util.database;
 
 import java.io.FileInputStream;
 import java.io.InputStream;
+import java.lang.reflect.Method;
 import java.sql.Connection;
 import java.sql.Driver;
 import java.sql.DriverManager;
@@ -18,9 +19,19 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.sql.DataSource;
+
+import org.hibernate.Session;
+import org.hibernate.SessionFactory;
+import org.hibernate.stat.Statistics;
+
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
+import com.idega.util.ArrayUtil;
+import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -256,17 +267,62 @@ public class PoolManager implements Singleton {
 	// debug
 	public String getStats(String name) {
 		ConnectionPool tempPool = this.pools.get(name);
-		return tempPool.getStats();
+		return tempPool == null ? "Pool with name '" + name + "' not available" : tempPool.getStats();
 	}
 
 	// Status of all pools:
 	public String getStats() {
-		String returnString = "";
-		for (String name: this.pools.keySet()) {
-			ConnectionPool tempPool = this.pools.get(name);
-			returnString = returnString + "\nStatus of datasource " + name + " is: " + tempPool.getStats() + " ";
+		StringBuilder result = new StringBuilder();
+		if (MapUtil.isEmpty(pools)) {
+			result.append("There are no <b>DB pools</b> available.<br/>");
+		} else {
+			for (String name: this.pools.keySet()) {
+				ConnectionPool tempPool = this.pools.get(name);
+				result.append("Status of datasource '<b>").append(name).append("</b>' is: ").append(tempPool.getStats()).append("<br/>");
+			}
 		}
-		return returnString;
+
+		String[] dataSources = ConnectionBroker.getDatasources();
+		if (ArrayUtil.isEmpty(dataSources)) {
+			dataSources = new String[] {ConnectionBroker.DEFAULT_POOL};
+		}
+		for (String dataSourceName: dataSources) {
+			DataSource dataSource = ConnectionBroker.getDataSource(dataSourceName);
+			try {
+				if ("BasicDataSource".equals(dataSource.getClass().getSimpleName())) {
+					Method numActive = dataSource.getClass().getMethod("getNumActive");
+					Object active = numActive.invoke(dataSource);
+
+					Method numIdle = dataSource.getClass().getMethod("getNumIdle");
+					Object idle = numIdle.invoke(dataSource);
+
+					Method maxActive = dataSource.getClass().getMethod("getMaxActive");
+					Object maxTotal = maxActive.invoke(dataSource);
+
+					Method maxIdleMethod = dataSource.getClass().getMethod("getMaxIdle");
+					Object maxIdle = maxIdleMethod.invoke(dataSource);
+					result.append("Data source <b>").append(dataSourceName).append("</b> has active connections: ").append(active)
+						.append(" (max allowed: ").append(maxTotal)
+						.append(active instanceof Integer && maxTotal instanceof Integer ? "; free connections: " + (((Integer) maxTotal) - ((Integer) active)) : CoreConstants.EMPTY)
+						.append("); idle connections: ").append(idle).append(" (max idle: ").append(maxIdle).append(").<br/>");
+				}
+			} catch (Throwable e) {
+				log.log(Level.WARNING, "Error getting statistics for datasource " + dataSource, e);
+			}
+		}
+
+		try {
+			Session session = DBUtil.getInstance().getCurrentSession();
+			if (session != null) {
+				SessionFactory sessionFactory = session.getSessionFactory();
+				Statistics statistics = sessionFactory.getStatistics();
+				result.append("<b>Hibernate statistics:</b> ").append(statistics.toString());
+			}
+		} catch (Exception e) {
+			log.log(Level.WARNING, "Error getting statistics for Hibernate", e);
+		}
+
+		return result.toString();
 	}
 
 	public Map<String, String> getStatsHashtable() {
