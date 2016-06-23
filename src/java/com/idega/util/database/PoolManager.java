@@ -21,10 +21,6 @@ import java.util.logging.Logger;
 
 import javax.sql.DataSource;
 
-import org.hibernate.Session;
-import org.hibernate.SessionFactory;
-import org.hibernate.stat.Statistics;
-
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
@@ -312,12 +308,7 @@ public class PoolManager implements Singleton {
 		}
 
 		try {
-			Session session = DBUtil.getInstance().getCurrentSession();
-			if (session != null) {
-				SessionFactory sessionFactory = session.getSessionFactory();
-				Statistics statistics = sessionFactory.getStatistics();
-				result.append("<b>Hibernate statistics:</b> ").append(statistics.toString());
-			}
+			result.append("<b>Hibernate statistics:</b> ").append(DBUtil.getInstance().getStatistics());
 		} catch (Exception e) {
 			log.log(Level.WARNING, "Error getting statistics for Hibernate", e);
 		}
