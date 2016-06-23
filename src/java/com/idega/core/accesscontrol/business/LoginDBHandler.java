@@ -271,7 +271,7 @@ public class LoginDBHandler {
 	}
 
 	public static LoginTable createLogin(com.idega.user.data.User user, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType) throws Exception {
-		int userId = ((Integer) user.getPrimaryKey()).intValue();
+		int userId = Integer.valueOf(user.getPrimaryKey().toString()).intValue();
 		return createLogin(userId, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType, null);
 	}
 

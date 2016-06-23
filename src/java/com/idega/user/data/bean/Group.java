@@ -85,7 +85,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g where g.personalId = :personalId"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_NAME, query = "select g from Group g where g.name = :name"),
 	@NamedQuery(
 			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS,
@@ -247,8 +247,6 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
     @Transient
     private boolean hasUsers;
-
-
 
 	@PrePersist
 	public void setDefaultValues() {

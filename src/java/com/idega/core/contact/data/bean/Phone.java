@@ -58,6 +58,7 @@ public class Phone implements Serializable {
 	@Column(name = COLUMN_PHONE_ID)
 	private Integer phoneID;
 
+	public static final String QUERY_FIND_BY_NUMBER = "phone.findPhoneByNumber";
 	@Column(name = COLUMN_NUMBER)
 	private String number;
 
@@ -143,6 +144,10 @@ public class Phone implements Serializable {
 	public List<User> getUsers() {
 		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	/**

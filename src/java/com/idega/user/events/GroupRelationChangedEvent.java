@@ -7,7 +7,7 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 	private static final long serialVersionUID = 1391585374701171810L;
 
 	private String reason = null;
-	
+
 	public GroupRelationChangedEvent(Object source) {
 		super(source);
 	}
@@ -24,5 +24,5 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 	public void setReason(String reason) {
 		this.reason = reason;
 	}
-	
+
 }

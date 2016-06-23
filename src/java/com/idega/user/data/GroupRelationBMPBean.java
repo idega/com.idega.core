@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -516,6 +517,35 @@ public boolean equals(Object obj) {
     +" and "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
 
+	/**
+	 * <p>Bidirectional, all data included</p>
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by,
+	 * not <code>null</code>;
+	 * @param relatedGroupID is {@link Group#getPrimaryKey()} to search by,
+	 * not <code>null</code>;
+	 * @return primary keys or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Object> ejbFindAllOrderedByDate(int groupID, int relatedGroupID) {
+		StringBuilder query = new StringBuilder();
+		query.append(" SELECT ").append(getIDColumnName());
+		query.append(" FROM ").append(getTableName());
+		query.append(" WHERE (");
+			query.append(GroupRelationBMPBean.GROUP_ID_COLUMN).append(" = ").append(groupID);
+			query.append(" AND ").append(GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN).append(" = ").append(relatedGroupID);
+		query.append(") OR (");
+			query.append(GroupRelationBMPBean.GROUP_ID_COLUMN).append(" = ").append(relatedGroupID);
+			query.append(" AND ").append(GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN).append(" = ").append(groupID);
+		query.append(") ORDER BY INITIATION_DATE ");
+
+		try {
+			return this.idoFindPKsBySQL(query.toString());
+		} catch (FinderException e) {
+			getLogger().log(Level.WARNING, "Failed to get primary keys by query: '" + query.toString() + "'");
+		}
+
+		return Collections.emptyList();
+	}
+
   /**
    * Finds all active relationships specified only in one direction with groupID and relatedGroupID and relationshipType as specified
    */
@@ -607,7 +637,7 @@ public void removeBy(User currentUser) throws RemoveException{
 		super.store();
 		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent("Changed"));
 	}
-	
+
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
 
 	//constructing query

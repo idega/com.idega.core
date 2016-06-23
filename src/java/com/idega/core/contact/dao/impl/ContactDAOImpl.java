@@ -54,7 +54,10 @@ public class ContactDAOImpl extends GenericDaoImpl implements ContactDAO {
 			return null;
 		}
 
-		return getSingleResult(Email.QUERY_FIND_BY_USER_AND_TYPE, Email.class, new Param("id", user.getId()));
+		Param param1 = new Param("id", user.getId());
+		Param param2 = new Param("uniqueName", type);
+
+		return getSingleResult(Email.QUERY_FIND_BY_USER_AND_TYPE, Email.class, param1, param2);
 	}
 
 	@Override

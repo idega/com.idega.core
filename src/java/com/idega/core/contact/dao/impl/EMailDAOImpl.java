@@ -82,6 +82,10 @@
  */
 package com.idega.core.contact.dao.impl;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -93,6 +97,8 @@ import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.dao.GenericTypeDAO;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.user.data.bean.User;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -121,7 +127,7 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 			ELUtil.getInstance().autowire(this);
 		}
 
-		return null;
+		return this.genericTypeDAO;
 	}
 
 	/*
@@ -146,11 +152,22 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 	@Override
 	public Email findByEMailAddress(String eMailAddress) {
 		if (!StringUtil.isEmpty(eMailAddress)) {
-			return getSingleResult(
-					Email.FIND_BY_E_MAIL_ADDRESS,
-					Email.class, 
-					new com.idega.core.persistence.Param(
-							Email.eMailAddressProp, eMailAddress));
+			try {
+				return getSingleResult(
+						Email.FIND_BY_E_MAIL_ADDRESS,
+						Email.class, 
+						new com.idega.core.persistence.Param(
+								Email.eMailAddressProp, eMailAddress));
+			} catch (Exception e) {
+				List<Email> results = getResultList(
+						Email.FIND_BY_E_MAIL_ADDRESS,
+						Email.class, 
+						new com.idega.core.persistence.Param(
+								Email.eMailAddressProp, eMailAddress));
+				if (!ListUtil.isEmpty(results)) {
+					return results.iterator().next();
+				}
+			}
 		}
 
 		return null;
@@ -186,8 +203,12 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 	 * @see com.idega.core.contact.dao.EMailDAO#update(java.lang.String, com.idega.core.contact.data.bean.EmailType)
 	 */
 	@Override
-	public Email update(String eMailAddress, EmailType type) {
-		Email entity = findByEMailAddress(eMailAddress);
+	public Email update(Integer id, Integer userId, String eMailAddress, EmailType type) {
+		Email entity = findById(id);
+		if (entity == null) {
+			entity = findByEMailAddress(eMailAddress);
+		}
+
 		if (entity == null) {
 			entity = new Email();
 		}
@@ -200,6 +221,16 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 			entity.setEmailType(type);
 		}
 
+		if (userId != null) {
+			/*
+			 * I believe that good e-mail address shoud have only one owner
+			 */
+			User user = find(User.class, userId);
+			if (user != null) {
+				entity.setUsers(new ArrayList<User>(Arrays.asList(user)));
+			}
+		}
+
 		return update(entity);
 	}
 
@@ -207,9 +238,9 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 	 * @see com.idega.core.contact.dao.EMailDAO#update(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public Email update(String eMailAddress, String displayName,
-			String uniqueName, String description) {
-		return update(eMailAddress, getGenericTypeDAO().update(null, 
+	public Email update(Integer id, String eMailAddress,
+			String displayName, String uniqueName, String description) {
+		return update(id, null, eMailAddress, getGenericTypeDAO().update(null, 
 				uniqueName, displayName, description, EmailType.class));
 	}
 }

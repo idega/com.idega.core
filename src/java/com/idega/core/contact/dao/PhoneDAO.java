@@ -113,4 +113,36 @@ public interface PhoneDAO {
 	 * @return entities or {@link Collections#emptyList()} on failure; 
 	 */
 	Collection<Phone> findByUserId(Integer userId, String uniqueName);
+
+	/**
+	 * 
+	 * @param phoneNumber is {@link Phone#getNumber()}, not <code>null</code>
+	 * @return entity or <code>null</code> on failure;
+	 */
+	Phone findByPhoneNumber(String phoneNumber);
+
+	/**
+	 * 
+	 * @param entity to update, not <code>null</code>;
+	 * @return created / updated entity or <code>null</code> on failure;
+	 */
+	Phone update(Phone entity);
+
+	/**
+	 * 
+	 * @param id is {@link Phone#getId()}, new entity is created when <code>null</code>;
+	 * @param userId is {@link User#getId()}, skipped if <code>null</code>;
+	 * @param phoneNumber is {@link Phone#getNumber()}, skipped if <code>null</code>;
+	 * @param phoneType is {@link PhoneType#getUniqueName()}, skipped if <code>null</code>;
+	 * @return created / updated entity or <code>null</code> on failure;
+	 */
+	Phone update(Integer id, Integer userId, String phoneNumber, String phoneType);
+
+	/**
+	 * 
+	 * @param userId is {@link User#getId()}, skipped if <code>null</code>;
+	 * @param phoneNumbers is {@link Phone#getNumber()}, skipped if <code>null</code>;
+	 * @return updated entities or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<Phone> update(Integer userId, Collection<String> phoneNumbers);
 }

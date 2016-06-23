@@ -44,7 +44,6 @@ public class LoginTableHomeImpl extends IDOFactory implements LoginTableHome {
 	public LoginTable findLoginForUser(User user) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((LoginTableBMPBean) entity).ejbFindLoginForUser(user);
-		this.idoCheckInPooledEntity(entity);
 		return this.findByPrimaryKey(pk);
 	}
 

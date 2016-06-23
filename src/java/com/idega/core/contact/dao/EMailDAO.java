@@ -120,15 +120,18 @@ public interface EMailDAO {
 
 	/**
 	 * 
+	 * @param id is {@link Email#getId()}, skipped if <code>null</code>;
+	 * @param userId TODO
 	 * @param eMailAddress is {@link Email#getEmailAddress()}, 
 	 * not <code>null</code>;
 	 * @param type
 	 * @return created/updated entity or <code>null</code> on failure;
 	 */
-	Email update(String eMailAddress, EmailType type);
+	Email update(Integer id, Integer userId, String eMailAddress, EmailType type);
 	
 	/**
 	 * 
+	 * @param id is {@link Email#getId()}, skipped if <code>null</code>;
 	 * @param eMailAddress is {@link Email#getEmailAddress()}, 
 	 * not <code>null</code>;
 	 * @param displayName is {@link GenericType#getDisplayName()}, 
@@ -139,5 +142,5 @@ public interface EMailDAO {
 	 * skipped if <code>null</code>;
 	 * @return created/updated entity or <code>null</code> on failure;
 	 */
-	Email update(String eMailAddress, String displayName, String uniqueName, String description);
+	Email update(Integer id, String eMailAddress, String displayName, String uniqueName, String description);
 }

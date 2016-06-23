@@ -476,11 +476,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public List<Group> getParentGroups() throws EJBException {
-		try {
-			return getParentGroups(null, null);
-		} catch (Exception e) {
-			throw new EJBException(e);
-		}
+		return getParentGroups(null, null);
 	}
 
 	protected Collection getChildGroupRelationships() throws FinderException {
@@ -638,7 +634,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			}
 			query += ")";
 		}
-//		query += " order by g." + COLUMN_NAME;
 		return idoFindPKsBySQL(query, PREFETCH_SIZE);
 	}
 
@@ -2025,9 +2020,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.idega.user.data.GroupNode#getParentGroups(java.util.Map, java.util.Map)
+	/**
+	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database
+	 * access is minimized by passing a Map of cached groupParents and Map of
+	 * cached groups to the method
 	 */
 	@Override
 	public List<Group> getParentGroups(

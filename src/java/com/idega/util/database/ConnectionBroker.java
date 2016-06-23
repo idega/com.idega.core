@@ -149,7 +149,7 @@ public class ConnectionBroker {
 			}
 		} else if (isUsingJNDIDatasource()) {
 			try {
-				if (!connection.isClosed()) {
+				if (connection != null && !connection.isClosed()) {
 					connection.close();
 				}
 			} catch (SQLException e) {

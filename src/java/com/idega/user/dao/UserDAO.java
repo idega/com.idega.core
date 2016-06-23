@@ -57,7 +57,7 @@ public interface UserDAO extends GenericDao {
 	public Gender getFemaleGender();
 
 	public User getByEmailAddress(String emailAddress);
-	
+
 	List<User> getUsersByEmailAddress(String emailAddress);
 
 	public Address getUsersMainAddress(User user);
@@ -99,5 +99,12 @@ public interface UserDAO extends GenericDao {
 	 * @return filtered entities or {@link Collections#emptyList()} on failure;
 	 */
 	List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName);
+
+	/**
+	 *
+	 * @param anyColumn is {@link User#getPersonalID()} or {@link User#getFirstName()} or ...
+	 * @return {@link Collection} on entities or {@link Collections#emptyList()} on failure;
+	 */
+	List<User> findFilteredBy(String anyColumn);
 
 }

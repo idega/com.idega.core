@@ -426,8 +426,10 @@ public class ConnectionPool {
 	}
 	private synchronized void addConnectionToPool(Connection conn)
 	{
-		// Put the connection at the end of the Vector
-		this.freeConnections.add(conn);
+		if (conn != null) {
+			// Put the connection at the end of the Vector
+			this.freeConnections.add(conn);
+		}
 	}
 	public synchronized void release()
 	{
@@ -440,8 +442,10 @@ public class ConnectionPool {
 			Connection con = allConnections.next();
 			try
 			{
-				con.close();
-				log.fine("Closed connection");
+				if (con != null && !con.isClosed()) {
+					con.close();
+					log.fine("Closed connection");
+				}
 			}
 			catch (SQLException e)
 			{
@@ -686,7 +690,9 @@ public class ConnectionPool {
 	}
 	private void removeFromCheckedOutList(Connection conn)
 	{
-		getCheckedOutMap().remove(conn);
+		if (conn != null) {
+			getCheckedOutMap().remove(conn);
+		}
 	}
 	private void cleanUpCheckedOut()
 	{

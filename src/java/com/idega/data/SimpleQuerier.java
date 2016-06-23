@@ -123,7 +123,7 @@ public class SimpleQuerier {
     }
 
     public static List<Serializable[]> executeQuery(String sqlQuery, String datasource, int columns) throws Exception {
-    	Connection conn= null;
+    	Connection conn = null;
         try {
             conn = getConnection(datasource);
             return executeQuery(conn, sqlQuery, columns);
@@ -165,7 +165,6 @@ public class SimpleQuerier {
                 stmt.close();
             }
 
-            long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
             	CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sqlQuery);
             }
@@ -382,7 +381,6 @@ public class SimpleQuerier {
             }
             IOUtil.close(chrInstream);
 
-            long end = System.currentTimeMillis();
             if (CoreUtil.isSQLMeasurementOn()) {
             	CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sql);
             }

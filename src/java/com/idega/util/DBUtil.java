@@ -49,4 +49,6 @@ public abstract class DBUtil {
 
 	public abstract <S extends Serializable> S getCurrentSession();
 
+	public abstract String getStatistics();
+
 }

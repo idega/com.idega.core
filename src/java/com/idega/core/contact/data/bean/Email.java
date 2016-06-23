@@ -32,7 +32,11 @@ import com.idega.util.DBUtil;
 	@NamedQuery(name = "email.findAll", query = "select e from Email e"),
 	@NamedQuery(name = Email.FIND_BY_ID, query = "FROM Email e WHERE e.emailID = :emailID"),
 	@NamedQuery(name = "email.findAllByUser", query = "select e from Email e join e.users u where u.userID = :userID"),
-	@NamedQuery(name = Email.QUERY_FIND_BY_USER_AND_TYPE, query = "select e from Email e inner join e.users u where u.id = :id"),
+	@NamedQuery(
+			name = Email.QUERY_FIND_BY_USER_AND_TYPE,
+			query = 	"SELECT e FROM Email e "
+					+ 	"JOIN e.users u ON u.id = :id "
+					+	"JOIN e.emailType t ON t.uniqueName = :uniqueName"),
 	@NamedQuery(name = "email.findAllByGroup", query = "select e from Email e join e.groups g where g.groupID = :groupID"),
 	@NamedQuery(name = Email.FIND_BY_E_MAIL_ADDRESS, query = "select e from Email e where e.address = :address"),
 	@NamedQuery(name = "email.findByGroupAndType", query = "select e from Email e join e.groups g join e.emailType t where t.uniqueName = :uniqueName and g.groupID = :groupID")
@@ -129,6 +133,10 @@ public class Email implements Serializable, EmailDataView {
 	public List<User> getUsers() {
 		users = DBUtil.getInstance().lazyLoad(users);
 		return this.users;
+	}
+
+	public void setUsers(List<User> users) {
+		this.users = users;
 	}
 
 	/**

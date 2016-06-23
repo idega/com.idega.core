@@ -1,6 +1,7 @@
 package com.idega.user.data;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -36,5 +37,15 @@ public interface GroupRelationHome extends com.idega.data.IDOHome
  public java.lang.String getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(int p0,java.lang.String p1);
  public Collection<GroupRelation> findGroupsRelationshipsContaining(int groupId,Collection<String> relationTypes);
  public java.util.Collection findGroupRelationsByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<String> relatedGroupIds, java.sql.Date dateFrom, java.sql.Date dateTo) throws javax.ejb.FinderException;
+
+	/**
+	 * <p>Bidirectional, all data included</p>
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by,
+	 * not <code>null</code>;
+	 * @param relatedGroupID is {@link Group#getPrimaryKey()} to search by,
+	 * not <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	Collection<GroupRelation> findAllOrderedByDate(int groupID, int relatedGroupID);
 
 }
