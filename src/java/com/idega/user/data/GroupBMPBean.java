@@ -93,6 +93,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	static final String COLUMN_SHORT_NAME = "SHORT_NAME";
 	static final String COLUMN_ABBREVATION = "ABBR";
 	static final String COLUMN_GROUP_MODERATOR_ID = "GROUP_MODERATOR_ID";
+	public static final String COLUMN_SYSTEM_IMAGE_ID = "SYSTEM_IMAGE_ID";
 //	static final String COLUMN_GROUP_PERSONAL_ID = "GROUP_PERSONAL_ID";
 
 	static final String META_DATA_HOME_PAGE = "homepage";
@@ -126,6 +127,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		this.addManyToManyRelationShip(Address.class, SQL_RELATION_ADDRESS);
 		addMetaDataRelationship();
 		// can have extra info in the ic_metadata table
+
+		addOneToOneRelationship(COLUMN_SYSTEM_IMAGE_ID, "Image", com.idega.core.file.data.ICFile.class);
+		this.setNullable(COLUMN_SYSTEM_IMAGE_ID, true);
+
 
 		// id of the group that has the permissions for this group. If this is not
 		// null then this group has inherited permissions.
@@ -468,6 +473,22 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	public boolean isPermissionControllingGroup() {
 		return getBooleanColumnValue(COLUMN_IS_PERMISSION_CONTROLLING_GROUP, false);
 	}
+
+	@Override
+	public int getSystemImageID() {
+		return getIntColumnValue(COLUMN_SYSTEM_IMAGE_ID);
+	}
+
+	@Override
+	public void setSystemImageID(Integer fileID) {
+		setColumn(COLUMN_SYSTEM_IMAGE_ID, fileID);
+	}
+
+	@Override
+	public void setSystemImageID(int fileID) {
+		setColumn(COLUMN_SYSTEM_IMAGE_ID, fileID);
+	}
+
 
 	/**
 	 * Gets a list of all the groups that this "group" is directly member of.

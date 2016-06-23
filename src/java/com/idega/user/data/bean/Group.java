@@ -133,6 +133,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private static final String COLUMN_VAT_NUMBER = "group_vat_number";
 	private static final String COLUMN_BANK_ACCOUNT = "group_bank_acc";
 	private static final String COLUMN_MERCHANT_ID = "merchant_id";
+	private static final String COLUMN_SYSTEM_IMAGE = "system_image_id";
 
 	public static final String SQL_RELATION_EMAIL = "ic_group_email";
 	public static final String SQL_RELATION_ADDRESS = "ic_group_address";
@@ -244,6 +245,10 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.group")
     private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = COLUMN_SYSTEM_IMAGE)
+	private ICFile systemImage;
 
     @Transient
     private boolean hasUsers;
@@ -603,6 +608,15 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	 */
 	public void setAddresses(List<Address> addresses) {
 		this.addresses = addresses;
+	}
+
+	public ICFile getSystemImage() {
+		systemImage = getInitialized(systemImage);
+		return this.systemImage;
+	}
+
+	public void setSystemImage(ICFile systemImage) {
+		this.systemImage = systemImage;
 	}
 
 	/**

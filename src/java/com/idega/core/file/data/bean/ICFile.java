@@ -44,7 +44,8 @@ import com.idega.util.DBUtil;
 @Entity
 @Table(name = ICFile.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "file.findAll", query = "select f from ICFile f")
+	@NamedQuery(name = "file.findAll", query = "select f from ICFile f"),
+	@NamedQuery(name = "file.findById", query = "select f from ICFile f where f.fileID = :id")
 })
 public class ICFile implements Serializable, MetaDataCapable {
 

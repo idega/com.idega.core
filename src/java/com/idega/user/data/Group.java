@@ -573,4 +573,8 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 //	public void setGroupPersonalId(String groupPersonalId);
 //	public String getGroupPersonalId();
 
+	public int getSystemImageID();
+	public void setSystemImageID(java.lang.Integer p0);
+	public void setSystemImageID(int fileID);
+
 }
