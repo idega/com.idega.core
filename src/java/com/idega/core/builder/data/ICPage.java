@@ -30,6 +30,8 @@ public interface ICPage extends TreeableEntity<ICPage>, IDOLegacyEntity, Resourc
 	public java.lang.String getName();
 
 	public java.lang.String getName(Locale locale);
+	
+	public String getNameByCurrentLocale();
 
 	public java.io.InputStream getPageValue();
 
