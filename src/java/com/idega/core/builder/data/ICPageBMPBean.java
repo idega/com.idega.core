@@ -23,8 +23,12 @@ import java.util.logging.Level;
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.dao.IBPageNameDAO;
 import com.idega.core.file.data.ICFile;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.net.data.ICProtocol;
 import com.idega.core.user.data.User;
 import com.idega.data.GenericEntity;
@@ -45,7 +49,9 @@ import com.idega.io.serialization.Storable;
 import com.idega.presentation.IWContext;
 import com.idega.repository.data.Resource;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.expression.ELUtil;
 
 /**
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
@@ -192,6 +198,21 @@ public class ICPageBMPBean extends TreeableEntityBMPBean<ICPage> implements ICPa
 		}
 		*/
 		return getName();
+	}
+	
+	@Autowired
+	IBPageNameDAO ibPageNameDAO;
+	
+	public IBPageNameDAO getIBPageNameDAO() {
+		if(this.ibPageNameDAO == null) {
+			this.ibPageNameDAO = ELUtil.getInstance().getBean("ibPageNameDAO");
+		}
+		return this.ibPageNameDAO;
+	}
+	
+	public String getNameByCurrentLocale() {
+		return getIBPageNameDAO().getNameByPageAndLocale(getID(),
+				ICLocaleBusiness.getLocaleId(CoreUtil.getCurrentLocale()));
 	}
 
 	/**
