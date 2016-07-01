@@ -216,8 +216,16 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@JoinTable(name = GroupRelation.ENTITY_NAME, joinColumns = { @JoinColumn(name = GroupRelation.COLUMN_RELATED_GROUP, referencedColumnName = COLUMN_GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = GroupRelation.COLUMN_GROUP) })
 	private List<Group> parents;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Group.class)
-	@JoinTable(name = GroupRelation.ENTITY_NAME, joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, inverseJoinColumns = { @JoinColumn(name = GroupRelation.COLUMN_RELATED_GROUP, referencedColumnName = COLUMN_GROUP_ID) })
+	@ManyToMany(
+			fetch = FetchType.LAZY, 
+			cascade = { CascadeType.PERSIST, CascadeType.MERGE }, 
+			targetEntity = Group.class)
+	@JoinTable(
+			name = GroupRelation.ENTITY_NAME, 
+			joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, 
+			inverseJoinColumns = { @JoinColumn(
+					name = GroupRelation.COLUMN_RELATED_GROUP, 
+					referencedColumnName = COLUMN_GROUP_ID) })
 	private List<Group> children;
 
     @OneToMany(mappedBy = "pk.group")

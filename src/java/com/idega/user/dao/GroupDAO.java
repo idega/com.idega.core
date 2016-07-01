@@ -113,5 +113,4 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByPersonalId(String personalId);
 
 	public List<Group> getGroupsByName(String name);
-
 }

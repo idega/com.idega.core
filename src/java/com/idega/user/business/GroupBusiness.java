@@ -151,7 +151,10 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection<Group> getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes)
+	public Collection<Group> getParentGroupsRecursive(
+			Group aGroup, 
+			String[] groupTypes, 
+			boolean returnSpecifiedGroupTypes)
 			throws EJBException, java.rmi.RemoteException;
 
 	/**
