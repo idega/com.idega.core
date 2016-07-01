@@ -1033,7 +1033,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 				return list;
 			} catch (Exception ex) {
-				getLogger().log(Level.WARNING, 
+				getLogger().log(Level.WARNING,
 						"Failed to get list of child groups, cause of: ", ex);
 			}
 		}

@@ -156,12 +156,6 @@ public interface GroupBusiness extends IBOService {
 	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
 	public Collection<Group> getParentGroupsRecursive(User user, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
 
-	public Collection<Group> getParentGroupsRecursive(
-			Group aGroup,
-			String[] groupTypes,
-			boolean returnSpecifiedGroupTypes)
-			throws EJBException, java.rmi.RemoteException;
-
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUsers
 	 */
