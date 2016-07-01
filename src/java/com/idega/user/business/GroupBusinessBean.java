@@ -984,17 +984,21 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	@Override
 	public Collection<Group> getChildGroups(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) {
-		try {
-			Collection<Group> list = aGroup.getChildGroups(groupTypes, returnSpecifiedGroupTypes);
-			if (list != null) {
-				list.remove(aGroup);
+		if (aGroup != null) {
+			try {
+				Collection<Group> list = aGroup.getChildGroups(groupTypes, returnSpecifiedGroupTypes);
+				if (list != null) {
+					list.remove(aGroup);
+				}
+
+				return list;
+			} catch (Exception ex) {
+				getLogger().log(Level.WARNING, 
+						"Failed to get list of child groups, cause of: ", ex);
 			}
-			return list;
 		}
-		catch (Exception ex) {
-			ex.printStackTrace();
-			return null;
-		}
+
+		return Collections.emptyList();
 	}
 
 	@Override

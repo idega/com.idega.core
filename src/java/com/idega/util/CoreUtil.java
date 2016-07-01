@@ -314,7 +314,15 @@ public class CoreUtil {
 	}
 
 	public static final boolean isSQLMeasurementOn() {
-		return IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("measure_sql_queries", Boolean.FALSE);
+		IWMainApplication mainApplication = IWMainApplication.getDefaultIWMainApplication();
+		if (mainApplication != null) {
+			IWMainApplicationSettings settings = mainApplication.getSettings();
+			if (settings != null) {
+				return settings.getBoolean("measure_sql_queries", Boolean.FALSE);
+			}
+		}
+
+		return Boolean.FALSE;
 	}
 
 	public static final boolean isUIRenderingMeasurementOn() {

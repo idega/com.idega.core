@@ -1087,7 +1087,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (userGroups != null) {
 				groups = new ArrayList<Group>();
 				for (com.idega.user.data.Group group: userGroups) {
-					groups.add(getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString())));
+					try {
+						groups.add(getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString())));
+					} catch (Exception e) {
+						Logger.getLogger(this.getClass().getName()).log(Level.INFO, 
+								"Failed to add group by name " + group.getName());;
+					}
 				}
 
 			// New user system end

@@ -2055,7 +2055,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (group == null)
 			return Collections.emptyList();
 
-		Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
+		Group g = null;
+		try {
+			g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
+		} catch (Exception e) {
+			getLogger().warning("Failed to get group by name: " + group.getName());
+		}
+
 		return getAllRolesKeysForGroup(g);
 	}
 
