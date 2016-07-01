@@ -108,7 +108,7 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 */
 	@Override
 	public long getResourceTime(String pathWithinBundle) {
-		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
+		JarEntry entry = jarModule == null ? null : jarModule.getJarEntry(pathWithinBundle);
 		return (entry != null ? entry.getTime() : 0);
 	}
 

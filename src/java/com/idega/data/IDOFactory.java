@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBLocalObject;
@@ -31,6 +32,16 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 	private static final long serialVersionUID = 463763865403762367L;
 
 	protected String dataSource = GenericEntity.DEFAULT_DATASOURCE;
+
+	private Logger logger = null;
+	
+	protected Logger getLog() {
+		if (this.logger == null) {
+			this.logger = Logger.getLogger(getClass().getName());
+		}
+
+		return this.logger;
+	}
 
   protected IDOFactory(){
   }
