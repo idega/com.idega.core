@@ -1693,7 +1693,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		try {
 			if (logIn(request, login)) {
-				storeUserAndGroupInformationInSession(request.getSession(), user);
+				storeUserAndGroupInformationInSession(request.getSession(true), user);
 				LoginRecord loginRecord = LoginDBHandler.recordLogin(login, request.getRemoteAddr());
 				storeLoggedOnInfoInSession(
 						request,
