@@ -109,10 +109,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 						List<V> paramValue = new ArrayList<V>((Collection<V>) value);
 						if (paramValue.size() > 1000) {
 							usableParams.add(new Param(
-									param.getParamName(), 
+									param.getParamName(),
 									paramValue.subList(0, 1000)));
 							unusedParams.add(new Param(
-									param.getParamName(), 
+									param.getParamName(),
 									paramValue.subList(1000, paramValue.size())));
 						} else {
 							usableParams.add(param);
@@ -142,15 +142,15 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	private <Expected, V> List<Expected> getResultListByQuery(
-			List<Expected> results, 
-			Query q, 
-			Class<Expected> expectedReturnType, 
-			String cachedRegionName, 
+			List<Expected> results,
+			Query q,
+			Class<Expected> expectedReturnType,
+			String cachedRegionName,
 			Param... params) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
 		}
-		
+
 		QueryParams<Expected> queryParams = new QueryParams<>(params);
 		queryParams.doPrepareParameters();
 
@@ -171,9 +171,9 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		results.addAll(tmpResults);
 		if (queryParams.isLoadInMultipleSteps()) {
 			return getResultListByQuery(
-					results, q, 
-					expectedReturnType, 
-					cachedRegionName, 
+					results, q,
+					expectedReturnType,
+					cachedRegionName,
 					ArrayUtil.convertListToArray(queryParams.getUnusedParams()));
 		}
 
@@ -217,10 +217,13 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					        .shortValue()));
 				}
 			} else {
-				
+
 				String message = null;
-				if (result != null ) message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
-				else message = "Can not convert null to: " + expectedReturnType + ": such converter is not implemented yet!";
+				if (result != null ) {
+					message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
+				} else {
+					message = "Can not convert null to: " + expectedReturnType + ": such converter is not implemented yet!";
+				}
 				logger.warning(message);
 				CoreUtil.sendExceptionNotification(message, null);
 			}
