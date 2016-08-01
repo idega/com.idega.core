@@ -10,6 +10,7 @@
 package com.idega.user.dao.impl;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -18,6 +19,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -278,7 +280,16 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to) {
 		return getChildGroups(parentGroupsIds, municipalities, unions, years, notHavingTypes, from, to, false);
 	}
-	private List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to, boolean loadAliases) {
+	private List<Group> getChildGroups(
+			List<Integer> parentGroupsIds,
+			List<String> municipalities,
+			List<String> unions,
+			List<String> years,
+			List<String> notHavingTypes,
+			Integer from,
+			Integer to,
+			boolean loadAliases
+	) {
 		return getChildGroups(Group.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to, loadAliases);
 	}
 
@@ -385,7 +396,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 						"groupChildGroupsWithFilterAndTypesAndPaging");
 			}
 
-			return results;
+			return new ArrayList<>(results);
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + " by query: " + query.toString(), e);
 		}
@@ -425,14 +436,33 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			List<Integer> parentIds = null;
 			while (!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds, groupTypes))) {
-				ids.addAll(parentIds);
-				groupsIds = parentIds;
+				if (parentIds.size() == groupsIds.size() && parentIds.containsAll(groupsIds)) {
+					groupsIds = null;
+				} else {
+					ids.addAll(parentIds);
+					groupsIds = parentIds;
+				}
 			}
 
 			return ids;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + groupsIds + " and group types " + groupTypes, e);
 		}
+		return null;
+	}
+
+	@Override
+	public List<Integer> getDirectGroupIdsForUser(Integer userId) {
+		if (userId == null) {
+			return null;
+		}
+
+		try {
+			return getResultList(GroupRelation.QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER, Integer.class, new Param("userId", userId));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Erorr getting direct groups for user " + userId, e);
+		}
+
 		return null;
 	}
 
@@ -444,29 +474,52 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 
 		try {
-			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
-
 			List<Integer> ids = new ArrayList<>();
 
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
 			Collection<com.idega.user.data.Group> userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+			getLogger().info("Got top groups for user " + user.getId() + ": " + userTopGroups);	//	TODO: remove
+
 			List<Integer> parentGroupsIds = new ArrayList<>();
+			List<Integer> groupsToSkip = Arrays.asList(489017, 329932, 329937);
 			for (Iterator<com.idega.user.data.Group> groupsIter = userTopGroups.iterator(); groupsIter.hasNext();) {
-				parentGroupsIds.add(Integer.valueOf(groupsIter.next().getId()));
+				Integer groupId = Integer.valueOf(groupsIter.next().getId());
+				if (!groupsToSkip.contains(groupId)) {
+					parentGroupsIds.add(groupId);
+				}
 			}
 			ids.addAll(parentGroupsIds);
 
 			List<Integer> childrenIds = null;
 			while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null))) {
-				ids.addAll(childrenIds);
-				parentGroupsIds = childrenIds;
+				if (childrenIds.size() == parentGroupsIds.size() && childrenIds.containsAll(parentGroupsIds)) {
+					parentGroupsIds = null;
+				} else {
+					ids.addAll(childrenIds);
+					parentGroupsIds = childrenIds;
+				}
 			}
 
-			return ids;
+			List<Integer> results = getUniqueIds(ids);
+			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting all groups for " + user, e);
 		}
 
 		return null;
+	}
+
+	private List<Integer> getUniqueIds(List<Integer> ids) {
+		if (ListUtil.isEmpty(ids)) {
+			return ids;
+		}
+
+		Map<Integer, Boolean> uniqueIds = new ConcurrentHashMap<>();
+		ids.parallelStream().forEach(id -> {
+			uniqueIds.put(id, Boolean.TRUE);
+		});
+
+		return new ArrayList<>(uniqueIds.keySet());
 	}
 
 	@Override
@@ -648,6 +701,58 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			return null;
 		}
 		return groups.get(0);
+	}
+
+	@Override
+	public List<Group> getGroupsByIdsAndTypes(List<Integer> ids, List<String> types) {
+		if (ListUtil.isEmpty(ids)) {
+			getLogger().warning("IDs not provided");
+			return null;
+		}
+
+		if (ListUtil.isEmpty(types)) {
+			getLogger().warning("Types not provided");
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_GROUPS_BY_IDS_AND_TYPES, Group.class, new Param("ids", ids), new Param("types", types));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs (" + ids + ") and types " + types, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<Integer> getGroupdsIdsByIdsAndTypes(List<Integer> ids, List<String> types) {
+		if (ListUtil.isEmpty(ids)) {
+			getLogger().warning("IDs not provided");
+			return null;
+		}
+
+		if (ListUtil.isEmpty(types)) {
+			getLogger().warning("Types not provided");
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_IDS_BY_IDS_AND_TYPES, Integer.class, new Param("ids", ids), new Param("types", types));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs (" + ids + ") and types " + types, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public List<Integer> getAllGroupsIds() {
+		try {
+			return getResultList(Group.QUERY_FIND_ALL_IDS, Integer.class);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting IDs for all groups", e);
+		}
+		return null;
 	}
 
 }

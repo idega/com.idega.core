@@ -59,7 +59,7 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> findParentGroups(Integer groupId);
 	public Collection<Integer> findParentGroupsIds(Integer groupId);
-	
+
 	public Group findGroupByName(String name);
 
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc);
@@ -99,8 +99,7 @@ public interface GroupDAO extends GenericDao {
 	 * @return {@link Collection} of {@link Group#getPermissionControllingGroup()}
 	 * or {@link Collections#emptyList()};
 	 */
-	Collection<Integer> findPermissionGroupPrimaryKeys(
-			Collection<Integer> primaryKeys);
+	Collection<Integer> findPermissionGroupPrimaryKeys(Collection<Integer> primaryKeys);
 
 	public List<Group> findGroupsByAlias(Group aliasGroup);
 
@@ -113,4 +112,12 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByPersonalId(String personalId);
 
 	public List<Group> getGroupsByName(String name);
+
+	public List<Group> getGroupsByIdsAndTypes(List<Integer> ids, List<String> types);
+	public List<Integer> getGroupdsIdsByIdsAndTypes(List<Integer> ids, List<String> types);
+
+	public List<Integer> getAllGroupsIds();
+
+	public List<Integer> getDirectGroupIdsForUser(Integer userId);
+
 }
