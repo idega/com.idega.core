@@ -18,6 +18,7 @@ import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.presentation.IWContext;
 import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.CoreConstants;
 import com.idega.util.IWTimestamp;
 import com.idega.util.expression.ELUtil;
@@ -579,13 +580,11 @@ public boolean equals(Object obj) {
   /**Finders end**/
 
   /**
-<<<<<<< HEAD
-=======
    * @deprecated Replaced with remove(User)
    */
   @Deprecated
-@Override
-public void remove()  throws RemoveException  {
+  @Override
+  public void remove()  throws RemoveException  {
     User currentUser;
     try {
       currentUser = IWContext.getInstance().getCurrentUser();
@@ -597,7 +596,6 @@ public void remove()  throws RemoveException  {
   }
 
   /**
->>>>>>> fdc7351764269b322882b03abe9addf99fcd9c33
    *
    */
   @Override
@@ -605,8 +603,6 @@ public void removeBy(User currentUser) throws RemoveException{
     this.removeBy(currentUser,IWTimestamp.getTimestampRightNow());
 
   }
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -635,7 +631,7 @@ public void removeBy(User currentUser) throws RemoveException{
 	@Override
 	public void store() throws IDOStoreException{
 		super.store();
-		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent("Changed"));
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.GROUP_CHANGE, (Integer) getPrimaryKey()));
 	}
 
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{

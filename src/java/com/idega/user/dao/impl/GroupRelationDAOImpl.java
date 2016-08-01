@@ -44,7 +44,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
-
 	@Override
 	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<Integer> relatedGroupIds, Date dateFrom, Date dateTo) {
 		StringBuilder query = null;
@@ -142,7 +141,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
-
 	@Override
 	public Long getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo) {
 		StringBuilder query = null;
@@ -177,7 +175,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
-
 	@Override
 	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo) {
 		StringBuilder query = null;
@@ -211,7 +208,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		}
 		return null;
 	}
-
 
 	@Override
 	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupId(String relatedGroupType, Integer groupId) {
@@ -248,7 +244,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
-
 	@Override
 	public Integer getGroupRelationsCountByRelatedGroupTypeAndRelatedGroupIdsAndDate(String relatedGroupType, List<Integer> relatedGroupIds, Date dateFrom, Date dateTo) {
 		try {
@@ -261,9 +256,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		}
 		return 0;
 	}
-
-
-
 
 	@Override
 	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeOrderedByDate(String relatedGroupType, Integer firstResult, Integer maxResults) {
@@ -326,8 +318,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
-
-
 	@Override
 	public List<Object[]> getGroupRelationsCountForPeriod(String relatedGroupType, List<Integer> relatedGroupIds, Date dateFrom, Date dateTo) {
 		StringBuilder query = null;
@@ -360,6 +350,5 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		}
 		return null;
 	}
-
 
 }
