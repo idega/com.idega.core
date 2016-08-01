@@ -21,6 +21,9 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
 import javax.persistence.PreUpdate;
 import javax.persistence.Table;
@@ -31,9 +34,12 @@ import javax.persistence.Transient;
 import com.idega.core.accesscontrol.data.PasswordNotKnown;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
+import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.DBUtil;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
+import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = UserLogin.ENTITY_NAME)
@@ -44,8 +50,9 @@ import com.idega.util.IWTimestamp;
 	@NamedQuery(name = "login.findByUserAndType", query = "select l from UserLogin l where l.user = :user and l.loginType = :loginType"),
 	@NamedQuery(name = "login.findDefaultLoginForUser", query = "select l from UserLogin l where l.user = :user and l.loginType is null"),
 	@NamedQuery(name = UserLogin.QUERY_FIND_BY_PASSWORD, query = "select l from UserLogin l where l.userPassword = :password"),
-	@NamedQuery(name = UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, query = "SELECT l FROM UserLogin l JOIN l.user u WHERE (u.uniqueId = :"
-		+User.PROP_UNIQUE_ID+") AND l.loginType IS null")
+	@NamedQuery(name = UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, query = "SELECT l FROM UserLogin l JOIN l.user u WHERE (u.uniqueId = :" + User.PROP_UNIQUE_ID + ") AND l.loginType IS null"),
+	@NamedQuery(name = UserLogin.QUERY_FIND_DEFAULT_LOGINS, query = "select l from UserLogin l where l.loginType is null"),
+	@NamedQuery(name = UserLogin.QUERY_FIND_USER_ID_WITH_DEFAULT_LOGINS, query = "select distinct l.user.id from UserLogin l where l.loginType is null")
 })
 @Cacheable
 public class UserLogin implements Serializable {
@@ -56,7 +63,9 @@ public class UserLogin implements Serializable {
 								COLUMN_LOGIN_ID = ENTITY_NAME + "_id",
 
 								QUERY_FIND_BY_PASSWORD = "login.findByPassword",
-								QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId";
+								QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId",
+								QUERY_FIND_DEFAULT_LOGINS = "login.findDefaultLogins",
+								QUERY_FIND_USER_ID_WITH_DEFAULT_LOGINS = "login.findUserIdWithDefaultLogins";
 
 	private static final String COLUMN_USER = "ic_user_id";
 	private static final String COLUMN_USER_LOGIN = "user_login";
@@ -111,6 +120,18 @@ public class UserLogin implements Serializable {
 	@PreUpdate
 	private void updateLastChanged() {
 		setLastChanged(IWTimestamp.getTimestampRightNow());
+	}
+
+	@PostPersist
+	@PostUpdate
+	@PostRemove
+	public void onChange() {
+		User user = getUser();
+		if (user == null) {
+			return;
+		}
+
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_UPDATE, true, user.getId()));
 	}
 
 	@Column(name = COLUMN_COUNT_SENT_TO_BANK)

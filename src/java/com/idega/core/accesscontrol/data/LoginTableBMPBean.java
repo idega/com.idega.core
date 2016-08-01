@@ -8,6 +8,7 @@ import javax.ejb.FinderException;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOException;
+import com.idega.data.IDOStoreException;
 import com.idega.data.query.CountColumn;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
@@ -15,7 +16,10 @@ import com.idega.data.query.Table;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.user.data.UserBMPBean;
+import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.EncryptionType;
+import com.idega.util.expression.ELUtil;
 
 public class LoginTableBMPBean extends GenericEntity implements LoginTable, EncryptionType {
 
@@ -59,7 +63,13 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 		addIndex("IDX_LOGIN_REC_5", getUserLoginColumnName());
 
 		getEntityDefinition().setBeanCachingActiveByDefault(true);
+	}
 
+	@Override
+	public void store() throws IDOStoreException{
+		super.store();
+
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_UPDATE, true, getUserId()));
 	}
 
 	@Override
