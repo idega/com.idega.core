@@ -76,6 +76,7 @@ import com.idega.util.expression.ELUtil;
 @DiscriminatorOptions(force = true)
 @NamedQueries({
 	@NamedQuery(name = "group.findAll", query = "select g from Group g"),
+	@NamedQuery(name = Group.QUERY_FIND_ALL_IDS, query = "select g.groupID from Group g"),
 	@NamedQuery(name = "group.findAllByGroupType", query = "select g from Group g where g.groupType = :groupType"),
 	@NamedQuery(name = "group.findAllByGroupTypes", query = "select g from Group g where g.groupType in (:groupTypes)"),
 	@NamedQuery(name = "group.findByGroupTypeAndName", query = "select g from Group g where g.groupType = :groupType and g.name = :name"),
@@ -87,13 +88,11 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g where g.personalId = :personalId"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_NAME, query = "select g from Group g where g.name = :name"),
-	@NamedQuery(
-			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS,
-			query = "SELECT g.permissionControllingGroup FROM Group g "
-					+ "WHERE g.groupID in (:ids) "
-					+ "AND g.permissionControllingGroup IS NOT NULL"),
+	@NamedQuery(name = Group.QUERY_FIND_PERMISSION_GROUP_IDS, query = "SELECT g.permissionControllingGroup FROM Group g WHERE g.groupID in (:ids) AND g.permissionControllingGroup IS NOT NULL"),
 	@NamedQuery(name = Group.QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES, query = "select distinct g.alias from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types)"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID")
+	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID"),
+	@NamedQuery(name = Group.QUERY_FIND_GROUPS_BY_IDS_AND_TYPES, query = "select distinct g from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_IDS_AND_TYPES, query = "select distinct g.groupID from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)")
 })
 @XmlTransient
 @Cacheable
@@ -110,6 +109,9 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_BY_GROUP_ID = "group.findByGroupId",
 								QUERY_FIND_BY_PERSONAL_ID = "group.findByPersonalId",
 								QUERY_FIND_BY_NAME = "group.findByName",
+								QUERY_FIND_GROUPS_BY_IDS_AND_TYPES = "group.findGroupsByIdsAndTypes",
+								QUERY_FIND_IDS_BY_IDS_AND_TYPES = "group.findIdsByIdsAndTypes",
+								QUERY_FIND_ALL_IDS = "group.findAllIds",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",
@@ -240,14 +242,14 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private List<Group> parents;
 
 	@ManyToMany(
-			fetch = FetchType.LAZY, 
-			cascade = { CascadeType.PERSIST, CascadeType.MERGE }, 
+			fetch = FetchType.LAZY,
+			cascade = { CascadeType.PERSIST, CascadeType.MERGE },
 			targetEntity = Group.class)
 	@JoinTable(
-			name = GroupRelation.ENTITY_NAME, 
-			joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, 
+			name = GroupRelation.ENTITY_NAME,
+			joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) },
 			inverseJoinColumns = { @JoinColumn(
-					name = GroupRelation.COLUMN_RELATED_GROUP, 
+					name = GroupRelation.COLUMN_RELATED_GROUP,
 					referencedColumnName = COLUMN_GROUP_ID) })
 	private List<Group> children;
 
