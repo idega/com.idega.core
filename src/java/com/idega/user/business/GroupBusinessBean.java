@@ -86,6 +86,8 @@ import com.idega.user.data.UserGroupPlugInHome;
 import com.idega.user.data.UserGroupRepresentative;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
+import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
@@ -529,7 +531,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		try {
 			Map<String, G> groupsContained = new LinkedHashMap<String, G>();
 
-			String key = "";
+			String key = CoreConstants.EMPTY;
 			Iterator<G> iter = groups.iterator();
 			while (iter.hasNext()) {
 				G item = iter.next();
@@ -602,7 +604,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			pGroups = group.getParentGroups(cachedParents, cachedGroups);
 		}
 		if (pGroups != null) {
-			String key = "";
+			String key = CoreConstants.EMPTY;
 			Iterator<G> iter = pGroups.iterator();
 			while (iter.hasNext()) {
 				G item = iter.next();
@@ -723,7 +725,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 			if (groups != null && !groups.isEmpty()) {
 
-				String key = "";
+				String key = CoreConstants.EMPTY;
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
 					Group item = (Group) iter.next();
@@ -913,16 +915,16 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public Collection<Group> getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) {
 		long start = System.currentTimeMillis();
 		try {
-		// author: Thomas
-		Map<Integer, Boolean> alreadyCheckedGroups = new HashMap<Integer, Boolean>();
-		Collection<Group> result = new ArrayList<Group>();
-		String[] userType = new String[] { getUserHome().getGroupType() };
-		getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers, userType);
-		return result;
+			// author: Thomas
+			Map<Integer, Boolean> alreadyCheckedGroups = new HashMap<Integer, Boolean>();
+			Collection<Group> result = new ArrayList<Group>();
+			String[] userType = new String[] { getUserHome().getGroupType() };
+			getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers, userType);
+			return result;
 		} finally {
-			getLogger().info("Filtered in: " + (System.currentTimeMillis() - start) + " ms");
+			CoreUtil.doDebug(start, System.currentTimeMillis(), "GroupBusinessBean.getChildGroupsRecursiveResultFiltered");
 		}
-		}
+	}
 
 	@Override
 	public Collection<User> getUsersFromGroupRecursive(Group group) {
@@ -1135,7 +1137,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	private void putGroupsContained(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes) throws RemoteException {
 		Collection childGroups = group.getChildGroups(groupTypes, returnGroupTypes);
 		if (childGroups != null && !childGroups.isEmpty()) {
-			String key = "";
+			String key = CoreConstants.EMPTY;
 			Iterator iter = childGroups.iterator();
 			while (iter.hasNext()) {
 				Group item = (Group) iter.next();
@@ -1356,7 +1358,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	@Override
 	public Group createGroup(String name) throws CreateException, RemoteException {
-		String description = "";
+		String description = CoreConstants.EMPTY;
 		return createGroup(name, description);
 	}
 
@@ -1578,7 +1580,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			else {
 				// okay, group is null, but we need an instance
 				// to get the alias and general group type
-				groupTypeString = "";
+				groupTypeString = CoreConstants.EMPTY;
 				groupType = GroupTypeBMPBean.getStaticInstance();
 			}
 		}
