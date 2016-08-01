@@ -11,6 +11,7 @@ package com.idega.user.data;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.CreateException;
@@ -197,6 +198,8 @@ public interface GroupHome extends IDOHome {
 	 * {@link Collections#emptyList()} on failure;
 	 */
 	Collection<Group> findParentGroups(int groupID);
+
+	Collection<Integer> findParentGroupsKeys(List<Integer> groupsIDs);
 
 	/**
 	 *

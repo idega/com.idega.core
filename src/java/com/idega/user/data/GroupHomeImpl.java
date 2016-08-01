@@ -12,6 +12,7 @@ package com.idega.user.data;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -318,6 +319,12 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	public Collection<Integer> findParentGroupKeys(int groupID) {
 		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
 		return entity.ejbFindParentGroups(Arrays.asList(groupID));
+	}
+
+	@Override
+	public Collection<Integer> findParentGroupsKeys(List<Integer> groupsIDs) {
+		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
+		return entity.ejbFindParentGroups(groupsIDs);
 	}
 
 	/*
