@@ -487,7 +487,6 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
 			Collection<com.idega.user.data.Group> userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
-			getLogger().info("Got top groups for user " + user.getId() + ": " + userTopGroups);	//	TODO: remove
 
 			List<Integer> parentGroupsIds = new ArrayList<>();
 			List<Integer> groupsToSkip = Arrays.asList(489017, 329932, 329937);
