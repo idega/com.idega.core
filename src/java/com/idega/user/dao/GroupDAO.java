@@ -41,6 +41,7 @@ public interface GroupDAO extends GenericDao {
 
 	public Group findByGroupTypeAndName(GroupType type, String name);
 
+	public List<Group> getGroupsByType(String groupType);
 	public List<Group> getGroupsByType(GroupType groupType);
 
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes);
