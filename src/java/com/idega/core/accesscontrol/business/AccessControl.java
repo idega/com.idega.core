@@ -2765,7 +2765,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			return permissionHome.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 						permGroups,
 						AccessController.PERMISSION_KEY_VIEW,
-						AccessController.CATEGORY_STRING_GROUP_ID);
+						AccessController.CATEGORY_STRING_GROUP_ID
+			);
 		} catch (FinderException e) {
 			e.printStackTrace();
 		}
