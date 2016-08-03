@@ -204,13 +204,11 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected IWMainApplication getApplication() {
-		IWContext iwc = CoreUtil.getIWContext();
-		return iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getIWMainApplication();
+		return IWMainApplication.getDefaultIWMainApplication();
 	}
 
 	protected IWApplicationContext getIWApplicationContext() {
-		IWContext iwc = CoreUtil.getIWContext();
-		return iwc == null ? IWMainApplication.getDefaultIWApplicationContext() : iwc.getIWMainApplication().getIWApplicationContext();
+		return IWMainApplication.getDefaultIWApplicationContext();
 	}
 
 	protected <K extends Serializable, V> Map<K, V> getCache(String cacheName) {
