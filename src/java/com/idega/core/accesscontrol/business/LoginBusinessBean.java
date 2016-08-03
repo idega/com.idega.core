@@ -1036,7 +1036,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return false;
 		}
 
-		storeUserAndGroupInformationInSession(request.getSession(), user);
+		storeUserAndGroupInformationInSession(request.getSession(true), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		storeLoggedOnInfoInSession(request, request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
 		if (user != null)
@@ -1055,7 +1055,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, UserLogin userLogin) throws Exception {
 		User user = userLogin.getUser();
 
-		storeUserAndGroupInformationInSession(request.getSession(), user);
+		storeUserAndGroupInformationInSession(request.getSession(true), user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		storeLoggedOnInfoInSession(request, request.getSession(), userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
 		if (user != null)
@@ -1600,7 +1600,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	private boolean logInAsAnotherUser(HttpServletRequest request, User user, boolean reserveCurrentUser) throws Exception {
 		if (isLoggedOn(request)) {
-			HttpSession session = request.getSession();
+			HttpSession session = request.getSession(true);
 			UserLogin userLogin = getUserLoginDAO().findLoginForUser(user);
 			String login = null;
 			if (userLogin != null) {
