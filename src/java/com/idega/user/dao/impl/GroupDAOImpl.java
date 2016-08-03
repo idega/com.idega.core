@@ -33,6 +33,7 @@ import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.GroupBMPBean;
@@ -414,26 +415,18 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Integer> getParentGroupsIds(List<Integer> ids) {
-		return getParentGroupsIds(ids, null);
-	}
-
-	private List<Integer> getParentGroupsIds(List<Integer> ids, Collection<String> groupTypes) {
 		try {
 			List<Param> params = new ArrayList<Param>();
 			StringBuilder query = new StringBuilder("select distinct r.group.id from ");
 			query.append(GroupRelation.class.getName()).append(" r join r.group g where r.relatedGroup.id in (:ids) ");
 			query.append(" and (r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' or r.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING);
 			query.append("') and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
-			if (!ListUtil.isEmpty(groupTypes)) {
-				query.append(" and g.groupType.groupType in (:groupTypes)");
-				params.add(new Param("groupTypes", groupTypes));
-			}
 			params.add(new Param("ids", ids));
 
 			List<Integer> results = getResultListByInlineQuery(query.toString(), Integer.class, ArrayUtil.convertListToArray(params));
 			return results;
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + ids + " and group types " + groupTypes, e);
+			getLogger().log(Level.WARNING, "Error getting parent groups for groups with IDs " + ids, e);
 		}
 		return null;
 	}
@@ -444,13 +437,17 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<Integer> ids = new ArrayList<>();
 
 			List<Integer> parentIds = null;
-			while (!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds, groupTypes))) {
+			while (!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds))) {
 				if (parentIds.size() == groupsIds.size() && parentIds.containsAll(groupsIds)) {
 					groupsIds = null;
 				} else {
 					ids.addAll(parentIds);
 					groupsIds = parentIds;
 				}
+			}
+
+			if (!ListUtil.isEmpty(groupTypes) && !ListUtil.isEmpty(ids)) {
+				ids = getGroupdsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
 			}
 
 			return ids;
@@ -487,6 +484,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
 			Collection<com.idega.user.data.Group> userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+			if (ListUtil.isEmpty(userTopGroups)) {
+				GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
+				userTopGroups = groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
+				getLogger().info("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") by permissions" +
+						(ListUtil.isEmpty(userTopGroups) ? " and also did not find any directly related groups" : ", but found directly related groups: " + userTopGroups));
+			}
 
 			List<Integer> parentGroupsIds = new ArrayList<>();
 			List<Integer> groupsToSkip = Arrays.asList(489017, 329932, 329937);
