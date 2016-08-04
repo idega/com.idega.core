@@ -1107,7 +1107,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 			lSession.setPrimaryGroup(primaryGroup);
 		}
 
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
+		IWMainApplication iwma = null;
+		try {
+			iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
+		} catch (Exception e) {}
+		iwma = iwma == null ? IWMainApplication.getDefaultIWMainApplication() : iwma;
 		UserProperties properties = new UserProperties(iwma, user.getId());
 		lSession.setUserProperties(properties);
 	}
