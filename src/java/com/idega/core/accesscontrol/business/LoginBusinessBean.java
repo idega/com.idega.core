@@ -619,7 +619,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 					canLogin = verifyPasswordWithoutLogin(request, username, password);
 					String sessionId = null;
 					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
-						ServletContext sc = request.getSession().getServletContext();
+						HttpSession session = request.getSession(true);
+						ServletContext sc = session.getServletContext();
 						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
 
 						if (ListUtil.isEmpty(verificators)) {
@@ -629,7 +630,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 							LOGGER.info("Session ID to generate SMS code for user '" + username + "': " + sessionId);	//	TODO
 							for (TwoStepLoginVerificator verificator: verificators) {
 								//Sending SMS message
-								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
+								IWApplicationContext iwac = getIWMainApplication(session).getIWApplicationContext();
 								verificator.doSendSecondStepVerification(iwac, username, sessionId);
 							}
 						}
@@ -768,7 +769,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean isLoginByUUID(HttpServletRequest request) {
 		if (RequestUtil.isParameterSet(request, PARAM_LOGIN_BY_UNIQUE_ID)) {
 			String referer = RequestUtil.getReferer(request);
-			IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+			IWMainApplication iwma = getIWMainApplication(request.getSession(true));
 			String allowedReferers = iwma.getSettings().getProperty(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
 			if (allowedReferers == null || "".equals(allowedReferers)) {
 				return true;
@@ -1107,11 +1108,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			lSession.setPrimaryGroup(primaryGroup);
 		}
 
-		IWMainApplication iwma = null;
-		try {
-			iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
-		} catch (Exception e) {}
-		iwma = iwma == null ? IWMainApplication.getDefaultIWMainApplication() : iwma;
+		IWMainApplication iwma = getIWMainApplication(session);
 		UserProperties properties = new UserProperties(iwma, user.getId());
 		lSession.setUserProperties(properties);
 	}
@@ -1122,7 +1119,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	private static IWMainApplication getIWMainApplication(HttpSession session) {
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
+		IWMainApplication iwma = null;
+		ServletContext servletContext = null;
+		try {
+			servletContext = session.getServletContext();
+			iwma = IWMainApplication.getIWMainApplication(servletContext);
+		} catch (Exception e) {
+			LOGGER.warning("Error getting " + IWMainApplication.class.getName() + " from session's (" + session + ") servlet context " + servletContext);
+		}
+		iwma = iwma == null ? IWMainApplication.getDefaultIWMainApplication() : iwma;
 		return iwma;
 	}
 
@@ -1199,7 +1204,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		User user = userLogin.getUser();
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+		IWMainApplication iwma = getIWMainApplication(request.getSession(true));
 		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
 		if (isLoginExpired(userLogin) && !isAdmin) {
 			return LoginState.EXPIRED;
@@ -2058,7 +2063,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		User user = userLogin.getUser();
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(request.getSession().getServletContext());
+		IWMainApplication iwma = getIWMainApplication(request.getSession(true));
 		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
 		if (isLoginExpired(userLogin) && !isAdmin) {
 			return LoginState.EXPIRED;
