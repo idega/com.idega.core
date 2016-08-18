@@ -17,6 +17,7 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
@@ -57,6 +58,7 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -316,7 +318,24 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	@Override
 	public Date getDateOfBirth() {
-		return (Date) getColumnValue(getColumnNameDateOfBirth());
+		Date date = (Date) getColumnValue(getColumnNameDateOfBirth());
+		if (date != null) {
+			return date;
+		}
+
+		try {
+			String personalId = getPersonalID();
+			if (StringUtil.isEmpty(personalId)) {
+				return null;
+			}
+
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(getIWMainApplication().getIWApplicationContext(), UserBusiness.class);
+			date = userBusiness.getUserDateOfBirthFromPersonalId(personalId);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting user's (ID: " + getId() + ") date of birth", e);
+		}
+
+		return date;
 	}
 
 	@Override
