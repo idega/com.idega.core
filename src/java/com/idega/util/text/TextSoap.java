@@ -250,7 +250,11 @@ public class TextSoap {
 	 *@return              Description of the Return Value
 	 */
 	public static String findAndReplace(String text, char charToFind, char charReplace) {
-		return text.replace(charToFind, charReplace);
+		if (!StringUtil.isEmpty(text)) {
+			return text.replace(charToFind, charReplace);
+		}
+
+		return text;
 	}
 
 	/**
