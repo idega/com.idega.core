@@ -121,4 +121,6 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Integer> getDirectGroupIdsForUser(Integer userId);
 
+	public List<Group> findActiveGroupsByType(String groupType);
+
 }

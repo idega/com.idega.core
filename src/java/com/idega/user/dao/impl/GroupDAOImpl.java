@@ -766,4 +766,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	@Override
+	public List<Group> findActiveGroupsByType(String groupType) {
+		String query = "select distinct gr.relatedGroup from " + GroupRelation.class.getName() + " gr where gr.relatedGroupType = '" + groupType +
+				"' and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')";
+		return getResultListByInlineQuery(query, Group.class);
+	}
+
+
 }
