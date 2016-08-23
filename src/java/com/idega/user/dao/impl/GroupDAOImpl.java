@@ -781,5 +781,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	@Override
+	public List<Group> getDirectGroupsForUserByType(Integer userId, List<String> groupTypes) {
+		if (userId == null || ListUtil.isEmpty(groupTypes)) {
+			return null;
+		}
+
+		try {
+			return getResultList(GroupRelation.QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE, Group.class, new Param("userId", userId),  new Param("groupTypes", groupTypes));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Erorr getting direct groups for user " + userId, e);
+		}
+
+		return null;
+	}
+
 
 }

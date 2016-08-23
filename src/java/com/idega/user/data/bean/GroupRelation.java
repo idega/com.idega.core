@@ -60,6 +60,11 @@ import com.idega.util.expression.ELUtil;
 			name = GroupRelation.QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER,
 			query = "SELECT DISTINCT gr.group.id FROM GroupRelation gr WHERE gr.relatedGroup.id = :userId AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) " +
 			"AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE,
+			query = "SELECT DISTINCT gr.group FROM GroupRelation gr WHERE gr.relatedGroup.id = :userId AND gr.group.groupType.groupType in (:groupTypes) AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) " +
+			"AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
 	)
 })
 @Cacheable
@@ -74,7 +79,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 								QUERY_GET_HISTORY = "groupRelation.getHistory",
 								QUERY_FIND_PARENT_IDS = "groupRelation.findParentIds",
 								QUERY_COUNT_BY_RELATED_GROUP_TYPE = "groupRelation.countByRelatedGroupType",
-								QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER = "groupRelation.findDirectGroupIdsForUser";
+								QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER = "groupRelation.findDirectGroupIdsForUser",
+								QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE = "groupRelation.findDirectGroupsForUserByType";
 
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
