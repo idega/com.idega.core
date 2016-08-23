@@ -2546,7 +2546,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 			topNodes = getStoredTopNodeGroups(user);
 			if (topNodes != null && !topNodes.isEmpty()) {
-				iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
+				if (iwuc != null) {
+					iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
+				}
 				return topNodes;
 			} else {
 				log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
