@@ -2510,6 +2510,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		try {
 		Collection<Group> topNodes = new ArrayList<Group>();
 
+		boolean log = getIWMainApplication().getSettings().getBoolean("user_bussiness.log", false);
+
 		// check for the super user case first
 		boolean isSuperUser = false, currentUser = true;
 		if (iwuc == null) {
@@ -2551,7 +2553,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				}
 				return topNodes;
 			} else {
-				log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
+				if (log) {
+					log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
+				}
+
 				Timer totalTime = new Timer();
 				totalTime.start();
 				Collection<Group> allViewAndOwnerPermissionGroups = new ArrayList<Group>();
@@ -2601,7 +2606,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						}
 					}*/
 					if(true) {
-						log("[UserBusinessBean]: not using stored procedure topnode search");
+						if (log) {
+							log("[UserBusinessBean]: not using stored procedure topnode search");
+						}
+
 						Timer time = new Timer();
 						time.start();
 						Map<Integer, Map<Integer, Group>> parents = new HashMap<Integer, Map<Integer, Group>>();
@@ -2638,7 +2646,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							e.printStackTrace();
 						}
 						time.stop();
-						log("[UserBusinessBean]: getting permission groups complete " + time.getTimeString());
+
+						if (log) {
+							log("[UserBusinessBean]: getting permission groups complete " + time.getTimeString());
+						}
+
 						time.start();
 						// searchForTopNodesFromTop=3000; //some suitable value
 						/*if (false) {// (allViewAndOwnerPermissionGroups.size() >
@@ -2664,7 +2676,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							}
 						}*/
 						if(true) {
-							log("[UserBusinessBean]: using old topnode search");
+							if (log) {
+								log("[UserBusinessBean]: using old topnode search");
+							}
+
 							// get all (recursively) parents for permission
 							Map<String, Collection<Integer>> cachedParents = new HashMap<String, Collection<Integer>>();
 							Map<String, Group> cachedGroups = new HashMap<String, Group>();
@@ -2695,7 +2710,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								}
 							}
 							time.stop();
-							log("[UserBusinessBean]: getting all parents (recursively) complete " + time.getTimeString());
+
+							if (log) {
+								log("[UserBusinessBean]: getting all parents (recursively) complete " + time.getTimeString());
+							}
+
 							time.start();
 							// Filter out the real top nodes!
 							Map<Integer, Boolean> skipThese = new HashMap<Integer, Boolean>();
@@ -2736,7 +2755,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								}// inner while ends
 							}// outer while ends
 							time.stop();
-							log("[UserBusinessBean]: filter out the real topnodes complete " + time.getTimeString());
+
+							if (log) {
+								log("[UserBusinessBean]: filter out the real topnodes complete " + time.getTimeString());
+							}
+
 							time.start();
 							// Now we have to check if the remaining top nodes
 							// have a shortcut
@@ -2760,7 +2783,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									}
 								}
 								time.stop();
-								log("[UserBusinessBean]: some alias complete " + time.getTimeString());
+
+								if (log) {
+									log("[UserBusinessBean]: some alias complete " + time.getTimeString());
+								}
+
 								time.start();
 								// check the children recursively
 								List<Integer> groupsToRemove = new ArrayList<Integer>();
@@ -2790,7 +2817,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									}
 								}
 								time.stop();
-								log("[UserBusinessBean]: check children (recursively) complete " + time.getTimeString());
+
+								if (log) {
+									log("[UserBusinessBean]: check children (recursively) complete " + time.getTimeString());
+								}
 
 								time.start();
 								// remove the top nodes that have aliases under
@@ -2800,7 +2830,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									groupMap.remove(removeIter.next());
 								}
 								time.stop();
-								log("[UserBusinessBean]: remove the aliases undr another top node complete " + time.getTimeString());
+
+								if (log) {
+									log("[UserBusinessBean]: remove the aliases undr another top node complete " + time.getTimeString());
+								}
 							}
 							// finally done! the remaining nodes are the top
 							// nodes
@@ -2811,7 +2844,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					e.printStackTrace();
 				}
 				totalTime.stop();
-				log("[UserBusinessBean]: topnode....(...) ends " + totalTime.getTimeString());
+
+				if (log) {
+					log("[UserBusinessBean]: topnode....(...) ends " + totalTime.getTimeString());
+				}
+
 				int numberOfPermissions = allViewAndOwnerPermissionGroups.size();
 				if (numberOfPermissions > NUMBER_OF_PERMISSIONS_CACHING_LIMIT) {
 					storeUserTopGroupNodes(user, topNodes, numberOfPermissions, totalTime.getTimeString(), null);
