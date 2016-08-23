@@ -768,9 +768,32 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Group> findActiveGroupsByType(String groupType) {
-		String query = "select distinct gr.relatedGroup from " + GroupRelation.class.getName() + " gr where gr.relatedGroupType = '" + groupType +
-				"' and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')";
-		return getResultListByInlineQuery(query, Group.class);
+		if (StringUtil.isEmpty(groupType)) {
+			getLogger().log(Level.WARNING, "Type is not provided");
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE, Group.class, new Param("groupType", groupType));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting active groups by group type " + groupType, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> getDirectGroupsForUserByType(Integer userId, List<String> groupTypes) {
+		if (userId == null || ListUtil.isEmpty(groupTypes)) {
+			return null;
+		}
+
+		try {
+			return getResultList(GroupRelation.QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE, Group.class, new Param("userId", userId),  new Param("groupTypes", groupTypes));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Erorr getting direct groups for user " + userId, e);
+		}
+
+		return null;
 	}
 
 
