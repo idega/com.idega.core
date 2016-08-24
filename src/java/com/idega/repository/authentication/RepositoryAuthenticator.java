@@ -164,7 +164,9 @@ public class RepositoryAuthenticator extends BaseFilter {
 			}
 		}
 
-		session.setAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME, repositoryPrincipal);
+		try {
+			session.setAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME, repositoryPrincipal);
+		} catch (Exception e) {}
 		return request;
 	}
 
@@ -199,11 +201,16 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private String getUserAuthenticatedByRepository(HttpSession session) {
-		return (String) session.getAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		try {
+			return (String) session.getAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		} catch (Exception e) {}
+		return null;
 	}
 
 	private void setAsUnauthenticatedInRepository(HttpSession session) {
-		session.removeAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		try {
+			session.removeAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		} catch (Exception e) {}
 	}
 
 	private boolean isAuthenticated(HttpServletRequest request, LoggedOnInfo info, String login, String password) {
