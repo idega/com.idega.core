@@ -487,7 +487,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			if (ListUtil.isEmpty(userTopGroups)) {
 				GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
 				userTopGroups = groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
-				getLogger().info("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") by permissions" +
+				getLogger().fine("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") by permissions" +
 						(ListUtil.isEmpty(userTopGroups) ? " and also did not find any directly related groups" : ", but found directly related groups: " + userTopGroups));
 			}
 
