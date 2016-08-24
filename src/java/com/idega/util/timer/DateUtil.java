@@ -88,6 +88,9 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.time.ZoneId;
+import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
+import java.time.format.FormatStyle;
 import java.util.Date;
 
 import com.idega.util.StringUtil;
@@ -101,6 +104,8 @@ import com.idega.util.StringUtil;
  * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
  */
 public class DateUtil {
+
+	public static final DateTimeFormatter FULL_DATE_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL);
 
 	/**
 	 * 
@@ -251,6 +256,25 @@ public class DateUtil {
 			return new Timestamp(javaDate.getTime());
 		}
 
+
+		return null;
+	}
+
+	public static ZonedDateTime getZonedDateTime(Date date) {
+		LocalDateTime dateTime = getDateTime(date);
+		if (dateTime != null) {
+			ZonedDateTime zonedDateTime = ZonedDateTime.now();
+			return ZonedDateTime.of(dateTime, zonedDateTime.getZone());
+		}
+
+		return null;
+	}
+
+	public static String getFormattedDate(Date date) {
+		ZonedDateTime dateTime = getZonedDateTime(date);
+		if (dateTime != null) {
+			return FULL_DATE_FORMATTER.format(dateTime);
+		}
 
 		return null;
 	}
