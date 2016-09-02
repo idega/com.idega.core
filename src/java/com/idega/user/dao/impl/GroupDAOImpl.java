@@ -208,6 +208,18 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> getParentGroups(Integer groupId, Collection<String> groupTypes) {
+		if (groupId == null) {
+			getLogger().warning("Child group id is not provided");
+			return new ArrayList<Group>();
+		}
+
+		Param param1 = new Param("relatedGroupId", groupId);
+		Param param2 = new Param("groupTypes", groupTypes);
+		return getResultList(GroupRelation.QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE, Group.class, param1, param2);
+	}
+
+	@Override
 	public void createUniqueRelation(Group group, Group relatedGroup, GroupRelationType relationType, Date initiationDate) {
 		GroupRelation relation = new GroupRelation();
 		relation.setGroup(group);

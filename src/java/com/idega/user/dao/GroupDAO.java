@@ -51,6 +51,8 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> getParentGroups(Group group, Collection<GroupType> groupTypes);
 
+	public List<Group> getParentGroups(Integer groupId, Collection<String> groupTypes);
+
 	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<String> groupTypes);
 
 	public void createUniqueRelation(Group group, Group relatedGroup, GroupRelationType relationType, Date initiationDate);
