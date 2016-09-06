@@ -179,9 +179,19 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 	}
 
 	@Override
-	public UserLogin getDefaultLoginByUUId(String UUId){
-		UserLogin login = getSingleResult(UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, UserLogin.class, new Param(User.PROP_UNIQUE_ID, UUId));
-		return login;
+	public UserLogin getDefaultLoginByUUId(String uuid) {
+		if (StringUtil.isEmpty(uuid)) {
+			return null;
+		}
+
+		try {
+			List<UserLogin> logins = getResultList(UserLogin.QUERY_FIND_DEFAULT_LOGIN_BY_UUID, UserLogin.class, new Param(User.PROP_UNIQUE_ID, uuid));
+			return ListUtil.isEmpty(logins) ? null : logins.get(0);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting login by uuid " + uuid, e);
+		}
+
+		return null;
 	}
 
 	@Override
