@@ -17,6 +17,7 @@ import java.util.Map;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
+import com.idega.util.ListUtil;
 
 
 /**
@@ -62,8 +63,16 @@ public class PropertyCache implements Singleton {
 
 	public void setAllCachedPropertiesOnInstance(String key, Object instance) {
 		List<Property> props = getPropertyList(key);
+		if (ListUtil.isEmpty(props)) {
+			return;
+		}
+
 		for (Iterator<Property> iter = props.iterator(); iter.hasNext();) {
 			Property prop = iter.next();
+			if (prop == null) {
+				continue;
+			}
+
 			prop.setPropertyOnInstance(instance);
 		}
 	}
