@@ -135,9 +135,8 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 	@Override
 	public Phone findByPrimaryKey(Integer primaryKey) {
 		if (primaryKey != null) {
-			getSingleResult(Phone.QUERY_FIND_BY_ID, Phone.class, new Param(Phone.phoneIdProp, primaryKey));
+			return getSingleResult(Phone.QUERY_FIND_BY_ID, Phone.class, new Param(Phone.phoneIdProp, primaryKey));
 		}
-
 		return null;
 	}
 

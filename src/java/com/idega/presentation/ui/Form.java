@@ -947,6 +947,21 @@ public class Form
 		}
 	}
 
+	public void setPageToSubmitTo(ICPage page, String parameters) {
+		int ibPageID = ((Integer) page.getPrimaryKey()).intValue();
+		if (IWMainApplication.useNewURLScheme) {
+			try {
+				setAction(this.getBuilderService(getIWApplicationContext()).getPageURI(ibPageID) + parameters);
+			}
+			catch (RemoteException e) {
+				e.printStackTrace();
+			}
+		}
+		else {
+			this._submitToPage = ibPageID;
+		}
+	}
+	
 	public void setPageToSubmitTo(ICPage page) {
 		setPageToSubmitTo(((Integer) page.getPrimaryKey()).intValue());
 	}
