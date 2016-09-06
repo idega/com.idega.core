@@ -1163,6 +1163,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			lInfo.setLoginType(loginType);
 		}
 
+		session = session == null ? request.getSession(true) : session;
 		IWMainApplication iwma = getIWMainApplication(session);
 		AccessController aController = iwma.getAccessController();
 		IWUserContext iwuc = new IWUserContextImpl(session, session.getServletContext());
