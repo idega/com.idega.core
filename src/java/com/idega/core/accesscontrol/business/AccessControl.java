@@ -2548,19 +2548,29 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @param groups
 	 * @return all ICPermissions owned by these groups
 	 */
-	public static Collection<ICPermission> getAllGroupPermitPermissions(Collection<Group> groups) {
+	public static Collection<ICPermission> getAllGroupPermitPermissions(Collection<?> groups) {
+		if (ListUtil.isEmpty(groups)) {
+			return Collections.emptyList();
+		}
+
 		PermissionDAO permissionDAO = ELUtil.getInstance().getBean(PermissionDAO.class);
 		GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
 
 	    Collection<Group> permGroups = new ArrayList<Group>();
-	    for (Group group : groups) {
-			permGroups.add(groupDAO.findGroup(group.getID()));
+	    for (Object group: groups) {
+	    	if (group instanceof Group) {
+	    		permGroups.add((Group) group);
+	    	} else if (group instanceof com.idega.user.data.Group) {
+	    		Integer id = Integer.valueOf(((com.idega.user.data.Group) group).getId());
+	    		permGroups.add(groupDAO.findGroup(id));
+	    	}
 		}
 
 	    Collection<ICPermission> returnCol = permissionDAO.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 	    			permGroups,
 					AccessController.PERMISSION_KEY_PERMIT,
-					AccessController.CATEGORY_STRING_GROUP_ID);
+					AccessController.CATEGORY_STRING_GROUP_ID
+		);
 		return returnCol;
 	}
 
