@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.Cacheable;
@@ -19,6 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.persistence.DaoFunctions;
 import com.idega.core.persistence.Param;
+import com.idega.user.data.bean.Group;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -34,7 +36,7 @@ import com.idega.util.StringUtil;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class DaoFunctionsImpl implements DaoFunctions {
 
-	private static final Logger logger = Logger.getLogger(DaoFunctionsImpl.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DaoFunctionsImpl.class.getName());
 
 	private static final List<Class<?>> IMPLEMENTED_CONVERTERS = Collections.unmodifiableList(Arrays.asList(new Class<?>[] {
 			Long.class,
@@ -60,7 +62,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			String name = param.getParamName();
 			Object value = param.getParamValue();
 			if (value instanceof String && (CoreConstants.Y.equals(value) || CoreConstants.N.equals(value))) {
-				logger.info("Changing type of parameter (name: " + name + ", value: '" + value + "'): from " + value.getClass().getName() + " to " + Character.class.getName());
+				LOGGER.info("Changing type of parameter (name: " + name + ", value: '" + value + "'): from " + value.getClass().getName() + " to " + Character.class.getName());
 				value = Character.valueOf(((String) value).charAt(0));
 			}
 
@@ -182,51 +184,70 @@ public class DaoFunctionsImpl implements DaoFunctions {
 
 	@SuppressWarnings("unchecked")
 	private <Exptected> List<Exptected> getRealResults(List<Object> results, Class<Exptected> expectedReturnType) {
-		if (ListUtil.isEmpty(results))
+		if (ListUtil.isEmpty(results)) {
 			return null;
+		}
 
+		Object tmp = null;
 		List<Exptected> realResults = new ArrayList<Exptected>();
-		for (Object result : results) {
-			if (expectedReturnType.isInstance(result)) {
-				realResults.add((Exptected) result);
-			} else if (result instanceof Number) {
-				Number number = (Number) result;
-				if (expectedReturnType.equals(Long.class)) {
-					// Long
-					realResults.add((Exptected) Long
-					        .valueOf(number.longValue()));
-				} else if (expectedReturnType.equals(Integer.class)) {
-					// Integer
-					realResults.add((Exptected) Integer.valueOf(number
-					        .intValue()));
-				} else if (expectedReturnType.equals(Float.class)) {
-					// Float
-					realResults.add((Exptected) Float.valueOf(number
-					        .floatValue()));
-				} else if (expectedReturnType.equals(Byte.class)) {
-					// Byte
-					realResults.add((Exptected) Byte
-					        .valueOf(number.byteValue()));
-				} else if (expectedReturnType.equals(Double.class)) {
-					// Double
-					realResults.add((Exptected) Double.valueOf(number
-					        .doubleValue()));
-				} else if (expectedReturnType.equals(Short.class)) {
-					// Short
-					realResults.add((Exptected) Short.valueOf(number
-					        .shortValue()));
-				}
-			} else {
+		try {
+			for (Object result: results) {
+				tmp = result;
 
-				String message = null;
-				if (result != null ) {
-					message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
+				if (expectedReturnType.isInstance(result)) {
+					realResults.add((Exptected) result);
+
+				} else if (result instanceof Number) {
+					Number number = (Number) result;
+					if (expectedReturnType.equals(Long.class)) {
+						// Long
+						realResults.add((Exptected) Long.valueOf(number.longValue()));
+
+					} else if (expectedReturnType.equals(Integer.class)) {
+						// Integer
+						realResults.add((Exptected) Integer.valueOf(number .intValue()));
+
+					} else if (expectedReturnType.equals(Float.class)) {
+						// Float
+						realResults.add((Exptected) Float.valueOf(number.floatValue()));
+
+					} else if (expectedReturnType.equals(Byte.class)) {
+						// Byte
+						realResults.add((Exptected) Byte.valueOf(number.byteValue()));
+
+					} else if (expectedReturnType.equals(Double.class)) {
+						// Double
+						realResults.add((Exptected) Double.valueOf(number.doubleValue()));
+
+					} else if (expectedReturnType.equals(Short.class)) {
+						// Short
+						realResults.add((Exptected) Short.valueOf(number.shortValue()));
+					}
+
+				} else if (result instanceof Group && expectedReturnType.equals(Integer.class)) {
+					//	Group to Integer
+					realResults.add((Exptected) ((Group) result).getID());
+
 				} else {
-					message = "Can not convert null to: " + expectedReturnType + ": such converter is not implemented yet!";
+					String message = null;
+					if (result != null) {
+						message = getClass().getName() + ": can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
+					} else {
+						message = getClass().getName() + ": can not convert null to: " + expectedReturnType + ": such converter is not implemented yet!";
+					}
+					LOGGER.warning(message);
+					CoreUtil.sendExceptionNotification(message, null);
 				}
-				logger.warning(message);
-				CoreUtil.sendExceptionNotification(message, null);
 			}
+		} catch (Exception e) {
+			String message = null;
+			if (tmp != null) {
+				message = "Error converting " + tmp + " (" + tmp.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
+			} else {
+				message = "Error converting null to: " + expectedReturnType + ": such converter is not implemented yet!";
+			}
+			LOGGER.log(Level.WARNING, message, e);
+			CoreUtil.sendExceptionNotification(message, e);
 		}
 
 		return ListUtil.isEmpty(realResults) ? null : realResults;
