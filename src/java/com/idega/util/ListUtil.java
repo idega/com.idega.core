@@ -107,17 +107,21 @@ private static <T> ArrayList<T> getEmptyVector(){
 	 * @returns a String with comma separated values
 	 */
 	public static String convertListOfStringsToCommaseparatedString(List<String> list) {
+		return convertListToCommaseparatedString(list);
+	}
+
+	public static String convertListToCommaseparatedString(List<?> list) {
 		StringBuffer sList = new StringBuffer();
 		if (list != null && !list.isEmpty()) {
-			Iterator<String> iter = list.iterator();
+			Iterator<?> iter = list.iterator();
 			for (int g = 0; iter.hasNext(); g++) {
-				String item = iter.next();
+				Object item = iter.next();
 				if (g > 0) {
 					sList.append(CoreConstants.COMMA);
 				}
 
 				if (item != null) {
-					sList.append(item);
+					sList.append(item.toString());
 				}
 
 			}
