@@ -2109,6 +2109,8 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 			}
 			if (ex.lineNumber) {
 				mailMessage += '\nLine number: ' + ex.lineNumber;
+			} else if (ex.line) {
+				mailMessage += '\nLine number: ' + ex.line;
 			}
 			if (ex.number) {
 				mailMessage += '\nError number: ' + ex.number;
@@ -2116,7 +2118,9 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 			if (ex.url) {
 				mailMessage += '\nURL: ' + ex.url;
 			}
-			
+			if (ex.stack) {
+				mailMessage += '\nStack: ' + ex.stack;
+			}
 			if (ex.javaClassName) {
 				mailMessage += '\nJava class name: ' + ex.javaClassName;
 			}
