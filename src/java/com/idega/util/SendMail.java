@@ -407,8 +407,7 @@ public class SendMail {
 
 	public static void send(SendMailMessageValue mv) throws MessagingException {
 		File attachment = mv.getAttachedFile();
-		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(), mv.getHeaders(), false,
-				true, attachment);
+		send(mv.getFrom(), mv.getTo(), mv.getCc(), mv.getBcc(), mv.getReplyTo(), mv.getHost(), mv.getSubject(), mv.getText(), mv.getHeaders(), false, false, attachment);
 	}
 
 	public static Message send(String from, String to, String cc, String bcc, String host, String subject, String text) throws MessagingException {
