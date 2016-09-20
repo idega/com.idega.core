@@ -197,6 +197,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
     public static final boolean DEFAULT_DEBUG_FLAG = false;
     public static boolean debug = DEFAULT_DEBUG_FLAG;
 
+    public final static String PROPERTY_DEFAULT_SERVICE_URL = "default_service_url";
+
     //Member variables:
     private Map<String, IWBundle> loadedBundles;
     private Properties bundlesFile;
