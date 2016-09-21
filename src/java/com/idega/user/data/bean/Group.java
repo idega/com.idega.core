@@ -94,6 +94,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_GROUPS_BY_IDS_AND_TYPES, query = "select distinct g from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_IDS_AND_TYPES, query = "select distinct g.groupID from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_TYPE, query = "select g from Group g where g.groupType.groupType = :groupTypeValue"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_NAME_AND_GROUP_TYPE, query = "select g from Group g where g.name = :name and g.groupType.groupType = :groupTypeValue"),
 	@NamedQuery(name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE, query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')")
 
 })
@@ -116,6 +117,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_IDS_BY_IDS_AND_TYPES = "group.findIdsByIdsAndTypes",
 								QUERY_FIND_ALL_IDS = "group.findAllIds",
 								QUERY_FIND_BY_GROUP_TYPE = "group.findAllByGroupTypeValue",
+								QUERY_FIND_BY_NAME_AND_GROUP_TYPE = "group.findAllByNameAndGroupTypeValue",
 								QUERY_FIND_ACTIVE_GROUPS_BY_TYPE = "group.findActiveGroupsByType",
 
 								ENTITY_NAME = "ic_group",
