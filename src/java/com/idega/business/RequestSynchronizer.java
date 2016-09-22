@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import javax.annotation.PreDestroy;
 
@@ -16,16 +17,17 @@ import com.idega.data.ExplicitlySynchronizedEntity;
 @Service(RequestSynchronizer.BEAN_NAME)
 @Scope("request")
 public class RequestSynchronizer {
+
 	public static final String BEAN_NAME = "requestSynchronizer";
-	
+
 	private Collection<ExplicitlySynchronizedEntity> synchronizationEntities;
 	private Map<String, Object> properties;
-	
+
 	@Autowired
 	private ExplicitSynchronizationBusiness explicitSynchronizationBusiness;
 
 	public Collection<ExplicitlySynchronizedEntity> getSynchronizerKeys() {
-		if(synchronizationEntities != null){
+		if (synchronizationEntities != null) {
 			return synchronizationEntities;
 		}
 		synchronizationEntities = new ArrayList<ExplicitlySynchronizedEntity>();
@@ -35,14 +37,15 @@ public class RequestSynchronizer {
 	public void addEntityToSyncronize(ExplicitlySynchronizedEntity entity){
 		getSynchronizerKeys().add(entity);
 	}
-	
-	@SuppressWarnings("unused")
+
 	@PreDestroy
-	private void activateSynchronization(){
-		explicitSynchronizationBusiness.activateSynchronization(synchronizationEntities,getProperties());
+	private void activateSynchronization() {
+		Logger.getLogger(getClass().getName()).info("Acitvating synchronization for " + synchronizationEntities + ", properties: " + properties);
+		explicitSynchronizationBusiness.activateSynchronization(synchronizationEntities, getProperties());
 	}
+
 	public Map<String, Object> getProperties() {
-		if(properties != null){
+		if (properties != null) {
 			return properties;
 		}
 		properties = new HashMap<String, Object>();
