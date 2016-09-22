@@ -2,6 +2,7 @@ package com.idega.idegaweb;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.OutputStream;
 import java.util.Locale;
 
 import com.idega.core.file.data.ICFile;
@@ -22,17 +23,17 @@ public class IWSystemProperties extends IWPropertyList {
 	private IWMainApplication _application;
 	private final static String PROPERTY_NAME = "system_property_file_id";
 	private ICFile systemProperties;
-	
+
 	public IWSystemProperties(IWMainApplication application) {
 //		super();
 		this._application = application;
 		loadPropertiesFile(application);
 	}
-	
+
 	private void loadPropertiesFile(IWMainApplication application) {
 		try {
 			String icFileID = application.getSettings().getProperty(PROPERTY_NAME);
-			
+
 			if (icFileID != null) {
 				ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
 				ICFile icFile = home.findByPrimaryKey(new Integer(icFileID));
@@ -41,7 +42,7 @@ public class IWSystemProperties extends IWPropertyList {
 			}
 			else {
 				File file = createFile(application.getPropertiesRealPath(), "system_properties.pxml");
-				
+
 				ICFileHome home = (ICFileHome) IDOLookup.getHome(ICFile.class);
 				ICFile icFile = home.create();
 				icFile.setFileValue(new FileInputStream(file));
@@ -49,7 +50,7 @@ public class IWSystemProperties extends IWPropertyList {
 				icFile.store();
 
 				application.getSettings().setProperty(PROPERTY_NAME, icFile.getPrimaryKey().toString());
-				
+
 				this.systemProperties = icFile;
 				file.delete();
 				super.load(icFile.getFileValue());
@@ -66,24 +67,32 @@ public class IWSystemProperties extends IWPropertyList {
 		}
 		return null;
 	}
-	
+
 	public String getLocalizedName(Locale locale,IWProperty property) {
 		return this._application.getBundle(IW_BUNDLE_IDENTIFIER).getResourceBundle(locale).getLocalizedString(property.getName(), property.getName());
 	}
-	
+
 	public IWPropertyList getProperties(String propertyListName) {
 		IWPropertyList list = getPropertyList(propertyListName);
-		if ( list == null ) {
+		if (list == null) {
 			list = this.getNewPropertyList(propertyListName);
 		}
 		return list;
 	}
-	
+
+	@Override
 	public void store() {
-		super.store(this.systemProperties.getFileValueForWrite());
+		if (this.systemProperties == null) {
+			return;
+		}
+		OutputStream output = this.systemProperties.getFileValueForWrite();
+		if (output != null) {
+			super.store(output);
+		}
 		this.systemProperties.store();
 	}
-	
+
+	@Override
 	public void unload() {
 		this.systemProperties = null;
 		super.unload();
