@@ -13,7 +13,9 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
 import java.security.Principal;
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
@@ -75,6 +77,7 @@ import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.FacesUtil;
+import com.idega.util.FileUploadUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
@@ -347,6 +350,27 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	public boolean isUploadedFileSet() {
 		return this._uploadedFile != null;
+	}
+	
+	public List<UploadFile> getUploadedFiles() {
+		Map<String, UploadFile> uploadedFiles = FileUploadUtil.getAllUploadedFiles(this);
+		if(uploadedFiles == null || uploadedFiles.isEmpty()) {
+			return null;
+		}
+		
+		List<String> sortedKeys = new ArrayList<String>(uploadedFiles.keySet());
+		Collections.sort(sortedKeys);
+		
+		List<UploadFile> uploadedFilesList = new ArrayList<UploadFile>();
+		for(String key : sortedKeys) {
+			UploadFile file = uploadedFiles.get(key);
+			uploadedFilesList.add(file);
+		}
+		
+		if(ListUtil.isEmpty(uploadedFilesList)) {
+			return null;
+		}
+		return uploadedFilesList;
 	}
 
 	public String getUserAgent() {
