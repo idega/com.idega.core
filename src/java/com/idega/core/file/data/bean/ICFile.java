@@ -44,8 +44,9 @@ import com.idega.util.DBUtil;
 @Entity
 @Table(name = ICFile.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "file.findAll", query = "select f from ICFile f"),
-	@NamedQuery(name = "file.findById", query = "select f from ICFile f where f.fileID = :id")
+
+	@NamedQuery(name = ICFile.QUERY_FIND_BY_ID, query = "select f from ICFile f where f.fileID = :id"),
+	@NamedQuery(name = ICFile.QUERY_FIND_ALL, query = "select f from ICFile f")
 })
 public class ICFile implements Serializable, MetaDataCapable {
 
@@ -68,7 +69,9 @@ public class ICFile implements Serializable, MetaDataCapable {
 	private static final String COLUMN_HASH = "hash_value";
 
 	private static final String TREE_TABLE_NAME = ENTITY_NAME + "_tree";
-
+	public static final String QUERY_FIND_BY_ID = "file.findById";
+	public static final String QUERY_FIND_ALL = "file.findAll";
+	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_FILE_ID)
