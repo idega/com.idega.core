@@ -185,6 +185,8 @@ public class IWMainApplication	extends Application  implements MutableClass {
     private final static String WORKSPACE_URI="/workspace/";
     private final static String LOGIN_URI="/login/";
 
+    public final static String PROPERTY_DEFAULT_SERVICE_URL = "default_service_url";
+
     //mutable class variables:
     protected static IWMainApplication defaultIWMainApplication = null;
     private static IWCacheManager cacheManager = null;
