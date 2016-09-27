@@ -46,13 +46,13 @@ import com.idega.idegaweb.IWApplicationContext;
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.51 $
  */
-public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable {
+public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable, GroupNode<Group> {
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
 	 */
 	public String getGroupTypeValue();
-
+	
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeKey
 	 */
