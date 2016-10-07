@@ -22,7 +22,11 @@ public class QueryNativeInlineImpl extends QueryInlineImpl {
 			if (getMappingName() != null) {
 				query = getEntityManager().createNativeQuery(getQueryExpression(), getMappingName());
 			} else {
-				query = getEntityManager().createNativeQuery(getQueryExpression(), getExpectedReturnType());
+				if (getExpectedReturnType() == null || getExpectedReturnType().getName().equals(Object.class.getName()) || getExpectedReturnType().getName().equals(Object[].class.getName()) ){
+					query = getEntityManager().createNativeQuery(getQueryExpression());
+				} else {
+					query = getEntityManager().createNativeQuery(getQueryExpression(), getExpectedReturnType());
+				}
 			}
 
 			if (getMaxResults() != null)
