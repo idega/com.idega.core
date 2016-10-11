@@ -83,7 +83,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_ID, query = "select g from Group g where g.groupID = :groupId"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids) order by g.name"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g where g.personalId = :personalId"),
@@ -95,8 +95,12 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_IDS_AND_TYPES, query = "select distinct g.groupID from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_TYPE, query = "select g from Group g where g.groupType.groupType = :groupTypeValue"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_NAME_AND_GROUP_TYPE, query = "select g from Group g where g.name = :name and g.groupType.groupType = :groupTypeValue"),
-	@NamedQuery(name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE, query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')")
-
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE,
+			query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_AND_TYPES_BY_IDS, query = "select g.groupID, g.groupType.groupType from Group g where g.groupID in :ids")
 })
 @XmlTransient
 @Cacheable
@@ -119,6 +123,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_BY_GROUP_TYPE = "group.findAllByGroupTypeValue",
 								QUERY_FIND_BY_NAME_AND_GROUP_TYPE = "group.findAllByNameAndGroupTypeValue",
 								QUERY_FIND_ACTIVE_GROUPS_BY_TYPE = "group.findActiveGroupsByType",
+								QUERY_FIND_IDS_AND_TYPES_BY_IDS = "group.findIdsAndTypesByIds",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",
