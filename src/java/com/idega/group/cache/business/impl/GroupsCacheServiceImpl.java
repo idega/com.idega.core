@@ -467,4 +467,22 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 	}
 
+	@Override
+	public void doCacheGroup(Integer groupId) {
+		if (groupId == null) {
+			return;
+		}
+
+		try {
+			Group group = groupDAO.findGroup(groupId);
+			if (group == null) {
+				return;
+			}
+
+			doCacheGroup(new Object[] {group.getID(), group.getType()}, getCache(), groupDAO, null, true);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error caching group by ID: " + groupId, e);
+		}
+	}
+
 }
