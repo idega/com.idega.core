@@ -256,7 +256,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	private boolean isCacheEnabled() {
-		return getApplication().getSettings().getBoolean("groups_cacher.cache_enabled", true);
+		return getApplication().getSettings().getBoolean("groups_cacher.cache_enabled", false);
 	}
 
 	private void doCacheGroups() {
