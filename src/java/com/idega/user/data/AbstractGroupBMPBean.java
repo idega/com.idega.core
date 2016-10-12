@@ -668,12 +668,6 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		getGeneralGroup().removeGroup(relatedGroupId,currentUser, AllEntries, time);
 	}
 
-	@Override
-	public String getType() {
-		return getGroupType();
-	}
-
-	@Override
 	public String getType() {
 		return getGroupType();
 	}
