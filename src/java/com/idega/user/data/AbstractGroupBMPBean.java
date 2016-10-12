@@ -673,4 +673,8 @@ public abstract class AbstractGroupBMPBean extends GenericEntity implements Grou
 		return getGroupType();
 	}
 
+	@Override
+	public String getType() {
+		return getGroupType();
+	}
 }
