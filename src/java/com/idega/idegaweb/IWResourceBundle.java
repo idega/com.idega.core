@@ -15,8 +15,6 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Reader;
 import java.io.Serializable;
 import java.io.StringReader;
@@ -759,9 +757,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		this.bundleIdentifier = bundleIdentifier;
 	}
 
-	private void writeObject(ObjectOutputStream out) throws IOException {
-	}
-
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#isModificationAllowed()
+	 */
+	@Override
+	public boolean isModificationAllowed() {
+		return Boolean.TRUE;
 	}
 }

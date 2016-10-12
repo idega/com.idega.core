@@ -20,42 +20,44 @@ import javax.naming.OperationNotSupportedException;
 
 public interface MessageResource {
 
-	public static final String NO_BUNDLE = "no bundle";
+	static final String NO_BUNDLE = "no bundle";
 
-	public void setLevel(Level priorityLevel);
+	void setLevel(Level priorityLevel);
 
-	public Level getLevel();
+	Level getLevel();
 
 	/**
 	 * @return String that was set or null if there was a failure setting String
 	 */
-	public String setMessage(String key, String value);
+	String setMessage(String key, String value);
 
-	public void setMessages(Map<String, String> values);
+	void setMessages(Map<String, String> values);
 
-	public Set<String> getAllLocalizedKeys();
+	Set<String> getAllLocalizedKeys();
 
 	/**
 	 * @param key - message key
 	 * @return String that was found in resource, null - if there are no values with specified key
 	 */
-	public String getMessage(String key);
+	String getMessage(String key);
 
-	public void removeMessage(String key);
+	void removeMessage(String key);
 
-	public boolean isAutoInsert();
+	boolean isAutoInsert();
 
-	public void setAutoInsert(boolean value);
+	void setAutoInsert(boolean value);
 
-	public String getIdentifier();
+	String getIdentifier();
 
-	public void setIdentifier(String identifier);
+	void setIdentifier(String identifier);
 
-	public void initialize(String bundleIdentifier, Locale locale) throws IOException, OperationNotSupportedException;
+	void initialize(String bundleIdentifier, Locale locale) throws IOException, OperationNotSupportedException;
 
-	public String getBundleIdentifier();
+	String getBundleIdentifier();
 
-	public void setBundleIdentifier(String identifier);
+	void setBundleIdentifier(String identifier);
 
-	public void store();
+	boolean isModificationAllowed();
+
+	void store();
 }

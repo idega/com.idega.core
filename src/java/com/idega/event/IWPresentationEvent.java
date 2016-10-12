@@ -166,7 +166,7 @@ public abstract class IWPresentationEvent extends EventObject implements Cloneab
     this.addParameter(prm);
   }
 
-  protected void addParameter(Parameter prm){
+  public void addParameter(Parameter prm){
     this._parameters.add(prm);
   }
 
