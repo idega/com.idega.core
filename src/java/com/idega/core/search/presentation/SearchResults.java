@@ -84,6 +84,7 @@ public class SearchResults extends Block {
 	protected boolean showAllResultProperties = false;
 	protected boolean openLinksInAnotherWindow = false;
 	protected boolean hideResultsLayer = false;
+	protected boolean showDateColumn = false;
 
 	public SearchResults() {
 		super();
@@ -280,9 +281,23 @@ public class SearchResults extends Block {
 						Collection<SearchResult> results = search == null ? null : search.getSearchResults();
 						if (results != null && !results.isEmpty()) {
 							noResult = false;
-							Text searchName = new Text(searchPlugin.getSearchName());
-							searchName.setStyleClass(getSearchNameStyleClass());
-							container.add(searchName);
+							if(!isSetToShowDateColumn()) {
+								Text searchName = new Text(searchPlugin.getSearchName());
+								searchName.setStyleClass(getSearchNameStyleClass());
+								container.add(searchName);
+							} else {
+								Layer tableHeader = new Layer();
+								tableHeader.setStyleClass(getSearchNameStyleClass());
+								
+								Text searchName = new Text(searchPlugin.getSearchName());
+								tableHeader.add(searchName);
+								
+								Text dateColumnName = new Text(searchPlugin.getSearchDateColumnName());
+								dateColumnName.setStyleClass(getSearchNameStyleClass() + "_date");
+								tableHeader.add(dateColumnName);
+								
+								container.add(tableHeader);
+							}
 							int row = 1;
 							Iterator<SearchResult> iterator = results.iterator();
 							UUIDGenerator generator = UUIDGenerator.getInstance();
@@ -376,8 +391,6 @@ public class SearchResults extends Block {
 									}
 								}
 
-
-
 								// extraRowElements
 								Collection<UIComponent> rowElements = searchPlugin.getExtraRowElements(result, iwrb);
 								if (rowElements != null && !rowElements.isEmpty()) {
@@ -387,6 +400,15 @@ public class SearchResults extends Block {
 									}
 								}
 
+								// adding date column
+								Collection<UIComponent> dates = searchPlugin.getFileCreationDates(result, iwrb);
+								if (dates != null && !dates.isEmpty()) {
+									Iterator<UIComponent> reiter = dates.iterator();
+									while (reiter.hasNext()) {
+										rowContainer.add(reiter.next());
+									}
+								}
+								
 								// adding spacer to force the row container
 								// around all floating elements
 								CSSSpacer space2 = (CSSSpacer) spacer.clone();
@@ -655,4 +677,13 @@ public class SearchResults extends Block {
 	public void setOpenLinksInAnotherWindow(boolean openLinksInAnotherWindow) {
 		this.openLinksInAnotherWindow = openLinksInAnotherWindow;
 	}
+
+	public boolean isSetToShowDateColumn() {
+		return showDateColumn;
+	}
+
+	public void setToShowDateColumn(boolean showDateColumn) {
+		this.showDateColumn = showDateColumn;
+	}
+	
 }

@@ -89,6 +89,8 @@ public interface SearchPlugin extends Cloneable{
 	 */
 	public String getSearchDescription();
 
+	public Collection<UIComponent> getFileCreationDates(SearchResult result, IWResourceBundle iwrb);
+	
 	/**
 	 * @return A collection of UIComponents.
 	 */
@@ -100,4 +102,7 @@ public interface SearchPlugin extends Cloneable{
 	 * @return context uri to result img. if null returned - default is used
 	 */
 	public String getResultImgByResultURI(String result_uri);
+
+	public String getSearchDateColumnName();
+	
 }

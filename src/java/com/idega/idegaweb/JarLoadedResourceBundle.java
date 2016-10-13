@@ -1,9 +1,8 @@
 package com.idega.idegaweb;
 
 import java.io.IOException;
-import java.io.ObjectInputStream;
-import java.io.ObjectOutputStream;
 import java.io.Serializable;
+import java.util.Collections;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
@@ -34,9 +33,6 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 
 	private static final long serialVersionUID = 2817447347536356853L;
 
-	private Level usagePriorityLevel = MessageResourceImportanceLevel.MIDDLE_ORDER;
-	private boolean autoInsert = false;
-
 	public static final String RESOURCE_IDENTIFIER = "jar_loaded_resource";
 
 	private IWResourceBundle resource;
@@ -47,8 +43,8 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 
 	protected void initProperities() {
 		setIdentifier(RESOURCE_IDENTIFIER);
-		setLevel(usagePriorityLevel);
-		setAutoInsert(autoInsert);
+		setLevel(MessageResourceImportanceLevel.MIDDLE_ORDER);
+		setAutoInsert(Boolean.FALSE);
 	}
 
 	@Override
@@ -70,78 +66,169 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#getBundleIdentifier()
+	 */
 	@Override
 	public String getBundleIdentifier() {
-		if (resource != null)
-			return resource.getBundleIdentifier();
+		if (getResource() != null) {
+			return getResource().getBundleIdentifier();
+		}
+
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#getIdentifier()
+	 */
 	@Override
 	public String getIdentifier() {
-		if (resource != null) {
-			return resource.getIdentifier();
-		} else {
-			return RESOURCE_IDENTIFIER;
+		if (getResource() != null) {
+			return getResource().getIdentifier();
+		}
+		
+		return RESOURCE_IDENTIFIER;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#getLevel()
+	 */
+	@Override
+	public Level getLevel() {
+		if (getResource() != null) {
+			return getResource().getLevel();
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#isAutoInsert()
+	 */
+	@Override
+	public boolean isAutoInsert() {
+		if (getResource() != null) {
+			return getResource().isAutoInsert();
+		} 
+
+		throw new NullPointerException("No resource is loaded!");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#removeMessage(java.lang.String)
+	 */
+	@Override
+	public void removeMessage(String key) {
+		throw new UnsupportedOperationException("Modification in not allowed for .jar resource");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#setAutoInsert(boolean)
+	 */
+	@Override
+	public void setAutoInsert(boolean value) {
+//		throw new UnsupportedOperationException("Modification in not allowed for .jar resource");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#setBundleIdentifier(java.lang.String)
+	 */
+	@Override
+	public void setBundleIdentifier(String identifier) {
+		if (getResource() != null) {
+			getResource().setBundleIdentifier(identifier);
 		}
 	}
 
-	@Override
-	public Level getLevel() {
-		return resource.getLevel();
-	}
-
-	@Override
-	public boolean isAutoInsert() {
-		return resource.isAutoInsert();
-	}
-
-	@Override
-	public void removeMessage(String key) {}
-
-	@Override
-	public void setAutoInsert(boolean value) {}
-
-	@Override
-	public void setBundleIdentifier(String identifier) {
-		resource.setBundleIdentifier(identifier);
-	}
-
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#setIdentifier(java.lang.String)
+	 */
 	@Override
 	public void setIdentifier(String identifier) {
-		resource.setIdentifier(identifier);
+		if (getResource() != null) {
+			getResource().setIdentifier(identifier);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#setLevel(java.util.logging.Level)
+	 */
 	@Override
 	public void setLevel(Level priorityLevel) {
-		resource.setLevel(priorityLevel);
+		if (getResource() != null) {
+			getResource().setLevel(priorityLevel);
+		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#setMessage(java.lang.String, java.lang.String)
+	 */
 	@Override
 	public String setMessage(String key, String value) {
+		throw new UnsupportedOperationException("Modification in not allowed for .jar resource");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#setMessages(java.util.Map)
+	 */
+	@Override
+	public void setMessages(Map<String, String> values) {
+		throw new UnsupportedOperationException("Modification in not allowed for .jar resource");
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#getAllLocalizedKeys()
+	 */
+	@Override
+	public Set<String> getAllLocalizedKeys() {
+		if (getResource() != null) {
+			return getResource().getAllLocalizedKeys();
+		}
+
+		return Collections.emptySet();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#getMessage(java.lang.String)
+	 */
+	@Override
+	public String getMessage(String key) {
+		if (getResource() != null) {
+			return getResource().getMessage(key);
+		}
+
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#isModificationAllowed()
+	 */
 	@Override
-	public void setMessages(Map<String, String> values) {}
-
-	@Override
-	public Set<String> getAllLocalizedKeys() {
-		return resource.getAllLocalizedKeys();
+	public boolean isModificationAllowed() {
+		return Boolean.FALSE;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.util.messages.MessageResource#store()
+	 */
 	@Override
-	public String getMessage(String key) {
-		return resource.getMessage(key);
-	}
-
-	@Override
-	public void store() {}
-
-	private void writeObject(ObjectOutputStream out) throws IOException {
-	}
-
-	private void readObject(ObjectInputStream in) throws IOException, ClassNotFoundException {
+	public void store() {
+		throw new UnsupportedOperationException("Modification in not allowed for .jar resource");
 	}
 
 	@Override
