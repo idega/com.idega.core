@@ -2,9 +2,12 @@ package com.idega.group.cache.business.impl;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CopyOnWriteArrayList;
@@ -70,7 +73,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	private void doCollectGroupsIds(
 			Map<Integer, List<Integer>> leveledResults,
 			List<Integer> plainResults,
-			List<Integer> ids,
+			final List<Integer> ids,
 			List<String> groupTypes,
 			List<String> notContainingTypes,
 			Integer levels,
@@ -83,7 +86,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 
 		List<CachedGroup> cachedGroups = new ArrayList<>();
-		Map<Integer, CachedGroup> cache = getCache();
+		Map<Integer, CachedGroup> cache = getIdsCache();
 		ids.parallelStream().forEach(id -> {
 			CachedGroup cachedGroup = cache.get(id);
 			if (cachedGroup != null) {
@@ -91,6 +94,18 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			}
 		});
 		if (cachedGroups.size() != ids.size()) {
+			Thread lazyCacher = new Thread(new Runnable() {
+
+				@Override
+				public void run() {
+					for (Integer id: ids) {
+						doCacheGroup(id);
+					}
+				}
+
+			});
+			lazyCacher.start();
+
 			return;
 		}
 
@@ -106,14 +121,16 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 	}
 
-	private Map<Integer, List<CachedGroup>> getConverted(List<CachedGroup> groups) {
+	private Map<Integer, List<CachedGroup>> getConverted(Collection<CachedGroup> groups) {
 		if (ListUtil.isEmpty(groups)) {
 			return null;
 		}
 
+		int level = 1;
 		Map<Integer, List<CachedGroup>> converted = new TreeMap<>();
-		for (int i = 0; i < groups.size(); i++) {
-			converted.put(i + 1, Arrays.asList(groups.get(0)));
+		for (CachedGroup group: groups) {
+			converted.put(level, Arrays.asList(group));
+			level++;
 		}
 		return converted;
 	}
@@ -261,27 +278,32 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 	private void doCacheGroups() {
 		try {
-			GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
-
 			List<String> groupTypes = groupDAO.getGroupTypes();
 			if (ListUtil.isEmpty(groupTypes)) {
 				return;
 			}
 
 			groupTypes.parallelStream().forEach(type -> {
-				doCacheGroupsByType(groupDAO, type);
+				long start = System.currentTimeMillis();
+				getLogger().info("Starting to cache groups with type " + type);
+				int amount = doCacheGroupsByType(type);
+				getLogger().info("Cached " + amount + " groups with type '" + type + "' in " + (System.currentTimeMillis() - start) + " ms");
 			});
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error caching groups", e);
 		}
 	}
 
-	private Map<Integer, CachedGroup> getCache() {
-		Map<Integer, CachedGroup> cache = getCache("EPLATFORM_ACTIVE_GROUPS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
+	private Map<Integer, CachedGroup> getIdsCache() {
+		Map<Integer, CachedGroup> cache = getCache("EPLATFORM_ACTIVE_GROUPS_IDS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
+		return cache;
+	}
+	private Map<String, Set<Integer>> getTypesCache() {
+		Map<String, Set<Integer>> cache = getCache("EPLATFORM_ACTIVE_GROUPS_TYPES_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
 		return cache;
 	}
 
-	private List<CachedGroup> getCachedGroups(GroupDAO groupDAO, List<Integer> ids) {
+	private List<CachedGroup> getCachedGroups(List<Integer> ids) {
 		if (ListUtil.isEmpty(ids)) {
 			return null;
 		}
@@ -292,7 +314,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return null;
 			}
 
-			List<CachedGroup> results = new ArrayList<>();
+			List<CachedGroup> results = new CopyOnWriteArrayList<>();
 			for (Property<Integer, String> property: data) {
 				if (property == null) {
 					continue;
@@ -307,23 +329,25 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return null;
 	}
 
-	private void doCacheChildren(GroupDAO groupDAO, List<Integer> ids, CachedGroup cachedGroup) {
+	private List<Integer> getCachedChildren(List<Integer> ids, CachedGroup cachedGroup) {
 		Map<Integer, List<Integer>> children = groupDAO.getChildGroupsIds(ids, null);
 		Map<Integer, List<CachedGroup>> cachedChildren = new TreeMap<>();
 		cachedGroup.setChildren(cachedChildren);
 		List<Integer> levels = new ArrayList<>(children.keySet());
 		levels.parallelStream().forEach(level -> {
 			List<Integer> levelIds = children.get(level);
-			cachedChildren.put(level, getCachedGroups(groupDAO, levelIds));
+			cachedChildren.put(level, getCachedGroups(levelIds));
 		});
+		return ids;
 	}
 
-	private void doCacheParents(GroupDAO groupDAO, List<Integer> ids, CachedGroup cachedGroup) {
+	private List<Integer> getCachedParents(List<Integer> ids, CachedGroup cachedGroup) {
 		List<Integer> parents = groupDAO.getParentGroupsIdsRecursive(ids, null);
-		cachedGroup.setParents(getCachedGroups(groupDAO, parents));
+		cachedGroup.setParents(getCachedGroups(parents));
+		return parents;
 	}
 
-	private void doCacheGroupsByType(GroupDAO groupDAO, String type) {
+	private int doCacheGroupsByType(String type) {
 		String query = "select case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id");
 		query = query.concat(", case g.groupType.groupType when '").concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.groupType.groupType else g.groupType.groupType end as type");
 		query = query.concat(" from ").concat(GroupRelation.class.getName()).concat(" gr inner join gr.relatedGroup g");
@@ -336,103 +360,84 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 					new com.idega.core.persistence.Param("groupType", type)
 			);
 			if (ListUtil.isEmpty(results)) {
-				return;
+				getLogger().warning("There are no active groups with type " + type);
+				return 0;
 			}
 
-			Map<Integer, CachedGroup> cache = getCache();
+			Map<Integer, CachedGroup> idsCache = getIdsCache();
+			Map<String, Set<Integer>> typesCache = getTypesCache();
 
-			results = new CopyOnWriteArrayList<>(results);
-			int sliceSize = getSettings().getInt("cache_slice_size", 15);
-			Integer totalLoaded = 0, total = results.size();
-			while (results.size() > 0) {
-				int slicesLoaded = 0;
-				final List<Object[]> slice = results.size() > sliceSize ?	new CopyOnWriteArrayList<>(results.subList(0, sliceSize)) :
-																			new CopyOnWriteArrayList<>(results);
-					results.removeAll(slice);
-
-					List<Object[]> tmp = new CopyOnWriteArrayList<>(slice);
-					for (Object[] data: tmp) {
-						doCacheGroup(data, cache, groupDAO, slice, true);
-					}
-
-					while (slice.size() > 0) {
-						slicesLoaded = sliceSize - slice.size();
-						getLogger().info("Slices loaded: " + slicesLoaded + " from " + sliceSize + ". Totally loaded " + totalLoaded + " from " + total);
-						Thread.sleep(500);
-					}
-					totalLoaded += sliceSize;
-				}
+			Integer cached = 0, total = results.size();
+			for (Object[] data: results) {
+				long start = System.currentTimeMillis();
+				doCacheGroup(data, idsCache, typesCache);
+				cached++;
+			    getLogger().info("Cached " + cached + " groups out of " + total + " with type '" + type + "' in " + (System.currentTimeMillis() - start) + " ms");
+			}
+			return cached;
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting groups by type: " + type + ", query: " + query, e);
+			getLogger().log(Level.WARNING, "Error caching groups with type: " + type + ", query: " + query, e);
 		}
+		return 0;
 	}
 
-	private void doCacheGroup(Object[] data, Map<Integer, CachedGroup> cache, GroupDAO groupDAO, List<Object[]> slice, boolean runInThread) {
+	private void doCacheGroup(Object[] data, Map<Integer, CachedGroup> idsCache, Map<String, Set<Integer>> typesCache) {
 		if (ArrayUtil.isEmpty(data) || data.length < 2 || data[0] == null || data[1] == null) {
 			return;
 		}
 
-		Thread loader = new Thread(new Runnable() {
+		Integer id = null;
+		try {
+			//	Group
+			id = (Integer) data[0];
+			String type = (String) data[1];
 
-			@Override
-			public void run() {
-				Integer id = null;
-				try {
-					//	Group
-					id = (Integer) data[0];
-					String type = (String) data[1];
-					CachedGroup cachedGroup = new CachedGroup(id, type);
-					cache.put(id, cachedGroup);
+			CachedGroup cachedGroup = new CachedGroup(id, type);
+			idsCache.put(id, cachedGroup);
 
-					List<Integer> ids = Arrays.asList(id);
-
-					ExecutorService service = Executors.newFixedThreadPool(2);
-					List<Future<Boolean>> futures = new ArrayList<>();
-
-					//	All children
-					Callable<Boolean> groupChildren = new Callable<Boolean>() {
-						@Override
-						public Boolean call() throws Exception {
-							doCacheChildren(groupDAO, ids, cachedGroup);
-							return Boolean.TRUE;
-						}
-					};
-					futures.add(service.submit(groupChildren));
-
-					//	All parents
-					Callable<Boolean> groupParents = new Callable<Boolean>() {
-
-						@Override
-						public Boolean call() throws Exception {
-							doCacheParents(groupDAO, ids, cachedGroup);
-							return Boolean.TRUE;
-						}
-
-					};
-					futures.add(service.submit(groupParents));
-
-					futures.parallelStream().forEach(future -> {
-			        	try {
-			        		future.get();
-			        	} catch (Exception e) {
-			 	            getLogger().log(Level.WARNING, "Error executing " + future, e);
-			 	        }
-			        });
-
-				    service.shutdown();
-				} catch (Exception e) {
-					getLogger().log(Level.WARNING, "Error caching group with ID: " + id, e);
-				} finally {
-					if (slice != null) {
-						slice.remove(data);
-					}
-				}
+			Set<Integer> typeIds = typesCache.get(type);
+			if (typeIds == null) {
+				typeIds = new LinkedHashSet<>();
+				typesCache.put(type, typeIds);
 			}
-		});
-		if (runInThread) {
-			loader.start();
-		} else {
-			loader.run();
+			typeIds.add(id);
+
+			List<Integer> ids = Arrays.asList(id);
+
+			ExecutorService service = Executors.newFixedThreadPool(2);
+			List<Future<List<Integer>>> futures = new ArrayList<>();
+
+			//	All children
+			Callable<List<Integer>> groupChildren = new Callable<List<Integer>>() {
+				@Override
+				public List<Integer> call() throws Exception {
+					return getCachedChildren(ids, cachedGroup);
+				}
+			};
+			futures.add(service.submit(groupChildren));
+
+			//	All parents
+			Callable<List<Integer>> groupParents = new Callable<List<Integer>>() {
+
+				@Override
+				public List<Integer> call() throws Exception {
+					return getCachedParents(ids, cachedGroup);
+				}
+
+			};
+			futures.add(service.submit(groupParents));
+
+			futures.parallelStream().forEach(future -> {
+				try {
+					future.get();
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error executing " + future, e);
+				}
+			});
+
+			service.shutdown();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error caching group with ID: " + id, e);
 		}
 	}
 
@@ -441,7 +446,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			return;
 		}
 
-		Map<Integer, CachedGroup> cache = getCache();
+		Map<Integer, CachedGroup> idsCache = getIdsCache();
+		Map<String, Set<Integer>> typesCache = getTypesCache();
 
 		Group relatedGroup = null;
 		try {
@@ -455,15 +461,22 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
-			cache.remove(groupId);
+			idsCache.remove(groupId);
+
+			String type = relatedGroup.getType();
+			if (!StringUtil.isEmpty(type)) {
+				Set<Integer> typesIds = typesCache.get(type);
+				if (!ListUtil.isEmpty(typesIds)) {
+					typesIds.remove(groupId);
+				}
+			}
 
 			String status = relation.getStatus();
 			if (StringUtil.isEmpty(status) || GroupRelation.STATUS_ACTIVE.equals(status) || GroupRelation.STATUS_ACTIVE_PENDING.equals(status)) {
-				GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
-				doCacheGroup(new Object[] {relatedGroup.getID(), relatedGroup.getType()}, cache, groupDAO, null, false);
+				doCacheGroup(new Object[] {relatedGroup.getID(), type}, idsCache, typesCache);
 			}
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error cache for group. Related group: " + relatedGroup, e);
+			getLogger().log(Level.WARNING, "Error updating cache for group. Related group: " + relatedGroup, e);
 		}
 	}
 
@@ -479,10 +492,25 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
-			doCacheGroup(new Object[] {group.getID(), group.getType()}, getCache(), groupDAO, null, true);
+			doCacheGroup(new Object[] {group.getID(), group.getType()}, getIdsCache(), getTypesCache());
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error caching group by ID: " + groupId, e);
 		}
+	}
+
+	@Override
+	public List<Group> findActiveGroupsByType(String type) {
+		if (StringUtil.isEmpty(type)) {
+			return null;
+		}
+
+		Map<String, Set<Integer>> typesCache = getTypesCache();
+		Set<Integer> ids = typesCache.get(type);
+		if (ListUtil.isEmpty(ids)) {
+			return null;
+		}
+
+		return groupDAO.findGroups(new ArrayList<>(ids), null, null);
 	}
 
 }

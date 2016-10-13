@@ -26,4 +26,6 @@ public interface GroupsCacheService {
 
 	public void doCacheGroup(Integer groupId);
 
+	public List<com.idega.user.data.bean.Group> findActiveGroupsByType(String type);
+
 }
