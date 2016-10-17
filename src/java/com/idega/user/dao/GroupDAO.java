@@ -30,6 +30,7 @@ public interface GroupDAO extends GenericDao {
 
 	public Group findGroup(Integer groupID);
 
+	public List<Group> findGroups(List<Integer> groupsIds);
 	public List<Group> findGroups(List<Integer> groupsIds, Integer from, Integer to);
 
 	@Transactional(readOnly = false)

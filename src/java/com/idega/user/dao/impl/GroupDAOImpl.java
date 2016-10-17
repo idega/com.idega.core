@@ -20,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -76,6 +75,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 		try {
 			return getResultList(Group.QUERY_FIND_BY_IDS, Group.class, from, to, null, new Param("ids", groupsIds));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds + ". From: " + from + ", to: " + to, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroups(List<Integer> groupsIds) {
+		if (ListUtil.isEmpty(groupsIds)) {
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_BY_IDS, Group.class, new Param("ids", groupsIds));
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds, e);
 		}
@@ -841,12 +854,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				return null;
 			}
 
-			List<Property<Integer, String>> results = new CopyOnWriteArrayList<>();
-			data.parallelStream().forEach(dataItem -> {
+			List<Property<Integer, String>> results = new ArrayList<>();
+			for (Object[] dataItem: data) {
 				if (!ArrayUtil.isEmpty(dataItem) && dataItem.length > 1 && dataItem[0] != null && dataItem[1] != null) {
 					results.add(new Property<Integer, String>((Integer) dataItem[0], (String) dataItem[1]));
 				}
-			});
+			}
 
 			return results;
 		} catch (Exception e) {
