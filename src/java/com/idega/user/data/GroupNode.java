@@ -36,4 +36,6 @@ public interface GroupNode<G> {
 			Map<String, Collection<Integer>> cachedParents,
 			Map<String, G> cachedGroups) throws EJBException;
 
+	public Collection<G> getChildren();
+
 }
