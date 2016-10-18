@@ -51,7 +51,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
 	 */
 	public String getGroupTypeValue();
-
+	
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeKey
 	 */

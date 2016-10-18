@@ -32,7 +32,8 @@ import com.idega.util.ListUtil;
 @NamedQueries({
 	@NamedQuery(name = "groupType.findAll", query = "select t from GroupType t"),
 	@NamedQuery(name = "groupType.findByType", query = "select t from GroupType t where t.groupType = :groupType"),
-	@NamedQuery(name = GroupType.QUERY_FIND_ALL_VISIBLE, query = "select t from GroupType t where t.isVisible != 'N' group by t.groupType")
+	@NamedQuery(name = GroupType.QUERY_FIND_ALL_VISIBLE, query = "select t from GroupType t where t.isVisible != 'N' group by t.groupType"),
+	@NamedQuery(name = GroupType.QUERY_FIND_GROUP_TYPES, query = "select t.groupType from GroupType t where t.isVisible != 'N' group by t.groupType")
 })
 @Cacheable
 public class GroupType implements Serializable, ICTreeNode<GroupType> {
@@ -40,9 +41,11 @@ public class GroupType implements Serializable, ICTreeNode<GroupType> {
 	private static final long serialVersionUID = 3574509217562528319L;
 
 	public static final String	ENTITY_NAME = "ic_group_type",
-								QUERY_FIND_ALL_VISIBLE = "groupType.findAllVisibleTypes";
+								QUERY_FIND_ALL_VISIBLE = "groupType.findAllVisibleTypes",
+								QUERY_FIND_GROUP_TYPES = "groupType.findGroupTypes",
 
-	public static final String COLUMN_TYPE = "group_type";
+								COLUMN_TYPE = "group_type";
+
 	private static final String COLUMN_DESCRIPTION = "description";
 	private static final String COLUMN_DEFAULT_GROUP_NAME = "default_group_name";
 	private static final String COLUMN_IS_VISIBLE = "is_visible";

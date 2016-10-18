@@ -20,6 +20,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -36,6 +37,7 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
+import com.idega.user.dao.Property;
 import com.idega.user.data.GroupBMPBean;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupTypeBMPBean;
@@ -822,5 +824,41 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	@Override
+	public List<String> getGroupTypes() {
+		try {
+			return getResultList(GroupType.QUERY_FIND_GROUP_TYPES, String.class);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group types", e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Property<Integer, String>> getIdsAndTypes(List<Integer> ids) {
+		if (ListUtil.isEmpty(ids)) {
+			return null;
+		}
+
+		try {
+			List<Object[]> data = getResultList(Group.QUERY_FIND_IDS_AND_TYPES_BY_IDS, Object[].class, new Param("ids", ids));
+			if (ListUtil.isEmpty(data)) {
+				return null;
+			}
+
+			List<Property<Integer, String>> results = new CopyOnWriteArrayList<>();
+			data.parallelStream().forEach(dataItem -> {
+				if (!ArrayUtil.isEmpty(dataItem) && dataItem.length > 1 && dataItem[0] != null && dataItem[1] != null) {
+					results.add(new Property<Integer, String>((Integer) dataItem[0], (String) dataItem[1]));
+				}
+			});
+
+			return results;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting IDs and types by IDs: " + ids, e);
+		}
+
+		return null;
+	}
 
 }

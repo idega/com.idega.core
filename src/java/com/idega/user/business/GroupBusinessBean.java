@@ -1286,7 +1286,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	@Override
-	public Collection getGroupsByAbbreviation(String abbreviation) throws RemoteException {
+	public Collection<Group> getGroupsByAbbreviation(String abbreviation) throws RemoteException {
 		try {
 			return this.getGroupHome().findGroupsByAbbreviation(abbreviation);
 		}

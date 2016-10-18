@@ -3786,11 +3786,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	@Override
 	public boolean validatePersonalId(String personalId, Locale locale) {
 		if (StringUtil.isEmpty(personalId)) {
-			LOGGER.warning("Personal ID is empty!");
 			return false;
 		}
 		if (locale == null) {
-			LOGGER.warning("Unkown locale!");
 			return false;
 		}
 
