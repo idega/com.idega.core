@@ -213,28 +213,6 @@ public class Table extends PresentationObjectContainer implements TableType{
 	*Add an object inside this Table in cell with coordinates x,y from top right
 	*/
 	public void add(PresentationObject modObject, int xpos, int ypos) {
-		/*if (modObject != null) {
-			try {
-				if (isResizable) {
-					if (xpos > this.getColumns()) {
-						setColumns(xpos);
-					}
-					if (ypos > this.getRows()) {
-						setRows(ypos);
-					}
-				}
-				if (theCells[xpos - 1][ypos - 1] == null) {
-					theCells[xpos - 1][ypos - 1] = new TableCell();
-					//super.add(theObjects);
-				}
-				theCells[xpos - 1][ypos - 1].add(modObject);
-				modObject.setParentObject(this);
-				modObject.setLocation(this.getLocation());
-			}
-			catch (Exception ex) {
-				add(new ExceptionWrapper(ex, this));
-			}
-		}*/
 		add((UIComponent)modObject,xpos,ypos);
 	}
 
