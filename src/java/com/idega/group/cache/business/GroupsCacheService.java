@@ -30,4 +30,6 @@ public interface GroupsCacheService {
 
 	public void doCache(List<Integer> groupsIds);
 
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to);
+
 }

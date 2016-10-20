@@ -630,4 +630,9 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		doCacheGroups(toCache, null);
 	}
 
+	@Override
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to) {
+		return getChildGroupsIds(parentGroupsIds, havingTypes, notHavingTypes, null, from, to);
+	}
+
 }
