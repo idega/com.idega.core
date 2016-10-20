@@ -344,6 +344,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return getChildGroups(Integer.class, parentGroupsIds, municipalities, unions, years, notHavingTypes, null, from, to, false);
 	}
 
+	@Override
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to) {
+		return getChildGroups(Integer.class, parentGroupsIds, null, null, null, notHavingTypes, havingTypes, from, to, false);
+	}
+
 	private <T> List<T> getChildGroups(
 			Class<T> resultType,
 			List<Integer> parentGroupsIds,
