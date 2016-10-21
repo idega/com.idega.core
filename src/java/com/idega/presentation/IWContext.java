@@ -914,7 +914,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	}
 
 	public String getServerName() {
-		return RequestUtil.getServerName(getRequest());
+		return getRequest().getServerName();
 	}
 
 	public String getProtocol() {
