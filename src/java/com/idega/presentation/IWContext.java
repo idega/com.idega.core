@@ -904,7 +904,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		String protocol = getProtocol().toLowerCase();
 		if (protocol.startsWith(HTTP)) {
 			if (protocol.startsWith(HTTPS) || https) {
-				return HTTPS + COLONSLASHSLASH + getRequest().getServerName() + getRequestURI();
+				return HTTPS + COLONSLASHSLASH + getServerName() + getRequestURI();
 			}
 			else {
 				return getRequestURI();
@@ -914,7 +914,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	}
 
 	public String getServerName() {
-		return getRequest().getServerName();
+		return RequestUtil.getServerName(getRequest());
 	}
 
 	public String getProtocol() {
