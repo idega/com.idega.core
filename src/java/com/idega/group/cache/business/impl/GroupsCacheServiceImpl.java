@@ -432,6 +432,9 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		if (ListUtil.isEmpty(ids) && StringUtil.isEmpty(type)) {
 			return 0;
 		}
+		if (!isCacheEnabled("_by_ids")) {
+			return 0;
+		}
 
 		String query = getQuery(ids, type);
 		if (query == null) {
@@ -453,7 +456,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			Map<Integer, CachedGroup> idsCache = getIdsCache();
 			Map<String, Set<Integer>> typesCache = getTypesCache();
 
-			Integer cached = 0;
+			Integer cached = 0, total = results.size();
 			for (Object[] data: results) {
 				cached++;
 
@@ -465,6 +468,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				}
 
 				doCacheGroup(data, idsCache, typesCache);
+				getLogger().info("Cached " + cached + " groups out of " + total);
 			}
 			return cached;
 		} catch (Exception e) {
