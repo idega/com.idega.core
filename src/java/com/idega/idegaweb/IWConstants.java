@@ -26,7 +26,7 @@ public class IWConstants{
   public static final String LINK_HOVER_STYLE = "color:#000000;font-size:12px;text-decoration:underline;";
   public static final String FORM_STYLE = "margin-top:0px;margin-bottom:0px";
   public static final String IMAGE_STYLE = "border:0px solid #000000;";
-  
+
   public static String HEADER_STYLE_1 = "font-family: Arial, Helvetica, sans-serif; font-size: 12px; color: #000000; font-weight: bold";
   public static final String HEADER_STYLE_1_NAME = "HeaderText1";
   public static String HEADER_STYLE_2 = "font-family: Arial, Helvetica, sans-serif; font-size: 11px; color: #000000; font-weight: bold";
@@ -51,10 +51,10 @@ public class IWConstants{
   public static String LINK_HOVER_STYLE_3 = "";
   public static final String LINK_STYLE_3_NAME = "Link3";
   public static final String HOVER = ":hover";
-  
+
   public static String INPUT_STYLE = "font-size: 9px; border: 1 solid #000000;";
   public static final String INPUT_STYLE_NAME = "Input1";
-  
+
 
   public final static String DEFAULT_INTERFACE_COLOR="#F2F2F2";
   public final static String DEFAULT_LIGHT_INTERFACE_COLOR="#FFFFFF";
@@ -75,18 +75,19 @@ public class IWConstants{
   public static final String BUILDER_FONT_STYLE_INTERFACE_SMALL = "font-family:Arial,Helvetica,sans-serif;font-size: 7pt; border: 1 solid #000000;";
 
   public static final String BUILDER_FONT_STYLE_LARGE_RED = "font-family:Arial,Helvetica,sans-serif;font-size:8pt;font-weight:bold;color:#FF0000;";
-  
-  public static final String SERVER_URL_PROPERTY_NAME = "Server URL";
-  
-  public static HashMap getDefaultStyles() {
-  	HashMap map = new HashMap();
+
+  public static final String	SERVER_URL_PROPERTY_NAME = "Server URL",
+		  						DEFAULT_SERVER_URL_PROPERTY_NAME = "DEFAULT_SERVER_URL";
+
+  public static HashMap<String, String> getDefaultStyles() {
+  	HashMap<String, String> map = new HashMap<>();
   	String[] styleNames = {HEADER_STYLE_1_NAME,HEADER_STYLE_2_NAME,HEADER_STYLE_3_NAME,BODY_STYLE_1_NAME,BODY_STYLE_2_NAME,BODY_STYLE_3_NAME,LINK_STYLE_1_NAME,LINK_STYLE_1_NAME+HOVER,LINK_STYLE_2_NAME,LINK_STYLE_2_NAME+HOVER,LINK_STYLE_3_NAME,LINK_STYLE_3_NAME+HOVER,INPUT_STYLE_NAME};
   	String[] styleValues = {HEADER_STYLE_1,HEADER_STYLE_2,HEADER_STYLE_3,BODY_STYLE_1,BODY_STYLE_2,BODY_STYLE_3,LINK_STYLE_1,LINK_HOVER_STYLE_1,LINK_STYLE_2,LINK_HOVER_STYLE_2,LINK_STYLE_3,LINK_HOVER_STYLE_3,INPUT_STYLE};
-  		
+
   	for ( int a = 0; a < styleNames.length; a++ ) {
-  		map.put(styleNames[a], styleValues[a]);	
+  		map.put(styleNames[a], styleValues[a]);
   	}
-  	
-  	return map;	
+
+  	return map;
   }
 }
