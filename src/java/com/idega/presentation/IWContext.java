@@ -351,22 +351,22 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	public boolean isUploadedFileSet() {
 		return this._uploadedFile != null;
 	}
-	
+
 	public List<UploadFile> getUploadedFiles() {
 		Map<String, UploadFile> uploadedFiles = FileUploadUtil.getAllUploadedFiles(this);
 		if(uploadedFiles == null || uploadedFiles.isEmpty()) {
 			return null;
 		}
-		
+
 		List<String> sortedKeys = new ArrayList<String>(uploadedFiles.keySet());
 		Collections.sort(sortedKeys);
-		
+
 		List<UploadFile> uploadedFilesList = new ArrayList<UploadFile>();
 		for(String key : sortedKeys) {
 			UploadFile file = uploadedFiles.get(key);
 			uploadedFilesList.add(file);
 		}
-		
+
 		if(ListUtil.isEmpty(uploadedFilesList)) {
 			return null;
 		}
@@ -781,7 +781,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		return null;
 	}
 
-	@SuppressWarnings("unchecked")
 	public Enumeration<String> getParameterNames() {
 		if (this._multipartParameters != null) {
 			return this._multipartParameters.keys();
