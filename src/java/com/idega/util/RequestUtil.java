@@ -18,12 +18,8 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import com.idega.core.builder.data.ICDomain;
-import com.idega.idegaweb.DefaultIWBundle;
-import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
-import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.IWAuthenticator;
 
 /**
@@ -69,52 +65,6 @@ public class RequestUtil {
 		}
 	}
 
-	private static boolean isValidServerName(String serverName) {
-		if (StringUtil.isEmpty(serverName)) {
-			return false;
-		}
-
-		if (DefaultIWBundle.isProductionEnvironment() && (serverName.indexOf("127.0.0.1") != -1 || serverName.indexOf("localhost") != -1)) {
-			return false;
-		}
-
-		return true;
-	}
-
-	public static String getServerName(HttpServletRequest request) {
-		String serverName = request.getServerName();
-		IWContext iwc = null;
-		try {
-			if (!isValidServerName(serverName)) {
-				iwc = CoreUtil.getIWContext();
-				if (iwc != null) {
-					ICDomain domain = iwc.getDomain();
-					serverName = domain == null ? null : domain.getServerName();
-				}
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		IWMainApplicationSettings settings = null;
-		if (!isValidServerName(serverName)) {
-			settings = iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings();
-			serverName = settings.getProperty(IWConstants.SERVER_URL_PROPERTY_NAME);
-		}
-		if (!isValidServerName(serverName)) {
-			settings = settings == null ?
-					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
-					settings;
-			serverName = settings.getProperty(IWMainApplication.PROPERTY_DEFAULT_SERVICE_URL);
-		}
-		if (!isValidServerName(serverName)) {
-			settings = settings == null ?
-					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
-					settings;
-			serverName = settings.getProperty(IWConstants.DEFAULT_SERVER_URL_PROPERTY_NAME);
-		}
-		return serverName;
-	}
-
 	/**
 	 * Gets a constructed base URL for the server.
 	 *
@@ -122,16 +72,11 @@ public class RequestUtil {
 	 *         http://www.idega.com:8080/
 	 */
 	public static String getServerURL(HttpServletRequest request) {
-		String serverName = getServerName(request);
-
 		StringBuffer buf = new StringBuffer();
-
-		String protocol = request.getScheme().concat("://");
-		if (!serverName.startsWith(protocol)) {
-			buf.append(protocol);
-		}
-
-		buf.append(serverName);
+		String scheme = request.getScheme();
+		buf.append(scheme);
+		buf.append("://");
+		buf.append(request.getServerName());
 		int port = request.getServerPort();
 		if (port == 80 || port == 443) {
 			//do not add port to url
