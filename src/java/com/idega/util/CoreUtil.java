@@ -194,7 +194,9 @@ public class CoreUtil {
     	String serverName = null;
     	String requestUri = null;
 		if (request != null) {
-	    	serverName = request.getServerName();
+			IWContext iwc = getIWContext();
+	    	serverName = iwc == null ? null : iwc.getServerURL();
+	    	serverName = serverName == null ? request.getServerName() : serverName;
 	    	requestUri = request.getRequestURI();
 
 	    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
