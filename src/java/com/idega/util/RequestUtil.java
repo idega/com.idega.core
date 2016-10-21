@@ -110,13 +110,22 @@ public class RequestUtil {
 			settings = settings == null ?
 					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
 					settings;
+			serverName = settings.getProperty(IWMainApplication.PROPERTY_DEFAULT_SERVICE_URL);
+		}
+		if (!isValidServerName(serverName)) {
+			settings = settings == null ?
+					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
+					settings;
 			serverName = settings.getProperty(IWConstants.DEFAULT_SERVER_URL_PROPERTY_NAME);
 		}
 
 		StringBuffer buf = new StringBuffer();
-		String scheme = request.getScheme();
-		buf.append(scheme);
-		buf.append("://");
+
+		String protocol = request.getScheme().concat("://");
+		if (!serverName.startsWith(protocol)) {
+			buf.append(protocol);
+		}
+
 		buf.append(serverName);
 		int port = request.getServerPort();
 		if (port == 80 || port == 443) {
