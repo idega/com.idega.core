@@ -81,13 +81,7 @@ public class RequestUtil {
 		return true;
 	}
 
-	/**
-	 * Gets a constructed base URL for the server.
-	 *
-	 * @return the servername with port and protocol, e.g.
-	 *         http://www.idega.com:8080/
-	 */
-	public static String getServerURL(HttpServletRequest request) {
+	public static String getServerName(HttpServletRequest request) {
 		String serverName = request.getServerName();
 		IWContext iwc = null;
 		try {
@@ -118,6 +112,17 @@ public class RequestUtil {
 					settings;
 			serverName = settings.getProperty(IWConstants.DEFAULT_SERVER_URL_PROPERTY_NAME);
 		}
+		return serverName;
+	}
+
+	/**
+	 * Gets a constructed base URL for the server.
+	 *
+	 * @return the servername with port and protocol, e.g.
+	 *         http://www.idega.com:8080/
+	 */
+	public static String getServerURL(HttpServletRequest request) {
+		String serverName = getServerName(request);
 
 		StringBuffer buf = new StringBuffer();
 
