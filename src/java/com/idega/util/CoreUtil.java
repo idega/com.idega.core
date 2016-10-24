@@ -38,8 +38,10 @@ import com.idega.core.cache.IWCacheManager2;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.data.IDOContainer;
 import com.idega.data.IDOEntity;
+import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWCacheManager;
+import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
@@ -194,7 +196,9 @@ public class CoreUtil {
     	String serverName = null;
     	String requestUri = null;
 		if (request != null) {
-	    	serverName = request.getServerName();
+			IWContext iwc = getIWContext();
+	    	serverName = iwc == null ? null : iwc.getServerURL();
+	    	serverName = serverName == null ? request.getServerName() : serverName;
 	    	requestUri = request.getRequestURI();
 
 	    	serverName = StringUtil.isEmpty(serverName) ? "unknown" : serverName;
@@ -662,6 +666,79 @@ public class CoreUtil {
 
 		LocalDate dateToday = DateUtil.getDate(new Date(System.currentTimeMillis()));
 		return (dateToday.toEpochDay() - localeDateOfBirth.toEpochDay()) / 365;
+	}
+
+	private static boolean isValidServerName(String serverName) {
+		if (StringUtil.isEmpty(serverName)) {
+			return false;
+		}
+
+		if (DefaultIWBundle.isProductionEnvironment() && (serverName.indexOf("127.0.0.1") != -1 || serverName.indexOf("localhost") != -1)) {
+			return false;
+		}
+
+		return true;
+	}
+
+	public static String getServerName(HttpServletRequest request) {
+		String serverName = request == null ? null : request.getServerName();
+
+		IWContext iwc = null;
+		try {
+			if (!isValidServerName(serverName)) {
+				iwc = getIWContext();
+				IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getIWMainApplication();
+				ICDomain domain = iwma.getIWApplicationContext().getDomain();
+				serverName = domain == null ? null : domain.getServerName();
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		IWMainApplicationSettings settings = null;
+		if (!isValidServerName(serverName)) {
+			settings = iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings();
+			serverName = settings.getProperty(IWConstants.SERVER_URL_PROPERTY_NAME);
+		}
+		if (!isValidServerName(serverName)) {
+			settings = settings == null ?
+					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
+					settings;
+			serverName = settings.getProperty(IWMainApplication.PROPERTY_DEFAULT_SERVICE_URL);
+		}
+		if (!isValidServerName(serverName)) {
+			settings = settings == null ?
+					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
+					settings;
+			serverName = settings.getProperty(IWConstants.DEFAULT_SERVER_URL_PROPERTY_NAME);
+		}
+
+		serverName =  serverName == null ? "127.0.0.1" : serverName;
+		return serverName;
+	}
+
+	public static String getServerURL(HttpServletRequest request) {
+		String serverName = getServerName(request);
+
+		if (request == null) {
+			return serverName;
+		}
+
+		StringBuffer buf = new StringBuffer();
+
+		String protocol = request.getScheme().concat("://");
+		if (!serverName.startsWith(protocol)) {
+			buf.append(protocol);
+		}
+
+		buf.append(serverName);
+		int port = request.getServerPort();
+		if (port == 80 || port == 443) {
+			//do not add port to url
+		} else {
+			buf.append(CoreConstants.COLON).append(port);
+		}
+		buf.append(CoreConstants.SLASH);
+		return buf.toString();
 	}
 
 }
