@@ -47,6 +47,7 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> getGroupsByNameAndType(String name, String type);
 
+	public List<Group> findGroupsByTypes(List<String> groupTypes);
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes);
 
 	public List<Group> getParentGroups(Group group);
@@ -120,7 +121,7 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByName(String name);
 
 	public List<Group> getGroupsByIdsAndTypes(List<Integer> ids, List<String> types);
-	public List<Integer> getGroupdsIdsByIdsAndTypes(List<Integer> ids, List<String> types);
+	public List<Integer> getGroupsIdsByIdsAndTypes(List<Integer> ids, List<String> types);
 
 	public List<Integer> getAllGroupsIds();
 

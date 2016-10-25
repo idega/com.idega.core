@@ -210,6 +210,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> findGroupsByTypes(List<String> groupTypes) {
+		if (ListUtil.isEmpty(groupTypes)) {
+			return null;
+		}
+
+		return getResultList(Group.QUERY_FIND_BY_TYPES, Group.class, new Param("groupTypes", groupTypes));
+	}
+
+	@Override
 	public List<Group> getParentGroups(Group group) {
 		if (group == null) {
 			getLogger().warning("Parent group is not provided");
@@ -488,7 +497,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			}
 
 			if (!ListUtil.isEmpty(groupTypes) && !ListUtil.isEmpty(ids)) {
-				ids = getGroupdsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
+				ids = getGroupsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
 			}
 
 			return ids;
@@ -777,7 +786,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Integer> getGroupdsIdsByIdsAndTypes(List<Integer> ids, List<String> types) {
+	public List<Integer> getGroupsIdsByIdsAndTypes(List<Integer> ids, List<String> types) {
 		if (ListUtil.isEmpty(ids)) {
 			getLogger().warning("IDs not provided");
 			return null;
