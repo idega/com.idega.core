@@ -1,9 +1,10 @@
 package com.idega.core.persistence;
 
+import java.util.Collections;
 import java.util.List;
 
-import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
 
@@ -38,51 +39,142 @@ public interface GenericDao {
 
 	public abstract void refresh(Object product);
 
-	public abstract <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
-	public abstract <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params);
-
-	public abstract <Expected> Expected getSingleResult(String namedQueryName,  Class<Expected> expectedReturnType, Param... params);
-
-	public abstract <Expected> Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
+	/**
+	 * 
+	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
+	 * <li>Creates {@link Query} if does not exist</li>
+	 * <li>Fixes problem of loading more than 1000 entities at once</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li>
+	 * <li>Sets expected {@link Class} for this Spring request bean</li>
+	 * <li>Measures execution time</li></p>
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @param namedQueryName is name of {@link NamedQuery} of the given entity, not <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	<Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
 
 	/**
-	 * <p>Queries database for results.</p>
-	 * @param query HQL query.
-	 * @param expectedReturnType any type you expect to get, for example:
-	 * {@link Long} should be fine for numbers, {@link String} for strings,
-	 * fits any Hibernate/JPA {@link Entity}. Usually marked as @Entity.
-	 * @param params to fill HQL query with and transform it to SQL query.
-	 * @return {@link List} of ? extends {@link Entity} (Is JPA or
-	 * Hibernate entity).
+	 * 
+	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
+	 * <li>Creates {@link Query} if does not exist</li>
+	 * <li>Fixes problem of loading more than 1000 entities at once</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li>
+	 * <li>Sets expected {@link Class} for this Spring request bean</li>
+	 * <li>Measures execution time</li></p>
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param cachedRegionName is name of existing cached data, skipped if <code>null</code>
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @param firstResult is index of first line to fetch form data source, skipped if <code>null</code>
+	 * @param maxResults is amount of entries to fetch from data source, skipped if <code>null</code>
+	 * @param namedQueryName is name of {@link NamedQuery} of the given entity, not <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
-	public abstract <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
-	public abstract <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params);
+	<Expected> List<Expected> getResultList(
+			String namedQueryName, 
+			Class<Expected> expectedReturnType, 
+			Integer firstResult, 
+			Integer maxResults, 
+			String cachedRegionName, 
+			Param... params);
 
 	/**
-	 * @param query
-	 * @return native inline query by query provided
+	 * 
+	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
+	 * <li>Creates {@link Query} if does not exist</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li>
+	 * <li>Sets expected {@link Class} for this Spring request bean</li>
+	 * <li>Measures execution time</li></p>
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @param namedQueryName is name of {@link NamedQuery} of the given entity, not <code>null</code>
+	 * @return entity or <code>null</code> on failure;
 	 */
-	public abstract com.idega.core.persistence.Query getQueryNativeInline(
-	        String query);
+	<Expected> Expected getSingleResult(String namedQueryName,  Class<Expected> expectedReturnType, Param... params);
 
 	/**
-	 * @param query Hibernate HQL type query.
-	 * @return com.idega.core.persistence.Query query by query provided
+	 * 
+	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
+	 * <li>Creates {@link Query} if does not exist</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li>
+	 * <li>Sets expected {@link Class} for this Spring request bean</li>
+	 * <li>Measures execution time</li></p>
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @param query is HQL query, not <code>null</code>
+	 * @return entity or <code>null</code> on failure;
 	 */
-	public abstract com.idega.core.persistence.Query getQueryInline(String query);
+	<Expected> Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
 
 	/**
-	 * @param queryName
-	 * @return hql or native query by query name provided. Query can be defined e.g. using
-	 * @javax.persistence.NamedQuery
+	 * 
+	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
+	 * <li>Creates {@link Query} if does not exist</li>
+	 * <li>Fixes problem of loading more than 1000 entities at once</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li>
+	 * <li>Sets expected {@link Class} for this Spring request bean</li>
+	 * <li>Measures execution time</li></p>
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @param query is HQL query, not <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
-	public abstract com.idega.core.persistence.Query getQueryNamed(
-	        String queryName);
+	<Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
+	
+	/**
+	 * 
+	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
+	 * <li>Creates {@link Query} if does not exist</li>
+	 * <li>Fixes problem of loading more than 1000 entities at once</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li>
+	 * <li>Sets expected {@link Class} for this Spring request bean</li>
+	 * <li>Measures execution time</li></p>
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param cachedRegionName is name of existing cached data, skipped if <code>null</code>
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @param firstResult is index of first line to fetch form data source, skipped if <code>null</code>
+	 * @param maxResults is amount of entries to fetch from data source, skipped if <code>null</code>
+	 * @param query is HQL query, not <code>null</code>
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
+	<Expected> List<Expected> getResultListByInlineQuery(
+			String query, 
+			Class<Expected> expectedReturnType, 
+			Integer firstResult, 
+			Integer maxResults, 
+			String cachedRegionName, 
+			Param... params);
+
+	/**
+	 * <p>Creates new Spring bean of {@link com.idega.core.persistence.Query} object of request scope</p>
+	 * @param query HQL type data source query.
+	 * @return com.idega.core.persistence.Query with queryExpression set.
+	 */
+	com.idega.core.persistence.Query getQueryNativeInline(String query);
+
+	/**
+	 * <p>Creates new Spring bean of {@link com.idega.core.persistence.Query} object of request scope</p>
+	 * @param query HQL type data source query.
+	 * @return com.idega.core.persistence.Query with queryExpression set.
+	 */
+	com.idega.core.persistence.Query getQueryInline(String query);
+
+	/**
+	 * <p>Creates new Spring bean of {@link com.idega.core.persistence.Query} object of request scope</p>
+	 * @param queryName HQL type data source query.
+	 * @return com.idega.core.persistence.Query with queryExpression set.
+	 */
+	com.idega.core.persistence.Query getQueryNamed(String queryName);
 
 	/**
 	 *
 	 * @see EntityManager#getCriteriaBuilder()
-	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	CriteriaBuilder getCriteriaBuilder();
 }
