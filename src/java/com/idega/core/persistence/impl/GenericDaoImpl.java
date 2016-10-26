@@ -121,17 +121,30 @@ public class GenericDaoImpl implements GenericDao {
 		return getQueryInline(query).getSingleResult(expectedReturnType, null, params);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getSingleResult(java.lang.String, java.lang.Class, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
 		return getQueryNamed(namedQueryName).getSingleResult(expectedReturnType, null, params);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getResultListByInlineQuery(java.lang.String, java.lang.Class, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params) {
 		return getResultListByInlineQuery(query, expectedReturnType, null, null, null, params);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getResultListByInlineQuery(java.lang.String, java.lang.Class, java.lang.Integer, java.lang.Integer, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params) {
@@ -139,46 +152,81 @@ public class GenericDaoImpl implements GenericDao {
 		if (firstResult != null) {
 			hqlQuery.setFirstResult(firstResult);
 		}
+
 		if (maxResults != null) {
 			hqlQuery.setMaxResults(maxResults);
 		}
+
 		return hqlQuery.getResultList(expectedReturnType, cachedRegionName, params);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQueryNativeInline(java.lang.String)
+	 */
 	@Override
 	public com.idega.core.persistence.Query getQueryNativeInline(String query) {
 		return createNewQueryNativeInline(query);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQueryInline(java.lang.String)
+	 */
 	@Override
 	public com.idega.core.persistence.Query getQueryInline(String query) {
 		return createNewQueryInline(query);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQueryNamed(java.lang.String)
+	 */
 	@Override
 	public com.idega.core.persistence.Query getQueryNamed(String queryName) {
 		return createNewQueryNamed(queryName);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getResultList(java.lang.String, java.lang.Class, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params) {
 		return getResultList(namedQueryName, expectedReturnType, null, null, null, params);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getResultList(java.lang.String, java.lang.Class, java.lang.Integer, java.lang.Integer, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
-	public <Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Integer firstResult, Integer maxResults, String cachedRegionName, Param... params) {
+	public <Expected> List<Expected> getResultList(
+			String namedQueryName, 
+			Class<Expected> expectedReturnType, 
+			Integer firstResult, 
+			Integer maxResults, 
+			String cachedRegionName, 
+			Param... params) {
 		com.idega.core.persistence.Query query = getQueryNamed(namedQueryName);
 		if (firstResult != null) {
 			query.setFirstResult(firstResult);
 		}
+
 		if (maxResults != null) {
 			query.setMaxResults(maxResults);
 		}
+
 		return query.getResultList(expectedReturnType, cachedRegionName, params);
 	}
 
+	/**
+	 * <p>Creates new Spring bean of {@link com.idega.core.persistence.Query} object of request scope</p>
+	 * @param queryExpression HQL type data source query.
+	 * @return com.idega.core.persistence.Query with queryExpression set.
+	 */
 	protected com.idega.core.persistence.Query createNewQueryNativeInline(String queryExpression) {
 		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(QueryNativeInlineImpl.beanIdentifier);
 		q.setQueryExpression(queryExpression);
@@ -186,10 +234,8 @@ public class GenericDaoImpl implements GenericDao {
 	}
 
 	/**
-	 * <p>Gets {@link com.idega.core.persistence.Query} and sets
-	 * {@link com.idega.core.persistence.Query
-	 * #setQueryExpression(String)} to queryExpression.</p>
-	 * @param queryExpression Hibernate HQL type query.
+	 * <p>Creates new Spring bean of {@link com.idega.core.persistence.Query} object of request scope</p>
+	 * @param queryExpression HQL type data source query.
 	 * @return com.idega.core.persistence.Query with queryExpression set.
 	 */
 	protected com.idega.core.persistence.Query createNewQueryInline(String queryExpression) {
@@ -198,6 +244,11 @@ public class GenericDaoImpl implements GenericDao {
 		return q;
 	}
 
+	/**
+	 * <p>Creates new Spring bean of {@link com.idega.core.persistence.Query} object of request scope</p>
+	 * @param queryExpression HQL type data source query.
+	 * @return com.idega.core.persistence.Query with queryExpression set.
+	 */
 	protected com.idega.core.persistence.Query createNewQueryNamed(String queryExpression) {
 		com.idega.core.persistence.Query q = ELUtil.getInstance().getBean(QueryNamedImpl.beanIdentifier);
 		q.setQueryExpression(queryExpression);
