@@ -37,7 +37,14 @@ import com.idega.util.DBUtil;
 	@NamedQuery(name = "userStatus.findAllActiveByUserAndGroup", query = "select us from UserStatus us where us.user = :user and us.group = :group and us.dateTo is null order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status order by us.dateFrom"),
 	@NamedQuery(name = "userStatus.findAllActiveByUserAndStatus", query = "select us from UserStatus us where us.user = :user and us.status = :status and us.dateTo is null order by us.dateFrom"),
-	@NamedQuery(name = UserStatus.QUERY_FIND_STATUSES_IN_GROUPS, query = "select us from UserStatus us where us.status.statusKey in (:statusKeys) and (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.dateFrom desc")
+	@NamedQuery(
+			name = UserStatus.QUERY_FIND_STATUSES_IN_GROUPS,
+			query = "select us from UserStatus us where us.status.statusKey in (:statusKeys) and (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.status.statusOrder, us.dateFrom desc"
+	),
+	@NamedQuery(
+			name = UserStatus.QUERY_FIND_ALL_ACTIVE_IN_GROUPS,
+			query = "select us from UserStatus us where (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.status.statusOrder, us.dateFrom desc"
+	)
 })
 @Cacheable
 public class UserStatus implements Serializable {
@@ -45,8 +52,10 @@ public class UserStatus implements Serializable {
 	private static final long serialVersionUID = 2044595478957579919L;
 
 	public static final String	ENTITY_NAME = "ic_usergroup_status",
+
 								QUERY_FIND_ALL = "userStatus.findAll",
-								QUERY_FIND_STATUSES_IN_GROUPS = "userStatus.findStatusesInGroup";
+								QUERY_FIND_STATUSES_IN_GROUPS = "userStatus.findStatusesInGroup",
+								QUERY_FIND_ALL_ACTIVE_IN_GROUPS = "userStatus.findAllActiveInGroups";
 
 	public static final String COLUMN_USER_STATUS_ID = "ic_usergroup_status_id";
 	private static final String COLUMN_STATUS = "status_id";
