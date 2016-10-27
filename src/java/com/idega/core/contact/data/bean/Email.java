@@ -21,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.idega.core.contact.data.ContactType;
 import com.idega.core.contact.data.EmailDataView;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -41,7 +42,7 @@ import com.idega.util.DBUtil;
 	@NamedQuery(name = Email.FIND_BY_E_MAIL_ADDRESS, query = "select e from Email e where e.address = :address"),
 	@NamedQuery(name = "email.findByGroupAndType", query = "select e from Email e join e.groups g join e.emailType t where t.uniqueName = :uniqueName and g.groupID = :groupID")
 })
-public class Email implements Serializable, EmailDataView {
+public class Email implements Serializable, EmailDataView, ContactType {
 
 	private static final long serialVersionUID = 2434545685633792727L;
 
@@ -145,5 +146,15 @@ public class Email implements Serializable, EmailDataView {
 	public List<Group> getGroups() {
 		groups = DBUtil.getInstance().lazyLoad(groups);
 		return this.groups;
+	}
+
+	@Override
+	public String getContact() {
+		return getEmailAddress();
+	}
+
+	@Override
+	public void setContact(String contact) {
+		setAddress(contact);
 	}
 }
