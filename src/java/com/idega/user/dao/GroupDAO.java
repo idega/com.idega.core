@@ -87,6 +87,7 @@ public interface GroupDAO extends GenericDao {
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases);
 
 	/**
@@ -136,5 +137,8 @@ public interface GroupDAO extends GenericDao {
 	public List<String> getGroupTypes();
 
 	public List<Property<Integer, String>> getIdsAndTypes(List<Integer> ids);
+
+	public boolean updateEmails(Group group, List<String> emails);
+	public boolean updatePhones(Group group, List<String> numbers);
 
 }

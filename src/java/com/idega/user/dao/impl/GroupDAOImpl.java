@@ -15,9 +15,11 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
@@ -29,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.bean.ICDomain;
+import com.idega.core.contact.data.ContactType;
+import com.idega.core.contact.data.bean.Email;
+import com.idega.core.contact.data.bean.Phone;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.idegaweb.IWMainApplication;
@@ -598,6 +603,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return getChildGroupsIds(parentGroupsIds, childGroupTypes, false);
 	}
 	@Override
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, levels, Integer.class, false);
+	}
+	@Override
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases) {
 		return getChildGroups(parentGroupsIds, childGroupTypes, null, Integer.class, loadAliases);
 	}
@@ -881,6 +890,101 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean updateEmails(Group group, List<String> emails) {
+		return updateContacts(group, emails, Email.class);
+	}
+
+	@Override
+	public boolean updatePhones(Group group, List<String> numbers) {
+		return updateContacts(group, numbers, Phone.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = false)
+	private <T extends ContactType> boolean updateContacts(Group group, List<String> contacts, Class<T> contactType) {
+		try {
+			if (group == null || ListUtil.isEmpty(contacts) || contactType == null) {
+				return false;
+			}
+
+			List<? extends ContactType> currentContacts = null;
+
+			boolean email = Email.class.getName().equals(contactType.getName()), phone = Phone.class.getName().equals(contactType.getName());
+
+			if (email) {
+				currentContacts = group.getEmails();
+			} else if (phone) {
+				currentContacts = group.getPhones();
+			}
+
+			Set<T> unchangedContacts = new HashSet<>();
+
+			Set<T> newContacts = null;
+			for (String contact: contacts) {
+				if (StringUtil.isEmpty(contact)) {
+					continue;
+				}
+				contact = contact.trim();
+				if (StringUtil.isEmpty(contact)) {
+					continue;
+				}
+
+				ContactType existingContact = null;
+				if (!ListUtil.isEmpty(currentContacts)) {
+					for (Iterator<? extends ContactType> currentContactsIter = currentContacts.iterator(); (currentContactsIter.hasNext() && existingContact == null);) {
+						existingContact = currentContactsIter.next();
+						if (contact.equals(existingContact.getContact())) {
+							unchangedContacts.add((T) existingContact);
+						} else {
+							existingContact = null;
+						}
+					}
+				}
+				if (existingContact == null) {
+					ContactType newContact = contactType.newInstance();
+					newContact.setContact(contact);
+					persist(newContact);
+
+					if (newContact != null && newContact.getId() != null) {
+						newContacts = newContacts == null ? new HashSet<>() : newContacts;
+						newContacts.add((T) newContact);
+					}
+				}
+			}
+
+			List<T> contactsForGroup = null;
+			Set<T> tmpContactsForGroup = new HashSet<>();
+			if (ListUtil.isEmpty(currentContacts)) {
+				contactsForGroup = newContacts == null ? null : new ArrayList<>(newContacts);
+			} else {
+				if (!ListUtil.isEmpty(newContacts)) {
+					tmpContactsForGroup.addAll(newContacts);
+				}
+				if (!ListUtil.isEmpty(currentContacts)) {
+					currentContacts.retainAll(unchangedContacts);
+				}
+				if (!ListUtil.isEmpty(currentContacts)) {
+					tmpContactsForGroup.addAll((List<T>) currentContacts);
+				}
+				contactsForGroup = new ArrayList<>(tmpContactsForGroup);
+			}
+
+			if (email) {
+				group.setEmails((List<Email>) contactsForGroup);
+			} else if (phone) {
+				group.setPhones((List<Phone>) contactsForGroup);
+			}
+
+			//Save
+			merge(group);
+			return true;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error updating contacts " + contacts + " for group " + group, e);
+		}
+		return false;
 	}
 
 }
