@@ -44,12 +44,20 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 	@Autowired
 	private DaoFunctions daoFunctions;
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getResultList(java.lang.Class, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Param... params) {
 		return getResultList(expectedReturnType, null, params);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getResultList(java.lang.Class, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
@@ -66,6 +74,10 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getResultList(java.lang.Class, java.lang.String, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String mappingName, String cachedRegionName, Param... params) {
@@ -86,6 +98,10 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getSingleResult(java.lang.Class, java.lang.String, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String mappingName, String cachedRegionName, Param... params) {
@@ -105,16 +121,30 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getSingleResult(java.lang.Class)
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType) {
 		return getSingleResult(expectedReturnType, CoreConstants.EMPTY);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getSingleResult(java.lang.Class, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, Param... params) {
 		return getSingleResult(expectedReturnType, null, params);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getSingleResult(java.lang.Class, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> Expected getSingleResult(Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
@@ -205,11 +235,20 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		this.firstResult = firstResult;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getResultList(java.lang.Class, java.util.Collection)
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, Collection<Param> params) {
 		return getResultList(expectedReturnType, null, params);
 	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.Query#getResultList(java.lang.Class, java.lang.String, java.util.Collection)
+	 */
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {

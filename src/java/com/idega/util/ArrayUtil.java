@@ -26,7 +26,12 @@ public class ArrayUtil  {
 		}
 		for (int i = 0; i < array.length; i++) {
 			Object element = array[i];
-			if (element.equals(object)) {
+
+			if (object instanceof Enum<?>) {
+				if (element == object) {
+					return true;
+				}
+			} else if (element.equals(object)) {
 				return true;
 			}
 		}

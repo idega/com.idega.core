@@ -67,23 +67,7 @@ public class IDOUtil implements Singleton {
 	 * @returns a String with comma separated values within quotationmarks e.g. 'asdf','asdf'
 	 */
 	public String convertCollectionOfStringsToCommaseparatedString(Collection<String> list) {
-		StringBuffer sList = new StringBuffer();
-		if (list != null && !list.isEmpty()) {
-			//String sGroupList = "";
-			Iterator<String> iter = list.iterator();
-			for (int g = 0; iter.hasNext(); g++) {
-				String item = iter.next();
-				if (g > 0) {
-					sList.append(COMMA_AND_SPACE);
-				}
-
-				if(item!=null) {
-					sList.append("'").append(item).append("'");
-				}
-
-			}
-		}
-		return sList.toString();
+		return toString(list);
 	}
 
 	/**
@@ -321,7 +305,7 @@ public class IDOUtil implements Singleton {
 	 * not <code>null</code>;
 	 * @return {@link Collection} of {@link Integer}s or {@link Collections#emptyList()} on failure;
 	 */
-	public Collection<Integer> convert(Collection<?> primaryKeys) {
+	public static Collection<Integer> convert(Collection<?> primaryKeys) {
 		ArrayList<Integer> list = new ArrayList<Integer>();
 
 		if (!ListUtil.isEmpty(primaryKeys)) {
@@ -331,5 +315,27 @@ public class IDOUtil implements Singleton {
 		}
 
 		return list;
+	}
+
+	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link EJBLocalObject#getPrimaryKey()},
+	 * not <code>null</code>;
+	 * @return comma separated string or <code>null</code> on failure;
+	 */
+	public static String toString(Collection<?> primaryKeys) {
+		StringBuffer line = new StringBuffer();
+
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			Iterator<?> iterator = primaryKeys.iterator();
+			while (iterator.hasNext()) {
+				line.append("'").append(iterator.next().toString()).append("'");
+				if (iterator.hasNext()) {
+					line.append(COMMA_AND_SPACE);
+				}
+			}
+		}
+
+		return line.toString();
 	}
 }

@@ -21,6 +21,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.idega.core.contact.data.ContactType;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.util.DBUtil;
@@ -33,14 +34,14 @@ import com.idega.util.DBUtil;
 	@NamedQuery(name = "phone.findUsersFaxPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_FAX_NUMBER + " and u.userID = :userID"),
 	@NamedQuery(name = "phone.findUsersHomePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_HOME_PHONE + " and u.userID = :userID"),
 	@NamedQuery(
-			name = Phone.QUERY_FIND_MOBILE_BY_USER_ID, 
+			name = Phone.QUERY_FIND_MOBILE_BY_USER_ID,
 			query = 	"SELECT DISTINCT p FROM Phone p "
-					+ 	"JOIN p.users u ON u.userID = :userID " 
+					+ 	"JOIN p.users u ON u.userID = :userID "
 					+ 	"JOIN p.phoneType t ON t.uniqueName = :uniqueName"),
 	@NamedQuery(name = "phone.findPhoneByNumber", query = "select p from Phone p where p.number = :phoneNumber"),
 	@NamedQuery(name = "phone.findUsersWorkPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_WORK_PHONE + " and u.userID = :userID")
 })
-public class Phone implements Serializable {
+public class Phone implements Serializable, ContactType {
 
 	private static final long serialVersionUID = -7009150311403912036L;
 
@@ -156,5 +157,15 @@ public class Phone implements Serializable {
 	public List<Group> getGroups() {
 		groups = DBUtil.getInstance().lazyLoad(groups);
 		return this.groups;
+	}
+
+	@Override
+	public String getContact() {
+		return getNumber();
+	}
+
+	@Override
+	public void setContact(String contact) {
+		setNumber(contact);
 	}
 }

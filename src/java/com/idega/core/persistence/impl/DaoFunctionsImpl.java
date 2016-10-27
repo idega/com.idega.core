@@ -47,6 +47,12 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			Short.class
 	}));
 
+	/**
+	 * 
+	 * <p>For each parameter calls {@link Query#setParameter(String, Object)}, checks parameters before action</p>
+	 * @param q is query for these parameters, not <code>null</code>
+	 * @param params to set, skipped if <code>null</code>
+	 */
 	private void setParameters(Query q, Param... params) {
 		if (ArrayUtil.isEmpty(params))
 			return;
@@ -54,6 +60,12 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		setParameters(q, Arrays.asList(params));
 	}
 
+	/**
+	 * 
+	 * <p>For each parameter calls {@link Query#setParameter(String, Object)}, checks parameters before action</p>
+	 * @param q is query for these parameters, not <code>null</code>
+	 * @param params to set, not <code>null</code>
+	 */
 	private void setParameters(Query q, Collection<Param> params) {
 		if (ListUtil.isEmpty(params))
 			return;
@@ -82,6 +94,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		}
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.DaoFunctions#getResultListByQuery(javax.persistence.Query, java.lang.Class, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
 		return getResultListByQuery(new ArrayList<Expected>(), q, expectedReturnType, cachedRegionName, params);
@@ -141,6 +157,19 @@ public class DaoFunctionsImpl implements DaoFunctions {
 
 	}
 
+	/**
+	 * 
+	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
+	 * <li>Fixes problem of loading more than 1000 entities at once</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li></p>
+	 * @param results is {@link List} of existing results to append, skipped if <code>null</code>
+	 * @param q is query to execute, not <code>null</code>;
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param cachedRegionName is name of existing cached data, skipped if <code>null</code>
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	private <Expected, V> List<Expected> getResultListByQuery(
@@ -182,6 +211,12 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		return results;
 	}
 
+	/**
+	 * 
+	 * @param results is {@link Collection} of objects to convert to more specified objects, not <code>null</code>
+	 * @param expectedReturnType is {@link Class} to cast objects to, not <code>null</code>;
+	 * @return results casted to expectedReturnType objects or <code>null</code> on failure;
+	 */
 	@SuppressWarnings("unchecked")
 	private <Exptected> List<Exptected> getRealResults(List<Object> results, Class<Exptected> expectedReturnType) {
 		if (ListUtil.isEmpty(results)) {
@@ -253,6 +288,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		return ListUtil.isEmpty(realResults) ? null : realResults;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.DaoFunctions#getSingleResultByQuery(javax.persistence.Query, java.lang.Class, java.lang.String, com.idega.core.persistence.Param[])
+	 */
 	@Override
 	@Transactional(readOnly = true, noRollbackFor = NoResultException.class)
 	public <Expected> Expected getSingleResultByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Param... params) {
@@ -265,14 +304,36 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		return result;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.DaoFunctions#getResultListByQuery(javax.persistence.Query, java.lang.Class, java.lang.String, java.util.Collection)
+	 */
 	@Override
 	public <Expected> List<Expected> getResultListByQuery(Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
 		return getResultListByQuery(new ArrayList<Expected>(), q, expectedReturnType, cachedRegionName, params);
 	}
 
+	/**
+	 * 
+	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
+	 * <li>Fixes problem of loading more than 1000 entities at once</li>
+	 * <li>Caches query</li>
+	 * <li>Checks all parameters</li></p>
+	 * @param results is {@link List} of existing results to append, skipped if <code>null</code>
+	 * @param q is query to execute, not <code>null</code>;
+	 * @param expectedReturnType is {@link Class} of JPA entity to return, not <code>null</code>;
+	 * @param cachedRegionName is name of existing cached data, skipped if <code>null</code>
+	 * @param params to add to {@link Query}, skipped if <code>null</code>;
+	 * @return entities or {@link Collections#emptyList()} on failure;
+	 */
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
-	private <Expected> List<Expected> getResultListByQuery(List<Expected> results, Query q, Class<Expected> expectedReturnType, String cachedRegionName, Collection<Param> params) {
+	private <Expected> List<Expected> getResultListByQuery(
+			List<Expected> results, 
+			Query q, 
+			Class<Expected> expectedReturnType, 
+			String cachedRegionName, 
+			Collection<Param> params) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
 		}

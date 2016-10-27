@@ -30,6 +30,7 @@ public interface GroupDAO extends GenericDao {
 
 	public Group findGroup(Integer groupID);
 
+	public List<Group> findGroups(List<Integer> groupsIds);
 	public List<Group> findGroups(List<Integer> groupsIds, Integer from, Integer to);
 
 	@Transactional(readOnly = false)
@@ -46,6 +47,7 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> getGroupsByNameAndType(String name, String type);
 
+	public List<Group> findGroupsByTypes(List<String> groupTypes);
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes);
 
 	public List<Group> getParentGroups(Group group);
@@ -85,6 +87,7 @@ public interface GroupDAO extends GenericDao {
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases);
 
 	/**
@@ -119,7 +122,7 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByName(String name);
 
 	public List<Group> getGroupsByIdsAndTypes(List<Integer> ids, List<String> types);
-	public List<Integer> getGroupdsIdsByIdsAndTypes(List<Integer> ids, List<String> types);
+	public List<Integer> getGroupsIdsByIdsAndTypes(List<Integer> ids, List<String> types);
 
 	public List<Integer> getAllGroupsIds();
 
@@ -134,5 +137,8 @@ public interface GroupDAO extends GenericDao {
 	public List<String> getGroupTypes();
 
 	public List<Property<Integer, String>> getIdsAndTypes(List<Integer> ids);
+
+	public boolean updateEmails(Group group, List<String> emails);
+	public boolean updatePhones(Group group, List<String> numbers);
 
 }

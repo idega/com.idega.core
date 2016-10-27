@@ -28,4 +28,8 @@ public interface GroupsCacheService {
 
 	public List<com.idega.user.data.bean.Group> findActiveGroupsByType(String type);
 
+	public void doCache(List<Integer> groupsIds);
+
+	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to);
+
 }

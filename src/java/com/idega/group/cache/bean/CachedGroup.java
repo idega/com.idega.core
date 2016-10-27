@@ -65,7 +65,7 @@ public class CachedGroup implements Serializable {
 
 	@Override
 	public String toString() {
-		return "ID: " + getId() + ", type: " + getType() + ", children: " + getChildren() + ", parents: " + getParents();
+		return "ID: " + getId() + ", type: " + getType();
 	}
 
 }

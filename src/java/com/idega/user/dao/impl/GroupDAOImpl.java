@@ -15,12 +15,13 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -30,6 +31,9 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.business.IBOLookup;
 import com.idega.core.builder.data.bean.ICDomain;
+import com.idega.core.contact.data.ContactType;
+import com.idega.core.contact.data.bean.Email;
+import com.idega.core.contact.data.bean.Phone;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.idegaweb.IWMainApplication;
@@ -76,6 +80,20 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 		try {
 			return getResultList(Group.QUERY_FIND_BY_IDS, Group.class, from, to, null, new Param("ids", groupsIds));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds + ". From: " + from + ", to: " + to, e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<Group> findGroups(List<Integer> groupsIds) {
+		if (ListUtil.isEmpty(groupsIds)) {
+			return null;
+		}
+
+		try {
+			return getResultList(Group.QUERY_FIND_BY_IDS, Group.class, new Param("ids", groupsIds));
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting groups by IDs: " + groupsIds, e);
 		}
@@ -194,6 +212,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		Param param = new Param("groupTypes", groupTypes);
 
 		return getResultList("group.findAllByGroupTypes", Group.class, param);
+	}
+
+	@Override
+	public List<Group> findGroupsByTypes(List<String> groupTypes) {
+		if (ListUtil.isEmpty(groupTypes)) {
+			return null;
+		}
+
+		return getResultList(Group.QUERY_FIND_BY_TYPES, Group.class, new Param("groupTypes", groupTypes));
 	}
 
 	@Override
@@ -475,7 +502,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			}
 
 			if (!ListUtil.isEmpty(groupTypes) && !ListUtil.isEmpty(ids)) {
-				ids = getGroupdsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
+				ids = getGroupsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
 			}
 
 			return ids;
@@ -574,6 +601,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	@Override
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes) {
 		return getChildGroupsIds(parentGroupsIds, childGroupTypes, false);
+	}
+	@Override
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, null, levels, Integer.class, false);
 	}
 	@Override
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases) {
@@ -764,7 +795,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Integer> getGroupdsIdsByIdsAndTypes(List<Integer> ids, List<String> types) {
+	public List<Integer> getGroupsIdsByIdsAndTypes(List<Integer> ids, List<String> types) {
 		if (ListUtil.isEmpty(ids)) {
 			getLogger().warning("IDs not provided");
 			return null;
@@ -846,12 +877,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				return null;
 			}
 
-			List<Property<Integer, String>> results = new CopyOnWriteArrayList<>();
-			data.parallelStream().forEach(dataItem -> {
+			List<Property<Integer, String>> results = new ArrayList<>();
+			for (Object[] dataItem: data) {
 				if (!ArrayUtil.isEmpty(dataItem) && dataItem.length > 1 && dataItem[0] != null && dataItem[1] != null) {
 					results.add(new Property<Integer, String>((Integer) dataItem[0], (String) dataItem[1]));
 				}
-			});
+			}
 
 			return results;
 		} catch (Exception e) {
@@ -859,6 +890,101 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 
 		return null;
+	}
+
+	@Override
+	public boolean updateEmails(Group group, List<String> emails) {
+		return updateContacts(group, emails, Email.class);
+	}
+
+	@Override
+	public boolean updatePhones(Group group, List<String> numbers) {
+		return updateContacts(group, numbers, Phone.class);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Transactional(readOnly = false)
+	private <T extends ContactType> boolean updateContacts(Group group, List<String> contacts, Class<T> contactType) {
+		try {
+			if (group == null || ListUtil.isEmpty(contacts) || contactType == null) {
+				return false;
+			}
+
+			List<? extends ContactType> currentContacts = null;
+
+			boolean email = Email.class.getName().equals(contactType.getName()), phone = Phone.class.getName().equals(contactType.getName());
+
+			if (email) {
+				currentContacts = group.getEmails();
+			} else if (phone) {
+				currentContacts = group.getPhones();
+			}
+
+			Set<T> unchangedContacts = new HashSet<>();
+
+			Set<T> newContacts = null;
+			for (String contact: contacts) {
+				if (StringUtil.isEmpty(contact)) {
+					continue;
+				}
+				contact = contact.trim();
+				if (StringUtil.isEmpty(contact)) {
+					continue;
+				}
+
+				ContactType existingContact = null;
+				if (!ListUtil.isEmpty(currentContacts)) {
+					for (Iterator<? extends ContactType> currentContactsIter = currentContacts.iterator(); (currentContactsIter.hasNext() && existingContact == null);) {
+						existingContact = currentContactsIter.next();
+						if (contact.equals(existingContact.getContact())) {
+							unchangedContacts.add((T) existingContact);
+						} else {
+							existingContact = null;
+						}
+					}
+				}
+				if (existingContact == null) {
+					ContactType newContact = contactType.newInstance();
+					newContact.setContact(contact);
+					persist(newContact);
+
+					if (newContact != null && newContact.getId() != null) {
+						newContacts = newContacts == null ? new HashSet<>() : newContacts;
+						newContacts.add((T) newContact);
+					}
+				}
+			}
+
+			List<T> contactsForGroup = null;
+			Set<T> tmpContactsForGroup = new HashSet<>();
+			if (ListUtil.isEmpty(currentContacts)) {
+				contactsForGroup = newContacts == null ? null : new ArrayList<>(newContacts);
+			} else {
+				if (!ListUtil.isEmpty(newContacts)) {
+					tmpContactsForGroup.addAll(newContacts);
+				}
+				if (!ListUtil.isEmpty(currentContacts)) {
+					currentContacts.retainAll(unchangedContacts);
+				}
+				if (!ListUtil.isEmpty(currentContacts)) {
+					tmpContactsForGroup.addAll((List<T>) currentContacts);
+				}
+				contactsForGroup = new ArrayList<>(tmpContactsForGroup);
+			}
+
+			if (email) {
+				group.setEmails((List<Email>) contactsForGroup);
+			} else if (phone) {
+				group.setPhones((List<Phone>) contactsForGroup);
+			}
+
+			//Save
+			merge(group);
+			return true;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error updating contacts " + contacts + " for group " + group, e);
+		}
+		return false;
 	}
 
 }
