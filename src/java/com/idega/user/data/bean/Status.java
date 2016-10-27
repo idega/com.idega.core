@@ -21,7 +21,7 @@ import javax.persistence.Table;
 @Table(name = Status.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = Status.QUERY_FIND_ALL, query = "select s from Status s"),
-	@NamedQuery(name = "status.findByStatusKey", query = "select s from Status s where s.statusKey = :statusKey"),
+	@NamedQuery(name = Status.QUERY_FIND_BY_STATUS_KEY, query = "select s from Status s where s.statusKey = :statusKey"),
 	@NamedQuery(name = Status.QUERY_FIND_BY_STATUS_KEYS, query = "select s from Status s where s.statusKey in (:statusKey)")
 })
 @Cacheable
@@ -32,6 +32,7 @@ public class Status implements Serializable {
 	public static final String	ENTITY_NAME = "ic_user_status",
 								COLUMN_STATUS_ID = "ic_user_status_id",
 								QUERY_FIND_ALL = "status.findAll",
+								QUERY_FIND_BY_STATUS_KEY = "status.findByStatusKey",
 								QUERY_FIND_BY_STATUS_KEYS = "status.findByStatusKeys";
 
 	private static final String COLUMN_STATUS_KEY = "status_key";
