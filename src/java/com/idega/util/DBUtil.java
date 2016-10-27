@@ -51,4 +51,8 @@ public abstract class DBUtil {
 
 	public abstract String getStatistics();
 
+	public abstract <T> void finalizeTransaction(T transaction);
+
+	public abstract <S> void finalizeSession(S session);
+
 }
