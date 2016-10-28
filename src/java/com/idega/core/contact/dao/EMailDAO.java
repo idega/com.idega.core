@@ -143,4 +143,6 @@ public interface EMailDAO {
 	 * @return created/updated entity or <code>null</code> on failure;
 	 */
 	Email update(Integer id, String eMailAddress, String displayName, String uniqueName, String description);
+
+	Email createEmail(Integer userId, String eMailAddress, EmailType type);
 }

@@ -243,4 +243,26 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 		return update(id, null, eMailAddress, getGenericTypeDAO().update(null, 
 				uniqueName, displayName, description, EmailType.class));
 	}
+	
+	@Override
+	public Email createEmail(Integer userId, String eMailAddress, EmailType type) {
+		Email entity = new Email();
+
+		if (!StringUtil.isEmpty(eMailAddress)) {
+			entity.setAddress(eMailAddress);
+		}
+
+		if (type != null) {
+			entity.setEmailType(type);
+		}
+
+		if (userId != null) {
+			User user = find(User.class, userId);
+			if (user != null) {
+				entity.setUsers(new ArrayList<User>(Arrays.asList(user)));
+			}
+		}
+
+		return update(entity);
+	}
 }
