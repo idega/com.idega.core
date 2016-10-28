@@ -49,6 +49,8 @@ public interface UserDAO extends GenericDao {
 	public Email getUsersMainEmail(User user);
 
 	public Email updateUserMainEmail(User user, String address);
+	
+	public Email updateUserMainEmailAddress(User user, String address);
 
 	public Gender getGender(String name);
 
