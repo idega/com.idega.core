@@ -34,7 +34,7 @@
 		class="org.springframework.jndi.JndiObjectFactoryBean">
         <property
         	name="jndiName"
-        	value="java:comp/env/jdbc/C3P0DS"/>
+        	value="java:comp/env/jdbc/DefaultDS"/>
     </bean>
 
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
