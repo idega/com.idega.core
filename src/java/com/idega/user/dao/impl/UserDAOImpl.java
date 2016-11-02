@@ -142,7 +142,22 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 				address,
 				contactDAO.getMainEmailType());
 	}
-
+	
+	@Override
+	public Email updateUserMainEmailAddress(User user, String address) {
+		Email email = getUsersMainEmail(user);
+		if(email == null) {
+			return getEMailDAO().createEmail(user.getId(), address, contactDAO.getMainEmailType());
+		}
+		
+		List<User> emailUsers = email.getUsers();
+		if(emailUsers.size() == 1 && emailUsers.get(0).getId().intValue() == user.getId().intValue()) {
+			return getEMailDAO().update(email.getId(), user.getId(), address, contactDAO.getMainEmailType());
+		} else {
+			return getEMailDAO().createEmail(user.getId(), address, contactDAO.getMainEmailType());
+		}
+	}
+	
 	@Override
 	public Gender getGender(String name) {
 		Param param = new Param("name", name);

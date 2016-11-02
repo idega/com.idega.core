@@ -222,7 +222,7 @@ public class TextSoap {
 	}
 
 	public static String removeLineBreaks(String stringToFormat) {
-		return findAndReplace(stringToFormat, "\n", "");
+		return findAndReplace(stringToFormat, "\n", CoreConstants.EMPTY);
 	}
 
 	/**
@@ -266,11 +266,15 @@ public class TextSoap {
 	 *@return                Description of the Return Value
 	 */
 	public static String findAndReplace(String text, String stringToFind, String stringToReplace) {
+		if (StringUtil.isEmpty(text)) {
+			return CoreConstants.EMPTY;
+		}
+
 		//Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT
 
 		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
-		if (stringToFind != null && !stringToFind.equals("")) {
+		if (stringToFind != null && !stringToFind.equals(CoreConstants.EMPTY)) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
@@ -293,11 +297,15 @@ public class TextSoap {
 	}
 
 	public static String findAndReplace(String text, String stringToFind, String stringAfterFindString, String stringToReplaceIfAfterStringIsNotPresent) {
-		StringBuffer buf = new StringBuffer("");
+		if (StringUtil.isEmpty(text)) {
+			return CoreConstants.EMPTY;
+		}
+
+		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
 		String returnString;
 		String replaceString;
 
-		if (stringToFind != null && !stringToFind.equals("")) {
+		if (stringToFind != null && !stringToFind.equals(CoreConstants.EMPTY)) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
@@ -322,18 +330,22 @@ public class TextSoap {
 			}
 		}
 		returnString = buf.toString();
-		if (returnString.equals("")) {
+		if (returnString.equals(CoreConstants.EMPTY)) {
 			returnString = text;
 		}
 		return returnString;
 	}
 
 	public static String findAndReplace(String text, String stringToFind, String[] stringsAfterFindString, String stringToReplaceIfNoneOfAfterStringsArePresent) {
-		StringBuffer buf = new StringBuffer("");
+		if (StringUtil.isEmpty(text)) {
+			return CoreConstants.EMPTY;
+		}
+
+		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
 		String returnString;
 		String replaceString;
 
-		if (stringToFind != null && !stringToFind.equals("")) {
+		if (stringToFind != null && !stringToFind.equals(CoreConstants.EMPTY)) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
@@ -367,22 +379,27 @@ public class TextSoap {
 			}
 		}
 		returnString = buf.toString();
-		if (returnString.equals("")) {
+		if (returnString.equals(CoreConstants.EMPTY)) {
 			returnString = text;
 		}
 		return returnString;
 	}
 
-
-
 	public static String findAndReplace(String text, String stringToFind, String stringAfterFindString, String stringToReplaceIfstringAfterFindStringMatches, String stringToReplace) {
+		if (
+				StringUtil.isEmpty(text) ||
+				stringAfterFindString == null
+		) {
+			return CoreConstants.EMPTY;
+		}
+
 		// Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT
-		StringBuffer buf = new StringBuffer("");
+		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
 		String returnString;
 		String replaceString = stringToReplace;
 
-		if (stringToFind != null && !stringToFind.equals("")) {
+		if (stringToFind != null && !stringToFind.equals(CoreConstants.EMPTY)) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
@@ -407,19 +424,33 @@ public class TextSoap {
 			}
 		}
 		returnString = buf.toString();
-		if (returnString.equals("")) {
+		if (returnString.equals(CoreConstants.EMPTY)) {
 			returnString = text;
 		}
 		return returnString;
 	}
 
-	public static String findAndReplace(String text, String stringToFind, String stringAfterFindString, String stringAfterFindStringToIgnoreIfFound, String stringToReplaceIfstringAfterFindStringMatches, String stringToReplace) {
+	public static String findAndReplace(
+			String text,
+			String stringToFind,
+			String stringAfterFindString,
+			String stringAfterFindStringToIgnoreIfFound,
+			String stringToReplaceIfstringAfterFindStringMatches,
+			String stringToReplace
+	) {
+		if (
+				StringUtil.isEmpty(text) ||
+				StringUtil.isEmpty(stringAfterFindString)
+		) {
+			return CoreConstants.EMPTY;
+		}
+
 		// Regex r = new Regex(stringToFind,stringReplace);
 		//return r.replaceAll(text); with regular expr. package called PAT
-		StringBuffer buf = new StringBuffer("");
+		StringBuffer buf = new StringBuffer(CoreConstants.EMPTY);
 		String returnString;
 		String replaceString = stringToReplace;
-		if (stringToFind != null && !stringToFind.equals("")) {
+		if (stringToFind != null && !stringToFind.equals(CoreConstants.EMPTY)) {
 			int index = text.indexOf(stringToFind);
 			int index2 = 0;
 			int length = stringToFind.length();
@@ -449,7 +480,7 @@ public class TextSoap {
 			}
 		}
 		returnString = buf.toString();
-		if (returnString.equals("")) {
+		if (returnString.equals(CoreConstants.EMPTY)) {
 			returnString = text;
 		}
 		return returnString;
@@ -482,7 +513,7 @@ public class TextSoap {
 		String prefix = "<tr><td>";
 		String suffix = "</td></tr></table>";
 		String tabletag = "<table cellpadding=\"0\" cellspacing=\"0\" ";
-		String crap = "";
+		String crap = CoreConstants.EMPTY;
 		int bracket = -1;
 		if (crappy.size() > 0) {
 			crap = crappy.get(0);
@@ -544,7 +575,7 @@ public class TextSoap {
 	 *@return               Description of the Return Value
 	 */
 	public static String findAndCut(String text, String stringToFind) {
-		return findAndReplace(text, stringToFind, "");
+		return findAndReplace(text, stringToFind, CoreConstants.EMPTY);
 	}
 
 	/**
@@ -559,7 +590,7 @@ public class TextSoap {
 			FixedNumber = "0";
 		}
 		else {
-			FixedNumber = "";
+			FixedNumber = CoreConstants.EMPTY;
 		}
 		return FixedNumber + numberToFix;
 	}
@@ -600,7 +631,7 @@ public class TextSoap {
 			}
 		}
 		else {
-			// text = "";
+			// text = CoreConstants.EMPTY;
 		}
 		return text;
 	}
@@ -629,8 +660,8 @@ public class TextSoap {
 	 *@return            Description of the Return Value
 	 */
 	public static String formatTabsAndReturnsToHtml(String text_body) {
-		if (text_body == null || text_body.equals("")) {
-			text_body = "";
+		if (text_body == null || text_body.equals(CoreConstants.EMPTY)) {
+			text_body = CoreConstants.EMPTY;
 		}
 
 		//text_body = findAndReplace(text_body, "*", "<li>");
