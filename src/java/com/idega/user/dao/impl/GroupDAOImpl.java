@@ -53,6 +53,7 @@ import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
 import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
+import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
@@ -667,9 +668,14 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 		StringBuilder query = new StringBuilder();
 		try {
-			query.append("SELECT gr.group.id, count(gr.relatedGroup.id) FROM ").append(GroupRelation.class.getName()).append("  gr WHERE gr.group.id in (");
+			query.append("SELECT gr.group.id, count(gr.relatedGroup.id) FROM ").append(GroupRelation.class.getName()).append(" gr WHERE gr.group.id in (");
 			for (Iterator<Group> groupsIter = groups.iterator(); groupsIter.hasNext();) {
 				Group group = groupsIter.next();
+				if (group == null) {
+					continue;
+				}
+				group = DBUtil.getInstance().lazyLoad(group);
+
 				Integer id = group.getID();
 				if (id != null) {
 					query.append(id);
