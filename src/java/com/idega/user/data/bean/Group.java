@@ -327,6 +327,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	public Integer getID() {
+		DBUtil.getInstance().lazyLoad(this);
 		return this.groupID;
 	}
 
