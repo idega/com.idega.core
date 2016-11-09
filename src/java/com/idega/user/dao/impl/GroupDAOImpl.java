@@ -400,9 +400,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		try {
 			params.add(new Param("ids", parentGroupsIds));
 
-			query = new StringBuilder("select ").append(resultType.getName().equals(Integer.class.getName()) ?
-					loadAliases ? "distinct g.id as id" : "distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
-					"g"
+			query = new StringBuilder("select ").append(
+					resultType.getName().equals(Integer.class.getName()) ?
+									loadAliases ?	"distinct g.id as id" :
+													"distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
+									"g"
 			).append(" from ");
 			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
 			if (!ListUtil.isEmpty(municipalities) && !municipalities.contains("null")) {
