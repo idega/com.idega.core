@@ -28,7 +28,7 @@ import com.idega.presentation.IWContext;
  * @version 1.1
  */
 public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializable {
-	
+
 	private static final long serialVersionUID = -6152459981067600867L;
 
 	/**
@@ -36,45 +36,45 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * This is default true but is set to false for certain databases such as Informix.
 	 */
 	public static boolean CUT_MILLISECONDS_OFF_IN_TOSTRING=true;
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * date string like the following: 1970-10-06
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String DATE_PATTERN = IWTimestamp.YEAR + "-" + IWTimestamp.MONTH + "-" + IWTimestamp.DAY;
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * two digit day.
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String DAY = "dd";
-	
+
 	/**
 	 * A time string representing the time at the first second of a day.
 	 */
 	public static final String FIRST_SECOND_OF_DAY = "00:00:00.0000";
-	
+
 	/**
 	 * A type setting for use with getLocaleDate.<br>
 	 * FULL is pretty completely specified, such as Tuesday, April 12, 1952 AD or 3:30:42pm PST.
 	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
 	 */
 	public static final int FULL = DateFormat.FULL;
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * two digit hour (0-23).
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String HOUR = "HH";
-	
+
 	/**
 	 * A time string representing the time at the last second of a day.
 	 */
 	public static final String LAST_SECOND_OF_DAY = "23:59:59.9999";
-	
+
 	/**
 	 * A type setting for use with getLocaleDate.<br>
 	 * getLocaleDate: LONG is longer, such as January 12, 1952 or 3:30:32pm<br>
@@ -82,42 +82,42 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
 	 */
 	public static final int LONG = DateFormat.LONG;
-	
+
 	/**
 	 * A type setting for use with getLocaleDate.<br>
 	 * MEDIUM is longer, such as Jan 12, 1952
 	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
 	 */
 	public static final int MEDIUM = DateFormat.MEDIUM;
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * x digit milliseconds.
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String MILLISECOND = "S";
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * two digit minute.
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String MINUTE = "mm";
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * two digit month.
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String MONTH = "MM";
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * two digit second.
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String SECOND = "ss";
-	
+
 	/**
 	 * A type setting for use with getLocaleDate.<br>
 	 * getLocaleDate: SHORT is completely numeric, such as 12.13.52 or 3:30pm.<br>
@@ -125,21 +125,21 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * @see IWTimestamp#getLocaleDate(Locale locale, int format)
 	 */
 	public static final int SHORT = DateFormat.SHORT;
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * date string like the following: 12:45:30.323
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String TIME_PATTERN = HOUR + ":" + MINUTE + ":" + SECOND + "." + MILLISECOND;
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * four digit year.
 	 * @see IWTimestamp#getDateString(String pattern)
 	 */
 	public static final String YEAR = "yyyy";
-	
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * two digit year.
@@ -152,7 +152,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	private boolean isTime;
 
 ///////////////////////////////////////////////////
-//      adders      
+//      adders
 ///////////////////////////////////////////////////
 
 	/**
@@ -162,7 +162,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public void addDays(int numberOfDays) {
 		this.calendar.add(Calendar.DAY_OF_MONTH, numberOfDays);
 	}
-	
+
 	/**
 	 * Adds weeks to the current date setting.
 	 * @param numberOfWeeks	The number of weeks to add.
@@ -214,6 +214,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	/**
 	 * @see java.lang.Comparable#compareTo(Object)
 	 */
+	@Override
 	public int compareTo(IWTimestamp compareStamp) {
 	  if (isEarlierThan(compareStamp)) {
 			return -1;
@@ -233,16 +234,24 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * @return boolean
 	 */
 	public boolean equals(Date date) {
+		if (date == null) {
+			return false;
+		}
+
 		return toSQLDateString().equals(date.toString());
 	}
 
 	/**
-	 * Returns true if the current date and time settings are identical to the date 
+	 * Returns true if the current date and time settings are identical to the date
 	 * settings of the <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with the current date setting.
 	 * @return boolean
 	 */
 	public boolean equals(IWTimestamp compareStamp) {
+		if (compareStamp == null) {
+			return false;
+		}
+
 		if (!this.isTime() && !this.isDate()) {
 			return (this.getYear() == compareStamp.getYear() && this.getMonth() == compareStamp.getMonth() && this.getDay() == compareStamp.getDay() && this.getHour() == compareStamp.getHour() && this.getMinute() == compareStamp.getMinute() && this.getSecond() == compareStamp.getSecond());
 		}
@@ -276,17 +285,25 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * @return boolean
 	 */
 	public boolean equals(Time time) {
+		if (time == null) {
+			return false;
+		}
+
 		return toSQLTimeString().equals(time.toString());
 	}
 
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is between to the given 
+	 * Returns true if this <code>IWTimestamp</code> object is between to the given
 	 * <code>IWTimestamp</code> objects.
 	 * @param stampBefore	The first IWTimestamp to compare with this object.
 	 * @param stampAfter		The second IWTimestamp to compare with this object.
 	 * @return boolean	True if this object is between the given objects, false otherwise.
 	 */
 	public boolean isBetween(IWTimestamp stampBefore, IWTimestamp stampAfter) {
+		if (stampBefore == null || stampAfter == null) {
+			return false;
+		}
+
 		if (this.isLaterThanOrEquals(stampBefore) && this.isEarlierThan(stampAfter)) {
 			return true;
 		}
@@ -294,16 +311,20 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>The same as {@link IWTimestamp#isBetween(IWTimestamp, IWTimestamp)},
 	 * but does not check equals option</p>
 	 * @param stampBefore to compare with this object, not <code>null</code>
 	 * @param stampAfter to compare with this object, not <code>null</code>;
-	 * @return <code>true</code> if this object is between the given objects, 
+	 * @return <code>true</code> if this object is between the given objects,
 	 * <code>false</code> otherwise
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public boolean isBetweenStrict(IWTimestamp stampBefore, IWTimestamp stampAfter) {
+		if (stampBefore == null || stampAfter == null) {
+			return false;
+		}
+
 		if (isLaterThan(stampBefore) && isEarlierThan(stampAfter)) {
 			return true;
 		}
@@ -379,7 +400,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
+	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -428,10 +449,10 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 		}
 		return false;
 	}
-	
-	
+
+
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
+	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -457,9 +478,9 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given 
+	 * Returns true if this <code>IWTimestamp</code> object is earlier than the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -485,10 +506,10 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 		}
 		return false;
 	}
-	
+
 
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is equal to the given 
+	 * Returns true if this <code>IWTimestamp</code> object is equal to the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -543,7 +564,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is later than the given 
+	 * Returns true if this <code>IWTimestamp</code> object is later than the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -592,9 +613,9 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is later than the given 
+	 * Returns true if this <code>IWTimestamp</code> object is later than the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -620,9 +641,9 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 		}
 		return false;
 	}
-	
+
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is later than the given 
+	 * Returns true if this <code>IWTimestamp</code> object is later than the given
 	 * <code>IWTimestamp</code> object.
 	 * @param compareStamp		The IWTimestamp to compare with this object.
 	 * @return IWTimestamp
@@ -650,7 +671,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 	/**
-	 * Returns true if this <code>IWTimestamp</code> object is later than or equal to 
+	 * Returns true if this <code>IWTimestamp</code> object is later than or equal to
 	 * the given <code>IWTimestamp</code> object.
 	 * @param compareStamp
 	 * @return boolean
@@ -671,7 +692,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 ///////////////////////////////////////////////////
-//      constructors      
+//      constructors
 ///////////////////////////////////////////////////
 
 	/**
@@ -776,7 +797,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 */
 	public IWTimestamp(Locale locale, String SQLFormat) {
 		this(locale);
-		
+
 		if (SQLFormat.length() == 10) {
 			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
 			this.calendar.setTime(Date.valueOf(SQLFormat));
@@ -822,7 +843,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 ///////////////////////////////////////////////////
-//      getters      
+//      getters
 ///////////////////////////////////////////////////
 
 	/**
@@ -843,10 +864,10 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * "hh 'o''clock' a, zzzz" => 12 o'clock PM, Pacific Daylight Time<br>
 	 * "K:mm a, z" => 0:08 PM, PDT<br>
 	 * "yyyyy.MMMMM.dd GGG hh:mm aaa" => 02001.July.04 AD 12:08 PM <br>
-	 * "EEE, d MMM yyyy HH:mm:ss Z" => Wed, 4 Jul 2001 12:08:56 -0700<br> 
+	 * "EEE, d MMM yyyy HH:mm:ss Z" => Wed, 4 Jul 2001 12:08:56 -0700<br>
 	 * "yyMMddHHmmssZ" => 010704120856-0700<br><br>
 	 * See <code>SimpleDateFormat</code> for more details on available pattern symbols.
-	 * 
+	 *
 	 * @param pattern		The pattern to use to format the current date
 	 * @return String
 	 * @see SimpleDateFormat
@@ -866,10 +887,10 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 * "hh 'o''clock' a, zzzz" => 12 o'clock PM, Pacific Daylight Time<br>
 	 * "K:mm a, z" => 0:08 PM, PDT<br>
 	 * "yyyyy.MMMMM.dd GGG hh:mm aaa" => 02001.July.04 AD 12:08 PM <br>
-	 * "EEE, d MMM yyyy HH:mm:ss Z" => Wed, 4 Jul 2001 12:08:56 -0700<br> 
+	 * "EEE, d MMM yyyy HH:mm:ss Z" => Wed, 4 Jul 2001 12:08:56 -0700<br>
 	 * "yyMMddHHmmssZ" => 010704120856-0700<br><br>
 	 * See <code>SimpleDateFormat</code> for more details on available pattern symbols.
-	 * 
+	 *
 	 * @param pattern		The pattern to use to format the current date
 	 * @param locale		The locale to use to format the current date
 	 * @return String
@@ -911,7 +932,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public GregorianCalendar getGregorianCalendar() {
 		return this.calendar;
 	}
-	
+
 	/**
 	 * Returns a <code>Calendar</code> object with the current date/time settings.
 	 * @return Calendar
@@ -1100,7 +1121,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 ///////////////////////////////////////////////////
-//      setters      
+//      setters
 ///////////////////////////////////////////////////
 
 	/**
@@ -1218,12 +1239,12 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 		this.calendar.set(Calendar.YEAR, year);
 	}
 
-	
+
 	public void setMinimalDaysInFirstWeek(int days) {
 		this.calendar.setMinimalDaysInFirstWeek(days);
 	}
 ///////////////////////////////////////////////////
-//      static methods      
+//      static methods
 ///////////////////////////////////////////////////
 
 	/**
@@ -1247,7 +1268,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public static int getHoursBetween(IWTimestamp before, IWTimestamp after) {
 		return (int) (getMilliSecondsBetween(before, after) / 3600000);
 	}
-	
+
 	/**
 	 * Returns the milliseconds between the given <code>IWTimestamp</code> objects.  If
 	 * the first one is later than the second a negative value is returned.
@@ -1265,7 +1286,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 			after.setYear(1);
 			//System.out.println(before.isTime()+"/"+after.isTime());
 		}
-		
+
 		long lBefore = before.getGregorianCalendar().getTime().getTime();
 		long lAfter = after.getGregorianCalendar().getTime().getTime();
 
@@ -1306,11 +1327,11 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	}
 
 ///////////////////////////////////////////////////
-//      toString      
+//      toString
 ///////////////////////////////////////////////////
 
 	/**
-	 * Returns an Oracle SQL string for the given date and time setting. The format is: 
+	 * Returns an Oracle SQL string for the given date and time setting. The format is:
 	 * "TO_DATE('1970 10 06 03:00','YYYY MM DD HH:MI')"
 	 * @return String
 	 */
@@ -1353,7 +1374,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 			}
 		}
 	}
-	
+
 	/**
 	 * Returns an SQL string for the given settings.  If the IWTimestamp is a date setting
 	 * it will return a date string, if it's a time setting, a time string.
@@ -1385,7 +1406,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 			return theString;
 		}
 	}
-	
+
 	/**
 	 * Returns an SQL string for the given date and time settings.
 	 * @return String
@@ -1394,7 +1415,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	@Override
 	public String toString() {
 		return toString(CUT_MILLISECONDS_OFF_IN_TOSTRING);
-	}	
+	}
 	@Override
 	public Object clone(){
 		try {
