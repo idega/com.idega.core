@@ -64,6 +64,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Group> findGroups(List<Integer> groupsIds) {
+		return findGroups(groupsIds, null, null);
+	}
+
+	@Override
 	public List<Group> findGroups(List<Integer> groupsIds, Integer from, Integer to) {
 		if (ListUtil.isEmpty(groupsIds)) {
 			return null;
