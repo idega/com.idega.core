@@ -658,7 +658,7 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	private void doMakeSureAllFilesLoaded(Map<String, String> data) {
-		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("check_loaded_localized_keys", false) || !DefaultIWBundle.isProductionEnvironment()) {
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("check_loaded_localized_keys", false)) {
 			return;
 		}
 
