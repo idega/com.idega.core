@@ -85,10 +85,12 @@ public interface GroupDAO extends GenericDao {
 	 * @return map where key is identifying level number
 	 */
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
+	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
 
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, boolean loadAliases);
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
 
 	/**
 	 * Checks if groups have users
@@ -112,8 +114,6 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> findGroupsByAlias(Group aliasGroup);
 
 	public List<Group> findGroupsByAliasAndName(Group aliasGroup, String groupName);
-
-	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
 
 	public void removeGroup(Integer groupId);
 

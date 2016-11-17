@@ -595,6 +595,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
 		return getChildGroups(parentGroupsIds, childGroupTypes, notHavingChildGroupTypes, levels, Group.class, false);
 	}
+	@Override
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
+		return getChildGroups(parentGroupsIds, childGroupTypes, notHavingChildGroupTypes, levels, Integer.class, false);
+	}
 
 	@Override
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
