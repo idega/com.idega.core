@@ -86,6 +86,7 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public boolean generateUserFolders(User user, String loginName) throws RepositoryException;
 
 	public boolean getExistence(String absolutePath) throws RepositoryException;
+	public boolean exists(String absolutePath) throws RepositoryException;
 
 	public List<RepositoryItemVersionInfo> getVersions(String parentPath, String fileName) throws RepositoryException;
 
@@ -146,12 +147,12 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public boolean doExportWorkspace(String workspaceName, String outputPath) throws IOException, RepositoryException;
 	public boolean doImportWorkspace(String workspaceName, String inputPath) throws IOException, RepositoryException;
 
-	
+
 	/**
-	 * 
-	 * @param path is the top directory path in repository, 
+	 *
+	 * @param path is the top directory path in repository,
 	 * where the search should be performed;
-	 * @return all sub-directories of given directory, 
+	 * @return all sub-directories of given directory,
 	 * or {@link Collections#emptyList()} on failure;
 	 * @throws RepositoryException
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
