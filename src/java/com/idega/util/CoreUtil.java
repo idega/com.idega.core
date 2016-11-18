@@ -554,7 +554,7 @@ public class CoreUtil {
 			RepositoryService service = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
 			return service.getRepositoryItemAsRootUser(pathInRepository);
 		} catch (RepositoryException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting file: " + pathInRepository, e);
 		}
 		return null;
 	}
@@ -692,7 +692,7 @@ public class CoreUtil {
 				serverName = domain == null ? null : domain.getServerName();
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error gerring server name from domain", e);
 		}
 		IWMainApplicationSettings settings = null;
 		if (!isValidServerName(serverName)) {
@@ -732,7 +732,7 @@ public class CoreUtil {
 
 		buf.append(serverName);
 		int port = request.getServerPort();
-		if (port == 80 || port == 443) {
+		if (port == 80 || port == 443 || (port >= 8000 && DefaultIWBundle.isProductionEnvironment())) {
 			//do not add port to url
 		} else {
 			buf.append(CoreConstants.COLON).append(port);
