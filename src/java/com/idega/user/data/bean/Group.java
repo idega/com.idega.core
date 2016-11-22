@@ -885,6 +885,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public String toString() {
+		DBUtil.getInstance().lazyLoad(this);
 		return getId();
 	}
 

@@ -465,6 +465,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	@Override
 	public List<Integer> getParentGroupsIds(List<Integer> ids) {
 		try {
+			if (ListUtil.isEmpty(ids)) {
+				return null;
+			}
+
 			List<Param> params = new ArrayList<Param>();
 			StringBuilder query = new StringBuilder("select distinct r.group.id from ");
 			query.append(GroupRelation.class.getName()).append(" r join r.group g where r.relatedGroup.id in (:ids) ");
@@ -702,7 +706,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			}
 			return results;
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error checking if groups " + groups + " have users. Query: " + query.toString(), e);
+			getLogger().log(Level.WARNING, "Error checking if groups have users. Query: " + query.toString(), e);
 		}
 
 		return null;
