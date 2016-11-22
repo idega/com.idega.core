@@ -34,17 +34,24 @@ public abstract class RepositoryItem extends File implements ICTreeNode<Reposito
 
 	private int id;
 	private String name;
-	
+
 	public abstract InputStream getInputStream() throws IOException;
 
+	@Override
 	public String getName() {
 		return name;
+	}
+
+	@Override
+	public long length() {
+		return getLength();
 	}
 
 	public abstract long getLength();
 	public abstract long getCreationDate();
 	public abstract long getLastModified();
 
+	@Override
 	public abstract boolean delete();
 
 	public abstract RepositoryItem getParenItem();
@@ -54,10 +61,13 @@ public abstract class RepositoryItem extends File implements ICTreeNode<Reposito
 
 	public abstract boolean isCollection();
 
+	@Override
 	public abstract boolean exists();
 
+	@Override
 	public abstract boolean createNewFile();
 
+	@Override
 	public abstract String getPath();
 	public abstract String getParentPath();
 
@@ -68,10 +78,10 @@ public abstract class RepositoryItem extends File implements ICTreeNode<Reposito
 	public RepositoryItem(String name) {
 		super(name);
 		this.name = name;
-		
+
 		id = new Random().nextInt();
 	}
-	
+
 	public String getEncodedPath() {
 		try {
 			return URLEncoder.encode(getPath(), CoreConstants.ENCODING_UTF8);
@@ -175,10 +185,12 @@ public abstract class RepositoryItem extends File implements ICTreeNode<Reposito
 		return getPath();
 	}
 
+	@Override
 	public boolean isHidden() {
 		return getName().startsWith(CoreConstants.DOT);
 	}
 
+	@Override
 	public boolean isDirectory() {
 		return isCollection();
 	}
