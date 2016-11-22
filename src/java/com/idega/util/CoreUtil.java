@@ -732,7 +732,7 @@ public class CoreUtil {
 
 		buf.append(serverName);
 		int port = request.getServerPort();
-		if (port == 80 || port == 443) {
+		if (port == 80 || port == 443 || (port > 1024 && DefaultIWBundle.isProductionEnvironment())) {
 			//do not add port to url
 		} else {
 			buf.append(CoreConstants.COLON).append(port);
