@@ -9,6 +9,8 @@
  */
 package com.idega.core.contact.data;
 
+import com.idega.data.ExplicitlySynchronizedEntity;
+
 
 
 
@@ -20,7 +22,7 @@ package com.idega.core.contact.data;
  * @author <a href="mailto:thomas@idega.com">thomas</a>
  * @version $Revision: 1.4 $
  */
-public interface Email extends EmailDataView, Contact {
+public interface Email extends EmailDataView, Contact, ExplicitlySynchronizedEntity {
 
 	/**
 	 * @see com.idega.core.contact.data.EmailBMPBean#setEmailAddress

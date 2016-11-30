@@ -14,13 +14,14 @@ import com.idega.core.contact.data.Phone;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.data.ICLanguage;
 import com.idega.core.location.data.Address;
+import com.idega.data.ExplicitlySynchronizedEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.IDOReportableEntity;
 
-public interface User extends IDOEntity, Group, com.idega.core.user.data.User, IDOReportableEntity {
+public interface User extends IDOEntity, Group, com.idega.core.user.data.User, IDOReportableEntity, ExplicitlySynchronizedEntity {
 
  public static final String FIELD_USER_ID = "IC_USER_ID";
  public static final String FIELD_FIRST_NAME = "FIRST_NAME";

@@ -20,6 +20,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 
 	private static final long serialVersionUID = 4314572105071916583L;
 
+	public static final String SYNCHRONIZATION_KEY = "com.idega.core.location.data.Address";
+	
 	public static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
 	public static final String ENTITY_NAME = "IC_ADDRESS";
 	public static final String STREET_NAME = "STREET_NAME";
@@ -37,7 +39,8 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private static AddressType type1; //for caching
 	private static AddressType type2; //for caching
 	public static final String STREET_ADDRESS_NOMINATIVE = "street_address_nominative";
-
+	private boolean synchronizationEnabled = true;
+	
 	public AddressBMPBean() {
 		super();
 	}
@@ -480,6 +483,21 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 			address.append(number);
 		}
 		return address.toString();
+	}
+
+	@Override
+	public String getSynchronizerKey() {
+		return SYNCHRONIZATION_KEY;
+	}
+
+	@Override
+	public void setSynchronizationEnabled(boolean enabled) {
+		synchronizationEnabled = enabled;
+	}
+
+	@Override
+	public boolean isSynchronizationEnabled() {
+		return synchronizationEnabled;
 	}
 
 }

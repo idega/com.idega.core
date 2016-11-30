@@ -25,6 +25,9 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 	private static final long serialVersionUID = -4420896834850155007L;
 	private static String userRelationshipTableName=null;
 
+	public static final String SYNCHRONIZATION_KEY = "com.idega.core.contact.data.PhoneBMPBean";
+	private boolean synchronizationEnabled = true;
+	
 	public PhoneBMPBean()
 	{
 		super();
@@ -306,5 +309,20 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 		catch(Exception e){
 			throw new IDOFinderException(e);
 		}
+	}
+
+	@Override
+	public String getSynchronizerKey() {
+		return SYNCHRONIZATION_KEY;
+	}
+
+	@Override
+	public void setSynchronizationEnabled(boolean enabled) {
+		synchronizationEnabled = enabled;
+	}
+
+	@Override
+	public boolean isSynchronizationEnabled() {
+		return synchronizationEnabled;
 	}
 }

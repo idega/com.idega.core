@@ -40,10 +40,14 @@ public class EmailBMPBean
 	extends ContactBmpBean
 	implements com.idega.core.contact.data.Email, com.idega.core.contact.data.EmailDataView{
 	private static final long serialVersionUID = -6649005980606226999L;
+	
+	public static final String SYNCHRONIZATION_KEY = "com.idega.core.contact.data.Email";
+	
 	public final static String SQL_TABLE_NAME = "IC_EMAIL";
 	public final static String SQL_COLUMN_EMAIL = "ADDRESS";
 	public final static String SQL_COLUMN_TYPE = "IC_EMAIL_TYPE_ID";
 	public final static String SQL_COLUMN_EMAIL_ID = "IC_EMAIL_ID";
+	private boolean synchronizationEnabled = true;
 	public EmailBMPBean()
 	{
 		super();
@@ -413,5 +417,20 @@ public class EmailBMPBean
 		}
 
 		return Collections.emptyList();
+	}
+	
+	@Override
+	public String getSynchronizerKey() {
+		return SYNCHRONIZATION_KEY;
+	}
+
+	@Override
+	public void setSynchronizationEnabled(boolean enabled) {
+		synchronizationEnabled = enabled;
+	}
+
+	@Override
+	public boolean isSynchronizationEnabled() {
+		return synchronizationEnabled;
 	}
 }

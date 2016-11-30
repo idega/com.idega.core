@@ -1,7 +1,9 @@
 package com.idega.core.contact.data;
 
+import com.idega.data.ExplicitlySynchronizedEntity;
 
-public interface Phone extends Contact
+
+public interface Phone extends Contact, ExplicitlySynchronizedEntity
 {
 	 public java.lang.String getNumber();
 	 public int getPhoneTypeId();
