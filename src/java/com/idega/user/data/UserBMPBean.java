@@ -82,11 +82,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private static final long serialVersionUID = 8515735782511731375L;
 
+	public static final String SYNCHRONIZATION_KEY = "com.idega.user.data.User";
+	
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final int PREFETCH_SIZE = 100;
 	private static final int SUBLIST_SIZE = 1000;
+	private boolean synchronizationEnabled = true;
 
 	public final static String SQL_TABLE_NAME= "IC_USER";
 	public final static String SQL_RELATION_EMAIL = "IC_USER_EMAIL";
@@ -3215,5 +3218,20 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public Long getAge() {
 		return CoreUtil.getAge(getDateOfBirth());
+	}
+
+	@Override
+	public String getSynchronizerKey() {
+		return SYNCHRONIZATION_KEY;
+	}
+
+	@Override
+	public void setSynchronizationEnabled(boolean enabled) {
+		synchronizationEnabled = enabled;
+	}
+
+	@Override
+	public boolean isSynchronizationEnabled() {
+		return synchronizationEnabled;
 	}
 }

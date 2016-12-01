@@ -3,9 +3,10 @@ package com.idega.core.location.data;
 
 import java.rmi.RemoteException;
 
+import com.idega.data.ExplicitlySynchronizedEntity;
 import com.idega.data.IDOLegacyEntity;
 
-public interface Address extends IDOLegacyEntity {
+public interface Address extends IDOLegacyEntity, ExplicitlySynchronizedEntity {
 	String FIELD_STREET_NAME = "StreetName";
 	String FIELD_STREET_NUMBER = "StreetNumber";
 	/**
