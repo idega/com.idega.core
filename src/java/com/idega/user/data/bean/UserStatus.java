@@ -42,6 +42,10 @@ import com.idega.util.DBUtil;
 			query = "select us from UserStatus us where us.status.statusKey in (:statusKeys) and (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.status.statusOrder, us.dateFrom desc"
 	),
 	@NamedQuery(
+			name = UserStatus.QUERY_FIND_STATUSES_IN_GROUPS_BY_USER_PERSONAL_ID,
+			query = "select us from UserStatus us where us.user.personalID = :userPersonalId and us.status.statusKey in (:statusKeys) and (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.status.statusOrder, us.dateFrom desc"
+	),
+	@NamedQuery(
 			name = UserStatus.QUERY_FIND_ALL_ACTIVE_IN_GROUPS,
 			query = "select us from UserStatus us where (us.group.id in (:ids) or us.group.alias.id in (:ids)) and us.dateTo is null order by us.status.statusOrder, us.dateFrom desc"
 	)
@@ -55,7 +59,8 @@ public class UserStatus implements Serializable {
 
 								QUERY_FIND_ALL = "userStatus.findAll",
 								QUERY_FIND_STATUSES_IN_GROUPS = "userStatus.findStatusesInGroup",
-								QUERY_FIND_ALL_ACTIVE_IN_GROUPS = "userStatus.findAllActiveInGroups";
+								QUERY_FIND_ALL_ACTIVE_IN_GROUPS = "userStatus.findAllActiveInGroups",
+										QUERY_FIND_STATUSES_IN_GROUPS_BY_USER_PERSONAL_ID = "userStatus.findStatusesInGroupsByUserPersonalId";
 
 	public static final String COLUMN_USER_STATUS_ID = "ic_usergroup_status_id";
 	private static final String COLUMN_STATUS = "status_id";
