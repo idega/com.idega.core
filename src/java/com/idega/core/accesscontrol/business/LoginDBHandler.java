@@ -42,6 +42,7 @@ import com.idega.presentation.IWContext;
 import com.idega.user.data.Group;
 import com.idega.user.data.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
@@ -168,27 +169,30 @@ public class LoginDBHandler {
 			}
 		}
 		loginTable.setLastChanged(IWTimestamp.getTimestampRightNow());
-			try {
-				//save the last changed by stuff if not the same user or super admin
-				IWContext iwc = IWContext.getInstance();
-				if(!iwc.isSuperAdmin() && iwc.getCurrentUserId()!=userID){
-					User changer = iwc.getCurrentUser();
-					loginTable.setChangedByUser(changer);
+		try {
+			//save the last changed by stuff if not the same user or super admin
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null && iwc.isLoggedOn() && (!iwc.isSuperAdmin() && iwc.getCurrentUserId() != userID)) {
+				User changer = iwc.getCurrentUser();
+				loginTable.setChangedByUser(changer);
 
-					//don't change the primary group though!
-					if(loginTable.getChangedByGroupId()<0){
-						Group primary = changer.getPrimaryGroup();
+				//don't change the primary group though!
+				if(loginTable.getChangedByGroupId()<0){
+					Group primary = changer.getPrimaryGroup();
 
-						if(primary!=null){
-							loginTable.setChangedByGroup(primary);
-						}
+					if(primary!=null){
+						loginTable.setChangedByGroup(primary);
 					}
 				}
-			} catch (Exception e) {
-				//no user, must be a system process setting a login
 			}
+		} catch (Exception e) {
+			//no user, must be a system process setting a login
+		}
 
 		loginTable.store();
+		if (update) {
+			CoreUtil.clearAllCaches();
+		}
 		return loginTable;
 	}
 
