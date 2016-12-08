@@ -4,7 +4,6 @@
 package com.idega.core.file.data.bean;
 
 import java.io.Serializable;
-import java.sql.Blob;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -23,7 +22,6 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
-import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -56,7 +54,6 @@ public class ICFile implements Serializable, MetaDataCapable {
 	private static final String COLUMN_MIME_TYPE = "mime_type";
 	private static final String COLUMN_NAME = "name";
 	private static final String COLUMN_DESCRIPTION = "description";
-	private static final String COLUMN_FILE_VALUE = "file_value";
 	private static final String COLUMN_CREATION_DATE = "creation_date";
 	private static final String COLUMN_MODIFICATION_DATE = "modification_date";
 	private static final String COLUMN_FILE_SIZE = "file_size";
@@ -85,10 +82,6 @@ public class ICFile implements Serializable, MetaDataCapable {
 
 	@Column(name = COLUMN_DESCRIPTION, length = 1000)
 	private String description;
-
-	@Lob
-	@Column(name = COLUMN_FILE_VALUE)
-	private Blob fileValue;
 
 	@Temporal(TemporalType.TIMESTAMP)
 	@Column(name = COLUMN_CREATION_DATE)
@@ -207,21 +200,6 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 */
 	public void setDescription(String description) {
 		this.description = description;
-	}
-
-	/**
-	 * @return the fileValue
-	 */
-	public Blob getFileValue() {
-		return this.fileValue;
-	}
-
-	/**
-	 * @param fileValue
-	 *          the fileValue to set
-	 */
-	public void setFileValue(Blob fileValue) {
-		this.fileValue = fileValue;
 	}
 
 	/**
