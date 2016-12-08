@@ -4796,7 +4796,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		loginTable.setUserPassword(encryptedPassword, newPassword);
 		try {
 			loginTable.store();
-		} catch (IDOStoreException e) {
+
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null && iwc.isLoggedOn()) {
+				loginTable.setChangedByUser(iwc.getCurrentUser());
+			}
+			loginTable.setLastChanged(IWTimestamp.RightNow().getTimestamp());
+
+			CoreUtil.clearAllCaches();
+		} catch (Exception e) {
 			getLogger().warning("Failed to store password for user " + user.getName());
 			return Boolean.FALSE;
 		}
