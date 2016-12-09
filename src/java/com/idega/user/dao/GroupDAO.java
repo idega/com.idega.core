@@ -100,7 +100,7 @@ public interface GroupDAO extends GenericDao {
 	 */
 	public Map<Integer, Boolean> hasUsers(List<Group> groups);
 
-	public List<Group> filterGroupsByType(List<Integer> groupsIds, List<String> groupTypes);
+	public List<Group> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes);
 
 	/**
 	 *
