@@ -83,7 +83,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	private static final long serialVersionUID = 8515735782511731375L;
 
 	public static final String SYNCHRONIZATION_KEY = "com.idega.user.data.User";
-	
+
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
@@ -130,6 +130,8 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
     	addAttribute(COLUMN_RESUME, "Resume", true, true, java.lang.String.class, 2048);
     	addAttribute(COLUMN_LAST_READ_FROM_IMPORT, "Last read from national import", Timestamp.class);
     	addAttribute(User.FIELD_SHA1, "SHA1", true, true, String.class, 40);
+		addAttribute(getColumnNameWorkplace(), "Workplace", true, true, java.lang.String.class);
+		addAttribute(getColumnNameJobPosition(), "Job position", true, true, java.lang.String.class);
     	addManyToManyRelationShip(ICLanguage.class, COLUMN_LANGUAGES);
 
 		addOneToOneRelationship(COLUMN_NAME_USER_PROPERTIES_FILE_ID, ICFile.class);
@@ -279,6 +281,14 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		return "PREFERRED_ROLE";
 	}
 
+	public static String getColumnNameWorkplace() {
+		return "WORKPLACE";
+	}
+
+	public static String getColumnNameJobPosition() {
+		return "JOB_POSITION";
+	}
+
 	/**
 	 * @depricated
 	 */
@@ -399,6 +409,26 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	@Override
 	public String getPreferredLocale() {
 		return getStringColumnValue(getColumnNamePreferredLocale());
+	}
+
+	@Override
+	public void setWorkplace(String workplace) {
+		setColumn(getColumnNameWorkplace(), workplace);
+	}
+
+	@Override
+	public String getWorkplace() {
+		return getStringColumnValue(getColumnNameWorkplace());
+	}
+
+	@Override
+	public void setJobPosition(String jobPosition) {
+		setColumn(getColumnNameJobPosition(), jobPosition);
+	}
+
+	@Override
+	public String getJobPosition() {
+		return getStringColumnValue(getColumnNameJobPosition());
 	}
 
 	@Override
