@@ -241,9 +241,5 @@ public java.lang.String getIDColumnName();
 	 */
 	Long getAge();
 
-	public void setWorkplace(String workplace);
-	public String getWorkplace();
-	public void setJobPosition(String jobPosition);
-	public String getJobPosition();
 
 }

@@ -99,8 +99,6 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	private static final String COLUMN_PREFERRED_LOCALE = "preferred_locale";
 	private static final String COLUMN_PREFERRED_ROLE = "preferred_role";
 	private static final String COLUMN_USER_PROPERTIES_FILE = "user_properties_file_id";
-	private static final String COLUMN_WORKPLACE = "workplace";
-	private static final String COLUMN_JOB_POSITION = "job_position";
 
 	public static final String SQL_RELATION_EMAIL = "ic_user_email";
 	public static final String SQL_RELATION_ADDRESS = "ic_user_address";
@@ -193,12 +191,6 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_USER_PROPERTIES_FILE)
 	private ICFile userProperties;
-
-	@Column(name = COLUMN_WORKPLACE)
-	private String workplace;
-
-	@Column(name = COLUMN_JOB_POSITION)
-	private String jobPosition;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Phone.class)
 	@JoinTable(name = SQL_RELATION_PHONE, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Phone.COLUMN_PHONE_ID) })
@@ -755,22 +747,6 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public void setStatuses(List<UserStatus> statuses) {
 		this.statuses = statuses;
-	}
-
-	public String getWorkplace() {
-		return workplace;
-	}
-
-	public void setWorkplace(String workplace) {
-		this.workplace = workplace;
-	}
-
-	public String getJobPosition() {
-		return jobPosition;
-	}
-
-	public void setJobPosition(String jobPosition) {
-		this.jobPosition = jobPosition;
 	}
 
 
