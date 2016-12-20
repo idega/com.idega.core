@@ -398,6 +398,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	public boolean isOwner(Group group, IWUserContext iwc) throws Exception {
+		group = DBUtil.getInstance().lazyLoad(group);
 		return isOwner(AccessController.CATEGORY_GROUP_ID, group.getID().toString(), iwc);
 	}
 
