@@ -77,6 +77,7 @@ import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -1807,16 +1808,22 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    List<Group> permissionControllingGroups = new ArrayList<Group>();
 	    Collection<Group> parents = getGroupDAO().getParentGroups(iwuc.getLoggedInUser().getUserRepresentative());
 
-	    if(parents!=null && !parents.isEmpty()) {
-	        Map<String, String> roleMap= new HashMap<String, String>();
+	    if (!ListUtil.isEmpty(parents)) {
+	        Map<String, String> roleMap = new HashMap<String, String>();
+
+	        DBUtil dbUtil = DBUtil.getInstance();
 
 	        //get the real permission controlling group if not the parent
 	        for (Iterator<Group> iterator = parents.iterator(); iterator.hasNext();) {
                 Group parent = iterator.next();
+                parent = dbUtil.lazyLoad(parent);
+
                 Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
-                if(permissionControllingParentGroup != null) {
+                permissionControllingParentGroup = dbUtil.lazyLoad(permissionControllingParentGroup);
+
+                if (permissionControllingParentGroup != null) {
                     permissionControllingGroups.add(permissionControllingParentGroup);
-                }else {
+                } else {
                     permissionControllingGroups.add(parent);
                 }
 	        }
@@ -1824,11 +1831,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		    //create the role map we need
 	        Collection<ICPermission> permissions = getAllRolesForGroupCollection(permissionControllingGroups);
 
-	        if(!permissions.isEmpty()) {
+	        if (!ListUtil.isEmpty(permissions)) {
 		        for (Iterator<ICPermission> iter = permissions.iterator(); iter.hasNext();) {
 	                ICPermission perm = iter.next();
 	                String roleKey = perm.getPermissionString();
-	                if(!roleMap.containsKey(roleKey)) {
+	                if (!roleMap.containsKey(roleKey)) {
 	                    roleMap.put(roleKey,roleKey);
 	                }
 	            }
@@ -1841,8 +1848,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	        //if so we return true
 	        //this could be optimized by doing a count sql instead
 	        Group permGroup = getGroupDAO().findGroup(group.getID());
-	        Collection<ICPermission> validPerms = getPermissionDAO().findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup(RoleHelperObject.getStaticInstance().toString(), permissionKey, roleMap.values(), permGroup);
-            if(validPerms != null && !validPerms.isEmpty()) {
+	        Collection<ICPermission> validPerms = getPermissionDAO().findAllPermissionsByContextTypeAndContextValueAndPermissionStringCollectionAndPermissionGroup(
+	        		RoleHelperObject.getStaticInstance().toString(),
+	        		permissionKey,
+	        		roleMap.values(),
+	        		permGroup
+	        );
+            if (validPerms != null && !validPerms.isEmpty()) {
 	            return true;
 	        }
 	    }
