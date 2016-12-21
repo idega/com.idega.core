@@ -69,7 +69,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	public void store() throws IDOStoreException{
 		super.store();
 
-		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_UPDATE, true, getUserId()));
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_LOGIN, true, getUserId()));
 	}
 
 	@Override
