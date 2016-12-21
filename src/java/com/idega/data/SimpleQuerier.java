@@ -122,6 +122,34 @@ public class SimpleQuerier {
         return theReturn;
     }
 
+    public static boolean executeDelete(String sql, String datasource) throws Exception {
+    	Connection conn = null;
+        try {
+            conn = getConnection(datasource);
+
+            Statement stmt = null;
+
+            long start = System.currentTimeMillis();
+            try {
+            	stmt = conn.createStatement();
+            	return stmt.execute(sql);
+
+            } finally {
+                if (stmt != null) {
+                    stmt.close();
+                }
+
+                if (CoreUtil.isSQLMeasurementOn()) {
+                	CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sql);
+                }
+            }
+        } finally {
+            if (conn != null) {
+                freeConnection(conn, datasource);
+            }
+        }
+    }
+
     public static List<Serializable[]> executeQuery(String sqlQuery, String datasource, int columns) throws Exception {
     	Connection conn = null;
         try {
