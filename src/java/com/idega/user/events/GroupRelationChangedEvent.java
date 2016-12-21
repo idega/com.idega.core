@@ -8,7 +8,7 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	public enum EventType {
 
-		START, GROUP_CHANGE, USER_UPDATE, EMPTY;
+		START, GROUP_CHANGE, USER_UPDATE, USER_LOGIN, EMPTY;
 
 	}
 

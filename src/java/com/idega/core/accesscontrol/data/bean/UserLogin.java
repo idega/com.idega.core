@@ -131,7 +131,7 @@ public class UserLogin implements Serializable {
 			return;
 		}
 
-		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_UPDATE, true, user.getId()));
+		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_LOGIN, true, user.getId()));
 	}
 
 	@Column(name = COLUMN_COUNT_SENT_TO_BANK)
