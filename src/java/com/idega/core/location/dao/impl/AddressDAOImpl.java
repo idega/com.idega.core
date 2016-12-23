@@ -33,15 +33,15 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 	public Collection<Address> findBy(Integer userId, String addressTypeName) {
 		if (userId != null && !StringUtil.isEmpty(addressTypeName)) {
 			return getResultList(
-					Address.QUERY_FIND_BY_USER_AND_TYPE, 
-					Address.class, 
-					new Param("userID", userId), 
+					Address.QUERY_FIND_BY_USER_AND_TYPE,
+					Address.class,
+					new Param("userID", userId),
 					new Param("uniqueName", addressTypeName));
 		}
 
 		return Collections.emptyList();
 	}
-	
+
 
 	@Override
 	@Transactional(readOnly = false)
@@ -103,6 +103,11 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 	@Override
 	public List<PostalCode> getAllPostalCodes() {
 		return getResultList("postalCode.findAll", PostalCode.class);
+	}
+
+	@Override
+	public List<PostalCode> getAllIcelandicPostalCodes() {
+		return getResultList(PostalCode.QUERY_FIND_ALL_ICELANDIC, PostalCode.class);
 	}
 
 	@Override
@@ -239,7 +244,7 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 		Param param = new Param("isoAbbreviation", isoAbbreviation);
 		return getSingleResult("country.findByISOAbbreviation", Country.class, param);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public Address update(Address entity) {

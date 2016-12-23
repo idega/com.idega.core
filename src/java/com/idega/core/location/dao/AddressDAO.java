@@ -1,5 +1,5 @@
 /**
- * 
+ *
  */
 package com.idega.core.location.dao;
 
@@ -69,15 +69,17 @@ public interface AddressDAO {
 	public Country getCountryByName(String name);
 
 	public Country getCountryByISOAbbreviation(String isoAbbreviation);
-	
+
 	public Address update(Address entity);
 
 	/**
-	 * 
+	 *
 	 * @param userId is {@link User#getPrimaryKey()}, not <code>null</code>;
 	 * @param addressTypeName is {@link AddressType#getUniqueName()}, not <code>null</code>;
 	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
 	Collection<Address> findBy(Integer userId, String addressTypeName);
+
+	public List<PostalCode> getAllIcelandicPostalCodes();
 
 }
