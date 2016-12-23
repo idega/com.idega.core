@@ -28,9 +28,10 @@ import com.idega.util.DBUtil;
 @Table(name = PostalCode.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = PostalCode.QUERY_FIND_ALL, query = "select p from PostalCode p where p.postalCode is not null order by p.postalCode"),
+	@NamedQuery(name = PostalCode.QUERY_FIND_ALL_ICELANDIC, query = "select p from PostalCode p where p.postalCode is not null and length(p.postalCode) = 3 order by p.postalCode"),
 	@NamedQuery(name = "postalCode.findAllByCountry", query = "select p from PostalCode p where p.country = :country order by p.postalCode"),
 	@NamedQuery(name = "postalCode.findByPostalCode", query = "select p from PostalCode p where p.postalCode = :postalCode"),
-	@NamedQuery(name = PostalCode.QUERY_FIND_BY_ADDRESS, 
+	@NamedQuery(name = PostalCode.QUERY_FIND_BY_ADDRESS,
 		query =		"SELECT DISTINCT p FROM PostalCode p "
 				+	"JOIN p.addresses a ON a.id = :id")
 })
@@ -40,7 +41,8 @@ public class PostalCode implements Serializable {
 
 	public static final String	ENTITY_NAME = "ic_postal_code",
 								COLUMN_POSTAL_CODE_ID = "ic_postal_code_id",
-								QUERY_FIND_ALL = "postalCode.findAll";
+								QUERY_FIND_ALL = "postalCode.findAll",
+								QUERY_FIND_ALL_ICELANDIC = "postalCode.findAllIcelandic";
 
 	private static final String COLUMN_POSTAL_CODE = "postal_code";
 	private static final String COLUMN_NAME = "name";
@@ -73,11 +75,11 @@ public class PostalCode implements Serializable {
 	public static final String QUERY_FIND_BY_ADDRESS = "postalCode.findByAddress";
 	public static final String addressesProp = "addresses";
 	@OneToMany(
-			mappedBy = "postalCode", 
+			mappedBy = "postalCode",
 			fetch = FetchType.LAZY,
 			orphanRemoval = false,
 			cascade = {
-					CascadeType.PERSIST, 
+					CascadeType.PERSIST,
 					CascadeType.MERGE,
 					CascadeType.DETACH,
 					CascadeType.REFRESH})
