@@ -631,7 +631,17 @@ public void removeBy(User currentUser) throws RemoveException{
 	@Override
 	public void store() throws IDOStoreException{
 		super.store();
-		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.GROUP_CHANGE, (Integer) getPrimaryKey()));
+
+		final Integer id = (Integer) getPrimaryKey();
+		Thread updater = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.GROUP_CHANGE, id));
+			}
+
+		});
+		updater.start();
 	}
 
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{

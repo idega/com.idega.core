@@ -131,7 +131,16 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	@PostUpdate
 	@PostRemove
 	public void onChange() {
-		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.GROUP_CHANGE, getId()));
+		final Integer id = getId();
+		Thread updater = new Thread(new Runnable() {
+
+			@Override
+			public void run() {
+				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.GROUP_CHANGE, id));
+			}
+
+		});
+		updater.start();
 	}
 
 	@Id
