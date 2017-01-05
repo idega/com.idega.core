@@ -66,6 +66,16 @@ import com.idega.util.expression.ELUtil;
 			name = GroupRelation.QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE,
 			query = "SELECT DISTINCT gr.group FROM GroupRelation gr WHERE gr.relatedGroup.id = :userId AND gr.group.groupType.groupType in (:groupTypes) AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) " +
 			"AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_GROUPS_IDS_ACTIVE_FROM,
+			query = "select gr.relatedGroup.id from GroupRelation gr where gr.relatedGroup.id in (:ids) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+					GroupRelation.STATUS_PASSIVE_PENDING + "') and gr.initiationDate >= :date and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_GROUPS_ACTIVE_FROM,
+			query = "select gr.relatedGroup from GroupRelation gr where gr.relatedGroup.id in (:ids) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+					GroupRelation.STATUS_PASSIVE_PENDING + "') and gr.initiationDate >= :date and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
 	)
 })
 @Cacheable
@@ -82,7 +92,9 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 								QUERY_COUNT_BY_RELATED_GROUP_TYPE = "groupRelation.countByRelatedGroupType",
 								QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER = "groupRelation.findDirectGroupIdsForUser",
 								QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE = "groupRelation.findDirectGroupsForUserByType",
-								QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE = "groupRelation.findByRelatedGroupIdAndType";
+								QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE = "groupRelation.findByRelatedGroupIdAndType",
+								QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
+								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom";
 
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
