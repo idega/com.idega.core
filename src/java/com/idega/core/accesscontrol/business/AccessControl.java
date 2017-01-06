@@ -3138,7 +3138,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  @Override
 	public boolean hasViewPermissionForPageURI(String pageUri, HttpServletRequest request) {
 	  	HttpSession session = request.getSession();
-	  	ServletContext sc = session.getServletContext();
+	  	ServletContext sc = session == null ? null : session.getServletContext();
+	  	sc = sc == null ? request.getServletContext() : sc;
 
 	  	//TODO: Optimize this since this has to be done for each request:
 	  	IWUserContext iwuc = new IWUserContextImpl(session, sc);

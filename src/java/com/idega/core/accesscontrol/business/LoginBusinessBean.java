@@ -54,6 +54,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.UserProperties;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
@@ -166,7 +167,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public static LoginBusinessBean getLoginBusinessBean(HttpSession session) {
-		IWApplicationContext iwac = getIWApplicationContext(session);
+		IWApplicationContext iwac = getIWApplicationContext(null, session);
 		return getLoginBusinessBean(iwac);
 	}
 
@@ -545,6 +546,26 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return MapUtil.isEmpty(verficators) ? null : verficators.values();
 	}
 
+	private static ServletContext getServletContext(HttpServletRequest request, HttpSession session) {
+		ServletContext context = null;
+		try {
+			context = session == null ? null : session.getServletContext();
+		} catch (Exception e) {}
+
+		if (context == null) {
+			if (request == null) {
+				try {
+					RequestResponseProvider rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+					request = rrProvider == null ? null : rrProvider.getRequest();
+				} catch (Exception e) {}
+			}
+
+			context = request == null ? null : request.getServletContext();
+		}
+
+		return context;
+	}
+
 	/**
 	 * This method is invoked by the IWAuthenticator and tries to log in or log
 	 * out the user depending on the request parameters.
@@ -620,7 +641,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					String sessionId = null;
 					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
 						HttpSession session = request.getSession(true);
-						ServletContext sc = session.getServletContext();
+						ServletContext sc = getServletContext(request, session);
 						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
 
 						if (ListUtil.isEmpty(verificators)) {
@@ -630,7 +651,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 							LOGGER.info("Session ID to generate SMS code for user '" + username + "': " + sessionId);	//	TODO
 							for (TwoStepLoginVerificator verificator: verificators) {
 								//Sending SMS message
-								IWApplicationContext iwac = getIWMainApplication(session).getIWApplicationContext();
+								IWApplicationContext iwac = getIWMainApplication(request, session).getIWApplicationContext();
 								verificator.doSendSecondStepVerification(iwac, username, sessionId);
 							}
 						}
@@ -769,7 +790,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean isLoginByUUID(HttpServletRequest request) {
 		if (RequestUtil.isParameterSet(request, PARAM_LOGIN_BY_UNIQUE_ID)) {
 			String referer = RequestUtil.getReferer(request);
-			IWMainApplication iwma = getIWMainApplication(request.getSession(true));
+			IWMainApplication iwma = getIWMainApplication(request, request.getSession(true));
 			String allowedReferers = iwma.getSettings().getProperty(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
 			if (allowedReferers == null || "".equals(allowedReferers)) {
 				return true;
@@ -1110,7 +1131,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			lSession.setPrimaryGroup(primaryGroup);
 		}
 
-		IWMainApplication iwma = getIWMainApplication(session);
+		IWMainApplication iwma = getIWMainApplication(null, session);
 		UserProperties properties = new UserProperties(iwma, user.getId());
 		lSession.setUserProperties(properties);
 	}
@@ -1120,11 +1141,11 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @param session
 	 * @return
 	 */
-	private static IWMainApplication getIWMainApplication(HttpSession session) {
+	private static IWMainApplication getIWMainApplication(HttpServletRequest request, HttpSession session) {
 		IWMainApplication iwma = null;
 		ServletContext servletContext = null;
 		try {
-			servletContext = session.getServletContext();
+			servletContext = getServletContext(request, session);
 			iwma = IWMainApplication.getIWMainApplication(servletContext);
 		} catch (Exception e) {
 			LOGGER.warning("Error getting " + IWMainApplication.class.getName() + " from session's (" + session + ") servlet context " + servletContext);
@@ -1138,8 +1159,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @param session
 	 * @return
 	 */
-	private static IWApplicationContext getIWApplicationContext(HttpSession session) {
-		IWMainApplication iwma = getIWMainApplication(session);
+	private static IWApplicationContext getIWApplicationContext(HttpServletRequest request, HttpSession session) {
+		IWMainApplication iwma = getIWMainApplication(request, session);
 		return iwma.getIWApplicationContext();
 	}
 
@@ -1164,9 +1185,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		session = session == null ? request.getSession(true) : session;
-		IWMainApplication iwma = getIWMainApplication(session);
+		IWMainApplication iwma = getIWMainApplication(request, session);
 		AccessController aController = iwma.getAccessController();
-		IWUserContext iwuc = new IWUserContextImpl(session, session.getServletContext());
+		IWUserContext iwuc = new IWUserContextImpl(session, getServletContext(request, session));
 		lInfo.setUserRoles(aController.getAllRolesForCurrentUser(iwuc));
 		Map<String, Object> m = getLoggedOnInfoMap(session);
 		m.put(lInfo.getLogin(), lInfo);
@@ -1207,7 +1228,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		User user = userLogin.getUser();
-		IWMainApplication iwma = getIWMainApplication(request.getSession(true));
+		IWMainApplication iwma = getIWMainApplication(request, request.getSession(true));
 		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
 		if (isLoginExpired(userLogin) && !isAdmin) {
 			return LoginState.EXPIRED;
@@ -1355,7 +1376,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return Returns empty Map if no one is logged on
 	 */
 	public Map<String, Object> getLoggedOnInfoMap(HttpSession session) {
-		ServletContext sc = session.getServletContext();
+		ServletContext sc = getServletContext(null, session);
 		@SuppressWarnings("unchecked")
 		Map<String, Object> loggedOnMap = (Map<String, Object>) sc.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
 		if (loggedOnMap == null) {
@@ -1657,7 +1678,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 	public boolean hasUserLogin(HttpServletRequest request, String personalId) throws Exception {
 		try {
-			IWApplicationContext iwac = getIWApplicationContext(request.getSession(true));
+			IWApplicationContext iwac = getIWApplicationContext(request, request.getSession(true));
 			com.idega.user.data.User user = getUserBusiness(iwac).getUser(personalId);
 			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
 			Collection<LoginTable> logins = loginTableHome.findLoginsForUser(user);
@@ -1923,7 +1944,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		User user = getUser(session);
 		if (user != null) {
 			try {
-				return getUserBusiness(getIWApplicationContext(session)).getUser(user.getId());
+				return getUserBusiness(getIWApplicationContext(null, session)).getUser(user.getId());
 			}
 			catch (RemoteException re) {
 				throw new IBORuntimeException(re);
@@ -2067,7 +2088,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		User user = userLogin.getUser();
-		IWMainApplication iwma = getIWMainApplication(request.getSession(true));
+		IWMainApplication iwma = getIWMainApplication(request, request.getSession(true));
 		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
 		if (isLoginExpired(userLogin) && !isAdmin) {
 			return LoginState.EXPIRED;

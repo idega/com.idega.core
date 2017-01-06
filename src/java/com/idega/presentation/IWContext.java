@@ -222,7 +222,11 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			}
 		}
 
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
+		ServletContext context = session == null ? null : session.getServletContext();
+		if (context == null && request != null) {
+			context = request.getServletContext();
+		}
+		IWMainApplication iwma = context == null ? IWMainApplication.getDefaultIWMainApplication() : IWMainApplication.getIWMainApplication(context);
 		if (getIfSetRequestCharacterEncoding(iwma)) {
 			try {
 				String characterSetEncoding = iwma.getSettings().getCharacterEncoding();
