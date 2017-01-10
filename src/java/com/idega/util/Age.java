@@ -3,6 +3,13 @@ package com.idega.util;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
+import com.idega.business.IBOLookup;
+import com.idega.core.user.data.User;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.business.UserBusiness;
 
 /**
  * Copyright: Copyright (c) 2002-2004 idega Software
@@ -15,14 +22,42 @@ public class Age {
 
 	private GregorianCalendar startDate;
 
-	public Age(Date startdate) {
+	private Age() {
 		this.startDate = new GregorianCalendar();
+	}
+
+	private Age(Date dateOfBirth, String personalId) {
+		this();
+
+		if (dateOfBirth == null) {
+			try {
+				UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+				dateOfBirth = userBusiness.getUserDateOfBirthFromPersonalId(personalId);
+			} catch (Exception e) {
+				Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error computing age for person with personal ID: " + personalId, e);
+			}
+		}
+
+		if (dateOfBirth != null) {
+			this.startDate.setTime(dateOfBirth);
+		}
+	}
+
+	public Age(User user) {
+		this(user.getDateOfBirth(), user.getPersonalID());
+	}
+
+	public Age(com.idega.user.data.bean.User user) {
+		this(user.getDateOfBirth(), user.getPersonalID());
+	}
+
+	public Age(Date startdate) {
+		this();
 		this.startDate.setTime(startdate);
 	}
 
 	public Age(long date) {
-		this.startDate = new GregorianCalendar();
-		this.startDate.setTime(new Date(date));
+		this(new Date(date));
 	}
 
 	/**
@@ -42,7 +77,7 @@ public class Age {
 		}
 		return yearAge;
 	}
-	
+
 	/**
 	 * Gets the exact age on the day specified calculated from birth day.
 	 * @return
@@ -76,11 +111,12 @@ public class Age {
 
 		return isOlder;
 	}
-	
+
 	/* (non-Javadoc)
      * @see java.lang.Object#toString()
      */
-    public String toString() {
+    @Override
+	public String toString() {
         return String.valueOf(getYears());
     }
 }
