@@ -29,12 +29,12 @@ public class ExplicitSynchronizationBusinessBean extends DefaultSpringBean imple
 			RequestSynchronizer rs = ELUtil.getInstance().getBean(RequestSynchronizer.BEAN_NAME);
 			rs.addEntityToSyncronize(entity);
 		} catch (IllegalStateException e) {
-			getLogger().warning("Non request synchronization is not implemented yet. Can't get bean: Entity " + entity.getClass() + " pk: "+ entity.getPK() + " is not syncronized with other servers.");
+			getLogger().warning("Non request synchronization is not implemented yet. Can't get bean: Entity " + entity.getClass() +
+							" pk: "+ entity.getPK() + " is not syncronized with other servers.");
 		} catch (Exception e) {
-			if(e instanceof org.springframework.beans.factory.BeanCreationException){
+			if (e instanceof org.springframework.beans.factory.BeanCreationException) {
 				Throwable cause = e.getCause();
 				if ((cause != null) && (cause instanceof java.lang.IllegalStateException)) {
-					getLogger().info("Entity " + entity.getClass() + " pk: "+ entity.getPK() + " is not syncronized with other servers. Not implemented.");
 					return;
 				}
 			}
