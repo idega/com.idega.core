@@ -51,7 +51,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
 	 */
 	public String getGroupTypeValue();
-	
+
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeKey
 	 */
@@ -297,6 +297,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
 	 */
 	public void addGroup(User userToAdd) throws EJBException;
+	public void addGroup(User userToAdd, Timestamp time) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup

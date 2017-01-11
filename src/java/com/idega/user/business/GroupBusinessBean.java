@@ -12,6 +12,7 @@ package com.idega.user.business;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -88,6 +89,7 @@ import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
@@ -1302,8 +1304,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	@Override
 	public void addUser(int groupId, User user) throws EJBException, RemoteException {
+		addUser(groupId, user, IWTimestamp.getTimestampRightNow());
+	}
+	@Override
+	public void addUser(int groupId, User user, Timestamp time) throws EJBException, RemoteException {
 		try {
-			this.getGroupByGroupID(groupId).addGroup(user);
+			this.getGroupByGroupID(groupId).addGroup(user, time == null ? IWTimestamp.getTimestampRightNow() : time);
 		}
 		catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());

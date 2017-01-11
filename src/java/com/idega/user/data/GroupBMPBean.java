@@ -908,8 +908,12 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addGroup(User userToAdd) throws EJBException {
+		addGroup(userToAdd, IWTimestamp.getTimestampRightNow());
+	}
+	@Override
+	public void addGroup(User userToAdd, Timestamp time) throws EJBException {
 
-		this.addGroup(this.getGroupIDFromGroup(userToAdd));
+		this.addGroup(this.getGroupIDFromGroup(userToAdd), time);
 		boolean needsToStore = false;
 		if (userToAdd.getDeleted()) {
 			needsToStore = true;
@@ -944,10 +948,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public void addGroup(int groupId, Timestamp time) throws EJBException {
 		try {
-			// GroupRelation rel = this.getGroupRelationHome().create();
-			// rel.setGroup(this);
-			// rel.setRelatedGroup(groupId);
-			// rel.store();
 			if (time != null) {
 				addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time);
 			}
@@ -1183,10 +1183,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	@Override
 	public void removeUser(User user, User currentUser, Timestamp time) throws RemoveException {
-		// former: user.getGroupId() but this method is deprecated therefore:
-		// user.getId()
 		try {
-			this.removeGroup(user.getID(), currentUser, false, time);
+			this.removeGroup(user.getID(), currentUser, false, time == null ? IWTimestamp.getTimestampRightNow() : time);
 
 		}
 		catch (EJBException e) {
@@ -1831,8 +1829,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	@Override
-	public void removeGroup(int relatedGroupId, User currentUser,
-			boolean allEntries, Timestamp time) throws EJBException {
+	public void removeGroup(int relatedGroupId, User currentUser, boolean allEntries, Timestamp time) throws EJBException {
 		try {
 			Collection<GroupRelation> rels = null;
 			if (allEntries) {
@@ -1845,9 +1842,12 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 				iter.next().removeBy(currentUser, time);
 			}
 
-			ELUtil.getInstance().publishEvent(new GroupUserRemovedEvent(
-					(Integer) currentUser.getPrimaryKey(),
-					relatedGroupId));
+			ELUtil.getInstance().publishEvent(
+					new GroupUserRemovedEvent(
+							(Integer) currentUser.getPrimaryKey(),
+							relatedGroupId
+					)
+			);
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());

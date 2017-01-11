@@ -10,6 +10,7 @@
 package com.idega.user.business;
 
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -340,6 +341,7 @@ public interface GroupBusiness extends IBOService {
 	 * @see com.idega.user.business.GroupBusinessBean#addUser
 	 */
 	public void addUser(int groupId, User user) throws EJBException, RemoteException;
+	public void addUser(int groupId, User user, Timestamp time) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupHome

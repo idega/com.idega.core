@@ -12,6 +12,7 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
@@ -248,8 +249,8 @@ public interface UserBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#removeUserFromGroup
 	 */
-	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException,
-			java.rmi.RemoteException;
+	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException, java.rmi.RemoteException;
+	public void removeUserFromGroup(User user, Group group, User currentUser, Timestamp time) throws RemoveException, java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#setPermissionGroup

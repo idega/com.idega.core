@@ -1240,6 +1240,10 @@ public void delete(int userId) throws SQLException {
 	public void addGroup(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
+	@Override
+	public void addGroup(User p0, Timestamp time) throws EJBException{
+		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
+	}
 
 	@Override
 	public List getChildGroups(String[] p0, boolean p1) throws javax.ejb.EJBException {

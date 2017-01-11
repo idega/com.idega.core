@@ -13,6 +13,7 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.sql.Date;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -748,10 +749,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public void removeUserFromGroup(User user, Group group, User currentUser) throws RemoveException {
+		removeUserFromGroup(user, group, currentUser, IWTimestamp.getTimestampRightNow());
+	}
+
+	@Override
+	public void removeUserFromGroup(User user, Group group, User currentUser, Timestamp time) throws RemoveException {
 		// call plugin methods first
 		callAllUserGroupPluginBeforeUserRemoveMethod(user, group);
 
-		group.removeUser(user, currentUser);
+		group.removeUser(user, currentUser, time);
 		Integer primaryGroupId = new Integer(user.getPrimaryGroupID());
 		if (group.getPrimaryKey().equals(primaryGroupId)) {
 			// update primary group for user, since it was the group the user was removed from
