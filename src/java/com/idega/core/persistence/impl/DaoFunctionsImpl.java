@@ -48,7 +48,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}));
 
 	/**
-	 * 
+	 *
 	 * <p>For each parameter calls {@link Query#setParameter(String, Object)}, checks parameters before action</p>
 	 * @param q is query for these parameters, not <code>null</code>
 	 * @param params to set, skipped if <code>null</code>
@@ -61,7 +61,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>For each parameter calls {@link Query#setParameter(String, Object)}, checks parameters before action</p>
 	 * @param q is query for these parameters, not <code>null</code>
 	 * @param params to set, not <code>null</code>
@@ -125,7 +125,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					if (value instanceof Collection) {
 						@SuppressWarnings("unchecked")
 						List<V> paramValue = new ArrayList<V>((Collection<V>) value);
-						if (paramValue.size() > 1000) {
+						if (paramValue.size() > 5000) {
 							usableParams.add(new Param(
 									param.getParamName(),
 									paramValue.subList(0, 1000)));
@@ -158,7 +158,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
 	 * <li>Caches query</li>
@@ -212,7 +212,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param results is {@link Collection} of objects to convert to more specified objects, not <code>null</code>
 	 * @param expectedReturnType is {@link Class} to cast objects to, not <code>null</code>;
 	 * @return results casted to expectedReturnType objects or <code>null</code> on failure;
@@ -314,7 +314,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
 	 * <li>Caches query</li>
@@ -329,10 +329,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	private <Expected> List<Expected> getResultListByQuery(
-			List<Expected> results, 
-			Query q, 
-			Class<Expected> expectedReturnType, 
-			String cachedRegionName, 
+			List<Expected> results,
+			Query q,
+			Class<Expected> expectedReturnType,
+			String cachedRegionName,
 			Collection<Param> params) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
