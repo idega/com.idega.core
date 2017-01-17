@@ -157,11 +157,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			if (reInitializeRequest()) {
 				request = getRequest();
 			} else {
-				try {
-					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request);
-				} catch (Exception e) {
-					LOGGER.log(Level.SEVERE, "Error initializing IWContext", e);
-					CoreUtil.sendExceptionNotification(e);
+				HttpSession session = request.getSession(true);
+				if (session == null) {
+					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request + ", session: " + session);
 				}
 			}
 		}
