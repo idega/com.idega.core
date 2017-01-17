@@ -9,6 +9,7 @@
  */
 package com.idega.user.dao.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -94,14 +95,19 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Group> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes) {
+		return filterGroupsByIdsAndTypes(groupsIds, groupTypes, Group.class);
+	}
+
+	@Override
+	public <T extends Serializable> List<T> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes, Class<T> resultType) {
 		if ((ListUtil.isEmpty(groupsIds)) || (ListUtil.isEmpty(groupTypes))){
 			return null;
 		}
 
 		try {
-			List<Group> groups = getResultList(
-					Group.QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES,
-					Group.class,
+			List<T> groups = getResultList(
+					resultType.getName().equals(Integer.class.getName()) ? Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES : Group.QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES,
+					resultType,
 					new Param("ids", groupsIds),
 					new Param("groupTypes", groupTypes)
 			);
@@ -209,11 +215,24 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Group> findGroupsByTypes(List<String> groupTypes) {
+		return findGroupsByTypes(groupTypes, Group.class);
+	}
+
+	@Override
+	public List<Integer> findGroupsIdsByTypes(List<String> groupTypes) {
+		return findGroupsByTypes(groupTypes, Integer.class);
+	}
+
+	private <T> List<T> findGroupsByTypes(List<String> groupTypes, Class<T> resultType) {
 		if (ListUtil.isEmpty(groupTypes)) {
 			return null;
 		}
 
-		return getResultList(Group.QUERY_FIND_BY_TYPES, Group.class, new Param("groupTypes", groupTypes));
+		return getResultList(
+				resultType.getName().equals(Integer.class.getName()) ? Group.QUERY_FIND_IDS_BY_TYPES : Group.QUERY_FIND_BY_TYPES,
+				resultType,
+				new Param("groupTypes", groupTypes)
+		);
 	}
 
 	@Override
@@ -835,13 +854,26 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Group> findActiveGroupsByType(String groupType) {
+		return findActiveGroupsByType(groupType, Group.class);
+	}
+
+	@Override
+	public List<Integer> findActiveGroupsIDsByType(String groupType) {
+		return findActiveGroupsByType(groupType, Integer.class);
+	}
+
+	private <T> List<T> findActiveGroupsByType(String groupType, Class<T> resultType) {
 		if (StringUtil.isEmpty(groupType)) {
 			getLogger().log(Level.WARNING, "Type is not provided");
 			return null;
 		}
 
 		try {
-			return getResultList(Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE, Group.class, new Param("groupType", groupType));
+			return getResultList(
+					resultType.getName().equals(Integer.class.getName()) ? Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPE : Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE,
+					resultType,
+					new Param("groupType", groupType)
+			);
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting active groups by group type " + groupType, e);
 		}

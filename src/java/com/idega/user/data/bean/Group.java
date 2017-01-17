@@ -91,6 +91,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_PERMISSION_GROUP_IDS, query = "SELECT g.permissionControllingGroup FROM Group g WHERE g.groupID in (:ids) AND g.permissionControllingGroup IS NOT NULL"),
 	@NamedQuery(name = Group.QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES, query = "select distinct g.alias from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_TYPES_FROM_ALIASES, query = "select distinct g.id from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID"),
 	@NamedQuery(name = Group.QUERY_FIND_GROUPS_BY_IDS_AND_TYPES, query = "select distinct g from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_IDS_AND_TYPES, query = "select distinct g.groupID from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_TYPE, query = "select g from Group g where g.groupType.groupType = :groupTypeValue"),
@@ -101,12 +102,23 @@ import com.idega.util.expression.ELUtil;
 			GroupRelation.STATUS_PASSIVE_PENDING + "')"
 	),
 	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPE,
+			query = "select distinct gr.relatedGroup.id from GroupRelation gr where gr.relatedGroupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
 			name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES,
 			query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
 			GroupRelation.STATUS_PASSIVE_PENDING + "')"
 	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES,
+			query = "select distinct gr.relatedGroup.id from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
 	@NamedQuery(name = Group.QUERY_FIND_IDS_AND_TYPES_BY_IDS, query = "select g.groupID, g.groupType.groupType from Group g where g.groupID in :ids"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES, query = "select g from Group g where g.groupType.groupType in (:groupTypes)")
+	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES, query = "select g from Group g where g.groupType.groupType in (:groupTypes)"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_TYPES, query = "select g.id from Group g where g.groupType.groupType in (:groupTypes)")
 })
 @XmlTransient
 @Cacheable
@@ -118,6 +130,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_PERMISSION_GROUP_IDS = "group.findPermissionGroupIds",
 								QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES = "group.findAliasesByTypesFromAliases",
 								QUERY_FIND_BY_TYPES_FROM_ALIASES = "group.findByTypesFromAliases",
+								QUERY_FIND_IDS_BY_TYPES_FROM_ALIASES = "group.findIdsByTypesFromAliases",
 								QUERY_FIND_BY_ALIAS = "group.findByAlias",
 								QUERY_FIND_BY_ALIAS_AND_NAME = "group.findByAliasAndName",
 								QUERY_FIND_BY_GROUP_ID = "group.findByGroupId",
@@ -129,9 +142,12 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_BY_GROUP_TYPE = "group.findAllByGroupTypeValue",
 								QUERY_FIND_BY_NAME_AND_GROUP_TYPE = "group.findAllByNameAndGroupTypeValue",
 								QUERY_FIND_ACTIVE_GROUPS_BY_TYPE = "group.findActiveGroupsByType",
+								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPE = "group.findActiveGroupsIdsByType",
 								QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES = "group.findActiveGroupsByIdsAndTypes",
+								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES = "group.findActiveGroupsIdsByIdsAndTypes",
 								QUERY_FIND_IDS_AND_TYPES_BY_IDS = "group.findIdsAndTypesByIds",
 								QUERY_FIND_BY_TYPES = "group.findByGroupTypes",
+								QUERY_FIND_IDS_BY_TYPES = "group.findIdsByGroupTypes",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",

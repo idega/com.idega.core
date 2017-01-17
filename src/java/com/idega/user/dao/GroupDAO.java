@@ -9,6 +9,7 @@
  */
 package com.idega.user.dao;
 
+import java.io.Serializable;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -48,6 +49,7 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByNameAndType(String name, String type);
 
 	public List<Group> findGroupsByTypes(List<String> groupTypes);
+	public List<Integer> findGroupsIdsByTypes(List<String> groupTypes);
 	public List<Group> getGroupsByTypes(List<GroupType> groupTypes);
 
 	public List<Group> getParentGroups(Group group);
@@ -101,6 +103,7 @@ public interface GroupDAO extends GenericDao {
 	public Map<Integer, Boolean> hasUsers(List<Group> groups);
 
 	public List<Group> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes);
+	public <T extends Serializable> List<T> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes, Class<T> resultType);
 
 	/**
 	 *
@@ -129,6 +132,7 @@ public interface GroupDAO extends GenericDao {
 	public List<Integer> getDirectGroupIdsForUser(Integer userId);
 
 	public List<Group> findActiveGroupsByType(String groupType);
+	public List<Integer> findActiveGroupsIDsByType(String groupType);
 
 	public List<Group> getDirectGroupsForUserByType(Integer userId, List<String> groupTypes);
 
