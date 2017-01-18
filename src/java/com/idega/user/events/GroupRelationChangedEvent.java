@@ -57,4 +57,9 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 		this.type = type;
 	}
 
+	@Override
+	public String toString() {
+		return "Type: " + getType() + ", group relation ID: " + getGroupRelationId() + ", user ID: " + getUserId();
+	}
+
 }
