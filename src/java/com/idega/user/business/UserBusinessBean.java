@@ -4825,13 +4825,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		// store new password
 		loginTable.setUserPassword(encryptedPassword, newPassword);
 		try {
-			loginTable.store();
-
 			IWContext iwc = CoreUtil.getIWContext();
 			if (iwc != null && iwc.isLoggedOn()) {
 				loginTable.setChangedByUser(iwc.getCurrentUser());
 			}
 			loginTable.setLastChanged(IWTimestamp.RightNow().getTimestamp());
+			loginTable.store();
 
 			CoreUtil.clearAllCaches();
 		} catch (Exception e) {
