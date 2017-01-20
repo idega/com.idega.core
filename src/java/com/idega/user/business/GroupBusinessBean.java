@@ -3034,4 +3034,16 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return ELUtil.getInstance().getBean(GroupDAO.class);
 	}
 
+	@Override
+	public Collection<Integer> getGroupsByTypeAndMetadata(String groupType, String metadataName, String metadataValue) {
+		try {
+			return this.getGroupHome().getGroupsByTypeAndMetadata(groupType, metadataName, metadataValue);
+		}
+		catch (FinderException e) {
+			this.getLogger().log(Level.WARNING, "Failed getting groups by type and metadata", e);
+			return ListUtil.getEmptyList();
+		}
+	}
+
+
 }

@@ -1993,6 +1993,27 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		return this.idoFindPKsByQuery(query);
 	}
 
+	public Collection<Integer> ejbGetGroupsByTypeAndMetadata(String groupType, String metadataName, String metadataValue) throws FinderException {
+		if (StringUtil.isEmpty(metadataName) || StringUtil.isEmpty(metadataValue)) {
+			return null;
+		}
+
+		StringBuilder query = new StringBuilder();
+		query.append("SELECT g.IC_GROUP_ID ");
+		query.append("FROM ic_group g ");
+		query.append("JOIN ic_group_ic_metadata gm ON g.IC_GROUP_ID = gm.IC_GROUP_ID ");
+		query.append("JOIN ic_metadata m ON gm.IC_METADATA_ID = m.IC_METADATA_ID ");
+		query.append("WHERE 1 = 1 ");
+		if (!StringUtil.isEmpty(groupType)) {
+			query.append("AND g.GROUP_TYPE = '").append(groupType).append("' ");
+		}
+		query.append("AND m.METADATA_NAME = '").append(metadataName).append("' ");
+		query.append("AND m.METADATA_VALUE = '").append(metadataValue).append("' ");
+
+		return idoFindPKsBySQL(query.toString());
+	}
+
+
 	/**Searches by:
 	 * 		name,
 	 * 		description

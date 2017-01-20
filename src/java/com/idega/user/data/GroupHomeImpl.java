@@ -456,4 +456,12 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		return groups;
 	}
 
+	@Override
+	public Collection<Integer> getGroupsByTypeAndMetadata(String groupType, String metadataName, String metadataValue) throws FinderException {
+		GroupBMPBean entity = (GroupBMPBean) this.idoCheckOutPooledEntity();
+
+		return entity.ejbGetGroupsByTypeAndMetadata(groupType, metadataName, metadataValue);
+	}
+
+
 }
