@@ -146,4 +146,6 @@ public interface GroupDAO extends GenericDao {
 	public boolean updateEmails(Group group, List<String> emails);
 	public boolean updatePhones(Group group, List<String> numbers);
 
+	public Integer getFirstAncestorGroupIdOfType(Integer groupsId, Collection<String> groupTypes);
+
 }

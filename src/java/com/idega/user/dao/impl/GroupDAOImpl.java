@@ -514,6 +514,30 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public Integer getFirstAncestorGroupIdOfType(Integer groupsId, Collection<String> groupTypes) {
+		try {
+			List<Integer> ids = new ArrayList<>();
+			List<Integer> groupsIds = Arrays.asList(groupsId);
+			List<Integer> parentIds = null;
+			while ((!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds))) && (ListUtil.isEmpty(ids))) {
+				if (parentIds.size() == groupsIds.size() && parentIds.containsAll(groupsIds)) {
+					groupsIds = null;
+				} else {
+					ids.addAll(parentIds);
+					groupsIds = parentIds;
+					if (!ListUtil.isEmpty(groupTypes) && !ListUtil.isEmpty(ids)) {
+						ids = getGroupsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
+					}
+				}
+			}
+			return !ListUtil.isEmpty(ids) ? ids.get(0) : null;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting parent groups for group with ID " + groupsId + " and group types " + groupTypes, e);
+		}
+		return null;
+	}
+
+	@Override
 	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<String> groupTypes) {
 		try {
 			List<Integer> ids = new ArrayList<>();
