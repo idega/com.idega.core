@@ -45,6 +45,7 @@ import com.idega.core.accesscontrol.data.bean.LoginInfo;
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.accesscontrol.event.LoggedInUserCredentials;
+import com.idega.core.accesscontrol.event.LoggedInUserCredentials.LoginType;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.bean.ICLanguage;
 import com.idega.core.user.business.UserBusiness;
@@ -482,7 +483,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password));
+			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password, LoginType.CREDENTIALS, null));
 		}
 	}
 
@@ -1090,7 +1091,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					try {
 						groups.add(getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString())));
 					} catch (Exception e) {
-						Logger.getLogger(this.getClass().getName()).log(Level.INFO, 
+						Logger.getLogger(this.getClass().getName()).log(Level.INFO,
 								"Failed to add group by name " + group.getName());;
 					}
 				}
