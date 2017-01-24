@@ -674,7 +674,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			InputStream stream = IOUtil.getStreamFromJar(getBundleIdentifier(), file);
 			String content = StringHandler.getContentFromInputStream(stream);
 			if (StringUtil.isEmpty(content)) {
-				LOGGER.warning("No content in " + getBundleIdentifier() + ", file: " + file + " for " + locale);
 				return;
 			}
 
