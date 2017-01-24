@@ -44,6 +44,7 @@ import com.idega.core.accesscontrol.data.bean.LoginInfo;
 import com.idega.core.accesscontrol.data.bean.LoginRecord;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.accesscontrol.event.LoggedInUserCredentials;
+import com.idega.core.accesscontrol.event.LoggedInUserCredentials.LoginType;
 import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.localisation.data.bean.ICLanguage;
 import com.idega.data.IDOLookup;
@@ -481,7 +482,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password));
+			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password, LoginType.CREDENTIALS, null));
 		}
 	}
 
@@ -1063,7 +1064,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
 		if (user != null)
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName));
 		return true;
 	}
 
@@ -1081,9 +1082,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 		HttpSession session = request.getSession(true);
 		storeUserAndGroupInformationInSession(session, user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
-		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
+		String userName = userLogin.getUserLogin();
+		storeLoggedOnInfoInSession(request, session, userLogin, userName, user, loginRecord, userLogin.getLoginType());
 		if (user != null)
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId()));
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName));
 		return true;
 	}
 
