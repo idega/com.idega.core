@@ -561,7 +561,17 @@ public class LoginBusinessBean implements IWPageEventListener {
 				} catch (Exception e) {}
 			}
 
-			context = request == null ? null : request.getServletContext();
+			if (request != null) {
+				try {
+					context = request.getServletContext();
+				} catch (Exception e) {}
+
+				if (context == null) {
+					try {
+						context = request.getSession(true).getServletContext();
+					} catch (Exception e) {}
+				}
+			}
 		}
 
 		return context;
