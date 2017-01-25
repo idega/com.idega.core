@@ -55,6 +55,8 @@ public abstract class DefaultSpringBean {
 	private static final Logger LOGGER = Logger.getLogger(DefaultSpringBean.class.getName());
 	private static Logger LOGGER_;
 
+	public static final String DEVELOPEMENT_STATE_WARNING = "WARNING: developement state is enabled!";
+
 	private RepositoryService repositoryService;
 
 	protected Logger getLogger() {
