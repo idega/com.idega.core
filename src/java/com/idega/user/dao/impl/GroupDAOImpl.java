@@ -514,6 +514,30 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public Integer getFirstAncestorGroupIdOfType(Integer groupsId, Collection<String> groupTypes) {
+		try {
+			List<Integer> ids = new ArrayList<>();
+			List<Integer> groupsIds = Arrays.asList(groupsId);
+			List<Integer> parentIds = null;
+			while ((!ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds))) && (ListUtil.isEmpty(ids))) {
+				if (parentIds.size() == groupsIds.size() && parentIds.containsAll(groupsIds)) {
+					groupsIds = null;
+				} else {
+					ids.addAll(parentIds);
+					groupsIds = parentIds;
+					if (!ListUtil.isEmpty(groupTypes) && !ListUtil.isEmpty(ids)) {
+						ids = getGroupsIdsByIdsAndTypes(ids, new ArrayList<>(groupTypes));
+					}
+				}
+			}
+			return !ListUtil.isEmpty(ids) ? ids.get(0) : null;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting parent groups for group with ID " + groupsId + " and group types " + groupTypes, e);
+		}
+		return null;
+	}
+
+	@Override
 	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, Collection<String> groupTypes) {
 		try {
 			List<Integer> ids = new ArrayList<>();
@@ -1034,6 +1058,40 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			getLogger().log(Level.WARNING, "Error updating contacts " + contacts + " for group " + group, e);
 		}
 		return false;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public boolean setMetadata(Group group, String key, String value) {
+		try {
+			group.setMetaData(key, value);
+			merge(group);
+			return true;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error setting metadata " + key + "=" + value + " for group " + group, e);
+		}
+		return false;
+	}
+
+	@Override
+	public List<Integer> getGroupsIdsByGroupTypeAndMetadata(String type, String key, String value) {
+		if (StringUtil.isEmpty(type) || StringUtil.isEmpty(key) || StringUtil.isEmpty(value)) {
+			return null;
+		}
+
+		try {
+			return getResultList(
+					Group.QUERY_FIND_IDS_BY_TYPE_AND_METADATA,
+					Integer.class,
+					new Param("metadataKey", key),
+					new Param("metadataValue", value),
+					new Param("groupType", type)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups IDs by type " + type + " and metadada: " + key + "=" + value, e);
+		}
+
+		return null;
 	}
 
 }

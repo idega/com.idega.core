@@ -119,7 +119,12 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = Group.QUERY_FIND_IDS_AND_TYPES_BY_IDS, query = "select g.groupID, g.groupType.groupType from Group g where g.groupID in :ids"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES, query = "select g from Group g where g.groupType.groupType in (:groupTypes)"),
 	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_TYPES, query = "select g.id from Group g where g.groupType.groupType in (:groupTypes)"),
-	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_ALIASES_IDS, query = "select g.alias.id from Group g where g.id in (:aliasesIds)")
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_ALIASES_IDS, query = "select g.alias.id from Group g where g.id in (:aliasesIds)"),
+	@NamedQuery(
+			name = Group.QUERY_FIND_IDS_BY_TYPE_AND_METADATA,
+			query = "select distinct g.id from GroupRelation gr join gr.relatedGroup.metadata meta join gr.relatedGroup g where meta.key = :metadataKey and meta.value = :metadataValue and " +
+					"g.groupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	)
 })
 @XmlTransient
 @Cacheable
@@ -150,6 +155,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_BY_TYPES = "group.findByGroupTypes",
 								QUERY_FIND_IDS_BY_TYPES = "group.findIdsByGroupTypes",
 								QUERY_FIND_IDS_BY_ALIASES_IDS = "group.findIdsByAliasesIds",
+								QUERY_FIND_IDS_BY_TYPE_AND_METADATA = "group.findIdsByTypeAndMetadata",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",

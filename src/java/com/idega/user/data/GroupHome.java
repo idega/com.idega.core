@@ -280,5 +280,4 @@ public interface GroupHome extends IDOHome {
 
 	public Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException;
 
-	public Collection<Integer> getGroupsByTypeAndMetadata(String groupType, String metadataName, String metadataValue) throws FinderException;
 }

@@ -744,5 +744,4 @@ public interface GroupBusiness extends IBOService {
 
 	public GroupDAO getGroupDAO();
 
-	public Collection<Integer> getGroupsByTypeAndMetadata(String groupType, String metadataName, String metadataValue);
 }

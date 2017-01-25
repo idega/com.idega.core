@@ -8,14 +8,21 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	private Integer userId;
 
-	public UserHasLoggedInEvent(Integer userId) {
+	private String userName;
+
+	public UserHasLoggedInEvent(Integer userId, String userName) {
 		super(userId);
 
 		this.userId = userId;
+		this.userName = userName;
 	}
 
 	public Integer getUserId() {
 		return userId;
+	}
+
+	public String getUserName() {
+		return userName;
 	}
 
 }
