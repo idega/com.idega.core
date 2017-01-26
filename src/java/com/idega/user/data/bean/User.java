@@ -68,7 +68,16 @@ import com.idega.util.StringUtil;
 			name = User.QUERY_FIND_BY_PRIMARY_KEYS,
 			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)"),
 	@NamedQuery(name = User.QUERY_FIND_BY_PHONE_NUMBER, query = "select distinct u from User u join u.phones up where up.number = :number"),
-	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :key and um.value = :value")
+	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :key and um.value = :value"),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id in (:groupsIds) AND (" +
+				"(gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' or gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateFrom AND gr.terminationDate < :dateTo) " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	)
 })
 @XmlTransient
 @Cacheable
@@ -109,7 +118,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String	QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys",
 								QUERY_FIND_BY_PHONE_NUMBER = "user.findByPhoneNumber",
-								QUERY_FIND_BY_METADATA = "user.findByMetadata";
+								QUERY_FIND_BY_METADATA = "user.findByMetadata",
+								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
