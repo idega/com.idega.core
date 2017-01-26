@@ -97,7 +97,6 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				}
 			});
 			if (filteredCachedGroups.size() != ids.size()) {
-				getLogger().warning("Not all groups are cached. Expected: " + ids + " (" + ids.size() + "), got " + filteredCachedGroups + " (" + filteredCachedGroups.size() + "), will lazily, async fill-in cache");
 				Thread cacher = new Thread(new Runnable() {
 
 					@Override
