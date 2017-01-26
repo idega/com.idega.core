@@ -349,7 +349,10 @@ public class CoreUtil {
 		String request = iwc == null ? "unknown" : iwc.getRequestURI();
 		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
 
-		StringBuffer message = new StringBuffer("Query '").append(query).append("' ");
+		StringBuffer message = new StringBuffer();
+		String user = iwc == null || !iwc.isLoggedOn() ? CoreConstants.EMPTY : iwc.getCurrentUser().getName();
+		message.append("Query ").append(StringUtil.isEmpty(user) ? user : "for ".concat(user).concat(CoreConstants.SPACE)).append("'").append(query).append("' ");
+
 		if (!ListUtil.isEmpty(params)) {
 			message.append("with parameters ").append(params).append(" ");
 		}
@@ -399,7 +402,9 @@ public class CoreUtil {
 		String request = iwc == null ? "unknown" : iwc.getRequestURI();
 		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
 
-		StringBuffer message = new StringBuffer("Method '").append(method).append("' ");
+		StringBuffer message = new StringBuffer();
+		String user = iwc == null || !iwc.isLoggedOn() ? CoreConstants.EMPTY : iwc.getCurrentUser().getName();
+		message.append("Method ").append(StringUtil.isEmpty(user) ? user : "for ".concat(user).concat(CoreConstants.SPACE)).append("'").append(method).append("' ");
 
 		message.append("executed in ").append(executionTime).append(" ms");
 		boolean printStackTrace = settings.getBoolean("print_stack_trace_for_debug", Boolean.FALSE);
@@ -448,7 +453,9 @@ public class CoreUtil {
 		String sessionId = iwc == null ? "unknown" : iwc.getRequest().getSession(true).getId();
 		User user = iwc == null ? null : iwc.isLoggedOn() ? iwc.getLoggedInUser() : null;
 
-		StringBuffer message = new StringBuffer("UI component '").append(component.getClass().getName()).append("' ");
+		StringBuffer message = new StringBuffer();
+		String userLabel = user == null ? CoreConstants.EMPTY : user.getName();
+		message.append("UI component ").append(StringUtil.isEmpty(userLabel) ? user : "for ".concat(userLabel).concat(CoreConstants.SPACE)).append("'").append(component.getClass().getName()).append("' ");
 
 		message.append("rendered into HTML in ").append(executionTime).append(" ms");
 		boolean printStackTrace = settings.getBoolean("print_stack_trace_for_ui_debug", Boolean.FALSE);
