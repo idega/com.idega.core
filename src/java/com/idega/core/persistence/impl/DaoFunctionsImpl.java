@@ -125,13 +125,11 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					if (value instanceof Collection) {
 						@SuppressWarnings("unchecked")
 						List<V> paramValue = new ArrayList<V>((Collection<V>) value);
-						if (paramValue.size() > 5000) {
-							usableParams.add(new Param(
-									param.getParamName(),
-									paramValue.subList(0, 1000)));
-							unusedParams.add(new Param(
-									param.getParamName(),
-									paramValue.subList(1000, paramValue.size())));
+
+						int allowedParamsInCollection = 5000;
+						if (paramValue.size() > allowedParamsInCollection) {
+							usableParams.add(new Param(param.getParamName(), paramValue.subList(0, allowedParamsInCollection)));
+							unusedParams.add(new Param(param.getParamName(), paramValue.subList(allowedParamsInCollection, paramValue.size())));
 						} else {
 							usableParams.add(param);
 						}
@@ -177,7 +175,8 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			Query q,
 			Class<Expected> expectedReturnType,
 			String cachedRegionName,
-			Param... params) {
+			Param... params
+	) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
 		}
@@ -200,12 +199,19 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		}
 
 		results.addAll(tmpResults);
+		int maxResults = q.getMaxResults();
+		if (maxResults > 0 && results.size() >= maxResults) {
+			return results;
+		}
+
 		if (queryParams.isLoadInMultipleSteps()) {
 			return getResultListByQuery(
-					results, q,
+					results,
+					q,
 					expectedReturnType,
 					cachedRegionName,
-					ArrayUtil.convertListToArray(queryParams.getUnusedParams()));
+					ArrayUtil.convertListToArray(queryParams.getUnusedParams())
+			);
 		}
 
 		return results;
@@ -356,6 +362,11 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		}
 
 		results.addAll(tmpResults);
+		int maxResults = q.getMaxResults();
+		if (maxResults > 0 && results.size() >= maxResults) {
+			return results;
+		}
+
 		if (queryParams.isLoadInMultipleSteps()) {
 			return getResultListByQuery(results, q, expectedReturnType, cachedRegionName, queryParams.getUnusedParams());
 		}

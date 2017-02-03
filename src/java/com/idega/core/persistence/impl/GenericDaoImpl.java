@@ -204,12 +204,13 @@ public class GenericDaoImpl implements GenericDao {
 	@Override
 	@Transactional(readOnly = true)
 	public <Expected> List<Expected> getResultList(
-			String namedQueryName, 
-			Class<Expected> expectedReturnType, 
-			Integer firstResult, 
-			Integer maxResults, 
-			String cachedRegionName, 
-			Param... params) {
+			String namedQueryName,
+			Class<Expected> expectedReturnType,
+			Integer firstResult,
+			Integer maxResults,
+			String cachedRegionName,
+			Param... params
+	) {
 		com.idega.core.persistence.Query query = getQueryNamed(namedQueryName);
 		if (firstResult != null) {
 			query.setFirstResult(firstResult);
