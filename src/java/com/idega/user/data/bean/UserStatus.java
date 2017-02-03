@@ -158,4 +158,10 @@ public class UserStatus implements Serializable {
 	public void setCreatedBy(User createdBy) {
 		this.createdBy = createdBy;
 	}
+
+	@Override
+	public String toString() {
+		return "ID: " + getId() + ", status: " + getStatus() + ", user: " + getUser() + " since " + getDateFrom();
+	}
+
 }

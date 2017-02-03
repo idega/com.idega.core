@@ -54,43 +54,41 @@ public class Status implements Serializable {
 	@JoinColumn(name = COLUMN_PARENT)
 	private Status parent;
 
-
 	public Integer getId() {
 		return this.statusID;
 	}
-
 
 	public void setId(Integer statusID) {
 		this.statusID = statusID;
 	}
 
-
 	public String getStatusKey() {
 		return this.statusKey;
 	}
-
 
 	public void setStatusKey(String statusKey) {
 		this.statusKey = statusKey;
 	}
 
-
 	public Integer getStatusOrder() {
 		return this.statusOrder;
 	}
-
 
 	public void setStatusOrder(Integer statusOrder) {
 		this.statusOrder = statusOrder;
 	}
 
-
 	public Status getParent() {
 		return this.parent;
 	}
 
-
 	public void setParent(Status parent) {
 		this.parent = parent;
 	}
+
+	@Override
+	public String toString() {
+		return "Status key: " + getStatusKey();
+	}
+
 }
