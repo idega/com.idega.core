@@ -713,7 +713,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private Metadata getMetadata(String key) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
-			if (metaData.getKey().equals(key)) {
+			if (metaData != null && metaData.getKey().equals(key)) {
 				return metaData;
 			}
 		}
@@ -725,7 +725,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
-			if (metaData.getKey().equals(metaDataKey)) {
+			if (metaData != null && metaData.getKey().equals(metaDataKey)) {
 				return metaData.getValue();
 			}
 		}
