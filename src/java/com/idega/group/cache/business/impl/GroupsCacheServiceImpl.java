@@ -1,8 +1,10 @@
 package com.idega.group.cache.business.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
@@ -15,6 +17,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,7 @@ import com.idega.user.data.User;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.ArrayUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -636,6 +641,84 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	@Override
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to) {
 		return getChildGroupsIds(parentGroupsIds, havingTypes, notHavingTypes, null, from, to);
+	}
+
+	@Override
+	public <K extends Serializable, CK extends Serializable, V extends Serializable> Map<K, Map<CK, List<V>>> getCache(Integer size, Long timeToLiveInSeconds, boolean resetable) {
+		return getCache("EPLATFORM.childGroupsCache", timeToLiveInSeconds, timeToLiveInSeconds, size, resetable);
+	}
+
+	private Lock lockForGroupsTree = new ReentrantLock();
+	@Override
+	public <V extends Serializable> Map<String, V> getGroupsTreeCache(boolean checkIfEmpty) {
+		lockForGroupsTree.lock();
+		Map<String, V> cache = null;
+		try {
+			cache = getCache(GROUP_TREE_CACHE_NAME, 2592000, 2592000, Integer.MAX_VALUE, true);
+			if (checkIfEmpty && MapUtil.isEmpty(cache)) {
+				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.EMPTY));
+			}
+			return cache;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting cache groups tree cache", e);
+			return Collections.emptyMap();
+		} finally {
+			lockForGroupsTree.unlock();
+		}
+	}
+
+	private Lock lockForUsersGroups = new ReentrantLock();
+	@Override
+	public Map<Integer, List<Integer>> getUsersGroupsCache(boolean checkIfEmpty, Integer userId) {
+		lockForUsersGroups.lock();
+		Map<Integer, List<Integer>> cache = null;
+		try {
+			cache = getCache("EPLATFORM_USERS_GROUPS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
+
+			if (userId != null && (MapUtil.isEmpty(cache) || !cache.containsKey(userId))) {
+				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_UPDATE, false, userId));
+			}
+
+			if (checkIfEmpty && MapUtil.isEmpty(cache)) {
+				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.EMPTY));
+			}
+			return cache;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting groups tree cache", e);
+			return Collections.emptyMap();
+		} finally {
+			lockForUsersGroups.unlock();
+		}
+	}
+
+	@Override
+	public Map<String, List<com.idega.user.data.bean.Group>> getUserGroupsCache() {
+		Map<String, List<com.idega.user.data.bean.Group>> cache = null;
+		try {
+			cache = getCache("EPLATFORM_USER_GROUPS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, true);
+			return cache;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting user groups cache", e);
+			return Collections.emptyMap();
+		}
+	}
+
+	private Map<String, Boolean> progress = new HashMap<>();
+
+	@Override
+	public void setCacheInProgress(String name, Boolean inProgress) {
+		inProgress = inProgress == null ? Boolean.FALSE : inProgress;
+		progress.put(name, inProgress);
+	}
+
+	@Override
+	public boolean isCacheInProgress(String name) {
+		if (StringUtil.isEmpty(name)) {
+			return Boolean.FALSE;
+		}
+
+		Boolean inProgress = progress.get(name);
+		return inProgress == null ? Boolean.FALSE : inProgress;
 	}
 
 }
