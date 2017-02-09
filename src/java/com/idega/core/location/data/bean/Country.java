@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -20,6 +21,9 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.idega.util.CoreUtil;
+import com.idega.util.LocaleUtil;
+
 @Entity
 @Cacheable
 @Table(name=Country.ENTITY_NAME)
@@ -28,7 +32,7 @@ import javax.xml.bind.annotation.XmlTransient;
 	@NamedQuery(name="country.findByISOAbbreviation", query="select c from Country c where c.ISOAbbreviation = :isoAbbreviation"),
 	@NamedQuery(name="country.findByName", query="select c from Country c where c.name = :name"),
 	@NamedQuery(
-			name = Country.QUERY_FIND_BY_ADDRESS_ID, 
+			name = Country.QUERY_FIND_BY_ADDRESS_ID,
 			query="SELECT DISTINCT c FROM Country c JOIN c.addresses a ON a.id = :id")
 
 })
@@ -63,7 +67,7 @@ public class Country implements Serializable {
 			fetch = FetchType.LAZY,
 			orphanRemoval = false,
 			cascade = {
-					CascadeType.PERSIST, 
+					CascadeType.PERSIST,
 					CascadeType.MERGE,
 					CascadeType.DETACH,
 					CascadeType.REFRESH})
@@ -83,11 +87,19 @@ public class Country implements Serializable {
 		this.countryID = countryID;
 	}
 
+	public String getName(Locale locale) {
+		return getName(locale, this.name);
+	}
+
+	private String getName(Locale locale, String defaultName) {
+		return LocaleUtil.getLocalizedCountryName(locale, defaultName, getISOAbbreviation());
+	}
+
 	/**
 	 * @return the name
 	 */
 	public String getName() {
-		return this.name;
+		return getName(CoreUtil.getCurrentLocale());
 	}
 
 	/**

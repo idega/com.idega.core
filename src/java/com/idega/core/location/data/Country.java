@@ -1,5 +1,7 @@
 package com.idega.core.location.data;
 
+import java.util.Locale;
+
 import com.idega.data.IDOEntity;
 
 
@@ -12,6 +14,8 @@ public interface Country extends IDOEntity {
 	 * @see com.idega.core.location.data.CountryBMPBean#getName
 	 */
 	public String getName();
+
+	public String getName(Locale locale);
 
 	/**
 	 * @see com.idega.core.location.data.CountryBMPBean#getDescription

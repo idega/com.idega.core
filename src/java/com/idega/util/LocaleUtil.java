@@ -15,7 +15,7 @@ import com.idega.util.datastructures.map.MapUtil;
  * @version 1.0
  */
 public class LocaleUtil {
-	
+
 	private static Map<String, Locale> locales = new TreeMap<String, Locale>();
 
 	private static Locale icelandicLocale;
@@ -63,7 +63,7 @@ public class LocaleUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return {@link Map} of {@link Locale#getCountry()} and {@link Locale};
 	 */
 	public static Map<String, Locale> getLocales() {
@@ -82,7 +82,7 @@ public class LocaleUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param locales {@link Map} of {@link Locale#getCountry()} and {@link Locale};
 	 */
 	public static void setLocales(Map<String, Locale> locales) {
@@ -90,7 +90,7 @@ public class LocaleUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param countryCode is {@link Locale#getCountry()}, not <code>null</code>;
 	 * @return {@link Locale} or <code>null</code> on failure;
 	 */
@@ -101,4 +101,23 @@ public class LocaleUtil {
 
 		return null;
 	}
+
+	public static String getLocalizedCountryName(Locale localeIn, String defaultName, String isoAbbreviation) {
+		if (localeIn == null || StringUtil.isEmpty(isoAbbreviation)) {
+			return defaultName;
+		}
+
+		Locale countryLocale = LocaleUtil.getLocaleByCountry(isoAbbreviation);
+		if (countryLocale == null) {
+			return defaultName;
+		}
+
+		String localizedCountryName = countryLocale.getDisplayCountry(localeIn);
+		if (StringUtil.isEmpty(localizedCountryName)) {
+			return defaultName;
+		}
+
+		return localizedCountryName;
+	}
+
 }
