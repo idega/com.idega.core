@@ -77,7 +77,11 @@ import com.idega.util.expression.ELUtil;
 			name = GroupRelation.QUERY_FIND_GROUPS_ACTIVE_FROM,
 			query = "select gr.relatedGroup from GroupRelation gr where gr.relatedGroup.id in (:ids) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
 					GroupRelation.STATUS_PASSIVE_PENDING + "') and gr.initiationDate >= :date and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
-	)
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_GROUPS_IDS_BY_STATUSES,
+			query = "SELECT DISTINCT gr.relatedGroup.id FROM GroupRelation gr WHERE gr.relatedGroup.id in (:ids) AND (gr.groupRelationType.type='" + GroupRelation.RELATION_TYPE_GROUP_PARENT +
+					"' OR gr.groupRelationType.type IS NULL) AND gr.status in (:statuses)")
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
@@ -96,7 +100,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 								QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE = "groupRelation.findByRelatedGroupIdAndType",
 								QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES = "groupRelation.findByRelatedGroupsIdAndTypes",
 								QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
-								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom";
+								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
+								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses";
 
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
@@ -139,7 +144,6 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 			setInitiationDate(IWTimestamp.getTimestampRightNow());
 		}
 	}
-
 
 	@PostPersist
 	@PostUpdate
