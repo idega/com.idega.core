@@ -102,13 +102,13 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	}
 
 	@Override
-	public List<Object[]> getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriodGroupedByDate(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo) {
+	public List<Object[]> getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriodGroupedByDate(String relatedGroupType, List<Integer> groupIds, Date dateFrom, Date dateTo) {
 		StringBuilder query = null;
 		try {
 			List<Param> params = new ArrayList<Param>();
 			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
-			if (groupId != null) {
-				params.add(new Param(GroupRelation.PARAM_GROUP_ID, groupId));
+			if (!ListUtil.isEmpty(groupIds)) {
+				params.add(new Param(GroupRelation.PARAM_GROUP_ID, groupIds));
 			}
 			if (dateFrom != null && dateTo != null) {
 				params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
@@ -118,8 +118,8 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			query = new StringBuilder("SELECT DISTINCT DATE(CASE WHEN r.terminationDate IS NOT NULL AND r.terminationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.terminationDate < :" + GroupRelation.PARAM_DATE_TO + " THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL AND r.initiationModificationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationModificationDate < :" + GroupRelation.PARAM_DATE_TO + " THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL AND r.initiationDate >= :" + GroupRelation.PARAM_DATE_FROM + " AND r.initiationDate < :" + GroupRelation.PARAM_DATE_TO + " THEN initiation_date END) AS date, COUNT(r.groupRelationID) ");
 			query.append(" FROM GroupRelation r");
 			query.append(" WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			if (groupId != null) {
-				query.append(" AND r.group.groupID = :" + GroupRelation.PARAM_GROUP_ID);
+			if (!ListUtil.isEmpty(groupIds)) {
+				query.append(" AND r.group.groupID IN (:" + GroupRelation.PARAM_GROUP_ID + ") ");
 			}
 			if (dateFrom != null && dateTo != null) {
 				query.append(" AND (");
@@ -176,13 +176,13 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	}
 
 	@Override
-	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, Integer groupId, Date dateFrom, Date dateTo) {
+	public List<GroupRelation> getGroupRelationsByRelatedGroupTypeAndGroupIdAndPeriod(String relatedGroupType, List<Integer> groupIds, Date dateFrom, Date dateTo) {
 		StringBuilder query = null;
 		try {
 			List<Param> params = new ArrayList<Param>();
 			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
-			if (groupId != null) {
-				params.add(new Param(GroupRelation.PARAM_GROUP_ID, groupId));
+			if (!ListUtil.isEmpty(groupIds)) {
+				params.add(new Param(GroupRelation.PARAM_GROUP_ID, groupIds));
 			}
 			if (dateFrom != null && dateTo != null) {
 				params.add(new Param(GroupRelation.PARAM_DATE_FROM, dateFrom));
@@ -190,8 +190,8 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			}
 
 			query = new StringBuilder("SELECT r FROM GroupRelation r WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			if (groupId != null) {
-				query.append(" AND r.group.groupID = :" + GroupRelation.PARAM_GROUP_ID);
+			if (!ListUtil.isEmpty(groupIds)) {
+				query.append(" AND r.group.groupID IN (:" + GroupRelation.PARAM_GROUP_ID + ") ");
 			}
 			if (dateFrom != null && dateTo != null) {
 				query.append(" AND (");
