@@ -150,7 +150,7 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Integer> getGroupsIdsByGroupTypeAndMetadata(String type, String key, String value);
 
-	public Integer getFirstAncestorGroupIdOfType(Integer groupsId, Collection<String> groupTypes);
+	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes);
 
 	public List<Group> findActiveGroupsByTypes(List<String> groupTypes);
 

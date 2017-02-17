@@ -75,21 +75,28 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	}
 
 	@Override
-	public List<Object[]> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes) {
+	public List<Object[]> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> groupsIds) {
 		StringBuilder query = new StringBuilder();
 		try {
 			List<Param> params = new ArrayList<Param>();
 			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
-			if (!ListUtil.isEmpty(groupTypes)) {
-				params.add(new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes));
-			}
 
-			query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, r.group, r ");
+			query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, ");
+			query.append(" r.group.id, r.group.groupType.groupType, ");	//	1, 2
+			query.append(" r.initiationDate, r.terminationDate, r.initiationModificationDate, r.terminationModificationDate ");
 			query.append(" FROM GroupRelation r");
-			query.append(" WHERE r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+			query.append(" WHERE 1 = 1 ");
+
+			if (!ListUtil.isEmpty(groupsIds)) {
+				query.append(" and r.group.id in (:groupsIds) ");
+				params.add(new Param("groupsIds", groupsIds));
+			}
 			if (!ListUtil.isEmpty(groupTypes)) {
 				query.append(" AND r.group.groupType.groupType in (:" + GroupRelation.PARAM_GROUP_TYPES).append(") ");
+				params.add(new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes));
 			}
+			query.append(" AND r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+
 			query.append(" GROUP BY 2");
 			query.append(" ORDER BY date DESC");
 

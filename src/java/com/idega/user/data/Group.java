@@ -9,6 +9,7 @@
  */
 package com.idega.user.data;
 
+import java.io.Serializable;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
@@ -45,7 +46,7 @@ import com.idega.idegaweb.IWApplicationContext;
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision: 1.51 $
  */
-public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable, GroupNode<Group> {
+public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, UniqueIDCapable, GroupNode<Group>, Serializable {
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
