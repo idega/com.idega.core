@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Stack;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.idega.business.IBOLookup;
@@ -270,27 +271,42 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		protected User reserveUser = null;
 	}
 
+	private Boolean superAdmin = null;
+
 	@Override
 	public boolean isSuperAdmin() {
-		try {
-			User user = getUserEntity();
-			if (user != null) {
-				if (user.equals(this.getAccessController().getAdministratorUser())) {
-					return true;
-				}
-
-				PermissionGroup permGroup = getAccessController().getPermissionGroupAdministrator();
-				if (permGroup == null) {
-					return false;
-				}
-
-				UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-				return userBusiness.isMemberOfGroup(permGroup.getID(), userBusiness.getUser(user.getId()));
-			}
-		} catch (Exception ex) {
-			ex.printStackTrace();
+		if (superAdmin != null) {
+			return superAdmin;
 		}
-		return false;
+
+		User user = null;
+		try {
+			user = getUserEntity();
+			if (user == null) {
+				superAdmin = false;
+				return superAdmin;
+			}
+
+			if (user.equals(this.getAccessController().getAdministratorUser())) {
+				superAdmin = true;
+				return superAdmin;
+			}
+
+			PermissionGroup permGroup = getAccessController().getPermissionGroupAdministrator();
+			if (permGroup == null) {
+				superAdmin = false;
+				return superAdmin;
+			}
+
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+			superAdmin = userBusiness.isMemberOfGroup(permGroup.getID(), userBusiness.getUser(user.getId()));
+			return superAdmin;
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error resolving if " + user + " is super admin", e);
+			superAdmin = false;
+		}
+
+		return superAdmin;
 	}
 
 	public IWApplicationContext getIWApplicationContext() {
