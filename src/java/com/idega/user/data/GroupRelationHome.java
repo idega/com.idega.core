@@ -26,7 +26,7 @@ public interface GroupRelationHome extends com.idega.data.IDOHome
  public java.util.Collection<GroupRelation> findGroupsRelationshipsContaining(int p0,int p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsContaining(int p0,java.lang.String p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsContaining(int p0,java.lang.String p1,java.lang.String p2)throws javax.ejb.FinderException;
- public java.util.Collection findGroupsRelationshipsContainingBiDirectional(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException;
+ public java.util.Collection<GroupRelation> findGroupsRelationshipsContainingBiDirectional(int p0,int p1,java.lang.String p2)throws javax.ejb.FinderException;
  public java.util.Collection<GroupRelation> findGroupsRelationshipsContainingBiDirectional(int p0,int p1)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsContainingGroupsAndStatus(com.idega.user.data.Group p0,com.idega.user.data.Group p1,java.lang.String p2)throws javax.ejb.FinderException;
  public java.util.Collection findGroupsRelationshipsContainingUniDirectional(int p0,int p1)throws javax.ejb.FinderException;
