@@ -33,7 +33,7 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("redirect_when_session_timeout", Boolean.FALSE)) {
 			LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
 			//	Checking if user were logged in
-			if (loginSession != null && loginSession.getUser() != null) {
+			if (loginSession != null && loginSession.getUserEntity() != null) {
 				//	If session is time out redirect user to /pages
 				if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
 					//	Redirect

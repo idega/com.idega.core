@@ -188,7 +188,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public static boolean isLoggedOn(IWUserContext iwc) {
 		try {
-			return getLoginSessionBean().getUser() != null;
+			return getLoginSessionBean().getUserEntity() != null;
 		}
 		catch (BeanCreationException bce) {
 			return false;
@@ -221,7 +221,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public boolean isLoggedOn(HttpSession session) {
-		return getLoginSessionBean().getUser() != null;
+		return getLoginSessionBean().getUserEntity() != null;
 	}
 
 	public static void internalSetState(IWContext iwc, LoginState state) throws RemoteException {
@@ -1575,7 +1575,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		LoginBusinessBean.getLoginSessionBean().retrieve();
-		if (LoginBusinessBean.getLoginSessionBean().getUser() != null) {
+		if (LoginBusinessBean.getLoginSessionBean().getUserEntity() != null) {
 			return true;
 		}
 		else {

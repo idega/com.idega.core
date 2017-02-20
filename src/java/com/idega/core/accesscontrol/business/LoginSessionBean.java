@@ -323,7 +323,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	@Override
 	public String getSuperAdminId() {
 		if (isSuperAdmin()) {
-			return getUser().getId().toString();
+			return getUserEntity().getId().toString();
 		}
 		return null;
 	}
