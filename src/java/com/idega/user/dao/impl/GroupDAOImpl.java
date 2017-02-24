@@ -592,11 +592,12 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		try {
 			List<Integer> ids = new ArrayList<>();
 
+			//TODO: Zygimantas: As I wrote before - userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions() does not return correct groups, so instead firstly calling groupBusiness.getParentGroups() which returns correct groups
 			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
-			Collection<com.idega.user.data.Group> userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+			GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
+			Collection<com.idega.user.data.Group> userTopGroups = groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
 			if (ListUtil.isEmpty(userTopGroups)) {
-				GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
-				userTopGroups = groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
+				userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
 				getLogger().fine("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") by permissions" +
 						(ListUtil.isEmpty(userTopGroups) ? " and also did not find any directly related groups" : ", but found directly related groups: " + userTopGroups));
 			}
