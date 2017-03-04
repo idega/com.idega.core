@@ -20,10 +20,12 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -37,6 +39,8 @@ import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.Phone;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.IDOUtil;
+import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.business.GroupBusiness;
@@ -1119,4 +1123,63 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return null;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.GroupDAO#findAliases(java.util.Collection)
+	 */
+	@Override
+	public Map<Integer, Integer> findAliasesIds(Collection<Integer> groupIds) {
+		HashMap<Integer, Integer> map = new HashMap<>();
+
+		if (!ListUtil.isEmpty(groupIds)) {
+			StringBuilder query = new StringBuilder();
+			query
+			.append("SELECT g.IC_GROUP_ID, g.ALIAS_ID ")
+			.append("FROM ic_group g ")
+			.append("WHERE g.ALIAS_ID IS NOT NULL ")
+			.append("AND g.IC_GROUP_ID IN (")
+			.append(IDOUtil.toString(groupIds))
+			.append(")");
+
+			List<Serializable[]> lines = null;
+			try {
+				lines = SimpleQuerier.executeQuery(query.toString(), 2);
+			} catch (Exception e) {
+				Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to get results by query: " + query.toString());
+			}
+
+			if (!ListUtil.isEmpty(lines)) {
+				for (Serializable[] column : lines) {
+					map.put((Integer) column[0], (Integer) column[1]);
+				}
+			}
+		}
+		
+		return map;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.GroupDAO#findAliases(java.util.Collection)
+	 */
+	@Override
+	public Map<Integer, Group> findAliases(Collection<Integer> groupIds) {
+		Map<Integer, Group> map = new HashMap<>();
+		
+		Map<Integer, Integer> aliases = findAliasesIds(groupIds);
+		if (!MapUtil.isEmpty(aliases)) {
+			List<Group> aliasGroups = findGroups(new ArrayList<>(aliases.values()), null, null);
+			if (!ListUtil.isEmpty(aliasGroups)) {
+				for (Group aliasGroup : aliasGroups) {
+					for (Entry<Integer, Integer> entry : aliases.entrySet()) {
+						if (entry.getValue().equals(aliasGroup.getID())) {
+							map.put(entry.getKey(), aliasGroup);
+						}
+					}
+				}
+			}
+		}
+
+		return map;
+	}
 }

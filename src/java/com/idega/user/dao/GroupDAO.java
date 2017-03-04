@@ -154,4 +154,17 @@ public interface GroupDAO extends GenericDao {
 
 	public List<Group> findActiveGroupsByTypes(List<String> groupTypes);
 
+	/**
+	 * 
+	 * @param groupIds to search by, not null;
+	 * @return {@link Map} of {@link Group#getId()} and its alias {@link Group#getId()}
+	 */
+	Map<Integer, Integer> findAliasesIds(Collection<Integer> groupIds);
+
+	/**
+	 * 
+	 * @param groupIds to search by, not null;
+	 * @return {@link Map} of {@link Group#getId()} and its alias {@link Group}
+	 */
+	Map<Integer, Group> findAliases(Collection<Integer> groupIds);
 }
