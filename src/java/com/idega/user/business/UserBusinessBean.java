@@ -485,6 +485,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName) throws CreateException, RemoteException {
+		return createUser(firstName, middleName, lastName, displayname, personalID, description, gender, date_of_birth, primary_group, fullName, null);
+	}
+
+	@Override
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson) throws CreateException, RemoteException {
 		try {
 			User userToAdd = getUserHome().create();
 
@@ -520,6 +525,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			if (primary_group != null) {
 				userToAdd.setPrimaryGroupID(primary_group);
+			}
+			if (juridicalPerson != null) {
+				userToAdd.setJuridicalPerson(juridicalPerson);
 			}
 			userToAdd.store();
 			setUserUnderDomain(this.getIWApplicationContext().getDomain(), userToAdd, (GroupDomainRelationType) null);
@@ -650,6 +658,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String fullName) throws CreateException {
+		return createUserWithLogin(firstname, middlename, lastname, SSN, displayname, description, gender, date_of_birth, primary_group, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType, null, null);
+	}
+
+	@Override
+	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String fullName, Boolean juridicalPerson) throws CreateException {
 		UserTransaction transaction = this.getSessionContext().getUserTransaction();
 		AccessController controller = getIWMainApplication().getAccessController();
 		try {
@@ -661,7 +674,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// newUser = insertUser(firstname,middlename,
 			// lastname,null,null,null,null,primary_group);
-			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName);
+			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName, juridicalPerson);
 			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
 				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 			}
