@@ -594,6 +594,15 @@ public class CoreUtil {
 		return host;
 	}
 
+	public static void clearIDOCaches() {
+		try {
+			IDOContainer.getInstance().flushAllBeanCache();
+			IDOContainer.getInstance().flushAllQueryCache();
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error clearing IDO caches", e);
+		}
+	}
+
 	public static void clearAllCaches() {
 		try {
 			IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
@@ -601,8 +610,7 @@ public class CoreUtil {
 			BuilderLogicWrapper blw = ELUtil.getInstance().getBean(BuilderLogicWrapper.SPRING_BEAN_NAME_BUILDER_LOGIC_WRAPPER);
 			blw.getBuilderService(iwma.getIWApplicationContext()).clearAllCaches();
 			IBOLookup.clearAllCache();
-			IDOContainer.getInstance().flushAllBeanCache();
-			IDOContainer.getInstance().flushAllQueryCache();
+			clearIDOCaches();
 			IWCacheManager2 iwcm2 = IWCacheManager2.getInstance(iwma);
 			iwcm2.reset();
 			IWCacheManager.getInstance(iwma).clearAllCaches();
