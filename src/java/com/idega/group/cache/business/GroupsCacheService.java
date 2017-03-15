@@ -39,7 +39,7 @@ public interface GroupsCacheService {
 
 	public <V extends Serializable> Map<String, V> getGroupsTreeCache(boolean checkIfEmpty);
 
-	public Map<Integer, List<Integer>> getUsersGroupsCache(boolean checkIfEmpty, Integer userId);
+	public Map<String, List<Integer>> getUsersGroupsCache(boolean checkIfEmpty, Integer userId);
 
 	public Map<String, List<com.idega.user.data.bean.Group>> getUserGroupsCache();
 

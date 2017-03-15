@@ -669,9 +669,9 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 	private Lock lockForUsersGroups = new ReentrantLock();
 	@Override
-	public Map<Integer, List<Integer>> getUsersGroupsCache(boolean checkIfEmpty, Integer userId) {
+	public Map<String, List<Integer>> getUsersGroupsCache(boolean checkIfEmpty, Integer userId) {
 		lockForUsersGroups.lock();
-		Map<Integer, List<Integer>> cache = null;
+		Map<String, List<Integer>> cache = null;
 		try {
 			cache = getCache("EPLATFORM_USERS_GROUPS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
 
