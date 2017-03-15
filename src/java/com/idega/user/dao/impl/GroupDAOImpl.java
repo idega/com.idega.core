@@ -591,8 +591,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return getAllGroupsIdsForUser(user, iwuc, false);
 	}
 
+	private Collection<com.idega.user.data.Group> getUserGroupsByPermissions(IWUserContext iwuc, User user, UserBusiness userBusiness) throws Exception {
+		return userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+	}
+	private Collection<com.idega.user.data.Group> getUserGroupsByHierarchy(User user, UserBusiness userBusiness, GroupBusiness groupBusiness) throws Exception {
+		return groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
+	}
+
 	@Override
-	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean useOldMethodFirst) {
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions) {
 		if (user == null) {
 			getLogger().warning("User is not provided");
 			return null;
@@ -601,23 +608,26 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		try {
 			List<Integer> ids = new ArrayList<>();
 
-			//TODO: userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions() does not return correct groups, but groupBusiness.getParentGroups() also does not return correct groups
 			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
 			GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
 			Collection<com.idega.user.data.Group> userTopGroups = null;
-			if (useOldMethodFirst) {
-				userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
+			if (byPermissions) {
+				userTopGroups = getUserGroupsByPermissions(iwuc, user, userBusiness);
 				if (ListUtil.isEmpty(userTopGroups)) {
-					userTopGroups = groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
-					getLogger().fine("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") by permissions" +
-							(ListUtil.isEmpty(userTopGroups) ? " and also did not find any directly related groups" : ", but found directly related groups: " + userTopGroups));
+					userTopGroups = getUserGroupsByHierarchy(user, userBusiness, groupBusiness);
+					if (ListUtil.isEmpty(userTopGroups)) {
+						getLogger().warning("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") by permissions" +
+							" and also did not find any directly related groups");
+					}
 				}
 			} else {
-				userTopGroups = groupBusiness.getParentGroups(userBusiness.getUser(user.getId()));
+				userTopGroups = getUserGroupsByHierarchy(user, userBusiness, groupBusiness);
 				if (ListUtil.isEmpty(userTopGroups)) {
-					userTopGroups = userBusiness.getUsersTopGroupNodesByViewAndOwnerPermissions(userBusiness.getUser(user.getId()), iwuc);
-					getLogger().fine("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") directly related groups " +
-							(ListUtil.isEmpty(userTopGroups) ? " and also did not find any groups by permissions" : ", but found groups by permissions: " + userTopGroups));
+					userTopGroups = getUserGroupsByPermissions(iwuc, user, userBusiness);
+					if (ListUtil.isEmpty(userTopGroups)) {
+						getLogger().warning("Did not find any top groups for " + user + " (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ") directly related groups " +
+							" and also did not find any groups by permissions");
+					}
 				}
 			}
 
@@ -641,8 +651,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				}
 			}
 
-			List<Integer> results = getUniqueIds(ids);
-			return results;
+			return getUniqueIds(ids);
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting all groups for " + user, e);
 		}
