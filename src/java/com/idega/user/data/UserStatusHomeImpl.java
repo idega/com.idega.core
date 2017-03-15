@@ -9,32 +9,42 @@
  */
 package com.idega.user.data;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOFactory;
+import com.idega.util.ListUtil;
 
 
 /**
- * 
+ *
  *  Last modified: $Date$ by $Author$
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision$
  */
 public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 
+	@Override
 	protected Class getEntityInterfaceClass() {
 		return UserStatus.class;
 	}
 
+	@Override
 	public UserStatus create() throws javax.ejb.CreateException {
 		return (UserStatus) super.createIDO();
 	}
 
+	@Override
 	public UserStatus findByPrimaryKey(Object pk) throws javax.ejb.FinderException {
 		return (UserStatus) super.findByPrimaryKeyIDO(pk);
 	}
 
+	@Override
 	public Collection findAll() throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAll();
@@ -42,6 +52,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllByUserId(int id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllByUserId(id);
@@ -49,6 +60,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllActiveByUserId(int id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllActiveByUserId(id);
@@ -56,6 +68,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllByStatusId(int id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllByStatusId(id);
@@ -63,6 +76,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllActiveByStatusId(int id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllActiveByStatusId(id);
@@ -70,6 +84,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllActiveByGroupId(int id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllActiveByGroupId(id);
@@ -77,6 +92,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllByGroupId(int id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllByGroupId(id);
@@ -84,6 +100,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllByUserIdAndGroupId(int user_id, int group_id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllByUserIdAndGroupId(user_id, group_id);
@@ -91,13 +108,19 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
-	public Collection findAllActiveByUserIdAndGroupId(int user_id, int group_id) throws FinderException {
+	@Override
+	public List<UserStatus> findAllActiveByUserIdAndGroupId(int user_id, int group_id) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllActiveByUserIdAndGroupId(user_id, group_id);
 		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
+		Collection<UserStatus> results = this.getEntityCollectionForPrimaryKeys(ids);
+		if (ListUtil.isEmpty(results)) {
+			return Collections.emptyList();
+		}
+		return new ArrayList<>(results);
 	}
 
+	@Override
 	public Collection findAllByUserIDAndStatusID(Integer userID, Integer statusID) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllByUserIDAndStatusID(userID, statusID);
@@ -105,6 +128,7 @@ public class UserStatusHomeImpl extends IDOFactory implements UserStatusHome {
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public Collection findAllActiveByUserIDAndStatusID(Integer userID, Integer statusID) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.util.Collection ids = ((UserStatusBMPBean) entity).ejbFindAllActiveByUserIDAndStatusID(userID, statusID);
