@@ -2770,9 +2770,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * @throws RemoteException
 	 */
 	@Deprecated
-	public static Collection<com.idega.core.accesscontrol.data.ICPermission> getAllGroupViewPermissionsLegacy(
-			Collection<com.idega.user.data.Group> groups
-	) throws IDOLookupException, RemoteException {
+	public static Collection<com.idega.core.accesscontrol.data.ICPermission> getAllGroupViewPermissionsLegacy(Collection<com.idega.user.data.Group> groups) throws IDOLookupException, RemoteException {
 
 		ICPermissionHome permissionHome = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
 		GroupBusiness groupBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), GroupBusiness.class);
@@ -2781,7 +2779,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    for (com.idega.user.data.Group group: groups) {
 	    	try {
 	    		permGroups.add(groupBusiness.getGroupByGroupID(Integer.valueOf(group.getId())));
-	    	} catch (FinderException e) {}
+	    	} catch (Exception e) {}
 	    }
 
 		try {
