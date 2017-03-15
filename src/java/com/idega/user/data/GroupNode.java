@@ -9,6 +9,8 @@ import javax.ejb.EJBException;
 
 public interface GroupNode<G> {
 
+	public String getName();
+
 	public String getId();
 
 	public String getType();
