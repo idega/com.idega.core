@@ -2899,17 +2899,21 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public void addGroupPKsToCollectionFromICPermissionCollection(Collection<ICPermission> ICPermissionSRC, Collection<Object> GroupDEST) {
 		GroupHome grHome = getGroupHome();
 		for (Iterator<ICPermission> iter = ICPermissionSRC.iterator(); iter.hasNext();) {
-			ICPermission perm = iter.next();
-			if (!perm.getPermissionValue()) {
-				continue;// we don't want to use this permission if is a
-				// negative permission (a NOT permission)
-			}
 			try {
-				String groupId = perm.getContextValue();
-				Object grPK = grHome.decode(groupId);
-				GroupDEST.add(grPK);
-			} catch (NumberFormatException e1) {
-				e1.printStackTrace();
+				ICPermission perm = iter.next();
+				if (!perm.getPermissionValue()) {
+					continue;// we don't want to use this permission if is a
+					// negative permission (a NOT permission)
+				}
+				try {
+					String groupId = perm.getContextValue();
+					Object grPK = grHome.decode(groupId);
+					GroupDEST.add(grPK);
+				} catch (NumberFormatException e1) {
+					e1.printStackTrace();
+				}
+			} catch (Exception ee1) {
+				ee1.printStackTrace();
 			}
 		}
 	}

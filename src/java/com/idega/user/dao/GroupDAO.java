@@ -73,6 +73,7 @@ public interface GroupDAO extends GenericDao {
 	public Group findGroupByName(String name);
 
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc);
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean useOldMethodFirst);
 
 	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
 	public List<Group> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes);
@@ -155,14 +156,14 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> findActiveGroupsByTypes(List<String> groupTypes);
 
 	/**
-	 * 
+	 *
 	 * @param groupIds to search by, not null;
 	 * @return {@link Map} of {@link Group#getId()} and its alias {@link Group#getId()}
 	 */
 	Map<Integer, Integer> findAliasesIds(Collection<Integer> groupIds);
 
 	/**
-	 * 
+	 *
 	 * @param groupIds to search by, not null;
 	 * @return {@link Map} of {@link Group#getId()} and its alias {@link Group}
 	 */
