@@ -11,6 +11,7 @@ package com.idega.user.data;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 import java.util.Locale;
 
 import javax.ejb.CreateException;
@@ -160,6 +161,8 @@ public interface GroupHome extends IDOHome {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public Collection<Group> findGroups(Collection<String> groupIDs);
+
+	public List<Group> findGroups(List<Integer> groupIDs);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByType
