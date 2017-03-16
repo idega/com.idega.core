@@ -160,6 +160,8 @@ public interface GroupHome extends IDOHome {
 	 */
 	public Collection<Group> findGroups(Collection<String> groupIDs);
 
+	public List<Group> findGroups(List<Integer> groupIDs);
+
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsByType
 	 */

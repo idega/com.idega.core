@@ -9,6 +9,7 @@
  */
 package com.idega.user.data;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
@@ -275,6 +276,21 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 		}
 
 		return Collections.emptyList();
+	}
+
+	@Override
+	public List<Group> findGroups(List<Integer> groupIDs) {
+		if (ListUtil.isEmpty(groupIDs)) {
+			return null;
+		}
+
+		List<String> ids = new ArrayList<>();
+		for (Integer id: groupIDs) {
+			ids.add(String.valueOf(id));
+		}
+
+		Collection<Group> results = findGroups(ids);
+		return new ArrayList<>(results);
 	}
 
 	@Override
