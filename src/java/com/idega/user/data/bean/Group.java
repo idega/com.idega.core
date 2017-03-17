@@ -117,6 +117,11 @@ import com.idega.util.expression.ELUtil;
 			GroupRelation.STATUS_PASSIVE_PENDING + "')"
 	),
 	@NamedQuery(
+			name = Group.QUERY_FIND_PARENT_ACTIVE_GROUPS_BY_IDS_AND_TYPES,
+			query = "select distinct gr.group from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
 			name = Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES,
 			query = "select distinct gr.relatedGroup.id from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
 			GroupRelation.STATUS_PASSIVE_PENDING + "')"
@@ -156,6 +161,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_ACTIVE_GROUPS_BY_TYPES = "group.findActiveGroupsByTypes",
 								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPE = "group.findActiveGroupsIdsByType",
 								QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES = "group.findActiveGroupsByIdsAndTypes",
+								QUERY_FIND_PARENT_ACTIVE_GROUPS_BY_IDS_AND_TYPES = "group.findParentActiveGroupsByIdsAndTypes",
 								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES = "group.findActiveGroupsIdsByIdsAndTypes",
 								QUERY_FIND_IDS_AND_TYPES_BY_IDS = "group.findIdsAndTypesByIds",
 								QUERY_FIND_BY_TYPES = "group.findByGroupTypes",

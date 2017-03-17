@@ -168,4 +168,6 @@ public interface GroupDAO extends GenericDao {
 	 * @return {@link Map} of {@link Group#getId()} and its alias {@link Group}
 	 */
 	Map<Integer, Group> findAliases(Collection<Integer> groupIds);
+
+	public List<Group> filterParentGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes);
 }
