@@ -400,6 +400,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	/**
 	 * @return the name
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -869,7 +870,8 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public String getId() {
-		return getID().toString();
+		Integer id = getID();
+		return id == null ? null : String.valueOf(id);
 	}
 
 	@Override
