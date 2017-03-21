@@ -838,7 +838,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (permissionKey.equals(AccessController.PERMISSION_KEY_EDIT) || permissionKey.equals(AccessController.PERMISSION_KEY_VIEW)) {
 			if (obj instanceof Group) {
 				boolean owner = isGroupOwnerRecursively((Group) obj, iwc); //because owners parents groups always get read/write access
-				getLogger().info("Current user owner of " + ((Group) obj).getId() + ": " + owner);
+				getLogger().info("Current user is owner of " + ((Group) obj).getId() + ": " + owner);
 				return owner;
 			}
 			else {
@@ -1944,13 +1944,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public boolean hasPermitPermissionFor(com.idega.user.data.Group group, IWUserContext iwuc) {
-		long start = System.currentTimeMillis();
-		try {
 		Group g = getGroupDAO().findGroup(new Integer(group.getPrimaryKey().toString()));
 		return hasPermitPermissionFor(g, iwuc);
-		} finally {
-			getLogger().info("Legacy group: " + group + ". Took time: " + (System.currentTimeMillis() - start) + " ms");
-		}
 	}
 
 	/**
@@ -1958,8 +1953,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public boolean hasPermitPermissionFor(Group group, IWUserContext iwuc) {
-		    //check for regular permission, then by role
-			return hasPermissionForGroup(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
+		//check for regular permission, then by role
+		return hasPermissionForGroup(AccessController.PERMISSION_KEY_PERMIT, group, iwuc);
 	}
 
 	public static Collection<ICPermission> getAllPermissions(Group group, String contextType) {
@@ -2930,7 +2925,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public boolean hasRole(String roleKey, Group group, IWUserContext iwuc){
 		if (group == null) {
-			getLogger().warning("Group is not provided!");
+			getLogger().warning("Group is not provided! Role key: " + roleKey);
 			return false;
 		}
 
@@ -2972,7 +2967,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			}
 			else {
 				if(roleKey!=null){
-					getLogger().info("AccessControl: the role "+roleKey+" does not exist creating it!");
+					getLogger().info("AccessControl: the role " + roleKey + " does not exist, creating it!");
 
 					if(createRoleWithRoleKey(roleKey)!=null){
 						this.rolesList.add(roleKey);
