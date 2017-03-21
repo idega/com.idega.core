@@ -147,8 +147,15 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 
 	@Override
 	public LoginRecord getLastRecordByUser(User user) {
-		Param param = new Param("user", user);
-		return getSingleResult(LoginRecord.FIND_LAST_BY_USER, LoginRecord.class, param);
+		List<LoginRecord> records = getResultList(
+				LoginRecord.FIND_LAST_BY_USER,
+				LoginRecord.class,
+				0,
+				1,
+				null,
+				new Param("user", user)
+		);
+		return ListUtil.isEmpty(records) ? null : records.iterator().next();
 	}
 
 	@Override
