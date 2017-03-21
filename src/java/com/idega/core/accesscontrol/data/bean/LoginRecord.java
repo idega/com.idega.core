@@ -26,7 +26,7 @@ import com.idega.user.data.bean.User;
 @Table(name = LoginRecord.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "loginRecord.findAllByLogin", query = "select l from LoginRecord l where l.login = :login"),
-	@NamedQuery(name = "loginRecord.findLastByUser", query = "select l from LoginRecord l where l.user = :user order by l.inStamp desc"),
+	@NamedQuery(name = LoginRecord.FIND_LAST_BY_USER, query = "select l from LoginRecord l where l.user = :user order by l.inStamp desc"),
 	@NamedQuery(name = "loginRecord.findLastByLogin", query = "select l from LoginRecord l where l.login = :login order by l.inStamp desc"),
 	@NamedQuery(name = LoginRecord.GET_NUMBER_OF_LOGINS_FOR_USER, query = "select count(l) from LoginRecord l where l.user = :user")
 })
@@ -35,7 +35,8 @@ public class LoginRecord implements Serializable {
 
 	private static final long serialVersionUID = 874430366534007413L;
 
-	public static final String GET_NUMBER_OF_LOGINS_FOR_USER = "loginRecord.getNumberOfLoginsForUser";
+	public static final String	GET_NUMBER_OF_LOGINS_FOR_USER = "loginRecord.getNumberOfLoginsForUser",
+								FIND_LAST_BY_USER = "loginRecord.findLastByUser";
 
 	public static final String ENTITY_NAME = "ic_login_rec";
 	public static final String COLUMN_LOGIN_RECORD_ID = "ic_login_rec_id";
