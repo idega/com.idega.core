@@ -184,10 +184,14 @@ private static <T> ArrayList<T> getEmptyVector(){
 			return Collections.emptyList();
 		}
 
-		List<T> results = new ArrayList<T>();
-		lists.forEach(list -> {
+		List<T> results = new ArrayList<>();
+		for (List<T> list: lists) {
+			if (ListUtil.isEmpty(list)) {
+				continue;
+			}
+
 			results.addAll(list);
-		});
+		};
 		return results;
 	}
 
