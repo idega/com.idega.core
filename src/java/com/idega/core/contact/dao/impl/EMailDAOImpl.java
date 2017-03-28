@@ -234,6 +234,12 @@ public class EMailDAOImpl extends GenericDaoImpl implements EMailDAO {
 		return update(entity);
 	}
 
+	@Override
+	public Email update(Integer id, Integer userId, String eMailAddress) {
+		return update(id, userId, eMailAddress, getGenericTypeDAO().update(null, 
+				EmailType.MAIN_EMAIL, null, null, EmailType.class));
+	}
+
 	/* (non-Javadoc)
 	 * @see com.idega.core.contact.dao.EMailDAO#update(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
