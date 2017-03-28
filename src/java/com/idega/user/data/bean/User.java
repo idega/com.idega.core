@@ -5,7 +5,6 @@ package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -18,6 +17,8 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -50,7 +51,6 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -115,6 +115,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
+	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer userID;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
