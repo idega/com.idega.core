@@ -114,4 +114,12 @@ public interface GroupDAO extends GenericDao {
 	public List<Group> getGroupsByPersonalId(String personalId);
 
 	public List<Group> getGroupsByName(String name);
+
+	/**
+	 * 
+	 * @param entity to update/create, not <code>null</code>
+	 * @return created/updated entity or <code>null</code> on failure
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	<T extends Group> T update(T entity);
 }

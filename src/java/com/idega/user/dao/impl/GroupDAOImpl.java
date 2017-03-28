@@ -662,4 +662,30 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return groups.get(0);
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.GroupDAO#update(com.idega.user.data.bean.Group)
+	 */
+	@Override
+	@Transactional(readOnly = false)
+	public <T extends Group> T update(T entity) {
+		if (entity != null) {
+			if (entity.getId() == null) {
+				persist(entity);
+				if (entity.getID() != null) {
+					getLogger().fine("Entity: " + entity + " created!");
+					return entity;
+				}
+			} else {
+				entity = merge(entity);
+				if (entity != null) {
+					getLogger().fine("Entity: " + entity + " updated");
+					return entity;
+				}
+			}
+		}
+
+		getLogger().warning("Failed to create/update entity: " + entity);
+		return null;
+	}
 }
