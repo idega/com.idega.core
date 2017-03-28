@@ -763,7 +763,11 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public String getId() {
-		return getID().toString();
+		if (getID() != null) {
+			return getID().toString();
+		}
+
+		return null;
 	}
 
 	@Override
