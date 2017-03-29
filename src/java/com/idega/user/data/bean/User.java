@@ -17,8 +17,6 @@ import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
@@ -115,7 +113,6 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
-	@GeneratedValue(strategy = GenerationType.AUTO)
 	private Integer userID;
 
 	@OneToOne(fetch = FetchType.LAZY, cascade = { CascadeType.ALL })
