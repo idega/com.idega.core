@@ -170,4 +170,8 @@ public interface GroupDAO extends GenericDao {
 	Map<Integer, Group> findAliases(Collection<Integer> groupIds);
 
 	public List<Group> filterParentGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes);
+
+	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes, boolean selectPassive);
+
+	public List<Integer> getParentGroupsIds(List<Integer> ids, boolean selectPassive);
 }

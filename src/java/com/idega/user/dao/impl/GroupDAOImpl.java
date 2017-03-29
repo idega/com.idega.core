@@ -517,6 +517,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Integer> getParentGroupsIds(List<Integer> ids) {
+		return getParentGroupsIds(ids, false);
+	}
+
+	@Override
+	public List<Integer> getParentGroupsIds(List<Integer> ids, boolean selectPassive) {
 		try {
 			if (ListUtil.isEmpty(ids)) {
 				return null;
@@ -525,8 +530,10 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<Param> params = new ArrayList<Param>();
 			StringBuilder query = new StringBuilder("select distinct r.group.id from ");
 			query.append(GroupRelation.class.getName()).append(" r join r.group g where r.relatedGroup.id in (:ids) ");
-			query.append(" and (r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' or r.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING);
-			query.append("') and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
+			if (!selectPassive) {
+				query.append(" and (r.status = '").append(GroupRelation.STATUS_ACTIVE).append("' or r.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("')");
+			}
+			query.append(" and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
 			params.add(new Param("ids", ids));
 
 			List<Integer> results = getResultListByInlineQuery(query.toString(), Integer.class, ArrayUtil.convertListToArray(params));
@@ -539,6 +546,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes) {
+		return getFirstAncestorGroupIdOfType(groupId, groupTypes, false);
+	}
+
+	@Override
+	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes, boolean selectPassive) {
 		if (groupId == null || ListUtil.isEmpty(groupTypes)) {
 			return null;
 		}
@@ -547,7 +559,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<Integer> ids = new ArrayList<>();
 			List<Integer> groupsIds = Arrays.asList(groupId);
 			List<Integer> parentIds = null;
-			while (ListUtil.isEmpty(ids) && !ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds))) {
+			while (ListUtil.isEmpty(ids) && !ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds, selectPassive))) {
 				if (parentIds.size() == groupsIds.size() && parentIds.containsAll(groupsIds)) {
 					groupsIds = null;
 				} else {
