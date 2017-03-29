@@ -96,7 +96,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 				params.add(new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes));
 			}
 			query.append(" AND r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			query.append(" AND (r.status = '" + GroupRelation.STATUS_ACTIVE + "' OR r.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')");
+			//query.append(" AND (r.status = '" + GroupRelation.STATUS_ACTIVE + "' OR r.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')");
 
 			query.append(" GROUP BY 2");
 			query.append(" ORDER BY date DESC");
