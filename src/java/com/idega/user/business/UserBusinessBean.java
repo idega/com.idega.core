@@ -803,19 +803,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * Male: M, male, 0 Female: F, female, 1
 	 */
 	@Override
-	public Integer getGenderId(String gender) throws Exception {
+	public Gender getGender(String gender) throws Exception {
 		try {
 			GenderHome home = getGenderHome();
 			if (gender.equalsIgnoreCase("M") || gender.equalsIgnoreCase("male") || gender.equalsIgnoreCase("0")) {
 				if (this.male == null) {
 					this.male = home.getMaleGender();
 				}
-				return (Integer) this.male.getPrimaryKey();
+				return this.male;
 			} else if (gender.equalsIgnoreCase("F") || gender.equalsIgnoreCase("female") || gender.equalsIgnoreCase("1")) {
 				if (this.female == null) {
 					this.female = home.getFemaleGender();
 				}
-				return (Integer) this.female.getPrimaryKey();
+				return this.female;
 			} else {
 				// throw new RuntimeException("String gender must be: M, male,
 				// 0, F, female or 1 ");
@@ -827,6 +827,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	public Integer getGenderId(String gender) throws Exception {
+		Gender genderEntity = getGender(gender);
+		return genderEntity == null ? null : (Integer) genderEntity.getPrimaryKey();
+	}
+	
 	/**
 	 * Returnes true if that genderid refers to the male gender
 	 */
