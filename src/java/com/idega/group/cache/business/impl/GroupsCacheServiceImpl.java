@@ -432,7 +432,6 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 			Long count = groupDAO.getSingleResultByInlineQuery("select count(gr.groupRelationID) from " + GroupRelation.class.getName() +
 					" gr where gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "'", Long.class);
-//			Integer count = 8801;
 			if (count == null || count <= 0) {
 				return;
 			}
