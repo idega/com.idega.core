@@ -1,6 +1,7 @@
 package com.idega.group.cache.bean;
 
 import java.io.Serializable;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -8,13 +9,19 @@ public class CachedGroup implements Serializable {
 
 	private static final long serialVersionUID = -6002584749728533881L;
 
+	private Integer groupRelationId;
+
 	private Integer id;
 
 	private String type;
 
-	private List<CachedGroup> parents;
+	private Map<Integer, CachedGroup> parents = new HashMap<>();
+	private Map<Integer, CachedGroup> children = new HashMap<>();
 
-	private Map<Integer, List<CachedGroup>> children;
+	private List<CachedGroup> allParents;
+	private Map<Integer, List<CachedGroup>> allChildren;
+
+	private boolean active;
 
 	public CachedGroup() {
 		super();
@@ -25,10 +32,21 @@ public class CachedGroup implements Serializable {
 
 		this.id = id;
 		this.type = type;
+	}
 
-		if ("alias".equals(type)) {
-			System.out.println("Alias in " + this);
-		}
+	public CachedGroup(Integer groupRelationId, Integer id, String type, boolean active) {
+		this(id, type);
+
+		this.groupRelationId = groupRelationId;
+		this.active = active;
+	}
+
+	public Integer getGroupRelationId() {
+		return groupRelationId;
+	}
+
+	public void setGroupRelationId(Integer groupRelationId) {
+		this.groupRelationId = groupRelationId;
 	}
 
 	public Integer getId() {
@@ -47,25 +65,94 @@ public class CachedGroup implements Serializable {
 		this.type = type;
 	}
 
-	public List<CachedGroup> getParents() {
+	public List<CachedGroup> getAllParents() {
+		return allParents;
+	}
+
+	public void setAllParents(List<CachedGroup> allParents) {
+		this.allParents = allParents;
+	}
+
+	public Map<Integer, List<CachedGroup>> getAllChildren() {
+		return allChildren;
+	}
+
+	public void setAllChildren(Map<Integer, List<CachedGroup>> allChildren) {
+		this.allChildren = allChildren;
+	}
+
+	public Map<Integer, CachedGroup> getParents() {
 		return parents;
 	}
 
-	public void setParents(List<CachedGroup> parents) {
+	public void setParents(Map<Integer, CachedGroup> parents) {
 		this.parents = parents;
 	}
 
-	public Map<Integer, List<CachedGroup>> getChildren() {
+	public void addParent(CachedGroup parent) {
+		addRelation(parents, parent);
+	}
+
+	private void addRelation(Map<Integer, CachedGroup> relations, CachedGroup relation) {
+		if (relation == null) {
+			return;
+		}
+
+		if (relations == null) {
+			relations = new HashMap<>();
+		}
+
+		relations.put(relation.getId(), relation);
+	}
+
+	public Map<Integer, CachedGroup> getChildren() {
 		return children;
 	}
 
-	public void setChildren(Map<Integer, List<CachedGroup>> children) {
+	public void setChildren(Map<Integer, CachedGroup> children) {
 		this.children = children;
+	}
+
+	public void addChild(CachedGroup child) {
+		addRelation(children, child);
+	}
+
+	public boolean isActive() {
+		return active;
+	}
+
+	public void setActive(boolean active) {
+		this.active = active;
+	}
+
+	@Override
+	public boolean equals(Object o) {
+		if (o instanceof CachedGroup) {
+			CachedGroup cachedGroup = (CachedGroup) o;
+			Integer relationId1 = getGroupRelationId();
+			Integer relationId2 = cachedGroup.getGroupRelationId();
+			Integer id1 = getId();
+			Integer id2 = cachedGroup.getId();
+			String type1 = getType();
+			String type2 = cachedGroup.getType();
+			Map<Integer, CachedGroup> parents1 = getParents();
+			Map<Integer, CachedGroup> parents2 = cachedGroup.getParents();
+			if (
+					relationId1 != null && relationId2 != null && relationId1.intValue() == relationId2.intValue() &&
+					id1 != null && id2 != null && id1.intValue() == id2.intValue() &&
+					type1 != null && type2 != null && type1.equals(type2) &&
+					parents1 != null && parents2 != null && parents1.equals(parents2)
+			) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	@Override
 	public String toString() {
-		return "ID: " + getId() + ", type: " + getType();
+		return "ID: " + getId() + ", type: " + getType() + ", parent IDs: " + getParents().keySet() + ", children IDs: " + getChildren().keySet();
 	}
 
 }

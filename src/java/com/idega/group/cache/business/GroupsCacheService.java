@@ -14,7 +14,7 @@ public interface GroupsCacheService {
 
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> notContainingTypes, Integer from, Integer to);
 
-	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
+	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notContainingTypes, Integer levels, Integer from, Integer to);
 
@@ -29,7 +29,7 @@ public interface GroupsCacheService {
 
 	public void doCacheGroup(Integer groupId);
 
-	public List<com.idega.user.data.bean.Group> findActiveGroupsByType(String type);
+	public List<Group> findActiveGroupsByType(String type);
 
 	public void doCache(List<Integer> groupsIds);
 
@@ -41,8 +41,21 @@ public interface GroupsCacheService {
 
 	public Map<String, List<Integer>> getUsersGroupsCache(boolean checkIfEmpty, Integer userId);
 
-	public Map<String, List<com.idega.user.data.bean.Group>> getUserGroupsCache();
+	public Map<String, List<Group>> getUserGroupsCache();
 
 	public void setCacheInProgress(String name, Boolean inProgress);
 	public boolean isCacheInProgress(String name);
+
+	public void doCacheGroupRelations();
+
+	public List<Integer> findGroupsIdsByTypes(List<String> types);
+
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentIds, List<String> childGroupsTypes);
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentIds, List<String> childGroupsTypes, Integer levels);
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentIds, List<String> childGroupsTypes, boolean loadAliases);
+
+	public List<Integer> getGroupsIdsByIdsAndTypes(List<Integer> parentIds, List<String> childGroupsTypes);
+
+	public <T extends Serializable> List<T> filterGroupsByIdsAndTypes(List<Integer> parentIds, List<String> childGroupsTypes, Class<T> resultType);
+
 }
