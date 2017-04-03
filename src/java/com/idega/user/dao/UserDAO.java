@@ -109,4 +109,16 @@ public interface UserDAO extends GenericDao {
 	 */
 	List<User> findFilteredBy(String anyColumn);
 
+	/**
+	 * 
+	 * <p>Updates/creates user</p>
+	 * @param id is {@link User#getId()}, skipped on creation
+	 * @param personalId is {@link User#getPersonalID()}
+	 * @param eMail is {@link User#getEmailAddress()}
+	 * @param name is {@link User#getName()}
+	 * @param gender is "F" for female and "M" for male, not default value
+	 * @return entity or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	User update(Integer id, String personalId, String eMail, String name, String gender);
 }

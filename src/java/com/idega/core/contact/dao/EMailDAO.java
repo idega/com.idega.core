@@ -85,6 +85,7 @@ package com.idega.core.contact.dao;
 import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.EmailType;
 import com.idega.core.data.bean.GenericType;
+import com.idega.user.data.bean.User;
 
 /**
  * <p>Data access object for {@link Email} entity</p>
@@ -145,4 +146,15 @@ public interface EMailDAO {
 	Email update(Integer id, String eMailAddress, String displayName, String uniqueName, String description);
 
 	Email createEmail(Integer userId, String eMailAddress, EmailType type);
+
+	/**
+	 * 
+	 * <p>Updates/creates entity</p>
+	 * @param id is {@link Email#getId()} new entity is created on <code>null</code>
+	 * @param userId is {@link User#getId()}, not <code>null</code>
+	 * @param eMailAddress is value to add, not <code>null</code>
+	 * @return entity or <code>null</code> on failure
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	Email update(Integer id, Integer userId, String eMailAddress);
 }
