@@ -70,7 +70,21 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 	@Override
 	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels) {
-		return getChildGroupsIds(parentGroupsIds, childGroupTypes, null, levels, null, null);
+		Map<Integer, List<Integer>> allIds = getChildGroupsIds(parentGroupsIds, childGroupTypes, levels);
+		if (MapUtil.isEmpty(allIds)) {
+			return null;
+		}
+
+		Set<Integer> results = new HashSet<>();
+		for (List<Integer> ids: allIds.values()) {
+			if (ListUtil.isEmpty(ids)) {
+				continue;
+			}
+
+			results.addAll(ids);
+		}
+
+		return new ArrayList<>(results);
 	}
 
 	@Override
@@ -401,6 +415,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	private Map<Integer, com.idega.group.cache.bean.GroupRelation> relations = new HashMap<>();
+	private Map<Integer, Integer> aliases = new HashMap<>();
 	private Map<Integer, CachedGroup> groups = new HashMap<>();
 	private Map<String, Set<Integer>> types = new HashMap<>();
 
@@ -495,6 +510,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 							String relatedGroupType = (String) alias[2];
 
 							addRelations(null, parent, new CachedGroup(parent == null ? null : parent.getGroupRelationId(), relatedGroupId, relatedGroupType, true));
+							this.aliases.put(relatedGroupId, aliasId);
 						}
 					}
 				}
@@ -578,7 +594,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 		if (parent != null && child != null) {
 			parent.addChild(child);
-			child.addChild(parent);
+			child.addParent(parent);
 		}
 	}
 
@@ -1013,8 +1029,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 		Map<Integer, List<Integer>> results = new HashMap<>();
 		for (Integer parentId: parentIds) {
-			CachedGroup parent = groups.get(parentId);
-			Map<Integer, List<Integer>> tmpResults = getChildren(parent, childGroupsTypes, levels);
+			Map<Integer, List<Integer>> tmpResults = getChildren(parentId, childGroupsTypes, levels);
 			if (MapUtil.isEmpty(tmpResults)) {
 				continue;
 			}
@@ -1038,8 +1053,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 		Set<Integer> results = new HashSet<>();
 		for (Integer parentId: parentIds) {
-			CachedGroup parent = groups.get(parentId);
-			Map<Integer, List<Integer>> tmpResults = getChildren(parent, childGroupsTypes, null);
+			Map<Integer, List<Integer>> tmpResults = getChildren(parentId, childGroupsTypes, null);
 			if (MapUtil.isEmpty(tmpResults)) {
 				continue;
 			}
@@ -1056,12 +1070,11 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return new ArrayList<>(results);
 	}
 
-	private Map<Integer, List<Integer>> getChildren(CachedGroup parent, List<String> childGroupsTypes, Integer maxLevels) {
-		if (parent == null || ListUtil.isEmpty(childGroupsTypes)) {
+	private Map<Integer, List<Integer>> getChildren(Integer parentId, List<String> childGroupsTypes, Integer maxLevels) {
+		if (parentId == null || ListUtil.isEmpty(childGroupsTypes)) {
 			return null;
 		}
 
-		Integer parentId = parent.getId();
 		Set<Integer> results = new HashSet<>();
 		for (String type: childGroupsTypes) {
 			Set<Integer> ids = types.get(type);
@@ -1069,7 +1082,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				continue;
 			}
 
-			for (Integer id: ids) {
+			Set<Integer> copy = new HashSet<>(ids);
+			for (Integer id: copy) {
 				if (id.intValue() == parentId.intValue()) {
 					results.add(id);
 					continue;
@@ -1090,11 +1104,10 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 
 		Map<Integer, List<Integer>> allResults = new HashMap<>();
-		allResults.put(1, new ArrayList<>(results));
+		if (!ListUtil.isEmpty(results)) {
+			allResults.put(1, new ArrayList<>(results));
+		}
 		return allResults;
-
-//		Map<Integer, List<Integer>> results = new HashMap<>();
-//		return getChildren(parent, childGroupsTypes, maxLevels, null, results, null);
 	}
 
 	private void collectAllParentsIds(Map<Integer, CachedGroup> parents, Map<Integer, Boolean> results, Integer maxLevels, Integer currentLevel) {
