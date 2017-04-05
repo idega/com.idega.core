@@ -379,20 +379,41 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
-			GroupRelationDAO groupRelationDAO = ELUtil.getInstance().getBean(GroupRelationDAO.class);
-			GroupRelation groupRelation = groupRelationDAO.getById(relationId);
-			if (groupRelation == null) {
+			getLogger().info("Updating relations cache. ID of changed relation: " + relationId);
+
+			Integer groupId = event.getGroupId();
+			String groupType = event.getGroupType();
+			Integer relatedGroupId = event.getRelatedGroupId();
+			String relatedGroupType = event.getRelatedGroupType();
+			String status = event.getStatus();
+
+			if (groupId == null || relatedGroupId == null) {
+				GroupRelationDAO groupRelationDAO = ELUtil.getInstance().getBean(GroupRelationDAO.class);
+				GroupRelation groupRelation = groupRelationDAO.getById(relationId);
+				if (groupRelation == null) {
+					getLogger().warning("Did not find group relation by ID: " + relationId);
+					return;
+				} else {
+					getLogger().info("Found group relation by ID: " + relationId);
+				}
+
+				Group group = groupRelation.getGroup();
+				groupId = group == null ? null : group.getID();
+				groupType = group == null ? null : group.getType();
+
+				Group relatedGroup = groupRelation.getRelatedGroup();
+				relatedGroupId = relatedGroup == null ? null : relatedGroup.getID();
+				relatedGroupType = relatedGroup == null ? null : relatedGroup.getType();
+
+				status = groupRelation.getStatus();
+			}
+
+			if (groupId == null || relatedGroupId == null || StringUtil.isEmpty(groupType) || StringUtil.isEmpty(relatedGroupType)) {
+				getLogger().warning("Can not update relations cache: insufficient data. ID of changed relation: " + relationId);
 				return;
 			}
 
-			Group group = groupRelation.getGroup();
-			Integer groupId = group.getID();
-			String groupType = group.getType();
-
-			Group relatedGroup = groupRelation.getRelatedGroup();
-			Integer relatedGroupId = relatedGroup.getID();
-			String relatedGroupType = relatedGroup.getType();
-			boolean active = isActive(groupRelation.getStatus());
+			boolean active = isActive(status);
 
 			com.idega.group.cache.bean.GroupRelation relation = relations.get(relationId);
 			CachedGroup parent = new CachedGroup(relationId, groupId, groupType, active);
