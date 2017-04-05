@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -28,6 +30,8 @@ import javax.persistence.PostPersist;
 import javax.persistence.PostRemove;
 import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
@@ -36,8 +40,10 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.user.events.GroupRelationChangedEvent.EventType;
+import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 @Entity
@@ -143,6 +149,28 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		if (getInitiationDate() == null) {
 			setInitiationDate(IWTimestamp.getTimestampRightNow());
 		}
+
+		onBeforeUpdate();
+	}
+
+	@PreUpdate
+	@PreRemove
+	public void onBeforeUpdate() {
+		final Integer id = getId();
+		if (id != null) {
+			//	Editing
+			String status = getStatus();
+			GroupRelationType groupRelationType = getGroupRelationType();
+			String relationshipType = groupRelationType == null ? null : groupRelationType.getType();
+			GroupType relatedGroupTypeEntity = getRelatedGroupType();
+			String relatedGroupType = relatedGroupTypeEntity == null ? null : relatedGroupTypeEntity.getGroupType();
+			if (StringUtil.isEmpty(status) || StringUtil.isEmpty(relationshipType) || StringUtil.isEmpty(relatedGroupType)) {
+				String message = "Insufficient data for " + getClass().getName() + ", ID: " + id + ". Status: " + status + ", relationship type : " + relationshipType + ", related group type: " + relatedGroupType;
+				RuntimeException e = new RuntimeException(message);
+				CoreUtil.sendExceptionNotification(message, e);
+				throw e;
+			}
+		}
 	}
 
 	@PostPersist
@@ -150,15 +178,35 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	@PostRemove
 	public void onChange() {
 		final Integer id = getId();
-		Thread updater = new Thread(new Runnable() {
 
-			@Override
-			public void run() {
-				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.GROUP_CHANGE, id));
-			}
+		try {
+			final Group group = getGroup();
+			final Group relatedGroup = getRelatedGroup();
+			final String status = getStatus();
+			Thread updater = new Thread(new Runnable() {
 
-		});
-		updater.start();
+				@Override
+				public void run() {
+					ELUtil.getInstance().publishEvent(
+							new GroupRelationChangedEvent(
+									EventType.GROUP_CHANGE,
+									id,
+									group == null ? null : group.getID(),
+									group == null ? null : group.getType(),
+									relatedGroup == null ? null : relatedGroup.getID(),
+									relatedGroup == null ? null : relatedGroup.getType(),
+									status
+							)
+					);
+				}
+
+			});
+			updater.start();
+		} catch (Exception e) {
+			String message = "Error posting event about updated " + getClass().getName() + " with ID: " + id;
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, message, e);
+			CoreUtil.sendExceptionNotification(message, e);
+		}
 	}
 
 	@Id
