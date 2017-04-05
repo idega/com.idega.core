@@ -12,6 +12,7 @@ package com.idega.user.business;
 
 import java.io.IOException;
 import java.rmi.RemoteException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -993,7 +994,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 				return list;
 			} catch (Exception ex) {
-				getLogger().log(Level.WARNING, 
+				getLogger().log(Level.WARNING,
 						"Failed to get list of child groups, cause of: ", ex);
 			}
 		}
@@ -1260,8 +1261,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	@Override
 	public void addUser(int groupId, User user) throws EJBException, RemoteException {
+		addUser(groupId, user, null);
+	}
+	@Override
+	public void addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException {
 		try {
-			this.getGroupByGroupID(groupId).addGroup(user);
+			this.getGroupByGroupID(groupId).addGroup(user, timestamp);
 		}
 		catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());
