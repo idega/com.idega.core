@@ -494,6 +494,14 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public Collection<Group> getParentGroupsRecursive(User user, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
 		return getParentGroupsRecursive((Group) user, groupTypes, returnSpecifiedGroupTypes, null, null);
 	}
+	@Override
+	public Collection<Group> getParentGroupsRecursive(
+			Group aGroup,
+			String[] groupTypes,
+			boolean returnSpecifiedGroupTypes
+	) throws EJBException, java.rmi.RemoteException {
+		return getParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes, null, null);
+	}
 
 	private <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(
 			G aGroup,
