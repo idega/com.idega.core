@@ -110,8 +110,12 @@ public class IWDatePicker extends TextInput {
 	private void initializeProperties(FacesContext context) {
 		ValueExpression ve = getValueExpression(INITIAL_DATE_PROPERTY);
     	if (ve != null) {
-	    	Date date = (Date) ve.getValue(context.getELContext());
-	    	setDate(date);
+	    	Object dateObject =  ve.getValue(context.getELContext());
+	    	if (dateObject instanceof Date) {
+		    	setDate((Date) dateObject);
+	    	} else {
+	    		setDate(new IWTimestamp(dateObject.toString()).getDate());
+	    	}
     	}
 
     	ve = getValueExpression(COMPOSITE_ID_PROPERTY);
