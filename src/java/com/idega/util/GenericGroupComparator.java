@@ -21,23 +21,39 @@ import com.idega.presentation.IWContext;
  */
 public class GenericGroupComparator implements Comparator {
 
-	protected IWContext _iwc;
 	protected final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
-	
+
+	protected IWContext _iwc = null;
+	private Collator collator = null;
+
 	public GenericGroupComparator(IWContext iwc) {
 		this._iwc = iwc;
+		collator = Collator.getInstance(iwc.getCurrentLocale());
 	}
 
 	/**
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
+	@Override
 	public int compare(Object o1, Object o2) {
-		Collator collator = Collator.getInstance(this._iwc.getCurrentLocale());
-		
+		if (!(o1 instanceof GenericGroup) || !(o2 instanceof GenericGroup)) {
+			return 0;
+		}
+
 		GenericGroup g1 = (GenericGroup) o1;
 		GenericGroup g2 = (GenericGroup) o2;
-		
-		return collator.compare(g1.getName(), g2.getName());
+
+		if (g1 == null || g2 == null) {
+			return 0;
+		}
+
+		String name1 = g1.getName();
+		String name2 = g2.getName();
+		if (name1 == null || name2 == null) {
+			return 0;
+		}
+
+		return collator.compare(name1, name2);
 	}
 
 }
