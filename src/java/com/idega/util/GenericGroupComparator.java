@@ -19,13 +19,15 @@ import com.idega.presentation.IWContext;
  * To enable and disable the creation of type comments go to
  * Window>Preferences>Java>Code Generation.
  */
-public class GenericGroupComparator implements Comparator<GenericGroup> {
+public class GenericGroupComparator implements Comparator {
 
 	protected final static String IW_BUNDLE_IDENTIFIER = "com.idega.user";
 
+	protected IWContext _iwc = null;
 	private Collator collator = null;
 
 	public GenericGroupComparator(IWContext iwc) {
+		this._iwc = iwc;
 		collator = Collator.getInstance(iwc.getCurrentLocale());
 	}
 
@@ -33,7 +35,14 @@ public class GenericGroupComparator implements Comparator<GenericGroup> {
 	 * @see java.util.Comparator#compare(java.lang.Object, java.lang.Object)
 	 */
 	@Override
-	public int compare(GenericGroup g1, GenericGroup g2) {
+	public int compare(Object o1, Object o2) {
+		if (!(o1 instanceof GenericGroup) || !(o2 instanceof GenericGroup)) {
+			return 0;
+		}
+
+		GenericGroup g1 = (GenericGroup) o1;
+		GenericGroup g2 = (GenericGroup) o2;
+
 		if (g1 == null || g2 == null) {
 			return 0;
 		}
