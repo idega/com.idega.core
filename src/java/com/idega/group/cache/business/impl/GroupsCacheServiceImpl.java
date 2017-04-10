@@ -42,6 +42,7 @@ import com.idega.user.data.GroupTypeConstants;
 import com.idega.user.data.User;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
+import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.ArrayUtil;
@@ -379,8 +380,6 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
-			getLogger().info("Updating relations cache. ID of changed relation: " + relationId);
-
 			Integer groupId = event.getGroupId();
 			String groupType = event.getGroupType();
 			Integer relatedGroupId = event.getRelatedGroupId();
@@ -414,6 +413,9 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			}
 
 			boolean active = isActive(status);
+
+			getLogger().info("Updating relations cache. ID of changed relation: " + relationId + ". Group ID: " + groupId + ", group type: " +
+					groupType + ", related group ID: " + relatedGroupId + ", related group type: " + relatedGroupType + ", active: " + active);
 
 			com.idega.group.cache.bean.GroupRelation relation = relations.get(relationId);
 			CachedGroup parent = new CachedGroup(relationId, groupId, groupType, active);
@@ -459,6 +461,16 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 	}
 
+	private boolean isUserCacheOn() {
+		String property = "cache_groups_and_users_relations";
+		try {
+			return getSettings().getBoolean(property, false);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting property " + property, e);
+		}
+		return false;
+	}
+
 	@Override
 	@Transactional(readOnly = true)
 	public void doCacheGroupRelations() {
@@ -466,20 +478,23 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		try {
 			relations = new HashMap<>();
 
-			Long count = groupDAO.getSingleResultByInlineQuery("select count(gr.groupRelationID) from " + GroupRelation.class.getName() +
-					" gr where gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "'", Long.class);
+			String query = "from " + GroupRelation.class.getName() + " gr where gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "'";
+			if (isUserCacheOn()) {
+				query = query.concat(" and gr.relatedGroup.groupType.groupType != '").concat(UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE).concat("'");
+			}
+
+			Long count = groupDAO.getSingleResultByInlineQuery("select count(gr.groupRelationID) ".concat(query), Long.class);
 			if (count == null || count <= 0) {
 				return;
 			}
 
 			int columns = 5;
-			String query = "select gr.groupRelationID, gr.group.id, gr.group.groupType.groupType, gr.relatedGroup.id, gr.relatedGroup.groupType.groupType from " + GroupRelation.class.getName() +
-					" gr where gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "'";
+			String relationsQuery = "select gr.groupRelationID, gr.group.id, gr.group.groupType.groupType, gr.relatedGroup.id, gr.relatedGroup.groupType.groupType ".concat(query);
 
 			int index = 0;
 			int step = 50000;
 			while (index < count) {
-				List<Object[]> data = groupDAO.getResultListByInlineQuery(query, Object[].class, index, step, null);
+				List<Object[]> data = groupDAO.getResultListByInlineQuery(relationsQuery, Object[].class, index, step, null);
 				if (ListUtil.isEmpty(data)) {
 					continue;
 				}
@@ -501,8 +516,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 						aliasesIds.put(relatedGroupId, groupId);
 					}
 
-//					String status = (String) relationData[5];
-					boolean active = true;//isActive(status);
+					boolean active = true;
 					addRelations(
 							new com.idega.group.cache.bean.GroupRelation(relationId, groupId, groupType, relatedGroupId, relatedGroupType, active),
 							new CachedGroup(relationId, groupId, groupType, active),
