@@ -16,6 +16,7 @@ import com.idega.block.web2.business.JQueryUIType;
 import com.idega.block.web2.business.Web2Business;
 import com.idega.idegaweb.IWBundle;
 import com.idega.presentation.IWContext;
+import com.idega.presentation.ui.handlers.IWDatePickerHandler;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
@@ -47,7 +48,7 @@ public class IWDatePicker extends TextInput {
 
 	private static final String MAX_DATE_PROPERTY = "maxDate";
 	private Date maxDate = null;
-	
+
 	private static final String MIN_DATE_PROPERTY = "minDate";
 	private Date minDate = null;
 
@@ -110,7 +111,13 @@ public class IWDatePicker extends TextInput {
 	private void initializeProperties(FacesContext context) {
 		ValueExpression ve = getValueExpression(INITIAL_DATE_PROPERTY);
     	if (ve != null) {
-	    	Date date = (Date) ve.getValue(context.getELContext());
+    		Object value = ve.getValue(context.getELContext());
+    		Date date = null;
+    		if (value instanceof Date) {
+    			date = (Date) value;
+    		} else if (value instanceof String) {
+    			date = IWDatePickerHandler.getParsedDate((String) value);
+    		}
 	    	setDate(date);
     	}
 
@@ -511,10 +518,12 @@ public class IWDatePicker extends TextInput {
 		this.onSelectAction = onSelectAction;
 	}
 
+	@Override
 	public String getName() {
 		return name;
 	}
 
+	@Override
 	public void setName(String name) {
 		this.name = name;
 	}

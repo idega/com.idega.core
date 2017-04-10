@@ -40,20 +40,24 @@ public class GenericGroupComparator implements Comparator<Object> {
 	 */
 	@Override
 	public int compare(Object o1, Object o2) {
-		String c1 = null, c2 = null;
+		String name1 = null, name2 = null;
 		if (o1 instanceof Group) {
-			c1 = ((Group) o1).getName();
+			name1 = ((Group) o1).getName();
 		} else if (o1 instanceof GenericGroup) {
-			c1 = ((GenericGroup) o1).getName();
+			name1 = ((GenericGroup) o1).getName();
 		}
 
 		if (o2 instanceof Group) {
-			c2 = ((Group) o2).getName();
+			name2 = ((Group) o2).getName();
 		} else if (o2 instanceof GenericGroup) {
-			c2 = ((GenericGroup) o2).getName();
+			name2 = ((GenericGroup) o2).getName();
 		}
 
-		return collator.compare(c1, c2);
+		if (name1 == null || name2 == null) {
+			return 0;
+		}
+
+		return collator.compare(name1, name2);
 	}
 
 }
