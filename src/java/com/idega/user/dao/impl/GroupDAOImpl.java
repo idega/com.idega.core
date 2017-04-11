@@ -795,11 +795,13 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				}
 				group = DBUtil.getInstance().lazyLoad(group);
 
-				Integer id = group.getID();
-				if (id != null) {
-					query.append(id);
-					if (groupsIter.hasNext()) {
-						query.append(", ");
+				if (group != null) {
+					Integer id = group.getID();
+					if (id != null) {
+						query.append(id);
+						if (groupsIter.hasNext()) {
+							query.append(", ");
+						}
 					}
 				}
 			}
