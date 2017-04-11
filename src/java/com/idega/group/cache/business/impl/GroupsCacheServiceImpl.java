@@ -412,6 +412,10 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
+			if (UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE.equals(relatedGroupType) && !isUserCacheOn()) {
+				return;
+			}
+
 			boolean active = isActive(status);
 
 			getLogger().info("Updating relations cache. ID of changed relation: " + relationId + ". Group ID: " + groupId + ", group type: " +
