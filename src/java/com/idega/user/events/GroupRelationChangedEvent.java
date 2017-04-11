@@ -24,7 +24,7 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 	private Integer relatedGroupId;
 	private String relatedGroupType;
 
-	private String status;
+	private String status, source;
 
 	public GroupRelationChangedEvent(EventType type) {
 		super(type);
@@ -95,6 +95,15 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	public String getStatus() {
 		return status;
+	}
+
+	@Override
+	public String getSource() {
+		return source;
+	}
+
+	public void setSource(String source) {
+		this.source = source;
 	}
 
 	@Override
