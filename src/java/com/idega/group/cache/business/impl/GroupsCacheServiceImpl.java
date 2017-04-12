@@ -482,7 +482,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		try {
 			relations = new HashMap<>();
 
-			String query = "from " + GroupRelation.class.getName() + " gr where gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "'";
+			String query = "from " + GroupRelation.class.getName() + " gr where (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') ";
 			if (!isUserCacheOn()) {
 				query = query.concat(" and gr.relatedGroup.groupType.groupType != '").concat(UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE).concat("'");
 			}
