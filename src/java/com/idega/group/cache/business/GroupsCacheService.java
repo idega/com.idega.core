@@ -58,4 +58,6 @@ public interface GroupsCacheService {
 
 	public <T extends Serializable> List<T> filterGroupsByIdsAndTypes(List<Integer> parentIds, List<String> childGroupsTypes, Class<T> resultType);
 
+	public boolean isUserCacheOn();
+
 }

@@ -465,7 +465,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 	}
 
-	private boolean isUserCacheOn() {
+	@Override
+	public boolean isUserCacheOn() {
 		String property = "cache_groups_and_users_relations";
 		try {
 			return getSettings().getBoolean(property, false);
