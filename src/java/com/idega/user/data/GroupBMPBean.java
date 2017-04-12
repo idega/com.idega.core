@@ -1826,11 +1826,14 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException {
 		int groupId = this.getGroupIDFromGroup(entityToRemoveFrom);
-		if ((groupId == -1) || (groupId == 0)) {
+		removeGroup(groupId, currentUser);
+	}
+
+	public void removeGroup(Integer groupIdToRemove, User currentUser) throws EJBException {
+		int groupId = groupIdToRemove == null ? -1 : groupIdToRemove;
+		if (groupId == -1 || groupId == 0) {
 			this.removeGroup(groupId, currentUser, true);
-		}
-		else {
-			// just removing this particular one
+		} else {
 			this.removeGroup(groupId, currentUser, false);
 		}
 	}
@@ -1886,8 +1889,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	@Override
-	public void removeGroup(int relatedGroupId, User currentUser, boolean AllEntries) throws EJBException {
-		removeGroup(relatedGroupId, currentUser, AllEntries, IWTimestamp.getTimestampRightNow());
+	public void removeGroup(int relatedGroupId, User currentUser, boolean allEntries) throws EJBException {
+		removeGroup(relatedGroupId, currentUser, allEntries, IWTimestamp.getTimestampRightNow());
 	}
 
 	protected GroupRelationHome getGroupRelationHome() {

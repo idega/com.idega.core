@@ -2894,6 +2894,11 @@ public void removeGroup(Group group, User currentUser)  {
     throw new UnsupportedOperationException();
   }
 
+  @Override
+public void removeGroup(Integer groupIdToRemove, User currentUser) {
+	  throw new UnsupportedOperationException();
+  }
+
   /**
    * Unsupported.
    *
