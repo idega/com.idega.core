@@ -66,6 +66,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getName
 	 */
+	@Override
 	public String getName();
 
 	/**
@@ -544,6 +545,8 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 * @see com.idega.user.data.GroupBMPBean#removeGroup
 	 */
 	public void removeGroup(Group entityToRemoveFrom, User currentUser) throws EJBException;
+
+	public void removeGroup(Integer groupIdToRemove, User currentUser);
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#removeGroup
