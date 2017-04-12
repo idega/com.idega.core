@@ -649,31 +649,23 @@ public void removeBy(User currentUser) throws RemoveException{
 
 		super.store();
 
-		final Integer id = (Integer) getPrimaryKey();
+		Integer id = (Integer) getPrimaryKey();
 
 		try {
-			final Group group = getGroup();
-			final Group relatedGroup = getRelatedGroup();
-			final String status = getStatus();
-			Thread updater = new Thread(new Runnable() {
-
-				@Override
-				public void run() {
-					ELUtil.getInstance().publishEvent(
-							new GroupRelationChangedEvent(
-									EventType.GROUP_CHANGE,
-									id,
-									group == null ? null : (Integer) group.getPrimaryKey(),
-									group == null ? null : group.getType(),
-									relatedGroup == null ? null : (Integer) relatedGroup.getPrimaryKey(),
-									relatedGroup == null ? null : relatedGroup.getType(),
-									status
-							)
-					);
-				}
-
-			});
-			updater.start();
+			Group group = getGroup();
+			Group relatedGroup = getRelatedGroup();
+			String status = getStatus();
+			ELUtil.getInstance().publishEvent(
+					new GroupRelationChangedEvent(
+							EventType.GROUP_CHANGE,
+							id,
+							group == null ? null : (Integer) group.getPrimaryKey(),
+							group == null ? null : group.getType(),
+							relatedGroup == null ? null : (Integer) relatedGroup.getPrimaryKey(),
+							relatedGroup == null ? null : relatedGroup.getType(),
+							status
+					)
+			);
 		} catch (Exception e) {
 			String message = "Error posting event about updated " + getClass().getName() + " with ID: " + id;
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, message, e);
