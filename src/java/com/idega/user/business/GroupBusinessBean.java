@@ -1316,8 +1316,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 	@Override
 	public void addUser(int groupId, User user, Timestamp time) throws EJBException, RemoteException {
+		addUser(Integer.valueOf(groupId), user, time);
+	}
+	@Override
+	public Integer addUser(Integer groupId, User user, Timestamp time) throws EJBException, RemoteException {
 		try {
-			this.getGroupByGroupID(groupId).addGroup(user, time == null ? IWTimestamp.getTimestampRightNow() : time);
+			return getGroupByGroupID(groupId).addUser(user, time == null ? IWTimestamp.getTimestampRightNow() : time);
 		}
 		catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());

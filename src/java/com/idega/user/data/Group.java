@@ -300,6 +300,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 */
 	public void addGroup(User userToAdd) throws EJBException;
 	public void addGroup(User userToAdd, Timestamp time) throws EJBException;
+	public Integer addUser(User userToAdd, Timestamp time) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
