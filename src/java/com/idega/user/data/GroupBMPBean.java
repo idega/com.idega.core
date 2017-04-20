@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -974,8 +975,19 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addGroup(User userToAdd) throws EJBException {
+		addGroup(userToAdd, IWTimestamp.getTimestampRightNow());
+	}
 
-		this.addGroup(this.getGroupIDFromGroup(userToAdd));
+	@Override
+	public void addGroup(User userToAdd, Timestamp time) throws EJBException {
+		addUser(userToAdd, time);
+	}
+
+	@Override
+	public Integer addUser(User userToAdd, Timestamp time) throws EJBException {
+		Integer userId = Integer.valueOf(this.getGroupIDFromGroup(userToAdd));
+		Integer relationId = addGroup(userId, time);
+
 		boolean needsToStore = false;
 		if (userToAdd.getDeleted()) {
 			needsToStore = true;
@@ -990,6 +1002,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		if (needsToStore) {
 			userToAdd.store();
 		}
+
+		return relationId;
 	}
 
 	/**
@@ -1018,9 +1032,9 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	@Override
-	public void addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
+	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
 		try {
-			addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time, addedBy);
+			return addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time, addedBy);
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -1080,27 +1094,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		addUniqueRelation(relatedGroupId, relationType, time, null);
 	}
 
-	private void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time, User addedBy) throws CreateException {
-		if (!hasRelationTo(relatedGroupId, relationType)) {
-			GroupRelation rel = this.getGroupRelationHome().create();
-			rel.setGroup(this);
-			rel.setRelatedGroup(relatedGroupId);
-			rel.setRelationshipType(relationType);
-			if (time == null) {
-				time = IWTimestamp.getTimestampRightNow();
-			}
-
-			if (addedBy == null) {
-				addedBy = getPerformer();
-			}
-
-			rel.setCreatedBy(addedBy);
-			rel.setInitiationDate(time);
-			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
-			rel.store();
-		}
-	}
-
 	private User getPerformer() {
 		try {
 			IWContext iwc = CoreUtil.getIWContext();
@@ -1109,6 +1102,31 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			}
 		} catch (Exception e) {}
 		return null;
+	}
+
+	private Integer addUniqueRelation(Integer relatedGroupId, String relationType, Timestamp time, User addedBy) throws CreateException {
+		Collection<GroupRelation> relations = getRelations(relatedGroupId, relationType);
+		if (!ListUtil.isEmpty(relations)) {
+			return (Integer) relations.iterator().next().getPrimaryKey();
+		}
+
+		GroupRelation rel = this.getGroupRelationHome().create();
+		rel.setGroup(this);
+		rel.setRelatedGroup(relatedGroupId);
+		rel.setRelationshipType(relationType);
+		if (time == null) {
+			time = IWTimestamp.getTimestampRightNow();
+		}
+
+		if (addedBy == null) {
+			addedBy = getPerformer();
+		}
+
+		rel.setCreatedBy(addedBy);
+		rel.setInitiationDate(time);
+		rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
+		rel.store();
+		return (Integer) rel.getPrimaryKey();
 	}
 
 	@Override
@@ -1566,14 +1584,11 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public boolean hasRelationTo(int groupId) {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
-		Collection relations = new ArrayList();
+		Collection<GroupRelation> relations = new ArrayList<>();
 		try {
 			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(myId, groupId);
-		}
-		catch (FinderException ex) {
-			ex.printStackTrace();
-		}
-		return !relations.isEmpty();
+		} catch (FinderException ex) {}
+		return !ListUtil.isEmpty(relations);
 	}
 
 	/**
@@ -1581,21 +1596,22 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public boolean hasRelationTo(int groupId, String relationType) {
+		Collection<GroupRelation> relations = getRelations(groupId, relationType);
+		return !ListUtil.isEmpty(relations);
+	}
+
+	private Collection<GroupRelation> getRelations(int groupId, String relationType) {
 		int myId = ((Integer) this.getPrimaryKey()).intValue();
-		Collection relations = new ArrayList();
 		try {
-			relations = this.getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(myId, groupId, relationType);
-		}
-		catch (FinderException ex) {
-			ex.printStackTrace();
-		}
-		return !relations.isEmpty();
+			return this.getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(myId, groupId, relationType);
+		} catch (FinderException ex) {}
+		return Collections.emptyList();
 	}
 
 	@Override
-	public Iterator getChildrenIterator() {
-		Iterator it = null;
-		Collection children = getChildren();
+	public Iterator<Group> getChildrenIterator() {
+		Iterator<Group> it = null;
+		Collection<Group> children = getChildren();
 		if (children != null) {
 			it = children.iterator();
 		}
@@ -1603,7 +1619,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	@Override
-	public Collection getChildren() {
+	public Collection<Group> getChildren() {
 		AccessController instance = IWMainApplication.getDefaultIWMainApplication().getAccessController();
 		if (this.getID() == instance.getUsersGroupID()) {
 			// String[] groupTypes = {"ic_user_representative"};

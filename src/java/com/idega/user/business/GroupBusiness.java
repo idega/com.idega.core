@@ -41,9 +41,11 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.AddressData;
 import com.idega.user.bean.GroupDataBean;
+import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.GroupNode;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
 import com.idega.user.data.GroupTypeHome;
@@ -132,18 +134,18 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection<Group> getParentGroupsRecursive(int uGroupId) throws EJBException, java.rmi.RemoteException;
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(int uGroupId) throws EJBException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection<Group> getParentGroupsRecursive(Group aGroup) throws EJBException, java.rmi.RemoteException;
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup) throws EJBException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
-	public Collection<Group> getParentGroupsRecursive(Group aGroup, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException,
-			java.rmi.RemoteException;
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup, Map<String, Collection<Integer>> cachedParents, Map<String, G> cachedGroups) throws EJBException;
+	public Collection<Group> getParentGroupsRecursive(User user, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getUserRepresentativeGroupTypeStringArray
@@ -153,6 +155,10 @@ public interface GroupBusiness extends IBOService {
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getParentGroupsRecursive
 	 */
+
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
+	public Collection<Group> getParentGroupsRecursive(User user, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException;
+
 	public Collection<Group> getParentGroupsRecursive(
 			Group aGroup,
 			String[] groupTypes,
@@ -343,8 +349,7 @@ public interface GroupBusiness extends IBOService {
 	 * @see com.idega.user.business.GroupBusinessBean#addUser
 	 */
 	public void addUser(int groupId, User user) throws EJBException, RemoteException;
-	public void addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException;
-	public void addUser(int groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException;
+	public Integer addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException;
 	public Integer addUser(Integer groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException;
 	public Property addUser(Integer groupId, User user, User addedBy, Timestamp timestamp) throws EJBException, RemoteException;
 
@@ -744,5 +749,9 @@ public interface GroupBusiness extends IBOService {
 			String name,
 			String description,
 			String city,
-			Collection<String> roles);
+			Collection<String> roles
+	);
+
+	public GroupDAO getGroupDAO();
+
 }
