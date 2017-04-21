@@ -61,6 +61,7 @@ import com.idega.util.StringUtil;
 	@NamedQuery(name = "user.findAll", query = "select u from User u where u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(name = "user.findAllByPrimaryGroup", query = "select u from User u where u.primaryGroup = :primaryGroup and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID"),
+	@NamedQuery(name = User.QUERY_FIND_BY_PERSONAL_IDS, query = "select u from User u where u.personalID IN (:personalIDs)"),
 	@NamedQuery(name = "user.findByUniqueID", query = "select u from User u where u.uniqueId = :uniqueId"),
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
@@ -119,6 +120,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	public static final String	QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys",
 								QUERY_FIND_BY_PHONE_NUMBER = "user.findByPhoneNumber",
 								QUERY_FIND_BY_METADATA = "user.findByMetadata",
+								QUERY_FIND_BY_PERSONAL_IDS = "user.findByPersonalIDs",
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
