@@ -1,10 +1,12 @@
 package com.idega.user.dao.impl;
 
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Repository;
@@ -12,10 +14,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.group.cache.business.GroupsCacheService;
+import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.dao.GroupRelationDAO;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.util.ArrayUtil;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository(GroupRelationDAO.BEAN_NAME)
@@ -74,39 +81,94 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
-	@Override
-	public List<Object[]> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> groupsIds) {
-		StringBuilder query = new StringBuilder();
-		try {
-			List<Param> params = new ArrayList<Param>();
-			params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
+	@Autowired
+	private GroupsCacheService groupsCacheService;
 
-			query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, ");
-			query.append(" r.group.id, r.group.groupType.groupType, ");	//	1, 2
-			query.append(" r.initiationDate, r.terminationDate, r.initiationModificationDate, r.terminationModificationDate ");
-			query.append(" FROM GroupRelation r");
-			query.append(" WHERE 1 = 1 ");
-
-			if (!ListUtil.isEmpty(groupsIds)) {
-				query.append(" and r.group.id in (:groupsIds) ");
-				params.add(new Param("groupsIds", groupsIds));
-			}
-			if (!ListUtil.isEmpty(groupTypes)) {
-				query.append(" AND r.group.groupType.groupType in (:" + GroupRelation.PARAM_GROUP_TYPES).append(") ");
-				params.add(new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes));
-			}
-			query.append(" AND r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
-			//query.append(" AND (r.status = '" + GroupRelation.STATUS_ACTIVE + "' OR r.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')");
-
-			query.append(" GROUP BY 2");
-			query.append(" ORDER BY date DESC");
-
-			List<Object[]> results = getResultListByInlineQuery(query.toString(), Object[].class, ArrayUtil.convertListToArray(params));
-			return results;
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting group relations by query " + query, e);
+	private GroupsCacheService getGroupsCacheService() {
+		if (groupsCacheService == null) {
+			ELUtil.getInstance().autowire(this);
 		}
-		return null;
+		return groupsCacheService;
+	}
+
+	@Override
+	public List<GroupRelationBean> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> groupsIds, List<String> entityTypes) {
+		long start = System.currentTimeMillis();
+		try {
+			if (StringUtil.isEmpty(relatedGroupType)) {
+				getLogger().warning("Related group's type is not provided");
+				return null;
+			}
+
+			StringBuilder query = null;
+			try {
+				List<GroupRelationBean> cachedResults = getGroupsCacheService().getGroupRelationsByRelatedGroupTypeAndGroupTypes(
+						relatedGroupType,
+						groupTypes,
+						groupsIds,
+						entityTypes
+				);
+				if (!ListUtil.isEmpty(cachedResults)) {
+					return cachedResults;
+				}
+
+				List<Param> params = new ArrayList<Param>();
+				params.add(new Param(GroupRelation.PARAM_RELATED_GROUP_TYPE, relatedGroupType));
+
+				query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, ");
+				query.append(" r.group.id, r.group.groupType.groupType, ");	//	1, 2
+				query.append(" r.initiationDate, r.terminationDate, r.initiationModificationDate, r.terminationModificationDate, r.status ");
+				query.append(" FROM ").append(GroupRelation.class.getName()).append(" r");
+				query.append(" WHERE 1 = 1 ");
+
+				if (!ListUtil.isEmpty(groupsIds)) {
+					query.append(" and r.group.id in (:groupsIds) ");
+					params.add(new Param("groupsIds", groupsIds));
+				}
+				if (!ListUtil.isEmpty(groupTypes)) {
+					query.append(" AND r.group.groupType.groupType in (:" + GroupRelation.PARAM_GROUP_TYPES).append(") ");
+					params.add(new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes));
+				}
+				query.append(" AND r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE);
+
+				query.append(" GROUP BY 2");
+				query.append(" ORDER BY date DESC");
+
+				List<Object[]> allData = getResultListByInlineQuery(query.toString(), Object[].class, ArrayUtil.convertListToArray(params));
+				if (ListUtil.isEmpty(allData)) {
+					return null;
+				}
+
+				List<GroupRelationBean> results = new ArrayList<>();
+				for (Object[] data: allData) {
+					if (ArrayUtil.isEmpty(data) || data.length < 8) {
+						continue;
+					}
+
+					try {
+						Integer groupId = ((Number) data[1]).intValue();
+						String groupType = (String) data[2];
+						Timestamp initiationDate = (Timestamp) data[3];
+						Timestamp terminationDate = (Timestamp) data[4];
+						Timestamp initiationModificationDate = (Timestamp) data[5];
+						Timestamp terminationModificationDate = (Timestamp) data[6];
+						String status = (String) data[7];
+						boolean active = status != null && (GroupRelation.STATUS_ACTIVE.equals(status) || GroupRelation.STATUS_ACTIVE_PENDING.equals(status));
+						GroupRelationBean bean = new GroupRelationBean(null, groupId, groupType, null, relatedGroupType, active, initiationDate, terminationDate, initiationModificationDate, terminationModificationDate);
+						results.add(bean);
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Error creating " + GroupRelationBean.class.getName() + " from " + data, e);
+					}
+				}
+				return results;
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Error getting group relations by query " + query, e);
+			}
+			return null;
+		} finally {
+			CoreUtil.doDebug(start, System.currentTimeMillis(), getClass().getName() + ".getGroupRelationsByRelatedGroupTypeAndGroupTypes, related group type: " + relatedGroupType +
+					", group types: " + groupTypes + ", group IDs: " + groupsIds);
+		}
 	}
 
 	@Override
@@ -139,7 +201,6 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			query.append(" GROUP BY 1 ");
 			query.append(" HAVING COUNT(r.groupRelationID) > 0 ");
 			query.append(" ORDER BY date DESC");
-			//query.append(" ORDER BY r.terminationDate, r.initiationModificationDate DESC");
 
 			List<Object[]> results = getResultListByInlineQuery(query.toString(), Object[].class, ArrayUtil.convertListToArray(params));
 			return results;

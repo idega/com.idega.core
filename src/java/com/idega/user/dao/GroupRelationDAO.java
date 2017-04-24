@@ -14,6 +14,7 @@ import java.util.List;
 
 import com.idega.business.SpringBeanName;
 import com.idega.core.persistence.GenericDao;
+import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.data.bean.GroupRelation;
 
 @SpringBeanName(GroupRelationDAO.BEAN_NAME)
@@ -43,6 +44,6 @@ public interface GroupRelationDAO extends GenericDao {
 
 	public List<Object[]> getGroupRelationsCountByRelatedGroupTypeAndGroupIdAndPeriodGroupedByDate(String relatedGroupType, List<Integer> groupId, Date dateFrom, Date dateTo);
 
-	public List<Object[]> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> ids);
+	public List<GroupRelationBean> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> ids, List<String> entityTypes);
 
 }
