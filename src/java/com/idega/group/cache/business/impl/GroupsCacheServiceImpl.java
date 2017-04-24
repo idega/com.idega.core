@@ -1238,7 +1238,11 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			if (parent == null) {
 				continue;
 			}
-			if (checkIfActive && !parent.isActive()) {
+			boolean proceed = true;
+			if (checkIfActive) {
+				proceed = parent.isActive();
+			}
+			if (!proceed) {
 				continue;
 			}
 
@@ -1379,6 +1383,10 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	private void addGroupRelationBean(Map<Integer, GroupRelationBean> results, GroupRelationBean relation, List<String> entityTypes) {
+		if (relation == null) {
+			return;
+		}
+
 		results.put(relation.getId(), relation);
 
 		if (ListUtil.isEmpty(entityTypes)) {
