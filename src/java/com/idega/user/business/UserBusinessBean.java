@@ -110,6 +110,7 @@ import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupRelation;
+import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.MetadataConstants;
 import com.idega.user.data.Status;
@@ -834,11 +835,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Integer getGenderId(String gender) throws Exception {
 		Gender genderEntity = getGender(gender);
 		return genderEntity == null ? null : (Integer) genderEntity.getPrimaryKey();
 	}
-	
+
 	/**
 	 * Returnes true if that genderid refers to the male gender
 	 */
@@ -3390,7 +3392,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		catch (Exception rme) {
 			throw new RuntimeException(rme.getMessage());
 		}
-		return !coll.isEmpty();
+		if (ListUtil.isEmpty(coll)) {
+			return false;
+		}
+		for (GroupRelation relation: coll) {
+			if (relation == null) {
+				continue;
+			}
+
+			String status = relation.getStatus();
+			if (StringUtil.isEmpty(status)) {
+				continue;
+			}
+
+			if (GroupRelationBMPBean.STATUS_ACTIVE.equals(status) || GroupRelationBMPBean.STATUS_ACTIVE_PENDING.equals(status)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	private String moveUserWithoutTest(IWResourceBundle iwrb, User user, Group parentGroup, Group targetGroup, User currentUser) {
