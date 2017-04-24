@@ -123,7 +123,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Group> filterParentGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes) {
+	public List<Group> filterActiveParentGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes) {
 		if ((ListUtil.isEmpty(groupsIds)) || (ListUtil.isEmpty(groupTypes))){
 			return null;
 		}
@@ -551,13 +551,22 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes, boolean selectPassive) {
-		if (groupId == null || ListUtil.isEmpty(groupTypes)) {
+		if (groupId == null) {
+			return null;
+		}
+
+		List<Integer> ids = getFirstAncestorGroupIdsOfType(Arrays.asList(groupId), groupTypes, selectPassive);
+		return ListUtil.isEmpty(ids) ? null : ids.iterator().next();
+	}
+
+	@Override
+	public List<Integer> getFirstAncestorGroupIdsOfType(List<Integer> groupsIds, List<String> groupTypes, boolean selectPassive) {
+		if (ListUtil.isEmpty(groupsIds) || ListUtil.isEmpty(groupTypes)) {
 			return null;
 		}
 
 		try {
 			List<Integer> ids = new ArrayList<>();
-			List<Integer> groupsIds = Arrays.asList(groupId);
 			List<Integer> parentIds = null;
 			while (ListUtil.isEmpty(ids) && !ListUtil.isEmpty(parentIds = getParentGroupsIds(groupsIds, selectPassive))) {
 				if (parentIds.size() == groupsIds.size() && parentIds.containsAll(groupsIds)) {
@@ -570,9 +579,9 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 					}
 				}
 			}
-			return !ListUtil.isEmpty(ids) ? ids.iterator().next() : null;
+			return ids;
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting parent groups for group with ID " + groupId + " and group types " + groupTypes, e);
+			getLogger().log(Level.WARNING, "Error getting parent groups for group with IDs " + groupsIds + " and group types " + groupTypes, e);
 		}
 		return null;
 	}
