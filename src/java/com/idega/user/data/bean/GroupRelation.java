@@ -191,7 +191,11 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 							group == null ? null : group.getType(),
 							relatedGroup == null ? null : relatedGroup.getID(),
 							relatedGroup == null ? null : relatedGroup.getType(),
-							status
+							status,
+							getInitiationDate(),
+							getTerminationDate(),
+							getInitiationModificationDate(),
+							getTerminationModificationDate()
 					)
 			);
 		} catch (Exception e) {

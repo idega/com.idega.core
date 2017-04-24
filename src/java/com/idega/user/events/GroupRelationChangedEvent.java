@@ -1,5 +1,8 @@
 package com.idega.user.events;
 
+import java.sql.Timestamp;
+import java.util.Date;
+
 import org.springframework.context.ApplicationEvent;
 
 public class GroupRelationChangedEvent extends ApplicationEvent {
@@ -26,6 +29,8 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	private String status, source;
 
+	private Timestamp initiationDate = null, terminationDate = null, initiationModificationDate = null, terminationModificationDate = null;
+
 	public GroupRelationChangedEvent(EventType type) {
 		super(type);
 
@@ -38,7 +43,47 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 		this.groupRelationId = groupRelationId;
 	}
 
-	public GroupRelationChangedEvent(EventType type, Integer groupRelationId, Integer groupId, String groupType, Integer relatedGroupId, String relatedGroupType, String status) {
+	public GroupRelationChangedEvent(
+			EventType type,
+			Integer groupRelationId,
+			Integer groupId,
+			String groupType,
+			Integer relatedGroupId,
+			String relatedGroupType,
+			String status,
+			Date initiationDate,
+			Date terminationDate,
+			Date initiationModificationDate,
+			Date terminationModificationDate
+	) {
+		this(
+				type,
+				groupRelationId,
+				groupId,
+				groupType,
+				relatedGroupId,
+				relatedGroupType,
+				status,
+				initiationDate == null ? null : new Timestamp(initiationDate.getTime()),
+				terminationDate == null ? null : new Timestamp(terminationDate.getTime()),
+				initiationModificationDate == null ? null : new Timestamp(initiationModificationDate.getTime()),
+				terminationModificationDate == null ? null : new Timestamp(terminationModificationDate.getTime())
+		);
+	}
+
+	public GroupRelationChangedEvent(
+			EventType type,
+			Integer groupRelationId,
+			Integer groupId,
+			String groupType,
+			Integer relatedGroupId,
+			String relatedGroupType,
+			String status,
+			Timestamp initiationDate,
+			Timestamp terminationDate,
+			Timestamp initiationModificationDate,
+			Timestamp terminationModificationDate
+	) {
 		this(type, groupRelationId);
 
 		this.groupId = groupId;
@@ -48,6 +93,11 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 		this.relatedGroupType = relatedGroupType;
 
 		this.status = status;
+
+		this.initiationDate = initiationDate;
+		this.terminationDate = terminationDate;
+		this.initiationModificationDate = initiationModificationDate;
+		this.terminationModificationDate = terminationModificationDate;
 	}
 
 	public GroupRelationChangedEvent(EventType type, boolean executeInThread, Integer userId) {
@@ -104,6 +154,22 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	public void setSource(String source) {
 		this.source = source;
+	}
+
+	public Timestamp getInitiationDate() {
+		return initiationDate;
+	}
+
+	public Timestamp getTerminationDate() {
+		return terminationDate;
+	}
+
+	public Timestamp getInitiationModificationDate() {
+		return initiationModificationDate;
+	}
+
+	public Timestamp getTerminationModificationDate() {
+		return terminationModificationDate;
 	}
 
 	@Override

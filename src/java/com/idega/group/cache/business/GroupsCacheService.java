@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
 
+import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.data.bean.Group;
 
 public interface GroupsCacheService {
@@ -59,5 +60,7 @@ public interface GroupsCacheService {
 	public <T extends Serializable> List<T> filterGroupsByIdsAndTypes(List<Integer> parentIds, List<String> childGroupsTypes, Class<T> resultType);
 
 	public boolean isUserCacheOn();
+
+	public List<GroupRelationBean> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> groupsIds, List<String> entityTypes);
 
 }

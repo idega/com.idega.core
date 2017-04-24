@@ -663,7 +663,11 @@ public void removeBy(User currentUser) throws RemoveException{
 							group == null ? null : group.getType(),
 							relatedGroup == null ? null : (Integer) relatedGroup.getPrimaryKey(),
 							relatedGroup == null ? null : relatedGroup.getType(),
-							status
+							status,
+							getInitiationDate(),
+							getTerminationDate(),
+							getInitiationModificationDate(),
+							getTerminationModificationDate()
 					)
 			);
 		} catch (Exception e) {
