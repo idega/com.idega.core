@@ -1289,10 +1289,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	protected Address updateUsersAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, AddressType addressType) throws CreateException, RemoteException {
 		Address address = null;
 		if (streetNameAndNumber != null && user != null) {
+			String streetName = null, streetNumber = null;
 			try {
 				AddressBusiness addressBiz = getAddressBusiness();
-				String streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
-				String streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
+				streetName = addressBiz.getStreetNameFromAddressString(streetNameAndNumber);
+				streetNumber = addressBiz.getStreetNumberFromAddressString(streetNameAndNumber);
 				address = getUserAddressByAddressType(((Integer) user.getPrimaryKey()).intValue(), addressType);
 				boolean addAddress = false;
 				/** @todo is this necessary?* */
@@ -1326,8 +1327,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					user.addAddress(address);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Failed to update or create address for userid : " + user.getPrimaryKey());
+				getLogger().log(Level.WARNING, "Failed to update or create address (" + address + ", street name: '" + streetName + "', street number: '" + streetNumber +
+						"', street name with number: '" + streetNameAndNumber + "') for user with ID : " + user.getPrimaryKey(), e);
 			}
 		} else {
 			throw new CreateException("No streetname or user is null!");
