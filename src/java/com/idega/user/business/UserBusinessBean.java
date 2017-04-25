@@ -827,11 +827,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 	}
 
+	@Override
 	public Integer getGenderId(String gender) throws Exception {
 		Gender genderEntity = getGender(gender);
 		return genderEntity == null ? null : (Integer) genderEntity.getPrimaryKey();
 	}
-	
+
 	/**
 	 * Returnes true if that genderid refers to the male gender
 	 */
@@ -1317,8 +1318,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					user.addAddress(address);
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
-				System.err.println("Failed to update or create address for userid : " + user.getPrimaryKey());
+				getLogger().log(Level.WARNING, "Failed to update or create address (" + address + ") for user with ID : " + user.getPrimaryKey(), e);
 			}
 		} else {
 			throw new CreateException("No streetname or user is null!");
