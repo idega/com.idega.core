@@ -1397,7 +1397,21 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			return;
 		}
 
-		CachedGroup parentEntity = getParentGroupByType(relation.getGroupId(), entityTypes);
+		CachedGroup parentEntity = null;
+
+		CachedGroup parentGroup = groups.get(relation.getGroupId());
+		if (parentGroup != null && entityTypes.contains(parentGroup.getType())) {
+			parentEntity = parentGroup;
+		}
+		if (parentEntity == null) {
+			CachedGroup relatedGroup = groups.get(relation.getRelatedGroupId());
+			if (relatedGroup != null && entityTypes.contains(relatedGroup.getType())) {
+				parentEntity = relatedGroup;
+			}
+		}
+		if (parentEntity == null) {
+			parentEntity = getParentGroupByType(relation.getGroupId(), entityTypes);
+		}
 		if (parentEntity == null) {
 			return;
 		}
