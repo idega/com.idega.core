@@ -41,6 +41,7 @@ import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.data.IDOUtil;
 import com.idega.data.SimpleQuerier;
+import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.business.GroupBusiness;
@@ -1274,6 +1275,24 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 		getLogger().warning("Failed to create/update entity: " + entity);
 		return null;
+	}
+
+	@Override
+	public String getMetaData(Group group, String key) {
+		if (group == null) {
+			return null;
+		}
+
+		return getMetaData(group.getID(), key);
+	}
+	@Override
+	public String getMetaData(Integer groupId, String key) {
+		if (groupId == null || StringUtil.isEmpty(key)) {
+			return null;
+		}
+
+		List<String> results = getResultList(Metadata.QUERY_FIND_BY_GROUP_ID_AND_KEY, String.class, new Param("groupId", groupId), new Param("key", key));
+		return ListUtil.isEmpty(results) ? null : results.iterator().next();
 	}
 
 }

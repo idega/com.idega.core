@@ -184,4 +184,7 @@ public interface GroupDAO extends GenericDao {
 	 */
 	<T extends Group> T update(T entity);
 
+	public String getMetaData(Integer groupId, String key);
+	public String getMetaData(Group group, String key);
+
 }
