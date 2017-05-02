@@ -51,7 +51,12 @@ Calendar.getAbsolutePos = function(el) {
 
 Calendar._add_evs = function(el) {
 	Calendar.addEvent(el, "mouseover", Calendar.dayMouseOver);
-	Calendar.addEvent(el, "mousedown", Calendar.dayMouseDown);
+	if (isChromeBrowser()) {
+		Calendar.addEvent(el, "pointerdown", Calendar.dayMouseDown);
+		Calendar.addEvent(el, "click", Calendar.dayMouseDown);
+	} else {
+		Calendar.addEvent(el, "mousedown", Calendar.dayMouseDown);
+	}
 	Calendar.addEvent(el, "mouseout", Calendar.dayMouseOut);
 	if (Calendar.is_ie) {
 		Calendar.addEvent(el, "dblclick", Calendar.dayMouseDblClick);
@@ -61,7 +66,12 @@ Calendar._add_evs = function(el) {
 
 Calendar._del_evs = function(el) {
 	Calendar.removeEvent(el, "mouseover", Calendar.dayMouseOver);
-	Calendar.removeEvent(el, "mousedown", Calendar.dayMouseDown);
+	if (isChromeBrowser()) {
+		Calendar.removeEvent(el, "pointerdown", Calendar.dayMouseDown);
+		Calendar.removeEvent(el, "click", Calendar.dayMouseDown);
+	} else {
+		Calendar.removeEvent(el, "mousedown", Calendar.dayMouseDown);
+	}
 	Calendar.removeEvent(el, "mouseout", Calendar.dayMouseOut);
 	if (Calendar.is_ie) {
 		Calendar.removeEvent(el, "dblclick", Calendar.dayMouseDblClick);
@@ -209,6 +219,8 @@ Calendar.tableMouseUp = function(ev) {
 		}
 	}
 	Calendar.removeEvent(document, "mouseup", Calendar.tableMouseUp);
+	Calendar.removeEvent(document, "pointerup", Calendar.tableMouseUp);
+	
 	Calendar.removeEvent(document, "mouseover", Calendar.tableMouseOver);
 	Calendar.removeEvent(document, "mousemove", Calendar.tableMouseOver);
 	cal.hideCombos();
@@ -341,7 +353,9 @@ Calendar.calDragEnd = function (ev) {
 	cal.dragging = false;
 	Calendar.removeEvent(document, "mousemove", Calendar.calDragIt);
 	Calendar.removeEvent(document, "mouseover", Calendar.stopEvent);
+	
 	Calendar.removeEvent(document, "mouseup", Calendar.calDragEnd);
+	Calendar.removeEvent(document, "pointerup", Calendar.calDragEnd);
 	Calendar.tableMouseUp(ev);
 	cal.hideShowCovered();
 };
@@ -355,7 +369,9 @@ Calendar.dayMouseDown = function(ev) {
 		Calendar.addClass(el, "hilite active");
 		Calendar.addEvent(document, "mouseover", Calendar.tableMouseOver);
 		Calendar.addEvent(document, "mousemove", Calendar.tableMouseOver);
+		
 		Calendar.addEvent(document, "mouseup", Calendar.tableMouseUp);
+		Calendar.addEvent(document, "pointerup", Calendar.tableMouseUp);
 	} else if (cal.isPopup) {
 		cal.dragStart(ev);
 	}
@@ -501,7 +517,12 @@ Calendar.prototype.create = function (_par) {
 	table.cellSpacing = 0;
 	table.cellPadding = 0;
 	table.calendar = this;
-	Calendar.addEvent(table, "mousedown", Calendar.tableMouseDown);
+	if (isChromeBrowser()) {
+		Calendar.addEvent(table, "pointerdown", Calendar.dayMouseDown);
+		Calendar.addEvent(table, "click", Calendar.tableMouseDown);
+	} else {
+		Calendar.addEvent(table, "mousedown", Calendar.tableMouseDown);
+	}
 
 	var div = document.createElement("div");
 	this.element = div;
@@ -818,7 +839,9 @@ Calendar.prototype.dragStart = function (ev) {
 	this.yOffs = posY - parseInt(st.top);
 	Calendar.addEvent(document, "mousemove", Calendar.calDragIt);
 	Calendar.addEvent(document, "mouseover", Calendar.stopEvent);
+	
 	Calendar.addEvent(document, "mouseup", Calendar.calDragEnd);
+	Calendar.addEvent(document, "pointerup", Calendar.calDragEnd);
 };
 
 Calendar.prototype.setDateFormat = function (str) {
