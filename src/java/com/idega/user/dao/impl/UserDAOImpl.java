@@ -67,7 +67,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Autowired
 	private AddressDAO addressDAO;
-	
+
 	@Autowired
 	private EMailDAO eMailDAO;
 
@@ -113,7 +113,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	private UserBusiness getUserBusiness() {
 		try {
 			return IBOLookup.getServiceInstance(
-					IWMainApplication.getDefaultIWApplicationContext(), 
+					IWMainApplication.getDefaultIWApplicationContext(),
 					UserBusiness.class);
 		} catch (IBOLookupException e) {
 			getLogger().log(Level.WARNING, "Failed to get " + UserBusiness.class + " cause of: ", e);
@@ -162,7 +162,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 				newGroup.setGroupType(getGroupTypeHome().getPermissionGroupTypeString());
 				newGroup.setIsPermissionControllingGroup(Boolean.FALSE);
 				newGroup.setUniqueId(UUID.randomUUID().toString());
-				
+
 				try {
 					newGroup.store();
 				} catch (IDOStoreException e) {
@@ -209,7 +209,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return user;
 	}
 
-	
+
 
 	@Override
 	public User getUser(Integer userID) {
@@ -266,19 +266,19 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			getEMailDAO().update(email.getId(), null, null,	"sub", null);
 		}
 
-		return getEMailDAO().update(null, 
-				user.getId(), 
-				address, 
+		return getEMailDAO().update(null,
+				user.getId(),
+				address,
 				contactDAO.getMainEmailType());
 	}
-	
+
 	@Override
 	public Email updateUserMainEmailAddress(User user, String address) {
 		Email email = getUsersMainEmail(user);
 		if(email == null) {
 			return getEMailDAO().createEmail(user.getId(), address, contactDAO.getMainEmailType());
 		}
-		
+
 		List<User> emailUsers = email.getUsers();
 		if(emailUsers.size() == 1 && emailUsers.get(0).getId().intValue() == user.getId().intValue()) {
 			return getEMailDAO().update(email.getId(), user.getId(), address, contactDAO.getMainEmailType());
@@ -286,7 +286,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			return getEMailDAO().createEmail(user.getId(), address, contactDAO.getMainEmailType());
 		}
 	}
-	
+
 	@Override
 	public Gender getGender(String name) {
 		Param param = new Param("name", name);
@@ -460,40 +460,59 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return Collections.emptyList();
 	}
 
+	private String getLikeExpression(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return value;
+		}
+
+		if (!value.startsWith(CoreConstants.PERCENT)) {
+			value = CoreConstants.PERCENT.concat(value);
+		}
+		if (!value.endsWith(CoreConstants.PERCENT)) {
+			value = value.concat(CoreConstants.PERCENT);
+		}
+
+		return value;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName) {
+	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName, Integer firstResult, Integer maxResults) {
 		ArrayList<Param> parameters = new ArrayList<Param>();
 		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
 		query.append("WHERE u.deletedWhen IS NULL ");
 
 		if (!StringUtil.isEmpty(firstName)) {
-			parameters.add(new Param("firstName", firstName));
+			parameters.add(new Param("firstName", getLikeExpression(firstName)));
 			query.append("AND u.firstName like :firstName ");
 		}
 
 		if (!StringUtil.isEmpty(middleName)) {
-			parameters.add(new Param("middleName", middleName));
+			parameters.add(new Param("middleName", getLikeExpression(middleName)));
 			query.append("AND u.middleName like :middleName ");
 		}
 
 		if (!StringUtil.isEmpty(lastName)) {
-			parameters.add(new Param("lastName", lastName));
+			parameters.add(new Param("lastName", getLikeExpression(lastName)));
 			query.append("AND u.lastName like :lastName ");
 		}
 
 		if (!StringUtil.isEmpty(personalId)) {
-			parameters.add(new Param("personalId", personalId + "%"));
+			parameters.add(new Param("personalId", getLikeExpression(personalId)));
 			query.append("AND u.personalID like :personalId ");
 		}
 
 		return getResultListByInlineQuery(
 				query.toString(),
 				User.class,
-				parameters.toArray(new Param[parameters.size()]));
+				firstResult,
+				maxResults,
+				query.toString(),
+				parameters.toArray(new Param[parameters.size()])
+		);
 	}
 
 	/*
@@ -501,23 +520,29 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String)
 	 */
 	@Override
-	public List<User> findFilteredBy(String anyColumn) {
-		if (!StringUtil.isEmpty(anyColumn)) {
-			StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
-			query.append("WHERE u.firstName like :param ");
-			query.append("OR u.middleName like :param ");
-			query.append("OR u.lastName like :param ");
-			query.append("OR u.personalID like :param ");
-			
-			return getResultListByInlineQuery(
-					query.toString(),
-					User.class,
-					new Param("param", anyColumn + "%"));
+	public List<User> findFilteredBy(String anyColumn, Integer firstResult, Integer maxResults) {
+		if (StringUtil.isEmpty(anyColumn)) {
+			return Collections.emptyList();
 		}
 
-		return Collections.emptyList();
+		anyColumn = getLikeExpression(anyColumn);
+
+		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
+		query.append("WHERE u.firstName like :param ");
+		query.append("OR u.middleName like :param ");
+		query.append("OR u.lastName like :param ");
+		query.append("OR u.personalID like :param ");
+
+		return getResultListByInlineQuery(
+				query.toString(),
+				User.class,
+				firstResult,
+				maxResults,
+				query.toString(),
+				new Param("param", anyColumn)
+		);
 	}
-	
+
 	@Override
 	public List<User> getUsersByEmailAddress(String emailAddress) {
 		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
@@ -525,7 +550,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			return null;
 
 		List<User> usersList = new ArrayList<User>();
-		
+
 		for (Email email: emails) {
 			List<User> users = email.getUsers();
 			initialize(users);
@@ -566,7 +591,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 		if (user == null) {
 			com.idega.user.data.User ejbUser = null;
-			
+
 			try {
 				String[] splittedName = name.split(CoreConstants.SPACE);
 				if (splittedName.length > 2) {

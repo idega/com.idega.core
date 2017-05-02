@@ -49,7 +49,7 @@ public interface UserDAO extends GenericDao {
 	public Email getUsersMainEmail(User user);
 
 	public Email updateUserMainEmail(User user, String address);
-	
+
 	public Email updateUserMainEmailAddress(User user, String address);
 
 	public Gender getGender(String name);
@@ -59,7 +59,7 @@ public interface UserDAO extends GenericDao {
 	public Gender getFemaleGender();
 
 	public User getByEmailAddress(String emailAddress);
-	
+
 	List<User> getUsersByEmailAddress(String emailAddress);
 
 	public Address getUsersMainAddress(User user);
@@ -100,17 +100,17 @@ public interface UserDAO extends GenericDao {
 	 * @param lastName {@link User#getLastName()} to filter by, skipped if <code>null</code>;
 	 * @return filtered entities or {@link Collections#emptyList()} on failure;
 	 */
-	List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName);
+	List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName, Integer firstResult, Integer maxResults);
 
 	/**
-	 * 
+	 *
 	 * @param anyColumn is {@link User#getPersonalID()} or {@link User#getFirstName()} or ...
 	 * @return {@link Collection} on entities or {@link Collections#emptyList()} on failure;
 	 */
-	List<User> findFilteredBy(String anyColumn);
+	List<User> findFilteredBy(String anyColumn, Integer firstResult, Integer maxResults);
 
 	/**
-	 * 
+	 *
 	 * <p>Updates/creates user</p>
 	 * @param id is {@link User#getId()}, skipped on creation
 	 * @param personalId is {@link User#getPersonalID()}
