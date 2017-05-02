@@ -336,40 +336,59 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return Collections.emptyList();
 	}
 
+	private String getLikeExpression(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return value;
+		}
+
+		if (!value.startsWith(CoreConstants.PERCENT)) {
+			value = CoreConstants.PERCENT.concat(value);
+		}
+		if (!value.endsWith(CoreConstants.PERCENT)) {
+			value = value.concat(CoreConstants.PERCENT);
+		}
+
+		return value;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName) {
+	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName, Integer firstResult, Integer maxResults) {
 		ArrayList<Param> parameters = new ArrayList<Param>();
 		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
 		query.append("WHERE u.deletedWhen IS NULL ");
 
 		if (!StringUtil.isEmpty(firstName)) {
-			parameters.add(new Param("firstName", firstName));
+			parameters.add(new Param("firstName", getLikeExpression(firstName)));
 			query.append("AND u.firstName like :firstName ");
 		}
 
 		if (!StringUtil.isEmpty(middleName)) {
-			parameters.add(new Param("middleName", middleName));
+			parameters.add(new Param("middleName", getLikeExpression(middleName)));
 			query.append("AND u.middleName like :middleName ");
 		}
 
 		if (!StringUtil.isEmpty(lastName)) {
-			parameters.add(new Param("lastName", lastName));
+			parameters.add(new Param("lastName", getLikeExpression(lastName)));
 			query.append("AND u.lastName like :lastName ");
 		}
 
 		if (!StringUtil.isEmpty(personalId)) {
-			parameters.add(new Param("personalId", personalId + "%"));
+			parameters.add(new Param("personalId", getLikeExpression(personalId)));
 			query.append("AND u.personalID like :personalId ");
 		}
 
 		return getResultListByInlineQuery(
 				query.toString(),
 				User.class,
-				parameters.toArray(new Param[parameters.size()]));
+				firstResult,
+				maxResults,
+				query.toString(),
+				parameters.toArray(new Param[parameters.size()])
+		);
 	}
 
 	/*
@@ -377,10 +396,12 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String)
 	 */
 	@Override
-	public List<User> findFilteredBy(String anyColumn) {
+	public List<User> findFilteredBy(String anyColumn, Integer firstResult, Integer maxResults) {
 		if (StringUtil.isEmpty(anyColumn)) {
 			return Collections.emptyList();
 		}
+
+		anyColumn = getLikeExpression(anyColumn);
 
 		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
 		List<Param> parameters = new ArrayList<>();
@@ -400,6 +421,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return getResultListByInlineQuery(
 				query.toString(),
 				User.class,
+				firstResult,
+				maxResults,
+				query.toString(),
 				ArrayUtil.convertListToArray(parameters)
 		);
 	}
