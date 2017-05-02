@@ -638,6 +638,18 @@ function isSafariBrowser() {
 	return true;
 }
 
+function isChromeBrowser() {
+	if (navigator == null) {
+		return false;
+	}
+	var browser = navigator.userAgent;
+	if (browser == null) {
+		return false;
+	}
+	
+	return /Chrome/.test(browser) && /Google Inc/.test(navigator.vendor);
+}
+
 // Function to add event to any object, example: registerEvent(window, "load", foo);
 function registerEvent(object, eventType, functionName) {
 	if (object.addEventListener) { 
