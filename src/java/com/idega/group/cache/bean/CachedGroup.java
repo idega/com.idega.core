@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 public class CachedGroup implements Serializable {
 
@@ -15,8 +16,8 @@ public class CachedGroup implements Serializable {
 
 	private String type;
 
-	private Map<Integer, CachedGroup> parents = new HashMap<>();
-	private Map<Integer, CachedGroup> children = new HashMap<>();
+	private Map<Integer, CachedGroup> parents = new ConcurrentHashMap<>();
+	private Map<Integer, CachedGroup> children = new ConcurrentHashMap<>();
 
 	private List<CachedGroup> allParents;
 	private Map<Integer, List<CachedGroup>> allChildren;
