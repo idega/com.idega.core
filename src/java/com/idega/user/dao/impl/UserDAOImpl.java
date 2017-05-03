@@ -423,20 +423,24 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 * @see com.idega.user.dao.UserDAO#update(com.idega.user.data.bean.User)
 	 */
 	@Override
+	@Transactional(readOnly = false)
 	public User update(User entity) {
-		if (entity != null) {
-			if (getUser(entity.getId()) == null) {
-				persist(entity);
-				if (entity.getId() != null) {
-					getLogger().fine("Entity: " + entity + " created!");
-					return entity;
-				}
-			} else {
-				entity = merge(entity);
-				if (entity != null) {
-					getLogger().fine("Entity: " + entity + " updated");
-					return entity;
-				}
+		if (entity == null) {
+			getLogger().warning("Entity not provided");
+			return null;
+		}
+
+		if (entity.getId() == null || getUser(entity.getId()) == null) {
+			persist(entity);
+			if (entity != null && entity.getId() != null) {
+				getLogger().fine("Entity: " + entity + " created!");
+				return entity;
+			}
+		} else {
+			entity = merge(entity);
+			if (entity != null && entity.getId() != null) {
+				getLogger().fine("Entity: " + entity + " updated");
+				return entity;
 			}
 		}
 
