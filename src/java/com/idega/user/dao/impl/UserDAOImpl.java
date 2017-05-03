@@ -101,7 +101,8 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	public User getUser(String personalID) {
 		if (!StringUtil.isEmpty(personalID)) {
 			Param param = new Param("personalID", personalID);
-			return getSingleResult("user.findByPersonalID", User.class, param);
+			List<User> users = getResultList("user.findByPersonalID", User.class, param);
+			return ListUtil.isEmpty(users) ? null : users.iterator().next();
 		}
 
 		return null;
