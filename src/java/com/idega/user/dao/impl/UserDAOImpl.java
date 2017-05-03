@@ -299,20 +299,24 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 * @see com.idega.user.dao.UserDAO#update(com.idega.user.data.bean.User)
 	 */
 	@Override
+	@Transactional(readOnly = false)
 	public User update(User entity) {
-		if (entity != null) {
-			if (getUser(entity.getId()) == null) {
-				persist(entity);
-				if (entity.getId() != null) {
-					getLogger().fine("Entity: " + entity + " created!");
-					return entity;
-				}
-			} else {
-				entity = merge(entity);
-				if (entity != null) {
-					getLogger().fine("Entity: " + entity + " updated");
-					return entity;
-				}
+		if (entity == null) {
+			getLogger().warning("Entity not provided");
+			return null;
+		}
+
+		if (entity.getId() == null || getUser(entity.getId()) == null) {
+			persist(entity);
+			if (entity != null && entity.getId() != null) {
+				getLogger().fine("Entity: " + entity + " created!");
+				return entity;
+			}
+		} else {
+			entity = merge(entity);
+			if (entity != null && entity.getId() != null) {
+				getLogger().fine("Entity: " + entity + " updated");
+				return entity;
 			}
 		}
 
@@ -478,15 +482,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			com.idega.user.data.User ejbUser = null;
 
 			try {
-				String[] splittedName = name.split(CoreConstants.SPACE);
+				com.idega.util.text.Name nameUtil = new com.idega.util.text.Name(name);
 				UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
-				if (splittedName.length > 2) {
-					ejbUser = userBusiness.createUser(splittedName[0], splittedName[1], splittedName[2], personalId);
-				} else if (splittedName.length > 1) {
-					ejbUser = userBusiness.createUser(splittedName[0], null, splittedName[1], personalId);
-				} else if (splittedName.length > 0) {
-					ejbUser = userBusiness.createUser(splittedName[0], null, null, personalId);
-				}
+				ejbUser = userBusiness.createUser(nameUtil.getFirstName(), nameUtil.getMiddleName(), nameUtil.getLastName(), personalId);
 			} catch (Exception e) {
 				getLogger().log(Level.WARNING, "Failed to create user, cause of:", e);
 			}

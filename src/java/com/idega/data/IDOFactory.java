@@ -34,7 +34,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 	protected String dataSource = GenericEntity.DEFAULT_DATASOURCE;
 
 	private Logger logger = null;
-	
+
 	protected Logger getLog() {
 		if (this.logger == null) {
 			this.logger = Logger.getLogger(getClass().getName());
@@ -73,8 +73,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
         entity = IDOContainer.getInstance().createEntity(entityInterfaceClass);
       }
       catch(Error e){
-        System.err.println("Error creating bean for : "+this.getClass().getName());
-        e.printStackTrace();
+        getLog().log(Level.WARNING, "Error creating bean for: " + this.getClass().getName(), e);
       }
       ((IDOEntityBean) entity).setEJBLocalHome(this);
 	  entity.setDatasource(this.dataSource);
@@ -82,7 +81,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
       //return (IDOEntity)beanClass.newInstance();
     }
     catch(Exception e){
-      e.printStackTrace();
+    	 getLog().log(Level.WARNING, "Error creating bean for: " + entityInterfaceClass.getName(), e);
       throw new javax.ejb.CreateException(e.getMessage());
     }
   }
@@ -144,11 +143,10 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
   public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey, Class<? extends IDOEntity> interfaceClass) throws FinderException {
     Object realPK = primaryKey;
     if (primaryKey instanceof IDOEntity) {
-    	try {
-    		throw new FinderException("Argument of type: " + primaryKey.getClass() +
-    				" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
-    	} catch(FinderException fe){
-    		fe.printStackTrace(System.err);
+    	try{
+    		throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
+    	} catch (FinderException fe) {
+    		getLog().log(Level.WARNING, "Error finding entity type of " + getEntityInterfaceClass() +  " by primary key" + primaryKey, fe);
     	}
     	realPK = ((IDOEntity) primaryKey).getPrimaryKey();
     }
