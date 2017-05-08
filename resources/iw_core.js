@@ -1304,8 +1304,10 @@ IWCORE.renderComponent = function(uuid, container, callback, properties, options
 			},
 			errorHandler: function() {
 				closeAllLoadingMessages();
-				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
-					reloadPage();
+				if (IWCORE.askIfReloadPage) {
+					if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
+						reloadPage();
+					}
 				}
 			},
 			timeout: 60000
@@ -1321,8 +1323,10 @@ IWCORE.getRenderedComponentByClassName = function(options) {
 			},
 			errorHandler: function() {
 				closeAllLoadingMessages();
-				if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
-					reloadPage();
+				if (IWCORE.askIfReloadPage) {
+					if (window.confirm('Ooops... Some error occurred rendering component... We recommend to reload page. Do you agree?')) {
+						reloadPage();
+					}
 				}
 			},
 			timeout: 60000
@@ -1953,7 +1957,6 @@ LazyLoader.doRealLoading = function(url, callback, parameters) {
 		}
 	} catch (e) {
 		LazyLoader.loading = false;
-		//console.log('ERROR in: LazyLoader.doRealLoading: ' + e.message);
 	}
 }
 
@@ -2094,9 +2097,17 @@ IWCORE.pingServer = function(sleepTime, id) {
 
 IWCORE.sendingErrorMail = false;
 IWCORE.userDeniedToReloadPageOnError = false;
+IWCORE.askIfReloadPage = true;
 IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
-	if (!IWCORE.sendingErrorMail	&& msg != 'Internal Server Error' && msg != 'Service Temporarily Unavailable' && msg != 'Timeout'
-									&& msg != 'Service Unavailable' && msg != 'OK') {
+	if (
+			!IWCORE.sendingErrorMail &&
+			msg != 'Internal Server Error' &&
+			msg != 'Service Temporarily Unavailable' &&
+			msg != 'Timeout' &&
+			msg != 'Service Unavailable' &&
+			msg != 'OK' &&
+			msg != 'Incomplete reply from server'
+	) {
 		IWCORE.sendingErrorMail = true;
 		LazyLoader.loadMultiple(['/dwr/engine.js', '/dwr/interface/WebUtil.js'], function() {
 			if (ex == null) {
@@ -2138,7 +2149,7 @@ IWCORE.sendExceptionNotification = function(msg, ex, reloadPageMessage) {
 	}
 	
 	if (ex != null && ex.messageToClient != null && ex.reloadPage) {
-		if (!IWCORE.userDeniedToReloadPageOnError) {
+		if (IWCORE.askIfReloadPage && !IWCORE.userDeniedToReloadPageOnError) {
 			if (reloadPageMessage == null) {
 				reloadPageMessage = 'Sorry, some error occurred... We strongly recommend to reload the page. Do you agree?';
 			}

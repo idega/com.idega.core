@@ -3,7 +3,6 @@
  */
 package com.idega.user.dao.impl;
 
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -11,10 +10,7 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.UUID;
 import java.util.logging.Level;
-
-import javax.ejb.CreateException;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -33,19 +29,10 @@ import com.idega.core.location.data.bean.Address;
 import com.idega.core.location.data.bean.AddressType;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
-import com.idega.data.IDOLookup;
-import com.idega.data.IDOLookupException;
-import com.idega.data.IDOStoreException;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.user.business.UserBusiness;
-import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
-import com.idega.user.data.GroupHome;
-import com.idega.user.data.GroupType;
-import com.idega.user.data.GroupTypeHome;
-import com.idega.user.data.UserHome;
 import com.idega.user.data.bean.Gender;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -68,40 +55,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Autowired
 	private AddressDAO addressDAO;
-	
+
 	@Autowired
 	private EMailDAO eMailDAO;
-
-	@Autowired
-	private GroupDAO groupDAO;
-
-	private GroupHome getGroupHome() {
-		try {
-			return (GroupHome) IDOLookup.getHome(com.idega.user.data.Group.class);
-		} catch (IDOLookupException e) {
-			getLogger().log(Level.WARNING, "Failed to get " + GroupHome.class + " cuase of: ", e);
-		}
-
-		return null;
-	}
-
-	private GroupTypeHome getGroupTypeHome() {
-		try {
-			return (GroupTypeHome) IDOLookup.getHome(GroupType.class);
-		} catch (IDOLookupException e) {
-			getLogger().log(Level.WARNING, "Failed to get " + GroupTypeHome.class + " cuase of: ", e);
-		}
-
-		return null;
-	}
-
-	private GroupDAO getGroupDAO() {
-		if (this.groupDAO == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-
-		return this.groupDAO;
-	}
 
 	private EMailDAO getEMailDAO() {
 		if (this.eMailDAO == null) {
@@ -114,75 +70,10 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	private UserBusiness getUserBusiness() {
 		try {
 			return IBOLookup.getServiceInstance(
-					IWMainApplication.getDefaultIWApplicationContext(), 
+					IWMainApplication.getDefaultIWApplicationContext(),
 					UserBusiness.class);
 		} catch (IBOLookupException e) {
 			getLogger().log(Level.WARNING, "Failed to get " + UserBusiness.class + " cause of: ", e);
-		}
-
-		return null;
-	}
-
-	private IWMainApplicationSettings getSettings() {
-		return IWMainApplication.getDefaultIWMainApplication().getSettings();
-	}
-
-	private Integer getUnassignedMembersGroupId() {
-		IWMainApplicationSettings settings = getSettings();
-		if (settings != null) {
-			String property = settings.getProperty(PROPERTY_UNASSIGNED_MEMBERS_GROUP_ID, "-1");
-			if (property != null) {
-				return Integer.valueOf(property);
-			}
-		}
-
-		return null;
-	}
-
-	private void setUnassignedMembersGroupId(Integer id) {
-		IWMainApplicationSettings settings = getSettings();
-		if (settings != null && id != null) {
-			settings.setProperty(PROPERTY_UNASSIGNED_MEMBERS_GROUP_ID, id.toString());
-		}
-	}
-
-	private Group getUnassignedMembersGroup() {
-		Group group = getGroupDAO().findGroup(getUnassignedMembersGroupId());
-		if (group == null) {
-			com.idega.user.data.Group newGroup = null;
-			try {
-				newGroup = getGroupHome().create();
-			} catch (CreateException e) {
-				getLogger().log(Level.WARNING, "Failed to create group, cause of:", e);
-			}
-
-			if (newGroup != null) {
-				newGroup.setCreated(new Timestamp(System.currentTimeMillis()));
-				newGroup.setDescription("Group for containing members without any access rights");
-				newGroup.setName("Unassigned Members Group");
-				newGroup.setGroupType(getGroupTypeHome().getPermissionGroupTypeString());
-				newGroup.setIsPermissionControllingGroup(Boolean.FALSE);
-				newGroup.setUniqueId(UUID.randomUUID().toString());
-				
-				try {
-					newGroup.store();
-				} catch (IDOStoreException e) {
-					getLogger().log(Level.WARNING, "Failed to save group, cause of:", e);
-				}
-
-				setUnassignedMembersGroupId((Integer) newGroup.getPrimaryKey());
-				group = getUnassignedMembersGroup();
-			}
-		}
-
-		return group;
-	}
-
-	private UserHome getUserHome() {
-		try {
-			return (UserHome) IDOLookup.getHome(com.idega.user.data.User.class);
-		} catch (IDOLookupException e) {
-			getLogger().log(Level.WARNING, "Failed to get " + UserHome.class + " cause of: ", e);
 		}
 
 		return null;
@@ -209,8 +100,6 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 		return user;
 	}
-
-	
 
 	@Override
 	public User getUser(Integer userID) {
@@ -267,19 +156,19 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			getEMailDAO().update(email.getId(), null, null,	"sub", null);
 		}
 
-		return getEMailDAO().update(null, 
-				user.getId(), 
-				address, 
+		return getEMailDAO().update(null,
+				user.getId(),
+				address,
 				contactDAO.getMainEmailType());
 	}
-	
+
 	@Override
 	public Email updateUserMainEmailAddress(User user, String address) {
 		Email email = getUsersMainEmail(user);
 		if(email == null) {
 			return getEMailDAO().createEmail(user.getId(), address, contactDAO.getMainEmailType());
 		}
-		
+
 		List<User> emailUsers = email.getUsers();
 		if(emailUsers.size() == 1 && emailUsers.get(0).getId().intValue() == user.getId().intValue()) {
 			return getEMailDAO().update(email.getId(), user.getId(), address, contactDAO.getMainEmailType());
@@ -287,7 +176,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			return getEMailDAO().createEmail(user.getId(), address, contactDAO.getMainEmailType());
 		}
 	}
-	
+
 	@Override
 	public Gender getGender(String name) {
 		Param param = new Param("name", name);
@@ -424,20 +313,24 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 * @see com.idega.user.dao.UserDAO#update(com.idega.user.data.bean.User)
 	 */
 	@Override
+	@Transactional(readOnly = false)
 	public User update(User entity) {
-		if (entity != null) {
-			if (getUser(entity.getId()) == null) {
-				persist(entity);
-				if (entity.getId() != null) {
-					getLogger().fine("Entity: " + entity + " created!");
-					return entity;
-				}
-			} else {
-				entity = merge(entity);
-				if (entity != null) {
-					getLogger().fine("Entity: " + entity + " updated");
-					return entity;
-				}
+		if (entity == null) {
+			getLogger().warning("Entity not provided");
+			return null;
+		}
+
+		if (entity.getId() == null || getUser(entity.getId()) == null) {
+			persist(entity);
+			if (entity != null && entity.getId() != null) {
+				getLogger().fine("Entity: " + entity + " created!");
+				return entity;
+			}
+		} else {
+			entity = merge(entity);
+			if (entity != null && entity.getId() != null) {
+				getLogger().fine("Entity: " + entity + " updated");
+				return entity;
 			}
 		}
 
@@ -461,40 +354,59 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return Collections.emptyList();
 	}
 
+	private String getLikeExpression(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return value;
+		}
+
+		if (!value.startsWith(CoreConstants.PERCENT)) {
+			value = CoreConstants.PERCENT.concat(value);
+		}
+		if (!value.endsWith(CoreConstants.PERCENT)) {
+			value = value.concat(CoreConstants.PERCENT);
+		}
+
+		return value;
+	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String, java.lang.String, java.lang.String, java.lang.String)
 	 */
 	@Override
-	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName) {
+	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName, Integer firstResult, Integer maxResults) {
 		ArrayList<Param> parameters = new ArrayList<Param>();
 		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
 		query.append("WHERE u.deletedWhen IS NULL ");
 
 		if (!StringUtil.isEmpty(firstName)) {
-			parameters.add(new Param("firstName", firstName));
+			parameters.add(new Param("firstName", getLikeExpression(firstName)));
 			query.append("AND u.firstName like :firstName ");
 		}
 
 		if (!StringUtil.isEmpty(middleName)) {
-			parameters.add(new Param("middleName", middleName));
+			parameters.add(new Param("middleName", getLikeExpression(middleName)));
 			query.append("AND u.middleName like :middleName ");
 		}
 
 		if (!StringUtil.isEmpty(lastName)) {
-			parameters.add(new Param("lastName", lastName));
+			parameters.add(new Param("lastName", getLikeExpression(lastName)));
 			query.append("AND u.lastName like :lastName ");
 		}
 
 		if (!StringUtil.isEmpty(personalId)) {
-			parameters.add(new Param("personalId", personalId + "%"));
+			parameters.add(new Param("personalId", getLikeExpression(personalId)));
 			query.append("AND u.personalID like :personalId ");
 		}
 
 		return getResultListByInlineQuery(
 				query.toString(),
 				User.class,
-				parameters.toArray(new Param[parameters.size()]));
+				firstResult,
+				maxResults,
+				query.toString(),
+				parameters.toArray(new Param[parameters.size()])
+		);
 	}
 
 	/*
@@ -502,23 +414,29 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 * @see com.idega.user.dao.UserDAO#findFilteredBy(java.lang.String)
 	 */
 	@Override
-	public List<User> findFilteredBy(String anyColumn) {
-		if (!StringUtil.isEmpty(anyColumn)) {
-			StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
-			query.append("WHERE u.firstName like :param ");
-			query.append("OR u.middleName like :param ");
-			query.append("OR u.lastName like :param ");
-			query.append("OR u.personalID like :param ");
-			
-			return getResultListByInlineQuery(
-					query.toString(),
-					User.class,
-					new Param("param", anyColumn + "%"));
+	public List<User> findFilteredBy(String anyColumn, Integer firstResult, Integer maxResults) {
+		if (StringUtil.isEmpty(anyColumn)) {
+			return Collections.emptyList();
 		}
 
-		return Collections.emptyList();
+		anyColumn = getLikeExpression(anyColumn);
+
+		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
+		query.append("WHERE u.firstName like :param ");
+		query.append("OR u.middleName like :param ");
+		query.append("OR u.lastName like :param ");
+		query.append("OR u.personalID like :param ");
+
+		return getResultListByInlineQuery(
+				query.toString(),
+				User.class,
+				firstResult,
+				maxResults,
+				query.toString(),
+				new Param("param", anyColumn)
+		);
 	}
-	
+
 	@Override
 	public List<User> getUsersByEmailAddress(String emailAddress) {
 		List<User> usersList = new ArrayList<User>();
@@ -570,16 +488,10 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 		if (user == null) {
 			com.idega.user.data.User ejbUser = null;
-			
+
 			try {
-				String[] splittedName = name.split(CoreConstants.SPACE);
-				if (splittedName.length > 2) {
-					ejbUser = getUserBusiness().createUser(splittedName[0], splittedName[1], splittedName[2], personalId);
-				} else if (splittedName.length > 1) {
-					ejbUser = getUserBusiness().createUser(splittedName[0], null, splittedName[1], personalId);
-				} else if (splittedName.length > 0) {
-					ejbUser = getUserBusiness().createUser(splittedName[0], null, null, personalId);
-				}
+				com.idega.util.text.Name nameUtil = new com.idega.util.text.Name(name);
+				ejbUser = getUserBusiness().createUser(nameUtil.getFirstName(), nameUtil.getMiddleName(), nameUtil.getLastName(), personalId);
 			} catch (Exception e) {
 				getLogger().log(Level.WARNING, "Failed to create user, cause of:", e);
 			}

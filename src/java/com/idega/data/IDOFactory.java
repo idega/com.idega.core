@@ -36,7 +36,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
 	protected String dataSource = GenericEntity.DEFAULT_DATASOURCE;
 
 	private Logger logger = null;
-	
+
 	protected Logger getLog() {
 		if (this.logger == null) {
 			this.logger = Logger.getLogger(getClass().getName());
@@ -75,8 +75,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
         entity = IDOContainer.getInstance().createEntity(entityInterfaceClass);
       }
       catch(Error e){
-        System.err.println("Error creating bean for : "+this.getClass().getName());
-        e.printStackTrace();
+        getLog().log(Level.WARNING, "Error creating bean for: " + this.getClass().getName(), e);
       }
       ((IDOEntityBean) entity).setEJBLocalHome(this);
 	  entity.setDatasource(this.dataSource);
@@ -84,7 +83,7 @@ public abstract class IDOFactory implements IDOHome,java.io.Serializable{
       //return (IDOEntity)beanClass.newInstance();
     }
     catch(Exception e){
-      e.printStackTrace();
+    	 getLog().log(Level.WARNING, "Error creating bean for: " + entityInterfaceClass.getName(), e);
       throw new javax.ejb.CreateException(e.getMessage());
     }
   }
@@ -147,7 +146,7 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
     		throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
     	}
     	catch(FinderException fe){
-    		fe.printStackTrace(System.err);
+    		getLog().log(Level.WARNING, "Error finding entity type of " + getEntityInterfaceClass() +  " by primary key" + primaryKey, fe);
     	}
     	realPK = ((IDOEntity)primaryKey).getPrimaryKey();
     }
@@ -155,13 +154,13 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
     return idoFindByPrimaryKey(interfaceClass, realPK);
   }
 
-  
+
 	/**
-	 * 
+	 *
 	 * <p>Makes a search for entity with primary key in all hierarchy.</p>
-	 * @param primaryKeys is {@link Collection} of 
+	 * @param primaryKeys is {@link Collection} of
 	 * {@link EJBLocalObject#getPrimaryKey()}, not <code>null</code>;
-	 * @return entities, extending this entity by given primary key or 
+	 * @return entities, extending this entity by given primary key or
 	 * entities of this type by primary key;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -182,10 +181,10 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 	}
 
 	/**
-	 * 
+	 *
 	 * @param primaryKey is {@link IDOEntity#getPrimaryKey()} to search by,
 	 * not <code>null</code>;
-	 * @return entity itself or a sub-type which has given id or 
+	 * @return entity itself or a sub-type which has given id or
 	 * <code>null</code> failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -238,13 +237,13 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 								+ "' proceeding to next one! ");
 			}
 		}
-		
+
 		return null;
 	}
 
 	/**
-	 * 
-	 * @return {@link Set} of different {@link IDOHome}s or 
+	 *
+	 * @return {@link Set} of different {@link IDOHome}s or
 	 * {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -257,12 +256,12 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 
 		return Collections.emptySet();
 	}
-	
+
 	/**
-	 * 
-	 * @param subTypes is {@link IDOEntity}s to get {@link IDOHome}s for, 
+	 *
+	 * @param subTypes is {@link IDOEntity}s to get {@link IDOHome}s for,
 	 * not <code>null</code>;
-	 * @return {@link Set} of different {@link IDOHome}s or 
+	 * @return {@link Set} of different {@link IDOHome}s or
 	 * {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -279,8 +278,8 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
 				home = IDOLookup.getHome(subType);
 			} catch (IDOLookupException e) {
 				java.util.logging.Logger.getLogger(getClass().getName()).log(
-						Level.WARNING, 
-						"Failed to get home for " + subType.getSimpleName() + 
+						Level.WARNING,
+						"Failed to get home for " + subType.getSimpleName() +
 						" cause of: ", e);
 			}
 
