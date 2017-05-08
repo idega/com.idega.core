@@ -209,7 +209,7 @@ public class GroupRelationBean implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Group ID: " + getGroupId() + ", related group ID: " + getRelatedGroupId() + ", related group type: " + getRelatedGroupType();
+		return "Group ID: " + getGroupId() + ", group type: " + getGroupType() + ", related group ID: " + getRelatedGroupId() + ", related group type: " + getRelatedGroupType();
 	}
 
 }
