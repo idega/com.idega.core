@@ -246,21 +246,24 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
-		if (index != -1) {
-			String streetNumber = addressString.substring(index, addressString.length()).trim();
-			if (streetNumber == null) {
-				return null;
-			}
+		if (index == -1) {
+			getLogger().warning("Failed to find number in " + addressString);
+			return null;
+		}
 
-			if (streetNumber.length() >= 30) {
-				if (streetNumber.indexOf(CoreConstants.SPACE) != -1) {
-					return streetNumber.split(CoreConstants.SPACE)[0];
-				} else {
-					return streetNumber.substring(0, 30);
-				}
+		String streetNumber = addressString.substring(index, addressString.length()).trim();
+		if (streetNumber == null) {
+			return null;
+		}
+
+		if (streetNumber.length() >= 30) {
+			if (streetNumber.indexOf(CoreConstants.SPACE) != -1) {
+				return streetNumber.split(CoreConstants.SPACE)[0];
+			} else {
+				return streetNumber.substring(0, 30);
 			}
 		}
-		return null;
+		return streetNumber;
 	}
 
 	/**
