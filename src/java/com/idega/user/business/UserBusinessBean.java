@@ -678,7 +678,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// newUser = insertUser(firstname,middlename,
 			// lastname,null,null,null,null,primary_group);
 			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName, juridicalPerson);
-			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
+			if (userLogin != null && password != null && !userLogin.equals(CoreConstants.EMPTY) && !password.equals(CoreConstants.EMPTY)) {
 				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 			}
 			transaction.commit();
@@ -1055,7 +1055,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public String getUserJob(User user) {
 		String job = user.getMetaData(JOB_META_DATA_KEY);
 		if (job == null || NULL.equals(job)) {
-			return "";
+			return CoreConstants.EMPTY;
 		} else {
 			return job;
 		}
@@ -1075,7 +1075,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	public String getUserWorkPlace(User user) {
 		String workPlace = user.getMetaData(WORKPLACE_META_DATA_KEY);
 		if (workPlace == null || NULL.equals(workPlace)) {
-			return "";
+			return CoreConstants.EMPTY;
 		} else {
 			return workPlace;
 		}
@@ -1315,7 +1315,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					address.setStreetNumber(streetNumber);
 				} else {
 					// Fix when entering unnumbered addresses (Aron )
-					address.setStreetNumber("");
+					address.setStreetNumber(CoreConstants.EMPTY);
 				}
 				if (communeID == null || communeID.intValue() == -1) {
 					address.setCommune(null);
@@ -1366,7 +1366,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		if (displayname != null) {
 			userToUpdate.setDisplayName(displayname);
-		} else if (fullname != null && (userToUpdate.getDisplayName() == null || "".equals(userToUpdate.getDisplayName()))) {
+		} else if (fullname != null && (userToUpdate.getDisplayName() == null || CoreConstants.EMPTY.equals(userToUpdate.getDisplayName()))) {
 			// set the display name as the full name
 			userToUpdate.setDisplayName(fullname);
 		}
@@ -1839,7 +1839,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return groupOrUser.getName();
 			}
 		} catch (Exception e) {
-			return "";
+			return CoreConstants.EMPTY;
 		}
 	}
 
@@ -3551,9 +3551,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	@Override
 	public String getUserApplicationStyleSheetURL() {
 		IWMainApplication application = this.getIWMainApplication();
-		String styleSheetOverrideURI = application.getSettings().getProperty("USER_APP_STYLE_SHEET", "");
+		String styleSheetOverrideURI = application.getSettings().getProperty("USER_APP_STYLE_SHEET", CoreConstants.EMPTY);
 
-		if (!"".equals(styleSheetOverrideURI)) {
+		if (!CoreConstants.EMPTY.equals(styleSheetOverrideURI)) {
 			return styleSheetOverrideURI;
 		} else {
 			IWBundle bundle = application.getBundle("com.idega.user");
@@ -3592,7 +3592,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException, CreateException {
-		if (fullAddressString != null && !"".equals(fullAddressString)) {
+		if (fullAddressString != null && !CoreConstants.EMPTY.equals(fullAddressString)) {
 			Address mainAddress = getUsersMainAddress(user);
 			boolean addAddress = false;
 			if (mainAddress == null) {
