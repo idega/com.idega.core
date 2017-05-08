@@ -63,4 +63,8 @@ public interface GroupsCacheService {
 
 	public List<GroupRelationBean> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> groupsIds, List<String> entityTypes);
 
+	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes);
+	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes, boolean selectPassive);
+	public List<Integer> getFirstAncestorGroupIdsOfType(List<Integer> groupsIds, List<String> groupTypes, boolean selectPassive);
+
 }
