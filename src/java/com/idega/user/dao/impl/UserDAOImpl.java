@@ -51,6 +51,7 @@ import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -520,19 +521,22 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	
 	@Override
 	public List<User> getUsersByEmailAddress(String emailAddress) {
-		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
-		if (ListUtil.isEmpty(emails))
-			return null;
-
 		List<User> usersList = new ArrayList<User>();
-		
-		for (Email email: emails) {
-			List<User> users = email.getUsers();
-			initialize(users);
-			if (!ListUtil.isEmpty(users)) {
-				usersList.addAll(users);
+		if (!StringUtil.isEmpty(emailAddress)) {
+			List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
+			if (ListUtil.isEmpty(emails))
+				return null;
+
+			
+			for (Email email: emails) {
+				List<User> users = email.getUsers();
+				initialize(users);
+				if (!ListUtil.isEmpty(users)) {
+					usersList.addAll(users);
+				}
 			}
 		}
+		
 
 		return usersList;
 	}
