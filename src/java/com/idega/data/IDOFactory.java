@@ -1,6 +1,7 @@
 package com.idega.data;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -14,6 +15,7 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBLocalObject;
 import javax.ejb.FinderException;
 
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -406,4 +408,33 @@ public void remove(Object primaryKey){
 		return theReturn.decode(pkString);
 	}
 
+	/**
+	 * 
+	 * <p>Get results from {@link SimpleQuerier}</p>
+	 * @param query to execute, not <code>null</code>
+	 * @return {@link Collection} of entities of {@link Collections#emptyList()} on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	protected <T extends IDOEntity> Collection<T> getResultsByQuery(String query) {
+		if (StringUtil.isEmpty(query)) {
+			throw new IllegalArgumentException("Query must be provided!");
+		}
+
+		String[] primaryKeys = null;
+		try {
+			primaryKeys = SimpleQuerier.executeStringQuery(query.toString());
+		} catch (Exception e) {
+			getLog().log(Level.WARNING, "Failed to get primary keys by query: " + query.toString());
+		}
+
+		if (!ArrayUtil.isEmpty(primaryKeys)) {
+			try {
+				return getEntityCollectionForPrimaryKeys(Arrays.asList(primaryKeys));
+			} catch (FinderException e) {
+				getLog().log(Level.WARNING, "Failed to get entities by primary keys: " + primaryKeys);
+			}
+		}
+
+		return Collections.emptyList();
+	}
 }
