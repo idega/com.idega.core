@@ -205,18 +205,30 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 * @return Finds the first number in the string and return a sbustring to that
 	 *         point or the whole string if no number is present
 	 */
-	public String getStreetNameFromAddressString(String addressString) {
+	public String getStreetNumberFromAddressString(String addressString) {
 		if (StringUtil.isEmpty(addressString)) {
 			return null;
 		}
 
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
 		if (index == -1) {
-			return addressString.trim();
+			getLogger().warning("Failed to find number in " + addressString);
+			return null;
 		}
-		else {
-			return addressString.substring(0, index).trim();
+
+		String streetNumber = addressString.substring(index, addressString.length()).trim();
+		if (streetNumber == null) {
+			return null;
 		}
+
+		if (streetNumber.length() >= 30) {
+			if (streetNumber.indexOf(CoreConstants.SPACE) != -1) {
+				return streetNumber.split(CoreConstants.SPACE)[0];
+			} else {
+				return streetNumber.substring(0, 30);
+			}
+		}
+		return streetNumber;
 	}
 
 	/**
