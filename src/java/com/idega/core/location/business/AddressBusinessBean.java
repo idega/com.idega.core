@@ -20,6 +20,7 @@ import com.idega.core.location.data.Country;
 import com.idega.core.location.data.CountryHome;
 import com.idega.core.location.data.PostalCode;
 import com.idega.core.location.data.PostalCodeHome;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
