@@ -247,7 +247,6 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 
 		int index = TextSoap.getIndexOfFirstNumberInString(addressString);
 		if (index == -1) {
-			getLogger().warning("Failed to find number in " + addressString);
 			return null;
 		}
 
