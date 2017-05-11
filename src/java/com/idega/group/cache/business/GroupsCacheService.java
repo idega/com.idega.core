@@ -67,4 +67,7 @@ public interface GroupsCacheService {
 	public Integer getFirstAncestorGroupIdOfType(Integer groupId, List<String> groupTypes, boolean selectPassive);
 	public List<Integer> getFirstAncestorGroupIdsOfType(List<Integer> groupsIds, List<String> groupTypes, boolean selectPassive);
 
+	public List<Integer> getGroupsAliasesIdsFromAliasesIdsAndGroupTypes(List<Integer> aliasesIds, List<String> groupsTypes);
+	public List<Integer> getGroupsIdsFromAliasesIds(List<Integer> aliasesIds);
+
 }
