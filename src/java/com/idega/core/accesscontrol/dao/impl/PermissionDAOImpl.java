@@ -355,4 +355,18 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		);
 	}
 
+	@Override
+	public List<String> findContextCaluesForPermissionsByRoles(List<String> roles) {
+		if (ListUtil.isEmpty(roles)) {
+			return null;
+		}
+
+		return getResultList(
+				ICPermission.CONTEXT_VALUE_BY_CONTEXT_TYPE_AND_PERMISSIONS,
+				String.class,
+				new Param("contextType", AccessController.PERMISSION_KEY_ROLE),
+				new Param("permissionStrings", roles)
+		);
+	}
+
 }
