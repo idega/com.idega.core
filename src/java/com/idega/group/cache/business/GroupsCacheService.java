@@ -3,9 +3,12 @@ package com.idega.group.cache.business;
 import java.io.Serializable;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
+import com.idega.group.cache.bean.CachedGroup;
 import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.data.bean.Group;
+import com.idega.user.events.GroupRelationChangedEvent;
 
 public interface GroupsCacheService {
 
@@ -24,6 +27,7 @@ public interface GroupsCacheService {
 	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, List<String> groupTypes);
 
 	public List<Group> getParentGroups(Integer id, List<String> groupTypes);
+	public List<Group> getParentGroups(List<Integer> ids, List<String> groupTypes);
 
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
@@ -47,8 +51,6 @@ public interface GroupsCacheService {
 	public void setCacheInProgress(String name, Boolean inProgress);
 	public boolean isCacheInProgress(String name);
 
-	public void doCacheGroupRelations();
-
 	public List<Integer> findGroupsIdsByTypes(List<String> types);
 
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentIds, List<String> childGroupsTypes);
@@ -69,5 +71,16 @@ public interface GroupsCacheService {
 
 	public List<Integer> getGroupsAliasesIdsFromAliasesIdsAndGroupTypes(List<Integer> aliasesIds, List<String> groupsTypes);
 	public List<Integer> getGroupsIdsFromAliasesIds(List<Integer> aliasesIds);
+
+	public void doStartCachingGroupRelations(List<String> groupTypesForChanges);
+	public void doUpdateGroupRelations(GroupRelationChangedEvent event, List<String> groupTypesForChanges);
+
+	public Map<Integer, GroupRelationBean> getRelations();
+	public Map<String, Set<Integer>> getRelatedGroupTypeRelationsIds();
+	public Map<Integer, Set<Integer>> getChildrenOfGroups();
+	public Map<Integer, Set<Integer>> getParentsOfGroups();
+	public Map<Integer, CachedGroup> getGroups();
+	public Map<String, Map<Integer, Boolean>> getTypes();
+	public Map<Integer, Map<String, Integer>> getCachedGroupRelationChanges();
 
 }
