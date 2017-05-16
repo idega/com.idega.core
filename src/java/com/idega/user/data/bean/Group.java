@@ -436,7 +436,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		} catch (FinderException fe) {
 			Logger.getLogger(getClass().getName()).warning("Group with ID " + id + " does not exist");
 		} catch (Exception e) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error gettign group with ID " + id, e);
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error getting group with ID " + id, e);
 		}
 
 		return null;
