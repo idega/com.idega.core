@@ -404,9 +404,9 @@ public class CoreUtil {
 
 		StringBuffer message = new StringBuffer();
 		String user = iwc == null || !iwc.isLoggedOn() ? CoreConstants.EMPTY : iwc.getCurrentUser().getName();
-		message.append("Method ").append(StringUtil.isEmpty(user) ? user : "for ".concat(user).concat(CoreConstants.SPACE)).append("'").append(method).append("' ");
+		message.append("Method executed in ").append(executionTime).append(" ms: ");
 
-		message.append("executed in ").append(executionTime).append(" ms");
+		message.append(StringUtil.isEmpty(user) ? user : "for ".concat(user).concat(CoreConstants.SPACE)).append("'").append(method).append("' ");
 		boolean printStackTrace = settings.getBoolean("print_stack_trace_for_debug", Boolean.FALSE);
 		if (printStackTrace) {
 			try {
