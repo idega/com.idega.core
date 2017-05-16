@@ -18,12 +18,14 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -56,14 +58,17 @@ import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.location.data.bean.Address;
 import com.idega.core.net.data.bean.ICNetwork;
 import com.idega.core.net.data.bean.ICProtocol;
+import com.idega.data.IDOLookup;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
+import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupNode;
 import com.idega.user.data.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -369,8 +374,13 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	}
 
 	public Integer getID() {
-		DBUtil.getInstance().lazyLoad(this);
-		return this.groupID;
+		try {
+			DBUtil.getInstance().lazyLoad(this);
+			return this.groupID;
+		} catch (EntityNotFoundException e) {
+			com.idega.user.data.Group group = getGroup(groupID);
+			return group == null ? null : (Integer) group.getPrimaryKey();
+		}
 	}
 
 	public void setID(Integer groupID) {
@@ -413,10 +423,34 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		this.name = name;
 	}
 
+	private com.idega.user.data.Group getGroup(Integer id) {
+		try {
+			if (id == null) {
+				return null;
+			}
+
+			CoreUtil.clearAllCaches();
+
+			GroupHome groupHome = (GroupHome) IDOLookup.getHome(com.idega.user.data.Group.class);
+			return groupHome.findByPrimaryKey(id);
+		} catch (FinderException fe) {
+			Logger.getLogger(getClass().getName()).warning("Group with ID " + id + " does not exist");
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error gettign group with ID " + id, e);
+		}
+
+		return null;
+	}
+
 	@Override
 	public String getType() {
-		GroupType type = getGroupType();
-		return type == null ? null : type.getGroupType();
+		try {
+			GroupType type = getGroupType();
+			return type == null ? null : type.getGroupType();
+		} catch (EntityNotFoundException e) {
+			com.idega.user.data.Group group = getGroup(groupID);
+			return group == null ? null : group.getType();
+		}
 	}
 
 	public GroupType getGroupType() {
