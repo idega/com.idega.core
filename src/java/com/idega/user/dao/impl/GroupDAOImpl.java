@@ -59,6 +59,7 @@ import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
 import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
+import com.idega.util.CoreConstants;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -810,7 +811,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 					if (id != null) {
 						query.append(id);
 						if (groupsIter.hasNext()) {
-							query.append(", ");
+							query.append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 						}
 					}
 				}
