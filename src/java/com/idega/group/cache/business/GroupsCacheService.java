@@ -24,6 +24,7 @@ public interface GroupsCacheService {
 
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> municipalities, List<String> unions, List<String> years, List<String> notHavingTypes, Integer from, Integer to);
 
+	public List<Integer> getParentGroupsIds(List<Integer> ids, List<String> groupTypes);
 	public List<Integer> getParentGroupsIdsRecursive(List<Integer> groupsIds, List<String> groupTypes);
 
 	public List<Group> getParentGroups(Integer id, List<String> groupTypes);
@@ -32,11 +33,7 @@ public interface GroupsCacheService {
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, Integer levels);
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels);
 
-	public void doCacheGroup(Integer groupId);
-
 	public List<Group> findActiveGroupsByType(String type);
-
-	public void doCache(List<Integer> groupsIds);
 
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to);
 
@@ -82,5 +79,6 @@ public interface GroupsCacheService {
 	public Map<Integer, CachedGroup> getGroups();
 	public Map<String, Map<Integer, Boolean>> getTypes();
 	public Map<Integer, Map<String, Integer>> getCachedGroupRelationChanges();
+	public Map<Integer, Integer> getAliases();
 
 }
