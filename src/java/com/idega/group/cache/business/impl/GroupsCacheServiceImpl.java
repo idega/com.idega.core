@@ -9,15 +9,9 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeMap;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 import java.util.logging.Level;
@@ -35,9 +29,7 @@ import com.idega.group.cache.business.GroupsCacheService;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.dao.GroupDAO;
-import com.idega.user.dao.Property;
 import com.idega.user.data.GroupTypeConstants;
-import com.idega.user.data.User;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.UserGroupRepresentative;
@@ -144,8 +136,13 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	@Override
+	public List<Integer> getParentGroupsIds(List<Integer> ids, List<String> groupTypes) {
+		return getParentGroupsIdsRecursive(ids, groupTypes);
+	}
+
+	@Override
 	public List<Group> getParentGroups(List<Integer> ids, List<String> groupTypes) {
-		List<Integer> parentGroupsIds = getParentGroupsIdsRecursive(ids, groupTypes);
+		List<Integer> parentGroupsIds = getParentGroupsIds(ids, groupTypes);
 		if (parentGroupsIds == null) {
 			return null;
 		}
@@ -160,7 +157,55 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 	@Override
 	public Map<Integer, List<Group>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
+		Map<Integer, List<Integer>> data = getChildGroupsIds(parentGroupsIds, childGroupTypes, notHavingChildGroupTypes, levels);
+		if (MapUtil.isEmpty(data)) {
+			return null;
+		}
+
+		Set<Integer> ids = new HashSet<>();
+		for (List<Integer> levelIds: data.values()) {
+			if (ListUtil.isEmpty(levelIds)) {
+				continue;
+			}
+
+			ids.addAll(levelIds);
+		}
+
 		Map<Integer, List<Group>> results = new HashMap<>();
+		List<Group> groups = groupDAO.findGroups(new ArrayList<>(ids));
+		if (ListUtil.isEmpty(groups)) {
+			return results;
+		}
+
+		for (Group group: groups) {
+			if (group == null) {
+				continue;
+			}
+
+			Integer id = group.getID();
+			if (id == null) {
+				continue;
+			}
+
+			for (Integer level: data.keySet()) {
+				List<Integer> levelIds = data.get(level);
+				if (ListUtil.isEmpty(levelIds) || !levelIds.contains(id)) {
+					continue;
+				}
+
+				List<Group> levelGroups = results.get(level);
+				if (levelGroups == null) {
+					levelGroups = new ArrayList<>();
+					results.put(level, levelGroups);
+				}
+				levelGroups.add(group);
+			}
+		}
+		return results;
+	}
+
+	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
+		Map<Integer, List<Integer>> results = new HashMap<>();
 
 		Map<Integer, List<Integer>> leveledIds = getAllRelatedGroupsIds(parentGroupsIds, childGroupTypes, levels, false);
 		if (MapUtil.isEmpty(leveledIds)) {
@@ -189,9 +234,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				}
 			}
 
-			List<Group> levelGroups = groupDAO.findGroups(new ArrayList<>(idsToLoad));
-			if (!ListUtil.isEmpty(levelGroups)) {
-				results.put(level, levelGroups);
+			if (!ListUtil.isEmpty(idsToLoad)) {
+				results.put(level, new ArrayList<>(idsToLoad));
 			}
 		}
 
@@ -211,9 +255,13 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			}
 
 			Integer groupId = event.getGroupId();
+			String groupName = event.getGroupName();
 			String groupType = event.getGroupType();
+
 			Integer relatedGroupId = event.getRelatedGroupId();
+			String relatedGroupName = event.getRelatedGroupName();
 			String relatedGroupType = event.getRelatedGroupType();
+
 			String status = event.getStatus();
 
 			Timestamp initiationDate = event.getInitiationDate();
@@ -231,10 +279,12 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 				Group group = groupRelation.getGroup();
 				groupId = group == null ? null : group.getID();
+				groupName = group == null ? groupName : group.getName();
 				groupType = group == null ? null : group.getType();
 
 				Group relatedGroup = groupRelation.getRelatedGroup();
 				relatedGroupId = relatedGroup == null ? null : relatedGroup.getID();
+				relatedGroupName = relatedGroup == null ? relatedGroupName : relatedGroup.getName();
 				relatedGroupType = relatedGroup == null ? null : relatedGroup.getType();
 
 				status = groupRelation.getStatus();
@@ -268,8 +318,10 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				relation = new GroupRelationBean(
 						relationId,
 						groupId,
+						groupName,
 						groupType,
 						relatedGroupId,
+						relatedGroupName,
 						relatedGroupType,
 						active,
 						initiationDate,
@@ -289,8 +341,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			if (cachedParent != null) {
 				parentActive = cachedParent.isActive();
 			}
-			CachedGroup parent = new CachedGroup(relationId, groupId, groupType, parentActive);
-			CachedGroup child = new CachedGroup(relationId, relatedGroupId, relatedGroupType, active);
+			CachedGroup parent = new CachedGroup(relationId, groupId, groupName, groupType, parentActive);
+			CachedGroup child = new CachedGroup(relationId, relatedGroupId, relatedGroupName, relatedGroupType, active);
 
 			addRelations(relation, parent, child);
 
@@ -361,7 +413,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	private Map<Integer, Integer> aliases = null;
-	private Map<Integer, Integer> getAliases() {
+	@Override
+	public Map<Integer, Integer> getAliases() {
 		if (aliases == null) {
 			aliases = new HashMap<>();
 		}
@@ -423,8 +476,8 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
-			int columns = 10;
-			String relationsQuery = "select gr.groupRelationID, gr.group.id, gr.group.groupType.groupType, gr.relatedGroup.id, gr.relatedGroup.groupType.groupType, gr.status, "
+			int columns = 12;
+			String relationsQuery = "select gr.groupRelationID, gr.group.id, gr.group.name, gr.group.groupType.groupType, gr.relatedGroup.id, gr.relatedGroup.name, gr.relatedGroup.groupType.groupType, gr.status, "
 									.concat("gr.initiationDate, gr.terminationDate, gr.initiationModificationDate, gr.terminationModificationDate ").concat(query);
 
 			Map<Integer, CachedGroup> groups = getGroups();
@@ -448,27 +501,31 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 					Integer relationId = ((Number) relationData[0]).intValue();
 
 					Integer groupId = ((Number) relationData[1]).intValue();
-					String groupType = (String) relationData[2];
+					String groupName = (String) relationData[2];
+					String groupType = (String) relationData[3];
 
-					Integer relatedGroupId = ((Number) relationData[3]).intValue();
-					String relatedGroupType = (String) relationData[4];
+					Integer relatedGroupId = ((Number) relationData[4]).intValue();
+					String relatedGroupName = (String) relationData[5];
+					String relatedGroupType = (String) relationData[6];
 					if (GroupTypeConstants.GROUP_TYPE_ALIAS.equals(relatedGroupType)) {
 						aliasesIds.put(relatedGroupId, groupId);
 					}
 
-					String status = (String) relationData[5];
+					String status = (String) relationData[7];
 					boolean active = isActive(status);
 
-					Timestamp initiationDate = (Timestamp) relationData[6];
-					Timestamp terminationDate = (Timestamp) relationData[7];
-					Timestamp initiationModificationDate = (Timestamp) relationData[8];
-					Timestamp terminationModificationDate = (Timestamp) relationData[9];
+					Timestamp initiationDate = (Timestamp) relationData[8];
+					Timestamp terminationDate = (Timestamp) relationData[9];
+					Timestamp initiationModificationDate = (Timestamp) relationData[10];
+					Timestamp terminationModificationDate = (Timestamp) relationData[11];
 					addRelations(
 							new GroupRelationBean(
 									relationId,
 									groupId,
+									groupName,
 									groupType,
 									relatedGroupId,
+									relatedGroupName,
 									relatedGroupType,
 									active,
 									initiationDate,
@@ -476,15 +533,15 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 									initiationModificationDate,
 									terminationModificationDate
 							),
-							new CachedGroup(relationId, groupId, groupType, true),
-							new CachedGroup(relationId, relatedGroupId, relatedGroupType, active)
+							new CachedGroup(relationId, groupId, groupName, groupType, true),
+							new CachedGroup(relationId, relatedGroupId, relatedGroupName, relatedGroupType, active)
 					);
 				}
 
 				if (!MapUtil.isEmpty(aliasesIds)) {
-					int aliasColumns = 3;
+					int aliasColumns = 4;
 					List<Object[]> aliases = groupDAO.getResultListByInlineQuery(
-							"select g.id, g.alias.id, g.alias.groupType.groupType from " + Group.class.getName() + " g where g.id in :aliasesIds",
+							"select g.id, g.alias.id, g.alias.name, g.alias.groupType.groupType from " + Group.class.getName() + " g where g.id in :aliasesIds",
 							Object[].class,
 							new Param("aliasesIds", new ArrayList<>(aliasesIds.keySet()))
 					);
@@ -500,9 +557,10 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 							CachedGroup parent = parentId == null ? null : groups.get(parentId);
 
 							Integer relatedGroupId = ((Number) alias[1]).intValue();
-							String relatedGroupType = (String) alias[2];
+							String relatedGroupName = (String) alias[2];
+							String relatedGroupType = (String) alias[3];
 
-							addRelations(null, parent, new CachedGroup(parent == null ? null : parent.getGroupRelationId(), relatedGroupId, relatedGroupType, true));
+							addRelations(null, parent, new CachedGroup(parent == null ? null : parent.getGroupRelationId(), relatedGroupId, relatedGroupName, relatedGroupType, true));
 
 							if (aliasId != null && relatedGroupId != null) {
 								aliasesCache.put(aliasId, relatedGroupId);
@@ -651,12 +709,12 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		if (relation.isActive()) {
 			CachedGroup parent = groups.get(relation.getGroupId());
 			if (parent == null) {
-				parent = new CachedGroup(relation.getId(), relation.getGroupId(), relation.getGroupType(), true);
+				parent = new CachedGroup(relation.getId(), relation.getGroupId(), relation.getGroupName(), relation.getGroupType(), true);
 				groups.put(parent.getId(), parent);
 			}
 			CachedGroup child = groups.get(relation.getRelatedGroupId());
 			if (child == null) {
-				child = new CachedGroup(relation.getId(), relation.getRelatedGroupId(), relation.getRelatedGroupType(), true);
+				child = new CachedGroup(relation.getId(), relation.getRelatedGroupId(), relation.getRelatedGroupName(), relation.getRelatedGroupType(), true);
 				groups.put(child.getId(), child);
 			}
 			if (parent != null && child != null) {
@@ -680,218 +738,6 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			key = key.concat(option);
 		}
 		return getApplication().getSettings().getBoolean(key, option == null ? true: false);
-	}
-
-	private Map<Integer, CachedGroup> getIdsCache() {
-		Map<Integer, CachedGroup> cache = getCache("EPLATFORM_ACTIVE_GROUPS_IDS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
-		return cache;
-	}
-	private Map<String, Set<Integer>> getTypesCache() {
-		Map<String, Set<Integer>> cache = getCache("EPLATFORM_ACTIVE_GROUPS_TYPES_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
-		return cache;
-	}
-
-	private List<CachedGroup> getCachedGroups(List<Integer> ids) {
-		if (ListUtil.isEmpty(ids)) {
-			return null;
-		}
-
-		try {
-			List<Property<Integer, String>> data = groupDAO.getIdsAndTypes(ids);
-			if (ListUtil.isEmpty(data)) {
-				return null;
-			}
-
-			List<CachedGroup> results = new ArrayList<>();
-			for (Property<Integer, String> property: data) {
-				if (property == null) {
-					continue;
-				}
-
-				results.add(new CachedGroup(property.getKey(), property.getValue()));
-			}
-			return results;
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error getting group info by IDs: " + ids, e);
-		}
-		return null;
-	}
-
-	private Integer getCachedChildren(Integer id, CachedGroup cachedGroup) {
-		Map<Integer, List<Integer>> children = groupDAO.getChildGroupsIds(Arrays.asList(id), null);
-
-		Map<Integer, List<CachedGroup>> cachedChildren = new TreeMap<>();
-		cachedGroup.setAllChildren(cachedChildren);
-
-		if (MapUtil.isEmpty(children)) {
-			return id;
-		}
-
-		for (Integer level: children.keySet()) {
-			List<Integer> levelIds = children.get(level);
-			List<CachedGroup> cachedGroups = getCachedGroups(levelIds);
-			cachedChildren.put(level, cachedGroups);
-		}
-		return id;
-	}
-
-	private Integer getCachedParents(Integer id, CachedGroup cachedGroup) {
-		List<Integer> parentGroupsIds = groupDAO.getParentGroupsIdsRecursive(Arrays.asList(id), null);
-		if (ListUtil.isEmpty(parentGroupsIds)) {
-			return null;
-		}
-
-		List<CachedGroup> cachedParentGroups = getCachedGroups(parentGroupsIds);
-		cachedGroup.setAllParents(cachedParentGroups);
-		return id;
-	}
-
-	private String getQuery(List<Integer> ids, String type) {
-		if (ListUtil.isEmpty(ids) && StringUtil.isEmpty(type)) {
-			return null;
-		}
-
-		String query = "select g.id, g.groupType.groupType from " + Group.class.getName() + " g where ";
-		if (!StringUtil.isEmpty(type)) {
-			query = query.concat("g.groupType.groupType = :groupType");
-		} else if (!ListUtil.isEmpty(ids)) {
-			query = query.concat("g.id in (:ids) and g.groupType.groupType != '").concat(User.USER_GROUP_TYPE).concat("'");
-		}
-
-		return query;
-	}
-
-	private int doCacheGroups(List<Integer> ids, String type) {
-		if (ListUtil.isEmpty(ids) && StringUtil.isEmpty(type)) {
-			return 0;
-		}
-		if (!isCacheEnabled("_by_ids")) {
-			return 0;
-		}
-
-		String query = getQuery(ids, type);
-		if (query == null) {
-			getLogger().warning("Unable to cache. IDs: " + ids + ", type: " + type);
-			return 0;
-		}
-		try {
-			Param param = new Param(StringUtil.isEmpty(type) ? "ids" : "groupType", StringUtil.isEmpty(type) ? ids : type);
-			List<Object[]> results = groupDAO.getResultListByInlineQuery(
-					query,
-					Object[].class,
-					param
-			);
-			if (ListUtil.isEmpty(results)) {
-				getLogger().warning("There are no groups with " + (StringUtil.isEmpty(type) ? "IDs " + ids : "type " + type));
-				return 0;
-			}
-
-			Map<Integer, CachedGroup> idsCache = getIdsCache();
-			Map<String, Set<Integer>> typesCache = getTypesCache();
-
-			Integer cached = 0, total = results.size();
-			for (Object[] data: results) {
-				cached++;
-
-				if (ArrayUtil.isEmpty(data)) {
-					continue;
-				}
-				if (idsCache.containsKey(data[0])) {
-					continue;
-				}
-
-				doCacheGroup(data, idsCache, typesCache);
-				getLogger().info("Cached " + cached + " groups out of " + total);
-			}
-			return cached;
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error caching groups with type " + (StringUtil.isEmpty(type) ? "IDs " + ids : "type " + type) + ", query: " + query, e);
-		}
-		return 0;
-	}
-
-	private void doCacheGroup(Object[] data, Map<Integer, CachedGroup> idsCache, Map<String, Set<Integer>> typesCache) {
-		if (ArrayUtil.isEmpty(data) || data.length < 2 || data[0] == null || data[1] == null) {
-			return;
-		}
-
-		Integer groupId = null;
-		try {
-			//	Group
-			final Integer id = (Integer) data[0];
-			groupId = id;
-			String type = (String) data[1];
-
-			CachedGroup cachedGroup = new CachedGroup(id, type);
-			idsCache.put(id, cachedGroup);
-
-			Set<Integer> typeIds = typesCache.get(type);
-			if (typeIds == null) {
-				typeIds = new LinkedHashSet<>();
-				typesCache.put(type, typeIds);
-			}
-			typeIds.add(id);
-
-			ExecutorService service = Executors.newFixedThreadPool(2);
-			List<Future<Integer>> futures = new ArrayList<>();
-
-			//	All children
-			Callable<Integer> groupChildren = new Callable<Integer>() {
-
-				@Override
-				public Integer call() throws Exception {
-					return getCachedChildren(id, cachedGroup);
-				}
-
-				@Override
-				public String toString() {
-					return "Children for group with ID " + id;
-				}
-
-			};
-			futures.add(service.submit(groupChildren));
-
-			//	All parents
-			Callable<Integer> groupParents = new Callable<Integer>() {
-
-				@Override
-				public Integer call() throws Exception {
-					return getCachedParents(id, cachedGroup);
-				}
-
-				@Override
-				public String toString() {
-					return "Parents for group with ID " + id;
-				}
-
-			};
-			futures.add(service.submit(groupParents));
-
-			futures.parallelStream().forEach(future -> {
-				try {
-					future.get();
-				} catch (Exception e) {
-					getLogger().log(Level.WARNING, "Error executing " + future, e);
-				}
-			});
-
-			service.shutdown();
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error caching group with ID: " + groupId, e);
-		}
-	}
-
-	@Override
-	public void doCacheGroup(Integer groupId) {
-		if (groupId == null) {
-			return;
-		}
-
-		try {
-			doCache(Arrays.asList(groupId));
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error caching group by ID: " + groupId, e);
-		}
 	}
 
 	@Override
@@ -949,25 +795,6 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		} finally {
 			CoreUtil.doDebug(start, System.currentTimeMillis(), getClass().getSimpleName() + ".findActiveCachedGroupsIdsByTypes Types: " + types);
 		}
-	}
-
-	@Override
-	public void doCache(List<Integer> groupsIds) {
-		if (ListUtil.isEmpty(groupsIds)) {
-			return;
-		}
-
-		List<Integer> toCache = new ArrayList<>();
-		Map<Integer, CachedGroup> cache = getIdsCache();
-		for (Integer id: groupsIds) {
-			if (id == null || cache.containsKey(id)) {
-				continue;
-			}
-
-			toCache.add(id);
-		}
-
-		doCacheGroups(toCache, null);
 	}
 
 	@Override

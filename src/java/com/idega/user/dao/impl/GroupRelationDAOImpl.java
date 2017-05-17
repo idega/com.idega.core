@@ -117,7 +117,8 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 
 				query = new StringBuilder("SELECT DATE(CASE WHEN r.terminationDate IS NOT NULL THEN r.terminationDate WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NOT NULL THEN init_modification_date WHEN r.terminationDate IS NULL AND r.initiationModificationDate IS NULL AND r.initiationDate IS NOT NULL THEN initiation_date END) AS date, ");
 				query.append(" r.group.id, r.group.groupType.groupType, ");	//	1, 2
-				query.append(" r.initiationDate, r.terminationDate, r.initiationModificationDate, r.terminationModificationDate, r.status, r.groupRelationID "); //3, 4, 5, 6, 7, 8
+				query.append(" r.initiationDate, r.terminationDate, r.initiationModificationDate, r.terminationModificationDate, r.status, r.groupRelationID, ");	//	3, 4, 5, 6, 7, 8
+				query.append(" r.group.name, r.relatedGroup.name "); //	9, 10
 				query.append(" FROM ").append(GroupRelation.class.getName()).append(" r");
 				query.append(" WHERE 1 = 1 ");
 
@@ -141,12 +142,13 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 
 				List<GroupRelationBean> results = new ArrayList<>();
 				for (Object[] data: allData) {
-					if (ArrayUtil.isEmpty(data) || data.length < 8) {
+					if (ArrayUtil.isEmpty(data) || data.length < 11) {
 						continue;
 					}
 
 					try {
 						Integer groupId = ((Number) data[1]).intValue();
+						String groupName = (String) data[9];
 						String groupType = (String) data[2];
 						Timestamp initiationDate = (Timestamp) data[3];
 						Timestamp terminationDate = (Timestamp) data[4];
@@ -154,8 +156,22 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 						Timestamp terminationModificationDate = (Timestamp) data[6];
 						String status = (String) data[7];
 						Integer groupRelationId = ((Number) data[8]).intValue();
+						String relatedGroupName = (String) data[10];
 						boolean active = status != null && (GroupRelation.STATUS_ACTIVE.equals(status) || GroupRelation.STATUS_ACTIVE_PENDING.equals(status));
-						GroupRelationBean bean = new GroupRelationBean(groupRelationId, groupId, groupType, null, relatedGroupType, active, initiationDate, terminationDate, initiationModificationDate, terminationModificationDate);
+						GroupRelationBean bean = new GroupRelationBean(
+								groupRelationId,
+								groupId,
+								groupName,
+								groupType,
+								null,
+								relatedGroupName,
+								relatedGroupType,
+								active,
+								initiationDate,
+								terminationDate,
+								initiationModificationDate,
+								terminationModificationDate
+						);
 						results.add(bean);
 					} catch (Exception e) {
 						getLogger().log(Level.WARNING, "Error creating " + GroupRelationBean.class.getName() + " from " + data, e);

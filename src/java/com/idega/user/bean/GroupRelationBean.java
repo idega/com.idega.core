@@ -12,12 +12,13 @@ public class GroupRelationBean implements Serializable {
 	private Integer id;
 
 	private Integer groupId;
+	private String groupName;
 	private String groupType;
 
 	private boolean active;
 
 	private Integer relatedGroupId;
-
+	private String relatedGroupName;
 	private String relatedGroupType;
 
 	private Timestamp initiationDate, terminationDate, initiationModificationDate, terminationModificationDate;
@@ -33,10 +34,15 @@ public class GroupRelationBean implements Serializable {
 
 	public GroupRelationBean(
 			Integer id,
+
 			Integer groupId,
+			String groupName,
 			String groupType,
+
 			Integer relatedGroupId,
+			String relatedGroupName,
 			String relatedGroupType,
+
 			boolean active,
 			Timestamp initiationDate,
 			Timestamp terminationDate,
@@ -46,9 +52,11 @@ public class GroupRelationBean implements Serializable {
 		this.id = id;
 
 		this.groupId = groupId;
+		this.groupName = groupName;
 		this.groupType = groupType;
 
 		this.relatedGroupId = relatedGroupId;
+		this.relatedGroupName = relatedGroupName;
 		this.relatedGroupType = relatedGroupType;
 
 		this.initiationDate = initiationDate;
@@ -175,6 +183,22 @@ public class GroupRelationBean implements Serializable {
 		this.parentEntityType = parentEntityType;
 	}
 
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getRelatedGroupName() {
+		return relatedGroupName;
+	}
+
+	public void setRelatedGroupName(String relatedGroupName) {
+		this.relatedGroupName = relatedGroupName;
+	}
+
 	@Override
 	public boolean equals(Object o) {
 		if (o instanceof GroupRelationBean) {
@@ -184,9 +208,13 @@ public class GroupRelationBean implements Serializable {
 
 			Integer groupId1 = getGroupId();
 			Integer groupId2 = gr.getGroupId();
+			String name1 = getGroupName();
+			String name2 = gr.getGroupName();
 			String type1 = getGroupType();
 			String type2 = gr.getGroupType();
 
+			String relatedGroupName1 = getRelatedGroupName();
+			String relatedGroupName2 = gr.getRelatedGroupName();
 			String relatedGroupType1 = getRelatedGroupType();
 			String relatedGroupType2 = gr.getRelatedGroupType();
 			Integer relatedGroupId1 = getRelatedGroupId();
@@ -195,9 +223,11 @@ public class GroupRelationBean implements Serializable {
 					id1 != null && id2 != null && id1.intValue() == id2.intValue() &&
 
 					groupId1 != null && groupId2 != null && groupId1.intValue() == groupId2.intValue() &&
+					name1 != null && name2 != null && name1.equals(name2) &&
 					type1 != null && type2 != null && type1.equals(type2) &&
 
 					relatedGroupId1 != null && relatedGroupId2 != null && relatedGroupId1.intValue() == relatedGroupId2.intValue() &&
+					relatedGroupName1 != null && relatedGroupName2 != null && relatedGroupName1.equals(relatedGroupName2) &&
 					relatedGroupType1 != null && relatedGroupType2 != null && relatedGroupType1.equals(relatedGroupType2)
 			) {
 				return true;

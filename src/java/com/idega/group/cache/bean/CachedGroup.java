@@ -14,6 +14,7 @@ public class CachedGroup implements Serializable {
 
 	private Integer id;
 
+	private String name;
 	private String type;
 
 	private Map<Integer, CachedGroup> parents = new ConcurrentHashMap<>();
@@ -28,15 +29,16 @@ public class CachedGroup implements Serializable {
 		super();
 	}
 
-	public CachedGroup(Integer id, String type) {
+	public CachedGroup(Integer id, String name, String type) {
 		this();
 
 		this.id = id;
+		this.name = name;
 		this.type = type;
 	}
 
-	public CachedGroup(Integer groupRelationId, Integer id, String type, boolean active) {
-		this(id, type);
+	public CachedGroup(Integer groupRelationId, Integer id, String name, String type, boolean active) {
+		this(id, name, type);
 
 		this.groupRelationId = groupRelationId;
 		this.active = active;
@@ -134,6 +136,8 @@ public class CachedGroup implements Serializable {
 			Integer relationId2 = cachedGroup.getGroupRelationId();
 			Integer id1 = getId();
 			Integer id2 = cachedGroup.getId();
+			String name1 = getName();
+			String name2 = cachedGroup.getName();
 			String type1 = getType();
 			String type2 = cachedGroup.getType();
 			Map<Integer, CachedGroup> parents1 = getParents();
@@ -141,6 +145,7 @@ public class CachedGroup implements Serializable {
 			if (
 					relationId1 != null && relationId2 != null && relationId1.intValue() == relationId2.intValue() &&
 					id1 != null && id2 != null && id1.intValue() == id2.intValue() &&
+					name1 != null && name2 != null && name1.equals(name2) &&
 					type1 != null && type2 != null && type1.equals(type2) &&
 					parents1 != null && parents2 != null && parents1.equals(parents2)
 			) {
@@ -149,6 +154,14 @@ public class CachedGroup implements Serializable {
 		}
 
 		return false;
+	}
+
+	public String getName() {
+		return name;
+	}
+
+	public void setName(String name) {
+		this.name = name;
 	}
 
 	@Override

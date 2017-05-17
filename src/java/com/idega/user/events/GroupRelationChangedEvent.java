@@ -22,9 +22,11 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 	private boolean executeInThread = true;
 
 	private Integer groupId;
+	private String groupName;
 	private String groupType;
 
 	private Integer relatedGroupId;
+	private String relatedGroupName;
 	private String relatedGroupType;
 
 	private String status, source;
@@ -45,11 +47,17 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	public GroupRelationChangedEvent(
 			EventType type,
+
 			Integer groupRelationId,
+
 			Integer groupId,
+			String groupName,
 			String groupType,
+
 			Integer relatedGroupId,
+			String relatedGroupName,
 			String relatedGroupType,
+
 			String status,
 			Date initiationDate,
 			Date terminationDate,
@@ -60,8 +68,10 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 				type,
 				groupRelationId,
 				groupId,
+				groupName,
 				groupType,
 				relatedGroupId,
+				relatedGroupName,
 				relatedGroupType,
 				status,
 				initiationDate == null ? null : new Timestamp(initiationDate.getTime()),
@@ -73,11 +83,17 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	public GroupRelationChangedEvent(
 			EventType type,
+
 			Integer groupRelationId,
+
 			Integer groupId,
+			String groupName,
 			String groupType,
+
 			Integer relatedGroupId,
+			String relatedGroupName,
 			String relatedGroupType,
+
 			String status,
 			Timestamp initiationDate,
 			Timestamp terminationDate,
@@ -87,9 +103,11 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 		this(type, groupRelationId);
 
 		this.groupId = groupId;
+		this.groupName = groupName;
 		this.groupType = groupType;
 
 		this.relatedGroupId = relatedGroupId;
+		this.relatedGroupName = relatedGroupName;
 		this.relatedGroupType = relatedGroupType;
 
 		this.status = status;
@@ -170,6 +188,22 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	public Timestamp getTerminationModificationDate() {
 		return terminationModificationDate;
+	}
+
+	public String getGroupName() {
+		return groupName;
+	}
+
+	public void setGroupName(String groupName) {
+		this.groupName = groupName;
+	}
+
+	public String getRelatedGroupName() {
+		return relatedGroupName;
+	}
+
+	public void setRelatedGroupName(String relatedGroupName) {
+		this.relatedGroupName = relatedGroupName;
 	}
 
 	@Override
