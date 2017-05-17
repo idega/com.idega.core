@@ -103,6 +103,7 @@ public interface GroupDAO extends GenericDao {
 	 * @return Group ID => flag if has users
 	 */
 	public Map<Integer, Boolean> hasUsers(List<Group> groups);
+	public Map<Integer, Boolean> hasUsersByGroupsIds(List<Integer> groupsIds);
 
 	public List<Group> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes);
 	public <T extends Serializable> List<T> filterGroupsByIdsAndTypes(List<Integer> groupsIds, List<String> groupTypes, Class<T> resultType);

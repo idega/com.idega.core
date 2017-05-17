@@ -796,24 +796,45 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			return null;
 		}
 
+		Set<Integer> ids = new HashSet<>();
+		for (Iterator<Group> groupsIter = groups.iterator(); groupsIter.hasNext();) {
+			Group group = groupsIter.next();
+			if (group == null) {
+				continue;
+			}
+
+			group = DBUtil.getInstance().lazyLoad(group);
+
+			if (group == null) {
+				continue;
+			}
+
+			Integer id = group.getID();
+			if (id != null) {
+				ids.add(id);
+			}
+		}
+		return hasUsersByGroupsIds(new ArrayList<>(ids));
+	}
+
+	@Override
+	public Map<Integer, Boolean> hasUsersByGroupsIds(List<Integer> groupsIds) {
+		if (ListUtil.isEmpty(groupsIds)) {
+			return null;
+		}
+
 		StringBuilder query = new StringBuilder();
 		try {
 			query.append("SELECT gr.group.id, count(gr.relatedGroup.id) FROM ").append(GroupRelation.class.getName()).append(" gr WHERE gr.group.id in (");
-			for (Iterator<Group> groupsIter = groups.iterator(); groupsIter.hasNext();) {
-				Group group = groupsIter.next();
-				if (group == null) {
+			for (Iterator<Integer> groupsIdsIter = groupsIds.iterator(); groupsIdsIter.hasNext();) {
+				Integer groupId = groupsIdsIter.next();
+				if (groupId == null) {
 					continue;
 				}
-				group = DBUtil.getInstance().lazyLoad(group);
 
-				if (group != null) {
-					Integer id = group.getID();
-					if (id != null) {
-						query.append(id);
-						if (groupsIter.hasNext()) {
-							query.append(CoreConstants.COMMA).append(CoreConstants.SPACE);
-						}
-					}
+				query.append(groupId);
+				if (groupsIdsIter.hasNext()) {
+					query.append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 				}
 			}
 			query.append(") and gr.groupRelationType.type = 'GROUP_PARENT' and (gr.status = 'ST_ACTIVE' or gr.status = 'PASS_PEND') ")
