@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -176,7 +178,7 @@ public class RepositoryAuthenticator extends BaseFilter {
 
 		HttpSession session = request.getSession(true);
 		Object userFolderGenerated = session.getAttribute("user_folder_generated");
-		if (userFolderGenerated == null || !((Boolean) userFolderGenerated)) {
+		if (userFolderGenerated == null) {
 			session.setAttribute("user_folder_generated", Boolean.TRUE);
 			generateUserFolders(request, lInfo.getUser());
 		}
@@ -195,9 +197,13 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private void generateUserFolders(HttpServletRequest request, User user) throws RepositoryException {
-		if (getRepositoryService().generateUserFolders(user, request.getRemoteUser())) {
-			request.getSession(true).setAttribute("user_folder_generated", Boolean.TRUE);
+		Boolean homeFolderGenerated = Boolean.FALSE;
+		try {
+			homeFolderGenerated = getRepositoryService().generateUserFolders(user, request.getRemoteUser());
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error generating home folders for " + user, e);
 		}
+		request.getSession(true).setAttribute("user_folder_generated", homeFolderGenerated);
 	}
 
 	private String getUserAuthenticatedByRepository(HttpSession session) {
