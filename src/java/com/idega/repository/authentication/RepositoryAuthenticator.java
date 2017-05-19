@@ -5,6 +5,8 @@ import java.rmi.RemoteException;
 import java.security.Principal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.jcr.RepositoryException;
 import javax.jcr.SimpleCredentials;
@@ -90,7 +92,7 @@ public class RepositoryAuthenticator extends BaseFilter {
 	public void doAuthentication(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
-		HttpSession session = req.getSession();
+		HttpSession session = req.getSession(true);
 		LoginBusinessBean loginBusiness = getLoginBusiness(req);
 
 		try {
@@ -138,7 +140,7 @@ public class RepositoryAuthenticator extends BaseFilter {
 		throws RemoteException, IOException, RepositoryException {
 
 		String repositoryPrincipal = loginName;
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 
 		if (loginBusiness.isLoggedOn(request)) {
@@ -164,7 +166,9 @@ public class RepositoryAuthenticator extends BaseFilter {
 			}
 		}
 
-		session.setAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME, repositoryPrincipal);
+		try {
+			session.setAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME, repositoryPrincipal);
+		} catch (Exception e) {}
 		return request;
 	}
 
@@ -172,9 +176,9 @@ public class RepositoryAuthenticator extends BaseFilter {
 		if (lInfo == null)
 			return;
 
-		HttpSession session = request.getSession();
+		HttpSession session = request.getSession(true);
 		Object userFolderGenerated = session.getAttribute("user_folder_generated");
-		if (userFolderGenerated == null || !((Boolean) userFolderGenerated)) {
+		if (userFolderGenerated == null) {
 			session.setAttribute("user_folder_generated", Boolean.TRUE);
 			generateUserFolders(request, lInfo.getUser());
 		}
@@ -193,17 +197,26 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private void generateUserFolders(HttpServletRequest request, User user) throws RepositoryException {
-		if (getRepositoryService().generateUserFolders(user, request.getRemoteUser())) {
-			request.getSession().setAttribute("user_folder_generated", Boolean.TRUE);
+		Boolean homeFolderGenerated = Boolean.FALSE;
+		try {
+			homeFolderGenerated = getRepositoryService().generateUserFolders(user, request.getRemoteUser());
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error generating home folders for " + user, e);
 		}
+		request.getSession(true).setAttribute("user_folder_generated", homeFolderGenerated);
 	}
 
 	private String getUserAuthenticatedByRepository(HttpSession session) {
-		return (String) session.getAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		try {
+			return (String) session.getAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		} catch (Exception e) {}
+		return null;
 	}
 
 	private void setAsUnauthenticatedInRepository(HttpSession session) {
-		session.removeAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		try {
+			session.removeAttribute(REPOSITORY_USER_PRINCIPAL_ATTRIBUTE_NAME);
+		} catch (Exception e) {}
 	}
 
 	private boolean isAuthenticated(HttpServletRequest request, LoggedOnInfo info, String login, String password) {
