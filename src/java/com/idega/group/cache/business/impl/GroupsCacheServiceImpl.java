@@ -204,6 +204,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return results;
 	}
 
+	@Override
 	public Map<Integer, List<Integer>> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels) {
 		Map<Integer, List<Integer>> results = new HashMap<>();
 
