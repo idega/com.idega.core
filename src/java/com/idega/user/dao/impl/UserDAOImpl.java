@@ -38,7 +38,6 @@ import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
-import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
@@ -112,7 +111,8 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	@Override
 	public User getUserByUUID(String uniqueID) {
 		Param param = new Param("uniqueId", uniqueID);
-		return getSingleResult("user.findByUniqueID", User.class, param);
+		List<User> users = getResultList("user.findByUniqueID", User.class, param);
+		return ListUtil.isEmpty(users) ? null : users.get(0);
 	}
 
 	@Override
@@ -442,7 +442,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 			if (ListUtil.isEmpty(emails))
 				return null;
 
-			
+
 			for (Email email: emails) {
 				List<User> users = email.getUsers();
 				initialize(users);
@@ -451,7 +451,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 				}
 			}
 		}
-		
+
 
 		return usersList;
 	}

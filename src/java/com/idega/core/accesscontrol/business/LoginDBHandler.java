@@ -16,6 +16,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Random;
+import java.util.logging.Logger;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -624,9 +625,11 @@ public class LoginDBHandler {
 	public static boolean verifyPassword(String user, String password) {
 		try {
 			LoginTable login = getLoginTableHome().findByLogin(user);
-			return Encrypter.verifyOneWayEncrypted(login.getUserPassword(), password);
+			return login == null ?
+				false :
+				Encrypter.verifyOneWayEncrypted(login.getUserPassword(), password);
 		} catch (FinderException fe) {
-			fe.printStackTrace();
+			Logger.getLogger(LoginDBHandler.class.getName()).warning("Failed to find login for username: " + user);
 		}
 		return false;
 	}

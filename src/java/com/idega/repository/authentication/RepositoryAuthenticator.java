@@ -27,6 +27,7 @@ import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.RepositoryStartedEvent;
 import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.BaseFilter;
@@ -173,19 +174,22 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private void updateRolesForUser(HttpServletRequest request, LoggedOnInfo lInfo) throws RepositoryException, RemoteException, IOException {
-		if (lInfo == null)
+		if (lInfo == null) {
 			return;
-
-		HttpSession session = request.getSession(true);
-		Object userFolderGenerated = session.getAttribute("user_folder_generated");
-		if (userFolderGenerated == null) {
-			session.setAttribute("user_folder_generated", Boolean.TRUE);
-			generateUserFolders(request, lInfo.getUser());
 		}
 
-		IWMainApplication iwma = getIWMainApplication(request);
-		boolean doUpdateRoles = iwma.getSettings().getBoolean(PROPERTY_UPDATE_ROLES, Boolean.TRUE);
-		if (doUpdateRoles) {
+		IWMainApplicationSettings settings = getIWMainApplication(request).getSettings();
+
+		if (settings.getBoolean("repository.generate_home_folders", true)) {
+			HttpSession session = request.getSession(true);
+			Object userFolderGenerated = session.getAttribute("user_folder_generated");
+			if (userFolderGenerated == null) {
+				session.setAttribute("user_folder_generated", Boolean.TRUE);
+				generateUserFolders(request, lInfo.getUser());
+			}
+		}
+
+		if (settings.getBoolean(PROPERTY_UPDATE_ROLES, Boolean.TRUE)) {
 			Object updated = lInfo.getAttribute(REPOSITORY_ROLES_UPDATED);
 			if (updated instanceof Boolean && (Boolean) updated)
 				return;
