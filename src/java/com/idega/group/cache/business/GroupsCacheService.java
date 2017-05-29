@@ -82,4 +82,6 @@ public interface GroupsCacheService {
 	public Map<Integer, Map<String, Integer>> getCachedGroupRelationChanges();
 	public Map<Integer, Integer> getAliases();
 
+	public void setGroupTypesForDebug(List<String> types);
+
 }
