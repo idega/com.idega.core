@@ -1,9 +1,9 @@
 /*
  * $Id: IWAuthenticator.java,v 1.39 2008/11/17 08:40:07 laddi Exp $ Created on
  * 31.7.2004 in project com.idega.core
- * 
+ *
  * Copyright (C) 2004-2005 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -57,6 +57,7 @@ import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CypherText;
 import com.idega.util.RequestUtil;
+import com.idega.util.StringUtil;
 
 /**
  * <p>
@@ -66,7 +67,7 @@ import com.idega.util.RequestUtil;
  * this filter reads that and logs the user into the system.
  * </p>
  * Last modified: $Date: 2008/11/17 08:40:07 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.39 $
  */
@@ -106,18 +107,20 @@ public class IWAuthenticator extends BaseFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#init(javax.servlet.FilterConfig)
 	 */
+	@Override
 	public void init(FilterConfig arg0) throws ServletException {
 	}
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#doFilter(javax.servlet.ServletRequest,
 	 *      javax.servlet.ServletResponse, javax.servlet.FilterChain)
 	 */
+	@Override
 	public void doFilter(ServletRequest srequest, ServletResponse sresponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) srequest;
 		HttpServletResponse response = (HttpServletResponse) sresponse;
@@ -126,12 +129,12 @@ public class IWAuthenticator extends BaseFilter {
 		User lastLoggedOnAsUser = null;
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);
 		boolean isLoggedOn = loginBusiness.isLoggedOn(request);
-		
+
 		//if ((isLoggedOn && loginBusiness.isLogOffAction(request)) || loginBusiness.isLogOnAction(request) || loginBusiness.isTryAgainAction(request)) {
 			if (isLoggedOn) {
 				lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
 			}
-	
+
 			if (useBasicAuthenticationMethod(request)) {
 				if (!isLoggedOn) {
 					if (!loginBusiness.authenticateBasicAuthenticationRequest(request)) {
@@ -147,27 +150,27 @@ public class IWAuthenticator extends BaseFilter {
 				tryRegularLogin(request);
 				tryCookieLogin(request, response, loginBusiness);
 			}
-	
+
 			processJAASLogin(request);
-	
+
 			if (!isLoggedOn){
 				isLoggedOn = loginBusiness.isLoggedOn(request);
 			}
-			
+
 			if (lastLoggedOnAsUser == null && isLoggedOn){
 				lastLoggedOnAsUser = loginBusiness.getCurrentUser(session);
 			}
-			
+
 			boolean didInterrupt = processAuthenticationListeners(request, response, session, lastLoggedOnAsUser, loginBusiness, isLoggedOn);
 			if (didInterrupt) {
 				return;
 			}
-	
+
 			boolean didRedirect = processRedirects(request, response, session, loginBusiness);
 			if (didRedirect) {
 				return;
 			}
-	
+
 			chain.doFilter(new IWJAASAuthenticationRequestWrapper(request), response);
 		/*}
 		else {
@@ -180,7 +183,7 @@ public class IWAuthenticator extends BaseFilter {
 	 * Processes the possibly attatched AuthenticationListeners. Returns true if
 	 * one of the authenticationfilters interrupts the filter chain.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param session
@@ -227,7 +230,7 @@ public class IWAuthenticator extends BaseFilter {
 	 * Processes possible redirects that might happen at login time. Returns true
 	 * if a redirect did happen.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param session
@@ -250,7 +253,7 @@ public class IWAuthenticator extends BaseFilter {
 	 * Processes possible redirects that might happen at login time. Returns true
 	 * if a redirect did happen.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param session
@@ -280,7 +283,7 @@ public class IWAuthenticator extends BaseFilter {
 				return true;
 			}
 		}
-		
+
 		if (RequestUtil.isParameterSet(request, PARAMETER_REDIRECT_URI_ONLOGON_FAILED) && !isLoggedOn) {
 			String uriToParse = request.getParameter(PARAMETER_REDIRECT_URI_ONLOGON_FAILED);
 			String uri = getLoginRedirectUriOnLogonParsedWithVariables(request,uriToParse);
@@ -289,10 +292,10 @@ public class IWAuthenticator extends BaseFilter {
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
-	
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getHomePageIDForUser(User)
 	 *
@@ -307,17 +310,23 @@ public class IWAuthenticator extends BaseFilter {
 		com.idega.user.data.User user = loginBusiness.getCurrentUserLegacy(session);
 		IWMainApplication iwMainApplication = getIWMainApplication(request);
 		IWApplicationContext iwac = iwMainApplication.getIWApplicationContext();
-		UserBusiness userBusiness = (UserBusiness) IBOLookup.getServiceInstance(iwac, UserBusiness.class);
-		
+		UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+
 		int redirectPageId = userBusiness.getHomePageIDForUser(user);
-		
+
 		if (redirectPageId > 0) {
-			response.sendRedirect(getBuilderService(iwac).getPageURI(redirectPageId));
+			String uri = null;
+			try {
+				uri = getBuilderService(iwac).getPageURI(redirectPageId);
+			} catch (Exception e) {
+				log.log(Level.WARNING, "Error getting page's URI by ID: " + redirectPageId, e);
+			}
+			response.sendRedirect(StringUtil.isEmpty(uri) ? CoreConstants.PAGES_URI_PREFIX : uri);
 			return true;
 		}
-		
+
 		log.log(Level.INFO, "Didn't find user's " + user.getDisplayName() + " home page");
-		
+
 		return false;
 	}
 
@@ -327,7 +336,7 @@ public class IWAuthenticator extends BaseFilter {
 	 * the variables ${currentUser.personalID}, ${currentUser.ticket} in the URL
 	 * String.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -343,7 +352,7 @@ public class IWAuthenticator extends BaseFilter {
 				ignoreParams.add(LoginBusinessBean.PARAMETER_PASSWORD2);//whatever that is...
 				ignoreParams.add(LoginBusinessBean.LoginStateParameter);
 				ignoreParams.add(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID);
-				
+
 				String parameterString = RequestUtil.getParametersStringFromRequest(request,ignoreParams);
 				if (parameterString.length() > 0) {
 					uri += (uri.indexOf("?") == -1 ? "?" : "&") + parameterString;
@@ -364,7 +373,7 @@ public class IWAuthenticator extends BaseFilter {
 	 * the variables ${currentUser.personalID}, ${currentUser.ticket} in the URL
 	 * String.
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @return
 	 */
@@ -372,7 +381,7 @@ public class IWAuthenticator extends BaseFilter {
 
 		LoginBusinessBean loginBean = LoginBusinessBean.getLoginBusinessBean(request);
 		LoggedOnInfo info = loginBean.getLoggedOnInfo(request.getSession());
-		
+
 		User user = null;
 		try{
 			user = loginBean.getCurrentUser(request.getSession());
@@ -383,7 +392,7 @@ public class IWAuthenticator extends BaseFilter {
 		} catch (NotLoggedOnException e){
 			//Do nothing
 		}
-		
+
 		if(info != null){
 			String ticket = info.getTicket();
 			if (ticket != null) {
@@ -403,9 +412,10 @@ public class IWAuthenticator extends BaseFilter {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see javax.servlet.Filter#destroy()
 	 */
+	@Override
 	public void destroy() {
 	}
 
@@ -424,7 +434,7 @@ public class IWAuthenticator extends BaseFilter {
 	 * Authenticates in/out with reading existing cookie or creating it on login
 	 * or removing it on logout
 	 * </p>
-	 * 
+	 *
 	 * @param request
 	 * @param response
 	 * @param loginBusiness
@@ -524,7 +534,7 @@ public class IWAuthenticator extends BaseFilter {
 		AuthenticationBusiness authenticationBusiness = null;
 		try {
 			IWApplicationContext iwac = getIWMainApplication(request).getIWApplicationContext();
-			authenticationBusiness = (AuthenticationBusiness) IBOLookup.getServiceInstance(iwac, AuthenticationBusiness.class);
+			authenticationBusiness = IBOLookup.getServiceInstance(iwac, AuthenticationBusiness.class);
 		}
 		catch (IBOLookupException e) {
 			e.printStackTrace();
@@ -539,7 +549,7 @@ public class IWAuthenticator extends BaseFilter {
 	@SuppressWarnings("unchecked")
 	protected void processJAASLogin(HttpServletRequest request) {
 		List loginModules = ImplementorRepository.getInstance().newInstances(LoginModule.class, this.getClass());
-		// just a shortcut 
+		// just a shortcut
 		if (loginModules.isEmpty()) {
 			return;
 		}
