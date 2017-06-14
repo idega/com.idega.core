@@ -1226,6 +1226,9 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 		Map<Integer, CachedGroup> relatedGroups = parents ? group.getParents() : group.getChildren();
 		if (MapUtil.isEmpty(relatedGroups)) {
+			relatedGroups = parents ? getParents(group) : getChildren(group);
+		}
+		if (MapUtil.isEmpty(relatedGroups)) {
 			return results;
 		}
 
