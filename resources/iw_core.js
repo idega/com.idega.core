@@ -1279,6 +1279,15 @@ IWCORE.insertRenderedComponent = function(component, options) {
 			parentContainer.replaceWith(jQuery(component.html));
 		}
 		
+		if (component.jsActions != null) {
+			for (var i = 0; i < component.jsActions.length; i++) {
+				var jsAction = component.jsActions[i];
+				if (jsAction != null && jsAction != '') {
+					executeJavaScriptActionsCodedInStringInGlobalScope(jsAction);
+				}
+			}
+		}
+		
 		if (options.callback) {
 			options.callback();
 		}
