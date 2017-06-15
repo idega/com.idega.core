@@ -1283,7 +1283,9 @@ IWCORE.insertRenderedComponent = function(component, options) {
 			for (var i = 0; i < component.jsActions.length; i++) {
 				var jsAction = component.jsActions[i];
 				if (jsAction != null && jsAction != '') {
-					executeJavaScriptActionsCodedInStringInGlobalScope(jsAction);
+					try {
+						executeJavaScriptActionsCodedInStringInGlobalScope(jsAction);
+					} catch (e) {}
 				}
 			}
 		}
