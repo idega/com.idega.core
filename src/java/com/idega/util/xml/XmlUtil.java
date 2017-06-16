@@ -407,28 +407,61 @@ public class XmlUtil {
 		return getElementsByXPath(container, expression, CoreConstants.EMPTY);
 	}
 
+	private static List<Element> getElementsByFilter(List<Content> contents, List<Filter<Element>> filters, List<Element> results) {
+		if (ListUtil.isEmpty(contents)) {
+			return results;
+		}
+
+		for (Content content: contents) {
+			if (content instanceof Element) {
+				Element e = (Element) content;
+
+				for (Filter<Element> f: filters) {
+					List<Element> elements = e.getContent(f);
+					if (!ListUtil.isEmpty(elements)) {
+						for (Element element: elements) {
+							if (!results.contains(element)) {
+								results.add(element);
+							}
+						}
+					}
+				}
+
+				results = getElementsByFilter(e.getContent(), filters, results);
+			}
+		}
+
+		return results;
+	}
+
 	public static List<Element> getElementsByXPath(Content container, String expression, String nameSpaceId) {
-		List<Element> elements = getContentByXPath(container, expression, nameSpaceId, Filters.element());
-		if (!ListUtil.isEmpty(elements))
-			return elements;
+		List<Element> elementsByXPath = getContentByXPath(container, expression, nameSpaceId, Filters.element());
+		elementsByXPath = elementsByXPath == null ? new ArrayList<>() : new ArrayList<>(elementsByXPath);
 
 		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ? null : Namespace.getNamespace(nameSpaceId, XHTML_NAMESPACE);
 
 		if (container instanceof Element) {
-			Filter<Element> f = namespace == null ? new ElementFilter(expression) : new ElementFilter(expression, namespace);
-			elements = ((Element) container).getContent(f);
-			if (!ListUtil.isEmpty(elements))
-				return elements;
+			List<Filter<Element>> filters = new ArrayList<>();
+			if (namespace != null) {
+				filters.add(new ElementFilter(expression, namespace));
+			}
+			filters.add(new ElementFilter(expression));
+			elementsByXPath = elementsByXPath == null ? new ArrayList<>() : new ArrayList<>(elementsByXPath);
+			elementsByXPath = getElementsByFilter(((Element) container).getContent(), filters, elementsByXPath);
+		}
+		if (!ListUtil.isEmpty(elementsByXPath)) {
+			return elementsByXPath;
 		}
 
-		elements = getElementsByXPath(container, expression, namespace);
-		if (ListUtil.isEmpty(elements)) {
-			if (StringUtil.isEmpty(nameSpaceId))
-				elements = getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID);
-			else
-				elements = getElementsByXPath(container, expression, Namespace.NO_NAMESPACE);
+		elementsByXPath = getElementsByXPath(container, expression, namespace);
+		if (ListUtil.isEmpty(elementsByXPath)) {
+			if (StringUtil.isEmpty(nameSpaceId)) {
+				elementsByXPath = getElementsByXPath(container, expression, XMLNS_NAMESPACE_ID);
+			} else {
+				elementsByXPath = getElementsByXPath(container, expression, Namespace.NO_NAMESPACE);
+			}
 		}
-		return elements;
+		return elementsByXPath;
 	}
 
 	public static <T> List<T> getContentByXPath(Content container, String expression, Filter<T> filter) {
