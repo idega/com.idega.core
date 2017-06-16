@@ -1279,6 +1279,10 @@ IWCORE.insertRenderedComponent = function(component, options) {
 			parentContainer.replaceWith(jQuery(component.html));
 		}
 		
+		if (options.callback) {
+			options.callback();
+		}
+		
 		if (component.jsActions != null) {
 			for (var i = 0; i < component.jsActions.length; i++) {
 				var jsAction = component.jsActions[i];
@@ -1288,10 +1292,6 @@ IWCORE.insertRenderedComponent = function(component, options) {
 					} catch (e) {}
 				}
 			}
-		}
-		
-		if (options.callback) {
-			options.callback();
 		}
 	});
 }
