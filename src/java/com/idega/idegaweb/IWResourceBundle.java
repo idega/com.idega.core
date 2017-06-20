@@ -22,6 +22,7 @@ import java.text.MessageFormat;
 import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
@@ -179,7 +180,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 
 		synchronized (this) {
 			this.lookup = new TreeMap<String, String>();
-			for (Entry<Object, Object> entry: this.properties.entrySet()) {
+			Set<Entry<Object, Object>> entries = new HashSet<>(this.properties.entrySet());
+			for (Entry<Object, Object> entry: entries) {
 				lookup.put(entry.getKey().toString(), entry.getValue().toString());
 			}
 
