@@ -116,6 +116,12 @@ public void setIsoAbbreviation(String IsoAbbreviation){
 		return (Integer) idoFindOnePKByQuery(query);
 	}
 
+	public Collection<?> ejbFindManyByISOAbbreviation(Collection<String> ISOAbbreviation) throws FinderException {
+		IDOQuery query = idoQuery();
+		query.appendSelectAllFrom(this).appendWhere(_COLUMN_ISOabbreviation).appendInForStringCollectionWithSingleQuotes(ISOAbbreviation);
+		return idoFindPKsByQuery(query);
+	}
+
 	@Override
 	public String getLocalizedName() {
 		String abbreviation = getIsoAbbreviation();

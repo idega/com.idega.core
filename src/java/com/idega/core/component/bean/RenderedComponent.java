@@ -6,8 +6,8 @@ public class RenderedComponent {
 
 	private String html;
 	private String errorMessage;
-	
-	private List<String> resources;
+
+	private List<String> resources, jsActions;
 
 	public String getHtml() {
 		return html;
@@ -31,6 +31,14 @@ public class RenderedComponent {
 
 	public void setResources(List<String> resources) {
 		this.resources = resources;
+	}
+
+	public List<String> getJsActions() {
+		return jsActions;
+	}
+
+	public void setJsActions(List<String> jsActions) {
+		this.jsActions = jsActions;
 	}
 
 }

@@ -1282,6 +1282,17 @@ IWCORE.insertRenderedComponent = function(component, options) {
 		if (options.callback) {
 			options.callback();
 		}
+		
+		if (component.jsActions != null) {
+			for (var i = 0; i < component.jsActions.length; i++) {
+				var jsAction = component.jsActions[i];
+				if (jsAction != null && jsAction != '') {
+					try {
+						executeJavaScriptActionsCodedInStringInGlobalScope(jsAction);
+					} catch (e) {}
+				}
+			}
+		}
 	});
 }
 
