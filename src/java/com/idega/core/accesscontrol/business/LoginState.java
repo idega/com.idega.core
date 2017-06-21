@@ -31,6 +31,7 @@ public class LoginState implements Serializable {
 	private static final int STATE_LOGIN_FAILED_DISABLED_NEXT_TIME = 8;
 	private static final int STATE_LOGIN_DISABLED = 9;
 	private static final int STATE_USER_AND_PASSWORD_EXISTS = 10;
+	private static final int STATE_STEP_2_FAILED = 11;
 
 	private int state = STATE_NO_STATE;
 
@@ -48,6 +49,7 @@ public class LoginState implements Serializable {
 	public static final LoginState FAILED_DISABLED_NEXT_TIME = new LoginState(STATE_LOGIN_FAILED_DISABLED_NEXT_TIME);
 	public static final LoginState DISABLED = new LoginState(STATE_LOGIN_DISABLED);
 	public static final LoginState USER_AND_PASSWORD_EXISTS = new LoginState(STATE_USER_AND_PASSWORD_EXISTS);
+	public static final LoginState STEP2FAILED = new LoginState(STATE_STEP_2_FAILED);
 
 	/*
 	 * (non-Javadoc)

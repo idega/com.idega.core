@@ -624,7 +624,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
 						ServletContext sc = request.getSession().getServletContext();
 						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
-
+						boolean codeSent = false;
 						if (ListUtil.isEmpty(verificators)) {
 							LOGGER.warning("There are no verificators: " + TwoStepLoginVerificator.class.getName());
 						} else {
@@ -633,16 +633,21 @@ public class LoginBusinessBean implements IWPageEventListener {
 							for (TwoStepLoginVerificator verificator: verificators) {
 								//Sending SMS message
 								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
-								verificator.doSendSecondStepVerification(iwac, username, sessionId);
+								codeSent = verificator.doSendSecondStepVerification(iwac, username, sessionId);
+								if (codeSent) break;
 							}
 						}
-						//Putting username and password attributes into the session
-						request.getSession().setAttribute(PARAMETER_USERNAME, username);
-						request.getSession().setAttribute(PARAMETER_PASSWORD, password);
-						request.setAttribute(PARAMETER_SESSION_ID, sessionId);
+						if (codeSent) {
+							//Putting username and password attributes into the session
+							request.getSession().setAttribute(PARAMETER_USERNAME, username);
+							request.getSession().setAttribute(PARAMETER_PASSWORD, password);
+							request.setAttribute(PARAMETER_SESSION_ID, sessionId);
 
-						//Setting the state
-						internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+							//Setting the state
+							internalSetState(request, LoginState.USER_AND_PASSWORD_EXISTS);
+						} else {
+							onLoginFailed(request, LoginState.STEP2FAILED, username);
+						}
 					} else {
 						onLoginFailed(request, canLogin, username);
 					}
