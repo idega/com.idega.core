@@ -57,6 +57,11 @@ public interface LoginRecordHome extends IDOHome {
 	public java.sql.Date getLastLoginByLoginID(Integer loginID) throws FinderException;
 
 	/**
+	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbHomeGetFirstLoginByUserID
+	 */
+	public java.sql.Date getFirstLoginByUserID(Integer userID) throws FinderException;
+	
+	/**
 	 * @see com.idega.core.accesscontrol.data.LoginRecordBMPBean#ejbHomeGetLastLoginByUserID
 	 */
 	public java.sql.Date getLastLoginByUserID(Integer userID) throws FinderException;

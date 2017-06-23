@@ -188,6 +188,19 @@ public class LoginRecordBMPBean extends GenericEntity implements LoginRecord {
 		}
 	}
 
+	public java.sql.Date ejbHomeGetFirstLoginByUserID(Integer userID) throws FinderException {
+		StringBuffer sql = new StringBuffer();
+		sql.append(" select min(in_stamp) from ic_login_rec r, ic_login l  ");
+		sql.append(" where l.ic_login_id = r.ic_login_id ");
+		sql.append(" and l.ic_user_id = ").append(userID);
+		try {
+			return getDateTableValue(sql.toString());
+		}
+		catch (SQLException e) {
+			throw new FinderException(e.getMessage());
+		}
+	}
+	
 	public java.sql.Date ejbHomeGetLastLoginByUserID(Integer userID) throws FinderException {
 		StringBuffer sql = new StringBuffer();
 		sql.append(" select max(in_stamp) from ic_login_rec r, ic_login l  ");

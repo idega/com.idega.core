@@ -82,6 +82,14 @@ public class LoginRecordHomeImpl extends IDOFactory implements LoginRecordHome {
 	}
 
 	@Override
+	public java.sql.Date getFirstLoginByUserID(Integer userID) throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		java.sql.Date theReturn = ((LoginRecordBMPBean) entity).ejbHomeGetFirstLoginByUserID(userID);
+		this.idoCheckInPooledEntity(entity);
+		return theReturn;
+	}
+	
+	@Override
 	public java.sql.Date getLastLoginByUserID(Integer userID) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 		java.sql.Date theReturn = ((LoginRecordBMPBean) entity).ejbHomeGetLastLoginByUserID(userID);
