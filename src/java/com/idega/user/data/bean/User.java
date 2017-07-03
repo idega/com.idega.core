@@ -159,7 +159,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@Column(name = COLUMN_PERSONAL_ID, length = 20)
 	private String personalID;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GENDER)
 	private Gender gender;
 
@@ -385,6 +385,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	}
 
 	public Gender getGender() {
+		gender = getInitialized(gender);
 		return this.gender;
 	}
 
