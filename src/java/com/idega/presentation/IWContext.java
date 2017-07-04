@@ -280,16 +280,16 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	}
 
 	private void storeContext() {
+		HttpServletRequest request = null;
 		try {
-			HttpServletRequest request = getRequest();
+			request = getRequest();
 			if (request == null) {
 				return;
 			}
 
 			request.setAttribute(IWCONTEXT_REQUEST_KEY, this);
 		} catch(Exception e) {
-			LOGGER.log(Level.SEVERE, "Error storing IWContext", e);
-			CoreUtil.sendExceptionNotification(e);
+			LOGGER.log(Level.SEVERE, "Error storing IWContext in request: " + request, e);
 		}
 	}
 
