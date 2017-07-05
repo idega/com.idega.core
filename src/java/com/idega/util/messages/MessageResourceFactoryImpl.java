@@ -128,8 +128,9 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		}
 
 		//	Auto inserting message in case none of resources has it
-		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
-			MessageResource resource = resourcesIter.next();
+		List<MessageResource> copies = new ArrayList<>(resources);
+		for (Iterator<MessageResource> copiesOfResourcesIter = copies.iterator(); copiesOfResourcesIter.hasNext();) {
+			MessageResource resource = copiesOfResourcesIter.next();
 			if (resource.isAutoInsert()) {
 				resource.setMessage(key, valueIfNotFound);
 			}
