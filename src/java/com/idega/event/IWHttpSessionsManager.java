@@ -70,7 +70,7 @@ public class IWHttpSessionsManager extends DefaultSpringBean {
 			userId = user == null ? null : user.getId();
 		} catch (Exception e) {}
 
-		String loginName = session.getAttribute("java.security.Principal_user_principal").toString();
+		String loginName = session.getAttribute("java.security.Principal_user_principal") == null ? null : session.getAttribute("java.security.Principal_user_principal").toString();
 
 		long lastAccessedTime = session == null ? 0 : session.getLastAccessedTime();
 		int maxInactiveInterval = session == null ? 0 : session.getMaxInactiveInterval();
