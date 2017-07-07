@@ -631,7 +631,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 	@Override
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc) {
-		return getAllGroupsIdsForUser(user, iwuc, false);
+		return getAllGroupsIdsForUser(user, iwuc, false, true);
 	}
 
 	private Collection<com.idega.user.data.Group> getUserGroupsByPermissions(IWUserContext iwuc, User user, UserBusiness userBusiness) throws Exception {
@@ -642,7 +642,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
-	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions) {
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions, boolean withChildren) {
 		if (user == null) {
 			getLogger().warning("User is not provided");
 			return null;
@@ -684,13 +684,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			}
 			ids.addAll(parentGroupsIds);
 
-			List<Integer> childrenIds = null;
-			while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null))) {
-				if (childrenIds.size() == parentGroupsIds.size() && childrenIds.containsAll(parentGroupsIds)) {
-					parentGroupsIds = null;
-				} else {
-					ids.addAll(childrenIds);
-					parentGroupsIds = childrenIds;
+			if (withChildren) {
+				List<Integer> childrenIds = null;
+				while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null))) {
+					if (childrenIds.size() == parentGroupsIds.size() && childrenIds.containsAll(parentGroupsIds)) {
+						parentGroupsIds = null;
+					} else {
+						ids.addAll(childrenIds);
+						parentGroupsIds = childrenIds;
+					}
 				}
 			}
 

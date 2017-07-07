@@ -1151,7 +1151,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		} else {
 			currentLevel++;
 		}
-		if (maxLevels != null && maxLevels > currentLevel) {
+		if (maxLevels != null && currentLevel > maxLevels) {
 			return results;
 		}
 
