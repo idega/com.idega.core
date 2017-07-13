@@ -95,4 +95,40 @@ public class AdvancedPropertyComparator implements Comparator<AdvancedProperty> 
 		return collator;
 	}
 
+	public boolean isSortById() {
+		return sortById;
+	}
+
+	public void setSortById(boolean sortById) {
+		this.sortById = sortById;
+	}
+
+	public boolean isDescending() {
+		return descending;
+	}
+
+	public void setDescending(boolean descending) {
+		this.descending = descending;
+	}
+
+	public Boolean getSortByName() {
+		return sortByName;
+	}
+
+	public void setSortByName(Boolean sortByName) {
+		this.sortByName = sortByName;
+	}
+
+	public Locale getLocale() {
+		return locale;
+	}
+
+	public void setLocale(Locale locale) {
+		this.locale = locale;
+	}
+
+	public void setCollator(Collator collator) {
+		this.collator = collator;
+	}
+
 }

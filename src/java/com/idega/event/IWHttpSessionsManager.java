@@ -14,8 +14,10 @@ import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
+import com.idega.core.accesscontrol.business.LoginBusinessBean;
 import com.idega.core.business.DefaultSpringBean;
 import com.idega.servlet.filter.RequestResponseProvider;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
@@ -62,9 +64,17 @@ public class IWHttpSessionsManager extends DefaultSpringBean {
 
 		HttpSession session = sessions.remove(id);
 
+		Integer userId = null;
+		try {
+			User user = LoginBusinessBean.getLoginBusinessBean(session).getCurrentUser(session);
+			userId = user == null ? null : user.getId();
+		} catch (Exception e) {}
+
+		String loginName = session.getAttribute("java.security.Principal_user_principal") == null ? null : session.getAttribute("java.security.Principal_user_principal").toString();
+
 		long lastAccessedTime = session == null ? 0 : session.getLastAccessedTime();
 		int maxInactiveInterval = session == null ? 0 : session.getMaxInactiveInterval();
-		getContext().publishEvent(new HttpSessionDestroyed(this, id, lastAccessedTime, maxInactiveInterval));
+		getContext().publishEvent(new HttpSessionDestroyed(this, id, lastAccessedTime, maxInactiveInterval, userId, loginName));
 	}
 
 	public boolean isSessionValid(String id) {

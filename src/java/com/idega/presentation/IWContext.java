@@ -297,7 +297,11 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public HttpSession getSession() {
-		return getRequest().getSession();
+		HttpSession session = getRequest().getSession();
+		if (session == null) {
+			session = getRequest().getSession(true);
+		}
+		return session;
 	}
 
 	public boolean isMultipartFormData() {

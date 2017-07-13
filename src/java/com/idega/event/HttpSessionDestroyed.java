@@ -9,13 +9,17 @@ public class HttpSessionDestroyed extends ApplicationEvent {
 	private String httpSessionId;
 	private long lastTimeAccessed;
 	private int maxInactiveInterval;
-	
-	public HttpSessionDestroyed(Object source, String httpSessionId, long lastTimeAccessed, int maxInactiveInterval) {
+	private Integer loggedInUserId;
+	private String loginName;
+
+	public HttpSessionDestroyed(Object source, String httpSessionId, long lastTimeAccessed, int maxInactiveInterval, Integer loggedInUserId, String loginName) {
 		super(source);
-		
+
 		this.httpSessionId = httpSessionId;
 		this.lastTimeAccessed = lastTimeAccessed;
 		this.maxInactiveInterval = maxInactiveInterval;
+		this.loggedInUserId = loggedInUserId;
+		this.loginName = loginName;
 	}
 
 	public String getHttpSessionId() {
@@ -29,4 +33,13 @@ public class HttpSessionDestroyed extends ApplicationEvent {
 	public int getMaxInactiveInterval() {
 		return maxInactiveInterval;
 	}
+
+	public Integer getLoggedInUserId() {
+		return loggedInUserId;
+	}
+
+	public String getLoginName() {
+		return loginName;
+	}
+
 }
