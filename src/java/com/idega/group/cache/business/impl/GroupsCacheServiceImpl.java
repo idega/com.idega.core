@@ -406,6 +406,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return types;
 	}
 
+	/*	Alias ID -> Group ID	*/
 	private Map<Integer, Integer> aliases = null;
 	@Override
 	public Map<Integer, Integer> getAliases() {
@@ -415,6 +416,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return aliases;
 	}
 
+	/*	Group ID -> Alias ID	*/
 	private Map<Integer, Integer> groupsAliases = null;
 	private Map<Integer, Integer> getGroupsAliases() {
 		if (groupsAliases == null) {
@@ -1655,6 +1657,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			return null;
 		}
 
+		Set<Integer> filteredAliasesIds = null;
 		long start = System.currentTimeMillis();
 		try {
 			Map<Integer, Integer> groupsAliasesCache = getGroupsAliases();
@@ -1664,20 +1667,22 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return null;
 			}
 
-			Set<Integer> filteredAliasesIds = new HashSet<>();
+			filteredAliasesIds = new HashSet<>();
 			for (Integer groupId: groupsIds) {
 				Integer aliasId = groupsAliasesCache.get(groupId);
 				if (aliasId == null) {
 					continue;
 				}
 
-				filteredAliasesIds.add(aliasId);
+				if (aliasesIds.contains(aliasId)) {
+					filteredAliasesIds.add(aliasId);
+				}
 			}
 
 			return ListUtil.isEmpty(filteredAliasesIds) ? null : new ArrayList<>(filteredAliasesIds);
 		} finally {
 			CoreUtil.doDebug(start, System.currentTimeMillis(), getClass().getSimpleName() + ".getGroupsAliasesIdsFromAliasesIdsAndGroupTypes" +
-					" Aliases IDs: " + aliasesIds + ", groups types: " + groupsTypes);
+					" Aliases IDs: " + aliasesIds + ", groups types: " + groupsTypes + ". RESULTS: " + filteredAliasesIds);
 		}
 	}
 
