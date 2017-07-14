@@ -437,10 +437,11 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			public void run() {
 				doCacheGroupRelations(groupTypesForChangesAtEntities);
 			}
+
 		});
 		if (DefaultIWBundle.isProductionEnvironment()) {
 			cacher.run();
-		} else {
+		} else if (getSettings().getBoolean("groups.start_caching_group_relations", false)) {
 			cacher.start();
 		}
 	}
