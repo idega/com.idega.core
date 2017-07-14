@@ -642,6 +642,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions) {
+		return getAllGroupsIdsForUser(user, iwuc, byPermissions, true);
+	}
+
+	@Override
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions, boolean withChildren) {
 		if (user == null) {
 			getLogger().warning("User is not provided");

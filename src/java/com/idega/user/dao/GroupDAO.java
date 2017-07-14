@@ -73,6 +73,7 @@ public interface GroupDAO extends GenericDao {
 	public Group findGroupByName(String name);
 
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc);
+	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions);
 	public List<Integer> getAllGroupsIdsForUser(User user, IWUserContext iwuc, boolean byPermissions, boolean withChildren);
 
 	public List<Integer> getChildGroupIds(List<Integer> parentGroupsIds, List<String> childGroupTypes);
