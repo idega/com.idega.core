@@ -1,6 +1,8 @@
 package com.idega.util;
 
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
  * Creditcardnumber checker <br>
@@ -14,13 +16,15 @@ import java.util.List;
 
 public class CreditCardChecker {
 
+	private static final Logger LOGGER = Logger.getLogger(CreditCardChecker.class.getName());
+
 	public static void main(String[] args) {
 		String number = "377846032140106";
-		
-		System.out.println(isValid(number));
-		System.out.println(getCardType(number).getCode() + ": " + getCardType(number).getName());
+
+		LOGGER.info(number + " is valid: " + isValid(number));
+		LOGGER.info(getCardType(number).getCode() + ": " + getCardType(number).getName());
 	}
-	
+
 	/**
 	 * Valid a Credit Card number
 	 */
@@ -29,10 +33,10 @@ public class CreditCardChecker {
 			return validCCNumber(number);
 		return false;
 	}
-	
+
 	/**
 	 * Validate a credit card number with allowed card types.
-	 * 
+	 *
 	 * @param number
 	 * @param allowedTypes
 	 * @return
@@ -42,17 +46,17 @@ public class CreditCardChecker {
 		if (!allowedTypes.contains(type)) {
 			return false;
 		}
-		
+
 		return validCCNumber(number);
 	}
-	
+
 	public static boolean isNumber(String n) {
 		try {
 			Double.valueOf(n).doubleValue();
 			return true;
 		}
 		catch (NumberFormatException e) {
-			e.printStackTrace();
+			LOGGER.warning(n + " is not a number");
 			return false;
 		}
 	}
@@ -86,7 +90,7 @@ public class CreditCardChecker {
 			}
 			return ((checksum % 10) == 0);
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Invalid CC number: " + n, e);
 			return false;
 		}
 	}
@@ -137,7 +141,11 @@ public class CreditCardChecker {
 					|| (digit3.compareTo("300") >= 0 && digit3.compareTo("305") <= 0)) {
 				if (cardnumber.length() == 14)
 					valid = CreditCardType.DINERS_CLUB;
+			} else {
+				LOGGER.warning("Failed to resolve card's type by provided number: " + cardnumber);
 			}
+		} else {
+			LOGGER.warning("Invalid card number: " + cardnumber);
 		}
 
 		return valid;
