@@ -1,6 +1,8 @@
 package com.idega.presentation.ui;
 
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -60,6 +62,8 @@ public class IWDatePicker extends TextInput {
 	private String onSelectAction = null;
 	private String inputName = null;
 	private String imageURI = null;
+	private String dateFormat = null;
+	private String dateFormatJS = null;
 
 	private String dateRangeSeparator = " - ";
 	private boolean showYearChange = false;
@@ -291,6 +295,7 @@ public class IWDatePicker extends TextInput {
 //			"datepicker";
 			VERSION_1_8_17.equals(version) ? isShowTime() ? "datetimepicker" : "datepicker" : "iwDatePicker";
 //			isShowTime() ? "datetimepicker" : "datepicker";
+
 		StringBuffer initAction = new StringBuffer("jQuery('#").append(!StringUtil.isEmpty(getCompositeId()) ? getCompositeId() : this.getId()).append("').").append(function).append("({");
 
 		initAction.append("iwdp:{id:'").append(getId()).append("',lang:'").append(locale.getLanguage()).append("'},");
@@ -306,6 +311,10 @@ public class IWDatePicker extends TextInput {
 
 		if (getYearRange() != null) {
 			initAction.append(", yearRange: ").append("'" + getYearRange() + "'");
+		}
+
+		if (getDateFormatJS() != null) {
+			initAction.append(", dateFormat: ").append("'" + getDateFormatJS() + "'");
 		}
 
 		// Max date
@@ -362,15 +371,20 @@ public class IWDatePicker extends TextInput {
 					iwDate.setDay(1);
 				}
 				if (iwDate != null) {
-					StringBuilder value = new StringBuilder(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
-
-					if (isDateRange()) {
-						iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
-						value.append(dateRangeSeparator);
-						if (isShowTime())
-							value.append(iwDateTo.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT));
-						else
-							value.append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+					StringBuilder value = new StringBuilder();
+					if (dateFormat != null && !isDateRange()){
+						DateFormat df = new SimpleDateFormat(dateFormat);
+						value.append(df.format(date));
+					} else {
+						value.append(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
+						if (isDateRange()) {
+							iwDateTo = dateTo == null ? new IWTimestamp(System.currentTimeMillis()) : new IWTimestamp(dateTo);
+							value.append(dateRangeSeparator);
+							if (isShowTime())
+								value.append(iwDateTo.getLocaleDateAndTime(locale, IWTimestamp.SHORT, IWTimestamp.SHORT));
+							else
+								value.append(iwDateTo.getLocaleDate(locale, IWTimestamp.SHORT));
+						}
 					}
 
 					setValue(value.toString());
@@ -628,5 +642,21 @@ public class IWDatePicker extends TextInput {
 
 	public void setCompositeId(String compositeId) {
 		this.compositeId = compositeId;
+	}
+
+	public String getDateFormat() {
+		return dateFormat;
+	}
+
+	public void setDateFormat(String dateFormat) {
+		this.dateFormat = dateFormat;
+	}
+
+	public String getDateFormatJS() {
+		return dateFormatJS;
+	}
+
+	public void setDateFormatJS(String dateFormatJS) {
+		this.dateFormatJS = dateFormatJS;
 	}
 }
