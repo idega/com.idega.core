@@ -361,6 +361,8 @@ public class IWDatePicker extends TextInput {
 			initAction.append(", regional: ['").append(language).append("']");
 		}
 
+		initAction.append(", beforeShow: function(input, inst) { var calendar = inst.dpDiv; setTimeout(function() { calendar.position({ my: 'left top', at: 'left bottom', collision: 'none', of: input});}, 1);}");
+
 		initAction.append("});");
 
 		if (date != null) {
