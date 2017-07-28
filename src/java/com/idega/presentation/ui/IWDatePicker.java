@@ -94,6 +94,7 @@ public class IWDatePicker extends TextInput {
 	private static final String YEAR_RANGE_PROPERTY = "yearRange";
 	private static final String DATEPICKER_VERSION_PROPERTY = "version";
 	private static final String ALTERNATE_FIELD_PROPERTY = "alternateFieldId";
+	private static final String READONLY_PROPERTY = "readonly_";
 
 	private String version;
 
@@ -263,6 +264,7 @@ public class IWDatePicker extends TextInput {
 			setManualDate = true;
 		}
 
+		if(getDisabled()) this.setReadOnly(Boolean.TRUE);
 //		if (date != null) {
 //			iwDate = new IWTimestamp(date);
 //
@@ -344,6 +346,8 @@ public class IWDatePicker extends TextInput {
 		if (isShowTime()) {
 			initAction.append(", showTime: true");
 		}
+
+		initAction.append(", readonly: " + getDisabled());
 
 		if (!StringUtil.isEmpty(getAlternateFieldId())) {
 			initAction.append(", altField: '" + getAlternateFieldId() + "'");
