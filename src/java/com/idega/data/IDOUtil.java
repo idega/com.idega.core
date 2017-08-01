@@ -246,7 +246,7 @@ public class IDOUtil implements Singleton {
 			List<Integer> returnList = new ArrayList<Integer>(entities.size());
 
 			for (Iterator<? extends IDOEntity> iter = entities.iterator(); iter.hasNext();) {
-				returnList.add((Integer) iter.next().getPrimaryKey());
+				returnList.add(Integer.valueOf(iter.next().getPrimaryKey().toString()));
 			}
 
 			return returnList;
