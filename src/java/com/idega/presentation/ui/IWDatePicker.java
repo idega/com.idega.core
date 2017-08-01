@@ -95,6 +95,8 @@ public class IWDatePicker extends TextInput {
 	private static final String DATEPICKER_VERSION_PROPERTY = "version";
 	private static final String ALTERNATE_FIELD_PROPERTY = "alternateFieldId";
 	private static final String READONLY_PROPERTY = "readonly_";
+	private static final String DATEFORMAT_JAVA_PROPERTY = "dateFormat";
+	private static final String DATEFORMAT_JS_PROPERTY = "dateFormatJS";
 
 	private String version;
 
@@ -230,6 +232,22 @@ public class IWDatePicker extends TextInput {
 	    	String version = (String) ve.getValue(context.getELContext());
 	    	if (!StringUtil.isEmpty(version)) {
 	    		setAlternateFieldId(version);
+	    	}
+    	}
+
+       	ve = getValueExpression(DATEFORMAT_JS_PROPERTY);
+    	if (ve != null) {
+	    	String format = (String) ve.getValue(context.getELContext());
+	    	if (!StringUtil.isEmpty(format)) {
+	    		setDateFormatJS(format);
+	    	}
+    	}
+
+       	ve = getValueExpression(DATEFORMAT_JAVA_PROPERTY);
+    	if (ve != null) {
+	    	String format = (String) ve.getValue(context.getELContext());
+	    	if (!StringUtil.isEmpty(format)) {
+	    		setDateFormat(format);
 	    	}
     	}
 	}
