@@ -94,6 +94,7 @@ public class IWDatePicker extends TextInput {
 	private static final String YEAR_RANGE_PROPERTY = "yearRange";
 	private static final String DATEPICKER_VERSION_PROPERTY = "version";
 	private static final String ALTERNATE_FIELD_PROPERTY = "alternateFieldId";
+	private static final String READONLY_PROPERTY = "readonly_";
 
 	private String version;
 
@@ -263,6 +264,7 @@ public class IWDatePicker extends TextInput {
 			setManualDate = true;
 		}
 
+		if(getDisabled()) this.setReadOnly(Boolean.TRUE);
 //		if (date != null) {
 //			iwDate = new IWTimestamp(date);
 //
@@ -345,6 +347,8 @@ public class IWDatePicker extends TextInput {
 			initAction.append(", showTime: true");
 		}
 
+		initAction.append(", readonly: " + getDisabled());
+
 		if (!StringUtil.isEmpty(getAlternateFieldId())) {
 			initAction.append(", altField: '" + getAlternateFieldId() + "'");
 		}
@@ -360,6 +364,8 @@ public class IWDatePicker extends TextInput {
 		if (canUseLocalizedText) {
 			initAction.append(", regional: ['").append(language).append("']");
 		}
+
+		initAction.append(", beforeShow: function(input, inst) { var calendar = inst.dpDiv; setTimeout(function() { calendar.position({ my: 'left top', at: 'left bottom', collision: 'none', of: input});}, 1);}");
 
 		initAction.append("});");
 
