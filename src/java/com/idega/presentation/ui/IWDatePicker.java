@@ -396,9 +396,14 @@ public class IWDatePicker extends TextInput {
 				}
 				if (iwDate != null) {
 					StringBuilder value = new StringBuilder();
-					if (dateFormat != null && !isDateRange()){
+					if (dateFormat != null){
 						DateFormat df = new SimpleDateFormat(dateFormat);
 						value.append(df.format(date));
+						if (isDateRange()) {
+							value.append(dateRangeSeparator);
+							dateTo = dateTo == null ? new Date(System.currentTimeMillis()) : dateTo;
+							value.append(df.format(dateTo));
+						}
 					} else {
 						value.append(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
 						if (isDateRange()) {
