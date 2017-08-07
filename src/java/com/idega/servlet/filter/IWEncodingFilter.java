@@ -127,7 +127,7 @@ public class IWEncodingFilter implements Filter {
 				iwc = new IWContext(request, response, servletConfig == null ? request.getSession().getServletContext() : servletConfig.getServletContext());
 			}
 
-			if (!iwc.isLoggedOn()) {
+			if (!iwc.isLoggedOn() && iwc.getIWMainApplication().getSettings().getBoolean("disable_view_state_for_unauthorized", true)) {
 				Logger.getLogger(getClass().getName()).info("User is not logged in, not allowing to use param '" + viewStateParam + "'");
 				String redirectUri = IWMainApplication.getDefaultIWMainApplication().getSettings()
 						.getProperty("view_state_param_redirect_page", CoreConstants.PAGES_URI_PREFIX);
