@@ -146,6 +146,16 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 		return getParsedDate(source, null);
 	}
 
+	public static final Date getParsedDateByFormat(String source, String format) {
+		if (StringUtil.isEmpty(source) || StringUtil.isEmpty(format)) return null;
+		DateFormat formatter = new SimpleDateFormat(format);
+		try {
+			return formatter.parse(source);
+		} catch (ParseException e) {
+			return null;
+		}
+	}
+
 	public static final Date getParsedDate(String source, Locale locale) {
 		Date date = getParsedDateByCurrentLocale(source, locale);
 		return date == null ? getParsedDateByDefaultPattern(source) : date;

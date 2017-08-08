@@ -461,6 +461,11 @@ version="1.2">
 	      <property-name>yearRange</property-name>
 	      <property-class>java.lang.String</property-class>
 	    </property>
+	    <property>
+	      <display-name>Date format</display-name>
+	      <property-name>dateformajs</property-name>
+	      <property-class>java.lang.String</property-class>
+	    </property>
 	</component>
 	
 	<component>
