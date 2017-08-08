@@ -295,7 +295,12 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public HttpSession getSession() {
-		HttpSession session = getRequest().getSession();
+		HttpSession session = null;
+		try {
+			session = getRequest().getSession();
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error getting session from " + getRequest(), e);
+		}
 		if (session == null) {
 			session = getRequest().getSession(true);
 		}
