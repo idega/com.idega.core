@@ -78,6 +78,15 @@ import com.idega.util.StringUtil;
 				"AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateFrom AND gr.terminationDate < :dateTo) " +
 			") " +
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id in (:groupsIds) AND (" +
+				"(gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' or gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateFrom AND gr.terminationDate < :dateTo) " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	)
 })
 @XmlTransient
@@ -121,7 +130,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_BY_PHONE_NUMBER = "user.findByPhoneNumber",
 								QUERY_FIND_BY_METADATA = "user.findByMetadata",
 								QUERY_FIND_BY_PERSONAL_IDS = "user.findByPersonalIDs",
-								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe";
+								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe",
+								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndDeletedAtGivenTimeframe";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
