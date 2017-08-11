@@ -94,6 +94,9 @@ public class IWDatePicker extends TextInput {
 	private static final String YEAR_RANGE_PROPERTY = "yearRange";
 	private static final String DATEPICKER_VERSION_PROPERTY = "version";
 	private static final String ALTERNATE_FIELD_PROPERTY = "alternateFieldId";
+	private static final String READONLY_PROPERTY = "readonly_";
+	private static final String DATEFORMAT_JAVA_PROPERTY = "dateFormat";
+	private static final String DATEFORMAT_JS_PROPERTY = "dateFormatJS";
 
 	private String version;
 
@@ -231,6 +234,22 @@ public class IWDatePicker extends TextInput {
 	    		setAlternateFieldId(version);
 	    	}
     	}
+
+       	ve = getValueExpression(DATEFORMAT_JS_PROPERTY);
+    	if (ve != null) {
+	    	String format = (String) ve.getValue(context.getELContext());
+	    	if (!StringUtil.isEmpty(format)) {
+	    		setDateFormatJS(format);
+	    	}
+    	}
+
+       	ve = getValueExpression(DATEFORMAT_JAVA_PROPERTY);
+    	if (ve != null) {
+	    	String format = (String) ve.getValue(context.getELContext());
+	    	if (!StringUtil.isEmpty(format)) {
+	    		setDateFormat(format);
+	    	}
+    	}
 	}
 
     @Override
@@ -263,6 +282,7 @@ public class IWDatePicker extends TextInput {
 			setManualDate = true;
 		}
 
+		if(getDisabled()) this.setReadOnly(Boolean.TRUE);
 //		if (date != null) {
 //			iwDate = new IWTimestamp(date);
 //
@@ -345,6 +365,8 @@ public class IWDatePicker extends TextInput {
 			initAction.append(", showTime: true");
 		}
 
+		initAction.append(", readonly: " + getDisabled());
+
 		if (!StringUtil.isEmpty(getAlternateFieldId())) {
 			initAction.append(", altField: '" + getAlternateFieldId() + "'");
 		}
@@ -361,6 +383,8 @@ public class IWDatePicker extends TextInput {
 			initAction.append(", regional: ['").append(language).append("']");
 		}
 
+		initAction.append(", beforeShow: function(input, inst) { var calendar = inst.dpDiv; setTimeout(function() { calendar.position({ my: 'left top', at: 'left bottom', collision: 'none', of: input});}, 1);}");
+
 		initAction.append("});");
 
 		if (date != null) {
@@ -372,9 +396,14 @@ public class IWDatePicker extends TextInput {
 				}
 				if (iwDate != null) {
 					StringBuilder value = new StringBuilder();
-					if (dateFormat != null && !isDateRange()){
+					if (dateFormat != null){
 						DateFormat df = new SimpleDateFormat(dateFormat);
 						value.append(df.format(date));
+						if (isDateRange()) {
+							value.append(dateRangeSeparator);
+							dateTo = dateTo == null ? new Date(System.currentTimeMillis()) : dateTo;
+							value.append(df.format(dateTo));
+						}
 					} else {
 						value.append(WebUtil.getLocalizedDate(iwDate, iwc.getCurrentLocale(), isShowTime()));
 						if (isDateRange()) {
