@@ -629,7 +629,6 @@ public class LoginBusinessBean implements IWPageEventListener {
 							LOGGER.warning("There are no verificators: " + TwoStepLoginVerificator.class.getName());
 						} else {
 							sessionId = getSessionId(request, true);
-							LOGGER.info("Session ID to generate SMS code for user '" + username + "': " + sessionId);	//	TODO
 							for (TwoStepLoginVerificator verificator: verificators) {
 								//Sending SMS message
 								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
