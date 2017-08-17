@@ -13,12 +13,12 @@ import java.util.Collection;
 
 import javax.ejb.FinderException;
 
-import com.idega.data.*;
+import com.idega.data.IDOHome;
 
 
 /**
  * Last modified: $Date: 2005/01/23 14:52:26 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.4 $
  */
@@ -46,6 +46,6 @@ public interface GenderHome extends IDOHome {
 	/**
 	 * @see com.idega.user.data.GenderBMPBean#ejbFindAllGenders
 	 */
-	public Collection findAllGenders() throws FinderException;
+	public Collection<Gender> findAllGenders() throws FinderException;
 
 }
