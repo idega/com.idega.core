@@ -101,4 +101,22 @@ public class LocaleUtil {
 
 		return null;
 	}
+	
+	public static String getLocalizedCountryName(Locale localeIn, String defaultName, String isoAbbreviation) {
+		if (localeIn == null || StringUtil.isEmpty(isoAbbreviation)) {
+			return defaultName;
+		}
+
+		Locale countryLocale = LocaleUtil.getLocaleByCountry(isoAbbreviation);
+		if (countryLocale == null) {
+			return defaultName;
+		}
+
+		String localizedCountryName = countryLocale.getDisplayCountry(localeIn);
+		if (StringUtil.isEmpty(localizedCountryName)) {
+			return defaultName;
+		}
+
+		return localizedCountryName;
+	}
 }

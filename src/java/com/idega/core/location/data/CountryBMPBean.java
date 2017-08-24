@@ -150,4 +150,13 @@ public class CountryBMPBean extends GenericEntity implements Country{
 
 		return getName();
 	}
+	
+  	@Override
+	public String getName(Locale locale) {
+		return getName(locale, this.getStringColumnValue(getColumnNameName()));
+  	}
+  	
+	private String getName(Locale locale, String defaultName) {
+		return LocaleUtil.getLocalizedCountryName(locale, defaultName, getIsoAbbreviation());
+	}
 }

@@ -5,6 +5,7 @@ package com.idega.core.location.data.bean;
 
 import java.io.Serializable;
 import java.util.List;
+import java.util.Locale;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -19,6 +20,8 @@ import javax.persistence.NamedQuery;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
+
+import com.idega.util.LocaleUtil;
 
 @Entity
 @Cacheable
@@ -83,6 +86,14 @@ public class Country implements Serializable {
 		this.countryID = countryID;
 	}
 
+	public String getName(Locale locale) {
+		return getName(locale, this.name);
+	}
+
+	private String getName(Locale locale, String defaultName) {
+		return LocaleUtil.getLocalizedCountryName(locale, defaultName, getISOAbbreviation());
+	}
+	
 	/**
 	 * @return the name
 	 */
