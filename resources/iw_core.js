@@ -2218,3 +2218,29 @@ if (typeof String.prototype.endsWith !== 'function') {
         return this.indexOf(suffix, this.length - suffix.length) !== -1;
     };
 }
+
+function addOpt(list, val, text, idx, selected) {
+	if( selected == null ) selected = false;
+	if( idx != null ) {
+		list.options[idx] = new Option( text, val, false, selected );
+	} else {
+		list.options[list.length] = new Option( text, val, false, selected );
+	}
+}
+function move(from, to) {
+	var here = from;
+	var there = to;
+	
+	if ( here.selectedIndex != -1 && here.length > 0) {
+		for( h=0; h<here.length;h++) {
+			if( here.options[h].selected ) {
+				addOpt( there, here.options[h].value, here.options[h].text );
+			}
+		}
+		for( h1=here.length-1;h1>-1; h1-- ) {
+			if( here.options[h1].selected ) {
+				here.options[h1] = null;
+			}
+		}
+	}
+}
