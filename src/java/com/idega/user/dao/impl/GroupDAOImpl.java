@@ -43,6 +43,7 @@ import com.idega.data.IDOUtil;
 import com.idega.data.SimpleQuerier;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserBusiness;
@@ -679,10 +680,32 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				}
 			}
 
+			List<String> groupTypesToSkip = null;
+			try {
+
+				IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+				if (settings != null) {
+					String groupTypesToSkipStr = settings.getProperty("group_types_to_skip", "iwme_temporary");
+					if (!StringUtil.isEmpty(groupTypesToSkipStr)) {
+						String[] groupTypesToSkipArray = groupTypesToSkipStr.split(CoreConstants.COMMA);
+						if (groupTypesToSkipArray != null) {
+							groupTypesToSkip = Arrays.asList(groupTypesToSkipArray);
+						}
+					}
+				}
+			} catch (Exception eGT) {
+				getLogger().log(Level.WARNING, "Could not get application property with group types to skip", eGT);
+			}
+
+
 			List<Integer> parentGroupsIds = new ArrayList<>();
 			List<Integer> groupsToSkip = Arrays.asList(489017, 329932, 329937);
 			for (Iterator<com.idega.user.data.Group> groupsIter = userTopGroups.iterator(); groupsIter.hasNext();) {
-				Integer groupId = Integer.valueOf(groupsIter.next().getId());
+				com.idega.user.data.Group groupIn = groupsIter.next();
+				if (!ListUtil.isEmpty(groupTypesToSkip) && !StringUtil.isEmpty(groupIn.getType()) && groupTypesToSkip.contains(groupIn.getType())) {
+					continue;
+				}
+				Integer groupId = Integer.valueOf(groupIn.getId());
 				if (!groupsToSkip.contains(groupId)) {
 					parentGroupsIds.add(groupId);
 				}
@@ -691,7 +714,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			if (withChildren) {
 				List<Integer> childrenIds = null;
-				while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null))) {
+				while (!ListUtil.isEmpty(childrenIds = getChildGroupsIds(parentGroupsIds, null, null, null, groupTypesToSkip, null, null))) {
 					if (childrenIds.size() == parentGroupsIds.size() && childrenIds.containsAll(parentGroupsIds)) {
 						parentGroupsIds = null;
 					} else {
