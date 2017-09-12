@@ -3865,7 +3865,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * Validated the Icelandic SSN checksum
 	 */
 	private boolean validateIcelandicSSN(String ssn) {
-		if (StringUtil.isEmpty(ssn)) {
+		if (StringUtil.isEmpty(ssn) || "1111111111".equals(ssn)) {
 			return false;
 		}
 
