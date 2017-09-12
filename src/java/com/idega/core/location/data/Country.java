@@ -43,4 +43,5 @@ public interface Country extends IDOEntity {
 	public void setIsoAbbreviation(String IsoAbbreviation);
 
 	public String getLocalizedName();
+
 }
