@@ -17,6 +17,7 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.contact.data.Email;
@@ -57,6 +58,8 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -81,7 +84,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	private static final long serialVersionUID = 8515735782511731375L;
 
 	public static final String SYNCHRONIZATION_KEY = "com.idega.user.data.User";
-	
+
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
 	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
@@ -3016,28 +3019,12 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 
 	@Override
 	public boolean isDeceased()  {
-		Status deceasedStatus = null;
 		try {
-			deceasedStatus = getStatusHome().findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
-		} catch (FinderException e) {
-			try {
-				deceasedStatus = getStatusHome().create();
-				deceasedStatus.setStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
-				deceasedStatus.store();
-			} catch (CreateException e1) {
-				e1.printStackTrace();
-			}
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+			return userBusiness.isDeceased((Integer) getPrimaryKey());
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error while checking if user is deceased. Personal ID: " + getPersonalID(), e);
 		}
-
-		Collection<?> coll = null;
-		try {
-			coll = getUserStatusHome().findAllByUserIDAndStatusID((Integer)getPrimaryKey(),(Integer) deceasedStatus.getPrimaryKey());
-		} catch (FinderException e) {}
-		if (!ListUtil.isEmpty(coll)) {
-			getLogger().info("User with SSN = " + getPersonalID() + " is deceased");
-			return true;
-		}
-
 		return false;
 	}
 
@@ -3196,6 +3183,7 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		throw new java.lang.UnsupportedOperationException("Method getGroupTypeEntity() not yet implemented.");
 	}
 
+	@Override
 	public Long getAge() {
 		return CoreUtil.getAge(getDateOfBirth());
 	}
