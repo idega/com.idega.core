@@ -58,6 +58,7 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.CoreConstants;
@@ -3049,28 +3050,12 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 
 	@Override
 	public boolean isDeceased()  {
-		Status deceasedStatus = null;
 		try {
-			deceasedStatus = getStatusHome().findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
-		} catch (FinderException e) {
-			try {
-				deceasedStatus = getStatusHome().create();
-				deceasedStatus.setStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
-				deceasedStatus.store();
-			} catch (CreateException e1) {
-				e1.printStackTrace();
-			}
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+			return userBusiness.isDeceased((Integer) getPrimaryKey());
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error while checking if user is deceased. Personal ID: " + getPersonalID(), e);
 		}
-
-		Collection<?> coll = null;
-		try {
-			coll = getUserStatusHome().findAllByUserIDAndStatusID((Integer)getPrimaryKey(),(Integer) deceasedStatus.getPrimaryKey());
-		} catch (FinderException e) {}
-		if (!ListUtil.isEmpty(coll)) {
-			getLogger().info("User with SSN = " + getPersonalID() + " is deceased");
-			return true;
-		}
-
 		return false;
 	}
 

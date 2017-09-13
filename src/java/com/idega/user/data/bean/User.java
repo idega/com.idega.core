@@ -12,6 +12,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -34,6 +36,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.core.builder.data.bean.ICPage;
@@ -49,6 +52,8 @@ import com.idega.core.location.data.bean.AddressType;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.business.UserBusiness;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
@@ -772,6 +777,14 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		this.statuses = statuses;
 	}
 
-
+	public boolean isDeceased()  {
+		try {
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
+			return userBusiness.isDeceased(getId());
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error while checking if user is deceased. Personal ID: " + getPersonalID(), e);
+		}
+		return false;
+	}
 
 }

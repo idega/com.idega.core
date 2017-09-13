@@ -114,12 +114,15 @@ import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.MetadataConstants;
 import com.idega.user.data.Status;
+import com.idega.user.data.StatusHome;
 import com.idega.user.data.TopNodeGroup;
 import com.idega.user.data.TopNodeGroupHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserComment;
 import com.idega.user.data.UserCommentHome;
 import com.idega.user.data.UserHome;
+import com.idega.user.data.UserStatus;
+import com.idega.user.data.UserStatusHome;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.Encrypter;
@@ -5466,5 +5469,42 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return null;
 	}
 
+	@Override
+	public boolean isDeceased(Integer id) {
+		if (id == null) {
+			return false;
+		}
 
-} // Class UserBusiness
+		try {
+			StatusHome statusHome = (StatusHome) IDOLookup.getHome(Status.class);
+
+			Status deceasedStatus = null;
+			try {
+				deceasedStatus = statusHome.findByStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
+			} catch (FinderException e) {
+				try {
+					deceasedStatus = statusHome.create();
+					deceasedStatus.setStatusKey(UserStatusBusinessBean.STATUS_DECEASED);
+					deceasedStatus.store();
+				} catch (CreateException e1) {
+					e1.printStackTrace();
+				}
+			}
+
+			Collection<?> coll = null;
+			try {
+				UserStatusHome userStatusHome = (UserStatusHome) IDOLookup.getHome(UserStatus.class);
+				coll = userStatusHome.findAllByUserIDAndStatusID(id, (Integer) deceasedStatus.getPrimaryKey());
+			} catch (FinderException e) {}
+			if (!ListUtil.isEmpty(coll)) {
+				getLogger().info("User with ID = " + id + " is deceased");
+				return true;
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error while checking if user is deceased. ID: " + id, e);
+		}
+
+		return false;
+	}
+
+}
