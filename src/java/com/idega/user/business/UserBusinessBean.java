@@ -3913,7 +3913,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			if (century == 9 || century == 0) {
 				validSSN = true;
 			} else {
-				validSSN = false;
+				int base = 2000;
+				int currentYear = IWTimestamp.RightNow().getYear();
+				if (currentYear >= (base + century * 100)) {
+					validSSN = true;
+				} else {
+					//	Personal ID can not be from the future
+					validSSN = false;
+				}
 			}
 		}
 
