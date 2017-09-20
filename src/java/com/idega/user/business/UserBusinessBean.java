@@ -3865,10 +3865,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	/**
-	 * Validated the Icelandic SSN checksum
+	 * Validated the Icelandic SSN checksum according to https://en.wikipedia.org/wiki/Kennitala
 	 */
 	private boolean validateIcelandicSSN(String ssn) {
-		if (StringUtil.isEmpty(ssn) || "1111111111".equals(ssn)) {
+		if (StringUtil.isEmpty(ssn)) {
 			return false;
 		}
 
@@ -3884,9 +3884,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				sum = sum + Integer.parseInt(ssn.substring(5, 6)) * 4;
 				sum = sum + Integer.parseInt(ssn.substring(6, 7)) * 3;
 				sum = sum + Integer.parseInt(ssn.substring(7, 8)) * 2;
-				sum = sum + Integer.parseInt(ssn.substring(8, 9)) * 1;
-				sum = sum + Integer.parseInt(ssn.substring(9, 10)) * 0;
-				if ((sum % 11) == 0) {
+				if (Integer.valueOf(ssn.substring(8, 9)).intValue() == (11 - (sum % 11))) {
 					validSSN = true;
 				} else {
 					LOGGER.warning(ssn + " is not a valid SSN. If fails validation test.");
@@ -3897,6 +3895,28 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		} else {
 			LOGGER.warning(ssn + " is not a valid SSN. It is not 10 characters.");
 		}
+
+		if (validSSN) {
+			String day = ssn.substring(0, 2);
+			if (Integer.valueOf(day) > 31) {
+				validSSN = false;
+			}
+		}
+		if (validSSN) {
+			String month = ssn.substring(2, 4);
+			if (Integer.valueOf(month) > 12) {
+				validSSN = false;
+			}
+		}
+		if (validSSN) {
+			int century = Integer.valueOf(ssn.substring(9, 10));
+			if (century == 9 || century == 0) {
+				validSSN = true;
+			} else {
+				validSSN = false;
+			}
+		}
+
 		return validSSN;
 	}
 
