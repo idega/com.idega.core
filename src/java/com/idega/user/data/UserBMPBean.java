@@ -3233,4 +3233,20 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	public boolean isSynchronizationEnabled() {
 		return synchronizationEnabled;
 	}
+
+	@Override
+	public Integer addUser(User userToAdd, Timestamp time, User addedBy) throws EJBException {
+		throw new UnsupportedOperationException("Method addUser() is not implemented yet");
+	}
+
+	@Override
+	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException {
+		throw new UnsupportedOperationException("Method addGroup() is not implemented yet");
+
+	}
+
+	@Override
+	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
+		throw new UnsupportedOperationException("Method addGroup() is not implemented yet");
+	}
 }

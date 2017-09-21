@@ -1314,19 +1314,21 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	public void addUser(int groupId, User user) throws EJBException, RemoteException {
 		addUser(groupId, user, IWTimestamp.getTimestampRightNow());
 	}
+
 	@Override
-	public void addUser(int groupId, User user, Timestamp time) throws EJBException, RemoteException {
-		addUser(Integer.valueOf(groupId), user, time);
+	public Integer addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException {
+		return addUser(groupId, user, timestamp, null);
 	}
+
 	@Override
-	public Integer addUser(Integer groupId, User user, Timestamp time) throws EJBException, RemoteException {
+	public Integer addUser(Integer groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException {
 		try {
 			Collection<GroupRelation> existingRelations = getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(
 					groupId,
 					((Integer) user.getPrimaryKey()).intValue()
 			);
 			if (ListUtil.isEmpty(existingRelations)) {
-				return getGroupByGroupID(groupId).addUser(user, time == null ? IWTimestamp.getTimestampRightNow() : time);
+				return getGroupByGroupID(groupId).addUser(user, timestamp == null ? IWTimestamp.getTimestampRightNow() : timestamp, addedBy);
 			}
 		} catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());

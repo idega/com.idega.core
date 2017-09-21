@@ -348,8 +348,8 @@ public interface GroupBusiness extends IBOService {
 	 * @see com.idega.user.business.GroupBusinessBean#addUser
 	 */
 	public void addUser(int groupId, User user) throws EJBException, RemoteException;
-	public void addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException;
-	public Integer addUser(Integer groupId, User user, Timestamp time) throws EJBException, RemoteException;
+	public Integer addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException;
+	public Integer addUser(Integer groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupHome

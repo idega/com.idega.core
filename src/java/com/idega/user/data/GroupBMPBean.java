@@ -53,8 +53,10 @@ import com.idega.data.query.WildCardColumn;
 import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.IWContext;
 import com.idega.user.events.GroupUserRemovedEvent;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -916,9 +918,15 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		addUser(userToAdd, time);
 	}
 
+	@Override
 	public Integer addUser(User userToAdd, Timestamp time) throws EJBException {
+		return addUser(userToAdd, time, null);
+	}
+
+	@Override
+	public Integer addUser(User userToAdd, Timestamp time, User addedBy) throws EJBException {
 		Integer userId = Integer.valueOf(this.getGroupIDFromGroup(userToAdd));
-		Integer relationId = addGroup(userId, time);
+		Integer relationId = addGroup(userId, time, addedBy);
 
 		boolean needsToStore = false;
 		if (userToAdd.getDeleted()) {
@@ -945,7 +953,12 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException {
-		this.addGroup(this.getGroupIDFromGroup(groupToAdd), time);
+		addGroup(groupToAdd, time, null);
+	}
+
+	@Override
+	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException {
+		this.addGroup(this.getGroupIDFromGroup(groupToAdd), time, addedBy);
 	}
 
 	/**
@@ -955,17 +968,13 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addGroup(int groupId, Timestamp time) throws EJBException {
-		addGroup(Integer.valueOf(groupId), time);
+		addGroup(groupId, time, null);
 	}
 
-	private Integer addGroup(Integer groupId, Timestamp time) throws EJBException {
+	@Override
+	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
 		try {
-			if (time != null) {
-				return addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time);
-			}
-			else {
-				return addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, null);
-			}
+			return addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time, addedBy);
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -1022,27 +1031,39 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
-		addUniqueRelation(Integer.valueOf(relatedGroupId), relationType, time);
+		addUniqueRelation(relatedGroupId, relationType, time, null);
 	}
 
-	private Integer addUniqueRelation(Integer relatedGroupId, String relationType, Timestamp time) throws CreateException {
-		Collection<GroupRelation> relations = getRelations(relatedGroupId, relationType);
-		if (!ListUtil.isEmpty(relations)) {
-			return (Integer) relations.iterator().next().getPrimaryKey();
-		}
+	private Integer addUniqueRelation(int relatedGroupId, String relationType, Timestamp time, User addedBy) throws CreateException {
+		if (!hasRelationTo(relatedGroupId, relationType)) {
+			GroupRelation rel = this.getGroupRelationHome().create();
+			rel.setGroup(this);
+			rel.setRelatedGroup(relatedGroupId);
+			rel.setRelationshipType(relationType);
+			if (time == null) {
+				time = IWTimestamp.getTimestampRightNow();
+			}
 
-		GroupRelation rel = this.getGroupRelationHome().create();
-		rel.setGroup(this);
-		rel.setRelatedGroup(relatedGroupId);
-		rel.setRelationshipType(relationType);
-		if (time == null) {
-			time = IWTimestamp.getTimestampRightNow();
+			if (addedBy == null) {
+				addedBy = getPerformer();
+			}
+			rel.setCreatedBy(addedBy);
+			rel.setInitiationDate(time);
+			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
+			rel.store();
+			return (Integer) rel.getPrimaryKey();
 		}
+		return null;
+	}
 
-		rel.setInitiationDate(time);
-		rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
-		rel.store();
-		return (Integer) rel.getPrimaryKey();
+	private User getPerformer() {
+		try {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null && iwc.isLoggedOn()) {
+				return iwc.getCurrentUser();
+			}
+		} catch (Exception e) {}
+		return null;
 	}
 
 	@Override
@@ -1099,7 +1120,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	public void removeRelation(int relatedGroupId, String relationType, User performer) throws RemoveException {
 		GroupRelation rel = null;
 		try {
-			// Group group = this.getGroupHome().findByPrimaryKey(relatedGroupId);
+			if (performer == null) {
+				performer = getPerformer();
+			}
+
 			Collection<GroupRelation> rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relatedGroupId, relationType);
 			Iterator<GroupRelation> iter = rels.iterator();
 			while (iter.hasNext()) {
@@ -1134,8 +1158,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	public Collection<Group> getRelatedBy(String relationType) throws FinderException {
 		GroupRelation rel = null;
 		Collection<Group> theReturn = new ArrayList<Group>();
-		Collection<GroupRelation> rels = null;
-		rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationType);
+		Collection<GroupRelation> rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationType);
 		Iterator<GroupRelation> iter = rels.iterator();
 		while (iter.hasNext()) {
 			rel = iter.next();
@@ -1846,6 +1869,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public void removeGroup(int relatedGroupId, User currentUser, boolean allEntries, Timestamp time) throws EJBException {
 		try {
+			if (currentUser == null) {
+				currentUser = getPerformer();
+			}
+
 			Collection<GroupRelation> rels = null;
 			if (allEntries) {
 				rels = getGroupRelationHome().findGroupsRelationshipsUnder(this);

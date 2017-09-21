@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -266,6 +267,12 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	public List<Group> getParentGroups() throws EJBException;
 
 	/**
+	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
+	 */
+	@Override
+	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
+
+	/**
 	 * @see com.idega.user.data.GroupBMPBean#getChildGroups
 	 */
 	public List<Group> getChildGroups() throws EJBException;
@@ -301,16 +308,21 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	public void addGroup(User userToAdd) throws EJBException;
 	public void addGroup(User userToAdd, Timestamp time) throws EJBException;
 	public Integer addUser(User userToAdd, Timestamp time) throws EJBException;
+	public Integer addUser(User userToAdd, Timestamp time, User addedBy) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
 	 */
 	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException;
 
+	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException;
+
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
 	 */
 	public void addGroup(int groupId, Timestamp time) throws EJBException;
+
+	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
