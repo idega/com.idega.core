@@ -1093,6 +1093,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			if (addedBy == null) {
 				addedBy = getPerformer();
 			}
+
 			rel.setCreatedBy(addedBy);
 			rel.setInitiationDate(time);
 			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
@@ -1829,6 +1830,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		removeGroup(groupId, currentUser);
 	}
 
+	@Override
 	public void removeGroup(Integer groupIdToRemove, User currentUser) throws EJBException {
 		int groupId = groupIdToRemove == null ? -1 : groupIdToRemove;
 		if (groupId == -1 || groupId == 0) {
