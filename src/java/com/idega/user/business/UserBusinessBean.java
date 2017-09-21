@@ -3798,13 +3798,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		if (validSSN) {
 			int century = Integer.valueOf(ssn.substring(9, 10));
-			if (century == 9 || century == 0) {
+			if (century == 9) {
 				validSSN = true;
 			} else {
-				int base = 2000;
-				int currentYear = IWTimestamp.RightNow().getYear();
-				if (currentYear >= (base + century * 100)) {
+				IWTimestamp now = IWTimestamp.RightNow();
+				int currentYear = now.getYear();
+				int birthYear = 2000 + Integer.valueOf(ssn.substring(4, 6)) + (century * 100);
+				if (birthYear < currentYear) {
 					validSSN = true;
+				} else if (birthYear == currentYear) {
+					int day = Integer.valueOf(ssn.substring(0, 2));
+					int month = Integer.valueOf(ssn.substring(2, 4));
+					IWTimestamp dateOfBirth = new IWTimestamp(day, month, birthYear);
+					now.setHour(0);
+					now.setMinute(0);
+					now.setSecond(0);
+					now.setMilliSecond(0);
+					if (dateOfBirth.getTime().getTime() <= now.getTime().getTime()) {
+						validSSN = true;
+					}
 				} else {
 					//	Personal ID can not be from the future
 					validSSN = false;
