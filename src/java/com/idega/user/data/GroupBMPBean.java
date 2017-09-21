@@ -978,7 +978,12 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException {
-		this.addGroup(this.getGroupIDFromGroup(groupToAdd), time);
+		addGroup(groupToAdd, time, null);
+	}
+
+	@Override
+	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException {
+		this.addGroup(this.getGroupIDFromGroup(groupToAdd), time, addedBy);
 	}
 
 	/**
@@ -988,17 +993,13 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addGroup(int groupId, Timestamp time) throws EJBException {
+		addGroup(groupId, time, null);
+	}
+
+	@Override
+	public void addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
 		try {
-			// GroupRelation rel = this.getGroupRelationHome().create();
-			// rel.setGroup(this);
-			// rel.setRelatedGroup(groupId);
-			// rel.store();
-			if (time != null) {
-				addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time);
-			}
-			else {
-				addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT);
-			}
+			addUniqueRelation(groupId, RELATION_TYPE_GROUP_PARENT, time, addedBy);
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -1055,10 +1056,11 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time) throws CreateException {
-		// try{
+		addUniqueRelation(relatedGroupId, relationType, time, null);
+	}
+
+	private void addUniqueRelation(int relatedGroupId, String relationType, Timestamp time, User addedBy) throws CreateException {
 		if (!hasRelationTo(relatedGroupId, relationType)) {
-			// System.out.println("hasRelationTo("+relatedGroupId+","+relationType+")
-			// IS FALSE");
 			GroupRelation rel = this.getGroupRelationHome().create();
 			rel.setGroup(this);
 			rel.setRelatedGroup(relatedGroupId);
@@ -1067,14 +1069,11 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 				time = IWTimestamp.getTimestampRightNow();
 			}
 
+			rel.setCreatedBy(addedBy);
 			rel.setInitiationDate(time);
 			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
 			rel.store();
 		}
-		// }
-		// catch(Exception e){
-		// throw new EJBException(e.getMessage());
-		// }
 	}
 
 	@Override

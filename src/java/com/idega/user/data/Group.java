@@ -52,7 +52,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeValue
 	 */
 	public String getGroupTypeValue();
-	
+
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getGroupTypeKey
 	 */
@@ -261,11 +261,13 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
 	 */
+	@Override
 	public List<Group> getParentGroups() throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getParentGroups
 	 */
+	@Override
 	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException;
 
 	/**
@@ -308,10 +310,14 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 */
 	public void addGroup(Group groupToAdd, Timestamp time) throws EJBException;
 
+	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException;
+
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
 	 */
 	public void addGroup(int groupId, Timestamp time) throws EJBException;
+
+	public void addGroup(int groupId, Timestamp time, User addedBy) throws EJBException;
 
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#addGroup
