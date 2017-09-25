@@ -3249,4 +3249,5 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
 		throw new UnsupportedOperationException("Method addGroup() is not implemented yet");
 	}
+
 }
