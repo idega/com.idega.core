@@ -689,7 +689,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 					if (!StringUtil.isEmpty(groupTypesToSkipStr)) {
 						String[] groupTypesToSkipArray = groupTypesToSkipStr.split(CoreConstants.COMMA);
 						if (groupTypesToSkipArray != null) {
-							groupTypesToSkip = Arrays.asList(groupTypesToSkipArray);
+							groupTypesToSkip = new ArrayList<>(Arrays.asList(groupTypesToSkipArray));
 						}
 					}
 				}
