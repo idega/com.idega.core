@@ -52,6 +52,7 @@ import com.idega.user.data.GroupTypeHome;
 import com.idega.user.data.User;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
+import com.idega.util.Property;
 import com.idega.util.datastructures.NestedSetsContainer;
 
 
@@ -350,6 +351,7 @@ public interface GroupBusiness extends IBOService {
 	public void addUser(int groupId, User user) throws EJBException, RemoteException;
 	public Integer addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException;
 	public Integer addUser(Integer groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException;
+	public Property addUser(Integer groupId, User user, User addedBy, Timestamp timestamp) throws EJBException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.GroupBusinessBean#getGroupHome

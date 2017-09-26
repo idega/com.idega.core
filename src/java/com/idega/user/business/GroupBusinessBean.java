@@ -91,6 +91,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.Property;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.NestedSetsContainer;
@@ -1320,20 +1321,80 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return addUser(groupId, user, timestamp, null);
 	}
 
-	@Override
-	public Integer addUser(Integer groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException {
+	private Property canAdd(Integer groupId, User user) {
+		Property result = new Property(Boolean.FALSE.toString(), null);
+
+		if (groupId == null || user == null) {
+			return result;
+		}
+
 		try {
+			Group targetGroup = getGroupByGroupID(groupId);
+			if (targetGroup == null) {
+				return result;
+			}
+
+			Collection<UserGroupPlugInBusiness> plugins = getUserGroupPluginsForGroupType(targetGroup.getType());
+			if (ListUtil.isEmpty(plugins)) {
+				return new Property(Boolean.TRUE.toString(), null);
+			}
+
+			for (UserGroupPlugInBusiness plugin: plugins) {
+				String pluginResult = plugin.isUserSuitedForGroup(user, targetGroup);
+				if (!StringUtil.isEmpty(pluginResult)) {
+					return new Property(Boolean.FALSE.toString(), pluginResult);
+				}
+			}
+
+			return new Property(Boolean.TRUE.toString(), null);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error adding " + user + " into group with ID: " + groupId, e);
+		}
+
+		return result;
+	}
+
+	@Override
+	public Property addUser(Integer groupId, User user, User addedBy, Timestamp timestamp) throws EJBException, RemoteException {
+		return addUser(groupId, user, addedBy, timestamp, checkUserGroupPlugins());
+	}
+
+	private boolean checkUserGroupPlugins() {
+		return getSettings().getBoolean("check_user_group_plugins", false);
+	}
+
+	private Property addUser(Integer groupId, User user, User addedBy, Timestamp timestamp, boolean checkUserGroupPlugins) throws EJBException, RemoteException {
+		try {
+			if (checkUserGroupPlugins) {
+				Property result = canAdd(groupId, user);
+				if (result == null || !Boolean.valueOf(result.getKey())) {
+					getLogger().warning(user + " can not be added into group with ID: " + groupId);
+					return result;
+				}
+			}
+
 			Collection<GroupRelation> existingRelations = getGroupRelationHome().findGroupsRelationshipsContainingBiDirectional(
 					groupId,
 					((Integer) user.getPrimaryKey()).intValue()
 			);
 			if (ListUtil.isEmpty(existingRelations)) {
-				return getGroupByGroupID(groupId).addUser(user, timestamp == null ? IWTimestamp.getTimestampRightNow() : timestamp, addedBy);
+				Integer relationId = getGroupByGroupID(groupId).addUser(user, timestamp == null ? IWTimestamp.getTimestampRightNow() : timestamp, addedBy);
+				return relationId == null ? null : new Property(Boolean.TRUE.toString(), relationId.toString());
 			}
 		} catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());
 		}
 		return null;
+	}
+
+	@Override
+	public Integer addUser(Integer groupId, User user, Timestamp timestamp, User addedBy) throws EJBException, RemoteException {
+		Property result = addUser(groupId, user, addedBy, timestamp, false);
+		return result == null ?
+				null :
+				StringHandler.isNumeric(result.getValue()) ?
+						Integer.valueOf(result.getValue()) :
+						null;
 	}
 
 	/**
