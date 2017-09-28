@@ -3772,7 +3772,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				sum = sum + Integer.parseInt(ssn.substring(5, 6)) * 4;
 				sum = sum + Integer.parseInt(ssn.substring(6, 7)) * 3;
 				sum = sum + Integer.parseInt(ssn.substring(7, 8)) * 2;
-				if (Integer.valueOf(ssn.substring(8, 9)).intValue() == (11 - (sum % 11))) {
+				sum = sum + Integer.parseInt(ssn.substring(8, 9)) * 1;
+				sum = sum + Integer.parseInt(ssn.substring(9, 10)) * 0;
+				if ((sum % 11) == 0) {
 					validSSN = true;
 				} else {
 					LOGGER.warning(ssn + " is not a valid SSN. If fails validation test.");
