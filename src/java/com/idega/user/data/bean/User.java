@@ -91,7 +91,7 @@ import com.idega.util.StringUtil;
 				"((gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
 				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo) " +
 				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
-				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateTo) " +
+				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo AND gr.terminationModificationDate IS NOT NULL AND gr.terminationModificationDate >= :dateTo) " +
 			") " +
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	),
