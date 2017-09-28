@@ -85,6 +85,17 @@ import com.idega.util.StringUtil;
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	),
 	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id IN (:groupsIds) " +
+			" AND (" +
+				"((gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo) " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateTo) " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
 			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME,
 			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id in (:groupsIds) AND (" +
 				"(gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
@@ -136,7 +147,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_BY_METADATA = "user.findByMetadata",
 								QUERY_FIND_BY_PERSONAL_IDS = "user.findByPersonalIDs",
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe",
-								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndDeletedAtGivenTimeframe";
+								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndDeletedAtGivenTimeframe",
+								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndBeforeGivenTimeframe";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
