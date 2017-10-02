@@ -686,13 +686,13 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		}
 
 		if (!isLatestVersionOfRelation(relation, cachedGroup)) {
-			if (canDebug(cachedGroup.getType())) {
+			if (isDebugOn() && canDebug(cachedGroup.getType())) {
 				getLogger().warning("Already exists cached group (" + groups.get(id) + "), not replacing it with cached group: " + cachedGroup + " (relation ID: " + relation.getId() + ")");
 			}
 			return;
 		}
 
-		if (groups.get(id) != null && canDebug(groups.get(id).getType())) {
+		if (isDebugOn() && (groups.get(id) != null && canDebug(groups.get(id).getType()))) {
 			getLogger().info("Replacing group " + groups.get(id) + " with group " + cachedGroup);
 		}
 		groups.put(id, cachedGroup);
@@ -784,11 +784,11 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				if (existingCachedGroup != null) {
 					CachedGroup tmp = new CachedGroup(relation.getId(), relation.getRelatedGroupId(), relation.getRelatedGroupName(), relation.getRelatedGroupType(), false);
 					if (isLatestVersionOfRelation(relation, tmp)) {
-						if (canDebug(existingCachedGroup.getType())) {
-							getLogger().info("Setting group " + existingCachedGroup + " inactive because group " + tmp + " is the lates version");
+						if (isDebugOn() && canDebug(existingCachedGroup.getType())) {
+							getLogger().info("Setting group " + existingCachedGroup + " inactive because group " + tmp + " is the latest version");
 						}
 						existingCachedGroup.setActive(false);
-					} else if (canDebug(existingCachedGroup.getType())) {
+					} else if (isDebugOn() && canDebug(existingCachedGroup.getType())) {
 						getLogger().info("Not setting inactive existing cached group " + existingCachedGroup + " because group " + tmp + " is not latest version");
 					}
 				}
@@ -1041,6 +1041,10 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return getAllRelatedGroupsIds(ids, groupsTypes, maxLevels, true);
 	}
 
+	private boolean isDebugOn() {
+		return getSettings().getBoolean("groups_cache.debug", false);
+	}
+
 	private List<Integer> getAllParentsIds(CachedGroup group) {
 		if (group == null) {
 			return null;
@@ -1048,7 +1052,9 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 
 		Set<Integer> allParents = getParentsOfGroups().get(group.getId());
 		if (ListUtil.isEmpty(allParents)) {
-			getLogger().warning("No parent groups found for " + group);
+			if (isDebugOn()) {
+				getLogger().warning("No parent groups found for " + group);
+			}
 			return null;
 		}
 
