@@ -14,14 +14,18 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.EJBException;
+import javax.ejb.FinderException;
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorColumn;
 import javax.persistence.DiscriminatorType;
 import javax.persistence.Entity;
+import javax.persistence.EntityNotFoundException;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,6 +43,7 @@ import javax.persistence.PrePersist;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
 import javax.xml.bind.annotation.XmlTransient;
 
 import com.idega.core.builder.data.bean.ICPage;
@@ -51,13 +56,17 @@ import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.location.data.bean.Address;
 import com.idega.core.net.data.bean.ICNetwork;
 import com.idega.core.net.data.bean.ICProtocol;
+import com.idega.data.IDOLookup;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
+import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupNode;
+import com.idega.user.data.User;
+import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -69,24 +78,70 @@ import com.idega.util.expression.ELUtil;
 @DiscriminatorColumn(name = Group.COLUMN_GROUP_TYPE, discriminatorType = DiscriminatorType.STRING)
 @NamedQueries({
 	@NamedQuery(name = "group.findAll", query = "select g from Group g"),
+	@NamedQuery(name = Group.QUERY_FIND_ALL_IDS, query = "select g.groupID from Group g"),
 	@NamedQuery(name = "group.findAllByGroupType", query = "select g from Group g where g.groupType = :groupType"),
 	@NamedQuery(name = "group.findAllByGroupTypes", query = "select g from Group g where g.groupType in (:groupTypes)"),
 	@NamedQuery(name = "group.findByGroupTypeAndName", query = "select g from Group g where g.groupType = :groupType and g.name = :name"),
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
 	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_ID, query = "select g from Group g where g.groupID = :groupId"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids)"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids) order by g.name"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS_AND_NAME, query = "select g from Group g where g.alias = :alias and g.name = :name"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_PERSONAL_ID, query = "select g from Group g where g.personalId = :personalId"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_NAME, query = "select g from Group g where g.name = :name"),
-	@NamedQuery(
-			name = Group.QUERY_FIND_PERMISSION_GROUP_IDS,
-			query = "SELECT g.permissionControllingGroup FROM Group g "
-					+ "WHERE g.groupID in (:ids) "
-					+ "AND g.permissionControllingGroup IS NOT NULL"),
+	@NamedQuery(name = Group.QUERY_FIND_PERMISSION_GROUP_IDS, query = "SELECT g.permissionControllingGroup FROM Group g WHERE g.groupID in (:ids) AND g.permissionControllingGroup IS NOT NULL"),
 	@NamedQuery(name = Group.QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES, query = "select distinct g.alias from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types)"),
-	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID")
+	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES_FROM_ALIASES, query = "select distinct g from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_TYPES_FROM_ALIASES, query = "select distinct g.id from Group g where g.groupID in (:ids) and g.alias.groupType.groupType in (:types) group by g.groupID"),
+	@NamedQuery(name = Group.QUERY_FIND_GROUPS_BY_IDS_AND_TYPES, query = "select distinct g from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_IDS_AND_TYPES, query = "select distinct g.groupID from Group g where g.groupID in (:ids) and g.groupType.groupType in (:types)"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_TYPE, query = "select g from Group g where g.groupType.groupType = :groupTypeValue"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_NAME_AND_GROUP_TYPE, query = "select g from Group g where g.name = :name and g.groupType.groupType = :groupTypeValue"),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPE,
+			query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_TYPES,
+			query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroupType.groupType IN (:groupType) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPE,
+			query = "select distinct gr.relatedGroup.id from GroupRelation gr where gr.relatedGroupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPES,
+			query = "select distinct gr.relatedGroup.id from GroupRelation gr where gr.relatedGroupType.groupType IN (:groupType) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES,
+			query = "select distinct gr.relatedGroup from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_PARENT_ACTIVE_GROUPS_BY_IDS_AND_TYPES,
+			query = "select distinct gr.group from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES,
+			query = "select distinct gr.relatedGroup.id from GroupRelation gr where gr.relatedGroup.groupID in :ids and gr.relatedGroupType.groupType in :groupTypes and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+			GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_AND_TYPES_BY_IDS, query = "select g.groupID, g.groupType.groupType from Group g where g.groupID in :ids"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_TYPES, query = "select g from Group g where g.groupType.groupType in (:groupTypes)"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_TYPES, query = "select g.id from Group g where g.groupType.groupType in (:groupTypes)"),
+	@NamedQuery(name = Group.QUERY_FIND_IDS_BY_ALIASES_IDS, query = "select g.alias.id from Group g where g.id in (:aliasesIds)"),
+	@NamedQuery(
+			name = Group.QUERY_FIND_IDS_BY_TYPE_AND_METADATA,
+			query = "select distinct g.id from GroupRelation gr join gr.relatedGroup.metadata meta join gr.relatedGroup g where meta.key = :metadataKey and meta.value = :metadataValue and " +
+					"g.groupType.groupType = :groupType and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	)
 })
 @XmlTransient
 @Cacheable
@@ -98,11 +153,29 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_PERMISSION_GROUP_IDS = "group.findPermissionGroupIds",
 								QUERY_FIND_ALIASES_BY_TYPES_FROM_ALIASES = "group.findAliasesByTypesFromAliases",
 								QUERY_FIND_BY_TYPES_FROM_ALIASES = "group.findByTypesFromAliases",
+								QUERY_FIND_IDS_BY_TYPES_FROM_ALIASES = "group.findIdsByTypesFromAliases",
 								QUERY_FIND_BY_ALIAS = "group.findByAlias",
 								QUERY_FIND_BY_ALIAS_AND_NAME = "group.findByAliasAndName",
 								QUERY_FIND_BY_GROUP_ID = "group.findByGroupId",
 								QUERY_FIND_BY_PERSONAL_ID = "group.findByPersonalId",
 								QUERY_FIND_BY_NAME = "group.findByName",
+								QUERY_FIND_GROUPS_BY_IDS_AND_TYPES = "group.findGroupsByIdsAndTypes",
+								QUERY_FIND_IDS_BY_IDS_AND_TYPES = "group.findIdsByIdsAndTypes",
+								QUERY_FIND_ALL_IDS = "group.findAllIds",
+								QUERY_FIND_BY_GROUP_TYPE = "group.findAllByGroupTypeValue",
+								QUERY_FIND_BY_NAME_AND_GROUP_TYPE = "group.findAllByNameAndGroupTypeValue",
+								QUERY_FIND_ACTIVE_GROUPS_BY_TYPE = "group.findActiveGroupsByType",
+								QUERY_FIND_ACTIVE_GROUPS_BY_TYPES = "group.findActiveGroupsByTypes",
+								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPE = "group.findActiveGroupsIdsByType",
+								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPES = "group.findActiveGroupsIdsByTypes",
+								QUERY_FIND_ACTIVE_GROUPS_BY_IDS_AND_TYPES = "group.findActiveGroupsByIdsAndTypes",
+								QUERY_FIND_PARENT_ACTIVE_GROUPS_BY_IDS_AND_TYPES = "group.findParentActiveGroupsByIdsAndTypes",
+								QUERY_FIND_ACTIVE_GROUPS_IDS_BY_IDS_AND_TYPES = "group.findActiveGroupsIdsByIdsAndTypes",
+								QUERY_FIND_IDS_AND_TYPES_BY_IDS = "group.findIdsAndTypesByIds",
+								QUERY_FIND_BY_TYPES = "group.findByGroupTypes",
+								QUERY_FIND_IDS_BY_TYPES = "group.findIdsByGroupTypes",
+								QUERY_FIND_IDS_BY_ALIASES_IDS = "group.findIdsByAliasesIds",
+								QUERY_FIND_IDS_BY_TYPE_AND_METADATA = "group.findIdsByTypeAndMetadata",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",
@@ -126,6 +199,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private static final String COLUMN_VAT_NUMBER = "group_vat_number";
 	private static final String COLUMN_BANK_ACCOUNT = "group_bank_acc";
 	private static final String COLUMN_MERCHANT_ID = "merchant_id";
+	private static final String COLUMN_SYSTEM_IMAGE = "system_image_id";
 
 	public static final String SQL_RELATION_EMAIL = "ic_group_email";
 	public static final String SQL_RELATION_ADDRESS = "ic_group_address";
@@ -184,6 +258,21 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	@Column(name = COLUMN_ABBREVIATION)
 	private String abbreviation;
 
+	@Column(name = COLUMN_PERSONAL_ID)
+	private String personalId;
+
+	@Column(name = COLUMN_WEB_PAGE)
+	private String webPage;
+
+	@Column(name = COLUMN_VAT_NUMBER)
+	private String vatNumber;
+
+	@Column(name = COLUMN_BANK_ACCOUNT)
+	private String bankAccount;
+
+	@Column(name = COLUMN_MERCHANT_ID)
+	private String merchantId;
+
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP_MODERATOR_ID)
 	private Group groupModerator;
@@ -217,19 +306,26 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private List<Group> parents;
 
 	@ManyToMany(
-			fetch = FetchType.LAZY, 
-			cascade = { CascadeType.PERSIST, CascadeType.MERGE }, 
+			fetch = FetchType.LAZY,
+			cascade = { CascadeType.PERSIST, CascadeType.MERGE },
 			targetEntity = Group.class)
 	@JoinTable(
-			name = GroupRelation.ENTITY_NAME, 
-			joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) }, 
+			name = GroupRelation.ENTITY_NAME,
+			joinColumns = { @JoinColumn(name = COLUMN_GROUP_ID) },
 			inverseJoinColumns = { @JoinColumn(
-					name = GroupRelation.COLUMN_RELATED_GROUP, 
+					name = GroupRelation.COLUMN_RELATED_GROUP,
 					referencedColumnName = COLUMN_GROUP_ID) })
 	private List<Group> children;
 
-    @OneToMany(mappedBy = "pk.group")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.group")
     private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+
+	@ManyToOne(fetch = FetchType.LAZY)
+	@JoinColumn(name = COLUMN_SYSTEM_IMAGE)
+	private ICFile systemImage;
+
+    @Transient
+    private boolean hasUsers;
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -252,24 +348,42 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		try {
+			if (this == obj) {
 				return true;
-		if (obj == null)
+			}
+
+			if (obj == null) {
 				return false;
-		if (getClass() != obj.getClass())
+			}
+
+			if (getClass() != obj.getClass()) {
 				return false;
+			}
+
 			Group other = (Group) obj;
 			if (this.groupID == null) {
-			if (other.groupID != null)
+				if (other.groupID != null) {
 					return false;
 				}
-		else if (!this.groupID.equals(other.groupID))
+			} else if (!this.groupID.equals(other.groupID)) {
 				return false;
+			}
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error while checking if equals " + this + " and " + obj, e);
+		}
+
 		return true;
 	}
 
 	public Integer getID() {
-		return this.groupID;
+		try {
+			DBUtil.getInstance().lazyLoad(this);
+			return this.groupID;
+		} catch (EntityNotFoundException e) {
+			com.idega.user.data.Group group = getGroup(groupID);
+			return group == null ? null : (Integer) group.getPrimaryKey();
+		}
 	}
 
 	public void setID(Integer groupID) {
@@ -299,6 +413,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	/**
 	 * @return the name
 	 */
+	@Override
 	public String getName() {
 		return this.name;
 	}
@@ -311,10 +426,34 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		this.name = name;
 	}
 
+	private com.idega.user.data.Group getGroup(Integer id) {
+		try {
+			if (id == null) {
+				return null;
+			}
+
+			CoreUtil.clearAllCaches();
+
+			GroupHome groupHome = (GroupHome) IDOLookup.getHome(com.idega.user.data.Group.class);
+			return groupHome.findByPrimaryKey(id);
+		} catch (FinderException fe) {
+			Logger.getLogger(getClass().getName()).warning("Group with ID " + id + " does not exist");
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error getting group with ID " + id, e);
+		}
+
+		return null;
+	}
+
 	@Override
 	public String getType() {
-		GroupType type = getGroupType();
-		return type == null ? null : type.getGroupType();
+		try {
+			GroupType type = getGroupType();
+			return type == null ? null : type.getGroupType();
+		} catch (EntityNotFoundException e) {
+			com.idega.user.data.Group group = getGroup(groupID);
+			return group == null ? null : group.getType();
+		}
 	}
 
 	public GroupType getGroupType() {
@@ -322,10 +461,6 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		return groupType;
 	}
 
-	/**
-	 * @param groupType
-	 *          the groupType to set
-	 */
 	public void setGroupType(GroupType groupType) {
 		this.groupType = groupType;
 	}
@@ -580,6 +715,15 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 		this.addresses = addresses;
 	}
 
+	public ICFile getSystemImage() {
+		systemImage = getInitialized(systemImage);
+		return this.systemImage;
+	}
+
+	public void setSystemImage(ICFile systemImage) {
+		this.systemImage = systemImage;
+	}
+
 	/**
 	 * @return the metadata
 	 */
@@ -613,7 +757,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	private Metadata getMetadata(String key) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
-			if (metaData.getKey().equals(key)) {
+			if (metaData != null && metaData.getKey().equals(key)) {
 				return metaData;
 			}
 		}
@@ -625,7 +769,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 	public String getMetaData(String metaDataKey) {
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
-			if (metaData.getKey().equals(metaDataKey)) {
+			if (metaData != null && metaData.getKey().equals(metaDataKey)) {
 				return metaData.getValue();
 			}
 		}
@@ -763,11 +907,8 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public String getId() {
-		if (getID() != null) {
-			return getID().toString();
-		}
-
-		return null;
+		Integer id = getID();
+		return id == null ? null : String.valueOf(id);
 	}
 
 	@Override
@@ -825,12 +966,13 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 	@Override
 	public String toString() {
+		DBUtil.getInstance().lazyLoad(this);
 		return getId();
 	}
 
 	private boolean isUser() {
 		GroupType type = getGroupType();
-		return type != null && com.idega.user.data.User.USER_GROUP_TYPE.equals(type.getGroupType());
+		return type != null && User.USER_GROUP_TYPE.equals(type.getGroupType());
 	}
 
 	private com.idega.user.data.bean.User getUserForGroup() {
@@ -917,5 +1059,55 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 
 		return returnCol;
 	}
+
+	public void setHasUsers(boolean hasUsers) {
+		this.hasUsers = hasUsers;
+	}
+
+	public boolean hasUsers() {
+		return hasUsers;
+	}
+
+	public String getPersonalId() {
+		return personalId;
+	}
+
+	public void setPersonalId(String personalId) {
+		this.personalId = personalId;
+	}
+
+	public String getWebPage() {
+		return webPage;
+	}
+
+	public void setWebPage(String webPage) {
+		this.webPage = webPage;
+	}
+
+	public String getVatNumber() {
+		return vatNumber;
+	}
+
+	public void setVatNumber(String vatNumber) {
+		this.vatNumber = vatNumber;
+	}
+
+	public String getBankAccount() {
+		return bankAccount;
+	}
+
+	public void setBankAccount(String bankAccount) {
+		this.bankAccount = bankAccount;
+	}
+
+	public String getMerchantId() {
+		return merchantId;
+	}
+
+	public void setMerchantId(String merchantId) {
+		this.merchantId = merchantId;
+	}
+
+
 
 }

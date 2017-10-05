@@ -13,8 +13,10 @@ public interface GroupNode<G> {
 
 	public String getType();
 
+	public String getName();
+
 	/**
-	 * 
+	 *
 	 * @return parent {@link Group}s without ancestors, or {@link Collections#emptyList()} on failure;
 	 * @deprecated use {@link GroupHome#findParentGroups(int)} instead
 	 */
@@ -22,7 +24,7 @@ public interface GroupNode<G> {
 	public List<G> getParentGroups();
 
 	/**
-	 * 
+	 *
 	 * @param cachedParents is not used;
 	 * @param cachedGroups is not used;
 	 * @return parent {@link Group}s without ancestors, or {@link Collections#emptyList()} on failure;
@@ -31,7 +33,7 @@ public interface GroupNode<G> {
 	 */
 	@Deprecated
 	public List<G> getParentGroups(
-			Map<String, Collection<Integer>> cachedParents, 
+			Map<String, Collection<Integer>> cachedParents,
 			Map<String, G> cachedGroups) throws EJBException;
 
 }
