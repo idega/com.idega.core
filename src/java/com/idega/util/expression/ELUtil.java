@@ -3,7 +3,6 @@ package com.idega.util.expression;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -25,6 +24,7 @@ import org.springframework.stereotype.Service;
 
 import com.idega.business.SpringBeanName;
 import com.idega.util.CoreConstants;
+import com.idega.util.StringUtil;
 
 import bsh.Interpreter;
 
@@ -150,10 +150,9 @@ public class ELUtil implements ApplicationContextAware {
 		Class<?>[] classParams = new Class[argsList.size()];
 
 		Object[] strParams = new String[argsList.size()];
-		for(int i = 0;i<argsList.size();i++){
+		for (int i = 0; i< argsList.size(); i++) {
 			classParams[i] = String.class;
 			strParams[i] = argsList.get(i);
-
 		}
 
 		Object obj = ELUtil.getInstance().getBean(beanName);
@@ -231,12 +230,27 @@ public class ELUtil implements ApplicationContextAware {
 		List<String> returnArray = new ArrayList<String>();
 		int pre = exp.indexOf(CoreConstants.BRACKET_LEFT);
 		if (pre >= 0) {
-			String argsList = exp.substring( pre+1, exp.lastIndexOf(CoreConstants.BRACKET_RIGHT));
-			String removedApo = argsList.replaceAll(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
-			StringTokenizer tokenizer = new  StringTokenizer(removedApo, CoreConstants.COMMA);
-			while (tokenizer.hasMoreTokens()) {
-				String token = tokenizer.nextToken();
-				returnArray.add(token.trim());
+			String argsList = exp.substring(pre + 1, exp.lastIndexOf(CoreConstants.BRACKET_RIGHT));
+			if (StringUtil.isEmpty(argsList)) {
+				return returnArray;
+			}
+
+			String[] args = argsList.split(CoreConstants.COMMA);
+			for (String arg: args) {
+				if (StringUtil.isEmpty(arg)) {
+					returnArray.add(CoreConstants.EMPTY);
+					continue;
+				}
+
+				arg = arg.trim();
+				if (arg.startsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
+					arg = arg.replaceFirst(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
+				}
+				if (arg.endsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
+					arg = arg.substring(0, arg.length() - 1);
+				}
+
+				returnArray.add(arg);
 			}
 		}
 		return returnArray;
