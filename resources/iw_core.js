@@ -922,9 +922,13 @@ IWCORE.getFixedHrefValue = function(hrefValue) {
 }
 
 IWCORE.getParameterByName = function(name) {
+	return IWCORE.getParameterByName(name, location.search);
+}
+
+IWCORE.getParameterByName = function(name, input) {
     name = name.replace(/[\[]/, "\\[").replace(/[\]]/, "\\]");
     var regex = new RegExp("[\\?&]" + name + "=([^&#]*)"),
-        results = regex.exec(location.search);
+    results = regex.exec(input);
     return results === null ? "" : decodeURIComponent(results[1].replace(/\+/g, " "));
 }
 
