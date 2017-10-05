@@ -1035,6 +1035,25 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	@Override
+	public List<Integer> findActiveGroupsIDsByTypes(List<String> groupTypes) {
+		if (ListUtil.isEmpty(groupTypes)) {
+			getLogger().log(Level.WARNING, "Types are not provided");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					Group.QUERY_FIND_ACTIVE_GROUPS_IDS_BY_TYPES,
+					Integer.class,
+					new Param("groupType", groupTypes)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting active group IDs by group types " + groupTypes, e);
+		}
+		return null;
+	}
+
+	@Override
 	public List<Group> findActiveGroupsByType(String groupType) {
 		return findActiveGroupsByType(groupType, Group.class);
 	}

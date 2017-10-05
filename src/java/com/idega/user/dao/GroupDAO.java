@@ -189,4 +189,5 @@ public interface GroupDAO extends GenericDao {
 	public String getMetaData(Integer groupId, String key);
 	public String getMetaData(Group group, String key);
 
+	public List<Integer> findActiveGroupsIDsByTypes(List<String> groupTypes);
 }
