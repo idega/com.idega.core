@@ -835,6 +835,17 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		return findActiveCachedGroupsIdsByTypes(types);
 	}
 
+	@Override
+	public List<Group> findActiveGroupsByTypes(List<String> groupTypes) {
+		List<Integer> ids = findActiveCachedGroupsIdsByTypes(groupTypes);
+		return ListUtil.isEmpty(ids) ? Collections.emptyList() : groupDAO.findGroups(ids);
+	}
+
+	@Override
+	public List<Integer> findActiveGroupsIDsByTypes(List<String> groupTypes) {
+		return findActiveCachedGroupsIdsByTypes(groupTypes);
+	}
+
 	private List<Integer> findActiveCachedGroupsIdsByTypes(List<String> types) {
 		if (ListUtil.isEmpty(types)) {
 			return null;

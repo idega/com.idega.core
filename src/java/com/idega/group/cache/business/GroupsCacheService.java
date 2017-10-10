@@ -35,6 +35,10 @@ public interface GroupsCacheService {
 
 	public List<Group> findActiveGroupsByType(String type);
 
+	public List<Group> findActiveGroupsByTypes(List<String> groupTypes);
+
+	public List<Integer> findActiveGroupsIDsByTypes(List<String> groupTypes);
+
 	public List<Integer> getChildGroupsIds(List<Integer> parentGroupsIds, List<String> havingTypes, List<String> notHavingTypes, Integer from, Integer to);
 
 	public <K extends Serializable, CK extends Serializable, V extends Serializable> Map<K, Map<CK, List<V>>> getCache(Integer size, Long timeToLiveInSeconds, boolean resetable);
