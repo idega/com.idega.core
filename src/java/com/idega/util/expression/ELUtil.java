@@ -142,7 +142,7 @@ public class ELUtil implements ApplicationContextAware {
 	 * @return
 	 * @throws Exception
 	 */
-	public Object evaluateExpression(String exp) throws Exception{
+	public Object evaluateExpression(String exp) throws Exception {
 		String beanName = getBeanName(exp);
 		String methodName = getMethodName(exp);
 		List<String> argsList = getArgs(exp);
