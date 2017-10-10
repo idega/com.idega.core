@@ -777,8 +777,19 @@ public class StringHandler {
 		return !StringUtil.isEmpty(value) && value.matches("[+-]?\\d*(\\.\\d+)?");
 	}
 
+	private final static String	tagStart = "\\<\\w+((\\s+\\w+(\\s*\\=\\s*(?:\".*?\"|'.*?'|[^'\"\\>\\s]+))?)+\\s*|\\s*)\\>",
+								tagEnd = "\\</\\w+\\>",
+								tagSelfClosing = "\\<\\w+((\\s+\\w+(\\s*\\=\\s*(?:\".*?\"|'.*?'|[^'\"\\>\\s]+))?)+\\s*|\\s*)/\\>",
+								htmlEntity =  "&[a-zA-Z][a-zA-Z0-9]+;";
+	private final static Pattern HTML_PATTERN = Pattern.compile("("+tagStart+".*"+tagEnd+")|("+tagSelfClosing+")|("+htmlEntity+")", Pattern.DOTALL);
+
 	public static boolean isHTML(String value) {
-		return !StringUtil.isEmpty(value) && value.matches("<\\s*\\w.*?>");
+		if (StringUtil.isEmpty(value)) {
+			return false;
+		}
+
+		Matcher matcher = HTML_PATTERN.matcher(value);
+		return matcher != null && matcher.find();
 	}
 
 	/**
