@@ -9,6 +9,8 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.persistence.Cacheable;
 import javax.persistence.CascadeType;
@@ -24,34 +26,98 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PostPersist;
+import javax.persistence.PostRemove;
+import javax.persistence.PostUpdate;
 import javax.persistence.PrePersist;
+import javax.persistence.PreRemove;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupRelationChangedEvent.EventType;
+import com.idega.util.CoreUtil;
+import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 @Entity
 @Table(name = GroupRelation.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "groupRelation.findByRelatedGroup", query = "select r from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
-	@NamedQuery(name = "groupRelation.findByRelatedGroupAndType", query = "select r from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_ALL, query = "select r from GroupRelation r"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_ID, query = "select r from GroupRelation r where r.groupRelationID = :" + GroupRelation.PARAM_GROUP_RELATION_ID),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP, query = "select distinct r.group from GroupRelation r where r.relatedGroup = :relatedGroup and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup.groupID = :relatedGroupId and g.groupType.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup.groupID in (:relatedGroupsIds) and g.groupType.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_GET_HISTORY, query = "select r from GroupRelation r where r.relatedGroup.groupID = :"+GroupRelation.PARAM_RELATED_GROUP_ID+" and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_COUNT_BY_RELATED_GROUP_TYPE, query = "select count(r) from GroupRelation r where r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE),
 	@NamedQuery(
 			name = GroupRelation.QUERY_FIND_PARENT_IDS,
 			query = "SELECT DISTINCT gr.group.id FROM GroupRelation gr "
 					+ "WHERE gr.relatedGroup.id in (:ids) "
 					+ "AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) "
-					+ "AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')")
+					+ "AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER,
+			query = "SELECT DISTINCT gr.group.id FROM GroupRelation gr WHERE gr.relatedGroup.id = :userId AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) " +
+			"AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE,
+			query = "SELECT DISTINCT gr.group FROM GroupRelation gr WHERE gr.relatedGroup.id = :userId AND gr.group.groupType.groupType in (:groupTypes) AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) " +
+			"AND (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_GROUPS_IDS_ACTIVE_FROM,
+			query = "select gr.relatedGroup.id from GroupRelation gr where gr.relatedGroup.id in (:ids) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+					GroupRelation.STATUS_PASSIVE_PENDING + "') and gr.initiationDate >= :date and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_GROUPS_ACTIVE_FROM,
+			query = "select gr.relatedGroup from GroupRelation gr where gr.relatedGroup.id in (:ids) and (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" +
+					GroupRelation.STATUS_PASSIVE_PENDING + "') and gr.initiationDate >= :date and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_GROUPS_IDS_BY_STATUSES,
+			query = "SELECT DISTINCT gr.relatedGroup.id FROM GroupRelation gr WHERE gr.relatedGroup.id in (:ids) AND (gr.groupRelationType.type='" + GroupRelation.RELATION_TYPE_GROUP_PARENT +
+					"' OR gr.groupRelationType.type IS NULL) AND gr.status in (:statuses)")
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
 
 	private static final long serialVersionUID = 5850270896539731950L;
 
-	public static final String QUERY_FIND_PARENT_IDS = "groupRelation.findParentIds";
+	public static final String	QUERY_FIND_ALL = "groupRelation.findAll",
+								QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
+								QUERY_FIND_BY_ID = "groupRelation.findById",
+								QUERY_FIND_BY_RELATED_GROUP_AND_TYPE = "groupRelation.findByRelatedGroupAndType",
+								QUERY_GET_HISTORY = "groupRelation.getHistory",
+								QUERY_FIND_PARENT_IDS = "groupRelation.findParentIds",
+								QUERY_COUNT_BY_RELATED_GROUP_TYPE = "groupRelation.countByRelatedGroupType",
+								QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER = "groupRelation.findDirectGroupIdsForUser",
+								QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE = "groupRelation.findDirectGroupsForUserByType",
+								QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE = "groupRelation.findByRelatedGroupIdAndType",
+								QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES = "groupRelation.findByRelatedGroupsIdAndTypes",
+								QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
+								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
+								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses";
+
+	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
+	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
+	public static final String PARAM_RELATED_GROUP_TYPE = "relatedGroupType";
+	public static final String PARAM_RELATED_GROUP_IDS = "relatedGroupIds";
+	public static final String PARAM_GROUP_TYPE = "groupType";
+	public static final String PARAM_GROUP_TYPES = "groupTypes";
+	public static final String PARAM_DATE_FROM = "dateFrom";
+	public static final String PARAM_DATE_TO = "dateTo";
+	public static final String PARAM_GROUP_ID = "groupId";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";
@@ -83,6 +149,62 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		if (getInitiationDate() == null) {
 			setInitiationDate(IWTimestamp.getTimestampRightNow());
 		}
+
+		onBeforeUpdate();
+	}
+
+	@PreUpdate
+	@PreRemove
+	public void onBeforeUpdate() {
+		final Integer id = getId();
+		if (id != null) {
+			//	Editing
+			String status = getStatus();
+			GroupRelationType groupRelationType = getGroupRelationType();
+			String relationshipType = groupRelationType == null ? null : groupRelationType.getType();
+			GroupType relatedGroupTypeEntity = getRelatedGroupType();
+			String relatedGroupType = relatedGroupTypeEntity == null ? null : relatedGroupTypeEntity.getGroupType();
+			if (StringUtil.isEmpty(status) || StringUtil.isEmpty(relationshipType) || StringUtil.isEmpty(relatedGroupType)) {
+				String message = "Insufficient data for " + getClass().getName() + ", ID: " + id + ". Status: " + status + ", relationship type : " + relationshipType + ", related group type: " + relatedGroupType;
+				RuntimeException e = new RuntimeException(message);
+				CoreUtil.sendExceptionNotification(message, e);
+				throw e;
+			}
+		}
+	}
+
+	@PostPersist
+	@PostUpdate
+	@PostRemove
+	public void onChange() {
+		Integer id = getId();
+
+		try {
+			Group group = getGroup();
+			Group relatedGroup = getRelatedGroup();
+			String status = getStatus();
+			ELUtil.getInstance().publishEvent(
+					new GroupRelationChangedEvent(
+							EventType.GROUP_CHANGE,
+							id,
+							group == null ? null : group.getID(),
+							group == null ? null : group.getName(),
+							group == null ? null : group.getType(),
+							relatedGroup == null ? null : relatedGroup.getID(),
+							relatedGroup == null ? null : relatedGroup.getName(),
+							relatedGroup == null ? null : relatedGroup.getType(),
+							status,
+							getInitiationDate(),
+							getTerminationDate(),
+							getInitiationModificationDate(),
+							getTerminationModificationDate()
+					)
+			);
+		} catch (Exception e) {
+			String message = "Error posting event about updated " + getClass().getName() + " with ID: " + id;
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, message, e);
+			CoreUtil.sendExceptionNotification(message, e);
+		}
 	}
 
 	@Id
@@ -90,15 +212,15 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	@Column(name = COLUMN_GROUP_RELATION_ID)
 	private Integer groupRelationID;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_GROUP)
 	private Group group;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_RELATED_GROUP)
 	private Group relatedGroup;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_RELATIONSHIP_TYPE)
 	private GroupRelationType groupRelationType;
 
@@ -113,15 +235,15 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	@Column(name = COLUMN_TERMINATION_DATE)
 	private Date terminationDate;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_PASSIVE_BY)
 	private User passiveBy;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_CREATED_BY)
 	private User createdBy;
 
-	@ManyToOne
+	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_RELATED_GROUP_TYPE)
 	private GroupType relatedGroupType;
 
@@ -142,14 +264,21 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	}
 
 	public Group getGroup() {
+		group = DBUtil.getInstance().lazyLoad(group);
+		return this.group;
+	}
+
+	public Group getGroupPlain() {
 		return this.group;
 	}
 
 	public Group getRelatedGroup() {
+		relatedGroup = DBUtil.getInstance().lazyLoad(relatedGroup);
 		return this.relatedGroup;
 	}
 
 	public GroupRelationType getGroupRelationType() {
+		groupRelationType = DBUtil.getInstance().lazyLoad(groupRelationType);
 		return this.groupRelationType;
 	}
 
@@ -166,14 +295,17 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	}
 
 	public User getPassiveBy() {
+		passiveBy = DBUtil.getInstance().lazyLoad(passiveBy);
 		return this.passiveBy;
 	}
 
 	public User getCreatedBy() {
+		createdBy = DBUtil.getInstance().lazyLoad(createdBy);
 		return this.createdBy;
 	}
 
 	public GroupType getRelatedGroupType() {
+		relatedGroupType = DBUtil.getInstance().lazyLoad(relatedGroupType);
 		return this.relatedGroupType;
 	}
 
@@ -231,6 +363,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	 * @return the metadata
 	 */
 	public Set<Metadata> getMetadata() {
+		metadata = DBUtil.getInstance().lazyLoad(metadata);
 		return this.metadata;
 	}
 
