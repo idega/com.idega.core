@@ -55,7 +55,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup = :relatedGroup and g.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup.groupID = :relatedGroupId and g.groupType.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES, query = "select distinct r.group from GroupRelation r join r.group g where r.relatedGroup.groupID in (:relatedGroupsIds) and g.groupType.groupType in (:groupTypes) and r.status = '" + GroupRelation.STATUS_ACTIVE + "' and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
-	@NamedQuery(name = GroupRelation.QUERY_GET_HISTORY, query = "select r from GroupRelation r join r.group g where r.relatedGroup.groupID = :"+GroupRelation.PARAM_RELATED_GROUP_ID+" and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
+	@NamedQuery(name = GroupRelation.QUERY_GET_HISTORY, query = "select r from GroupRelation r where r.relatedGroup.groupID = :"+GroupRelation.PARAM_RELATED_GROUP_ID+" and r.groupRelationType = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"),
 	@NamedQuery(name = "groupRelation.findBiDirectionalRelation", query = "select r from GroupRelation r where (r.group = :group and r.relatedGroup = :relatedGroup) or (r.relatedGroup = :group and r.group = :relatedGroup) and r.status = '" + GroupRelation.STATUS_ACTIVE + "'"),
 	@NamedQuery(name = GroupRelation.QUERY_COUNT_BY_RELATED_GROUP_TYPE, query = "select count(r) from GroupRelation r where r.relatedGroupType.groupType = :" + GroupRelation.PARAM_RELATED_GROUP_TYPE),
 	@NamedQuery(
@@ -265,6 +265,10 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 
 	public Group getGroup() {
 		group = DBUtil.getInstance().lazyLoad(group);
+		return this.group;
+	}
+
+	public Group getGroupPlain() {
 		return this.group;
 	}
 
