@@ -5,6 +5,7 @@ package com.idega.user.data.bean;
 
 import java.io.Serializable;
 import java.sql.SQLException;
+import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -54,6 +55,7 @@ import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -64,6 +66,7 @@ import com.idega.util.StringUtil;
 	@NamedQuery(name = "user.findAll", query = "select u from User u where u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(name = "user.findAllByPrimaryGroup", query = "select u from User u where u.primaryGroup = :primaryGroup and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID"),
+	@NamedQuery(name = User.QUERY_FIND_BY_PERSONAL_IDS, query = "select u from User u where u.personalID IN (:personalIDs)"),
 	@NamedQuery(name = "user.findByUniqueID", query = "select u from User u where u.uniqueId = :uniqueId"),
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
 	@NamedQuery(name = "user.findByNames", query = "select u from User u where u.firstName like :firstName or u.middleName like :middleName or u.lastName like :lastName and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
@@ -71,7 +74,36 @@ import com.idega.util.StringUtil;
 			name = User.QUERY_FIND_BY_PRIMARY_KEYS,
 			query = "SELECT u FROM User u WHERE u.userID IN (:primaryKeys)"),
 	@NamedQuery(name = User.QUERY_FIND_BY_PHONE_NUMBER, query = "select distinct u from User u join u.phones up where up.number = :number"),
-	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :key and um.value = :value")
+	@NamedQuery(name = User.QUERY_FIND_BY_METADATA, query = "select distinct u from User u join u.metadata um where um.key = :key and um.value = :value"),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id in (:groupsIds) AND (" +
+				"(gr.status = '" + GroupRelation.STATUS_ACTIVE + "' or gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' or gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateFrom AND gr.terminationDate < :dateTo) " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id IN (:groupsIds) " +
+			" AND (" +
+				"((gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo) " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.initiationDate IS NOT NULL AND gr.initiationDate <= :dateTo AND gr.terminationModificationDate IS NOT NULL AND gr.terminationModificationDate >= :dateTo) " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id in (:groupsIds) AND (" +
+				"(gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' or gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateFrom AND gr.terminationDate < :dateTo) " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	)
 })
 @XmlTransient
 @Cacheable
@@ -112,7 +144,11 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String	QUERY_FIND_BY_PRIMARY_KEYS = "user.findAllByPrimaryKeys",
 								QUERY_FIND_BY_PHONE_NUMBER = "user.findByPhoneNumber",
-								QUERY_FIND_BY_METADATA = "user.findByMetadata";
+								QUERY_FIND_BY_METADATA = "user.findByMetadata",
+								QUERY_FIND_BY_PERSONAL_IDS = "user.findByPersonalIDs",
+								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe",
+								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndDeletedAtGivenTimeframe",
+								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndBeforeGivenTimeframe";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
@@ -199,8 +235,18 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinTable(name = SQL_RELATION_PHONE, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Phone.COLUMN_PHONE_ID) })
 	private List<Phone> phones;
 
-	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Email.class)
-	@JoinTable(name = SQL_RELATION_EMAIL, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = Email.COLUMN_EMAIL_ID) })
+	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = UserStatus.class)
+	@JoinTable(name = UserStatus.ENTITY_NAME, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = UserStatus.COLUMN_USER_STATUS_ID) })
+	private List<UserStatus> statuses;
+
+	@ManyToMany(
+			fetch = FetchType.LAZY,
+			cascade = {CascadeType.PERSIST, CascadeType.MERGE},
+			targetEntity = Email.class)
+	@JoinTable(
+			name = SQL_RELATION_EMAIL,
+			joinColumns = {@JoinColumn(name = COLUMN_USER_ID)},
+			inverseJoinColumns = {@JoinColumn(name = Email.COLUMN_EMAIL_ID)})
 	private List<Email> emails;
 
 	@ManyToMany(fetch = FetchType.LAZY, cascade = { CascadeType.PERSIST, CascadeType.MERGE }, targetEntity = Address.class)
@@ -223,6 +269,33 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy="user")
     private List<UserLogin> logins;
+
+    @Column(name = com.idega.user.data.UserBMPBean.COLUMN_RESUME, length = 2048)
+    private String resume;
+
+    @Column(name = com.idega.user.data.UserBMPBean.COLUMN_LAST_READ_FROM_IMPORT)
+    private Timestamp lastReadFromImport;
+
+    @ManyToMany(fetch = FetchType.LAZY, targetEntity = ICLanguage.class)
+	@JoinTable(name = com.idega.user.data.UserBMPBean.COLUMN_LANGUAGES, joinColumns = { @JoinColumn(name = COLUMN_USER_ID) }, inverseJoinColumns = { @JoinColumn(name = ICLanguage.COLUMN_LANGUAGE_ID) })
+    private List<ICLanguage> languages;
+
+	public Timestamp getLastReadFromImport() {
+		return lastReadFromImport;
+	}
+
+	public void setLastReadFromImport(Timestamp lastReadFromImport) {
+		this.lastReadFromImport = lastReadFromImport;
+	}
+
+	public List<ICLanguage> getLanguages() {
+		languages = getInitialized(languages);
+		return languages;
+	}
+
+	public void setLanguages(List<ICLanguage> languages) {
+		this.languages = languages;
+	}
 
 	@PrePersist
 	public void setDefaultValues() {
@@ -694,6 +767,26 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public void setLogins(List<UserLogin> logins) {
 		this.logins = logins;
+	}
+
+	public String getResume() {
+		return resume;
+	}
+
+	public void setResume(String resume) {
+		this.resume = resume;
+	}
+
+	public Long getAge() {
+		return CoreUtil.getAge(getDateOfBirth());
+	}
+
+	public List<UserStatus> getStatuses() {
+		return statuses;
+	}
+
+	public void setStatuses(List<UserStatus> statuses) {
+		this.statuses = statuses;
 	}
 
 	public boolean isDeceased()  {
