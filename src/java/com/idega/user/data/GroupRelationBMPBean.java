@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
@@ -18,8 +19,11 @@ import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
 import com.idega.presentation.IWContext;
 import com.idega.user.events.GroupRelationChangedEvent;
+import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -516,12 +520,12 @@ public boolean equals(Object obj) {
     return this.idoFindPKsBySQL("select "+ getIDColumnName() +" from "+this.getTableName()+" where "+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+groupID
     +" and "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID+" and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
-	
+
 	/**
 	 * <p>Bidirectional, all data included</p>
-	 * @param groupID is {@link Group#getPrimaryKey()} to search by, 
+	 * @param groupID is {@link Group#getPrimaryKey()} to search by,
 	 * not <code>null</code>;
-	 * @param relatedGroupID is {@link Group#getPrimaryKey()} to search by, 
+	 * @param relatedGroupID is {@link Group#getPrimaryKey()} to search by,
 	 * not <code>null</code>;
 	 * @return primary keys or {@link Collections#emptyList()} on failure;
 	 */
@@ -579,13 +583,11 @@ public boolean equals(Object obj) {
   /**Finders end**/
 
   /**
-<<<<<<< HEAD
-=======
    * @deprecated Replaced with remove(User)
    */
   @Deprecated
-@Override
-public void remove()  throws RemoveException  {
+  @Override
+  public void remove()  throws RemoveException  {
     User currentUser;
     try {
       currentUser = IWContext.getInstance().getCurrentUser();
@@ -597,7 +599,6 @@ public void remove()  throws RemoveException  {
   }
 
   /**
->>>>>>> fdc7351764269b322882b03abe9addf99fcd9c33
    *
    */
   @Override
@@ -605,8 +606,6 @@ public void removeBy(User currentUser) throws RemoveException{
     this.removeBy(currentUser,IWTimestamp.getTimestampRightNow());
 
   }
-
-
 
 	/*
 	 * (non-Javadoc)
@@ -633,11 +632,53 @@ public void removeBy(User currentUser) throws RemoveException{
 	}
 
 	@Override
-	public void store() throws IDOStoreException{
+	public void store() throws IDOStoreException {
+		Object pk = getPrimaryKey();
+		if (pk != null) {
+			//	Editing
+			String status = getStatus();
+			String relationshipType = getRelationshipType();
+			String relatedGroupType = getRelatedGroupType();
+			if (StringUtil.isEmpty(status) || StringUtil.isEmpty(relationshipType) || StringUtil.isEmpty(relatedGroupType)) {
+				String message = "Insufficient data for " + getClass().getName() + ", ID: " + pk + ". Status: " + status + ", relationship type : " + relationshipType + ", related group type: " + relatedGroupType;
+				RuntimeException e = new RuntimeException(message);
+				CoreUtil.sendExceptionNotification(message, e);
+				throw e;
+			}
+		}
+
 		super.store();
-		ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent("Changed"));
+
+		Integer id = (Integer) getPrimaryKey();
+
+		try {
+			Group group = getGroup();
+			Group relatedGroup = getRelatedGroup();
+			String status = getStatus();
+			ELUtil.getInstance().publishEvent(
+					new GroupRelationChangedEvent(
+							EventType.GROUP_CHANGE,
+							id,
+							group == null ? null : (Integer) group.getPrimaryKey(),
+							group == null ? null : group.getName(),
+							group == null ? null : group.getType(),
+							relatedGroup == null ? null : (Integer) relatedGroup.getPrimaryKey(),
+							relatedGroup == null ? null : relatedGroup.getName(),
+							relatedGroup == null ? null : relatedGroup.getType(),
+							status,
+							getInitiationDate(),
+							getTerminationDate(),
+							getInitiationModificationDate(),
+							getTerminationModificationDate()
+					)
+			);
+		} catch (Exception e) {
+			String message = "Error posting event about updated " + getClass().getName() + " with ID: " + id;
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, message, e);
+			CoreUtil.sendExceptionNotification(message, e);
+		}
 	}
-	
+
   public Collection ejbFindAllGroupsRelationshipsTerminatedWithinSpecifiedTimePeriod(Group group, Group relatedGroup, Timestamp firstDateInPeriod, Timestamp lastDateInPeriod, String[] relationStatus) throws FinderException{
 
 	//constructing query
