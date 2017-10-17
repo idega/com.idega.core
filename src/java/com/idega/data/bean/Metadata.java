@@ -1,25 +1,35 @@
 /**
- * 
+ *
  */
 package com.idega.data.bean;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
 @Entity
 @Table(name = Metadata.ENTITY_NAME)
+@Cacheable
+@NamedQueries({
+	@NamedQuery(name = Metadata.QUERY_FIND_BY_GROUP_ID_AND_KEY, query = "select m.value from Group g inner join g.metadata m where g.groupID = :groupId and m.key = :key")
+})
 public class Metadata implements Serializable {
 
 	private static final long serialVersionUID = -1350922579475674106L;
 
-	public static final String ENTITY_NAME = "ic_metadata";
-	public static final String COLUMN_METADATA_ID = "ic_metadata_id";
+	public static final String	ENTITY_NAME = "ic_metadata",
+								COLUMN_METADATA_ID = "ic_metadata_id",
+
+								QUERY_FIND_BY_GROUP_ID_AND_KEY = "metadata.findByGroupIdAndKey";
+
 	private static final String COLUMN_KEY = "metadata_name";
 	private static final String COLUMN_VALUE = "metadata_value";
 	private static final String COLUMN_TYPE = "meta_data_type";
