@@ -66,6 +66,7 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	/**
 	 * @see com.idega.user.data.GroupBMPBean#getName
 	 */
+	@Override
 	public String getName();
 
 	/**
@@ -580,5 +581,9 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 
 	public void setModerator(User moderator);
 	public Collection<Group> getRelated(Collection<String> relationTypes);
+
+	public int getSystemImageID();
+	public void setSystemImageID(java.lang.Integer p0);
+	public void setSystemImageID(int fileID);
 
 }
