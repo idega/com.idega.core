@@ -13,8 +13,6 @@ public interface GroupNode<G> {
 
 	public String getType();
 
-	public String getName();
-
 	/**
 	 *
 	 * @return parent {@link Group}s without ancestors, or {@link Collections#emptyList()} on failure;
