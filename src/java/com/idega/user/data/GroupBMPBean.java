@@ -10,6 +10,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -28,9 +31,9 @@ import com.idega.core.location.data.Address;
 import com.idega.core.location.data.AddressType;
 import com.idega.core.net.data.ICNetwork;
 import com.idega.core.net.data.ICProtocol;
-import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
+import com.idega.data.IDOEntity;
 import com.idega.data.IDOEntityDefinition;
 import com.idega.data.IDOException;
 import com.idega.data.IDOLookup;
@@ -40,9 +43,7 @@ import com.idega.data.IDORelationshipException;
 import com.idega.data.IDOUtil;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.UniqueIDCapable;
-import com.idega.data.query.AND;
 import com.idega.data.query.Column;
-import com.idega.data.query.Criteria;
 import com.idega.data.query.InCriteria;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.OR;
@@ -53,6 +54,7 @@ import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.user.events.GroupUserRemovedEvent;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
@@ -258,6 +260,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		setColumn(getNameColumnName(), name);
 	}
 
+	@Override
+	public String getType() {
+		return getGroupType();
+	}
 	@Override
 	public String getGroupType() {
 		// try {
@@ -478,96 +484,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public List<Group> getParentGroups() throws EJBException {
-			return getParentGroups(null, null);
-		}
-
-	/**
-	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database
-	 * access is minimized by passing a Map of cached groupParents and Map of
-	 * cached groups to the method
-	 */
-	@Override
-	public List<Group> getParentGroups(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
-		List<Group> theReturn = new ArrayList<Group>();
-		try {
-			Group parent = null;
-			Collection<Group> parents = getCollectionOfParents(cachedParents, cachedGroups);
-			for (Iterator<Group> parIter = parents.iterator(); parIter.hasNext();) {
-				parent = parIter.next();
-				if (parent != null && !theReturn.contains(parent)) {
-					theReturn.add(parent);
-				}
-			}
-			if (isUser()) {
-				try {
-					User user = getUserForGroup();
-					Group usersPrimaryGroup = null;
-					String key = String.valueOf(user.getPrimaryGroupID());
-					if (cachedGroups != null) {
-						if (cachedGroups.containsKey(key)) {
-							usersPrimaryGroup = cachedGroups.get(key);
-						}
-						else {
-							usersPrimaryGroup = user.getPrimaryGroup();
-							cachedGroups.put(key, usersPrimaryGroup);
-						}
-					}
-					else {
-						usersPrimaryGroup = user.getPrimaryGroup();
-					}
-					if (usersPrimaryGroup != null && !theReturn.contains(usersPrimaryGroup)) {
-						theReturn.add(usersPrimaryGroup);
-					}
-				}
-				catch (FinderException e1) {
-					e1.printStackTrace();
-				}
-			}
-		}
-		catch (Exception e) {
-			e.printStackTrace();
-			throw new EJBException(e.getMessage());
-		}
-		return theReturn;
-	}
-
-	private Collection<Group> getCollectionOfParents(Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws FinderException {
-		Collection<Integer> col = null;
-		String key = this.getPrimaryKey().toString();
-		if (cachedParents != null) {
-			if (cachedParents.containsKey(key)) {
-				col = cachedParents.get(key);
-			}
-			else {
-				col = ejbFindParentGroups(this.getID());
-				cachedParents.put(key, col);
-			}
-		}
-		else {
-			col = ejbFindParentGroups(this.getID());
-		}
-
-		Collection<Group> returnCol = new ArrayList<Group>();
-		Group parent = null;
-		Integer parentID = null;
-		for (Iterator<Integer> iter = col.iterator(); iter.hasNext();) {
-			parentID = iter.next();
-			key = parentID.toString();
-			if (cachedGroups != null) {
-				if (cachedGroups.containsKey(key)) {
-					parent = cachedGroups.get(key);
-				}
-				else {
-					parent = getGroupHome().findByPrimaryKey(parentID);
-					cachedGroups.put(key, parent);
-				}
-			}
-			else {
-				parent = getGroupHome().findByPrimaryKey(parentID);
-			}
-			returnCol.add(parent);
-		}
-		return returnCol;
+		return getParentGroups(null, null);
 	}
 
 	protected Collection getChildGroupRelationships() throws FinderException {
@@ -670,18 +587,13 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 * @return A list of groups (not users) under this group
 	 */
 	@Override
-	public List getChildGroups() throws EJBException {
-		List theReturn = new ArrayList();
-
+	public List<Group> getChildGroups() throws EJBException {
 		try {
-			theReturn.addAll(ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, getUserGroupTypeList(), false)));
-			return theReturn;
-		}
-		catch (FinderException e) {
+			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, getUserGroupTypeList(), false));
+		} catch (FinderException e) {
 			e.printStackTrace();
-			return theReturn;
 		}
-
+		return Collections.emptyList();
 	}
 
 	/**
@@ -715,30 +627,22 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
 	}
 
-	public Collection ejbFindGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
-
-		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(
-				Integer.valueOf(containingGroup.getPrimaryKey().toString()), RELATION_TYPE_GROUP_PARENT);
-
-		SelectQuery query = idoSelectQuery();
-		Criteria theCriteria = null;
-		if (groupTypes != null && !groupTypes.isEmpty()) {
-			theCriteria = new InCriteria(idoQueryTable(), COLUMN_GROUP_TYPE, groupTypes, !returnTypes);
+	public Collection<Integer> ejbFindGroupsContained(Group containingGroup, Collection<String> groupTypes, boolean returnTypes) throws FinderException {
+		String query = "SELECT distinct g." + COLUMN_GROUP_ID + " FROM " + ENTITY_NAME + " g inner join " + GroupRelationBMPBean.TABLE_NAME + " gr on g." + COLUMN_GROUP_ID + " = gr." +
+				GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + " WHERE gr." + COLUMN_GROUP_ID + " = " + containingGroup.getPrimaryKey() + " and gr." + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " = '" +
+				RELATION_TYPE_GROUP_PARENT + "' and ( gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" + GroupRelationBMPBean.STATUS_ACTIVE + "' or gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" +
+				GroupRelationBMPBean.STATUS_PASSIVE_PENDING + "' )";
+		if (!ListUtil.isEmpty(groupTypes)) {
+			query += " and g.GROUP_TYPE " + (!returnTypes ? "NOT" : CoreConstants.EMPTY) + " IN (";
+			for (Iterator<String> typesIter = groupTypes.iterator(); typesIter.hasNext();) {
+				query += "'" + typesIter.next() + "'";
+				if (typesIter.hasNext()) {
+					query+= ", ";
 				}
-
-		Criteria inCr = new InCriteria(idoQueryTable(), COLUMN_GROUP_ID, findGroupRelationsSQL);
-
-		if (theCriteria == null) {
-			theCriteria = inCr;
 			}
-		else {
-			theCriteria = new AND(theCriteria, inCr);
+			query += ")";
 		}
-
-		query.addCriteria(theCriteria);
-		query.addOrder(idoQueryTable(), GroupBMPBean.COLUMN_NAME, true);
-
-		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
+		return idoFindPKsBySQL(query, PREFETCH_SIZE);
 	}
 
 	/**
@@ -751,24 +655,44 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 * @return
 	 * @throws FinderException
 	 */
-	public Collection ejbFindGroupsContained(Group containingGroup, Group groupTypeProxy) throws FinderException {
+	public Collection<Integer> ejbFindGroupsContained(Group containingGroup, Group groupTypeProxy, Class<? extends IDOEntity> theClass) throws FinderException {
+		String idColumn = getIDColumnName();
+		String select = "g." + COLUMN_GROUP_ID;
+		String join = CoreConstants.EMPTY;
+		String from = ENTITY_NAME + " g ";
+		String order = null;
+		if (groupTypeProxy != null && (groupTypeProxy instanceof User || groupTypeProxy.getType().equals(User.USER_GROUP_TYPE))) {
+			select = "u." + User.FIELD_USER_ID;
+			from = UserBMPBean.SQL_TABLE_NAME + " u ";
+			join = " inner join " + ENTITY_NAME + " g on " + select + " = g." + COLUMN_GROUP_ID;
+			order = " order by u." + User.FIELD_DISPLAY_NAME + ", u." + User.FIELD_FIRST_NAME;
+			theClass = UserBMPBean.class;
+			idColumn = User.FIELD_USER_ID;
+		}
 
-		String findGroupRelationsSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
+		String query = "SELECT distinct " + select + " FROM " + from + join + " inner join " + GroupRelationBMPBean.TABLE_NAME + " gr on g." + COLUMN_GROUP_ID + " = gr." +
+				GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + " WHERE gr." + COLUMN_GROUP_ID + " = " + containingGroup.getPrimaryKey() + " and gr." + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " = '" +
+				RELATION_TYPE_GROUP_PARENT + "' and ( gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" + GroupRelationBMPBean.STATUS_ACTIVE + "' or gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" +
+				GroupRelationBMPBean.STATUS_PASSIVE_PENDING + "' ) and g." + COLUMN_GROUP_TYPE + " like '" + groupTypeProxy.getGroupTypeKey() + "' ";
+		if (order != null) {
+			query += order;
+		}
 
-		SelectQuery query = idoSelectQuery();
-		query.addCriteria(new MatchCriteria(idoQueryTable(), COLUMN_GROUP_TYPE, MatchCriteria.LIKE, groupTypeProxy.getGroupTypeKey()));
-		query.addCriteria(new InCriteria(idoQueryTable(), COLUMN_GROUP_ID, findGroupRelationsSQL));
-
-		query.addOrder(idoQueryTable(), COLUMN_NAME, true);
-
-		return idoFindPKsByQueryIgnoringCacheAndUsingLoadBalance(query, (GenericEntity) groupTypeProxy, groupTypeProxy.getSelectQueryConstraints(), PREFETCH_SIZE);
+		return idoFindPKsBySQLIgnoringCache(query, -1, -1, null, theClass, idColumn);
 	}
 
-	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException, IDOException {
+	public int ejbHomeGetNumberOfGroupsContained(Group containingGroup, Collection<String> groupTypes, boolean returnTypes) throws FinderException, IDOException {
+		try {
+			throw new RuntimeException("Containing group: " + containingGroup + ", group type: " + groupTypes + ", return types: " + returnTypes);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Testing stack trace", e);
+		}
+
+		IDOQuery query = idoQuery();
+
 		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
 
 		if (groupTypes != null && !groupTypes.isEmpty()) {
-			IDOQuery query = idoQuery();
 			query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
 			query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
 			IDOQuery subQuery = idoQuery();
@@ -791,18 +715,12 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 
 	public int ejbHomeGetNumberOfVisibleGroupsContained(Group containingGroup) throws FinderException, IDOException {
-		String relatedSQL = getGroupRelationHome().getFindRelatedGroupIdsInGroupRelationshipsContainingSQL(((Integer) containingGroup.getPrimaryKey()).intValue(), RELATION_TYPE_GROUP_PARENT);
-		String visibleGroupTypes = getGroupTypeHome().getVisibleGroupTypesSQLString();
-
-		IDOQuery query = idoQuery();
-		query.appendSelectCountIDFrom(this.getEntityName(), getIDColumnName());
-		query.appendWhere(GroupBMPBean.COLUMN_GROUP_TYPE);
-		query.appendIn(visibleGroupTypes);
-		query.appendAnd();
-		query.append(GroupBMPBean.COLUMN_GROUP_ID);
-		query.appendIn(relatedSQL);
+		String query = "SELECT COUNT(g." + COLUMN_GROUP_ID + ") FROM " + ENTITY_NAME + " g inner join " + GroupRelationBMPBean.TABLE_NAME + " gr on g." + COLUMN_GROUP_ID + " = gr." +
+				GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + " inner join " + GroupTypeBMPBean.TABLE_NAME + " gt on g." + COLUMN_GROUP_TYPE + " = gt." + GroupTypeBMPBean.TYPE_COLUMN +
+				" WHERE gr." + COLUMN_GROUP_ID + "=" + containingGroup.getPrimaryKey() + " and gr." + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + "='" +
+				RELATION_TYPE_GROUP_PARENT + "' and ( gr." + GroupRelationBMPBean.STATUS_COLUMN + "='" + GroupRelationBMPBean.STATUS_ACTIVE + "' or gr." + GroupRelationBMPBean.STATUS_COLUMN + "='" +
+				GroupRelationBMPBean.STATUS_PASSIVE_PENDING + "' ) and gt." + GroupTypeBMPBean.COLUMN_IS_VISIBLE + " !='N'";
 		return this.idoGetNumberOfRecords(query.toString());
-
 	}
 
 	public Collection ejbFindTopNodeGroupsContained(ICDomain containingDomain, Collection groupTypes, boolean returnTypes) throws FinderException {
@@ -900,19 +818,18 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public List<Group> getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
 		List<Group> theReturn = new ArrayList<Group>();
-
 		List<String> types = null;
+
 		if (groupTypes != null && groupTypes.length > 0) {
 			types = ListUtil.convertStringArrayToList(groupTypes);
 		}
 
 		try {
-			return ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, types, returnSpecifiedGroupTypes));
-		}
-		catch (FinderException e) {
+			theReturn = ListUtil.convertCollectionToList(getGroupHome().findGroupsContained(this, types, returnSpecifiedGroupTypes));
+		} catch (FinderException e) {
 			e.printStackTrace();
+		}
 		return theReturn;
-	}
 	}
 
 	@Override
@@ -941,12 +858,10 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 * groupTypeProxy implements User then it will be collection of User elements
 	 */
 	@Override
-	public Collection<Group> getChildGroups(Group groupTypeProxy) throws EJBException {
-
+	public Collection<? extends Group> getChildGroups(Group groupTypeProxy) throws EJBException {
 		try {
 			return getGroupHome().findGroupsContained(this, groupTypeProxy);
-		}
-		catch (FinderException e) {
+		} catch (FinderException e) {
 			e.printStackTrace();
 			return ListUtil.getEmptyList();
 		}
@@ -985,8 +900,13 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	@Override
 	public Integer addUser(User userToAdd, Timestamp time) throws EJBException {
+		return addUser(userToAdd, time, null);
+	}
+
+	@Override
+	public Integer addUser(User userToAdd, Timestamp time, User addedBy) throws EJBException {
 		Integer userId = Integer.valueOf(this.getGroupIDFromGroup(userToAdd));
-		Integer relationId = addGroup(userId, time);
+		Integer relationId = addGroup(userId, time, addedBy);
 
 		boolean needsToStore = false;
 		if (userToAdd.getDeleted()) {
@@ -1094,6 +1014,28 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		addUniqueRelation(relatedGroupId, relationType, time, null);
 	}
 
+	private Integer addUniqueRelation(int relatedGroupId, String relationType, Timestamp time, User addedBy) throws CreateException {
+		if (!hasRelationTo(relatedGroupId, relationType)) {
+			GroupRelation rel = this.getGroupRelationHome().create();
+			rel.setGroup(this);
+			rel.setRelatedGroup(relatedGroupId);
+			rel.setRelationshipType(relationType);
+			if (time == null) {
+				time = IWTimestamp.getTimestampRightNow();
+			}
+
+			if (addedBy == null) {
+				addedBy = getPerformer();
+			}
+			rel.setCreatedBy(addedBy);
+			rel.setInitiationDate(time);
+			rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
+			rel.store();
+			return (Integer) rel.getPrimaryKey();
+		}
+		return null;
+	}
+
 	private User getPerformer() {
 		try {
 			IWContext iwc = CoreUtil.getIWContext();
@@ -1102,31 +1044,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			}
 		} catch (Exception e) {}
 		return null;
-	}
-
-	private Integer addUniqueRelation(Integer relatedGroupId, String relationType, Timestamp time, User addedBy) throws CreateException {
-		Collection<GroupRelation> relations = getRelations(relatedGroupId, relationType);
-		if (!ListUtil.isEmpty(relations)) {
-			return (Integer) relations.iterator().next().getPrimaryKey();
-		}
-
-		GroupRelation rel = this.getGroupRelationHome().create();
-		rel.setGroup(this);
-		rel.setRelatedGroup(relatedGroupId);
-		rel.setRelationshipType(relationType);
-		if (time == null) {
-			time = IWTimestamp.getTimestampRightNow();
-		}
-
-		if (addedBy == null) {
-			addedBy = getPerformer();
-		}
-
-		rel.setCreatedBy(addedBy);
-		rel.setInitiationDate(time);
-		rel.setRelatedGroupType(rel.getRelatedGroup().getGroupType());
-		rel.store();
-		return (Integer) rel.getPrimaryKey();
 	}
 
 	@Override
@@ -1282,10 +1199,8 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	@Override
 	public void removeUser(User user, User currentUser, Timestamp time) throws RemoveException {
-		// former: user.getGroupId() but this method is deprecated therefore:
-		// user.getId()
 		try {
-			this.removeGroup(user.getID(), currentUser, false, time);
+			this.removeGroup(user.getID(), currentUser, false, time == null ? IWTimestamp.getTimestampRightNow() : time);
 
 		}
 		catch (EJBException e) {
@@ -1539,9 +1454,57 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 		return this.idoFindPKsBySQL(sql);
 	}
 
-	public Collection<Integer> ejbFindParentGroups(int groupID) throws FinderException {
-		String sql = "select " + getIDColumnName() + " from " + GroupRelationBMPBean.TABLE_NAME + " where " + GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + "=" + groupID + " and (" + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + "='GROUP_PARENT' OR " + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " is null) and ( " + GroupRelationBMPBean.STATUS_COLUMN + "='" + GroupRelation.STATUS_ACTIVE + "' OR " + GroupRelationBMPBean.STATUS_COLUMN + "='" + GroupRelation.STATUS_PASSIVE_PENDING + "' ) ";
-		return this.idoFindPKsBySQL(sql);
+	/**
+	 *
+	 * @param groups is {@link Group#getPrimaryKey()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} of parent {@link Group}s
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindParentGroups(Collection<Integer> groups) {
+		if (!ListUtil.isEmpty(groups)) {
+			String primaryKeys = IDOUtil.getInstance()
+					.convertCollectionOfIntegersToCommaseparatedString(groups);
+
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT IC_GROUP_ID FROM IC_GROUP_RELATION ");
+			query.append("WHERE RELATED_IC_GROUP_ID IN (").append(primaryKeys).append(") ");
+			query.append("AND (");
+				query.append("RELATIONSHIP_TYPE = 'GROUP_PARENT' ");
+				query.append("OR ");
+				query.append("RELATIONSHIP_TYPE IS NULL");
+			query.append(") AND (");
+				query.append("GROUP_RELATION_STATUS = 'ST_ACTIVE' ");
+				query.append("OR ");
+				query.append("GROUP_RELATION_STATUS = 'PASS_PEND' ");
+			query.append(")");
+
+			try {
+				return this.idoFindPKsBySQL(query.toString());
+			} catch (FinderException e) {
+				getLogger().log(Level.WARNING,
+						"Failed to get primary keys by query: '" + query.toString() + "'");
+			}
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 *
+	 * <p>Searches whole {@link Group} tree to find it all</p>
+	 * @param groups is {@link Group#getPrimaryKey()}, not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPrimaryKey()} of parent {@link Group}s
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindParentGroupsRecursively(Collection<Integer> groups) {
+		Set<Integer> parentGroupsTree = new TreeSet<Integer>();
+
+		while (!ListUtil.isEmpty(groups)) {
+			parentGroupsTree.addAll(groups);
+			groups = ejbFindParentGroups(groups);
+		}
+
+		return parentGroupsTree;
 	}
 
 	private UserHome getUserHome() {
@@ -1900,6 +1863,13 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			for (Iterator<GroupRelation> iter = rels.iterator(); iter.hasNext();) {
 				iter.next().removeBy(currentUser, time);
 			}
+
+			ELUtil.getInstance().publishEvent(
+					new GroupUserRemovedEvent(
+							(Integer) currentUser.getPrimaryKey(),
+							relatedGroupId
+					)
+			);
 		}
 		catch (Exception e) {
 			throw new EJBException(e.getMessage());
@@ -2093,9 +2063,51 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	}
 
+	/**
+	 * Optimized version of getParentGroups() by Sigtryggur 22.06.2004 Database
+	 * access is minimized by passing a Map of cached groupParents and Map of
+	 * cached groups to the method
+	 */
 	@Override
-	public String getType() {
-		return getGroupType();
+	public List<Group> getParentGroups(
+			Map<String, Collection<Integer>> cachedParents,
+			Map<String, Group> cachedGroups) throws EJBException {
+		Collection<Group> groups = getGroupHome().findParentGroups((Integer) getPrimaryKey());
+		if (!ListUtil.isEmpty(groups)) {
+			return new ArrayList<Group>(groups);
+		}
+
+		return Collections.emptyList();
+	}
+
+	/**
+	 *
+	 * @param primaryKeys {@link Collection} of {@link Group#getPrimaryKey()},
+	 * not <code>null</code>;
+	 * @return {@link Collection} of {@link Group#getPermissionControllingGroupID()}
+	 * or {@link Collections#emptyList()} on failure;
+	 */
+	public Collection<Integer> ejbFindPermissionGroups(
+			Collection<Integer> primaryKeys) {
+		if (!ListUtil.isEmpty(primaryKeys)) {
+			String criteria = IDOUtil.getInstance()
+					.convertCollectionOfIntegersToCommaseparatedString(primaryKeys);
+
+			StringBuilder query = new StringBuilder();
+			query.append("SELECT icg.PERM_GROUP_ID ");
+			query.append("FROM ic_group icg ");
+			query.append("WHERE icg.IC_GROUP_ID IN (").append(criteria).append(") ");
+			query.append("AND icg.PERM_GROUP_ID IS NOT NULL ");
+
+			try {
+				return idoFindPKsBySQL(query.toString());
+			} catch (FinderException e) {
+				getLogger().log(Level.WARNING,
+						"Failed to get primary keys by query: '" + query.toString() + "'");
+			}
+		}
+
+		return Collections.emptyList();
 	}
 
 }

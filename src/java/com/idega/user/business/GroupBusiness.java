@@ -41,7 +41,6 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
 import com.idega.user.bean.AddressData;
 import com.idega.user.bean.GroupDataBean;
-import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupHome;
@@ -751,7 +750,5 @@ public interface GroupBusiness extends IBOService {
 			String city,
 			Collection<String> roles
 	);
-
-	public GroupDAO getGroupDAO();
 
 }

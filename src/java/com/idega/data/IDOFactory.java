@@ -139,19 +139,21 @@ public <T extends IDOEntity> T idoFindByPrimaryKey(Object primaryKey) throws Fin
   }
 
   @Override
-  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException{
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey) throws FinderException {
+	  return findByPrimaryKeyIDO(primaryKey, null);
+  }
+  public <T extends IDOEntity> T findByPrimaryKeyIDO(Object primaryKey, Class<? extends IDOEntity> interfaceClass) throws FinderException {
     Object realPK = primaryKey;
-    if(primaryKey instanceof IDOEntity){
+    if (primaryKey instanceof IDOEntity) {
     	try{
     		throw new FinderException("Argument of type: "+primaryKey.getClass()+" should not be passed as a parameter to findByPrimaryKey(). This currently works but will be removed in future APIs. Please remove this usage !!!");
-    	}
-    	catch(FinderException fe){
+    	} catch (FinderException fe) {
     		getLog().log(Level.WARNING, "Error finding entity type of " + getEntityInterfaceClass() +  " by primary key" + primaryKey, fe);
     	}
-    	realPK = ((IDOEntity)primaryKey).getPrimaryKey();
+    	realPK = ((IDOEntity) primaryKey).getPrimaryKey();
     }
-    Class<T> interfaceClass = getEntityInterfaceClass();
-    return idoFindByPrimaryKey(interfaceClass, realPK);
+    interfaceClass = interfaceClass == null ? getEntityInterfaceClass() : interfaceClass;
+    return (T) idoFindByPrimaryKey(interfaceClass, realPK);
   }
 
 
@@ -345,16 +347,20 @@ public void remove(Object primaryKey){
    */
   @Override
 public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys) throws FinderException {
+	  return getEntityCollectionForPrimaryKeys(collectionOfPrimaryKeys, null);
+  }
+
+  public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Collection<?> collectionOfPrimaryKeys, Class<? extends IDOEntity> theClass) throws FinderException {
   	if (collectionOfPrimaryKeys instanceof IDOPrimaryKeyList) {
   		return getIDOEntityListForPrimaryKeys(collectionOfPrimaryKeys);
   	} else {
 	  	Collection<T> theReturn = new ArrayList<T>();
 	    if (collectionOfPrimaryKeys != null){
 		    for (Object pk: collectionOfPrimaryKeys) {
-		      if(pk instanceof IDOEntity){
+		      if (pk instanceof IDOEntity) {
 		      	theReturn.add((T) pk);
 		      } else {
-			      T entityObject = this.findByPrimaryKeyIDO(pk);
+			      T entityObject = this.findByPrimaryKeyIDO(pk, theClass);
 			      theReturn.add(entityObject);
 		      }
 		    }
@@ -374,15 +380,18 @@ public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Col
     return theReturn;
   }
 
-  protected IDOEntity idoCheckOutPooledEntity(){
-    /**
-     * @todo: Change implementation
-     */
-	 GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(this.getEntityInterfaceClass(),this.dataSource);
-	 ent.setDatasource(this.dataSource, false);
-	 return ent;
+  protected IDOEntity idoCheckOutPooledEntity() {
+	  return idoCheckOutPooledEntity(this.getEntityInterfaceClass());
   }
 
+  protected <T extends IDOEntity> IDOEntity idoCheckOutPooledEntity(Class<T> interfaceClass) {
+	  /**
+	   * @todo: Change implementation
+	   */
+	  GenericEntity ent = (GenericEntity) com.idega.data.GenericEntity.getStaticInstanceIDO(interfaceClass, this.dataSource);
+	  ent.setDatasource(this.dataSource, false);
+	  return ent;
+  }
 
   protected void idoCheckInPooledEntity(IDOEntity entity){
     /**
@@ -403,7 +412,6 @@ public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Col
 	}
 
 	/**
-	 * 
 	 * <p>Get results from {@link SimpleQuerier}</p>
 	 * @param query to execute, not <code>null</code>
 	 * @return {@link Collection} of entities of {@link Collections#emptyList()} on failure;

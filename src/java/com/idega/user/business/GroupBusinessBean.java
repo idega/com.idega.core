@@ -73,6 +73,7 @@ import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
 import com.idega.user.data.GroupDomainRelationTypeHome;
 import com.idega.user.data.GroupHome;
+import com.idega.user.data.GroupNode;
 import com.idega.user.data.GroupRelation;
 import com.idega.user.data.GroupRelationHome;
 import com.idega.user.data.GroupType;
@@ -85,6 +86,8 @@ import com.idega.user.data.UserGroupPlugInHome;
 import com.idega.user.data.UserGroupRepresentative;
 import com.idega.user.data.UserGroupRepresentativeHome;
 import com.idega.user.data.UserHome;
+import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.Property;
@@ -438,7 +441,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 *           If an error occured
 	 */
 	@Override
-	public Collection getParentGroupsRecursive(Group aGroup) throws EJBException {
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup) throws EJBException {
 		return getParentGroupsRecursive(aGroup, null, null);
 	}
 
@@ -448,8 +451,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * groupParents and Map of cached groups to the method
 	 */
 	@Override
-	public Collection<Group> getParentGroupsRecursive(Group aGroup, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup, Map<String, Collection<Integer>> cachedParents, Map<String, G> cachedGroups) throws EJBException {
 		return getParentGroupsRecursive(aGroup, getUserRepresentativeGroupTypeStringArray(), false, cachedParents, cachedGroups);
+	}
+	@Override
+	public Collection<Group> getParentGroupsRecursive(User user, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
+		return getParentGroupsRecursive(user, getUserRepresentativeGroupTypeStringArray(), false, cachedParents, cachedGroups);
 	}
 
 	@Override
@@ -479,17 +486,30 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 *           If an error occured
 	 */
 	@Override
-	public Collection<Group> getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
+	public <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(G aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
+		return getParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes, null, null);
+	}
+	@Override
+	public Collection<Group> getParentGroupsRecursive(User user, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
+		return getParentGroupsRecursive((Group) user, groupTypes, returnSpecifiedGroupTypes, null, null);
+	}
+	@Override
+	public Collection<Group> getParentGroupsRecursive(
+			Group aGroup,
+			String[] groupTypes,
+			boolean returnSpecifiedGroupTypes
+	) throws EJBException, java.rmi.RemoteException {
 		return getParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes, null, null);
 	}
 
-	private Collection<Group> getParentGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
-		if (useStoredProsedureGettingParentGroupsRecursive()) {
-			return getParentGroupsRecursiveUsingStoredProcedure(aGroup, groupTypes, returnSpecifiedGroupTypes);
-		}
-		else {
-			return getParentGroupsRecursiveNotUsingStoredProcedure(aGroup, groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups);
-		}
+	private <G extends GroupNode<G>> Collection<G> getParentGroupsRecursive(
+			G aGroup,
+			String[] groupTypes,
+			boolean returnSpecifiedGroupTypes,
+			Map<String, Collection<Integer>> cachedParents,
+			Map<String, G> cachedGroups
+	) throws EJBException {
+		return getParentGroupsRecursiveNotUsingStoredProcedure(aGroup, groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups);
 	}
 
 	/**
@@ -497,40 +517,52 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Sigtryggur 22.06.2004 Database access is minimized by passing a Map of
 	 * cached groupParents and Map of cached groups to the method
 	 */
-	private Collection<Group> getParentGroupsRecursiveNotUsingStoredProcedure(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) throws EJBException {
-		// public Collection getGroupsContaining(Group groupContained, String[]
-		// groupTypes, boolean returnSepcifiedGroupTypes) throws
-		// EJBException,RemoteException{
+	private <G extends GroupNode<G>> Collection<G> getParentGroupsRecursiveNotUsingStoredProcedure(
+			G aGroup,
+			String[] groupTypes,
+			boolean returnSpecifiedGroupTypes,
+			Map<String, Collection<Integer>> cachedParents,
+			Map<String, G> cachedGroups
+	) throws EJBException {
+		Collection<G> groups = null;
+		try {
+			groups = aGroup.getParentGroups(cachedParents, cachedGroups);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 
-		Collection<Group> groups = aGroup.getParentGroups(cachedParents, cachedGroups);
+		if (ListUtil.isEmpty(groups)) {
+			return null;
+		}
 
-		if (groups != null && groups.size() > 0) {
-			Map GroupsContained = new LinkedHashMap();
+		List<G> specifiedGroups = new ArrayList<G>();
+		List<G> notSpecifiedGroups = new ArrayList<G>();
+		try {
+			Map<String, G> groupsContained = new LinkedHashMap<String, G>();
 
-			String key = "";
-			Iterator iter = groups.iterator();
+			String key = CoreConstants.EMPTY;
+			Iterator<G> iter = groups.iterator();
 			while (iter.hasNext()) {
-				Group item = (Group) iter.next();
+				G item = iter.next();
 				if (item != null) {
-					key = item.getPrimaryKey().toString();
-					if (!GroupsContained.containsKey(key)) {
-						GroupsContained.put(key, item);
-						putGroupsContaining(item, GroupsContained, groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups);
+					key = item.getId();
+					if (!groupsContained.containsKey(key)) {
+						groupsContained.put(key, item);
+						putGroupsContaining(item, groupsContained, groupTypes, returnSpecifiedGroupTypes, cachedParents, cachedGroups);
 					}
 				}
 			}
 
-			List specifiedGroups = new ArrayList();
-			List notSpecifiedGroups = new ArrayList();
 			int j = 0;
 			int k = 0;
-			Iterator iter2 = GroupsContained.values().iterator();
+			Iterator<G> iter2 = groupsContained.values().iterator();
 			if (groupTypes != null && groupTypes.length > 0) {
 				boolean specified = false;
 				while (iter2.hasNext()) {
-					Group tempObj = (Group) iter2.next();
+					G tempObj = iter2.next();
 					for (int i = 0; i < groupTypes.length; i++) {
-						if (tempObj.getGroupType().equals(groupTypes[i])) {
+						String groupType = tempObj.getType();
+						if (groupType != null && groupType.equals(groupTypes[i])) {
 							specifiedGroups.add(j++, tempObj);
 							specified = true;
 						}
@@ -547,21 +579,17 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			}
 			else {
 				while (iter2.hasNext()) {
-					Group tempObj = (Group) iter2.next();
+					G tempObj = iter2.next();
 					notSpecifiedGroups.add(j++, tempObj);
 				}
 				notSpecifiedGroups.remove(aGroup);
 				returnSpecifiedGroupTypes = false;
 			}
-
-			return (returnSpecifiedGroupTypes) ? specifiedGroups : notSpecifiedGroups;
-
-			// ///REMOVE AFTER IMPLEMENTING PUTGROUPSCONTAINED BETTER
-
+		} catch (Exception e) {
+			e.printStackTrace();
 		}
-		else {
-			return null;
-		}
+
+		return returnSpecifiedGroupTypes ? specifiedGroups : notSpecifiedGroups;
 	}
 
 	/**
@@ -569,26 +597,32 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 * Sigtryggur 22.06.2004 Database access is minimized by passing a Map of
 	 * cached groupParents and Map of cached groups to the method
 	 */
-	private void putGroupsContaining(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes, Map<String, Collection<Integer>> cachedParents, Map<String, Group> cachedGroups) {
-		Collection pGroups = null;
+	private <G extends GroupNode<G>> void putGroupsContaining(
+			G group,
+			Map<String, G> groupsContained,
+			String[] groupTypes,
+			boolean returnGroupTypes,
+			Map<String, Collection<Integer>> cachedParents,
+			Map<String, G> cachedGroups
+	) throws Exception {
+		List<G> pGroups = null;
 		if (cachedParents == null) {
 			pGroups = group.getParentGroups();// TODO EIKI FINISH THIS
 																				// groupTypes,returnGroupTypes);
-		}
-		else {
+		} else {
 			pGroups = group.getParentGroups(cachedParents, cachedGroups);
 		}
 		if (pGroups != null) {
-			String key = "";
-			Iterator iter = pGroups.iterator();
+			String key = CoreConstants.EMPTY;
+			Iterator<G> iter = pGroups.iterator();
 			while (iter.hasNext()) {
-				Group item = (Group) iter.next();
+				G item = iter.next();
 				if (item != null) {
-					key = item.getPrimaryKey().toString();
+					key = item.getId();
 
-					if (!GroupsContained.containsKey(key)) {
-						GroupsContained.put(key, item);
-						putGroupsContaining(item, GroupsContained, groupTypes, returnGroupTypes, cachedParents, cachedGroups);
+					if (!groupsContained.containsKey(key)) {
+						groupsContained.put(key, item);
+						putGroupsContaining(item, groupsContained, groupTypes, returnGroupTypes, cachedParents, cachedGroups);
 					}
 				}
 			}
@@ -700,7 +734,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 			if (groups != null && !groups.isEmpty()) {
 
-				String key = "";
+				String key = CoreConstants.EMPTY;
 				Iterator iter = groups.iterator();
 				while (iter.hasNext()) {
 					Group item = (Group) iter.next();
@@ -857,12 +891,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	@Override
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+	public Collection<Group> getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString, boolean onlyReturnTypesInCollection) {
 		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false);
 	}
 
 	@Override
-	public Collection getChildGroupsRecursiveResultFiltered(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
+	public Collection<Group> getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases) {
 		return getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection, false, false);
 	}
 
@@ -888,11 +922,17 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	@Override
 	public Collection<Group> getChildGroupsRecursiveResultFiltered(Group group, Collection<String> groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) {
-		// author: Thomas
-		Collection<Object> alreadyCheckedGroups = new ArrayList<Object>();
-		Collection<Group> result = new ArrayList<Group>();
-		getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers);
-		return result;
+		long start = System.currentTimeMillis();
+		try {
+			// author: Thomas
+			Map<Integer, Boolean> alreadyCheckedGroups = new HashMap<Integer, Boolean>();
+			Collection<Group> result = new ArrayList<Group>();
+			String[] userType = new String[] { getUserHome().getGroupType() };
+			getChildGroupsRecursive(group, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers, userType);
+			return result;
+		} finally {
+			CoreUtil.doDebug(start, System.currentTimeMillis(), "GroupBusinessBean.getChildGroupsRecursiveResultFiltered");
+		}
 	}
 
 	@Override
@@ -901,13 +941,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	@Override
-	public Collection getUsersFromGroupRecursive(Group group, Collection groupTypesAsString, boolean onlyReturnTypesInCollection) {
+	public Collection<User> getUsersFromGroupRecursive(Group group, Collection<String> groupTypesAsString, boolean onlyReturnTypesInCollection) {
 		// author: Thomas
-		Collection users = new ArrayList();
-		Collection groups = getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection);
-		Iterator iterator = groups.iterator();
+		Collection<User> users = new ArrayList<User>();
+		Collection<Group> groups = getChildGroupsRecursiveResultFiltered(group, groupTypesAsString, onlyReturnTypesInCollection);
+		Iterator<Group> iterator = groups.iterator();
 		while (iterator.hasNext()) {
-			Group tempGroup = (Group) iterator.next();
+			Group tempGroup = iterator.next();
 			try {
 				users.addAll(getUsers(tempGroup));
 			}
@@ -917,54 +957,62 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		return users;
 	}
 
-	private void getChildGroupsRecursive(Group currentGroup, Collection<Object> alreadyCheckedGroups, Collection<Group> result, Collection groupTypesAsString, boolean onlyReturnTypesInCollection, boolean includeAliases, boolean excludeGroupsWithoutMembers) {
+	private void getChildGroupsRecursive(
+			Group currentGroup,
+			Map<Integer, Boolean> alreadyCheckedGroups,
+			Collection<Group> result,
+			Collection<String> groupTypesAsString,
+			boolean onlyReturnTypesInCollection,
+			boolean includeAliases,
+			boolean excludeGroupsWithoutMembers,
+			String[] userType
+	) {
 		Integer currentPrimaryKey = (Integer) currentGroup.getPrimaryKey();
-		if (alreadyCheckedGroups.contains(currentPrimaryKey)) {
+		if (alreadyCheckedGroups.containsKey(currentPrimaryKey)) {
 			// already checked, avoid looping
 			return;
 		}
-		alreadyCheckedGroups.add(currentPrimaryKey);
+
+		alreadyCheckedGroups.put(currentPrimaryKey, Boolean.TRUE);
 		String currentGroupType = currentGroup.getGroupType();
+
 		// does the current group belong to the result set?
 		// if both are true or false then it belongs, otherwise not. (using XOR)
-		String[] userType = new String[] { getUserHome().getGroupType() };
 		if (groupTypesAsString == null || groupTypesAsString.isEmpty()) {
 			// no specific type, add all
 			if (excludeGroupsWithoutMembers) {
-				Collection users = currentGroup.getChildGroups(userType, true);
+				Collection<Group> users = currentGroup.getChildGroups(userType, true);
 				if (!users.isEmpty()) {
 					result.add(currentGroup);
 				}
-			}
-			else {
+			} else {
 				result.add(currentGroup);
 			}
-		}
-		else if (!(groupTypesAsString.contains(currentGroupType) ^ (onlyReturnTypesInCollection))) {
+		} else if (!(groupTypesAsString.contains(currentGroupType) ^ (onlyReturnTypesInCollection))) {
 			if (excludeGroupsWithoutMembers) {
-				Collection users = currentGroup.getChildGroups(userType, true);
+				Collection<Group> users = currentGroup.getChildGroups(userType, true);
 				if (!users.isEmpty()) {
 					result.add(currentGroup);
 				}
-			}
-			else {
+			} else {
 				result.add(currentGroup);
 			}
 		}
+
 		// go further
-		Collection children = currentGroup.getChildGroups();
-		Iterator childrenIterator = children.iterator();
+		Collection<Group> children = currentGroup.getChildGroups();
+		Iterator<Group> childrenIterator = children.iterator();
 		while (childrenIterator.hasNext()) {
-			Group child = (Group) childrenIterator.next();
+			Group child = childrenIterator.next();
 			if (includeAliases) {
 				if (child.isAlias()) {
 					if (child.getAlias() != null) {
-						alreadyCheckedGroups.add(child.getPrimaryKey());
+						alreadyCheckedGroups.put((Integer) child.getPrimaryKey(), Boolean.TRUE);
 						child = child.getAlias();
 					}
 				}
 			}
-			getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers);
+			getChildGroupsRecursive(child, alreadyCheckedGroups, result, groupTypesAsString, onlyReturnTypesInCollection, includeAliases, excludeGroupsWithoutMembers, userType);
 		}
 	}
 
@@ -1098,7 +1146,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	private void putGroupsContained(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes) throws RemoteException {
 		Collection childGroups = group.getChildGroups(groupTypes, returnGroupTypes);
 		if (childGroups != null && !childGroups.isEmpty()) {
-			String key = "";
+			String key = CoreConstants.EMPTY;
 			Iterator iter = childGroups.iterator();
 			while (iter.hasNext()) {
 				Group item = (Group) iter.next();
@@ -1124,7 +1172,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	@Override
-	public Collection getGroups(Collection<String> groupIDs) throws FinderException, RemoteException {
+	public Collection<Group> getGroups(Collection<String> groupIDs) throws FinderException, RemoteException {
 		return this.getGroupHome().findGroups(groupIDs);
 	}
 
@@ -1247,7 +1295,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	}
 
 	@Override
-	public Collection getGroupsByAbbreviation(String abbreviation) throws RemoteException {
+	public Collection<Group> getGroupsByAbbreviation(String abbreviation) throws RemoteException {
 		try {
 			return this.getGroupHome().findGroupsByAbbreviation(abbreviation);
 		}
@@ -1263,11 +1311,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	@Override
 	public void addUser(int groupId, User user) throws EJBException, RemoteException {
-		addUser(groupId, user, null);
+		addUser(groupId, user, IWTimestamp.getTimestampRightNow());
 	}
+
 	@Override
-	public void addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException {
-		addUser(groupId, user, timestamp, null);
+	public Integer addUser(int groupId, User user, Timestamp timestamp) throws EJBException, RemoteException {
+		return addUser(groupId, user, timestamp, null);
 	}
 
 	private Property canAdd(Integer groupId, User user) {
@@ -1333,6 +1382,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		} catch (FinderException fe) {
 			throw new EJBException(fe.getMessage());
 		}
+		return null;
 	}
 
 	@Override
@@ -1393,7 +1443,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 */
 	@Override
 	public Group createGroup(String name) throws CreateException, RemoteException {
-		String description = "";
+		String description = CoreConstants.EMPTY;
 		return createGroup(name, description);
 	}
 
@@ -1615,7 +1665,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			else {
 				// okay, group is null, but we need an instance
 				// to get the alias and general group type
-				groupTypeString = "";
+				groupTypeString = CoreConstants.EMPTY;
 				groupType = GroupTypeBMPBean.getStaticInstance();
 			}
 		}
@@ -1707,16 +1757,21 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 			try {
 				ICObject icObject = element.getBusinessICObject();
 				if (icObject != null) {
-					Class<UserGroupPlugInBusiness> pluginClass = RefactorClassRegistry.forName(icObject.getClassName());
-					pluginBiz = getServiceInstance(pluginClass);
-					list.add(pluginBiz);
+					Class<UserGroupPlugInBusiness> pluginClass = null;
+					try {
+						pluginClass = RefactorClassRegistry.forName(icObject.getClassName());
+					} catch (Exception e) {
+						getLogger().log(Level.WARNING, "Error getting class for name " + icObject.getClassName() + ". ICObject ID: " + icObject.getID(), e);
+					}
+					if (pluginClass != null) {
+						pluginBiz = getServiceInstance(pluginClass);
+						list.add(pluginBiz);
+					}
 				}
 				//else should we delete the record?
 			} catch (IBOLookupException e) {
 				e.printStackTrace();
 			} catch (RemoteException e) {
-				e.printStackTrace();
-			} catch (ClassNotFoundException e) {
 				e.printStackTrace();
 			}
 		}
@@ -2370,11 +2425,16 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		String groupId = group.getPrimaryKey().toString();
 		AccessController access = getAccessController();
 
-		Collection col = getParentGroupsRecursive(group);
+		Collection<Group> col = null;
+		try {
+			col = getParentGroupsRecursive(group);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (col != null && !col.isEmpty()) {
-			Iterator iter = col.iterator();
+			Iterator<Group> iter = col.iterator();
 			while (iter.hasNext()) {
-				Group parent = (Group) iter.next();
+				Group parent = iter.next();
 				Collection owners = AccessControl.getAllOwnerGroupPermissionsReverseForGroup(parent);
 
 				if (owners != null && !owners.isEmpty()) {
@@ -2561,7 +2621,12 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	@Override
 	public void applyInheritedPermissionsToGroup(Group newlyCreatedGroup) throws RemoteException {
 		AccessController access = getAccessController();
-		Collection recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
+		Collection<Group> recursiveParents = null;
+		try {
+			recursiveParents = getParentGroupsRecursive(newlyCreatedGroup);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 		if (recursiveParents != null && !recursiveParents.isEmpty()) {
 			try {
 				ICPermissionHome home = (ICPermissionHome) IDOLookup.getHome(ICPermission.class);
@@ -2633,10 +2698,6 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 
 	private Collection getParentGroupsRecursiveUsingStoredProcedure(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
 		return ParentGroupsRecursiveProcedure.getInstance().findParentGroupsRecursive(aGroup, groupTypes, returnSpecifiedGroupTypes);
-	}
-
-	private boolean useStoredProsedureGettingParentGroupsRecursive() {
-		return false; // ParentGroupsRecursiveProcedure.getInstance().isAvailable();
 	}
 
 	@Override

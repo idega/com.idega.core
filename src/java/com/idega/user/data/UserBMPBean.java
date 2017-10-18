@@ -322,7 +322,24 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	@Override
 	public Date getDateOfBirth() {
-		return (Date) getColumnValue(getColumnNameDateOfBirth());
+		Date date = (Date) getColumnValue(getColumnNameDateOfBirth());
+		if (date != null) {
+			return date;
+		}
+
+		try {
+			String personalId = getPersonalID();
+			if (StringUtil.isEmpty(personalId)) {
+				return null;
+			}
+
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(getIWMainApplication().getIWApplicationContext(), UserBusiness.class);
+			date = userBusiness.getUserDateOfBirthFromPersonalId(personalId);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting user's (ID: " + getId() + ") date of birth", e);
+		}
+
+		return date;
 	}
 
 	@Override
@@ -1064,7 +1081,11 @@ public void delete(int userId) throws SQLException {
 	}
 
 	/**
-	 * Returns the User that is the instance of the User representing the group userRepGroup	 * @param userRepGroup a Group of type "UserRepresentative"	 * @return Integer the primary key of the User representing the UserGroup	 * @throws FinderException If an error occurs	 */
+	 * Returns the User that is the instance of the User representing the group userRepGroup
+	 * @param userRepGroup a Group of type "UserRepresentative"
+	 * @return Integer the primary key of the User representing the UserGroup
+	 * @throws FinderException If an error occurs
+	 */
 	public Integer ejbFindUserForUserRepresentativeGroup(Group userRepGroup) throws FinderException {
 		//try{
 			String sGroupPK = userRepGroup.getPrimaryKey().toString();
@@ -1201,6 +1222,7 @@ public void delete(int userId) throws SQLException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
 	}
+
 	@Override
 	public void removeGroup() throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
@@ -1223,7 +1245,6 @@ public void delete(int userId) throws SQLException {
 	public void addGroup(User p0) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
 	}
-
 	@Override
 	public void addGroup(User p0, Timestamp time) throws EJBException{
 		throw new java.lang.UnsupportedOperationException("Method addGroup() not supported.");
@@ -1267,7 +1288,9 @@ public void delete(int userId) throws SQLException {
 		return "user_group_representative";
 	}
 	/**
-	 * Gets a list of all the groups that this "group" is directly member of.	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()	 */
+	 * Gets a list of all the groups that this "group" is directly member of.
+	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()
+	 */
 	@Override
 	public List getParentGroups() throws EJBException {
 		return getParentGroups(null, null);
@@ -3218,13 +3241,19 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	}
 
 	@Override
-	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException {
-		throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
+	public Integer addUser(User userToAdd, Timestamp time, User addedBy) throws EJBException {
+		throw new UnsupportedOperationException("Method addUser() is not implemented yet");
 	}
 
 	@Override
-	public void addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
-		throw new java.lang.UnsupportedOperationException("Method addGroup() not yet implemented.");
+	public void addGroup(Group groupToAdd, Timestamp time, User addedBy) throws EJBException {
+		throw new UnsupportedOperationException("Method addGroup() is not implemented yet");
+
+	}
+
+	@Override
+	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
+		throw new UnsupportedOperationException("Method addGroup() is not implemented yet");
 	}
 
 }

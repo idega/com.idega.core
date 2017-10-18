@@ -228,6 +228,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		return getGenericEntityDefinition().getEntityFieldsCollection();
 	}
 
+	protected GenericEntityDefinition getGenericEntityDefinition(Class<? extends IDOEntity> theClass) {
+		return (GenericEntityDefinition) getIDOContainer().getEntityDefinitions().get(theClass);
+	}
+
 	protected GenericEntityDefinition getGenericEntityDefinition() {
 		return (GenericEntityDefinition) getIDOContainer().getEntityDefinitions().get(this.getClass());
 	}
@@ -1839,22 +1843,35 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 
+	<PK> PK getPrimaryKeyFromResultSet(ResultSet rs, Class<? extends IDOEntity> theClass, String idColumn) throws SQLException {
+		theClass = theClass == null ? getClass() : theClass;
+		idColumn = StringUtil.isEmpty(idColumn) ? getIDColumnName() : idColumn;
+
+		IDOEntityField[] fields = getGenericEntityDefinition(theClass).getPrimaryKeyDefinition().getFields();
+		Class<PK> primaryKeyClass = getPrimaryKeyClass();
+		return getPrimaryKeyFromResultSet(primaryKeyClass, fields, rs, idColumn);
+	}
+
 	<PK> PK getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
 		IDOEntityField[] fields = getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
 		Class<PK> primaryKeyClass = getPrimaryKeyClass();
 		return getPrimaryKeyFromResultSet(primaryKeyClass, fields, rs);
 	}
 
-	@SuppressWarnings("unchecked")
 	<PK> PK getPrimaryKeyFromResultSet(Class<PK> primaryKeyClass, IDOEntityField[] primaryKeyFields, ResultSet rs) throws SQLException {
+		return getPrimaryKeyFromResultSet(primaryKeyClass, primaryKeyFields, rs, this.getIDColumnName());
+	}
+
+	@SuppressWarnings("unchecked")
+	<PK> PK getPrimaryKeyFromResultSet(Class<PK> primaryKeyClass, IDOEntityField[] primaryKeyFields, ResultSet rs, String idColumn) throws SQLException {
 		IDOEntityField[] fields = primaryKeyFields;
 		Class<PK> pkClass = primaryKeyClass;
 		PK theReturn = null;
+		idColumn = StringUtil.isEmpty(idColumn) ? this.getIDColumnName() : idColumn;
 
 		if (pkClass == Integer.class) {
-			theReturn = (PK) new Integer(rs.getInt(this.getIDColumnName()));
-		}
-		else {
+			theReturn = (PK) new Integer(rs.getInt(idColumn));
+		} else {
 			try {
 				theReturn = (PK) getPrimaryKeyClass().newInstance();
 			}
@@ -1866,7 +1883,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 
 			if (theReturn instanceof String) {
-				theReturn = (PK) rs.getString(getIDColumnName());
+				theReturn = (PK) rs.getString(idColumn);
 			}
 			else {
 				if (theReturn instanceof IDOPrimaryKey) {
@@ -4215,6 +4232,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	protected <PK> Collection<PK> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query) throws FinderException {
+		return idoFindPKsBySQLIgnoringCache(sqlQuery, returningNumber, startingEntry, query, null, null);
+	}
+
+	protected <PK> Collection<PK> idoFindPKsBySQLIgnoringCache(String sqlQuery, int returningNumber, int startingEntry, SelectQuery query, Class<? extends IDOEntity> theClass, String idColumn) throws FinderException {
 		String queryTmp = null;
 		if (query != null) {
 			queryTmp = query.toString();
@@ -4262,7 +4283,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 					}
 
 					if (addEntity) {
-						PK pk = this.getPrimaryKeyFromResultSet(rsh.rs);
+						PK pk = this.getPrimaryKeyFromResultSet(rsh.rs, theClass, idColumn);
 						if (pk != null) {
 							results.add(pk);
 						}

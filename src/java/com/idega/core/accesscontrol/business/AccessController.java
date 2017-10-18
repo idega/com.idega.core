@@ -12,6 +12,7 @@
 package com.idega.core.accesscontrol.business;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -207,6 +208,13 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public Set<String> getAllRolesForUser(User user);
   public Collection<Group> getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user);
   public Collection<String> getAllRolesKeysForGroup(Group group);
+
+  /**
+   * @param groupId is {@link Group#getId()}, not <code>null</code>;
+   * @return {@link Collection} of {@link ICPermission#getPermissionString()}
+   * or {@link Collections#emptyList()} on failure;
+   */
+  Collection<String> getAllRolesKeysForGroup(Collection<Integer> groupId);
 
 /*
   public static List getPermissionGroups(User user) throws Exception;
