@@ -88,4 +88,5 @@ public interface GroupsCacheService {
 
 	public void setGroupTypesForDebug(List<String> types);
 
+	public List<Integer> getParentGroupsIdsByLevel(List<Integer> groupsIds, List<String> groupTypes, Integer level);
 }
