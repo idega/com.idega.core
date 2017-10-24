@@ -126,6 +126,11 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	@Override
+	public List<Integer> getParentGroupsIdsByLevel(List<Integer> groupsIds, List<String> groupTypes, Integer level) {
+		return getAllRelatedGroupsIds(groupsIds, groupTypes, true, level);
+	}
+
+	@Override
 	public List<Group> getParentGroups(Integer id, List<String> groupTypes) {
 		if (id == null) {
 			return null;
