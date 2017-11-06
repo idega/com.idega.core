@@ -59,8 +59,8 @@ public class UserStatus implements Serializable {
 
 								QUERY_FIND_ALL = "userStatus.findAll",
 								QUERY_FIND_STATUSES_IN_GROUPS = "userStatus.findStatusesInGroup",
-								QUERY_FIND_ALL_ACTIVE_IN_GROUPS = "userStatus.findAllActiveInGroups",
-										QUERY_FIND_STATUSES_IN_GROUPS_BY_USER_PERSONAL_ID = "userStatus.findStatusesInGroupsByUserPersonalId";
+								QUERY_FIND_STATUSES_IN_GROUPS_BY_USER_PERSONAL_ID = "userStatus.findStatusesInGroupsByUserPersonalId",
+								QUERY_FIND_ALL_ACTIVE_IN_GROUPS = "userStatus.findAllActiveInGroups";
 
 	public static final String COLUMN_USER_STATUS_ID = "ic_usergroup_status_id";
 	private static final String COLUMN_STATUS = "status_id";

@@ -1854,9 +1854,6 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 	<PK> PK getPrimaryKeyFromResultSet(ResultSet rs) throws SQLException {
 		return getPrimaryKeyFromResultSet(rs, this.getClass(), null);
-//		IDOEntityField[] fields = getGenericEntityDefinition().getPrimaryKeyDefinition().getFields();
-//		Class<PK> primaryKeyClass = getPrimaryKeyClass();
-//		return getPrimaryKeyFromResultSet(primaryKeyClass, fields, rs);
 	}
 
 	<PK> PK getPrimaryKeyFromResultSet(Class<PK> primaryKeyClass, IDOEntityField[] primaryKeyFields, ResultSet rs) throws SQLException {
@@ -1868,6 +1865,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		IDOEntityField[] fields = primaryKeyFields;
 		Class<PK> pkClass = primaryKeyClass;
 		PK theReturn = null;
+		idColumn = StringUtil.isEmpty(idColumn) ? this.getIDColumnName() : idColumn;
 
 		if (pkClass == Integer.class) {
 			theReturn = (PK) new Integer(rs.getInt(idColumn));

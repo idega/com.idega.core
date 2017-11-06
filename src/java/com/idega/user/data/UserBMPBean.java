@@ -1082,7 +1082,11 @@ public void delete(int userId) throws SQLException {
 	}
 
 	/**
-	 * Returns the User that is the instance of the User representing the group userRepGroup	 * @param userRepGroup a Group of type "UserRepresentative"	 * @return Integer the primary key of the User representing the UserGroup	 * @throws FinderException If an error occurs	 */
+	 * Returns the User that is the instance of the User representing the group userRepGroup
+	 * @param userRepGroup a Group of type "UserRepresentative"
+	 * @return Integer the primary key of the User representing the UserGroup
+	 * @throws FinderException If an error occurs
+	 */
 	public Integer ejbFindUserForUserRepresentativeGroup(Group userRepGroup) throws FinderException {
 		//try{
 			String sGroupPK = userRepGroup.getPrimaryKey().toString();
@@ -1219,6 +1223,7 @@ public void delete(int userId) throws SQLException {
 		/**@todo: Implement this com.idega.user.data.Group method*/
 		throw new java.lang.UnsupportedOperationException("Method setExtraInfo() not yet implemented.");
 	}
+
 	@Override
 	public void removeGroup() throws javax.ejb.EJBException {
 		throw new java.lang.UnsupportedOperationException("Method removeGroup() not supported.");
@@ -1284,7 +1289,9 @@ public void delete(int userId) throws SQLException {
 		return "user_group_representative";
 	}
 	/**
-	 * Gets a list of all the groups that this "group" is directly member of.	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()	 */
+	 * Gets a list of all the groups that this "group" is directly member of.
+	 * @see com.idega.user.data.Group#getListOfAllGroupsContainingThis()
+	 */
 	@Override
 	public List getParentGroups() throws EJBException {
 		return getParentGroups(null, null);

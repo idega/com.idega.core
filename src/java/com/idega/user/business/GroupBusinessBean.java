@@ -68,7 +68,6 @@ import com.idega.presentation.IWContext;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.user.bean.AddressData;
 import com.idega.user.bean.GroupDataBean;
-import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.Group;
 import com.idega.user.data.GroupDomainRelation;
 import com.idega.user.data.GroupDomainRelationType;
@@ -95,7 +94,6 @@ import com.idega.util.Property;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.NestedSetsContainer;
-import com.idega.util.expression.ELUtil;
 
 /**
  * <p>
@@ -3108,11 +3106,6 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		}
 
 		return groups;
-	}
-
-	@Override
-	public GroupDAO getGroupDAO() {
-		return ELUtil.getInstance().getBean(GroupDAO.class);
 	}
 
 }

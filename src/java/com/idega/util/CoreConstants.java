@@ -110,6 +110,7 @@ public class CoreConstants {
 
 	public static final String WEBDAV_SERVLET_URI = "/content";
 
+	public static final String ISO_8859_1 = "ISO-8859-1";
 	public static final String ENCODING_UTF8 = "UTF-8";
 
 	public static final String DWR_ENGINE_SCRIPT = "/dwr/engine.js";

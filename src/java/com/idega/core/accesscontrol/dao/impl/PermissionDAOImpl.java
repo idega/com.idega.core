@@ -155,6 +155,12 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	}
 
 	@Override
+	public List<ICPermission> findPermissions(String contextType, String contextValue, String permissionString, String permissionValue) {
+		Character permValue = StringUtil.isEmpty(permissionValue) ? null : permissionValue.charAt(0);
+		return findPermissions(contextType, contextValue, permissionString, permValue);
+	}
+
+	@Override
 	public List<ICPermission> findPermissions(String contextType, Collection<String> contextValues, Group group) {
 		Param param1 = new Param("contextType", contextType);
 		Param param2 = new Param("contextValues", contextValues);

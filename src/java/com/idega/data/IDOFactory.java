@@ -409,7 +409,6 @@ public void remove(Object primaryKey){
 	}
 
 	/**
-	 * 
 	 * <p>Get results from {@link SimpleQuerier}</p>
 	 * @param query to execute, not <code>null</code>
 	 * @return {@link Collection} of entities of {@link Collections#emptyList()} on failure;
