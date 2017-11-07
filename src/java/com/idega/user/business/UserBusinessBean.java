@@ -2546,7 +2546,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			} else {
 				isSuperUser = iwuc.isSuperAdmin();
 				try {
-					currentUser = iwuc.getCurrentUser().equals(user);
+					currentUser = iwuc.isLoggedOn() ? iwuc.getCurrentUser().equals(user) : false;
 				} catch (Exception e) {
 					getLogger().log(Level.WARNING, "Error checking if " + user + " is current user", e);
 				}
