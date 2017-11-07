@@ -240,7 +240,6 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	  @Override
 	public Collection getTopLevelGroupsUnderDomain() throws IDORelationshipException, RemoteException, FinderException{
 	    Collection<GroupDomainRelation> relations = ((GroupDomainRelationHome)IDOLookup.getHome(GroupDomainRelation.class)).findGroupsRelationshipsUnderDomainByRelationshipType(this.getID(),GroupDomainRelationTypeBMPBean.RELATION_TYPE_TOP_NODE);
-	    getLogger().info("Relations: " + relations);
 
 	    //TODO do this in one sql command like in groupbmpbean and grouprelation
 	    Iterator<GroupDomainRelation> iter = relations.iterator();
@@ -250,7 +249,6 @@ public class ICDomainBMPBean extends GenericEntity implements ICDomain{
 	        groups.add(item.getRelatedGroup());
 	    }
 
-	    getLogger().info("Related groups: " + groups);
 	    return groups;
 	  }
 
