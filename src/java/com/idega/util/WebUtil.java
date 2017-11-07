@@ -367,4 +367,11 @@ public class WebUtil extends DefaultSpringBean {
     	return date1.before(date2);
     }
 
+    public boolean clearCaches() {
+    	if (getApplication().getSettings().getBoolean("web_util.allow_clear_caches", false)) {
+    		CoreUtil.clearAllCaches();
+    	}
+    	return true;
+    }
+
 }

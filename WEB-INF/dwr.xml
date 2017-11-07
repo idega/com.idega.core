@@ -44,6 +44,7 @@
       		<include method="setActiveRole"/>
       		<include method="isDateEarlierThan"/>
       		<include method="setSessionProperty"/>
+      		<include method="clearCaches()"/>
 		</create>
   		
 		<convert match="com.idega.builder.bean.AdvancedProperty" converter="bean" />
