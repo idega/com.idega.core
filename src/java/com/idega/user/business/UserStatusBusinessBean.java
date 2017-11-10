@@ -15,6 +15,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.EJBException;
@@ -264,6 +265,18 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	@Override
 	public boolean isDeceased(User user) {
 		return user == null ? false : user.isDeceased();
+	}
+
+	@Override
+	@SuppressWarnings("unchecked")
+	public Collection<UserStatus> findAllActiveBySearchCriteria(List<Integer> groupIds, List<String> roles) {
+		Collection<UserStatus> userStatuses = null;
+		try {
+			userStatuses = getUserStatusHome().findAllActiveBySearchCriteria(groupIds, roles);
+		} catch(Exception e) {
+			getLogger().log(Level.WARNING, "Could not get the user statuses for groups: " + groupIds + " and roles: " + roles, e);
+		}
+		return userStatuses;
 	}
 
 
