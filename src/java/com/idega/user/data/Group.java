@@ -587,9 +587,6 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 
 	public void setModerator(User moderator);
 	public Collection<Group> getRelated(Collection<String> relationTypes);
-//
-//	public void setGroupPersonalId(String groupPersonalId);
-//	public String getGroupPersonalId();
 
 	public int getSystemImageID();
 	public void setSystemImageID(java.lang.Integer p0);

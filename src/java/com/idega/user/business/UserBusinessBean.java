@@ -102,6 +102,7 @@ import com.idega.presentation.Image;
 import com.idega.servlet.filter.IWAuthenticator;
 import com.idega.user.bean.GroupMemberDataBean;
 import com.idega.user.bean.GroupMemberDataBeanComparator;
+import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.Gender;
 import com.idega.user.data.GenderHome;
@@ -2545,7 +2546,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			} else {
 				isSuperUser = iwuc.isSuperAdmin();
 				try {
-					currentUser = iwuc.getCurrentUser().equals(user);
+					currentUser = iwuc.isLoggedOn() ? iwuc.getCurrentUser().equals(user) : false;
 				} catch (Exception e) {
 					getLogger().log(Level.WARNING, "Error checking if " + user + " is current user", e);
 				}
@@ -3178,7 +3179,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Group targetGroup = null;
 		try {
 			groupBiz = getGroupBusiness();
-			com.idega.user.data.bean.Group targetGroupEntity = groupBiz.getGroupDAO().findGroup(targetGroupId);
+			GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
+			com.idega.user.data.bean.Group targetGroupEntity = groupDAO.findGroup(targetGroupId);
 			// check if we have editpermissions for the targetgroup
 			if (!getAccessController().hasEditPermissionFor(targetGroupEntity, iwuc)) {
 				// fill the result map

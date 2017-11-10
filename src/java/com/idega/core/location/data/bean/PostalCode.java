@@ -31,9 +31,7 @@ import com.idega.util.DBUtil;
 	@NamedQuery(name = PostalCode.QUERY_FIND_ALL_ICELANDIC, query = "select p from PostalCode p where p.postalCode is not null and length(p.postalCode) = 3 order by p.postalCode"),
 	@NamedQuery(name = "postalCode.findAllByCountry", query = "select p from PostalCode p where p.country = :country order by p.postalCode"),
 	@NamedQuery(name = PostalCode.QUERY_FIND_BY_POSTAL_CODE, query = "select p from PostalCode p where p.postalCode = :postalCode"),
-	@NamedQuery(name = PostalCode.QUERY_FIND_BY_ADDRESS,
-		query =		"SELECT DISTINCT p FROM PostalCode p "
-				+	"JOIN p.addresses a ON a.id = :id")
+	@NamedQuery(name = PostalCode.QUERY_FIND_BY_ADDRESS, query = "SELECT DISTINCT p FROM PostalCode p JOIN p.addresses a ON a.id = :id")
 })
 public class PostalCode implements Serializable {
 
