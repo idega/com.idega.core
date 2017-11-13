@@ -11,6 +11,7 @@ package com.idega.user.business;
 import java.rmi.RemoteException;
 import java.util.Collection;
 import java.util.Date;
+import java.util.List;
 
 import javax.ejb.CreateException;
 
@@ -105,5 +106,7 @@ public interface UserStatusBusiness extends IBOService {
 	public Collection getAllUsersWithStatus(int statusId);
 
 	public boolean isDeceased(User user);
+
+	public Collection<UserStatus> findAllActiveBySearchCriteria(List<Integer> groupIds, List<String> roles);
 
 }

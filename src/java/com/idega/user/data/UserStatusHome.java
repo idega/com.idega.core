@@ -10,14 +10,17 @@
 package com.idega.user.data;
 
 import java.util.Collection;
+import java.util.List;
+
 import javax.ejb.FinderException;
+
 import com.idega.data.IDOHome;
 
 
 /**
- * 
+ *
  *  Last modified: $Date$ by $Author$
- * 
+ *
  * @author <a href="mailto:eiki@idega.com">eiki</a>
  * @version $Revision$
  */
@@ -81,4 +84,6 @@ public interface UserStatusHome extends IDOHome {
 	 * @see com.idega.user.data.UserStatusBMPBean#ejbFindAllActiveByUserIDAndStatusID
 	 */
 	public Collection findAllActiveByUserIDAndStatusID(Integer userID, Integer statusID) throws FinderException;
+
+	public Collection findAllActiveBySearchCriteria(List<Integer> groupIds, List<String> roles) throws FinderException;
 }
