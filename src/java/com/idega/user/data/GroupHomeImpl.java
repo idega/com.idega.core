@@ -13,8 +13,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -157,11 +159,19 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 				this.idoCheckOutPooledEntity();
 		Class<? extends IDOEntity> theClass = entity.getClass();
 		java.util.Collection<Integer> ids = ((GroupBMPBean) proxyEntity).ejbFindGroupsContained(containingGroup, groupTypeProxy, theClass);
+
+		Set<Integer> uniqueIds = new HashSet<>();
+		if (!ListUtil.isEmpty(ids)) {
+			for (Integer id: ids) {
+				uniqueIds.add(id);
+			}
+		}
+
 		this.idoCheckInPooledEntity(entity);
 
 		this.idoCheckInPooledEntity(proxyEntity);
 
-		return this.getEntityCollectionForPrimaryKeys(ids, theClass);
+		return this.getEntityCollectionForPrimaryKeys(uniqueIds, theClass);
 	}
 
 	@Override
