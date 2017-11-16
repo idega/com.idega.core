@@ -20,6 +20,11 @@ public class PagedDataCollection<T> {
 
 	private Long totalCount;
 
+	private Integer pageSize;
+
+	private Integer page;
+
+
 	public PagedDataCollection(Collection<T> data, Long totalCount) {
 		this.data = data;
 		this.totalCount = totalCount;
@@ -51,6 +56,22 @@ public class PagedDataCollection<T> {
 	@Override
 	public String toString() {
 		return ListUtil.isEmpty(data) ? CoreConstants.MINUS : data.toString();
+	}
+
+	public Integer getPageSize() {
+		return pageSize;
+	}
+
+	public void setPageSize(Integer pageSize) {
+		this.pageSize = pageSize;
+	}
+
+	public Integer getPage() {
+		return page;
+	}
+
+	public void setPage(Integer page) {
+		this.page = page;
 	}
 
 }
