@@ -548,6 +548,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				query.append(" AND g.groupType.groupType in (:groupTypes) ");
 				params.add(new Param("groupTypes", groupTypes));
 			}
+
 			query.append(" and r.groupRelationType = '").append(GroupRelation.RELATION_TYPE_GROUP_PARENT).append("'");
 			params.add(new Param("ids", ids));
 
