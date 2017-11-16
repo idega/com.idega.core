@@ -670,7 +670,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			idColumn = User.FIELD_USER_ID;
 		}
 
-		String query = "SELECT distinct " + select + " FROM " + from + join + " inner join " + GroupRelationBMPBean.TABLE_NAME + " gr on g." + COLUMN_GROUP_ID + " = gr." +
+		String query = "SELECT " + select + " FROM " + from + join + " inner join " + GroupRelationBMPBean.TABLE_NAME + " gr on g." + COLUMN_GROUP_ID + " = gr." +
 				GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + " WHERE gr." + COLUMN_GROUP_ID + " = " + containingGroup.getPrimaryKey() + " and gr." + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " = '" +
 				RELATION_TYPE_GROUP_PARENT + "' and ( gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" + GroupRelationBMPBean.STATUS_ACTIVE + "' or gr." + GroupRelationBMPBean.STATUS_COLUMN + " = '" +
 				GroupRelationBMPBean.STATUS_PASSIVE_PENDING + "' ) and g." + COLUMN_GROUP_TYPE + " like '" + groupTypeProxy.getGroupTypeKey() + "' ";
