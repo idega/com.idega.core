@@ -4289,9 +4289,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				}
 				counter++;
 			}
-		} catch (Exception sqle) {
-			sqle.printStackTrace();
-			throw new IDOFinderException(sqle);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error executing query SQL: '" + sqlQuery + "', select query: '" + query + "'", e);
+			throw new IDOFinderException(e);
 		} finally {
 			if (rsh != null) {
 				rsh.close();
