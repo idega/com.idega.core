@@ -85,5 +85,5 @@ public interface UserStatusHome extends IDOHome {
 	 */
 	public Collection findAllActiveByUserIDAndStatusID(Integer userID, Integer statusID) throws FinderException;
 
-	public Collection findAllActiveBySearchCriteria(List<Integer> groupIds, List<String> roles) throws FinderException;
+	public Collection<UserStatus> findAllActiveBySearchCriteria(List<Integer> groupIds, List<String> roles) throws FinderException;
 }

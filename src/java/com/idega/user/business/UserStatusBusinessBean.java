@@ -268,7 +268,6 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	}
 
 	@Override
-	@SuppressWarnings("unchecked")
 	public Collection<UserStatus> findAllActiveBySearchCriteria(List<Integer> groupIds, List<String> roles) {
 		Collection<UserStatus> userStatuses = null;
 		try {
