@@ -5,6 +5,7 @@ package com.idega.repository.data;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.CoreConstants;
@@ -42,8 +43,12 @@ public class RefactorClassRegistry implements Singleton {
 		return decryptedClassName;
 	}
 
-	@SuppressWarnings("unchecked")
 	public static <T> Class<T> forName(String className) throws ClassNotFoundException {
+		return forName(className, true);
+	}
+
+	@SuppressWarnings("unchecked")
+	private static <T> Class<T> forName(String className, boolean reTry) throws ClassNotFoundException {
 		// first try to find the class
 		try {
 			className = getDecryptedClassName(className);
@@ -54,7 +59,17 @@ public class RefactorClassRegistry implements Singleton {
 				return RefactorClassRegistry.getInstance().findClass(className, ex);
 			}
 		} catch (Exception e) {
-			throw new ClassNotFoundException("Class with name " + className + " can not be found", e);
+			String defaultClass = null;
+			if (reTry) {
+				defaultClass = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("iw_class_registry.default_class");
+			}
+			if (StringUtil.isEmpty(defaultClass)) {
+				throw new ClassNotFoundException("Class with name " + className + " can not be found", e);
+			} else {
+				Logger.getLogger(RefactorClassRegistry.class.getName()).info("Failed to load class by provided name: " + className + ", will try to load default class: " + defaultClass);
+			}
+
+			return forName(defaultClass, false);
 		}
 	}
 
