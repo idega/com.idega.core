@@ -123,7 +123,7 @@ public class DownloadWriter implements MediaWritable {
 				String fileURL = fsystem.getFileURI(Integer.valueOf(fileId).intValue());
 				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
 				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
-				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
+				setAsDownload(iwc, this.file.getName(), (int) this.file.length(), fileId);
 			} catch (Exception e) {
 				this.icFile = null;
 			}
