@@ -51,6 +51,7 @@ import com.idega.repository.data.Resource;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -184,35 +185,30 @@ public class ICPageBMPBean extends TreeableEntityBMPBean<ICPage> implements ICPa
 
 	@Override
 	public String getName(Locale locale) {
-		/*int localeID = ICLocaleBusiness.getLocaleId(locale);
+		if (locale == null) {
+			return getName();
+		}
+
+		String localizedName = null;
 		try {
-			IBPageNameHome home = (IBPageNameHome) com.idega.data.IDOLookup.getHome(IBPageName.class);
-			IBPageName name = home.findByPageIdAndLocaleId(((Integer) getPrimaryKey()).intValue(), localeID);
-			return name.getPageName();
-		}
-		catch (RemoteException e) {
-			e.printStackTrace();
-		}
-		catch (FinderException e) {
-			//Nothing found...
-		}
-		*/
-		return getName();
+			localizedName = getIBPageNameDAO().getNameByPageAndLocale(getID(), ICLocaleBusiness.getLocaleId(locale));
+		} catch (Exception e) {}
+		return StringUtil.isEmpty(localizedName) ? getName() : localizedName;
 	}
-	
+
 	@Autowired
 	IBPageNameDAO ibPageNameDAO;
-	
+
 	public IBPageNameDAO getIBPageNameDAO() {
 		if(this.ibPageNameDAO == null) {
 			this.ibPageNameDAO = ELUtil.getInstance().getBean("ibPageNameDAO");
 		}
 		return this.ibPageNameDAO;
 	}
-	
+
+	@Override
 	public String getNameByCurrentLocale() {
-		return getIBPageNameDAO().getNameByPageAndLocale(getID(),
-				ICLocaleBusiness.getLocaleId(CoreUtil.getCurrentLocale()));
+		return getName(CoreUtil.getCurrentLocale());
 	}
 
 	/**
@@ -1048,7 +1044,7 @@ public class ICPageBMPBean extends TreeableEntityBMPBean<ICPage> implements ICPa
 	}
 
 	/**
-	 * 
+	 *
 	 * @return all {@link ICPage}s, that is not deleted or {@link Collections#emptyList()} on failure;
 	 */
 	public Collection<Integer> ejbFindAll() {
