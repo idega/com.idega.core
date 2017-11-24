@@ -1855,6 +1855,49 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return properties;
 	}
 
+	@Override
+	public List<List<Integer>> getHomePageIds(User user) {
+		List<List<Integer>> results = new ArrayList<>();
+
+		//	Gather all the users groups and see if any of them have home pages.
+		ICRole preferredRole = user.getPreferredRole();
+		String preferredRoleKey = preferredRole == null ? null : preferredRole.getRoleKey();
+
+		List<Integer> homepages = new ArrayList<>();
+		results.add(homepages);
+
+		List<Integer> homePagesOfPreferredRole = new ArrayList<>();
+		results.add(homePagesOfPreferredRole);
+
+		List<Integer> homepagesWithRolesNotPreferred = new ArrayList<>();
+		results.add(homepagesWithRolesNotPreferred);
+
+		Collection<Group> groups = user.getParentGroups();
+		if (ListUtil.isEmpty(groups)) {
+			return results;
+		}
+
+		//	Collect home pages
+		for (Group group: groups) {
+			if (group.getHomePageID() > 0) {
+				Integer pageID = new Integer(group.getHomePageID());
+
+				Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
+				if (!ListUtil.isEmpty(allRolesForGroup)) {
+					if (preferredRoleKey != null && allRolesForGroup.contains(preferredRoleKey)) {
+						homePagesOfPreferredRole.add(pageID);
+					} else {
+						homepagesWithRolesNotPreferred.add(pageID);
+					}
+				}
+				if (!homepages.contains(pageID)) {
+					homepages.add(pageID);
+				}
+			}
+		}
+
+		return results;
+	}
 
 	/**
 	 * 	Home page precedence is as follows:
@@ -1881,44 +1924,23 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return homePageID;
 		}
 
-		//Gather all the users groups and see if any of them have home pages.
-		ICRole preferredRole = user.getPreferredRole();
-		String preferredRoleKey = (preferredRole!=null)? preferredRole.getRoleKey() : null;
-		Collection<Integer> homepages = new ArrayList<Integer>();
-		Collection<Integer> homePagesOfPreferredRole = new ArrayList<Integer>();
-		Collection<Integer> homepagesWithRolesNotPreferred = new ArrayList<Integer>();
-
-		Collection<Group> groups = user.getParentGroups();
-
-		//collect home pages
-		for (Group group : groups) {
-			if (group.getHomePageID() > 0) {
-				Integer pageID = new Integer(group.getHomePageID());
-
-				Collection<String> allRolesForGroup = this.getIWApplicationContext().getIWMainApplication().getAccessController().getAllRolesKeysForGroup(group);
-				if( !ListUtil.isEmpty(allRolesForGroup)){
-					if(preferredRoleKey!=null && allRolesForGroup.contains(preferredRoleKey)){
-						homePagesOfPreferredRole.add(pageID);
-					}
-					else{
-						homepagesWithRolesNotPreferred.add(pageID);
-					}
-				}
-				if(!homepages.contains(pageID)) {
-					homepages.add(pageID);
-				}
-			}
+		List<List<Integer>> allHomePages = getHomePageIds(user);
+		if (ListUtil.isEmpty(allHomePages)) {
+			getLogger().warning("No homepages found for " + user);
+			return -1;
 		}
 
-		if(!ListUtil.isEmpty(homepages) && homepages.size()==1){
-			return ((homepages.iterator().next())).intValue();
+		List<Integer> homepages = allHomePages.get(0);
+		if (!ListUtil.isEmpty(homepages) && homepages.size() == 1) {
+			return homepages.iterator().next().intValue();
 		}
 
-
-		//preferred role
-		if(!ListUtil.isEmpty(homePagesOfPreferredRole)){
-			if(homePagesOfPreferredRole.size()==1){
-				return ((homePagesOfPreferredRole.iterator().next())).intValue();
+		//	Preferred role
+		List<Integer> homePagesOfPreferredRole = allHomePages.get(1);
+		List<Integer> homepagesWithRolesNotPreferred = allHomePages.get(2);
+		if (!ListUtil.isEmpty(homePagesOfPreferredRole)) {
+			if (homePagesOfPreferredRole.size() == 1 && ListUtil.isEmpty(homepagesWithRolesNotPreferred)) {
+				return homePagesOfPreferredRole.iterator().next().intValue();
 			}
 		}
 
