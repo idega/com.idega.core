@@ -17,6 +17,7 @@ import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.user.events.GroupRelationChangedEvent.EventType;
@@ -635,15 +636,18 @@ public void removeBy(User currentUser) throws RemoveException{
 	public void store() throws IDOStoreException {
 		Object pk = getPrimaryKey();
 		if (pk != null) {
-			//	Editing
-			String status = getStatus();
-			String relationshipType = getRelationshipType();
-			String relatedGroupType = getRelatedGroupType();
-			if (StringUtil.isEmpty(status) || StringUtil.isEmpty(relationshipType) || StringUtil.isEmpty(relatedGroupType)) {
-				String message = "Insufficient data for " + getClass().getName() + ", ID: " + pk + ". Status: " + status + ", relationship type : " + relationshipType + ", related group type: " + relatedGroupType;
-				RuntimeException e = new RuntimeException(message);
-				CoreUtil.sendExceptionNotification(message, e);
-				throw e;
+			if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("group.check_if_sufficient_data", false)) {
+				//	Editing
+				String status = getStatus();
+				String relationshipType = getRelationshipType();
+				String relatedGroupType = getRelatedGroupType();
+				if (StringUtil.isEmpty(status) || StringUtil.isEmpty(relationshipType) || StringUtil.isEmpty(relatedGroupType)) {
+					String message = "Insufficient data for " + getClass().getName() + ", ID: " + pk + ". Status: " + status +
+							", relationship type : " + relationshipType + ", related group type: " + relatedGroupType;
+					RuntimeException e = new RuntimeException(message);
+					CoreUtil.sendExceptionNotification(message, e);
+					throw e;
+				}
 			}
 		}
 

@@ -30,13 +30,18 @@ import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.builder.business.BuilderServiceFactory;
+import com.idega.core.builder.dao.IBPageNameDAO;
 import com.idega.core.builder.data.ICPageBMPBean;
 import com.idega.core.data.ICTreeNode;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
+import com.idega.core.localisation.business.ICLocaleBusiness;
 import com.idega.core.net.data.bean.ICProtocol;
 import com.idega.data.UniqueIDCapable;
 import com.idega.idegaweb.IWApplicationContext;
@@ -48,6 +53,8 @@ import com.idega.repository.data.Resource;
 import com.idega.user.data.bean.User;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 import com.idega.util.xml.XMLData;
 
 @Entity
@@ -188,6 +195,17 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 			IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
 			setUniqueId(uidGenerator.generateId());
 		}
+	}
+
+	@Autowired
+	@Transient
+	private IBPageNameDAO ibPageNameDAO;
+
+	private IBPageNameDAO getIBPageNameDAO() {
+		if (ibPageNameDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return ibPageNameDAO;
 	}
 
 	/**
@@ -593,7 +611,15 @@ public class ICPage implements Serializable, UniqueIDCapable, Storable, Resource
 
 	@Override
 	public String getNodeName(Locale locale) {
-		return getNodeName();
+		if (locale == null) {
+			return getName();
+		}
+
+		String localizedName = null;
+		try {
+			localizedName = getIBPageNameDAO().getNameByPageAndLocale(getID(), ICLocaleBusiness.getLocaleId(locale));
+		} catch (Exception e) {}
+		return StringUtil.isEmpty(localizedName) ? getName() : localizedName;
 	}
 
 	@Override
