@@ -1005,4 +1005,6 @@ public interface UserBusiness extends IBOService {
 
 	public boolean isDeceased(Integer id);
 
+	public List<List<Integer>> getHomePageIds(User user);
+
 }
