@@ -107,8 +107,6 @@ public class XMLWebserviceConfigurationTool extends BundleFileMerger {
 	 */
 	public static final String XML_HEADER = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>\n";
 
-	public static final String ENCODING = "UTF-8";
-
 	public XMLWebserviceConfigurationTool() {
 		setFileHeader(XML_HEADER);
 		setRootXMLElement(ROOT_ELEMENT_TAG);
