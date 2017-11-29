@@ -672,9 +672,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 *           If an error occured
 	 */
 	@Override
-	public Collection getChildGroupsRecursive(int groupId) throws EJBException, FinderException {
-		// public Collection getGroupsContained(int groupId) throws
-		// EJBException,FinderException,RemoteException{
+	public Collection<Group> getChildGroupsRecursive(int groupId) throws EJBException, FinderException {
 		try {
 			Group group = this.getGroupByGroupID(groupId);
 			return getChildGroupsRecursive(group);
@@ -695,7 +693,7 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 *           If an error occured
 	 */
 	@Override
-	public Collection getChildGroupsRecursive(Group aGroup) throws EJBException {
+	public Collection<Group> getChildGroupsRecursive(Group aGroup) throws EJBException {
 		return getChildGroupsRecursive(aGroup, getUserRepresentativeGroupTypeStringArray(), false);
 	}
 
@@ -721,33 +719,27 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 	 *           If an error occured
 	 */
 	@Override
-	public Collection getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
-		// public Collection getGroupsContained(Group groupContaining, String[]
-		// groupTypes, boolean returnSepcifiedGroupTypes) throws RemoteException{
+	public Collection<Group> getChildGroupsRecursive(Group aGroup, String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
 		try {
+			Map<String, Group> groupsContained = new HashMap<>();// to avoid duplicates
 
-			Map GroupsContained = new HashMap();// to avoid duplicates
-
-			Collection groups = aGroup.getChildGroups(groupTypes, returnSpecifiedGroupTypes);
-
-			// int j = 0;
+			Collection<Group> groups = aGroup.getChildGroups(groupTypes, returnSpecifiedGroupTypes);
 
 			if (groups != null && !groups.isEmpty()) {
-
 				String key = CoreConstants.EMPTY;
-				Iterator iter = groups.iterator();
+				Iterator<Group> iter = groups.iterator();
 				while (iter.hasNext()) {
-					Group item = (Group) iter.next();
+					Group item = iter.next();
 					if (item != null) {
 						key = item.getPrimaryKey().toString();
-						if (!GroupsContained.containsKey(key)) {
-							GroupsContained.put(key, item);
-							putGroupsContained(item, GroupsContained, groupTypes, returnSpecifiedGroupTypes);
+						if (!groupsContained.containsKey(key)) {
+							groupsContained.put(key, item);
+							putGroupsContained(item, groupsContained, groupTypes, returnSpecifiedGroupTypes);
 						}
 					}
 				}
 
-				return new ArrayList(GroupsContained.values());
+				return new ArrayList<>(groupsContained.values());
 			}
 			else {
 				return null;
@@ -1143,13 +1135,13 @@ public class GroupBusinessBean extends com.idega.business.IBOServiceBean impleme
 		 */
 	}
 
-	private void putGroupsContained(Group group, Map GroupsContained, String[] groupTypes, boolean returnGroupTypes) throws RemoteException {
-		Collection childGroups = group.getChildGroups(groupTypes, returnGroupTypes);
+	private void putGroupsContained(Group group, Map<String, Group> GroupsContained, String[] groupTypes, boolean returnGroupTypes) throws RemoteException {
+		Collection<Group> childGroups = group.getChildGroups(groupTypes, returnGroupTypes);
 		if (childGroups != null && !childGroups.isEmpty()) {
 			String key = CoreConstants.EMPTY;
-			Iterator iter = childGroups.iterator();
+			Iterator<Group> iter = childGroups.iterator();
 			while (iter.hasNext()) {
-				Group item = (Group) iter.next();
+				Group item = iter.next();
 				key = item.getPrimaryKey().toString();
 				if (!GroupsContained.containsKey(key)) {
 					GroupsContained.put(key, item);
