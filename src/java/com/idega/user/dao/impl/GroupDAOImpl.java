@@ -449,8 +449,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 			query = new StringBuilder("select ").append(
 					resultType.getName().equals(Integer.class.getName()) ?
-									loadAliases ?	"distinct g.id as id" :
-													"distinct case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
+									loadAliases ?	" g.id as id" :
+													" case g.groupType.groupType when '".concat(GroupTypeBMPBean.TYPE_ALIAS).concat("' then g.alias.id else g.id end as id") :
 									"g"
 			).append(" from ");
 			query.append(GroupRelation.class.getName()).append(" gr inner join gr.relatedGroup g");
@@ -511,7 +511,15 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 						"groupChildGroupsWithFilterAndTypesAndPaging");
 			}
 
-			return new ArrayList<>(results);
+			if (!ListUtil.isEmpty(results)) {
+				Set<T> uniqueResults = new HashSet<>();
+				for (T result: results) {
+					uniqueResults.add(result);
+				}
+				return new ArrayList<>(uniqueResults);
+			}
+
+			return results;
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting child groups for group(s) " + parentGroupsIds + " by query: " + query.toString(), e);
 		}
