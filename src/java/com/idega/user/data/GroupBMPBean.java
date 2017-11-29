@@ -266,16 +266,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 	@Override
 	public String getGroupType() {
-		// try {
-		// was going to the database everytime!! I kill you tryggvi/gummi (eiki)
-
-		// return (String) ((GroupType)
-		// getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
 		return getStringColumnValue(getGroupTypeColumnName());
-
-		// } catch (RemoteException ex) {
-		// throw new EJBException(ex);
-		// }
 	}
 
 	@Override
