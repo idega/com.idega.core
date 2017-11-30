@@ -83,6 +83,8 @@
 package com.idega.util.timer;
 
 import java.sql.Timestamp;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -92,7 +94,9 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.logging.Logger;
 
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
 /**
@@ -107,10 +111,42 @@ public class DateUtil {
 
 	public static final DateTimeFormatter FULL_DATE_FORMATTER = DateTimeFormatter.ofLocalizedDateTime(FormatStyle.FULL);
 
+	public static final DateFormat JSON_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
+
+	public static String getJSONDate(Date date) {
+		if (date == null) {
+			return null;
+		}
+
+		String dateValue = JSON_DATE_FORMAT.format(date);
+		if (dateValue.contains(CoreConstants.SPACE)) {
+			dateValue = dateValue.replace(CoreConstants.SPACE, "T");
+		}
+		dateValue = dateValue.concat("Z");
+
+		return dateValue;
+	}
+
+	public static Date getDateFromJSON(String date) {
+		if (StringUtil.isEmpty(date)) {
+			return null;
+		}
+
+		try {
+			if (date.contains("T")) date = date.replace("T", CoreConstants.SPACE);
+			if (date.contains("Z")) date = date.replace("Z", "+0000");
+			return JSON_DATE_FORMAT.parse(date);
+		} catch (Exception e) {
+			Logger.getLogger(DateUtil.class.getName()).warning("Unable to parse '" + date + "' into Date object");
+		}
+
+		return null;
+	}
+
 	/**
-	 * 
-	 * <p>Obtains an instance of LocalDate from a text string such as 2007-12-03. 
-	 * The string must represent a valid date and is parsed using 
+	 *
+	 * <p>Obtains an instance of LocalDate from a text string such as 2007-12-03.
+	 * The string must represent a valid date and is parsed using
 	 * java.time.format.DateTimeFormatter.ISO_LOCAL_DATE.</p>
 	 * @param date the text to parse such as "2007-12-03", not null;
 	 * @return the parsed local date, or <code>null</code>;
@@ -125,9 +161,9 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
-	 * <p>Obtains an instance of LocalTime from a text string such as 10:15. 
-	 * The string must represent a valid time and is parsed using 
+	 *
+	 * <p>Obtains an instance of LocalTime from a text string such as 10:15.
+	 * The string must represent a valid time and is parsed using
 	 * java.time.format.DateTimeFormatter.ISO_LOCAL_TIME.</p>
 	 * @param time the text to parse such as "10:15:30", not <code>null</code>;
 	 * @return the parsed local time or <code>null</code>;
@@ -171,7 +207,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date to convert, not <code>null</code>;
 	 * @return converted date or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -186,12 +222,12 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param dateTime to convert, not <code>null</code>;
 	 * @return converted date or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public static Date getDate(LocalDateTime dateTime) {	
+	public static Date getDate(LocalDateTime dateTime) {
 		if (dateTime != null) {
 			return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
 		}
@@ -200,13 +236,13 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param time to convert, not <code>null</code>;
 	 * @param date to convert, not <code>null</code>;
 	 * @return converted date or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public static Date getDate(LocalTime time, LocalDate date) {	
+	public static Date getDate(LocalTime time, LocalDate date) {
 		if (time != null && date != null) {
 			return getDate(time.atDate(date));
 		}
@@ -215,7 +251,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date to convert, not <code>null</code>;
 	 * @return converted date at 0 second of day or <code>null</code>;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -225,7 +261,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param time to convert, not <code>null</code>;
 	 * @return converted date at 0 date of epoch or <code>null</code>;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>

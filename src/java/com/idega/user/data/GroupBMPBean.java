@@ -73,7 +73,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	private static final long serialVersionUID = -5276962419455614341L;
 
-	private static final int PREFETCH_SIZE = 100;
+	private static final int PREFETCH_SIZE = Integer.MAX_VALUE;
 
 	public static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
 	private static final String SQL_RELATION_ADDRESS = "IC_GROUP_ADDRESS";
@@ -267,16 +267,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	}
 	@Override
 	public String getGroupType() {
-		// try {
-		// was going to the database everytime!! I kill you tryggvi/gummi (eiki)
-
-		// return (String) ((GroupType)
-		// getColumnValue(getGroupTypeColumnName())).getPrimaryKey();
 		return getStringColumnValue(getGroupTypeColumnName());
-
-		// } catch (RemoteException ex) {
-		// throw new EJBException(ex);
-		// }
 	}
 
 	@Override
@@ -617,28 +608,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 * @return
 	 * @throws FinderException
 	 */
-	public Collection ejbFindGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes) throws FinderException {
-		Table groupTable = new Table(ENTITY_NAME, "g");
-		Table groupRelTable = new Table(GroupRelationBMPBean.TABLE_NAME, "gr");
-		SelectQuery query = new SelectQuery(groupTable);
-		query.addColumn(new WildCardColumn(groupTable));
-		query.addJoin(groupTable, COLUMN_GROUP_ID, groupRelTable, GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN);
-		if (groupTypes != null && !groupTypes.isEmpty()) {
-			if (groupTypes.size() == 1) {
-				query.addCriteria(new MatchCriteria(groupTable, COLUMN_GROUP_TYPE, MatchCriteria.NOTEQUALS, groupTypes.iterator().next().toString()));
-			}
-			else {
-				query.addCriteria(new InCriteria(groupTable, COLUMN_GROUP_TYPE, groupTypes, !returnTypes));
-			}
-		}
-		query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.GROUP_ID_COLUMN, MatchCriteria.EQUALS, containingGroup.getPrimaryKey()));
-		query.addCriteria(new MatchCriteria(groupRelTable, GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN, MatchCriteria.EQUALS, RELATION_TYPE_GROUP_PARENT));
-		String[] statuses = { GroupRelationBMPBean.STATUS_ACTIVE, GroupRelationBMPBean.STATUS_PASSIVE_PENDING };
-		query.addCriteria(new InCriteria(groupRelTable, GroupRelationBMPBean.STATUS_COLUMN, statuses));
-		query.addOrder(groupTable, COLUMN_NAME, true);
-		return idoFindPKsByQueryUsingLoadBalance(query, PREFETCH_SIZE);
-	}
-
 	public Collection<Integer> ejbFindGroupsContained(Group containingGroup, Collection<String> groupTypes, boolean returnTypes) throws FinderException {
 		String query = "SELECT distinct g." + COLUMN_GROUP_ID + " FROM " + ENTITY_NAME + " g inner join " + GroupRelationBMPBean.TABLE_NAME + " gr on g." + COLUMN_GROUP_ID + " = gr." +
 				GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN + " WHERE gr." + COLUMN_GROUP_ID + " = " + containingGroup.getPrimaryKey() + " and gr." + GroupRelationBMPBean.RELATIONSHIP_TYPE_COLUMN + " = '" +
@@ -754,7 +723,6 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			query.append(GroupBMPBean.COLUMN_GROUP_ID);
 			query.appendIn(relationsSQL);
 			query.appendOrderBy(GroupBMPBean.COLUMN_NAME);
-			// System.out.println("[GroupBMPBean](ejbFindGroupsContained):
 			// "+query.toString());
 			return this.idoFindPKsBySQL(query.toString());
 		}
