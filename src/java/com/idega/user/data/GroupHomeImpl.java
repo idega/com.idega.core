@@ -123,16 +123,6 @@ public class GroupHomeImpl extends IDOFactory implements GroupHome {
 	}
 
 	@Override
-	public Collection<Group> findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
-			throws FinderException {
-		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
-		java.util.Collection<?> ids = ((GroupBMPBean) entity).ejbFindGroupsContainedTemp(containingGroup, groupTypes,
-				returnTypes);
-		this.idoCheckInPooledEntity(entity);
-		return this.getEntityCollectionForPrimaryKeys(ids);
-	}
-
-	@Override
 	public Collection<Group> findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
 			throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();

@@ -71,12 +71,6 @@ public interface GroupHome extends IDOHome {
 	public Group findGroupByPrimaryKey(Object primaryKey) throws FinderException;
 
 	/**
-	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContainedTemp
-	 */
-	public Collection<Group> findGroupsContainedTemp(Group containingGroup, Collection groupTypes, boolean returnTypes)
-			throws FinderException;
-
-	/**
 	 * @see com.idega.user.data.GroupBMPBean#ejbFindGroupsContained
 	 */
 	public Collection<Group> findGroupsContained(Group containingGroup, Collection groupTypes, boolean returnTypes)
