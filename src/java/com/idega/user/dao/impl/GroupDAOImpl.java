@@ -190,7 +190,8 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				params.add(param2);
 			}
 			List<Group> groups = getResultListByInlineQuery(query, Group.class, ArrayUtil.convertListToArray(params));
-			return ListUtil.isEmpty(groups) ? null : groups.get(0);
+			Group group = ListUtil.isEmpty(groups) ? null : DBUtil.getInstance().lazyLoad(groups.iterator().next());
+			return group;
 		}
 	}
 
