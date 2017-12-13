@@ -256,7 +256,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	public boolean isAdmin(IWUserContext iwc) throws Exception {
 		try {
-			Object ob = LoginBusinessBean.getLoginAttribute(getAdministratorGroupName(), iwc);
+			Object ob = iwc == null ? null : LoginBusinessBean.getLoginAttribute(getAdministratorGroupName(), iwc);
 			if (ob instanceof Boolean) {
 				return ((Boolean) ob).booleanValue();
 			} else {

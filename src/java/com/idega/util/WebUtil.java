@@ -374,4 +374,8 @@ public class WebUtil extends DefaultSpringBean {
     	return true;
     }
 
+    public Date getCurrentDate() {
+    	return IWTimestamp.RightNow().getDate();
+    }
+
 }
