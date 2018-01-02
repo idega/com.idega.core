@@ -296,7 +296,7 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected String getHost() {
-    	return CoreUtil.getHost();
+    	return getHost(false);
     }
 	protected String getHost(boolean addPort) {
     	return CoreUtil.getHost(addPort);
