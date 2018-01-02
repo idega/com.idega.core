@@ -157,8 +157,8 @@ public abstract class DefaultSpringBean {
 	}
 
 	/**
-	 * 
-	 * <p>Application properties are defined 
+	 *
+	 * <p>Application properties are defined
 	 * at ~/workspace/developer/applicationproperties/</p>
 	 * @param propertyName is 'property key name',
 	 * not <code>null</code>;
@@ -175,8 +175,8 @@ public abstract class DefaultSpringBean {
 	}
 
 	/**
-	 * 
-	 * <p>Application properties are defined 
+	 *
+	 * <p>Application properties are defined
 	 * at ~/workspace/developer/applicationproperties/</p>
 	 * @param propertyName is 'property key name',
 	 * not <code>null</code>;
@@ -186,7 +186,7 @@ public abstract class DefaultSpringBean {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	protected String getApplicationProperty(
-			String propertyName, 
+			String propertyName,
 			String defaultPropertyValue) {
 		IWMainApplicationSettings settings = getSettings();
 		if (settings != null) {
@@ -195,7 +195,7 @@ public abstract class DefaultSpringBean {
 
 		return null;
 	}
-	
+
 	protected IWMainApplicationSettings getSettings() {
 		IWMainApplication application = getApplication();
 		if (application != null) {
@@ -297,6 +297,9 @@ public abstract class DefaultSpringBean {
 
 	protected String getHost() {
     	return CoreUtil.getHost();
+    }
+	protected String getHost(boolean addPort) {
+    	return CoreUtil.getHost(addPort);
     }
 
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale) {
