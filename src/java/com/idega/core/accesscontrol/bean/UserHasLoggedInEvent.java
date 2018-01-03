@@ -10,10 +10,15 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	private String userName;
 
-	public UserHasLoggedInEvent(Integer userId, String userName) {
+	public UserHasLoggedInEvent(Integer userId) {
 		super(userId);
 
 		this.userId = userId;
+	}
+
+	public UserHasLoggedInEvent(Integer userId, String userName) {
+		this(userId);
+
 		this.userName = userName;
 	}
 

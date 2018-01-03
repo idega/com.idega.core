@@ -567,6 +567,10 @@ public class CoreUtil {
 	}
 
 	public static final String getHost() {
+		return getHost(false);
+	}
+
+	public static final String getHost(boolean addPort) {
 		ICDomain domain = null;
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
@@ -587,10 +591,14 @@ public class CoreUtil {
 		} else {
 			host = protocol.concat("://").concat(name);
 		}
-		int port = domain.getServerPort();
-		if (port > 0) {
-			host = host.concat(CoreConstants.COLON).concat(String.valueOf(port));
+
+		if (addPort) {
+			int port = domain.getServerPort();
+			if (port > 0) {
+				host = host.concat(CoreConstants.COLON).concat(String.valueOf(port));
+			}
 		}
+
 		return host;
 	}
 
