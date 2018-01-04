@@ -437,4 +437,26 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
+	@Override
+	public List<GroupRelation> getGroupRelationsByGroupIdAndRelatedGroupId(Integer groupId, Integer relatedGroupId) {
+		try {
+			return getResultList(GroupRelation.QUERY_FIND_BY_GROUP_ID_AND_RELATED_GROUP_ID,
+					GroupRelation.class,
+					new Param(GroupRelation.PARAM_GROUP_ID, groupId),
+					new Param(GroupRelation.PARAM_RELATED_GROUP_ID, relatedGroupId));
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations by group id: " + groupId + " and relatedGroupId: " + relatedGroupId, e);
+		}
+
+		return null;
+	}
+
+	@Override
+	public void onChange(GroupRelation gr) {
+		if (gr != null) {
+			gr.onChange();
+		}
+
+	}
+
 }
