@@ -157,11 +157,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			if (reInitializeRequest()) {
 				request = getRequest();
 			} else {
-				try {
-					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request);
-				} catch (Exception e) {
-					LOGGER.log(Level.SEVERE, "Error initializing IWContext", e);
-					CoreUtil.sendExceptionNotification(e);
+				HttpSession session = request.getSession(true);
+				if (session == null) {
+					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request + ", session: " + session);
 				}
 			}
 		}
@@ -222,7 +220,11 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			}
 		}
 
-		IWMainApplication iwma = IWMainApplication.getIWMainApplication(session.getServletContext());
+		ServletContext context = session == null ? null : session.getServletContext();
+		if (context == null && request != null) {
+			context = request.getServletContext();
+		}
+		IWMainApplication iwma = context == null ? IWMainApplication.getDefaultIWMainApplication() : IWMainApplication.getIWMainApplication(context);
 		if (getIfSetRequestCharacterEncoding(iwma)) {
 			try {
 				String characterSetEncoding = iwma.getSettings().getCharacterEncoding();
@@ -829,12 +831,16 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public Object getSessionAttribute(String attributeName) {
-		return getSession().getAttribute(attributeName);
+		HttpSession session = getSession();
+		return session == null ? null : session.getAttribute(attributeName);
 	}
 
 	@Override
 	public void setSessionAttribute(String attributeName, Object attribute) {
-		getSession().setAttribute(attributeName, attribute);
+		HttpSession session = getSession();
+		if (session != null) {
+			getSession().setAttribute(attributeName, attribute);
+		}
 	}
 
 	@Override
