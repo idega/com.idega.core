@@ -63,6 +63,9 @@ public class IWHttpSessionsManager extends DefaultSpringBean {
 		}
 
 		HttpSession session = sessions.remove(id);
+		if (session == null) {
+			return;
+		}
 
 		Integer userId = null;
 		try {
