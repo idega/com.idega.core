@@ -21,46 +21,46 @@ public class URIUtil {
 
 	private String uri;
 	private Map<String, String> parameters;
-	
+
 	public URIUtil() {
 		this(CoreConstants.EMPTY);
 	}
-	
+
 	public URIUtil(String uriStr) {
 		setUri(uriStr);
 	}
-	
+
 	public void setUri(String uri) {
 		parameters = null;
 		this.uri = uri;
 	}
-	
+
 	public Map<String, String> getParameters() {
-		
+
 		if(parameters == null)
 			parameters = new HashMap<String, String>();
-		
+
 		if(uri != null) {
-			
+
 			try {
 				String query = new URI(uri).getQuery();
-				
+
 				if(StringUtil.isEmpty(query))
 					return parameters;
-				
+
 				StringTokenizer st = new StringTokenizer(query, CoreConstants.AMP, false);
-				
+
 				while (st.hasMoreTokens()) {
-					
+
 					String current = st.nextToken();
-					
+
 					if(current.contains(CoreConstants.EQ)) {
-						
+
 						int eqOcc = current.indexOf(CoreConstants.EQ);
 						parameters.put(URLDecoder.decode(current.substring(0, eqOcc), CoreConstants.ENCODING_UTF8), URLDecoder.decode(current.substring(eqOcc+1), CoreConstants.ENCODING_UTF8));
 					}
 				}
-				
+
 			} catch (Exception e) {
 				parameters = null;
 				Logger.getLogger(getClass().getName()).log(Level.SEVERE, e.getMessage());
@@ -68,66 +68,65 @@ public class URIUtil {
 		} else {
 			Logger.getLogger(getClass().getName()).log(Level.WARNING, "No uri while resolving uri parameters");
 		}
-		
+
 		return parameters;
 	}
-	
+
 	public void setParameter(String key, String value) {
 		if (StringUtil.isEmpty(key) || StringUtil.isEmpty(value)) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Invalid parameter ('"+key+"') or/and it's value ('"+value+"')");
 			return;
 		}
-		
+
 		if(parameters == null)
 			parameters = getParameters();
-		
+
 		String notEncodedKey = key;
 		String notEncodedValue = value;
-		
+
 		try {
 			key = URLEncoder.encode(key, CoreConstants.ENCODING_UTF8);
 			value = URLEncoder.encode(value, CoreConstants.ENCODING_UTF8);
 		} catch (UnsupportedEncodingException e) {
 			throw new RuntimeException(e);
 		}
-		
+
 		String query;
 
 		try {
 			query = new URI(uri).getRawQuery();
-			
+
 		} catch (URISyntaxException e) {
 			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
 			return;
 		}
-		
+
 		if(query == null)
 			query = CoreConstants.EMPTY;
-		
+
 		String nonQuery = uri.substring(0, uri.lastIndexOf(query));
-		
+
 		if(parameters.containsKey(notEncodedKey)) {
-			
+
 			StringTokenizer st = new StringTokenizer(query, CoreConstants.AMP, false);
 			StringBuilder newquery = new StringBuilder(CoreConstants.EMPTY);
-			
+
 			while (st.hasMoreTokens()) {
 				String current = st.nextToken();
-				
+
 				if(!current.startsWith(key)) {
-					
+
 					newquery.append(current);
-					
+
 					if(st.hasMoreTokens())
 						newquery.append(CoreConstants.AMP);
 				}
-					
+
 			}
-			
+
 			query = newquery.toString();
 		}
-		
-		uri = 
+
+		uri =
 		new StringBuilder(nonQuery)
 		.append(nonQuery.endsWith(CoreConstants.QMARK) ? CoreConstants.EMPTY : CoreConstants.QMARK)
 		.append(query)
@@ -136,12 +135,12 @@ public class URIUtil {
 		.append(CoreConstants.EQ)
 		.append(value)
 		.toString();
-		
+
 		parameters.put(notEncodedKey, notEncodedValue);
 	}
-	
+
 	public String getUri() {
-		
+
 		return uri;
 	}
 }
