@@ -33,6 +33,7 @@ import com.idega.util.DBUtil;
 	@NamedQuery(name = "phone.findAll", query = "select p from Phone p"),
 	@NamedQuery(name = "phone.findUsersFaxPhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_FAX_NUMBER + " and u.userID = :userID"),
 	@NamedQuery(name = "phone.findUsersHomePhone", query = "select p from Phone p join p.users u join p.phoneType t where t.uniqueName = " + PhoneType.UNIQUE_NAME_HOME_PHONE + " and u.userID = :userID"),
+	@NamedQuery(name = Phone.QUERY_FIND_BY_USER_ID, query = "select p from Phone p join p.users u where u.userID = :userID"),
 	@NamedQuery(
 			name = Phone.QUERY_FIND_MOBILE_BY_USER_ID,
 			query = 	"SELECT DISTINCT p FROM Phone p "
@@ -52,8 +53,12 @@ public class Phone implements Serializable, ContactType {
 	private static final String COLUMN_PHONE_TYPE_ID = "ic_phone_type_id";
 
 	public static final String QUERY_FIND_BY_ID = "phone.findById";
+	public static final String QUERY_FIND_BY_USER_ID = "phone.findAllByUserId";
 	public static final String QUERY_FIND_MOBILE_BY_USER_ID = "phone.findUsersMobilePhone";
 	public static final String phoneIdProp = "phoneID";
+
+	public static final String PARAM_USER_ID = "userID";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_PHONE_ID)
@@ -82,6 +87,7 @@ public class Phone implements Serializable, ContactType {
 	/**
 	 * @return the phoneID
 	 */
+	@Override
 	public Integer getId() {
 		return this.phoneID;
 	}

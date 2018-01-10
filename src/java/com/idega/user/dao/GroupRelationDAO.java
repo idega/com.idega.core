@@ -46,4 +46,8 @@ public interface GroupRelationDAO extends GenericDao {
 
 	public List<GroupRelationBean> getGroupRelationsByRelatedGroupTypeAndGroupTypes(String relatedGroupType, List<String> groupTypes, List<Integer> ids, List<String> entityTypes);
 
+	public List<GroupRelation> getGroupRelationsByGroupIdAndRelatedGroupId(Integer groupId, Integer relatedGroupId);
+
+	public void onChange(GroupRelation gr);
+
 }

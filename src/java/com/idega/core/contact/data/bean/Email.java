@@ -32,7 +32,7 @@ import com.idega.util.DBUtil;
 @NamedQueries({
 	@NamedQuery(name = "email.findAll", query = "select e from Email e"),
 	@NamedQuery(name = Email.FIND_BY_ID, query = "FROM Email e WHERE e.emailID = :emailID"),
-	@NamedQuery(name = "email.findAllByUser", query = "select e from Email e join e.users u where u.userID = :userID"),
+	@NamedQuery(name = Email.QUERY_FIND_BY_USER_ID, query = "select e from Email e join e.users u where u.userID = :userID"),
 	@NamedQuery(
 			name = Email.QUERY_FIND_BY_USER_AND_TYPE,
 			query = 	"SELECT e FROM Email e "
@@ -54,7 +54,11 @@ public class Email implements Serializable, EmailDataView, ContactType {
 	private static final String COLUMN_EMAIL_TYPE_ID = "ic_email_type_id";
 
 	public static final String FIND_BY_ID = "email.findById";
+	public static final String QUERY_FIND_BY_USER_ID = "email.findAllByUser";
 	public static final String eMailIdProp = "emailID";
+
+	public static final String PARAM_USER_ID = "userID";
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_EMAIL_ID)
@@ -81,6 +85,7 @@ public class Email implements Serializable, EmailDataView, ContactType {
 	/**
 	 * @return the emailID
 	 */
+	@Override
 	public Integer getId() {
 		return this.emailID;
 	}
