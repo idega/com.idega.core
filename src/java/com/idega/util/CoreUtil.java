@@ -691,7 +691,7 @@ public class CoreUtil {
 		return (dateToday.toEpochDay() - localeDateOfBirth.toEpochDay()) / 365;
 	}
 
-	private static boolean isValidServerName(String serverName) {
+	public static boolean isValidServerName(String serverName) {
 		if (StringUtil.isEmpty(serverName)) {
 			return false;
 		}
