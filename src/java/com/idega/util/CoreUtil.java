@@ -696,7 +696,13 @@ public class CoreUtil {
 			return false;
 		}
 
-		if (DefaultIWBundle.isProductionEnvironment() && (serverName.indexOf("127.0.0.1") != -1 || serverName.indexOf("localhost") != -1)) {
+		if (
+				DefaultIWBundle.isProductionEnvironment() && (
+						serverName.indexOf(CoreConstants.DOT) == -1 ||
+						serverName.indexOf("127.0.0.1") != -1 ||
+						serverName.indexOf("localhost") != -1
+				)
+		) {
 			return false;
 		}
 
@@ -715,7 +721,7 @@ public class CoreUtil {
 				serverName = domain == null ? null : domain.getServerName();
 			}
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error gerring server name from domain", e);
+			LOGGER.log(Level.WARNING, "Error getting server name from " + ICDomain.class.getName(), e);
 		}
 		IWMainApplicationSettings settings = null;
 		if (!isValidServerName(serverName)) {
@@ -735,7 +741,7 @@ public class CoreUtil {
 			serverName = settings.getProperty(IWConstants.DEFAULT_SERVER_URL_PROPERTY_NAME);
 		}
 
-		serverName =  serverName == null ? "127.0.0.1" : serverName;
+		serverName = serverName == null ? "127.0.0.1" : serverName;
 		return serverName;
 	}
 
