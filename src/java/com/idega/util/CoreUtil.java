@@ -715,6 +715,8 @@ public class CoreUtil {
 		IWContext iwc = null;
 		try {
 			if (!isValidServerName(serverName)) {
+				LOGGER.warning("Server name ('" + serverName + "') not valid from request, will try to get from " + ICDomain.class.getName());
+
 				iwc = getIWContext();
 				IWMainApplication iwma = iwc == null ? IWMainApplication.getDefaultIWMainApplication() : iwc.getIWMainApplication();
 				ICDomain domain = iwma.getIWApplicationContext().getDomain();
@@ -725,16 +727,25 @@ public class CoreUtil {
 		}
 		IWMainApplicationSettings settings = null;
 		if (!isValidServerName(serverName)) {
+			LOGGER.warning("Server name ('" + serverName + "') not valid from " + ICDomain.class.getName() + ", will try to get by app property " +
+					IWConstants.SERVER_URL_PROPERTY_NAME);
+
 			settings = iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings();
 			serverName = settings.getProperty(IWConstants.SERVER_URL_PROPERTY_NAME);
 		}
 		if (!isValidServerName(serverName)) {
+			LOGGER.warning("Server name ('" + serverName + "') not valid by app property '" + IWConstants.SERVER_URL_PROPERTY_NAME +
+					"', will try to get by app property " + IWMainApplication.PROPERTY_DEFAULT_SERVICE_URL);
+
 			settings = settings == null ?
 					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
 					settings;
 			serverName = settings.getProperty(IWMainApplication.PROPERTY_DEFAULT_SERVICE_URL);
 		}
 		if (!isValidServerName(serverName)) {
+			LOGGER.warning("Server name ('" + serverName + "') not valid by app property '" + IWMainApplication.PROPERTY_DEFAULT_SERVICE_URL +
+					"', will try to get by app property " + IWConstants.DEFAULT_SERVER_URL_PROPERTY_NAME);
+
 			settings = settings == null ?
 					iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getIWMainApplication().getSettings():
 					settings;
