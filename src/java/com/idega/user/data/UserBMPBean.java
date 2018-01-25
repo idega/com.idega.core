@@ -419,21 +419,21 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 		String lastName = this.getLastName();
 
 		if (firstName == null) {
-			firstName = "";
+			firstName = CoreConstants.EMPTY;
 		}
 
 		if (middleName == null) {
-			middleName = "";
+			middleName = CoreConstants.EMPTY;
 		}
-		else if (!middleName.equals("")) {
-			middleName = " " + middleName;
+		else if (!middleName.equals(CoreConstants.EMPTY)) {
+			middleName = CoreConstants.SPACE.concat(middleName);
 		}
 
 		if (lastName == null) {
-			lastName = "";
+			lastName = CoreConstants.EMPTY;
 		}
-		else if (!lastName.equals("")){
-			lastName = " " + lastName;
+		else if (!lastName.equals(CoreConstants.EMPTY)){
+			lastName = CoreConstants.SPACE.concat(lastName);
 		}
 		return firstName + middleName + lastName;
 	}
@@ -621,8 +621,8 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 			this.removeFromColumn(getColumnNameFirstName());
 		}
 		else{
-			String temp = TextSoap.findAndCut(fName," ");
-			if( temp.equals("")){
+			String temp = TextSoap.findAndCut(fName,CoreConstants.SPACE);
+			if( temp.equals(CoreConstants.EMPTY)){
 				this.removeFromColumn(getColumnNameFirstName());
 			}
 			else {
@@ -638,8 +638,8 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 			this.removeFromColumn(getColumnNameMiddleName());
 		}
 		else{
-			String temp = TextSoap.findAndCut(mName," ");
-			if( temp.equals("")){
+			String temp = TextSoap.findAndCut(mName,CoreConstants.SPACE);
+			if( temp.equals(CoreConstants.EMPTY)){
 				this.removeFromColumn(getColumnNameMiddleName());
 			}
 			else {
@@ -654,8 +654,8 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 			this.removeFromColumn(getColumnNameLastName());
 		}
 		else{
-			String temp = TextSoap.findAndCut(lName," ");
-			if( temp.equals("")){
+			String temp = TextSoap.findAndCut(lName,CoreConstants.SPACE);
+			if( temp.equals(CoreConstants.EMPTY)){
 				this.removeFromColumn(getColumnNameLastName());
 			}
 			else {
@@ -1997,7 +1997,7 @@ public void delete(int userId) throws SQLException {
 		//strange stuff...examine
 		if (userIds != null && userIds.length == 0) {
 			return ejbFindUsersBySearchCondition(condition, new String[]{"-1"}, orderLastFirst);
-		}else if (condition == null || condition.equals("")) {
+		}else if (condition == null || condition.equals(CoreConstants.EMPTY)) {
 			if (userIds == null) {
 				return ejbFindAllUsers();
 			}else {
@@ -2010,7 +2010,7 @@ public void delete(int userId) throws SQLException {
 
 	public Collection ejbFindUsersByConditions(String userName, String personalId, String streetName, String groupName, int gender, int statusId, int startAge, int endAge, String[] allowedGroups, String[] allowedUsers, boolean useAnd, boolean orderLastFirst) throws FinderException {
 
-		if(userName!=null && userName.indexOf(" ")>-1){
+		if(userName!=null && userName.indexOf(CoreConstants.SPACE)>-1){
 			Name name = new Name(userName);
 			useAnd = true;
 			if(userName.equals(personalId)){
@@ -2031,7 +2031,7 @@ public void delete(int userId) throws SQLException {
 		Criteria theCriteria = null;
 
 		//name
-		if( (firstName!=null && !"".equals(firstName)) || (middleName!=null && !"".equals(middleName)) || (lastName!=null && !"".equals(lastName)) ){
+		if( (firstName!=null && !CoreConstants.EMPTY.equals(firstName)) || (middleName!=null && !CoreConstants.EMPTY.equals(middleName)) || (lastName!=null && !CoreConstants.EMPTY.equals(lastName)) ){
 			theCriteria = getUserNameSearchCriteria(firstName,middleName,lastName,useAnd);
 		}
 
@@ -2046,7 +2046,7 @@ public void delete(int userId) throws SQLException {
 		}
 
 		//personalId
-		if(personalId!=null && !personalId.equals("") ){
+		if(personalId!=null && !personalId.equals(CoreConstants.EMPTY) ){
 			Criteria personalIdCriteria = new MatchCriteria(idoQueryTable(),getColumnNamePersonalID(),MatchCriteria.LIKE,"%"+personalId+"%");
 			if(theCriteria==null){
 				theCriteria = personalIdCriteria;
@@ -2061,7 +2061,7 @@ public void delete(int userId) throws SQLException {
 		}
 
 		//address
-		if(streetName!=null && !streetName.equals("")  ){
+		if(streetName!=null && !streetName.equals(CoreConstants.EMPTY)  ){
 			try {
 				Criteria streetNameCriteria = new InCriteria(idoQueryTable(),getIDColumnName(),getUserAddressSelectQuery(streetName));
 				if(theCriteria==null){
@@ -2274,21 +2274,21 @@ public void delete(int userId) throws SQLException {
 	private Criteria getUserNameSearchCriteria(String firstName, String middleName, String lastName, boolean andCriteria) {
 		int count = 0;
 		Criteria firstNameCriteria = null;
-		if(firstName!=null && !firstName.equals("")){
+		if(firstName!=null && !firstName.equals(CoreConstants.EMPTY)){
 			String conditionString = StringHandler.firstCharacterToUpperCase(firstName);
 			firstNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameFirstName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
 
 		Criteria middleNameCriteria = null;
-		if(middleName!=null && !middleName.equals("") ){
+		if(middleName!=null && !middleName.equals(CoreConstants.EMPTY) ){
 			String conditionString = StringHandler.firstCharacterToUpperCase(middleName);
 			middleNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameMiddleName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
 		}
 
 		Criteria lastNameCriteria = null;
-		if(lastName!=null  && !lastName.equals("") ){
+		if(lastName!=null  && !lastName.equals(CoreConstants.EMPTY) ){
 			String conditionString = StringHandler.firstCharacterToUpperCase(lastName);
 			lastNameCriteria = new MatchCriteria(idoQueryTable(),getColumnNameLastName(),MatchCriteria.LIKE,conditionString+"%");
 			count++;
@@ -2443,14 +2443,14 @@ public void delete(int userId) throws SQLException {
 		}
 
 		Criteria join = new JoinCriteria(new Column(addressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())),new Column(userAddressTable,((pkAddressField==null)?"ic_address_id":pkAddressField.getSQLFieldName())));
-		if (streetName.indexOf(" ") == -1) {
+		if (streetName.indexOf(CoreConstants.SPACE) == -1) {
 		IDOEntityField addressField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
 		Criteria match = new MatchCriteria(addressTable,addressField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
 
 		query.addCriteria(new AND(join,match));
 		} else {
-			String streetNumber = streetName.substring(streetName.lastIndexOf(" ") + 1);
-			streetName = streetName.substring(0, streetName.lastIndexOf(" "));
+			String streetNumber = streetName.substring(streetName.lastIndexOf(CoreConstants.SPACE) + 1);
+			streetName = streetName.substring(0, streetName.lastIndexOf(CoreConstants.SPACE));
 
 			IDOEntityField streetNameField = addressDef.findFieldByUniqueName(Address.FIELD_STREET_NAME);
 			Criteria matchStreetName = new MatchCriteria(addressTable,streetNameField.getSQLFieldName(),MatchCriteria.LIKE,"%"+streetName.toUpperCase()+"%");
