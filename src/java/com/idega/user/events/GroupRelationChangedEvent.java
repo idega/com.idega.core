@@ -208,7 +208,10 @@ public class GroupRelationChangedEvent extends ApplicationEvent {
 
 	@Override
 	public String toString() {
-		return "Type: " + getType() + ", group relation ID: " + getGroupRelationId() + ", user ID: " + getUserId();
+		return "Type: " + getType() + ", group relation ID: " + getGroupRelationId() +
+				", group ID: " + getGroupId() + ", group type: " + getGroupType() + ", group name: " + getGroupName() +
+				", related group ID: " + getRelatedGroupId() + ", related group type: " + getRelatedGroupType() + ", related group name: " + getRelatedGroupName() +
+				", user ID: " + getUserId() + ", source: " + getSource();
 	}
 
 }

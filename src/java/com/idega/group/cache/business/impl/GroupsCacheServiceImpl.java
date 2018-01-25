@@ -310,10 +310,6 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 				return;
 			}
 
-			if (UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE.equals(relatedGroupType) && !isUserCacheOn()) {
-				return;
-			}
-
 			boolean active = isActive(status);
 
 			GroupRelationBean relation = getRelations().get(relationId);
@@ -1407,7 +1403,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 	}
 
 	private void addGroupRelationBean(GroupRelationBean relation, List<String> entityTypes) {
-		if (relation == null || !UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE.equals(relation.getRelatedGroupType())) {
+		if (relation == null) {
 			return;
 		}
 		if (ListUtil.isEmpty(entityTypes)) {
