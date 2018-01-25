@@ -1,10 +1,14 @@
 package com.idega.util.text;
 
+import java.util.Arrays;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.StringTokenizer;
 
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.LocaleUtil;
+import com.idega.util.StringUtil;
 
 /**
  * Title: com.idega.util.text.Name Description: A helper class for splitting up
@@ -45,14 +49,14 @@ public class Name {
 		if (this.fullName == null) {
 			StringBuffer fullNameBuffer = new StringBuffer();
 
-			this.firstName = (this.firstName == null) ? "" : this.firstName;
-			this.middleName = (this.middleName == null) ? "" : this.middleName;
-			this.lastName = (this.lastName == null) ? "" : this.lastName;
+			this.firstName = (this.firstName == null) ? CoreConstants.EMPTY : this.firstName;
+			this.middleName = (this.middleName == null) ? CoreConstants.EMPTY : this.middleName;
+			this.lastName = (this.lastName == null) ? CoreConstants.EMPTY : this.lastName;
 
-			fullNameBuffer.append(this.firstName).append(" ").append(this.middleName).append(" ").append(this.lastName);
+			fullNameBuffer.append(this.firstName).append(CoreConstants.SPACE).append(this.middleName).append(CoreConstants.SPACE).append(this.lastName);
 
 			this.fullName = fullNameBuffer.toString();
-			this.fullName = TextSoap.findAndReplace(this.fullName, "  ", " ");
+			this.fullName = TextSoap.findAndReplace(this.fullName, "  ", CoreConstants.SPACE);
 		}
 		return this.fullName;
 	}
@@ -64,17 +68,17 @@ public class Name {
 	public String getName(Locale locale, boolean commaSeperated) {
 		if (this.fullName == null) {
 			StringBuffer buffer = new StringBuffer();
-			this.firstName = (this.firstName == null) ? "" : this.firstName;
-			this.middleName = (this.middleName == null) ? "" : this.middleName;
-			this.lastName = (this.lastName == null) ? "" : this.lastName;
+			this.firstName = (this.firstName == null) ? CoreConstants.EMPTY : this.firstName;
+			this.middleName = (this.middleName == null) ? CoreConstants.EMPTY : this.middleName;
+			this.lastName = (this.lastName == null) ? CoreConstants.EMPTY : this.lastName;
 			if (locale.equals(LocaleUtil.getIcelandicLocale())) {
-				buffer.append(this.firstName).append(" ").append(this.middleName).append(" ").append(this.lastName);
+				buffer.append(this.firstName).append(CoreConstants.SPACE).append(this.middleName).append(CoreConstants.SPACE).append(this.lastName);
 			} else {
 				buffer.append(this.lastName);
 				if (commaSeperated) {
 					buffer.append(",");
 				}
-				buffer.append(" ").append(this.firstName).append(" ").append(this.middleName);
+				buffer.append(CoreConstants.SPACE).append(this.firstName).append(CoreConstants.SPACE).append(this.middleName);
 			}
 			return buffer.toString();
 
@@ -140,10 +144,39 @@ public class Name {
 				} else { // remove last name
 					this.lastName = null;
 				}
+
+				this.middleName = getCorrected(this.middleName);
+				this.lastName = getCorrected(this.lastName);
 			} else {
 				System.out.println("com.idega.util.text.Name fullname is an empty string!");
 			}
 		}
+	}
+
+	private String getCorrected(String namePart) {
+		if (StringUtil.isEmpty(namePart)) {
+			return namePart;
+		}
+
+		if (namePart.indexOf(CoreConstants.DOT) == -1) {
+			return namePart;
+		}
+
+		String[] parts = namePart.split("\\.");
+		if (ArrayUtil.isEmpty(parts)) {
+			return namePart;
+		}
+
+		StringBuilder namePartCorrected = new StringBuilder();
+		for (Iterator<String> partsIter = Arrays.asList(parts).iterator(); partsIter.hasNext();) {
+			String part = partsIter.next();
+			part = TextSoap.capitalize(part);
+			namePartCorrected.append(part);
+			if (partsIter.hasNext() || parts.length == 1) {
+				namePartCorrected.append(CoreConstants.DOT);
+			}
+		}
+		return namePartCorrected.toString();
 	}
 
 	/**
@@ -156,10 +189,10 @@ public class Name {
 			this.firstName = TextSoap.capitalize(this.firstName);
 		}
 		if (this.lastName != null) {
-			this.lastName = TextSoap.capitalize(this.lastName);
+			this.lastName = getCorrected(TextSoap.capitalize(this.lastName));
 		}
 		if (this.middleName != null) {
-			this.middleName = TextSoap.capitalize(this.middleName, " ");
+			this.middleName = getCorrected(TextSoap.capitalize(this.middleName, CoreConstants.SPACE));
 		}
 		this.fullName = getName();
 		return this;
@@ -167,6 +200,6 @@ public class Name {
 
 	public static void main(String[] arguments) {
 		Name name = new Name("George L. Henry");
-		System.out.println(name.getFirstName() + "  " + name.getMiddleName() + " " + name.getLastName());
+		System.out.println(name.getFirstName() + CoreConstants.SPACE + name.getMiddleName() + CoreConstants.SPACE + name.getLastName());
 	}
 }
