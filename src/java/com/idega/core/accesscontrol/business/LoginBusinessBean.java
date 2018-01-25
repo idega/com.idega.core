@@ -38,6 +38,7 @@ import org.springframework.web.context.support.WebApplicationContextUtils;
 import com.idega.business.IBOLookup;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.bean.UserHasLoggedInEvent;
+import com.idega.core.accesscontrol.bean.UserHasLoggedOutEvent;
 import com.idega.core.accesscontrol.dao.UserLoginDAO;
 import com.idega.core.accesscontrol.data.LoginTable;
 import com.idega.core.accesscontrol.data.LoginTableHome;
@@ -416,8 +417,18 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public boolean logOutUser(IWContext iwc) {
+		HttpSession session = iwc.getSession();
+		Object loginType = session == null ? null : session.getAttribute(LoggedInUserCredentials.LOGIN_TYPE);
+
 		LoggedOnInfo loggedOnInfo = getLoggedOnInfo(iwc);
-		return logOutUser(iwc.getRequest(), loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin());
+		if (logOutUser(iwc.getRequest(), loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin())) {
+			User user = loggedOnInfo == null ? null : loggedOnInfo.getUser();
+			if (user != null) {
+				ELUtil.getInstance().publishEvent(new UserHasLoggedOutEvent(user.getId(), loginType == null ? null : loginType.toString()));
+			}
+			return true;
+		}
+		return false;
 	}
 
 	/**

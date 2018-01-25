@@ -14,6 +14,8 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 
 	}
 
+	public static final String LOGIN_TYPE = "iw_login_type";
+
 	private HttpServletRequest request;
 
 	private String serverURL, userName, password;

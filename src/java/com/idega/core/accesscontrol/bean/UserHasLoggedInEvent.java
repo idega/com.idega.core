@@ -30,4 +30,9 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 		return userName;
 	}
 
+	@Override
+	public String toString() {
+		return "User ID: " + getUserId() + ", user name: " + getUserName();
+	}
+
 }
