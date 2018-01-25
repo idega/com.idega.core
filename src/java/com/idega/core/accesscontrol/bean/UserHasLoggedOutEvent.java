@@ -33,4 +33,9 @@ public class UserHasLoggedOutEvent extends ApplicationEvent {
 		this.loginType = loginType;
 	}
 
+	@Override
+	public String toString() {
+		return "User ID: " + getUserId() + ", login type: " + getLoginType();
+	}
+
 }
