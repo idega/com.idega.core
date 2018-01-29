@@ -365,7 +365,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	public boolean isOwner(ICFile file, IWUserContext iwc) throws Exception {
-		return isOwner(AccessController.CATEGORY_FILE_ID, file.getId().toString(), iwc);
+		return isOwner(AccessController.CATEGORY_FILE_ID, file.getFileId().toString(), iwc);
 	}
 
 	@Override
@@ -1693,7 +1693,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			AccessController.CATEGORY_FILE_ID,
 			iwac,
 			Integer.toString(groupId),
-			file.getId().toString(),
+			file.getFileId().toString(),
 			AccessController.PERMISSION_KEY_OWNER,
 			Boolean.TRUE);
 	}

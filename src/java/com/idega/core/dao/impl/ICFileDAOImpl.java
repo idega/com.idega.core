@@ -43,9 +43,9 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 	@Override
 	public ICFile findById(Integer id) {
 		if (id != null) {
-			return getSingleResult(ICFile.QUERY_FIND_BY_ID,
-					ICFile.class, new Param("id", id));
+			return find(ICFile.class, id);
 		}
+
 		return null;
 	}
 
@@ -79,9 +79,9 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 	@Override
 	public ICFile update(ICFile file) {
 		if (file != null) {
-			if (findById(file.getId()) != null) {
+			if (findById(file.getFileId()) != null) {
 				persist(file);
-				return findById(file.getId());
+				return findById(file.getFileId());
 			} else {
 				return merge(file);
 			}
@@ -104,57 +104,43 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 			Date modificationDate, 
 			Integer fileSize, 
 			ICMimeType type) {
-
-		/*
-		 * Setting up entity bean first
-		 */
-		com.idega.core.file.data.ICFile entityBean = null;
-		try {
-			entityBean = getICFileHome().findByPrimaryKey(id);
-		} catch (FinderException e1) {}
-
-		if (entityBean == null) {
-			try {
-				entityBean = getICFileHome().create();
-			} catch (CreateException e) {
-				getLogger().log(Level.WARNING, "Failed to create entity: ", e);
-			}
+		ICFile entity = findById(id);
+		if (entity == null) {
+			entity = new ICFile();
 		}
 
 		if (!StringUtil.isEmpty(name)) {
-			entityBean.setName(name);
+			entity.setName(name);
 		}
 
 		if (!StringUtil.isEmpty(description)) {
-			entityBean.setDescription(description);
+			entity.setDescription(description);
 		}
 
 		if (creationDate != null) {
-			entityBean.setCreationDate(new Timestamp(creationDate.getTime()));
+			entity.setCreationDate(new Timestamp(creationDate.getTime()));
 		}
 
 		if (modificationDate != null) {
-			entityBean.setModificationDate(new Timestamp(modificationDate.getTime()));
+			entity.setModificationDate(new Timestamp(modificationDate.getTime()));
 		}
 
 		if (fileSize != null) {
-			entityBean.setFileSize(fileSize);
+			entity.setFileSize(fileSize);
 		}
 
 		if (fileValue != null) {
-			entityBean.setFileValue(new ByteArrayInputStream(fileValue));
+			entity.setValue(fileValue);
 		}
 
-		entityBean.store();
-
-		entityBean.setMetaData("uuid", UUID.randomUUID().toString());
-		entityBean.store();
-		
-		ICFile file = findById(Integer.valueOf(entityBean.getPrimaryKey().toString()));
-		if (type != null) {
-			file.setMimetype(type);
+		entity = update(entity);
+		if (entity != null) {
+//			entity.setMetaData("uuid", UUID.randomUUID().toString());
+			if (type != null) {
+				entity.setMimetype(type);
+			}
 		}
 
-		return update(file);
+		return update(entity);
 	}
 }
