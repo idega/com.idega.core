@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.persistence.Basic;
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -22,6 +23,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.JoinTable;
+import javax.persistence.Lob;
 import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
@@ -42,7 +44,9 @@ import com.idega.util.DBUtil;
 @Entity
 @Table(name = ICFile.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = ICFile.QUERY_FIND_BY_ID, query = "select f from ICFile f where f.fileID = :id"),
+	@NamedQuery(
+			name = ICFile.QUERY_FIND_BY_ID, 
+			query = "FROM ICFile f WHERE f.fileId = :id"),
 	@NamedQuery(name = ICFile.QUERY_FIND_ALL, query = "select f from ICFile f")
 })
 public class ICFile implements Serializable, MetaDataCapable {
@@ -63,6 +67,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	private static final String COLUMN_DELETED_BY = "deleted_by";
 	private static final String COLUMN_DELETED_WHEN = "deleted_when";
 	private static final String COLUMN_HASH = "hash_value";
+	private static final String COLUMN_VALUE = "file_value";
 
 	private static final String TREE_TABLE_NAME = ENTITY_NAME + "_tree";
 	public static final String QUERY_FIND_BY_ID = "file.findById";
@@ -71,7 +76,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = COLUMN_FILE_ID)
-	private Integer fileID;
+	private Integer fileId;
 
 	@ManyToOne
 	@JoinColumn(name = COLUMN_MIME_TYPE)
@@ -142,19 +147,17 @@ public class ICFile implements Serializable, MetaDataCapable {
 	@Column(name = ICFileBMPBean.FILE_URI_IN_REPO, length = 1000)
 	private String uriInRepo;
 
-	/**
-	 * @return the fileID
-	 */
-	public Integer getId() {
-		return this.fileID;
+	@Lob
+	@Basic(fetch = FetchType.LAZY)
+	@Column(name = COLUMN_VALUE)
+	private byte[] value;
+
+	public Integer getFileId() {
+		return fileId;
 	}
 
-	/**
-	 * @param fileID
-	 *          the fileID to set
-	 */
-	public void setId(Integer fileID) {
-		this.fileID = fileID;
+	public void setFileId(Integer fileId) {
+		this.fileId = fileId;
 	}
 
 	/**
@@ -513,13 +516,13 @@ public class ICFile implements Serializable, MetaDataCapable {
 			metadata = new Metadata();
 			metadata.setKey(metaDataKey);
 		}
+
 		metadata.setValue(value);
 		if (type != null) {
 			metadata.setType(type);
 		}
 
 		getMetadata().add(metadata);
-
 	}
 
 	@Override
@@ -556,4 +559,11 @@ public class ICFile implements Serializable, MetaDataCapable {
 		this.uriInRepo = uriInRepo;
 	}
 
+	public byte[] getValue() {
+		return value;
+	}
+
+	public void setValue(byte[] value) {
+		this.value = value;
+	}
 }

@@ -67,6 +67,7 @@ import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.DBUtil;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -1593,7 +1594,15 @@ public class LoginBusinessBean implements IWPageEventListener {
 			Map<String, Object> m = getLoggedOnInfoMap(session);
 			LoggedOnInfo _logOnInfo = (LoggedOnInfo) m.remove(getLoggedOnInfo(session).getLogin());
 			if (_logOnInfo != null) {
-				getUserLoginDAO().createLogoutRecord(_logOnInfo.getLoginRecord());
+				LoginRecord loginRecord = _logOnInfo.getLoginRecord();
+				if (loginRecord != null) {
+					try {
+						loginRecord = DBUtil.getInstance().lazyLoad(loginRecord);
+						getUserLoginDAO().createLogoutRecord(loginRecord);
+					} catch (Exception e) {
+						LOGGER.log(Level.WARNING, "Error creating logout record", e);
+					}
+				}
 			}
 		}
 
