@@ -422,10 +422,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 		Object loginType = session == null ? null : session.getAttribute(LoggedInUserCredentials.LOGIN_TYPE);
 
 		LoggedOnInfo loggedOnInfo = getLoggedOnInfo(iwc);
+		User user = loggedOnInfo == null ? null : loggedOnInfo.getUser();
+		String loginTypeFromInfo = loggedOnInfo == null ? null : loggedOnInfo.getLoginType();
 		if (logOutUser(iwc.getRequest(), loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin())) {
-			User user = loggedOnInfo == null ? null : loggedOnInfo.getUser();
 			if (user != null) {
-				ELUtil.getInstance().publishEvent(new UserHasLoggedOutEvent(user.getId(), loginType == null ? null : loginType.toString()));
+				String type = loginType == null ? null : loginType.toString();
+				type = StringUtil.isEmpty(type) ? loginTypeFromInfo : type;
+				ELUtil.getInstance().publishEvent(new UserHasLoggedOutEvent(user.getId(), type));
 			}
 			return true;
 		}
@@ -677,7 +680,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 								//Sending SMS message
 								IWApplicationContext iwac = IWMainApplication.getIWMainApplication(sc).getIWApplicationContext();
 								codeSent = verificator.doSendSecondStepVerification(iwac, username, sessionId);
-								if (codeSent) break;
+								if (codeSent) {
+									break;
+								}
 							}
 						}
 						if (codeSent) {
@@ -961,17 +966,19 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 	public static void setLoginAttribute(String key, Object value, IWUserContext iwc) throws NotLoggedOnException {
-		if (isLoggedOn(iwc))
+		if (isLoggedOn(iwc)) {
 			LoginBusinessBean.getLoginSessionBean().setLoginAttribute(key, value);
-		else
+		} else {
 			throw new NotLoggedOnException();
+		}
 	}
 
 	public static Object getLoginAttribute(String key, IWUserContext iwc) throws NotLoggedOnException {
-		if (isLoggedOn(iwc))
+		if (isLoggedOn(iwc)) {
 			return LoginBusinessBean.getLoginSessionBean().getLoginAttribute(key);
-		else
+		} else {
 			throw new NotLoggedOnException();
+		}
 	}
 
 	public static void removeLoginAttribute(String key, IWUserContext iwc) throws RemoteException, RemoveException {
@@ -1091,8 +1098,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		storeUserAndGroupInformationInSession(session, user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
-		if (user != null)
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName));
+		if (user != null) {
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, userLogin.getLoginType()));
+		}
 		return true;
 	}
 
@@ -1112,8 +1120,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		String userName = userLogin.getUserLogin();
 		storeLoggedOnInfoInSession(request, session, userLogin, userName, user, loginRecord, userLogin.getLoginType());
-		if (user != null)
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName));
+		if (user != null) {
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, userLogin.getLoginType()));
+		}
 		return true;
 	}
 
