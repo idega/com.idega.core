@@ -88,7 +88,14 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(
 			name = GroupRelation.QUERY_FIND_GROUPS_IDS_BY_STATUSES,
 			query = "SELECT DISTINCT gr.relatedGroup.id FROM GroupRelation gr WHERE gr.relatedGroup.id in (:ids) AND (gr.groupRelationType.type='" + GroupRelation.RELATION_TYPE_GROUP_PARENT +
-					"' OR gr.groupRelationType.type IS NULL) AND gr.status in (:statuses)")
+					"' OR gr.groupRelationType.type IS NULL) AND gr.status in (:statuses)"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_BY_INITIATION_DATE,
+			query = "select gr from GroupRelation gr where (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING +
+					"') and gr.initiationDate >= :" + GroupRelation.PARAM_INITIATION_DATE_START + " and gr.initiationDate <= :" + GroupRelation.PARAM_INITIATION_DATE_END +
+					" and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
+	)
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
@@ -109,7 +116,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 								QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES = "groupRelation.findByRelatedGroupsIdAndTypes",
 								QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
 								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
-								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses";
+								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses",
+								QUERY_FIND_BY_INITIATION_DATE = "groupRelation.findByInitiationDate";
 
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
@@ -120,6 +128,9 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public static final String PARAM_DATE_FROM = "dateFrom";
 	public static final String PARAM_DATE_TO = "dateTo";
 	public static final String PARAM_GROUP_ID = "groupId";
+	public static final String PARAM_INITIATION_DATE = "initiationDate";
+	public static final String PARAM_INITIATION_DATE_START = "initiationDateStart";
+	public static final String PARAM_INITIATION_DATE_END = "initiationDateEnd";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";
