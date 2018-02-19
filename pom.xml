@@ -332,6 +332,7 @@
 		<artifactId>javax.servlet-api</artifactId>
 		<version>${javax.servlet.javax.servlet-api-version}</version>
      </dependency>
+     <dependency>
 	    	<groupId>javax.el</groupId>
 	    	<artifactId>el-api</artifactId>
 	    	<version>${javax.el-javax.el-api-version}</version>
