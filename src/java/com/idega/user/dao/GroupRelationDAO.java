@@ -9,6 +9,7 @@
  */
 package com.idega.user.dao;
 
+import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
 
@@ -49,5 +50,7 @@ public interface GroupRelationDAO extends GenericDao {
 	public List<GroupRelation> getGroupRelationsByGroupIdAndRelatedGroupId(Integer groupId, Integer relatedGroupId);
 
 	public void onChange(GroupRelation gr);
+
+	public List<GroupRelation> getGroupRelationsByInitiationDate(Timestamp initiationDateStart, Timestamp initiationDateEnd);
 
 }

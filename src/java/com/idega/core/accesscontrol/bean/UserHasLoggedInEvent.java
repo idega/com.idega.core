@@ -8,7 +8,7 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	private Integer userId;
 
-	private String userName;
+	private String userName, loginType;
 
 	public UserHasLoggedInEvent(Integer userId) {
 		super(userId);
@@ -16,10 +16,11 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 		this.userId = userId;
 	}
 
-	public UserHasLoggedInEvent(Integer userId, String userName) {
+	public UserHasLoggedInEvent(Integer userId, String userName, String loginType) {
 		this(userId);
 
 		this.userName = userName;
+		this.loginType = loginType;
 	}
 
 	public Integer getUserId() {
@@ -30,9 +31,13 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 		return userName;
 	}
 
+	public String getLoginType() {
+		return loginType;
+	}
+
 	@Override
 	public String toString() {
-		return "User ID: " + getUserId() + ", user name: " + getUserName();
+		return "User ID: " + getUserId() + ", type: " + getLoginType() + ", user name: " + getUserName();
 	}
 
 }

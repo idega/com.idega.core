@@ -99,7 +99,6 @@ public class LoginInfo implements Serializable, MetaDataCapable {
 		this.setEncryptionType(EncryptionType.MD5);
 	}
 
-	@SuppressWarnings("unused")
 	@PrePersist
 	@PreUpdate
 	private void setDefaultValues() {

@@ -452,6 +452,21 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	}
 
 	@Override
+	public List<GroupRelation> getGroupRelationsByInitiationDate(Timestamp initiationDateStart, Timestamp initiationDateEnd) {
+		try {
+			return getResultList(GroupRelation.QUERY_FIND_BY_INITIATION_DATE,
+					GroupRelation.class,
+					new Param(GroupRelation.PARAM_INITIATION_DATE_START, initiationDateStart),
+					new Param(GroupRelation.PARAM_INITIATION_DATE_END, initiationDateEnd)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations by initiation date start: " + initiationDateStart + ", end: " + initiationDateEnd, e);
+		}
+
+		return null;
+	}
+
+	@Override
 	public void onChange(GroupRelation gr) {
 		if (gr != null) {
 			gr.onChange();
