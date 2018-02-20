@@ -6,9 +6,10 @@ import java.io.StringReader;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 
 public class StringUtil {
@@ -24,6 +25,21 @@ public class StringUtil {
 		}
 
 		return new ArrayList<String>(Arrays.asList(values));
+	}
+
+	public static String getValue(Collection<String> values) {
+		if (ListUtil.isEmpty(values)) {
+			return null;
+		}
+
+		StringBuilder value = new StringBuilder();
+		for (Iterator<String> valuesIter = values.iterator(); valuesIter.hasNext();) {
+			value.append(valuesIter.next());
+			if (valuesIter.hasNext()) {
+				value.append(CoreConstants.COMMA);
+			}
+		}
+		return value.toString();
 	}
 
 	/**
@@ -243,8 +259,9 @@ public class StringUtil {
 
 	public static List<String> getLinesFromString(String content) {
 		List<String> strings = new ArrayList<String>();
-		if (isEmpty(content))
+		if (isEmpty(content)) {
 			return strings;
+		}
 
 		LineNumberReader lineReader = new LineNumberReader(new StringReader(content));
 
@@ -265,9 +282,9 @@ public class StringUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param strings of {@link Integer}s to convert, not <code>null</code>;
-	 * @return {@link ArrayList} of converted {@link Integer}s 
+	 * @return {@link ArrayList} of converted {@link Integer}s
 	 * or {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
