@@ -100,7 +100,7 @@ public class IWEncodingFilter implements Filter {
 		HttpServletResponse response = (HttpServletResponse) myResponse;
 
 		ByteArrayOutputStream bytes = null;
-		boolean gzip = isGZIPEnabled() && !isJSPRenderProcess() && isUIBeingRendered(request);
+		boolean gzip = isGZIPEnabled() && isUIBeingRendered(request) && !isJSPRenderProcess();
 		if (gzip) {
 			bytes = new ByteArrayOutputStream();
 			response = new GenericResponseWrapper(response, bytes);
@@ -184,23 +184,28 @@ public class IWEncodingFilter implements Filter {
 		HttpSession session = request.getSession(false);
 
 		String pageViewType = request.getParameter(CoreConstants.PARAMETER_PAGE_VIEW_TYPE);
-		if (!StringUtil.isEmpty(pageViewType))
+		if (!StringUtil.isEmpty(pageViewType)) {
 			session.setAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE, pageViewType);
+		}
 
-		if (CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(pageViewType))
+		if (CoreConstants.PAGE_VIEW_TYPE_MOBILE.equals(pageViewType)) {
 			return;
-		if (CoreConstants.PAGE_VIEW_TYPE_REGULAR.equals(pageViewType))
+		}
+		if (CoreConstants.PAGE_VIEW_TYPE_REGULAR.equals(pageViewType)) {
 			return;
+		}
 
 		String userAgent = RequestUtil.getUserAgent(request);
-		if (StringUtil.isEmpty(userAgent))
+		if (StringUtil.isEmpty(userAgent)) {
 			return;
+		}
 
 		userAgent = userAgent.toLowerCase();
 		boolean mobileBrowser = userAgent.contains("ios") || userAgent.contains("iphone") || userAgent.contains("ipad") || userAgent.contains("ipod") ||
 			userAgent.contains("android");
-		if (mobileBrowser)
+		if (mobileBrowser) {
 			session.setAttribute(CoreConstants.PARAMETER_PAGE_VIEW_TYPE, CoreConstants.PAGE_VIEW_TYPE_MOBILE);
+		}
 	}
 
 	private void setRequestResponseProvider(HttpServletRequest request, HttpServletResponse response) {

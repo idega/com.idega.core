@@ -71,8 +71,9 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 	private RepositoryService repositoryService;
 
 	protected Logger getLogger() {
-		if (LOGGER == null)
+		if (LOGGER == null) {
 			LOGGER = Logger.getLogger(getClass().getName());
+		}
 		return LOGGER;
 	}
 
@@ -431,16 +432,16 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
 	    String expr;
 	    if (isValueBinding(beanId)) {
-	    	expr = beanId;
+	    		expr = beanId;
 	    } else {
-	    	expr = getExpression(beanId);
+	    		expr = getExpression(beanId);
 	    }
 
 	    ELContext elContext = context.getELContext();
 	    ValueExpression ve = context.getApplication().getExpressionFactory().createValueExpression(elContext, expr, Object.class);
 	    @SuppressWarnings("unchecked")
 		T bean = (T) ve.getValue(elContext);
-    	return bean;
+	    return bean;
     }
 
     public IWBundle getBundle(FacesContext ctx, String bundleIdentifier) {
@@ -462,11 +463,13 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
     protected RepositorySession getRepositorySession() {
 		IWContext iwc = IWContext.getIWContext(getFacesContext());
-		if (iwc == null)
+		if (iwc == null) {
 			return null;
+		}
 
-		if (!iwc.isLoggedOn())
+		if (!iwc.isLoggedOn()) {
 			return null;
+		}
 
 		RepositorySession repositorySession = ELUtil.getInstance().getBean(RepositorySession.class);
 		return repositorySession;

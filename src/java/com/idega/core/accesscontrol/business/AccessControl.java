@@ -738,6 +738,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			DBUtil dbUtil = DBUtil.getInstance();
 			for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
 				Group parent = iter.next();
+				if (parent == null) {
+					continue;
+				}
+
 				parent = dbUtil.lazyLoad(parent);
 				if (parent == null) {
 					continue;
@@ -773,8 +777,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		List<String> tmp = null;
 		if (groupIds != null) {
 			tmp = new ArrayList<String>(groupIds.size());
-			for (Integer id: groupIds)
+			for (Integer id: groupIds) {
 				tmp.add(id.toString());
+			}
 		}
 
 		if (groupIds != null) {
@@ -1743,8 +1748,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		if (!identifiers.isEmpty()) {
 			Group permGroup = groupDAO.findGroup(group.getID());
 			List<ICPermission> perms = dao.findPermissions(category, identifiers, permGroup);
-			if (perms != null)
+			if (perms != null) {
 				permissions.addAll(perms);
+			}
 		}
 
 		return permissions;
@@ -1938,15 +1944,17 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		Collection<com.idega.core.accesscontrol.data.ICPermission> oldPermissions = new ArrayList<com.idega.core.accesscontrol.data.ICPermission>();
 		Collection<ICPermission> permissions = getAllGroupPermissionsForGroup(g);
-		if (ListUtil.isEmpty(permissions))
+		if (ListUtil.isEmpty(permissions)) {
 			return oldPermissions;
+		}
 
 		try {
 			ICPermissionHome permissionHome = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
 			for (ICPermission permission: permissions) {
 				com.idega.core.accesscontrol.data.ICPermission tmp = permissionHome.findByPrimaryKey(permission.getId());
-				if (tmp == null)
+				if (tmp == null) {
 					continue;
+				}
 
 				oldPermissions.add(tmp);
 			}
@@ -2064,8 +2072,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public Collection<ICPermission> getAllRolesForGroup(Group group) {
-		if (group == null)
+		if (group == null) {
 			return Collections.emptyList();
+		}
 
 		Group permGroup = getGroupDAO().findGroup(group.getID());
 		Collection<ICPermission> groupPermissions = new ArrayList<ICPermission>(); //empty
@@ -2089,8 +2098,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public Collection<String> getAllRolesKeysForGroup(com.idega.user.data.Group group) {
-		if (group == null)
+		if (group == null) {
 			return Collections.emptyList();
+		}
 
 		Group g = null;
 		try {
@@ -2770,8 +2780,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
 
 	    Collection<Group> permGroups = new ArrayList<Group>();
-	    for (Group group: groups)
+	    for (Group group: groups) {
 			permGroups.add(groupDAO.findGroup(group.getID()));
+		}
 
 		Collection<ICPermission> returnCol = permissionDAO.findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(
 					permGroups,

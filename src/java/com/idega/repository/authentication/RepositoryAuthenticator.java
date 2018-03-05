@@ -44,6 +44,8 @@ public class RepositoryAuthenticator extends BaseFilter {
 								REPOSITORY_ROLES_UPDATED = "iw_repository_roles_updated",
 								PROPERTY_UPDATE_ROLES = "repository.updateroles.enable";
 
+	private static final Logger LOGGER = Logger.getLogger(RepositoryAuthenticator.class.getName());
+
 	@Autowired
 	private RepositoryService repository;
 	@Autowired
@@ -84,7 +86,7 @@ public class RepositoryAuthenticator extends BaseFilter {
 
 			return true;
 		} catch (RepositoryException e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error applying default permissions to repository", e);
 		}
 
 		return false;
@@ -100,8 +102,10 @@ public class RepositoryAuthenticator extends BaseFilter {
 			if (loginBusiness.isLoggedOn(req)) {
 				LoggedOnInfo lInfo = loginBusiness.getLoggedOnInfo(session);
 				if (lInfo == null) {
-					throw new RuntimeException("Unable to get logged on info for session " + session);
+					LOGGER.warning("Unable to get logged on info for session " + session);
+					return;
 				}
+
 				req = setAsAuthenticatedInRepository(req, lInfo.getLogin(), lInfo);
 			} else {
 				String[] loginAndPassword = loginBusiness.getLoginNameAndPasswordFromBasicAuthenticationRequest(req);
@@ -129,7 +133,7 @@ public class RepositoryAuthenticator extends BaseFilter {
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error doing authentication in repository", e);
 			res.sendError(HttpServletResponse.SC_UNAUTHORIZED, e.getMessage());
 			return;
 		}
@@ -151,9 +155,10 @@ public class RepositoryAuthenticator extends BaseFilter {
 				request = new RepositoryAuthenticatedRequest(request, rootUserName, Collections.singleton(rootUserName));
 				repositoryPrincipal = rootUserName;
 			} else {
-				if (request.getUserPrincipal() == null && lInfo != null)
+				if (request.getUserPrincipal() == null && lInfo != null) {
 					//	Wrapping request
 					request = new RepositoryAuthenticatedRequest(request, loginName, lInfo.getUserRoles());
+				}
 
 				updateRolesForUser(request, lInfo);
 			}
@@ -191,8 +196,9 @@ public class RepositoryAuthenticator extends BaseFilter {
 
 		if (settings.getBoolean(PROPERTY_UPDATE_ROLES, Boolean.TRUE)) {
 			Object updated = lInfo.getAttribute(REPOSITORY_ROLES_UPDATED);
-			if (updated instanceof Boolean && (Boolean) updated)
+			if (updated instanceof Boolean && (Boolean) updated) {
 				return;
+			}
 
 			AuthenticationBusiness business = getAuthenticationBusiness();
 			business.updateRoleMembershipForUser(lInfo.getLogin(), lInfo.getUserRoles(), null);
@@ -240,15 +246,17 @@ public class RepositoryAuthenticator extends BaseFilter {
 	}
 
 	private RepositoryService getRepositoryService() {
-		if (repository == null)
+		if (repository == null) {
 			autowire();
+		}
 
 		return repository;
 	}
 
 	private AuthenticationBusiness getAuthenticationBusiness() {
-		if (authentication == null)
+		if (authentication == null) {
 			autowire();
+		}
 
 		return authentication;
 	}
