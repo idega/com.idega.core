@@ -254,11 +254,13 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 	public Object getPrimaryKeyValue() {
 		if (this._primaryKey != null) {
-			return this._primaryKey;
+			Class<?> pkType = getPrimaryKeyClass();
+			if (pkType != null && pkType.getName().equals(this._primaryKey.getClass().getName())) {
+				return this._primaryKey;
+			}
 		}
-		else {
-			return this.getValue(getIDColumnName());
-		}
+
+		return this.getValue(getIDColumnName());
 	}
 
 	public Integer getIDInteger() {
