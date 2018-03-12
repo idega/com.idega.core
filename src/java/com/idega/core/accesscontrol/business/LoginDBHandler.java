@@ -540,15 +540,17 @@ public class LoginDBHandler {
 		return recordLogin(login, IPAddress, -1);
 	}
 	public static com.idega.core.accesscontrol.data.bean.LoginRecord recordLogin(UserLogin login, String IPAddress) {
-		if (login == null || StringUtil.isEmpty(IPAddress))
+		if (login == null || StringUtil.isEmpty(IPAddress)) {
 			return null;
+		}
 
 		try {
 			LoginTableHome loginTableHome = (LoginTableHome) IDOLookup.getHome(LoginTable.class);
 			LoginTable lTable = loginTableHome.findByPrimaryKey(login.getId());
 			LoginRecord lr = recordLogin(lTable, IPAddress, -1);
-			if (lr == null)
+			if (lr == null) {
 				return null;
+			}
 
 			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean(UserLoginDAO.class);
 			com.idega.core.accesscontrol.data.bean.LoginRecord record = userLoginDAO.getSingleResultByInlineQuery(
@@ -573,7 +575,9 @@ public class LoginDBHandler {
 			if (IPAddress.length() > 16) {
 				IPAddress = IPAddress.substring(0, 16);
 			}
-			inRec.setIPAdress(IPAddress);
+			if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("eplatform.record_ip_on_login", true)) {
+				inRec.setIPAdress(IPAddress);
+			}
 			inRec.setLogin(login);
 			inRec.setLogInStamp(IWTimestamp.getTimestampRightNow());
 			if (asUser != -1) {
