@@ -318,7 +318,7 @@ public class IDOUtil implements Singleton {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param primaryKeys is {@link Collection} of {@link EJBLocalObject#getPrimaryKey()},
 	 * not <code>null</code>;
 	 * @return comma separated string or <code>null</code> on failure;
@@ -329,7 +329,12 @@ public class IDOUtil implements Singleton {
 		if (!ListUtil.isEmpty(primaryKeys)) {
 			Iterator<?> iterator = primaryKeys.iterator();
 			while (iterator.hasNext()) {
-				line.append("'").append(iterator.next().toString()).append("'");
+				Object o = iterator.next();
+				if (o == null) {
+					continue;
+				}
+
+				line.append("'").append(o.toString()).append("'");
 				if (iterator.hasNext()) {
 					line.append(COMMA_AND_SPACE);
 				}
