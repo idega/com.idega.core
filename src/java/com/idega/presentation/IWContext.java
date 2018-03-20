@@ -297,14 +297,19 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public HttpSession getSession() {
+		HttpServletRequest request = getRequest();
+		if (request == null) {
+			return null;
+		}
+
 		HttpSession session = null;
 		try {
-			session = getRequest().getSession();
+			session = request.getSession();
 		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting session from " + getRequest(), e);
+			LOGGER.log(Level.WARNING, "Error getting session from " + request, e);
 		}
 		if (session == null) {
-			session = getRequest().getSession(true);
+			session = request.getSession(true);
 		}
 		return session;
 	}
@@ -1307,8 +1312,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 			if (fctx != null) {
 				iwc = getIWContext(fctx);
-			} else
+			} else {
 				iwc = null;
+			}
 
 			return iwc;
 
@@ -1708,8 +1714,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	@Override
 	public ELContext getELContext() {
 		ELContext elContext = getRealFacesContext() != null ? getRealFacesContext().getELContext() : null;
-		if (elContext == null)
+		if (elContext == null) {
 			throw new IllegalStateException("Real FacesContext is not initialized yet.");
+		}
 
 		return elContext;
 	}
