@@ -506,6 +506,12 @@ public boolean equals(Object obj) {
     +") or ("+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+relatedGroupID+") ) and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE+"' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE_PENDING+"' ) ");
   }
 
+  public Collection<?> ejbFindGroupsHistoryRelationshipsContainingBiDirectional(int groupID,int relatedGroupID)throws FinderException{
+	  return this.idoFindPKsBySQL("select * from "+this.getTableName()+" where ( ("+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+groupID+" and "+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+relatedGroupID
+	  +") or ("+GroupRelationBMPBean.RELATED_GROUP_ID_COLUMN+"="+groupID+" and "+GroupRelationBMPBean.GROUP_ID_COLUMN+"="+relatedGroupID+") ) and ( "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_PASSIVE+
+	  "' OR "+GroupRelationBMPBean.STATUS_COLUMN+"='"+STATUS_ACTIVE_PENDING+"' ) ");
+  }
+
   /**
    * Finds all active relationships specified bidirectionally (in both directions) with groupID and relatedGroupID and relationshipType as specified
    */
