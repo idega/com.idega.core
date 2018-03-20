@@ -176,6 +176,14 @@ public java.util.Collection findGroupsRelationshipsContainingBiDirectional(int p
 }
 
 @Override
+public java.util.Collection<GroupRelation> findGroupsHistoryRelationshipsContainingBiDirectional(int p0,int p1) throws javax.ejb.FinderException {
+	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsHistoryRelationshipsContainingBiDirectional(p0,p1);
+	this.idoCheckInPooledEntity(entity);
+	return this.getEntityCollectionForPrimaryKeys(ids);
+}
+
+@Override
 public java.util.Collection findGroupsRelationshipsContainingGroupsAndStatus(com.idega.user.data.Group p0,com.idega.user.data.Group p1,java.lang.String p2)throws javax.ejb.FinderException{
 	com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
 	java.util.Collection ids = ((GroupRelationBMPBean)entity).ejbFindGroupsRelationshipsContainingGroupsAndStatus(p0,p1,p2);
