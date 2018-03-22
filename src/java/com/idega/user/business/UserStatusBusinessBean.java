@@ -21,8 +21,8 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import com.idega.business.IBOLookup;
 import com.idega.business.IBOServiceBean;
-import com.idega.data.IDOStoreException;
 import com.idega.user.data.Status;
 import com.idega.user.data.StatusHome;
 import com.idega.user.data.User;
@@ -209,34 +209,40 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 	}
 
 	@Override
-	public void setUserAsDeceased(Integer userID,Date deceasedDate) throws RemoteException{
+	public void setUserAsDeceased(Integer userID, Date deceasedDate) throws RemoteException {
+		if (userID == null) {
+			return;
+		}
+
 		try {
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(getIWApplicationContext(), UserBusiness.class);
+			User user = userBusiness.getUser(userID);
+			setUserAsDeceased(user, deceasedDate);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error marking user (ID: " + userID + ") as deceased", e);
+		}
+	}
+
+	@Override
+	public void setUserAsDeceased(User user, Date deceasedDate) throws RemoteException {
+		try {
+			if (user == null || user.isDeceased()) {
+				return;
+			}
+
+			Integer userID = (Integer) user.getPrimaryKey();
 			Status deceasedStatus = getDeceasedStatusCreateIfNone();
 			UserStatus dUserStatus = getDeceasedUserStatus(userID);
-			if(dUserStatus ==null){
+			if (dUserStatus == null) {
 				dUserStatus = getUserStatusHome().create();
 				dUserStatus.setUserId(userID.intValue());
-				//dUserStatus.setGroupId(group_id);
 				dUserStatus.setDateFrom(new Timestamp(deceasedDate.getTime()));
 				dUserStatus.setStatusId(((Integer)deceasedStatus.getPrimaryKey()).intValue());
 				dUserStatus.store();
 			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error marking " + user + " (personal ID: " + user.getPersonalID() + ") as deceased", e);
 		}
-		catch (IDOStoreException e) {
-			e.printStackTrace();
-
-		}
-
-		catch (EJBException e) {
-			e.printStackTrace();
-
-		}
-
-		catch (CreateException e) {
-			e.printStackTrace();
-
-		}
-
 	}
 
 	@Override
