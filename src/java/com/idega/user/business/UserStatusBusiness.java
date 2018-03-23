@@ -96,8 +96,9 @@ public interface UserStatusBusiness extends IBOService {
     /**
      * @see com.idega.user.business.UserStatusBusinessBean#setUserAsDeceased
      */
-    public void setUserAsDeceased(Integer userID, Date deceasedDate)
-            throws RemoteException, java.rmi.RemoteException;
+    public void setUserAsDeceased(Integer userID, Date deceasedDate) throws RemoteException, java.rmi.RemoteException;
+
+    public void setUserAsDeceased(User user, Date deceasedDate) throws RemoteException, java.rmi.RemoteException;
 
     public Status getStatusByStatusId(int statusId) throws RemoteException;
 
