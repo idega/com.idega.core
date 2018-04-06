@@ -45,7 +45,7 @@ import com.idega.util.expression.ELUtil;
 @Table(name = UserLogin.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(name = "login.findAllByUser", query = "select l from UserLogin l where l.user = :user"),
-	@NamedQuery(name = "login.findByLogin", query = "select l from UserLogin l where l.userLogin = :userLogin"),
+	@NamedQuery(name = UserLogin.QUERY_FIND_BY_LOGIN, query = "select l from UserLogin l where l.userLogin = :userLogin"),
 	@NamedQuery(name = "login.findByUserAndLogin", query = "select l from UserLogin l where l.user = :user and l.userLogin = :userLogin"),
 	@NamedQuery(name = "login.findByUserAndType", query = "select l from UserLogin l where l.user = :user and l.loginType = :loginType"),
 	@NamedQuery(name = "login.findDefaultLoginForUser", query = "select l from UserLogin l where l.user = :user and l.loginType is null"),
@@ -62,6 +62,7 @@ public class UserLogin implements Serializable {
 	public static final String	ENTITY_NAME = "ic_login",
 								COLUMN_LOGIN_ID = ENTITY_NAME + "_id",
 
+								QUERY_FIND_BY_LOGIN = "login.findByLogin",
 								QUERY_FIND_BY_PASSWORD = "login.findByPassword",
 								QUERY_FIND_DEFAULT_LOGIN_BY_UUID = "login.findDefaultLoginByUUId",
 								QUERY_FIND_DEFAULT_LOGINS = "login.findDefaultLogins",

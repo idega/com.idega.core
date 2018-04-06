@@ -5,6 +5,7 @@ import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Locale;
@@ -35,6 +36,8 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 
 	public static final DateFormat 	DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd"),
 									DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
+
+	private static final List<DateFormat> DEFAULT_FORMATTERS = Arrays.asList(DATE_FORMATTER,  new SimpleDateFormat("MM/dd/yyyy"));
 
 	private String method = null;
 	private String instanceId = null;
@@ -70,9 +73,13 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			return null;
 		}
 
-		try {
-			return DATE_FORMATTER.parse(source);
-		} catch (ParseException e) {
+		for (DateFormat formatter: DEFAULT_FORMATTERS) {
+			try {
+				Date date = formatter.parse(source);
+				if (date != null) {
+					return date;
+				}
+			} catch (ParseException e) {}
 		}
 
 		return null;
@@ -83,11 +90,13 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 	}
 
 	private static final Date getParsedDateByCurrentLocale(String source, Locale locale) {
-		if (StringUtil.isEmpty(source))
+		if (StringUtil.isEmpty(source)) {
 			return null;
+		}
 
-		if (source.endsWith(".0"))
+		if (source.endsWith(".0")) {
 			source = source.substring(0, source.lastIndexOf(".0"));
+		}
 
 		if (locale == null) {
 			IWContext iwc = CoreUtil.getIWContext();
@@ -147,7 +156,9 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 	}
 
 	public static final Date getParsedDateByFormat(String source, String format) {
-		if (StringUtil.isEmpty(source) || StringUtil.isEmpty(format)) return null;
+		if (StringUtil.isEmpty(source) || StringUtil.isEmpty(format)) {
+			return null;
+		}
 		DateFormat formatter = new SimpleDateFormat(format);
 		try {
 			return formatter.parse(source);

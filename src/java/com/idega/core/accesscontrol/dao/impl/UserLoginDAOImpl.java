@@ -109,7 +109,7 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 	@Override
 	public UserLogin findLoginByUsername(String username) {
 		Param param = new Param("userLogin", username);
-		return getSingleResult("login.findByLogin", UserLogin.class, param);
+		return getSingleResult(UserLogin.QUERY_FIND_BY_LOGIN, UserLogin.class, param);
 	}
 
 	@Override

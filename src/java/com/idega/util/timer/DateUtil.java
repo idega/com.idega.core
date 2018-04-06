@@ -314,4 +314,20 @@ public class DateUtil {
 
 		return null;
 	}
+
+	public static boolean equal(Date date, Date anotherDate) {
+		if (date == null && anotherDate == null) {
+			return Boolean.TRUE;
+		}
+
+		if (date != null && anotherDate == null) {
+			return Boolean.FALSE;
+		}
+
+		if (date == null && anotherDate != null) {
+			return Boolean.FALSE;
+		}
+
+		return date.equals(anotherDate);
+	}
 }
