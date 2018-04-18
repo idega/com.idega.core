@@ -909,7 +909,6 @@ public abstract class DatastoreInterface implements MutableClass {
     	executeBeforeInsert(entity);
     	PreparedStatement Stmt = null;
     	ResultSet RS = null;
-    	String sql = null;
     	try {
     		StringBuffer statement = new StringBuffer("");
     		statement.append("insert into ");
@@ -919,7 +918,7 @@ public abstract class DatastoreInterface implements MutableClass {
     		statement.append(") values (");
     		statement.append(getQuestionmarksForColumns(entity));
     		statement.append(")");
-    		sql = statement.toString();
+    		String sql = statement.toString();
     		logSQL(sql);
     		Stmt = conn.prepareStatement(sql);
     		setForPreparedStatement(STATEMENT_INSERT, Stmt, entity,null);
@@ -928,10 +927,6 @@ public abstract class DatastoreInterface implements MutableClass {
     		if (updateNumberGeneratedValueAfterInsert()) {
     			updateNumberGeneratedValue(entity, conn);
     		}
-    	} catch (Exception e) {
-    		String message = "Error executing SQL: " + sql;
-    		getLogger().log(Level.WARNING, message, e);
-    		throw new Exception(message, e);
     	}
     	finally {
     		if (RS != null) {
