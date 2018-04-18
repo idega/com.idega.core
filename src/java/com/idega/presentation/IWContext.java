@@ -159,7 +159,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			} else {
 				HttpSession session = request.getSession(true);
 				if (session == null) {
-					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request + ", session: " + session);
+					throw new RuntimeException("There was an error while initializing IWContext: session is not available. Request object: " + request + ", session: " + session);
 				}
 			}
 		}
@@ -636,6 +636,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 				return false;
 			}
 			HttpSession session = request.getSession(Boolean.FALSE);
+			if (session == null) {
+				session = request.getSession(true);
+			}
 			if (session == null) {
 				ExternalContext extContext = getExternalContext();
 				if (extContext == null) {
