@@ -853,7 +853,8 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public String getSessionId() {
-		return getSession().getId();
+		HttpSession session = getSession();
+		return session == null ? null : getSession().getId();
 	}
 
 	/**
@@ -866,7 +867,10 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public void removeSessionAttribute(String attributeName) {
-		getSession().removeAttribute(attributeName);
+		HttpSession session = getSession();
+		if (session != null) {
+			session.removeAttribute(attributeName);
+		}
 	}
 
 	public String getMarkupLanguage() {
