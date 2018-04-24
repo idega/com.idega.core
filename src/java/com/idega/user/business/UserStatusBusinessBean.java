@@ -241,7 +241,7 @@ public class UserStatusBusinessBean extends IBOServiceBean implements UserStatus
 				dUserStatus.store();
 			}
 		} catch (Exception e) {
-			getLogger().log(Level.WARNING, "Error marking " + user + " (personal ID: " + user.getPersonalID() + ") as deceased", e);
+			getLogger().warning("Error marking " + user + " (personal ID: " + user.getPersonalID() + ") as deceased");
 		}
 	}
 

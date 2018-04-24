@@ -159,7 +159,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			} else {
 				HttpSession session = request.getSession(true);
 				if (session == null) {
-					throw new RuntimeException("There was an error while initializing IWContext. Request object: " + request + ", session: " + session);
+					throw new RuntimeException("There was an error while initializing IWContext: session is not available. Request object: " + request + ", session: " + session);
 				}
 			}
 		}
@@ -637,6 +637,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			}
 			HttpSession session = request.getSession(Boolean.FALSE);
 			if (session == null) {
+				session = request.getSession(true);
+			}
+			if (session == null) {
 				ExternalContext extContext = getExternalContext();
 				if (extContext == null) {
 					LOGGER.severe(ExternalContext.class.getSimpleName() + " is not provided! Can not initialize HTTP session!");
@@ -850,7 +853,8 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public String getSessionId() {
-		return getSession().getId();
+		HttpSession session = getSession();
+		return session == null ? null : getSession().getId();
 	}
 
 	/**
@@ -863,7 +867,10 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	@Override
 	public void removeSessionAttribute(String attributeName) {
-		getSession().removeAttribute(attributeName);
+		HttpSession session = getSession();
+		if (session != null) {
+			session.removeAttribute(attributeName);
+		}
 	}
 
 	public String getMarkupLanguage() {
