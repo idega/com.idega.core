@@ -23,15 +23,15 @@ import javax.faces.context.FacesContext;
 
 /**
  * Last modified: $Date: 2008/04/02 16:37:03 $ by $Author: gimmi $
- * 
+ *
  * @author <a href="mailto:laddi@idega.com">laddi</a>
  * @version $Revision: 1.4 $
  */
 public class Table2 extends PresentationObject {
-	
+
 	/**
 	 * Left-flush data/Left-justify text. This is the default value for table data.
-	 * 
+	 *
 	 * @see #TableRow.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellHorizontalAlignment(java.lang.String);
@@ -41,7 +41,7 @@ public class Table2 extends PresentationObject {
 	public static final String HORIZONTAL_ALIGNMENT_LEFT = "left";
 	/**
 	 * Center data/Center-justify text. This is the default value for table headers.
-	 * 
+	 *
 	 * @see #TableRow.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellHorizontalAlignment(java.lang.String);
@@ -51,7 +51,7 @@ public class Table2 extends PresentationObject {
 	public static final String HORIZONTAL_ALIGNMENT_CENTER = "center";
 	/**
 	 * Right-flush data/Right-justify text.
-	 * 
+	 *
 	 * @see #TableRow.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellHorizontalAlignment(java.lang.String);
@@ -61,7 +61,7 @@ public class Table2 extends PresentationObject {
 	public static final String HORIZONTAL_ALIGNMENT_RIGHT = "right";
 	/**
 	 * Double-justify text.
-	 * 
+	 *
 	 * @see #TableRow.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellHorizontalAlignment(java.lang.String);
@@ -71,7 +71,7 @@ public class Table2 extends PresentationObject {
 	public static final String HORIZONTAL_ALIGNMENT_JUSTIFY = "justify";
 	/**
 	 * Align text around a specific character, setCharacter(char) must also be set (may not work in all user agents).
-	 * 
+	 *
 	 * @see #TableRow.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellHorizontalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellHorizontalAlignment(java.lang.String);
@@ -82,7 +82,7 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Cell data is flush with the top of the cell.
-	 * 
+	 *
 	 * @see #TableRow.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellVerticalAlignment(java.lang.String);
@@ -92,7 +92,7 @@ public class Table2 extends PresentationObject {
 	public static final String VERTICAL_ALIGNMENT_TOP = "top";
 	/**
 	 * Cell data is centered vertically within the cell. This is the default value.
-	 * 
+	 *
 	 * @see #TableRow.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellVerticalAlignment(java.lang.String);
@@ -102,7 +102,7 @@ public class Table2 extends PresentationObject {
 	public static final String VERTICAL_ALIGNMENT_MIDDLE = "middle";
 	/**
 	 * Cell data is flush with the bottom of the cell.
-	 * 
+	 *
 	 * @see #TableRow.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellVerticalAlignment(java.lang.String);
@@ -113,7 +113,7 @@ public class Table2 extends PresentationObject {
 	/**
 	 * All cells in the same row as a cell whose valign attribute has this value should have their textual data positioned so that the first text line occurs on a baseline common to all cells in the row.
 	 * This constraint does not apply to subsequent text lines in these cells.
-	 * 
+	 *
 	 * @see #TableRow.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableRowGroup.setCellVerticalAlignment(java.lang.String);
 	 * @see #TableColumn.setCellVerticalAlignment(java.lang.String);
@@ -121,7 +121,7 @@ public class Table2 extends PresentationObject {
 	 * @see #TableCell2.setCellVerticalAlignment(java.lang.String);
 	 */
 	public static final String VERTICAL_ALIGNMENT_BASELINE = "baseline";
-	
+
 	/**
 	 * No sides. This is the default value.
 	 * @see #setFrame(java.lang.String)
@@ -201,7 +201,7 @@ public class Table2 extends PresentationObject {
   private static final String MARKUP_ATTRIBUTE_RULES = "rules";
 	private static final String MARKUP_ATTRIBUTE_SUMMARY = "summary";
 	private static final String MARKUP_ATTRIBUTE_WIDTH = "width";
-  
+
 	public static final String MARKUP_ATTRIBUTE_CELL_HORIZONTAL_ALIGNMENT = "align";
 	public static final String MARKUP_ATTRIBUTE_CELL_VERTICAL_ALIGNMENT = "valign";
 	public static final String MARKUP_ATTRIBUTE_CHARACTER = "char";
@@ -210,7 +210,7 @@ public class Table2 extends PresentationObject {
 	/**
 	 * Creates a <code>TableCaption</code> within the <code>Table2</code> object.
 	 * Only one <code>TableCaption</code> can exist for each <code>Table2</code> object so the already created one is returned if it already exists.
-	 * 
+	 *
 	 * @param caption	The string to use as the caption for the table
 	 * @return A new <code>TableCaption</code> object or the one already created.
 	 */
@@ -225,49 +225,49 @@ public class Table2 extends PresentationObject {
 		}
 		return tableCaption;
 	}
-	
+
 	/**
 	 * Creates a <code>TableCaption</code> (with no text) within the <code>Table2</code> object.
-	 * 
+	 *
 	 * @return A new <code>TableCaption</code> object or the one already created.
 	 */
 	public TableCaption createCaption() {
 		return createCaption(null);
 	}
-	
+
 	/**
 	 * Gets the <code>TableCaption</code> object associated with the <code>Table2</code> object.
-	 * 
+	 *
 	 * @return The <code>TableCaption</code> already created or null if none exists.
 	 */
 	private TableCaption getCaption() {
-		Collection children = getChildren();
-		Iterator iter = children.iterator();
+		Collection<UIComponent> children = getChildren();
+		Iterator<UIComponent> iter = children.iterator();
 		while (iter.hasNext()) {
-			UIComponent element = (UIComponent) iter.next();
+			UIComponent element = iter.next();
 			if (element instanceof TableCaption) {
 				return (TableCaption) element;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new <code>TableColumnGroup</code> within the <code>Table2</code> object.
-	 * 
+	 *
 	 * @return A new <code>TableColumnGroup</code> object.
 	 */
 	public TableColumnGroup createColumnGroup() {
 		TableColumnGroup group = new TableColumnGroup();
 		getChildren().add(group);
-		
+
 		return group;
 	}
-	
+
 	/**
 	 * Creates a <code>TableHeaderRowGroup</code> within the <code>Table2</code> object.
 	 * Only one <code>TableHeaderRowGroup</code> can exist for each <code>Table2</code> object so the already created one is returned if it already exists.
-	 * 
+	 *
 	 * @return A new <code>TableHeaderRowGroup</code> object or the one already created.
 	 */
 	public TableHeaderRowGroup createHeaderRowGroup() {
@@ -278,12 +278,12 @@ public class Table2 extends PresentationObject {
 		}
 		return rowGroup;
 	}
-	
+
 	private TableHeaderRowGroup getHeaderRowGroup() {
-		Collection children = getChildren();
-		Iterator iter = children.iterator();
+		Collection<UIComponent> children = getChildren();
+		Iterator<UIComponent> iter = children.iterator();
 		while (iter.hasNext()) {
-			UIComponent element = (UIComponent) iter.next();
+			UIComponent element = iter.next();
 			if (element instanceof TableHeaderRowGroup) {
 				return (TableHeaderRowGroup) element;
 			}
@@ -294,23 +294,23 @@ public class Table2 extends PresentationObject {
 	 * Returns a collection of the <code>BodyRowGroups</code> within the <code>Table2</code> object.
 	 * @return Empty collection if no group are present
 	 */
-	public Collection getBodyRowGroups() {
-		Collection children = getChildren();
-		Iterator iter = children.iterator();
-		ArrayList list = new ArrayList();
+	public Collection<UIComponent> getBodyRowGroups() {
+		Collection<UIComponent> children = getChildren();
+		Iterator<UIComponent> iter = children.iterator();
+		List<UIComponent> list = new ArrayList<>();
 		while (iter.hasNext()) {
-			UIComponent element = (UIComponent) iter.next();
+			UIComponent element = iter.next();
 			if (element instanceof TableBodyRowGroup) {
 				list.add(element);
 			}
 		}
 		return list;
 	}
-	
+
 	/**
 	 * Creates a <code>TableFooterRowGroup</code> within the <code>Table2</code> object.
 	 * Only one <code>TableFooterRowGroup</code> can exist for each <code>Table2</code> object so the already created one is returned if it already exists.
-	 * 
+	 *
 	 * @return A new <code>TableFooterRowGroup</code> object or the one already created.
 	 */
 	public TableFooterRowGroup createFooterRowGroup() {
@@ -321,70 +321,70 @@ public class Table2 extends PresentationObject {
 		}
 		return rowGroup;
 	}
-	
+
 	private TableFooterRowGroup getFooterRowGroup() {
-		Collection children = getChildren();
-		Iterator iter = children.iterator();
+		Collection<UIComponent> children = getChildren();
+		Iterator<UIComponent> iter = children.iterator();
 		while (iter.hasNext()) {
-			UIComponent element = (UIComponent) iter.next();
+			UIComponent element = iter.next();
 			if (element instanceof TableFooterRowGroup) {
 				return (TableFooterRowGroup) element;
 			}
 		}
 		return null;
 	}
-	
+
 	/**
 	 * Creates a new <code>TableBodyRowGroup</code> within the <code>Table2</code> object.
-	 * 
+	 *
 	 * @return A new <code>TableBodyRowGroup</code> object.
 	 */
 	public TableBodyRowGroup createBodyRowGroup() {
 		TableBodyRowGroup rowGroup = new TableBodyRowGroup();
 		getChildren().add(rowGroup);
-		
+
 		return rowGroup;
 	}
-	
+
 	/**
 	 * Creates a <code>TableRow</code> within the <code>Table2</code> object.
-	 * 
+	 *
 	 * @return A new <code>TableRow</code> object.
 	 */
 	public TableRow createRow() {
 		TableRow row = new TableRow();
 		getChildren().add(row);
-		
+
 		return row;
 	}
-	
+
 	/**
 	 * Creates a <code>TableRow</code> within the <code>Table2</code> object with the specified index (row number).
-	 * 
+	 *
 	 * @param	The index (row number) of the new <code>TableRow</code>.
 	 * @return A new <code>TableRow</code> object.
 	 */
 	public TableRow createRow(int index) {
 		TableRow row = new TableRow();
 		getChildren().add(index, row);
-		
+
 		return row;
 	}
-	
+
 	/**
 	 * Gets the <code>TableRow</code> object with the specified index (row number).
-	 * 
+	 *
 	 * @param	The index (row number) of the new <code>TableRow</code>.
 	 * @return The <code>TableRow</code> object with the given index (or null if it doesn't exist).
 	 */
 	public TableRow getRow(int index) {
 		return (TableRow) getChildren().get(index);
 	}
-	
+
 	//Getters
 	/**
 	 * Gets the border value set for the table.
-	 * 
+	 *
 	 * @return The border value set for the table.  Returns the default value (0) if not set.
 	 */
   public int getBorder() {
@@ -397,7 +397,7 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Gets the cell padding value set for the table.
-	 * 
+	 *
 	 * @return The cell padding value set for the table.  Returns the default value (1) if not set.
 	 */
   public int getCellpadding() {
@@ -410,7 +410,7 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Gets the cell spacing value set for the table.
-	 * 
+	 *
 	 * @return The cell spacing value set for the table.  Returns the default value (2) if not set.
 	 */
   public int getCellspacing() {
@@ -423,7 +423,7 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Gets the frame value set for the table.
-	 * 
+	 *
 	 * @return The frame value set for the table.  Returns the default value if not set.
 	 */
   public String getFrame() {
@@ -441,7 +441,7 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Gets the rules value set for the table.
-	 * 
+	 *
 	 * @return The rules value set for the table.  Returns the default value if not set.
 	 */
   public String getRules() {
@@ -459,7 +459,7 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Gets the summary value set for the table.
-	 * 
+	 *
 	 * @return The summary value set for the table.  Returns null if not set.
 	 */
   public String getSummary() {
@@ -468,17 +468,18 @@ public class Table2 extends PresentationObject {
 
 	/**
 	 * Gets the width value set for the table.
-	 * 
+	 *
 	 * @return The width value set for the table.  Returns null if not set.
 	 */
-  public String getWidth() {
+  @Override
+public String getWidth() {
 		return getMarkupAttribute(MARKUP_ATTRIBUTE_WIDTH);
   }
-	
+
 	//Setters
   /**
    * Sets the border value of the table.  The number must be an integer greater than or equal to 0.
-   * 
+   *
    * @param border	The border value to set.
    */
   public void setBorder(int border) {
@@ -490,7 +491,7 @@ public class Table2 extends PresentationObject {
 
   /**
    * Sets the cell padding value of the table.  The number must be an integer greater than or equal to 0.
-   * 
+   *
    * @param cellpadding	The cell padding value to set.
    */
   public void setCellpadding(int cellpadding) {
@@ -502,7 +503,7 @@ public class Table2 extends PresentationObject {
 
   /**
    * Sets the cell spacing value of the Ttable.  The number must be an integer greater than or equal to 0.
-   * 
+   *
    * @param cellspacing	The cell spacing value to set.
    */
   public void setCellspacing(int cellspacing) {
@@ -514,7 +515,7 @@ public class Table2 extends PresentationObject {
 
   /**
    * Sets the frame value of the table.
-   * 
+   *
    * @param frame	The frame value to set.
    */
   public void setFrame(String frame) {
@@ -523,7 +524,7 @@ public class Table2 extends PresentationObject {
 
   /**
    * Sets the rules value of the table.
-   * 
+   *
    * @param rules	The rules value to set.
    */
   public void setRules(String rules) {
@@ -532,7 +533,7 @@ public class Table2 extends PresentationObject {
 
   /**
    * Sets the summary value of the table.
-   * 
+   *
    * @param summary	The summary value to set.
    */
   public void setSummary(String summary) {
@@ -541,78 +542,81 @@ public class Table2 extends PresentationObject {
 
   /**
    * Sets the width value of the table.  The value must be either a number (150) or a percentage (66%).
-   * 
+   *
    * @param width	The width value to set.
    */
-  public void setWidth(String width) {
+  @Override
+public void setWidth(String width) {
 		setMarkupAttribute(MARKUP_ATTRIBUTE_WIDTH, width);
   }
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			println("<table" + getMarkupAttributesString() + ">");
 
-			List theObjects = getChildren();
+			List<UIComponent> theObjects = getChildren();
 			Collections.sort(theObjects, new TableElementComparator());
 			if (theObjects != null) {
-				Iterator iter = theObjects.iterator();
+				Iterator<UIComponent> iter = theObjects.iterator();
 				while (iter.hasNext()) {
 					PresentationObject item = (PresentationObject) iter.next();
 					renderChild(iwc,item);
 				}
 			}
-			
+
 			println("</table>");
 		}
 	}
-	
+
+	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
 		println("<table" + getMarkupAttributesString() + ">");
 	}
 
+	@Override
 	public void encodeEnd(FacesContext arg0) throws IOException {
 		println("</table>");
 	}
-	
+
+	@Override
 	public void encodeChildren(FacesContext context) throws IOException {
 		Collections.sort(getChildren(), new TableElementComparator());
 		super.encodeChildren(context);
 	}
 
-	public class TableElementComparator implements Comparator {
+	public class TableElementComparator implements Comparator<UIComponent> {
 
-		public int compare(Object o1, Object o2) {
-			UIComponent obj1 = (UIComponent) o1;
-			UIComponent obj2 = (UIComponent) o2;
-			
+		@Override
+		public int compare(UIComponent obj1, UIComponent obj2) {
 			if (obj1 instanceof TableCaption) {
 				return -1;
 			}
 			else if (obj2 instanceof TableCaption) {
 				return 1;
 			}
-			
+
 			if (obj1 instanceof TableColumnGroup) {
 				return -1;
 			}
 			else if (obj2 instanceof TableColumnGroup) {
 				return 1;
 			}
-			
+
 			if (obj1 instanceof TableHeaderRowGroup) {
 				return -1;
 			}
 			else if (obj2 instanceof TableHeaderRowGroup) {
 				return 1;
 			}
-			
+
 			if (obj1 instanceof TableFooterRowGroup) {
 				return -1;
 			}
 			else if (obj2 instanceof TableFooterRowGroup) {
 				return 1;
 			}
-			
+
 			return 0;
 		}
 	}
