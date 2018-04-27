@@ -15,9 +15,12 @@ import java.io.InputStream;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 
 import javax.ejb.CreateException;
+import javax.faces.component.UIComponent;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -34,6 +37,7 @@ import com.idega.presentation.TableCell;
 import com.idega.presentation.TableCell2;
 import com.idega.presentation.TableRow;
 import com.idega.presentation.text.Text;
+import com.idega.util.CoreConstants;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -47,34 +51,47 @@ import com.idega.util.text.TextSoap;
 public class POIUtility {
 
 	/**
-	 * Creates an excel document from Table. Currently this only 
+	 * Creates an excel document from Table. Currently this only
 	 * supports table cells with Text objects.
 	 * @param table
 	 * @param fileName
 	 * @param sheetName
 	 * @return Returns True if file creation was a success, otherwise False.
 	 */
-	
-	
 	public static File createFileFromTable(Table2 table, String fileName, String sheetName) {
-//		int rows = table.getRows();
-//		int cols = table.getColumns();
-		
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
 
-		
-		
-		Collection hRows = table.createHeaderRowGroup().getChildren();
+		Collection<UIComponent> hRows = table.createHeaderRowGroup().getChildren();
 		int row = addTableRows(sheet, hRows, 0);
-		Collection bRows = table.getBodyRowGroups();
-		Iterator brIter = bRows.iterator();
+		Collection<UIComponent> bRows = table.getBodyRowGroups();
+		Iterator<UIComponent> brIter = bRows.iterator();
 		while (brIter.hasNext()) {
 			TableBodyRowGroup bRow = (TableBodyRowGroup) brIter.next();
 			row = addTableRows(sheet, bRow.getChildren(), row);
 		}
-		Collection fRows = table.createFooterRowGroup().getChildren();
+		Collection<UIComponent> fRows = table.createFooterRowGroup().getChildren();
 		row = addTableRows(sheet, fRows, row);
+
+		try {
+			if (bRows != null) {
+				UIComponent body = bRows.iterator().next();
+				if (body instanceof TableBodyRowGroup) {
+					TableBodyRowGroup tableBody = (TableBodyRowGroup) body;
+					TableRow bodyRow = tableBody.getRow(0);
+					if (bodyRow != null) {
+						Collection<UIComponent> cells = bodyRow.getCells();
+						if (cells != null) {
+							for (int i = 0; i < cells.size(); i++) {
+								sheet.autoSizeColumn(i);
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception e) {
+			Logger.getLogger(POIUtility.class.getName()).log(Level.WARNING, "Error auto sizing columns", e);
+		}
 
 		// Write the output to a file
 		FileOutputStream fileOut;
@@ -82,7 +99,7 @@ public class POIUtility {
 			fileOut = new FileOutputStream(fileName);
 			wb.write(fileOut);
 			fileOut.close();
-			
+
 			File file = new File(fileName);
 
 			return file;
@@ -90,13 +107,13 @@ public class POIUtility {
 		catch (FileNotFoundException e) {
 		}
 		catch (IOException e) {
-		} 
-		
+		}
+
 		return null;
 	}
 
-	private static int addTableRows(HSSFSheet sheet, Collection hRows, int startRow) {
-		Iterator rowsIter = hRows.iterator();
+	private static int addTableRows(HSSFSheet sheet, Collection<UIComponent> hRows, int startRow) {
+		Iterator<UIComponent> rowsIter = hRows.iterator();
 		Pattern sp = Pattern.compile(Text.NON_BREAKING_SPACE, Pattern.CASE_INSENSITIVE);
 		Pattern br = Pattern.compile(Text.BREAK, Pattern.CASE_INSENSITIVE);
 		Text obj = null;
@@ -105,8 +122,8 @@ public class POIUtility {
 			TableRow tRow = (TableRow) rowsIter.next();
 			HSSFRow row = sheet.createRow(startRow);
 			sheet.setRowSumsBelow(true);
-			Collection hCells = tRow.getCells();
-			Iterator hIter = hCells.iterator();
+			Collection<UIComponent> hCells = tRow.getCells();
+			Iterator<UIComponent> hIter = hCells.iterator();
 			int cellCounter = 0;
 			while (hIter.hasNext()) {
 				TableCell2 tCell = (TableCell2) hIter.next();
@@ -116,11 +133,11 @@ public class POIUtility {
 				if (obj != null) {
 					text = obj.toString();
 					if (text == null) {
-						text = "";
+						text = CoreConstants.EMPTY;
 					}
 					text = sp.matcher(text).replaceAll(" ");
 					text = br.matcher(text).replaceAll("\n");
-					row.createCell((short)cellCounter).setCellValue(text);
+					row.createCell(cellCounter).setCellValue(text);
 				}
 				cellCounter++;
 			}
@@ -128,37 +145,37 @@ public class POIUtility {
 		}
 		return startRow;
 	}
-	
+
 	public static File createFileFromTable(Table table, String fileName, String sheetName) {
 		int rows = table.getRows();
 		int cols = table.getColumns();
-		
+
 		HSSFWorkbook wb = new HSSFWorkbook();
 		HSSFSheet sheet = wb.createSheet(TextSoap.encodeToValidExcelSheetName(sheetName));
 
 		Text obj;
 		String text = null;
-		
+
 		Pattern sp = Pattern.compile(Text.NON_BREAKING_SPACE, Pattern.CASE_INSENSITIVE);
 		Pattern br = Pattern.compile(Text.BREAK, Pattern.CASE_INSENSITIVE);
-		
+
 		for (int x = 1; x <= rows; x++) { // has to start on 1, because getCellAt does (x-1, y-1)
 			HSSFRow row = sheet.createRow((x-1));
 			sheet.setRowSumsBelow(true);
 			for (int y = 1; y <= cols; y++) {// has to start on 1, because getCellAt does (x-1, y-1)
 				TableCell cell = table.getCellAt(y, x);
 				if (cell.getChildCount() > 1) {
-					List children = cell.getChildren();
-					Iterator it = children.iterator();
+					List<UIComponent> children = cell.getChildren();
+					Iterator<UIComponent> it = children.iterator();
 					boolean firstText = true;
-					StringBuffer buffer = new StringBuffer("");
+					StringBuffer buffer = new StringBuffer(CoreConstants.EMPTY);
 					while (it.hasNext()) {
 						Object element = it.next();
 						if (element.getClass() == Text.class) {
 							if (firstText) {
 								firstText = false;
 							} else {
-								buffer.append(", ");								
+								buffer.append(", ");
 							}
 							buffer.append(((Text)element).getText());
 						}
@@ -172,12 +189,12 @@ public class POIUtility {
 				}
 
 				if (text == null) {
-					text = "";
+					text = CoreConstants.EMPTY;
 				}
 
 				text = sp.matcher(text).replaceAll(" ");
 				text = br.matcher(text).replaceAll("\n");
-				row.createCell((short)(y-1)).setCellValue(text);
+				row.createCell((y-1)).setCellValue(text);
 			}
 		}
 		// Write the output to a file
@@ -186,7 +203,7 @@ public class POIUtility {
 			fileOut = new FileOutputStream(fileName);
 			wb.write(fileOut);
 			fileOut.close();
-			
+
 			File file = new File(fileName);
 
 			return file;
@@ -194,11 +211,11 @@ public class POIUtility {
 		catch (FileNotFoundException e) {
 		}
 		catch (IOException e) {
-		} 
-		
+		}
+
 		return null;
 	}
-	
+
 	public static ICFile createICFileFromTable(Table table, String fileName, String sheetName) {
 		try {
 			File file = createFileFromTable(table, fileName, sheetName);
@@ -216,7 +233,7 @@ public class POIUtility {
 		} catch (CreateException e) {
 			e.printStackTrace();
 		}
-		
+
 		return null;
 	}
 }
