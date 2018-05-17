@@ -1,9 +1,9 @@
 /*
  * $Id: PresentationObjectComponentList.java,v 1.8 2008/04/24 23:44:14 laddi Exp $ Created on
  * 14.11.2004
- * 
+ *
  * Copyright (C) 2004 Idega Software hf. All Rights Reserved.
- * 
+ *
  * This software is the proprietary information of Idega hf. Use is subject to
  * license terms.
  */
@@ -13,13 +13,16 @@ import java.io.Serializable;
 import java.util.AbstractList;
 import java.util.ArrayList;
 import java.util.List;
+
 import javax.faces.component.UIComponent;
+
+import com.idega.util.CoreConstants;
 
 /**
  * Overrided from JSFs standard Children because of the clone() issue.
- * 
+ *
  * Last modified: $Date: 2008/04/24 23:44:14 $ by $Author: laddi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson </a>
  * @version $Revision: 1.8 $
  */
@@ -97,10 +100,10 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 
 	private void checkValue(Object value) {
 		if (!(value instanceof UIComponent)) {
-			throw new ClassCastException("value is not a UIComponent");
+			throw new ClassCastException(value + (value == null ? CoreConstants.EMPTY : " (" + value.getClass().getName() + ")") + " is not a UIComponent");
 		}
 	}
-	
+
 	@Override
 	public Object clone(){
 		Object newObject = null;
@@ -117,8 +120,8 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 		}
 		return newObject;
 	}
-	
-	
+
+
 	/**
 	 * @return Returns the _component.
 	 */
@@ -130,5 +133,5 @@ class PresentationObjectComponentList extends AbstractList<UIComponent> implemen
 	 */
 	void setComponent(UIComponent _component) {
 		this._component = _component;
-	}	
+	}
 }
