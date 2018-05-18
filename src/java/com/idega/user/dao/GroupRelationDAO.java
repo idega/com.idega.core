@@ -53,4 +53,6 @@ public interface GroupRelationDAO extends GenericDao {
 
 	public List<GroupRelation> getGroupRelationsByInitiationDate(Timestamp initiationDateStart, Timestamp initiationDateEnd);
 
+	public List<GroupRelation> getTerminatedGroupRelationsByGroupIdsAndPeriod(List<Integer> groupIds, Date dateFrom, Date dateTo);
+
 }

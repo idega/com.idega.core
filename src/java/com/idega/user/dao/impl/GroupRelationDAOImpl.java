@@ -466,6 +466,29 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
+
+	@Override
+	public List<GroupRelation> getTerminatedGroupRelationsByGroupIdsAndPeriod(List<Integer> groupIds, Date dateFrom, Date dateTo) {
+		if (ListUtil.isEmpty(groupIds) || dateFrom == null || dateTo == null) {
+			getLogger().log(Level.WARNING, "Group ids or date from, or date to are empty.");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME,
+					GroupRelation.class,
+					new Param("groupsIds", groupIds),
+					new Param("dateFrom", dateFrom),
+					new Param("dateTo", dateTo)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting terminated group relations by group ids (" + groupIds + ") and period: " + dateFrom + " - " + dateTo, e);
+		}
+		return null;
+	}
+
+
 	@Override
 	public void onChange(GroupRelation gr) {
 		if (gr != null) {

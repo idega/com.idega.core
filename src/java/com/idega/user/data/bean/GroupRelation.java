@@ -91,6 +91,15 @@ import com.idega.util.expression.ELUtil;
 					"' OR gr.groupRelationType.type IS NULL) AND gr.status in (:statuses)"
 	),
 	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME,
+			query = "SELECT gr FROM GroupRelation gr WHERE gr.group.id in (:groupsIds) AND (" +
+				"(gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " +
+				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' or gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+				"AND gr.terminationDate IS NOT NULL AND gr.terminationDate >= :dateFrom AND gr.terminationDate < :dateTo) " +
+			") " +
+			" AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
 			name = GroupRelation.QUERY_FIND_BY_INITIATION_DATE,
 			query = "select gr from GroupRelation gr where (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING +
 					"') and gr.initiationDate >= :" + GroupRelation.PARAM_INITIATION_DATE_START + " and gr.initiationDate <= :" + GroupRelation.PARAM_INITIATION_DATE_END +
@@ -117,7 +126,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 								QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
 								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
 								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses",
-								QUERY_FIND_BY_INITIATION_DATE = "groupRelation.findByInitiationDate";
+								QUERY_FIND_BY_INITIATION_DATE = "groupRelation.findByInitiationDate",
+								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "groupRelation.findByGroupsIdsAndDeletedAtGivenTimeframe";
 
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
