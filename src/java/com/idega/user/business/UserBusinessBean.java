@@ -210,8 +210,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	}
 
 	private UserDAO getUserDAO() {
-		if (userDAO == null)
+		if (userDAO == null) {
 			ELUtil.getInstance().autowire(this);
+		}
 		return userDAO;
 	}
 
@@ -705,8 +706,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			} catch (Exception e) {
 				getLogger().log(Level.SEVERE, "Exception while creating user login for userLogin="+userLogin+", user="+newUser.getPrimaryKey(), e);
 			}
-		} else
+		} else {
 			throw new IllegalArgumentException("Tried to create login for user="+(newUser != null ? newUser.getPrimaryKey().toString() : null)+", but insufficient parameters provided: userLogin="+userLogin+", password="+password);
+		}
 	}
 
 	@Override
@@ -3805,7 +3807,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if ((sum % 11) == 0) {
 					validSSN = true;
 				} else {
-					LOGGER.warning(ssn + " is not a valid SSN. If fails validation test.");
+					LOGGER.warning(ssn + " is not a valid SSN. It fails validation test.");
 				}
 			} catch (NumberFormatException e) {
 				LOGGER.warning(ssn + " is not a valid SSN. It contains characters other than digits.");
@@ -4652,8 +4654,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		int homePageId = -1;
 		for (com.idega.user.data.bean.Group userGroup : userGroups) {
 			com.idega.core.builder.data.bean.ICPage homePage = userGroup.getHomePage();
-			if (homePage == null)
+			if (homePage == null) {
 				continue;
+			}
 
 			homePageId = homePage.getID();
 			if (homePageId > 0) {
