@@ -1,8 +1,12 @@
 package com.idega.user.data;
 
+import java.sql.Connection;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -24,6 +28,7 @@ import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -876,5 +881,57 @@ public void removeBy(User currentUser) throws RemoveException{
 
 
 	}
+
+	public void ejbUpdateTerminationDate(List<Integer> groupRelationIds, Date newDate) throws SQLException {
+		Connection conn = null;
+		Statement Stmt = null;
+		try {
+			if (!ListUtil.isEmpty(groupRelationIds) && newDate != null) {
+				conn = this.getConnection();
+				Stmt = conn.createStatement();
+
+				//Create the group relations IN string
+				String groupRelationIdsStr = CoreConstants.EMPTY;
+				for (Integer grId: groupRelationIds) {
+					if (!StringUtil.isEmpty(groupRelationIdsStr)) {
+						groupRelationIdsStr += CoreConstants.COMMA;
+					}
+					groupRelationIdsStr += grId;
+				}
+				//Create the date string
+				String newDateStr = CoreConstants.EMPTY;
+				IWTimestamp iwTimestamp = new IWTimestamp(newDate);
+				newDateStr += iwTimestamp.getYear();
+				newDateStr += CoreConstants.MINUS;
+				newDateStr += iwTimestamp.getMonth();
+				newDateStr += CoreConstants.MINUS;
+				newDateStr += iwTimestamp.getDay();
+				newDateStr += CoreConstants.SPACE;
+				newDateStr += iwTimestamp.getHour();
+				newDateStr += CoreConstants.COLON;
+				if (iwTimestamp.getMinute() < 10) {
+					newDateStr += "0";
+				}
+				newDateStr += iwTimestamp.getMinute();
+				newDateStr += CoreConstants.COLON;
+				if (iwTimestamp.getSecond() < 10) {
+					newDateStr += "0";
+				}
+				newDateStr += iwTimestamp.getSecond();
+
+
+				Stmt.executeUpdate("UPDATE ic_group_relation SET termination_date = '" + newDateStr + "', term_modification_date = '" + newDateStr + "' WHERE ic_group_relation_id IN (" + groupRelationIdsStr + ")");
+			}
+		}
+		finally {
+			if (Stmt != null) {
+				Stmt.close();
+			}
+			if (conn != null) {
+				freeConnection(conn);
+			}
+		}
+	}
+
 
 }

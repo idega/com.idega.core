@@ -1,7 +1,10 @@
 package com.idega.user.data;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -273,11 +276,17 @@ public java.util.Collection findAllDuplicatedAliases() throws javax.ejb.FinderEx
 	   		try {
 				return this.getEntityCollectionForPrimaryKeys(ids);
 			} catch (FinderException e) {
-				Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+				Logger.getLogger(getClass().getName()).log(Level.WARNING,
 						"Failed to get entities by primary keys: " + ids);
 			}
 	   	}
 
 	   	return Collections.emptyList();
+	}
+
+	@Override
+	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate) throws SQLException {
+		GroupRelationBMPBean entity = (GroupRelationBMPBean) this.idoCheckOutPooledEntity();
+	   	((GroupRelationBMPBean)entity).ejbUpdateTerminationDate(groupRelationIds, newDate);
 	}
 }

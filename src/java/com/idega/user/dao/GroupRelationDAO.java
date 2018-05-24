@@ -55,4 +55,5 @@ public interface GroupRelationDAO extends GenericDao {
 
 	public List<GroupRelation> getTerminatedGroupRelationsByGroupIdsAndPeriod(List<Integer> groupIds, Date dateFrom, Date dateTo);
 
+	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate);
 }

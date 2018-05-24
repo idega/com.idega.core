@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -495,6 +497,26 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			gr.onChange();
 		}
 
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate) {
+		if (newDate == null || ListUtil.isEmpty(groupRelationIds)) {
+			getLogger().warning("Data or group relation ids are not provided");
+			return;
+		}
+
+		try {
+				Query q = getEntityManager().createNativeQuery(
+						"UPDATE ic_group_relation SET termination_date = ?, term_modification_date = ? WHERE ic_group_relation_id IN (?)");
+				q.setParameter(1, newDate);
+				q.setParameter(2, newDate);
+				q.setParameter(3, groupRelationIds);
+				q.executeUpdate();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not update group relations with a new termination date: " + newDate, e);
+		}
 	}
 
 }

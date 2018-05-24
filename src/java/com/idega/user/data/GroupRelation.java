@@ -16,7 +16,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public final static String STATUS_ACTIVE_PENDING="ACT_PEND";
 
 
-	
+
  public com.idega.user.data.Group getGroup();
  public int getGroupID();
  public java.sql.Timestamp getInitiationDate();
@@ -59,4 +59,4 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public void setCreatedBy(User user);
  public int getCreatedById();
  public User getCreatedBy();
-}
+ }
