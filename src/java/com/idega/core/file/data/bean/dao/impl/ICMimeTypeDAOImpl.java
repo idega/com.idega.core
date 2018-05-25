@@ -106,6 +106,19 @@ public class ICMimeTypeDAOImpl extends GenericDaoImpl implements ICMimeTypeDAO {
 
 	/*
 	 * (non-Javadoc)
+	 * @see com.idega.core.file.data.bean.dao.ICMimeTypeDAO#getByType(java.lang.String)
+	 */
+	@Override
+	public ICMimeType getByType(String type) {
+		if (StringUtil.isEmpty(type)) {
+			return null;
+		}
+		
+		return find(ICMimeType.class, type);
+	}
+	
+	/*
+	 * (non-Javadoc)
 	 * @see com.idega.core.file.data.bean.dao.ICMimeTypeDAO#update(com.idega.core.file.data.bean.ICMimeType)
 	 */
 	@Override
