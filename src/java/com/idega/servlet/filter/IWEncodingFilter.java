@@ -177,7 +177,6 @@ public class IWEncodingFilter implements Filter {
 						}
 
 						requestURI = requestURI.replaceFirst(CoreConstants.PAGES_URI_PREFIX, CoreConstants.SLASH.concat(CoreConstants.HASH));
-						LOGGER.info("Redirecting to " + requestURI);
 						response.sendRedirect(requestURI);
 					}
 				}
