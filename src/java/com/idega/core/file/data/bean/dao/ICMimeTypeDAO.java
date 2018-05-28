@@ -96,6 +96,14 @@ public interface ICMimeTypeDAO {
 
 	/**
 	 * 
+	 * <p>Finds entity</p>
+	 * @param type, not <code>null</code>
+	 * @return entity or <code>null</code> on failure;
+	 */
+	ICMimeType getByType(String type);
+	
+	/**
+	 * 
 	 * <p>Updates or creates entity</p>
 	 * @param type to update/create, not <code>null</code>
 	 * @return entity or <code>null</code> on failure;
