@@ -1,8 +1,10 @@
 
 package com.idega.user.data;
 
+import java.sql.SQLException;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -289,5 +291,11 @@ public java.util.Collection findGroupRelationsByRelatedGroupTypeAndRelatedGroupI
 	   	}
 
 	   	return Collections.emptyList();
+	}
+
+	@Override
+	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate) throws SQLException {
+		GroupRelationBMPBean entity = (GroupRelationBMPBean) this.idoCheckOutPooledEntity();
+	   	entity.ejbUpdateTerminationDate(groupRelationIds, newDate);
 	}
 }

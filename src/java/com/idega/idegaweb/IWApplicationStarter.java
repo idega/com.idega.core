@@ -30,36 +30,37 @@ import com.idega.repository.data.RefactorClassRegistry;
 
 /**
  * <p>
- * This class is the ServletContextListener registered in web.xml and 
+ * This class is the ServletContextListener registered in web.xml and
  * is the trigger of the start of the idegaWeb application. Actually
  * this class calls IWMainApplicationStarter for starting up.
  * </p>
  * Copyright: Copyright (c) 2004-2005 idega software<br/>
  * Last modified: $Date: 2009/01/19 13:11:53 $ by $Author: anton $
- *  
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.7 $
  */
 public class IWApplicationStarter implements ServletContextListener {
 
 	private IWMainApplicationStarter starter;
-	
+
 	/**
 	 * initialize jsf environment
 	 */
+	@Override
 	public void contextInitialized(ServletContextEvent event) {
 		Logger.getLogger(this.getClass().getName()).info("IWApplicationStarter.contextInitialized");
 		//getDefaultLifecycle().addPhaseListener(new IWPhaseListener());
 		ServletContext sContext = event.getServletContext();
 		//installViewHandler(sContext);
 		this.starter = new IWMainApplicationStarter(sContext);
-		
+
 	}
-	
+
 	protected Lifecycle getDefaultLifecycle(){
 		return getLifecycleFactory().getLifecycle(LifecycleFactory.DEFAULT_LIFECYCLE);
 	}
-	
+
 	protected LifecycleFactory getLifecycleFactory(){
 		return (LifecycleFactory)FactoryFinder.getFactory(FactoryFinder.LIFECYCLE_FACTORY);
 	}
@@ -67,13 +68,18 @@ public class IWApplicationStarter implements ServletContextListener {
 	/**
 	 * @see javax.servlet.ServletContextListener#contextDestroyed(javax.servlet.ServletContextEvent)
 	 */
+	@Override
 	public void contextDestroyed(ServletContextEvent arg0) {
+		if (this.starter == null) {
+			return;
+		}
+
 		this.starter.shutdown();
 		this.starter=null;
 	}
-	
+
 	public static void installViewHandler(ServletContext context) {
-		
+
 		ApplicationFactory factory = (ApplicationFactory) FactoryFinder.getFactory(FactoryFinder.APPLICATION_FACTORY);
 		Application app = factory.getApplication();
 		ViewHandler origViewHandler = app.getViewHandler();
@@ -84,7 +90,7 @@ public class IWApplicationStarter implements ServletContextListener {
 			Constructor cs = css[1];
 			Object[] args = {origViewHandler};
 			iwViewHandler = (ViewHandler)cs.newInstance(args);
-			
+
 		} catch (InstantiationException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -101,7 +107,7 @@ public class IWApplicationStarter implements ServletContextListener {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-		app.setViewHandler(iwViewHandler);		
+		app.setViewHandler(iwViewHandler);
 	}
 
 }

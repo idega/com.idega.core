@@ -2,6 +2,9 @@ package com.idega.servlet.filter;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 import java.util.logging.Logger;
 import java.util.zip.GZIPOutputStream;
 
@@ -20,11 +23,15 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.ui.IFrame;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IOUtil;
+import com.idega.util.ListUtil;
 import com.idega.util.RequestUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.URIUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
 import net.sf.ehcache.constructs.web.GenericResponseWrapper;
@@ -141,6 +148,40 @@ public class IWEncodingFilter implements Filter {
 		}
 
 		doDetectMobileBrowser(request);
+
+		String stayAtePlatform = request.getParameter("stay_at_eplatform");
+		if (StringUtil.isEmpty(stayAtePlatform) && requestURI.startsWith(CoreConstants.PAGES_URI_PREFIX)) {
+			IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+			String stayAtEPlatformPagesProp = settings.getProperty("iw_stay_at_ePlatform");
+			if (!StringUtil.isEmpty(stayAtEPlatformPagesProp)) {
+				List<String> stayAtEPlatformPages = Arrays.asList(stayAtEPlatformPagesProp.split(CoreConstants.COMMA));
+				if (!ListUtil.isEmpty(stayAtEPlatformPages)) {
+					boolean stay = false;
+					for (String stayAtEPlatformPage: stayAtEPlatformPages) {
+						if (requestURI.startsWith(stayAtEPlatformPage)) {
+							stay = true;
+						}
+					}
+
+					if (!stay) {
+						Map<String, String[]> parameters = request.getParameterMap();
+						if (!MapUtil.isEmpty(parameters)) {
+							URIUtil uriUtil = new URIUtil(requestURI);
+							for (String paramKey: parameters.keySet()) {
+								String[] paramValues = request.getParameterValues(paramKey);
+								if (!ArrayUtil.isEmpty(paramValues)) {
+									uriUtil.setParameter(paramKey, paramValues[0]);
+								}
+							}
+							requestURI = uriUtil.getUri();
+						}
+
+						requestURI = requestURI.replaceFirst(CoreConstants.PAGES_URI_PREFIX, CoreConstants.SLASH.concat(CoreConstants.HASH));
+						response.sendRedirect(requestURI);
+					}
+				}
+			}
+		}
 
 		chain.doFilter(request, response);
 

@@ -6,6 +6,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.logging.Level;
 
+import javax.persistence.Query;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -466,12 +468,55 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		return null;
 	}
 
+
+	@Override
+	public List<GroupRelation> getTerminatedGroupRelationsByGroupIdsAndPeriod(List<Integer> groupIds, Date dateFrom, Date dateTo) {
+		if (ListUtil.isEmpty(groupIds) || dateFrom == null || dateTo == null) {
+			getLogger().log(Level.WARNING, "Group ids or date from, or date to are empty.");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME,
+					GroupRelation.class,
+					new Param("groupsIds", groupIds),
+					new Param("dateFrom", dateFrom),
+					new Param("dateTo", dateTo)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting terminated group relations by group ids (" + groupIds + ") and period: " + dateFrom + " - " + dateTo, e);
+		}
+		return null;
+	}
+
+
 	@Override
 	public void onChange(GroupRelation gr) {
 		if (gr != null) {
 			gr.onChange();
 		}
 
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate) {
+		if (newDate == null || ListUtil.isEmpty(groupRelationIds)) {
+			getLogger().warning("Data or group relation ids are not provided");
+			return;
+		}
+
+		try {
+				Query q = getEntityManager().createNativeQuery(
+						"UPDATE ic_group_relation SET termination_date = ?, term_modification_date = ? WHERE ic_group_relation_id IN (?)");
+				q.setParameter(1, newDate);
+				q.setParameter(2, newDate);
+				q.setParameter(3, groupRelationIds);
+				q.executeUpdate();
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not update group relations with a new termination date: " + newDate, e);
+		}
 	}
 
 }
