@@ -1401,7 +1401,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 			removeLoginSession(session);
 		}
-		session.invalidate();
+		if (session != null) {
+			session.invalidate();
+		}
 	}
 
 	/**
