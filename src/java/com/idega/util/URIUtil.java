@@ -90,14 +90,18 @@ public class URIUtil {
 			throw new RuntimeException(e);
 		}
 
-		String query;
+		String query = null;
 
-		try {
-			query = new URI(uri).getRawQuery();
+		if (uri.contains(CoreConstants.HASH) && uri.contains(CoreConstants.QMARK)) {
+			query = uri.substring(uri.indexOf(CoreConstants.QMARK) + 1);
+		} else {
+			try {
+				query = new URI(uri).getRawQuery();
 
-		} catch (URISyntaxException e) {
-			Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
-			return;
+			} catch (URISyntaxException e) {
+				Logger.getLogger(this.getClass().getName()).log(Level.SEVERE, e.getMessage());
+				return;
+			}
 		}
 
 		if(query == null)
