@@ -28,7 +28,7 @@ public interface ICObjectInstanceHome extends IDOHome {
 
 	public ICObjectInstance findByUniqueId(String uuid) throws FinderException;
 
-	public Collection findByPageKey(String pageKey) throws FinderException;
+	public Collection<ICObjectInstance> findByPageKey(String pageKey) throws FinderException;
 
 	public int getCountByICObject(ICObject ico) throws IDOException;
 
