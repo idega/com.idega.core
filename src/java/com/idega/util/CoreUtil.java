@@ -1,7 +1,9 @@
 package com.idega.util;
 
+import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStreamReader;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.io.Writer;
@@ -779,6 +781,21 @@ public class CoreUtil {
 		}
 		buf.append(CoreConstants.SLASH);
 		return buf.toString();
+	}
+	
+	public static String executeCommand(String command) throws Exception {
+		StringBuffer output = new StringBuffer();
+		
+		Process process = Runtime.getRuntime().exec(command);
+		process.waitFor();
+		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
+		
+		String line = CoreConstants.EMPTY;
+		while ((line = reader.readLine()) != null) {
+			output.append(line + CoreConstants.NEWLINE);
+		}
+		
+		return output.toString();
 	}
 
 }
