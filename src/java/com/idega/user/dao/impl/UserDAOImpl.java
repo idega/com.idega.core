@@ -354,6 +354,18 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		return Collections.emptyList();
 	}
 
+	@Override
+	public List<User> findByPersonalIds(Collection<String> personalIds) {
+		if (!ListUtil.isEmpty(personalIds)) {
+			return getResultListByInlineQuery(
+					"FROM " + User.class.getName() + " u "
+							+ "WHERE u.personalID IN (:personalIds)" ,
+							User.class, new Param("personalIds", personalIds));
+		}
+
+		return Collections.emptyList();
+	}
+
 	private String getLikeExpression(String value) {
 		if (StringUtil.isEmpty(value)) {
 			return value;
