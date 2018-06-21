@@ -19,6 +19,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.IOUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 
 
 /**
@@ -94,8 +95,9 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 				pathWithinBundle = pathWithinBundle.substring(1);
 				entry = jarModule.getJarEntry(pathWithinBundle);
 			}
-			if (entry == null)
+			if (entry == null) {
 				throw new FileNotFoundException("File not found inside jar module " + jarModule.getModuleIdentifier() + ": " + pathWithinBundle);
+			}
 		}
 		InputStream inStream = jarModule.getInputStream(entry);
 		return inStream;
@@ -108,7 +110,16 @@ public class JarLoadedIWBundle extends DefaultIWBundle {
 	 */
 	@Override
 	public long getResourceTime(String pathWithinBundle) {
-		JarEntry entry = jarModule == null ? null : jarModule.getJarEntry(pathWithinBundle);
+		if (jarModule == null) {
+			LOGGER.warning("Uknown JAR module for path within bundle: " + pathWithinBundle);
+			return 0;
+		}
+		if (StringUtil.isEmpty(pathWithinBundle)) {
+			LOGGER.warning("Unknown path within bundle " + jarModule);
+			return 0;
+		}
+
+		JarEntry entry = jarModule.getJarEntry(pathWithinBundle);
 		return (entry != null ? entry.getTime() : 0);
 	}
 

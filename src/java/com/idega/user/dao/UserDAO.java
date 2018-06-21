@@ -121,4 +121,6 @@ public interface UserDAO extends GenericDao {
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	User update(Integer id, String personalId, String eMail, String name, String gender);
+
+	public List<User> findByPersonalIds(Collection<String> personalIds);
 }
