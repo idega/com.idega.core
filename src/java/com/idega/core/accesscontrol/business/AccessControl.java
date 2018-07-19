@@ -743,6 +743,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				}
 
 				parent = dbUtil.lazyLoad(parent);
+				if (parent == null) {
+					continue;
+				}
+
 				Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
 				if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
 					groupsToCheckForPermissions.add(permissionControllingParentGroup);
