@@ -1750,6 +1750,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		Connection conn = null;
 		PreparedStatement Stmt = null;
 		ResultSet RS = null;
+		String sql = null;
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			conn = getConnection(getDatasource());
 			// Stmt = conn.createStatement();
@@ -1770,7 +1773,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			// dsi.appendPrimaryKeyWhereClause(this,buffer);
 			IDOEntityField[] fields = getEntityDefinition().getPrimaryKeyDefinition().getFields();
 			dsi.appendPrimaryKeyWhereClauseWithQuestionMarks(fields, buffer);
-			String sql = buffer.toString();
+			sql = buffer.toString();
 			logSQL(sql);
 			Stmt = conn.prepareStatement(sql);
 			dsi.setForPreparedStatementPrimaryKeyQuestionValues(this, fields, Stmt, 1);
@@ -1793,6 +1796,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
 			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sql);
+			}
 		}
 		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
@@ -1806,6 +1813,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		setPrimaryKey(id);
 		Connection conn = null;
 		Statement Stmt = null;
+		String sql = null;
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
@@ -1822,7 +1832,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			buffer.append(getIDColumnName());
 			buffer.append("=");
 			buffer.append(id);
-			ResultSet RS = Stmt.executeQuery(buffer.toString());
+			sql = buffer.toString();
+			ResultSet RS = Stmt.executeQuery(sql);
 			// ResultSet RS = Stmt.executeQuery("select * from "+getTableName()+"
 			// where "+getIDColumnName()+"="+id);
 			// eiki added null check
@@ -1840,6 +1851,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
+			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sql);
 			}
 		}
 		setEntityState(IDOLegacyEntity.STATE_IN_SYNCH_WITH_DATASTORE);
@@ -2101,7 +2116,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		 * tableToSelectFrom = entity.getEntityName() + this.getEntityName(); } else {
 		 * tableToSelectFrom = entity.getEntityName() + "_" + this.getEntityName(); }
 		 */
-
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
@@ -2125,6 +2141,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
+			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), SQLString);
 			}
 		}
 
@@ -2191,6 +2211,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		 * tableToSelectFrom = entity.getEntityName() + this.getEntityName(); } else {
 		 * tableToSelectFrom = entity.getEntityName() + "_" + this.getEntityName(); }
 		 */
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
@@ -2214,6 +2236,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
+			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), SQLString);
 			}
 		}
 		if (length > 0) {
@@ -2641,6 +2667,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		Statement stmt = null;
 		ResultSet rs = null;
 		Date date = null;
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			conn = getConnection(this.getDatasource());
 			stmt = conn.createStatement();
@@ -2664,11 +2692,18 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
 			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), dateSQLString);
+			}
 		}
 		return date;
 	}
 
 	public double getDoubleTableValue(String sqlString) throws SQLException {
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+
 		Connection conn = null;
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -2695,6 +2730,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
+			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sqlString);
 			}
 		}
 		return value;
@@ -2744,17 +2783,26 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		 * enum.nextElement(); vector.addElement(new
 		 * IDOLegacyEntity(tempInt.intValue())); }
 		 */
-		this.logSQL(SQLString);
-		List list = EntityFinder.findAll((IDOLegacyEntity) this, SQLString, returningNumberOfRecords);
-		if (list != null) {
-			return (IDOLegacyEntity[]) list.toArray((Object[]) Array.newInstance(this.getClass(), 0));
-			// return vector.toArray(new IDOLegacyEntity[0]);
-		}
-		else {
-			// Provided for backwards compatability where there was almost never
-			// returned null if
-			// there was nothing found
-			return (IDOLegacyEntity[]) Array.newInstance(this.getClass(), 0);
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+
+		try {
+			this.logSQL(SQLString);
+			List list = EntityFinder.findAll((IDOLegacyEntity) this, SQLString, returningNumberOfRecords);
+			if (list != null) {
+				return (IDOLegacyEntity[]) list.toArray((Object[]) Array.newInstance(this.getClass(), 0));
+				// return vector.toArray(new IDOLegacyEntity[0]);
+			}
+			else {
+				// Provided for backwards compatability where there was almost never
+				// returned null if
+				// there was nothing found
+				return (IDOLegacyEntity[]) Array.newInstance(this.getClass(), 0);
+			}
+		} finally {
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), SQLString);
+			}
 		}
 	}
 
@@ -3516,6 +3564,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			return;
 		}
 		else {
+			boolean measure = CoreUtil.isSQLMeasurementOn();
+			long start = measure ? System.currentTimeMillis() : 0;
+			String query = null;
 			// look for the metadata
 			Connection conn = null;
 			Statement Stmt = null;
@@ -3547,7 +3598,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				// buffer.append(" order by ");
 				// buffer.append(metadataTableName);
 				// buffer.append(".order_number");
-				String query = buffer.toString();
+				query = buffer.toString();
 				this.logSQL("[MetadataQuery]: " + query);
 				RS = Stmt.executeQuery(query);
 				while (RS.next()) {
@@ -3589,6 +3640,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				}
 				if (conn != null) {
 					freeConnection(getDatasource(), conn);
+				}
+
+				if (measure) {
+					CoreUtil.doDebugSQL(start, System.currentTimeMillis(), query);
 				}
 			}
 		}
@@ -4337,20 +4392,28 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	private ResultHelper prepareResultSet(Connection conn, String sqlString, SelectQuery query) throws SQLException {
 		ResultHelper rsh = new ResultHelper();
 		if (conn != null) {
-			if (query != null) {
-				DatastoreInterface dsi = DatastoreInterface.getDatastoreInterfaceByDatasource(getDatasource());
-				List values = query.getValues();
-				if (values != null && dsi.isUsingPreparedStatements()) {
-					rsh.stmt = conn.prepareStatement(query.toString(true));
-					dsi.insertIntoPreparedStatement(values, (PreparedStatement) rsh.stmt, 1);
-					rsh.rs = ((PreparedStatement) rsh.stmt).executeQuery();
-				} else {
+			boolean measure = CoreUtil.isSQLMeasurementOn();
+			long start = measure ? System.currentTimeMillis() : 0;
+			try {
+				if (query != null) {
+					DatastoreInterface dsi = DatastoreInterface.getDatastoreInterfaceByDatasource(getDatasource());
+					List values = query.getValues();
+					if (values != null && dsi.isUsingPreparedStatements()) {
+						rsh.stmt = conn.prepareStatement(query.toString(true));
+						dsi.insertIntoPreparedStatement(values, (PreparedStatement) rsh.stmt, 1);
+						rsh.rs = ((PreparedStatement) rsh.stmt).executeQuery();
+					} else {
+						rsh.stmt = conn.createStatement();
+						rsh.rs = rsh.stmt.executeQuery(query.toString());
+					}
+				} else if (sqlString != null) {
 					rsh.stmt = conn.createStatement();
-					rsh.rs = rsh.stmt.executeQuery(query.toString());
+					rsh.rs = rsh.stmt.executeQuery(sqlString);
 				}
-			} else if (sqlString != null) {
-				rsh.stmt = conn.createStatement();
-				rsh.rs = rsh.stmt.executeQuery(sqlString);
+			} finally {
+				if (measure) {
+					CoreUtil.doDebugSQL(start, System.currentTimeMillis(), query != null ? query.toString() : sqlString);
+				}
 			}
 		}
 		return rsh;
@@ -4489,6 +4552,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		Connection conn = null;
 		Statement Stmt = null;
 		Collection results = new ArrayList();
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
 		try {
 			conn = getConnection(getDatasource());
 			Stmt = conn.createStatement();
@@ -4512,6 +4577,10 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 			if (conn != null) {
 				freeConnection(getDatasource(), conn);
+			}
+
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), sqlQuery);
 			}
 		}
 		return results;

@@ -422,11 +422,18 @@ public <T extends IDOEntity> Collection<T> getEntityCollectionForPrimaryKeys(Col
 			throw new IllegalArgumentException("Query must be provided!");
 		}
 
+		boolean measure = CoreUtil.isSQLMeasurementOn();
+		long start = measure ? System.currentTimeMillis() : 0;
+
 		String[] primaryKeys = null;
 		try {
 			primaryKeys = SimpleQuerier.executeStringQuery(query.toString());
 		} catch (Exception e) {
 			getLog().log(Level.WARNING, "Failed to get primary keys by query: " + query.toString());
+		} finally {
+			if (measure) {
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), query);
+			}
 		}
 
 		if (!ArrayUtil.isEmpty(primaryKeys)) {
