@@ -1006,4 +1006,33 @@ public interface UserBusiness extends IBOService {
 
 	public List<List<Integer>> getHomePageIds(User user);
 
+	/**
+	 * <p>Updates or creates new user with login</p>
+	 * @param primaryKey is {@link User#getPrimaryKey()}
+	 * @param uuid is {@link User#getUniqueId()}
+	 * @param name is {@link User#getName()}
+	 * @param firstName is {@link User#getFirstName()}
+	 * @param middleName is {@link User#getMiddleName()}
+	 * @param lastName is {@link User#getLastName()}
+	 * @param displayName is {@link User#getDisplayName()}
+	 * @param personalId is {@link User#getPersonalID()}
+	 * @param email is {@link User#getUsersEmail()}
+	 * @param phone is {@link User#getUsersHomePhone()}
+	 * @param userName is {@link LoginTable#getUserLogin()}
+	 * @param password is {@link LoginTable#getUserPassword()}
+	 * @return entity or <code>null</code> on failure
+	 */
+	User update(
+			String primaryKey, 
+			String uuid, 
+			String name, 
+			String firstName, 
+			String middleName, 
+			String lastName,
+			String displayName, 
+			String personalId, 
+			String email, 
+			String phone, 
+			String userName, 
+			String password);
 }

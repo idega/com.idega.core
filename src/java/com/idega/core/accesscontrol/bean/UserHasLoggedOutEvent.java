@@ -11,7 +11,7 @@ public class UserHasLoggedOutEvent extends ApplicationEvent {
 	private String loginType;
 
 	public UserHasLoggedOutEvent(Integer userId, String loginType) {
-		super(userId);
+		super(userId == null ? loginType : userId);
 
 		this.userId = userId;
 		this.loginType = loginType;

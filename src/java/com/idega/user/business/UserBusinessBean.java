@@ -5081,12 +5081,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return user;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.idega.user.business.UserBusiness#update(java.lang.String, java.lang.String, java.lang.String)
-	 */
 	@Override
-	public User update(String primaryKey, String name, String email, String phone) {
+	public User update(
+			String primaryKey,
+			String uuid,
+			String name,
+			String firstName,
+			String middleName,
+			String lastName,
+			String displayName,
+			String personalId,
+			String email,
+			String phone,
+			String userName,
+			String password) {
 		User user = null;
 		if (!StringUtil.isEmpty(primaryKey)) {
 			/* Searching for existing one by primary key */
@@ -5097,6 +5105,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						"Failed to get " + User.class.getName() +
 						" by primary key: " + primaryKey);
 			}
+		} else if (!StringUtil.isEmpty(uuid)) {
+			try {
+				user = getUserHome().findUserByUniqueId(uuid);
+			} catch (FinderException e) {}
 		} else {
 			/* Searching for existing one by email and name */
 			Collection<User> users = getUserHome().findAllByNameAndEmail(
@@ -5116,6 +5128,26 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		if (user == null) {
 			return null;
+		}
+
+		if (!StringUtil.isEmpty(firstName)) {
+			user.setFirstName(firstName);
+		}
+
+		if (!StringUtil.isEmpty(middleName)) {
+			user.setMiddleName(middleName);
+		}
+
+		if (!StringUtil.isEmpty(lastName)) {
+			user.setLastName(lastName);
+		}
+
+		if (!StringUtil.isEmpty(displayName)) {
+			user.setDisplayName(displayName);
+		}
+
+		if (!StringUtil.isEmpty(personalId)) {
+			user.setPersonalID(personalId);
 		}
 
 		/* Storing user... */
@@ -5143,10 +5175,43 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 
+		/*
+		 * Updating login info
+		 */
+		LoginTable table = getLoginTableForUser(user);
+		if (table != null) {
+			if (!StringUtil.isEmpty(userName)) {
+				table.setUserLogin(userName);
+			}
+
+			if (!StringUtil.isEmpty(password)) {
+				table.setUserPassword(Encrypter.encryptOneWay(password), password);
+			}
+
+			table.setLastChanged(new Timestamp(System.currentTimeMillis()));
+
+			try {
+				table.store();
+			} catch (IDOStoreException e) {
+				getLogger().log(Level.WARNING,
+						"Failed to store user cause of: ", e);
+				return null;
+			}
+		}
+
 		getLogger().info(User.class.getName() +
 				" by primary key: " + user.getPrimaryKey().toString() +
 				" successfully updated!");
 		return user;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#update(java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public User update(String primaryKey, String name, String email, String phone) {
+		return update(primaryKey, null, name, null, null, null, null, null, email, phone, null, null);
 	}
 
 	protected boolean sendEmail(
