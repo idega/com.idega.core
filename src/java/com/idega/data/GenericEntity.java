@@ -4612,7 +4612,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		catch (Exception e) {
 			throw new IDOFinderException(e);
 		}
-		throw new IDOFinderException("Nothing found");
+		throw new IDOFinderException("Nothing found by query '".concat((selectQuery != null ? selectQuery.toString(): sqlQuery)).concat("'"));
 	}
 
 	/**

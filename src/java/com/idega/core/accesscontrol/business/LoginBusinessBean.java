@@ -25,6 +25,7 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 import javax.servlet.ServletContext;
+import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
@@ -65,6 +66,7 @@ import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
@@ -406,14 +408,45 @@ public class LoginBusinessBean implements IWPageEventListener {
 	/**
 	 * @return True if logOut was succesful, false if it failed
 	 */
-	protected boolean logOutUser(HttpServletRequest request, String userName) {
+	protected boolean logOutUser(HttpServletRequest request, HttpServletResponse response, String userName) {
 		try {
 			logOut(request, userName);
 			internalSetState(request, LoginState.LOGGED_OUT);
 			return true;
-		}
-		catch (Exception e) {
+		} catch (Exception e) {
 			return false;
+		} finally {
+			doClearCookies(request, response);
+		}
+	}
+
+	private void doClearCookies(HttpServletRequest request, HttpServletResponse response) {
+		if (request == null) {
+			return;
+		}
+		if (response == null) {
+			try {
+				RequestResponseProvider rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+				response = rrProvider == null ? null : rrProvider.getResponse();
+			} catch (Exception e) {}
+		}
+
+		Cookie[] cookies = request.getCookies();
+		if (ArrayUtil.isEmpty(cookies)) {
+			return;
+		}
+
+		String cookieToSkip = "currentLocale";
+		for (Cookie cookie: cookies) {
+			String name = cookie.getName();
+			if (!StringUtil.isEmpty(name) && !name.equals(cookieToSkip)) {
+				cookie.setValue(CoreConstants.EMPTY);
+				cookie.setPath(CoreConstants.SLASH);
+				cookie.setMaxAge(0);
+				if (response != null) {
+					response.addCookie(cookie);
+				}
+			}
 		}
 	}
 
@@ -424,7 +457,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoggedOnInfo loggedOnInfo = getLoggedOnInfo(iwc);
 		User user = loggedOnInfo == null ? null : loggedOnInfo.getUser();
 		String loginTypeFromInfo = loggedOnInfo == null ? null : loggedOnInfo.getLoginType();
-		if (logOutUser(iwc.getRequest(), loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin())) {
+		if (logOutUser(iwc.getRequest(), iwc.getResponse(), loggedOnInfo == null ? CoreConstants.EMPTY : loggedOnInfo.getLogin())) {
 			if (user != null) {
 				String type = loginType == null ? null : loginType.toString();
 				type = StringUtil.isEmpty(type) ? loginTypeFromInfo : type;
@@ -467,7 +500,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 	// protected void onLoginFailed(IWContext iwc, int loginState, String
 	// username) {
 	protected void onLoginFailed(HttpServletRequest request, LoginState loginState, String username) {
-		logOutUser(request, username);
+		IWContext iwc = CoreUtil.getIWContext();
+		logOutUser(request, iwc == null ? null : iwc.getResponse(), username);
 		internalSetState(request, loginState);
 		try {
 			LoginBusinessBean.getLoginSessionBean().setUserLoginName(username);
@@ -613,7 +647,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 						onLoginSuccessful(request, login == null ? null : login.getUserLogin(), login == null ? null : login.getUserPassword());
 					}
 					else {
-						logOutUser(request, info.getLogin());
+						IWContext iwc = CoreUtil.getIWContext();
+						logOutUser(request, iwc == null ? null : iwc.getResponse(), info.getLogin());
 					}
 				}
 
