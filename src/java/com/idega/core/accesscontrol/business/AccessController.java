@@ -65,6 +65,8 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 	public static final String PERMISSION_KEY_PERMIT = "permit";
 	public static final String PERMISSION_KEY_ROLE = "role_permission";
 
+	public static final String PERMISSION_TEMP_ROLES = "iw_temp_roles";
+
 	public static final int CATEGORY_OBJECT_INSTANCE = 0;
 	public static final int CATEGORY_OBJECT = 1;
 	public static final int CATEGORY_BUNDLE = 2;

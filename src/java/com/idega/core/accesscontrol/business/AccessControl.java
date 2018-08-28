@@ -59,10 +59,12 @@ import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWServiceNotStartedException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.GroupBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
@@ -2152,22 +2154,29 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    	return ListUtil.getEmptyList();
 	    }
 
+	    DBUtil dbUtil = DBUtil.getInstance();
 	    Collection<Group> permGroups = new ArrayList<Group>();
 	    for (Group group : groups) {
+	    	if (group == null) {
+	    		continue;
+	    	}
+
+	    	group = dbUtil.lazyLoad(group);
 			permGroups.add(getGroupDAO().findGroup(group.getID()));
 		}
 
         Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
                     RoleHelperObject.getStaticInstance().toString(),
-                    permGroups);
+                    permGroups
+        );
 
         //only return active and only actual roles and not group permission definitation roles
-        if(permissions!=null && !permissions.isEmpty()){
-            for ( Iterator<ICPermission> permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Iterator<ICPermission> permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
                 ICPermission perm = permissionsIter.next();
                 //perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
                 //if not it is a role for a permission key
-                if(perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())){
+                if (perm != null && perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())) {
                     returnCol.add(perm);
                 }
             }
@@ -2244,24 +2253,51 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		try {
 			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
-			if (c == null) {
-				return s;
-			}
-
-			for (ICPermission p: c) {
-				if (p.isActive()) {
-					String key = p.getPermissionString();
-					if (!s.contains(key)) {
-						s.add(key);
+			if (c != null) {
+				for (ICPermission p: c) {
+					if (p.isActive()) {
+						String key = p.getPermissionString();
+						if (!s.contains(key)) {
+							s.add(key);
+						}
 					}
 				}
 			}
-			return s;
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			getLogger().log(Level.WARNING, "Error getting all roles for user " + user, e);
 		}
 
-		return Collections.emptySet();
+		Set<String> tempRoles = getTempRoles();
+		if (!ListUtil.isEmpty(tempRoles)) {
+			s.addAll(tempRoles);
+		}
+
+		return s;
+	}
+
+	private Set<String> getTempRoles() {
+		try {
+			HttpServletRequest request = null;
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				RequestResponseProvider rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+				request = rrProvider == null ? null : rrProvider.getRequest();
+			} else {
+				request = iwc.getRequest();
+			}
+			HttpSession session = request == null ? null : request.getSession(true);
+			if (session == null) {
+				return null;
+			}
+
+			Object tempRolesObject = session.getAttribute(AccessController.PERMISSION_TEMP_ROLES);
+			if (tempRolesObject instanceof Set<?>) {
+				@SuppressWarnings("unchecked")
+				Set<String> tempRoles = (Set<String>) tempRolesObject;
+				return tempRoles;
+			}
+		} catch (Exception e) {}
+		return null;
 	}
 
 	@Override
