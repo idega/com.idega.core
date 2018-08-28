@@ -25,7 +25,7 @@ import com.idega.util.DBUtil;
 @Entity
 @Table(name = ICRole.ENTITY_NAME)
 @NamedQueries({
-	@NamedQuery(name = "role.findAll", query = "select r from ICRole r"),
+	@NamedQuery(name = ICRole.QUERY_FIND_ALL_ROLES, query = "select r from ICRole r"),
 	@NamedQuery(name = ICRole.QUERY_FIND_ROLE_BY_KEY, query = "select r from ICRole r where r.roleKey = :key")
 })
 @Cacheable
@@ -42,7 +42,8 @@ public class ICRole implements Serializable {
 
 	public static final int ROLE_KEY_MAX_LENGTH = 50;
 
-	public static final String QUERY_FIND_ROLE_BY_KEY = "role.findByKey";
+	public static final String 	QUERY_FIND_ROLE_BY_KEY = "role.findByKey",
+								QUERY_FIND_ALL_ROLES = "role.findAll";
 
 	@Id
 	@Column(name = COLUMN_ROLE_KEY, length = ROLE_KEY_MAX_LENGTH)

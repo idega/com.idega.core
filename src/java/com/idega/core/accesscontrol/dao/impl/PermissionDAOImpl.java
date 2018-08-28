@@ -66,12 +66,14 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		if (group == null) {
 			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ?
 					CoreConstants.Y : CoreConstants.N);
-			if (!ListUtil.isEmpty(permissions))
+			if (!ListUtil.isEmpty(permissions)) {
 				return permissions.iterator().next();
+			}
 		} else {
 			ICPermission permission = findPermission(contextType, contextValue, permissionString, group);
-			if (permission != null)
+			if (permission != null) {
 				return permission;
+			}
 		}
 
 		ICPermission permission = new ICPermission();
@@ -265,7 +267,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public List<ICRole> findAllRoles() {
-		return getResultList("role.findAll", ICRole.class);
+		return getResultList(ICRole.QUERY_FIND_ALL_ROLES, ICRole.class);
 	}
 
 	@Override
