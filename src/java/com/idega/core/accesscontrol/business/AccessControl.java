@@ -2162,7 +2162,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    	}
 
 	    	group = dbUtil.lazyLoad(group);
-			permGroups.add(getGroupDAO().findGroup(group.getID()));
+	    	Group permGroup = getGroupDAO().findGroup(group.getID());
+	    	if (permGroup != null) {
+	    		permGroups.add(permGroup);
+	    	}
 		}
 
         Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
