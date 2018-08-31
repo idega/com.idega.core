@@ -2251,7 +2251,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		if (!ListUtil.isEmpty(userRolesFromGroup)) {
 			for (String key: userRolesFromGroup) {
-				s.add(key);
+				s.add(key.replaceAll("\\s+",""));
 			}
 		}
 
