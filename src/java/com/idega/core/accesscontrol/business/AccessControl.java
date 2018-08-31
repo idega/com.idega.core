@@ -66,6 +66,7 @@ import com.idega.repository.data.ImplementorRepository;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.GroupHome;
@@ -2464,6 +2465,72 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		return groups;
+	}
+
+	@Override
+	public Collection<Group> getAllGroupsForRoleKeys(List<String> roleKeys, IWApplicationContext iwac) {
+		if (ListUtil.isEmpty(roleKeys)) {
+			return null;
+		}
+
+		Collection<Group> groups = new ArrayList<Group>();
+
+		Collection<ICPermission> permissions = getPermissionDAO().findPermissions(
+				RoleHelperObject.getStaticInstance().toString(),
+				RoleHelperObject.getStaticInstance().toString(),
+				roleKeys
+		);
+		if (!ListUtil.isEmpty(permissions)) {
+			for (ICPermission permission: permissions) {
+				groups.add(permission.getPermissionGroup());
+			}
+		}
+
+		return groups;
+	}
+
+	@Override
+	public List<User> getAllUsersByRoles(List<String> roleKeys, IWApplicationContext iwac) {
+		Collection<Group> groupsByRoles = getAllGroupsForRoleKeys(roleKeys, iwac);
+		if (ListUtil.isEmpty(groupsByRoles)) {
+			return null;
+		}
+
+		try {
+			Set<Integer> usersIds = new HashSet<>();
+
+			DBUtil dbUtil = DBUtil.getInstance();
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+			for (Group group: groupsByRoles) {
+				try {
+					if (group == null) {
+						continue;
+					}
+
+					group = dbUtil.lazyLoad(group);
+					Collection<com.idega.user.data.User> users = userBusiness.getUsersInGroup(group.getID());
+					if (ListUtil.isEmpty(users)) {
+						continue;
+					}
+
+					for (com.idega.user.data.User user: users) {
+						usersIds.add(Integer.valueOf(user.getId()));
+					}
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error getting users in group " + group, e);
+				}
+			}
+
+			if (ListUtil.isEmpty(usersIds)) {
+				return null;
+			}
+
+			return getUserDAO().findAll(usersIds);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting users by roles: " + roleKeys, e);
+		}
+
+		return null;
 	}
 
 	@Deprecated
