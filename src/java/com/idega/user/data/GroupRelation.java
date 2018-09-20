@@ -59,4 +59,7 @@ public interface GroupRelation extends com.idega.data.IDOEntity
  public void setCreatedBy(User user);
  public int getCreatedById();
  public User getCreatedBy();
+ public void setTerminationModificationDate(Timestamp stamp);
+ public void setInitiationModificationDate(Timestamp stamp);
+
  }
