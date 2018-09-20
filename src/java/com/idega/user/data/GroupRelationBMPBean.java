@@ -254,6 +254,11 @@ public void setInitiationDate(Timestamp stamp){
   }
 
   @Override
+public void setInitiationModificationDate(Timestamp stamp) {
+    this.setColumn(GroupRelationBMPBean.INITIATION_MODIFICATION_DATE_COLUMN, stamp);
+}
+
+  @Override
 public Timestamp getInitiationDate(){
     return (Timestamp)getColumnValue(GroupRelationBMPBean.INITIATION_DATE_COLUMN);
   }
@@ -267,6 +272,11 @@ public Timestamp getInitiationModificationDate(){
 public void setTerminationDate(Timestamp stamp){
     this.setColumn(GroupRelationBMPBean.TERMINATION_DATE_COLUMN,stamp);
     this.setColumn(GroupRelationBMPBean.TERMINATION_MODIFICATION_DATE_COLUMN, IWTimestamp.RightNow().getTimestamp());
+  }
+
+  @Override
+public void setTerminationModificationDate(Timestamp stamp) {
+    this.setColumn(GroupRelationBMPBean.TERMINATION_MODIFICATION_DATE_COLUMN, stamp);
   }
 
   @Override

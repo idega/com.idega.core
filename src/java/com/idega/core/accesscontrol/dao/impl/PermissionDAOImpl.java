@@ -78,13 +78,16 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	@Transactional(readOnly = false)
 	public ICPermission createPermission(String contextType, String contextValue, Group group, String permissionString, boolean permissionValue) {
 		if (group == null) {
-			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ? CoreConstants.Y.charAt(0) : CoreConstants.N.charAt(0));
-			if (!ListUtil.isEmpty(permissions))
+			List<ICPermission> permissions = findPermissions(contextType, contextValue, permissionString, permissionValue ?
+					CoreConstants.Y : CoreConstants.N);
+			if (!ListUtil.isEmpty(permissions)) {
 				return permissions.iterator().next();
+			}
 		} else {
 			ICPermission permission = findPermission(contextType, contextValue, permissionString, group);
-			if (permission != null)
+			if (permission != null) {
 				return permission;
+			}
 		}
 
 		ICPermission permission = new ICPermission();
@@ -132,6 +135,19 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		Param param3 = new Param("permissionString", permissionString);
 
 		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION, ICPermission.class, param1, param2, param3);
+	}
+
+	@Override
+	public List<ICPermission> findPermissions(String contextType, String contextValue, List<String> permissions) {
+		if (StringUtil.isEmpty(contextType) || StringUtil.isEmpty(contextValue) || ListUtil.isEmpty(permissions)) {
+			return null;
+		}
+
+		Param param1 = new Param("contextType", contextType);
+		Param param2 = new Param("contextValue", contextValue);
+		Param param3 = new Param("permissions", permissions);
+
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSIONS, ICPermission.class, param1, param2, param3);
 	}
 
 	@Override
@@ -325,7 +341,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public List<ICRole> findAllRoles() {
-		return getResultList("role.findAll", ICRole.class);
+		return getResultList(ICRole.QUERY_FIND_ALL_ROLES, ICRole.class);
 	}
 
 	@Override

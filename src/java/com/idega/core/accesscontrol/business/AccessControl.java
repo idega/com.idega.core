@@ -59,11 +59,14 @@ import com.idega.idegaweb.IWServiceImpl;
 import com.idega.idegaweb.IWServiceNotStartedException;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.repository.data.ImplementorRepository;
 import com.idega.repository.data.RefactorClassRegistry;
+import com.idega.servlet.filter.RequestResponseProvider;
 import com.idega.user.business.GroupBusiness;
+import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
 import com.idega.user.data.GroupHome;
@@ -2152,22 +2155,32 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    	return ListUtil.getEmptyList();
 	    }
 
+	    DBUtil dbUtil = DBUtil.getInstance();
 	    Collection<Group> permGroups = new ArrayList<Group>();
 	    for (Group group : groups) {
-			permGroups.add(getGroupDAO().findGroup(group.getID()));
+	    	if (group == null) {
+	    		continue;
+	    	}
+
+	    	group = dbUtil.lazyLoad(group);
+	    	Group permGroup = getGroupDAO().findGroup(group.getID());
+	    	if (permGroup != null) {
+	    		permGroups.add(permGroup);
+	    	}
 		}
 
         Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
                     RoleHelperObject.getStaticInstance().toString(),
-                    permGroups);
+                    permGroups
+        );
 
         //only return active and only actual roles and not group permission definitation roles
-        if(permissions!=null && !permissions.isEmpty()){
-            for ( Iterator<ICPermission> permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
+        if (permissions != null && !permissions.isEmpty()) {
+            for (Iterator<ICPermission> permissionsIter = permissions.iterator(); permissionsIter.hasNext();) {
                 ICPermission perm = permissionsIter.next();
                 //perm.getPermissionString().equals(perm.getContextValue()) is true if it is a marker for an active role for a group
                 //if not it is a role for a permission key
-                if(perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())){
+                if (perm != null && perm.getPermissionValue() && perm.getContextValue().equals(perm.getContextType())) {
                     returnCol.add(perm);
                 }
             }
@@ -2238,30 +2251,57 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 		if (!ListUtil.isEmpty(userRolesFromGroup)) {
 			for (String key: userRolesFromGroup) {
-				s.add(key);
+				s.add(key.replaceAll("\\s+",""));
 			}
 		}
 
 		try {
 			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
-			if (c == null) {
-				return s;
-			}
-
-			for (ICPermission p: c) {
-				if (p.isActive()) {
-					String key = p.getPermissionString();
-					if (!s.contains(key)) {
-						s.add(key);
+			if (c != null) {
+				for (ICPermission p: c) {
+					if (p.isActive()) {
+						String key = p.getPermissionString();
+						if (!s.contains(key)) {
+							s.add(key);
+						}
 					}
 				}
 			}
-			return s;
 		} catch (RemoteException e) {
-			e.printStackTrace();
+			getLogger().log(Level.WARNING, "Error getting all roles for user " + user, e);
 		}
 
-		return Collections.emptySet();
+		Set<String> tempRoles = getTempRoles();
+		if (!ListUtil.isEmpty(tempRoles)) {
+			s.addAll(tempRoles);
+		}
+
+		return s;
+	}
+
+	private Set<String> getTempRoles() {
+		try {
+			HttpServletRequest request = null;
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				RequestResponseProvider rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+				request = rrProvider == null ? null : rrProvider.getRequest();
+			} else {
+				request = iwc.getRequest();
+			}
+			HttpSession session = request == null ? null : request.getSession(true);
+			if (session == null) {
+				return null;
+			}
+
+			Object tempRolesObject = session.getAttribute(AccessController.PERMISSION_TEMP_ROLES);
+			if (tempRolesObject instanceof Set<?>) {
+				@SuppressWarnings("unchecked")
+				Set<String> tempRoles = (Set<String>) tempRolesObject;
+				return tempRoles;
+			}
+		} catch (Exception e) {}
+		return null;
 	}
 
 	@Override
@@ -2425,6 +2465,72 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		return groups;
+	}
+
+	@Override
+	public Collection<Group> getAllGroupsForRoleKeys(List<String> roleKeys, IWApplicationContext iwac) {
+		if (ListUtil.isEmpty(roleKeys)) {
+			return null;
+		}
+
+		Collection<Group> groups = new ArrayList<Group>();
+
+		Collection<ICPermission> permissions = getPermissionDAO().findPermissions(
+				RoleHelperObject.getStaticInstance().toString(),
+				RoleHelperObject.getStaticInstance().toString(),
+				roleKeys
+		);
+		if (!ListUtil.isEmpty(permissions)) {
+			for (ICPermission permission: permissions) {
+				groups.add(permission.getPermissionGroup());
+			}
+		}
+
+		return groups;
+	}
+
+	@Override
+	public List<User> getAllUsersByRoles(List<String> roleKeys, IWApplicationContext iwac) {
+		Collection<Group> groupsByRoles = getAllGroupsForRoleKeys(roleKeys, iwac);
+		if (ListUtil.isEmpty(groupsByRoles)) {
+			return null;
+		}
+
+		try {
+			Set<Integer> usersIds = new HashSet<>();
+
+			DBUtil dbUtil = DBUtil.getInstance();
+			UserBusiness userBusiness = IBOLookup.getServiceInstance(iwac, UserBusiness.class);
+			for (Group group: groupsByRoles) {
+				try {
+					if (group == null) {
+						continue;
+					}
+
+					group = dbUtil.lazyLoad(group);
+					Collection<com.idega.user.data.User> users = userBusiness.getUsersInGroup(group.getID());
+					if (ListUtil.isEmpty(users)) {
+						continue;
+					}
+
+					for (com.idega.user.data.User user: users) {
+						usersIds.add(Integer.valueOf(user.getId()));
+					}
+				} catch (Exception e) {
+					getLogger().log(Level.WARNING, "Error getting users in group " + group, e);
+				}
+			}
+
+			if (ListUtil.isEmpty(usersIds)) {
+				return null;
+			}
+
+			return getUserDAO().findAll(usersIds);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting users by roles: " + roleKeys, e);
+		}
+
+		return null;
 	}
 
 	@Deprecated

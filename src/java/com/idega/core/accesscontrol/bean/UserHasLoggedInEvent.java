@@ -1,5 +1,7 @@
 package com.idega.core.accesscontrol.bean;
 
+import javax.servlet.http.HttpSession;
+
 import org.springframework.context.ApplicationEvent;
 
 public class UserHasLoggedInEvent extends ApplicationEvent {
@@ -10,6 +12,8 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	private String userName, loginType;
 
+	private HttpSession session;
+
 	public UserHasLoggedInEvent(Integer userId) {
 		super(userId);
 
@@ -17,10 +21,16 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 	}
 
 	public UserHasLoggedInEvent(Integer userId, String userName, String loginType) {
+		this(userId, userName, loginType, null);
+	}
+
+	public UserHasLoggedInEvent(Integer userId, String userName, String loginType, HttpSession session) {
 		this(userId);
 
 		this.userName = userName;
 		this.loginType = loginType;
+
+		this.session = session;
 	}
 
 	public Integer getUserId() {
@@ -33,6 +43,10 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	public String getLoginType() {
 		return loginType;
+	}
+
+	public HttpSession getSession() {
+		return session;
 	}
 
 	@Override

@@ -65,6 +65,8 @@ public interface AccessController extends com.idega.idegaweb.IWService {
 	public static final String PERMISSION_KEY_PERMIT = "permit";
 	public static final String PERMISSION_KEY_ROLE = "role_permission";
 
+	public static final String PERMISSION_TEMP_ROLES = "iw_temp_roles";
+
 	public static final int CATEGORY_OBJECT_INSTANCE = 0;
 	public static final int CATEGORY_OBJECT = 1;
 	public static final int CATEGORY_BUNDLE = 2;
@@ -193,6 +195,9 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public Collection<ICRole> getAllRoles();
   public Collection<Group> getAllGroupsThatAreRoleMasters(IWApplicationContext iwac                  );
   public Collection<Group> getAllGroupsForRoleKey(String roleKey, IWApplicationContext iwac                  );
+  public Collection<Group> getAllGroupsForRoleKeys(List<String> roleKeys, IWApplicationContext iwac);
+
+  public List<User> getAllUsersByRoles(List<String> roleKeys, IWApplicationContext iwac);
 
   @Deprecated
   public void removeGroupFromRoleMastersList(com.idega.user.data.Group group, IWApplicationContext iwac                  );
