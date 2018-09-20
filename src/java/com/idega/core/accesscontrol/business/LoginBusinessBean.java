@@ -533,7 +533,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password, LoginType.CREDENTIALS, null));
+			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password, LoginType.CREDENTIALS, null, null));
 		}
 	}
 
@@ -1132,9 +1132,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 		HttpSession session = request.getSession(true);
 		storeUserAndGroupInformationInSession(session, user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
-		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, userLogin.getLoginType());
+		String loginType = getLoginType(request, userLogin);
+		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, loginType);
 		if (user != null) {
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, userLogin.getLoginType()));
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, loginType, request.getSession(true)));
 		}
 		return true;
 	}
@@ -1147,6 +1148,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return logIn(request, null, userLogin);
 	}
 
+	private String getLoginType(HttpServletRequest request, UserLogin userLogin) {
+		String loginType = request == null ? null : (String) request.getAttribute("login_type");
+		loginType = StringUtil.isEmpty(loginType) ?
+				userLogin == null ? null : userLogin.getLoginType() :
+				loginType;
+		return loginType;
+	}
+
 	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, UserLogin userLogin) throws Exception {
 		User user = userLogin.getUser();
 
@@ -1154,9 +1163,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 		storeUserAndGroupInformationInSession(session, user);
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		String userName = userLogin.getUserLogin();
-		storeLoggedOnInfoInSession(request, session, userLogin, userName, user, loginRecord, userLogin.getLoginType());
+		String loginType = getLoginType(request, userLogin);
+		storeLoggedOnInfoInSession(request, session, userLogin, userName, user, loginRecord, loginType);
 		if (user != null) {
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, userLogin.getLoginType()));
+			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, loginType, request.getSession(true)));
 		}
 		return true;
 	}

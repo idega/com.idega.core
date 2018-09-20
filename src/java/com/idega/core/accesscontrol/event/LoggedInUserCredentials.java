@@ -18,13 +18,13 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 
 	private HttpServletRequest request;
 
-	private String serverURL, userName, password;
+	private String serverURL, userName, password, loginType;
 
 	private LoginType type;
 
 	private Integer loginId;
 
-	public LoggedInUserCredentials(HttpServletRequest request, String serverURL, String userName, String password, LoginType type, Integer loginId) {
+	public LoggedInUserCredentials(HttpServletRequest request, String serverURL, String userName, String password, LoginType type, Integer loginId, String loginType) {
 		super(request);
 
 		this.request = request;
@@ -33,6 +33,7 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 		this.password = password;
 		this.type = type;
 		this.loginId = loginId;
+		this.loginType = loginType;
 	}
 
 	public HttpServletRequest getRequest() {
@@ -63,9 +64,13 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 		return loginId;
 	}
 
+	public String getLoginType() {
+		return loginType;
+	}
+
 	@Override
 	public String toString() {
-		return "Username: " + getUserName() + ", type: " + getType() + ", login ID: " + getLoginId();
+		return "Username: " + getUserName() + ", type: " + getType() + ", login ID: " + getLoginId() + ", login type: " + getLoginType();
 	}
 
 }
