@@ -153,31 +153,42 @@ public class IWEncodingFilter implements Filter {
 		if (StringUtil.isEmpty(stayAtePlatform) && requestURI.startsWith(CoreConstants.PAGES_URI_PREFIX)) {
 			IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 			String stayAtEPlatformPagesProp = settings.getProperty("iw_stay_at_ePlatform");
-			if (!StringUtil.isEmpty(stayAtEPlatformPagesProp)) {
-				List<String> stayAtEPlatformPages = Arrays.asList(stayAtEPlatformPagesProp.split(CoreConstants.COMMA));
-				if (!ListUtil.isEmpty(stayAtEPlatformPages)) {
-					boolean stay = false;
-					for (String stayAtEPlatformPage: stayAtEPlatformPages) {
-						if (requestURI.startsWith(stayAtEPlatformPage)) {
-							stay = true;
+			String serverName = request.getServerName();
+			if (!StringUtil.isEmpty(stayAtEPlatformPagesProp) && stayAtEPlatformPagesProp.indexOf(serverName) != -1) {
+				List<String> domainsStayAtEPlatformPages = Arrays.asList(stayAtEPlatformPagesProp.split(CoreConstants.SEMICOLON));
+				if (!ListUtil.isEmpty(domainsStayAtEPlatformPages)) {
+					for (String domainStayAtEPlatformPages: domainsStayAtEPlatformPages) {
+						if (domainStayAtEPlatformPages.indexOf(serverName) == -1) {
+							continue;
 						}
-					}
 
-					if (!stay) {
-						Map<String, String[]> parameters = request.getParameterMap();
-						if (!MapUtil.isEmpty(parameters)) {
-							URIUtil uriUtil = new URIUtil(requestURI);
-							for (String paramKey: parameters.keySet()) {
-								String[] paramValues = request.getParameterValues(paramKey);
-								if (!ArrayUtil.isEmpty(paramValues)) {
-									uriUtil.setParameter(paramKey, paramValues[0]);
+						domainStayAtEPlatformPages = domainStayAtEPlatformPages.substring(domainStayAtEPlatformPages.indexOf(CoreConstants.EQ) + 1);
+						List<String> stayAtEPlatformPages = Arrays.asList(domainStayAtEPlatformPages.split(CoreConstants.COMMA));
+						if (!ListUtil.isEmpty(stayAtEPlatformPages)) {
+							boolean stay = false;
+							for (String stayAtEPlatformPage: stayAtEPlatformPages) {
+								if (requestURI.startsWith(stayAtEPlatformPage)) {
+									stay = true;
 								}
 							}
-							requestURI = uriUtil.getUri();
-						}
 
-						requestURI = requestURI.replaceFirst(CoreConstants.PAGES_URI_PREFIX, CoreConstants.SLASH.concat(CoreConstants.HASH));
-						response.sendRedirect(requestURI);
+							if (!stay) {
+								Map<String, String[]> parameters = request.getParameterMap();
+								if (!MapUtil.isEmpty(parameters)) {
+									URIUtil uriUtil = new URIUtil(requestURI);
+									for (String paramKey: parameters.keySet()) {
+										String[] paramValues = request.getParameterValues(paramKey);
+										if (!ArrayUtil.isEmpty(paramValues)) {
+											uriUtil.setParameter(paramKey, paramValues[0]);
+										}
+									}
+									requestURI = uriUtil.getUri();
+								}
+
+								requestURI = requestURI.replaceFirst(CoreConstants.PAGES_URI_PREFIX, CoreConstants.SLASH.concat(CoreConstants.HASH));
+								response.sendRedirect(requestURI);
+							}
+						}
 					}
 				}
 			}
