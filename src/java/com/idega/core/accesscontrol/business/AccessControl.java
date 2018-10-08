@@ -2158,14 +2158,18 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    DBUtil dbUtil = DBUtil.getInstance();
 	    Collection<Group> permGroups = new ArrayList<Group>();
 	    for (Group group : groups) {
-	    	if (group == null) {
-	    		continue;
-	    	}
+	    	try {
+		    	if (group == null) {
+		    		continue;
+		    	}
 
-	    	group = dbUtil.lazyLoad(group);
-	    	Group permGroup = getGroupDAO().findGroup(group.getID());
-	    	if (permGroup != null) {
-	    		permGroups.add(permGroup);
+		    	group = dbUtil.lazyLoad(group);
+		    	Group permGroup = getGroupDAO().findGroup(group.getID());
+		    	if (permGroup != null) {
+		    		permGroups.add(permGroup);
+		    	}
+	    	} catch (Exception e) {
+	    		getLogger().log(Level.WARNING, "Error handling group " + group, e);
 	    	}
 		}
 
