@@ -73,6 +73,18 @@ public interface UserDAO extends GenericDao {
 	public List<User> findAll(Collection<Integer> primaryKeys);
 
 	/**
+	 * 
+	 * @param primaryKeys is {@link Collection} of {@link User#getId()}, skipped if <code>null</code>
+	 * @param uuids is {@link Collection} of {@link User#getUniqueId()}, skipped if <code>null</code>
+	 * @param personalIds is {@link Collection} of {@link User#getPersonalID()}, skipped if <code>null</code>
+	 * @return filtered data by given criteria or {@link Collections#emptyList()} on failure;
+	 */
+	public List<User> findAll(
+			Collection<Integer> primaryKeys, 
+			Collection<String> uuids, 
+			Collection<String> personalIds);
+
+	/**
 	 *
 	 * <p>A workaround to solve problems of bad emails in data source</p>
 	 * @param user
