@@ -109,8 +109,9 @@ public class SendMail {
 			email.setHostName(getHost());
 			int port = 465;
 			String portValue = getPort();
-			if (!StringUtil.isEmpty(portValue))
+			if (!StringUtil.isEmpty(portValue)) {
 				port = Integer.valueOf(portValue);
+			}
 			email.setSmtpPort(port);
 			email.setAuthenticator(new DefaultAuthenticator(getUsername(), getPassword()));
 			email.setSSLOnConnect(true);
@@ -118,8 +119,9 @@ public class SendMail {
 			email.setSubject(subject);
 			email.setMsg(message);
 			email.addTo(to);
-			if (!StringUtil.isEmpty(replyTo))
+			if (!StringUtil.isEmpty(replyTo)) {
 				email.addReplyTo(replyTo);
+			}
 			email.send();
 
 			return true;
@@ -228,20 +230,23 @@ public class SendMail {
 		String port = getPort();
 		if (StringUtil.isEmpty(host)) {
 			host = getHost();
-			if (StringUtil.isEmpty(host))
+			if (StringUtil.isEmpty(host)) {
 				throw new MessagingException("Mail server is not configured!");
+			}
 		}
 
-		if (StringUtil.isEmpty(username))
+		if (StringUtil.isEmpty(username)) {
 			useSmtpAuthentication = false;
+		}
 
 		// Set the host smtp address
 		Properties props = new Properties();
 		props.put("mail.smtp.host", host);
 
 		// Set the smtp server port
-		if (!StringUtil.isEmpty(port))
+		if (!StringUtil.isEmpty(port)) {
 			props.put("mail.smtp.port", port);
+		}
 
 		// Start a session
 		Session session;
@@ -249,8 +254,9 @@ public class SendMail {
 			props.put("mail.smtp.auth", Boolean.TRUE.toString());
 			Authenticator auth = new SMTPAuthenticator(username, password);
 
-			if (useSSL)
+			if (useSSL) {
 				props.put("mail.smtp.ssl.enable", Boolean.TRUE.toString());
+			}
 
 			session = Session.getInstance(props, auth);
 		} else {
@@ -262,8 +268,9 @@ public class SendMail {
 
 		// Construct a message
 		//	Sender
-		if (StringUtil.isEmpty(from))
+		if (StringUtil.isEmpty(from)) {
 			throw new MessagingException("From address is null.");
+		}
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 
@@ -276,8 +283,9 @@ public class SendMail {
 		addRecipients(message, Message.RecipientType.BCC, bcc);
 
 		//	Reply-to
-		if (!StringUtil.isEmpty(replyTo))
+		if (!StringUtil.isEmpty(replyTo)) {
 			message.setReplyTo(InternetAddress.parse(replyTo));
+		}
 
 		//	Subject
 		message.setSubject(subject, charset);
@@ -331,8 +339,9 @@ public class SendMail {
 					StringBuilder filesNames = new StringBuilder();
 					if (!ArrayUtil.isEmpty(attachedFiles)) {
 						for (File attachment: attachedFiles) {
-							if (attachment == null)
+							if (attachment == null) {
 								continue;
+							}
 
 							filesNames.append(attachment.getName()).append(CoreConstants.COMMA).append(CoreConstants.SPACE);
 						}
@@ -341,17 +350,19 @@ public class SendMail {
 				} finally {
 					if (deleteFiles && !ArrayUtil.isEmpty(attachedFiles)) {
 						for (File attachment: attachedFiles) {
-							if (attachment != null && attachment.exists())
+							if (attachment != null && attachment.exists()) {
 								attachment.delete();
+							}
 						}
 					}
 				}
 			}
 		});
-		if (useThread)
+		if (useThread) {
 			transporter.start();
-		else
+		} else {
 			transporter.run();
+		}
 
 		return message;
 	}
@@ -366,28 +377,38 @@ public class SendMail {
 	}
 
 	private static boolean doValidateAddresses(String addresses) {
-		if (StringUtil.isEmpty(addresses))
+		if (StringUtil.isEmpty(addresses)) {
 			return false;
+		}
 
 		String[] emails = addresses.split(CoreConstants.COMMA);
-		if (ArrayUtil.isEmpty(emails))
+		if (ArrayUtil.isEmpty(emails)) {
 			return false;
+		}
 
 		for (String email: emails) {
-			if (!EmailValidator.getInstance().validateEmail(email))
+			if (StringUtil.isEmpty(email)) {
+				continue;
+			}
+
+			email = email.trim();
+			if (!EmailValidator.getInstance().validateEmail(email)) {
+				LOGGER.warning("Email '" + email + "' is invalid");
 				return false;
+			}
 		}
 
 		return true;
 	}
 
 	private static boolean addRecipients(MimeMessage message, RecipientType recipientType, String addresses) throws MessagingException {
-		if (StringUtil.isEmpty(addresses))
+		if (StringUtil.isEmpty(addresses)) {
 			return false;
+		}
 
 		addresses = StringHandler.replace(addresses, CoreConstants.SEMICOLON, CoreConstants.COMMA);
 		if (!doValidateAddresses(addresses)) {
-			LOGGER.warning("Adrresses " + addresses + " are invalid!");
+			LOGGER.warning("Adrress(es) " + addresses + " is/are invalid!");
 			return false;
 		}
 
