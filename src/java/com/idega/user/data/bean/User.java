@@ -165,6 +165,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
+	public static final String PROPERTY_ID = "userID";
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
 	private Integer userID;
@@ -173,6 +174,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@PrimaryKeyJoinColumn(name = COLUMN_USER_ID, referencedColumnName = Group.COLUMN_GROUP_ID)
 	private UserGroupRepresentative group;
 
+	public static final String PROPERTY_UUID = "uniqueId";
 	public static final String PROP_UNIQUE_ID = ENTITY_NAME + "_" + COLUMN_UNIQUE_ID;
 	@Column(name = COLUMN_UNIQUE_ID, length = 36, nullable = false, unique = true)
 	private String uniqueId;
@@ -196,6 +198,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@Column(name = COLUMN_DATE_OF_BIRTH)
 	private Date dateOfBirth;
 
+	public static final String PROPERTY_PERSONAL_ID = "personalID";
 	@Column(name = COLUMN_PERSONAL_ID, length = 20)
 	private String personalID;
 

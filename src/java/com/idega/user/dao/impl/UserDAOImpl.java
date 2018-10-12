@@ -3,10 +3,12 @@
  */
 package com.idega.user.dao.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -247,6 +249,22 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		}
 
 		return users;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#findAll(java.util.Collection, java.util.Collection, java.util.Collection)
+	 */
+	@Override
+	public List<User> findAll(
+			Collection<Integer> primaryKeys, 
+			Collection<String> uuids,
+			Collection<String> personalIds) {
+		HashMap<String, Collection<? extends Serializable>> arguments = new HashMap<>(4);
+		arguments.put(User.PROPERTY_ID, primaryKeys);
+		arguments.put(User.PROPERTY_UUID, uuids);
+		arguments.put(User.PROPERTY_PERSONAL_ID, personalIds);
+		return findAll(User.class, arguments);
 	}
 
 	/*
