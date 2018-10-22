@@ -2150,7 +2150,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
 	 */
 	public Collection<ICPermission> getAllRolesForGroupCollection(Collection<Group> groups) {
-	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>(); //empty
+	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>();
 	    if (ListUtil.isEmpty(groups)) {
 	    	return ListUtil.getEmptyList();
 	    }
@@ -2158,18 +2158,19 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    DBUtil dbUtil = DBUtil.getInstance();
 	    Set<Integer> permGroupsIds = new HashSet<>();
 	    for (Group group: groups) {
+	    	Integer id = null;
 	    	try {
 		    	if (group == null) {
 		    		continue;
 		    	}
 
 		    	group = dbUtil.lazyLoad(group);
-		    	Integer id = group.getID();
+		    	id = group.getID();
 		    	if (id != null) {
 		    		permGroupsIds.add(id);
 		    	}
 	    	} catch (Exception e) {
-	    		getLogger().log(Level.WARNING, "Error handling group " + group, e);
+	    		getLogger().log(Level.WARNING, "Error handling group with ID " + id, e);
 	    	}
 		}
 
