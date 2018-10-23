@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.persistence.Cacheable;
@@ -34,7 +35,7 @@ import com.idega.util.StringUtil;
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 public class DaoFunctionsImpl implements DaoFunctions {
 
-	private static final Logger logger = Logger.getLogger(DaoFunctionsImpl.class.getName());
+	private static final Logger LOGGER = Logger.getLogger(DaoFunctionsImpl.class.getName());
 
 	private static final List<Class<?>> IMPLEMENTED_CONVERTERS = Collections.unmodifiableList(Arrays.asList(new Class<?>[] {
 			Long.class,
@@ -46,33 +47,35 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}));
 
 	/**
-	 * 
+	 *
 	 * <p>For each parameter calls {@link Query#setParameter(String, Object)}, checks parameters before action</p>
 	 * @param q is query for these parameters, not <code>null</code>
 	 * @param params to set, skipped if <code>null</code>
 	 */
 	private void setParameters(Query q, Param... params) {
-		if (ArrayUtil.isEmpty(params))
+		if (ArrayUtil.isEmpty(params)) {
 			return;
+		}
 
 		setParameters(q, Arrays.asList(params));
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>For each parameter calls {@link Query#setParameter(String, Object)}, checks parameters before action</p>
 	 * @param q is query for these parameters, not <code>null</code>
 	 * @param params to set, not <code>null</code>
 	 */
 	private void setParameters(Query q, Collection<Param> params) {
-		if (ListUtil.isEmpty(params))
+		if (ListUtil.isEmpty(params)) {
 			return;
+		}
 
 		for (Param param : params) {
 			String name = param.getParamName();
 			Object value = param.getParamValue();
 			if (value instanceof String && (CoreConstants.Y.equals(value) || CoreConstants.N.equals(value))) {
-				logger.info("Changing type of parameter (name: " + name + ", value: '" + value + "'): from " + value.getClass().getName() + " to " + Character.class.getName());
+				LOGGER.info("Changing type of parameter (name: " + name + ", value: '" + value + "'): from " + value.getClass().getName() + " to " + Character.class.getName());
 				value = Character.valueOf(((String) value).charAt(0));
 			}
 
@@ -125,10 +128,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 						List<V> paramValue = new ArrayList<V>((Collection<V>) value);
 						if (paramValue.size() > 1000) {
 							usableParams.add(new Param(
-									param.getParamName(), 
+									param.getParamName(),
 									paramValue.subList(0, 1000)));
 							unusedParams.add(new Param(
-									param.getParamName(), 
+									param.getParamName(),
 									paramValue.subList(1000, paramValue.size())));
 						} else {
 							usableParams.add(param);
@@ -156,7 +159,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
 	 * <li>Caches query</li>
@@ -171,15 +174,16 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	private <Expected, V> List<Expected> getResultListByQuery(
-			List<Expected> results, 
-			Query q, 
-			Class<Expected> expectedReturnType, 
-			String cachedRegionName, 
-			Param... params) {
+			List<Expected> results,
+			Query q,
+			Class<Expected> expectedReturnType,
+			String cachedRegionName,
+			Param... params
+	) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
 		}
-		
+
 		QueryParams<Expected> queryParams = new QueryParams<>(params);
 		queryParams.doPrepareParameters();
 
@@ -187,10 +191,17 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		setParameters(q, queryParams.getUsableParams());
 
 		List<Expected> tmpResults = null;
-		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
-			tmpResults = getRealResults(q.getResultList(), expectedReturnType);
-		} else {
+		try {
 			tmpResults = q.getResultList();
+		} catch (Exception e) {
+			String error = "Error executing query " + DBUtil.getInstance().getQueryInfo(q) + ". Expected return type: " + expectedReturnType.getName() +
+					(ArrayUtil.isEmpty(params) ? CoreConstants.EMPTY : ", parameters: " + Arrays.asList(params));
+			LOGGER.log(Level.WARNING, error, e);
+			CoreUtil.sendExceptionNotification(error, e);
+		}
+
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
+			tmpResults = getRealResults(tmpResults, expectedReturnType);
 		}
 
 		if (ListUtil.isEmpty(tmpResults)) {
@@ -200,25 +211,27 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		results.addAll(tmpResults);
 		if (queryParams.isLoadInMultipleSteps()) {
 			return getResultListByQuery(
-					results, q, 
-					expectedReturnType, 
-					cachedRegionName, 
-					ArrayUtil.convertListToArray(queryParams.getUnusedParams()));
+					results, q,
+					expectedReturnType,
+					cachedRegionName,
+					ArrayUtil.convertListToArray(queryParams.getUnusedParams())
+			);
 		}
 
 		return results;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param results is {@link Collection} of objects to convert to more specified objects, not <code>null</code>
 	 * @param expectedReturnType is {@link Class} to cast objects to, not <code>null</code>;
 	 * @return results casted to expectedReturnType objects or <code>null</code> on failure;
 	 */
 	@SuppressWarnings("unchecked")
-	private <Exptected> List<Exptected> getRealResults(List<Object> results, Class<Exptected> expectedReturnType) {
-		if (ListUtil.isEmpty(results))
+	private <Exptected> List<Exptected> getRealResults(List<?> results, Class<Exptected> expectedReturnType) {
+		if (ListUtil.isEmpty(results)) {
 			return null;
+		}
 
 		List<Exptected> realResults = new ArrayList<Exptected>();
 		for (Object result : results) {
@@ -253,7 +266,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 				}
 			} else {
 				String message = "Can not convert " + result + " (" + result.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
-				logger.warning(message);
+				LOGGER.warning(message);
 				CoreUtil.sendExceptionNotification(message, null);
 			}
 		}
@@ -287,7 +300,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
 	 * <li>Caches query</li>
@@ -302,11 +315,12 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	@Transactional(readOnly = true)
 	@SuppressWarnings("unchecked")
 	private <Expected> List<Expected> getResultListByQuery(
-			List<Expected> results, 
-			Query q, 
-			Class<Expected> expectedReturnType, 
-			String cachedRegionName, 
-			Collection<Param> params) {
+			List<Expected> results,
+			Query q,
+			Class<Expected> expectedReturnType,
+			String cachedRegionName,
+			Collection<Param> params
+	) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
 		}
@@ -318,10 +332,18 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		setParameters(q, queryParams.getUsableParams());
 
 		List<Expected> tmpResults = null;
-		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
-			tmpResults = getRealResults(q.getResultList(), expectedReturnType);
-		} else {
+		tmpResults = q.getResultList();
+		try {
 			tmpResults = q.getResultList();
+		} catch (Exception e) {
+			String error = "Error executing query " + DBUtil.getInstance().getQueryInfo(q) + ". Expected return type: " + expectedReturnType.getName() +
+					(ListUtil.isEmpty(params) ? CoreConstants.EMPTY : ", parameters: " + params);
+			LOGGER.log(Level.WARNING, error, e);
+			CoreUtil.sendExceptionNotification(error, e);
+		}
+
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
+			tmpResults = getRealResults(tmpResults, expectedReturnType);
 		}
 
 		if (ListUtil.isEmpty(tmpResults)) {

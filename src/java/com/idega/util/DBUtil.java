@@ -55,4 +55,6 @@ public abstract class DBUtil {
 
 	public abstract <S> void finalizeSession(S session);
 
+	public abstract String getQueryInfo(Query q);
+
 }

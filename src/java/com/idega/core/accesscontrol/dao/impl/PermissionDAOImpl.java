@@ -227,11 +227,15 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 
 	@Override
-	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Collection<Group> groups) {
-		Param param1 = new Param("contextType", contextType);
-		Param param2 = new Param("groups", groups);
+	public List<ICPermission> findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(String contextType, Collection<Integer> groupsIds) {
+		if (ListUtil.isEmpty(groupsIds)) {
+			return Collections.emptyList();
+		}
 
-		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS, ICPermission.class, param1, param2);
+		Param param1 = new Param("contextType", contextType);
+		Param param2 = new Param("groupsIDs", groupsIds);
+
+		return getResultList(ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION_GROUPS_IDS, ICPermission.class, param1, param2);
 	}
 
 	@Override

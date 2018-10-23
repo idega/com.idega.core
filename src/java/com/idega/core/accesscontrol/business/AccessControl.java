@@ -1813,9 +1813,9 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	        for (Iterator<Group> iterator = parents.iterator(); iterator.hasNext();) {
                 Group parent = iterator.next();
                 Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
-                if(permissionControllingParentGroup != null) {
+                if (permissionControllingParentGroup != null) {
                     permissionControllingGroups.add(permissionControllingParentGroup);
-                }else {
+                } else {
                     permissionControllingGroups.add(parent);
                 }
 	        }
@@ -1823,7 +1823,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		    //create the role map we need
 	        Collection<ICPermission> permissions = getAllRolesForGroupCollection(permissionControllingGroups);
 
-	        if(!permissions.isEmpty()) {
+	        if (!ListUtil.isEmpty(permissions)) {
 		        for (Iterator<ICPermission> iter = permissions.iterator(); iter.hasNext();) {
 	                ICPermission perm = iter.next();
 	                String roleKey = perm.getPermissionString();
@@ -2150,32 +2150,33 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
 	 */
 	public Collection<ICPermission> getAllRolesForGroupCollection(Collection<Group> groups) {
-	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>(); //empty
+	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>();
 	    if (ListUtil.isEmpty(groups)) {
 	    	return ListUtil.getEmptyList();
 	    }
 
 	    DBUtil dbUtil = DBUtil.getInstance();
-	    Collection<Group> permGroups = new ArrayList<Group>();
-	    for (Group group : groups) {
+	    Set<Integer> permGroupsIds = new HashSet<>();
+	    for (Group group: groups) {
+	    	Integer id = null;
 	    	try {
 		    	if (group == null) {
 		    		continue;
 		    	}
 
 		    	group = dbUtil.lazyLoad(group);
-		    	Group permGroup = getGroupDAO().findGroup(group.getID());
-		    	if (permGroup != null) {
-		    		permGroups.add(permGroup);
+		    	id = group.getID();
+		    	if (id != null) {
+		    		permGroupsIds.add(id);
 		    	}
 	    	} catch (Exception e) {
-	    		getLogger().log(Level.WARNING, "Error handling group " + group, e);
+	    		getLogger().log(Level.WARNING, "Error handling group with ID " + id, e);
 	    	}
 		}
 
         Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
                     RoleHelperObject.getStaticInstance().toString(),
-                    permGroups
+                    permGroupsIds
         );
 
         //only return active and only actual roles and not group permission definitation roles
@@ -2409,22 +2410,36 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	 */
 	@Override
 	public Collection<ICPermission> getAllRolesWithRolePermissionsForGroupCollection(Collection<Group> groups) {
-	    Collection<Group> permGroups = new ArrayList<Group>();
-	    for (Group group : groups) {
-			permGroups.add(getGroupDAO().findGroup(group.getID()));
+	    if (ListUtil.isEmpty(groups)) {
+	    	return Collections.emptyList();
+	    }
+
+		Set<Integer> permGroupsIds = new HashSet<>();
+		DBUtil dbUtil = DBUtil.getInstance();
+	    for (Group group: groups) {
+	    	if (group == null) {
+	    		continue;
+	    	}
+
+	    	group = dbUtil.lazyLoad(group);
+			Integer id = group.getID();
+			if (id != null) {
+				permGroupsIds.add(id);
+			}
 		}
 
 	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>();
         Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
                     RoleHelperObject.getStaticInstance().toString(),
-                    permGroups);
+                    permGroupsIds
+         );
 
-        if(permissions!=null && !permissions.isEmpty()){
+        if (!ListUtil.isEmpty(permissions)) {
             Iterator<ICPermission> permissionsIter = permissions.iterator();
             while (permissionsIter.hasNext()) {
                 ICPermission perm = permissionsIter.next();
 
-                if(perm.getPermissionValue()){
+                if (perm.getPermissionValue()) {
                     returnCol.add(perm);
                 }
             }

@@ -7,9 +7,11 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
@@ -128,8 +130,9 @@ public class XmlUtil {
 
 	private static DocumentBuilderFactory getDocumentBuilderFactory(
 			boolean namespaceAware) {
-		if (namespaceAware)
+		if (namespaceAware) {
 			return getDocumentBuilderFactoryNSAware();
+		}
 
 		if (factoryNoNamespace == null) {
 			factoryNoNamespace = getFactory(Boolean.FALSE);
@@ -271,8 +274,9 @@ public class XmlUtil {
 	}
 
 	public static org.jdom2.Document getJDOMXMLDocument(Document document) {
-		if (document == null)
+		if (document == null) {
 			return null;
+		}
 
 		DOMBuilder domBuilder = new DOMBuilder();
 		return domBuilder.build(document);
@@ -466,14 +470,16 @@ public class XmlUtil {
 
 	public static <T> List<T> getContentByXPath(Content container, String expression, Filter<T> filter) {
 		List<T> content = getContentByXPath(container, expression, XHTML_NAMESPACE_ID, filter);
-		if (ListUtil.isEmpty(content))
+		if (ListUtil.isEmpty(content)) {
 			content = getContentByXPath(container, expression, CoreConstants.EMPTY, filter);
+		}
 		return content;
 	}
 
 	public static <T> List<T> getContentByXPath(Content container, String expression, String nameSpaceId, Filter<T> filter) {
-		if (container == null || expression == null)
+		if (container == null || expression == null) {
 			return null;
+		}
 
 		Namespace namespace = StringUtil.isEmpty(nameSpaceId) ?
 				Namespace.NO_NAMESPACE :
@@ -490,8 +496,9 @@ public class XmlUtil {
 	}
 
 	public static List<Element> getElementsByXPath(Content container, String expression, Namespace namespace) {
-		if (!(container instanceof Element))
+		if (!(container instanceof Element)) {
 			return Collections.emptyList();
+		}
 
 		try {
 			boolean validNameSpace = false;
@@ -505,12 +512,14 @@ public class XmlUtil {
 			org.jdom2.filter.Filter<Element> filter = null;
 			if (validNameSpace) {
 				filter = new ElementFilter(expression, namespace);
-			} else
+			} else {
 				filter = new ElementFilter(expression);
+			}
 
 			List<Element> tmp = new ArrayList<Element>();
-			for (Iterator<Element> results = root.getDescendants(filter); results.hasNext();)
+			for (Iterator<Element> results = root.getDescendants(filter); results.hasNext();) {
 				tmp.add(results.next());
+			}
 
 			return tmp;
 		} catch (Exception e) {
@@ -550,8 +559,9 @@ public class XmlUtil {
 			String attribute, String attributeValue) {
 
 		List<Node> items = new ArrayList<Node>();
-		if (node == null || !node.hasChildNodes())
+		if (node == null || !node.hasChildNodes()) {
 			return items;
+		}
 
 		boolean isNamespaceSet = !StringUtil.isEmpty(namespaceURI);
 		boolean isNameSet = !StringUtil.isEmpty(name);
@@ -564,24 +574,30 @@ public class XmlUtil {
 
 			Node item = list.item(i);
 
-			if (!(item instanceof org.w3c.dom.Element))
+			if (!(item instanceof org.w3c.dom.Element)) {
 				continue;
+			}
 
 			element = (org.w3c.dom.Element) item;
 
 			boolean doAddItem = Boolean.TRUE;
 
-			if (isNameSet && !name.equals(item.getLocalName()))
+			if (isNameSet && !name.equals(item.getLocalName())) {
 				doAddItem = Boolean.FALSE;
-			if (isNamespaceSet && !namespaceURI.equals(item.getNamespaceURI()))
+			}
+			if (isNamespaceSet && !namespaceURI.equals(item.getNamespaceURI())) {
 				doAddItem = Boolean.FALSE;
-			if (isAttributeNameSet && StringUtil.isEmpty(element.getAttribute(attribute)))
+			}
+			if (isAttributeNameSet && StringUtil.isEmpty(element.getAttribute(attribute))) {
 				doAddItem = Boolean.FALSE;
-			if (isAttributeValueSet && !attributeValue.equals(element.getAttribute(attribute)))
+			}
+			if (isAttributeValueSet && !attributeValue.equals(element.getAttribute(attribute))) {
 				doAddItem = Boolean.FALSE;
+			}
 
-			if (doAddItem)
+			if (doAddItem) {
 				items.add(item);
+			}
 
 			items.addAll(getChildNodes(element, namespaceURI, name, attribute, attributeValue));
 		}
@@ -598,16 +614,19 @@ public class XmlUtil {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public static org.w3c.dom.Element getParentElement(Node element, String name) {
-		if (element == null)
+		if (element == null) {
 			return null;
+		}
 
 		Node parentNode = element.getParentNode();
-		if (parentNode == null)
+		if (parentNode == null) {
 			return null;
+		}
 
 		boolean isRequiredElement = Boolean.TRUE;
-		if (!(parentNode instanceof org.w3c.dom.Element))
+		if (!(parentNode instanceof org.w3c.dom.Element)) {
 			isRequiredElement = Boolean.FALSE;
+		}
 
 		if (!StringUtil.isEmpty(name)) {
 			if (!name.equals(parentNode.getLocalName())
@@ -630,8 +649,9 @@ public class XmlUtil {
  	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public List<Element> convertToElements(List<Node> items) {
-		if (ListUtil.isEmpty(items))
+		if (ListUtil.isEmpty(items)) {
 			return null;
+		}
 
 		List<Element> elements = new ArrayList<Element>();
 		for (Node node : items) {
@@ -745,4 +765,31 @@ public class XmlUtil {
 
         return sw.toString();
 	}
+
+	public static final String getBase64Decoded(String encodedInBase64) {
+		if (StringUtil.isEmpty(encodedInBase64)) {
+			return null;
+		}
+
+		try {
+			return new String(Base64.getDecoder().decode(encodedInBase64.getBytes(CoreConstants.ENCODING_UTF8)), CoreConstants.ENCODING_UTF8);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.log(Level.WARNING, "Error decoding '" + encodedInBase64 + "' from Base64", e);
+		}
+		return null;
+	}
+
+	public static final String getBase64Encoded(String valueToEncode) {
+		if (StringUtil.isEmpty(valueToEncode)) {
+			return null;
+		}
+
+		try {
+			return new String(Base64.getEncoder().encode(valueToEncode.getBytes(CoreConstants.ENCODING_UTF8)), CoreConstants.ENCODING_UTF8);
+		} catch (UnsupportedEncodingException e) {
+			LOGGER.log(Level.WARNING, "Error encoding '" + valueToEncode + "' to Base64", e);
+		}
+		return null;
+	}
+
 }

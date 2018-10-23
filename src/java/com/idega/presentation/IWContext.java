@@ -208,6 +208,9 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 		HttpSession session = request == null ? null : request.getSession();
 		if (session == null) {
+			session = request.getSession(true);
+		}
+		if (session == null) {
 			LOGGER.warning("Request: " + request + " and/or session: " + session + " is null");
 			RequestResponseProvider requestProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
 			try {
