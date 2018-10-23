@@ -484,8 +484,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			}
 			else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getLoggedInUser());
-
+				Collection<Integer> ids = getParentGroupsIdsAndPermissionControllingParentGroupsIds(permissionKey, iwuc.getLoggedInUser());
+				groups = ListUtil.isEmpty(ids) ? Collections.emptyList() : getGroupDAO().findGroups(new ArrayList<>(ids));
 			}
 
 			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
@@ -674,7 +674,8 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				//TODO Eiki remove this old crap, one should not recurse the parents! Done in more places
 				groups = LoginBusinessBean.getPermissionGroups(iwuc);
 			} else { //the correct version
-				groups = getParentGroupsAndPermissionControllingParentGroups(permissionKey, iwuc.getLoggedInUser());
+				Collection<Integer> ids = getParentGroupsIdsAndPermissionControllingParentGroupsIds(permissionKey, iwuc.getLoggedInUser());
+				groups = ListUtil.isEmpty(ids) ? Collections.emptyList() : getGroupDAO().findGroups(new ArrayList<>(ids));
 			}
 
 			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
@@ -733,10 +734,10 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 	}
 
-	private Collection<Group> getParentGroupsAndPermissionControllingParentGroups(String permissionKey, User user) throws RemoteException {
-		Collection<Group> groups = getGroupDAO().getParentGroups(user.getUserRepresentative()); //com.idega.user.data.User
+	private Collection<Integer> getParentGroupsIdsAndPermissionControllingParentGroupsIds(String permissionKey, User user) throws RemoteException {
+		Collection<Group> groups = getGroupDAO().getParentGroups(user.getUserRepresentative());
 
-		List<Group> groupsToCheckForPermissions = new ArrayList<Group>();
+		Collection<Integer> groupsToCheckForPermissions = new HashSet<Integer>();
 		if (!ListUtil.isEmpty(groups)) {
 			DBUtil dbUtil = DBUtil.getInstance();
 			for (Iterator<Group> iter = groups.iterator(); iter.hasNext();) {
@@ -750,18 +751,16 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					continue;
 				}
 
+				groupsToCheckForPermissions.add(parent.getID());
+
 				Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
-				if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent!=null && permissionControllingParentGroup != null) {
-					groupsToCheckForPermissions.add(permissionControllingParentGroup);
+				if (!AccessController.PERMISSION_KEY_OWNER.equals(permissionKey) && parent != null && permissionControllingParentGroup != null) {
+					groupsToCheckForPermissions.add(permissionControllingParentGroup.getID());
 				}
 			}
 		}
 
-		if (groups != null && groupsToCheckForPermissions != null) {
-			groups.addAll(groupsToCheckForPermissions);
-		}
-
-		return groups;
+		return groupsToCheckForPermissions;
 	}
 
 	/**
@@ -1803,20 +1802,20 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	    //If something is found then we return true, otherwise false
 
 	    //get the parent groups
-	    List<Group> permissionControllingGroups = new ArrayList<Group>();
+	    Collection<Integer> permissionControllingGroups = new HashSet<Integer>();
 	    Collection<Group> parents = getGroupDAO().getParentGroups(iwuc.getLoggedInUser().getUserRepresentative());
 
-	    if(parents!=null && !parents.isEmpty()) {
-	        Map<String, String> roleMap= new HashMap<String, String>();
+	    if (!ListUtil.isEmpty(parents)) {
+	        Map<String, String> roleMap = new HashMap<String, String>();
 
 	        //get the real permission controlling group if not the parent
 	        for (Iterator<Group> iterator = parents.iterator(); iterator.hasNext();) {
                 Group parent = iterator.next();
                 Group permissionControllingParentGroup = parent.getPermissionControllingGroup();
                 if (permissionControllingParentGroup != null) {
-                    permissionControllingGroups.add(permissionControllingParentGroup);
+                    permissionControllingGroups.add(permissionControllingParentGroup.getID());
                 } else {
-                    permissionControllingGroups.add(parent);
+                    permissionControllingGroups.add(parent.getID());
                 }
 	        }
 
@@ -2149,30 +2148,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	/**
 	 * Gets all the role permissions the collection of group have. It does not return role-permissionkey permissions
 	 */
-	public Collection<ICPermission> getAllRolesForGroupCollection(Collection<Group> groups) {
+	public Collection<ICPermission> getAllRolesForGroupCollection(Collection<Integer> permGroupsIds) {
 	    Collection<ICPermission> returnCol = new ArrayList<ICPermission>();
-	    if (ListUtil.isEmpty(groups)) {
+	    if (ListUtil.isEmpty(permGroupsIds)) {
 	    	return ListUtil.getEmptyList();
 	    }
-
-	    DBUtil dbUtil = DBUtil.getInstance();
-	    Set<Integer> permGroupsIds = new HashSet<>();
-	    for (Group group: groups) {
-	    	Integer id = null;
-	    	try {
-		    	if (group == null) {
-		    		continue;
-		    	}
-
-		    	group = dbUtil.lazyLoad(group);
-		    	id = group.getID();
-		    	if (id != null) {
-		    		permGroupsIds.add(id);
-		    	}
-	    	} catch (Exception e) {
-	    		getLogger().log(Level.WARNING, "Error handling group with ID " + id, e);
-	    	}
-		}
 
         Collection<ICPermission> permissions = getPermissionDAO().findAllPermissionsByContextTypeAndPermissionGroupOrderedByContextValue(
                     RoleHelperObject.getStaticInstance().toString(),
@@ -2261,7 +2241,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		}
 
 		try {
-			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsAndPermissionControllingParentGroups(null, user));
+			Collection<ICPermission> c = getAllRolesForGroupCollection(getParentGroupsIdsAndPermissionControllingParentGroupsIds(null, user));
 			if (c != null) {
 				for (ICPermission p: c) {
 					if (p.isActive()) {
