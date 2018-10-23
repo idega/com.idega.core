@@ -2529,7 +2529,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				return null;
 			}
 
-			return getUserDAO().findAll(usersIds);
+			return getUserDAO().findByPrimaryKeys(usersIds);
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error getting users by roles: " + roleKeys, e);
 		}
