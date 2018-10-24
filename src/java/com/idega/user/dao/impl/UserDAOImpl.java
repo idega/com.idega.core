@@ -115,7 +115,8 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	public User getUser(String personalID) {
 		if (!StringUtil.isEmpty(personalID)) {
 			Param param = new Param("personalID", personalID);
-			return getSingleResult("user.findByPersonalID", User.class, param);
+			List<User> users = getResultList("user.findByPersonalID", User.class, param);
+			return ListUtil.isEmpty(users) ? null : users.iterator().next();
 		}
 
 		return null;
@@ -198,8 +199,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public User getUserBySHA1(String sha1) {
-		if (StringUtil.isEmpty(sha1))
+		if (StringUtil.isEmpty(sha1)) {
 			return null;
+		}
 
 		return getSingleResultByInlineQuery("from " + User.class.getName() + " u where u.sha1 = :sha1", User.class, new Param("sha1", sha1));
 	}
@@ -207,8 +209,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	@Override
 	public User getByEmailAddress(String emailAddress) {
 		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
-		if (ListUtil.isEmpty(emails))
+		if (ListUtil.isEmpty(emails)) {
 			return null;
+		}
 
 		for (Email email: emails) {
 			List<User> users = email.getUsers();
@@ -257,7 +260,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 */
 	@Override
 	public List<User> findAll(
-			Collection<Integer> primaryKeys, 
+			Collection<Integer> primaryKeys,
 			Collection<String> uuids,
 			Collection<String> personalIds) {
 		HashMap<String, Collection<? extends Serializable>> arguments = new HashMap<>(4);
@@ -472,8 +475,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		List<User> usersList = new ArrayList<User>();
 		if (!StringUtil.isEmpty(emailAddress)) {
 			List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
-			if (ListUtil.isEmpty(emails))
+			if (ListUtil.isEmpty(emails)) {
 				return null;
+			}
 
 
 			for (Email email: emails) {
