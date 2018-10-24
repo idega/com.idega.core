@@ -533,7 +533,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password, LoginType.CREDENTIALS, null, null));
+			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(
+					request,
+					RequestUtil.getServerURL(request),
+					username,
+					password,
+					LoginType.CREDENTIALS,
+					null,
+					null
+				)
+			);
 		}
 	}
 
@@ -598,7 +607,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return MapUtil.isEmpty(verficators) ? null : verficators.values();
 	}
 
-	private static ServletContext getServletContext(HttpServletRequest request, HttpSession session) {
+	public static ServletContext getServletContext(HttpServletRequest request, HttpSession session) {
 		ServletContext context = null;
 		try {
 			context = session == null ? null : session.getServletContext();
