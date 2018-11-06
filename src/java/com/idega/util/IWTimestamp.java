@@ -839,27 +839,29 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public IWTimestamp(Locale locale, String SQLFormat) {
 		this(locale);
 
-		if (SQLFormat.length() == 10) {
-			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
-			setTime(Date.valueOf(SQLFormat));
-			setAsDate();
-		}
-		else if (SQLFormat.length() == 8) {
-			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
-			setTime(Time.valueOf(SQLFormat));
-			setAsTime();
-		}
-		else if(SQLFormat.length() == 6) {
-			DateFormat dateFormatddmmyy = new SimpleDateFormat("ddMMyy");
-			try {
-				setTime(dateFormatddmmyy.parse(SQLFormat));
+		if (!StringUtil.isEmpty(SQLFormat)) {
+			if (SQLFormat.length() == 10) {
+				//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
+				setTime(Date.valueOf(SQLFormat));
+				setAsDate();
 			}
-			catch (ParseException e) {
-				throw (IllegalArgumentException)new IllegalArgumentException().initCause(e);
+			else if (SQLFormat.length() == 8) {
+				//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
+				setTime(Time.valueOf(SQLFormat));
+				setAsTime();
 			}
-		}
-		else {
-			setTime(Timestamp.valueOf(SQLFormat));
+			else if(SQLFormat.length() == 6) {
+				DateFormat dateFormatddmmyy = new SimpleDateFormat("ddMMyy");
+				try {
+					setTime(dateFormatddmmyy.parse(SQLFormat));
+				}
+				catch (ParseException e) {
+					throw (IllegalArgumentException)new IllegalArgumentException().initCause(e);
+				}
+			}
+			else {
+				setTime(Timestamp.valueOf(SQLFormat));
+			}
 		}
 	}
 
