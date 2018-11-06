@@ -32,9 +32,7 @@ import com.idega.idegaweb.IWResourceBundle;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.repository.RepositoryService;
 import com.idega.repository.RepositorySession;
-import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
-import com.idega.util.PresentationUtil;
 import com.idega.util.RenderUtils;
 import com.idega.util.WebUtil;
 import com.idega.util.expression.ELUtil;
@@ -142,34 +140,6 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 			}
 
 			super.encodeBegin(context);
-		}
-		
-		boolean showAcceptCookiesFooter = getIWMainApplication(context)
-				.getSettings()
-				.getProperty("accept_cookies_footer_enabled",
-						Boolean.FALSE.toString())
-				.equalsIgnoreCase(Boolean.TRUE.toString());
-		
-		if (showAcceptCookiesFooter) {
-			
-			
-			PresentationUtil.addJavaScriptSourceLineToHeader(
-					IWContext.getIWContext(context),
-					CoreConstants.DWR_ENGINE_SCRIPT);
-			
-			PresentationUtil.addJavaScriptSourceLineToHeader(
-					IWContext.getIWContext(context),
-					CoreConstants.DWR_UTIL_SCRIPT);
-			
-			PresentationUtil.addJavaScriptSourceLineToHeader(
-					IWContext.getIWContext(context),
-					"/dwr/interface/WebUtil.js");
-
-			PresentationUtil.addJavaScriptSourceLineToHeader(
-					IWContext.getIWContext(context),
-					getBundle(context, CoreConstants.CORE_IW_BUNDLE_IDENTIFIER)
-							.getVirtualPathWithFileNameString(
-									"javascript/acceptCookies.js"));
 		}
 
 	}
