@@ -62,6 +62,7 @@ public class CoreConstants {
 	public static final String PROP_SYSTEM_ACCOUNT = "mail_user_account";
 	public static final String PROP_SYSTEM_MAIL_HOST = "mail_host";
 	public static final String PROP_SHOW_ADMIN_TOOLBAR = "show.admin.toolbar";
+	public static final String PROP_PRIVACY_POLICY_URL = "privacy_policy_url";
 
 	/**
 	 * <p>
