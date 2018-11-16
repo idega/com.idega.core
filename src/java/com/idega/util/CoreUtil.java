@@ -232,8 +232,9 @@ public class CoreUtil {
 
 		    		notification = new StringBuffer("Requested uri: ").append(requestedUri).append("\n");
 		    		notification.append("User: ").append(userFullName).append("\n");
-		    		if (!StringUtil.isEmpty(message))
-		    			notification.append("Message: ").append(message).append("\n");
+		    		if (!StringUtil.isEmpty(message)) {
+						notification.append("Message: ").append(message).append("\n");
+					}
 		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
 		    		String receiver = settings.getProperty("exception_report_receiver", "abuse@idega.com");
@@ -507,8 +508,9 @@ public class CoreUtil {
 		List<String> ids = new ArrayList<String>(entities.size());
 		for (IDOEntity entity : entities) {
 			Object id = entity.getPrimaryKey();
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			ids.add(id.toString());
 		}
@@ -523,8 +525,9 @@ public class CoreUtil {
 		List<Integer> ids = new ArrayList<Integer>(entities.size());
 		for (IDOEntity entity : entities) {
 			Object id = entity.getPrimaryKey();
-			if (id == null)
+			if (id == null) {
 				continue;
+			}
 
 			try {
 				ids.add(Integer.valueOf(id.toString()));
@@ -541,12 +544,14 @@ public class CoreUtil {
 
 		Map<?, ?> utils = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext())
 				.getBeansOfType(JSFUtil.class);
-		if (MapUtil.isEmpty(utils))
+		if (MapUtil.isEmpty(utils)) {
 			return;
+		}
 
 		for (Object bean: utils.values()) {
-			if (bean instanceof JSFUtil)
+			if (bean instanceof JSFUtil) {
 				((JSFUtil) bean).setFacesScope(context);
+			}
 		}
     }
 
@@ -591,7 +596,9 @@ public class CoreUtil {
 		if (StringUtil.isEmpty(protocol) || StringUtil.isEmpty(name)) {
 			return CoreConstants.EMPTY;
 		} else {
-			host = protocol.concat("://").concat(name);
+			host = name.indexOf("://") == -1 ?
+					protocol.concat("://").concat(name) :
+					name;
 		}
 
 		if (addPort) {
@@ -782,19 +789,19 @@ public class CoreUtil {
 		buf.append(CoreConstants.SLASH);
 		return buf.toString();
 	}
-	
+
 	public static String executeCommand(String command) throws Exception {
 		StringBuffer output = new StringBuffer();
-		
+
 		Process process = Runtime.getRuntime().exec(command);
 		process.waitFor();
 		BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
-		
+
 		String line = CoreConstants.EMPTY;
 		while ((line = reader.readLine()) != null) {
 			output.append(line + CoreConstants.NEWLINE);
 		}
-		
+
 		return output.toString();
 	}
 

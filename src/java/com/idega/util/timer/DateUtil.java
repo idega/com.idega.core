@@ -94,9 +94,13 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
+import java.util.Locale;
 import java.util.logging.Logger;
 
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.StringUtil;
 
 /**
@@ -113,6 +117,43 @@ public class DateUtil {
 
 	public static final DateFormat JSON_DATE_FORMAT = new SimpleDateFormat("yyyy-MM-dd HH:mm:ssZ");
 
+	public static final String PROPERTY_ZONE_ID = "core.zone_id";
+
+	private static IWMainApplication getApplication() {
+		return IWMainApplication.getDefaultIWMainApplication();
+	}
+
+	private static IWMainApplicationSettings getSettings() {
+		IWMainApplication application = getApplication();
+		if (application != null) {
+			return application.getSettings();
+		}
+
+		return null;
+	}
+
+	/**
+	 *
+	 * <p>Application properties are defined
+	 * at ~/workspace/developer/applicationproperties/</p>
+	 * @param propertyName is 'property key name',
+	 * not <code>null</code>;
+	 * @param defaultPropertyValue is initial value of 'property key value',
+	 * not <code>null</code>;
+	 * @return 'property key value' or <code>null</code> on failure;
+	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
+	 */
+	private static String getApplicationProperty(
+			String propertyName,
+			String defaultPropertyValue) {
+		IWMainApplicationSettings settings = getSettings();
+		if (settings != null) {
+			return settings.getProperty(propertyName, defaultPropertyValue);
+		}
+
+		return null;
+	}
+	
 	public static String getJSONDate(Date date) {
 		if (date == null) {
 			return null;
@@ -138,6 +179,21 @@ public class DateUtil {
 			return JSON_DATE_FORMAT.parse(date);
 		} catch (Exception e) {
 			Logger.getLogger(DateUtil.class.getName()).warning("Unable to parse '" + date + "' into Date object");
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return current {@link ZoneId} of {@link ZoneId} defined in {@link DateUtil#PROPERTY_ZONE_ID}
+	 */
+	public static ZoneId getZone() {
+		String zoneId = getApplicationProperty(
+				PROPERTY_ZONE_ID, 
+				ZoneId.systemDefault().getId());
+		if (!StringUtil.isEmpty(zoneId)) {
+			return ZoneId.of(zoneId);
 		}
 
 		return null;
@@ -185,7 +241,7 @@ public class DateUtil {
 	 */
 	public static LocalDateTime getDateTime(Date date) {
 		if (date != null) {
-			return Instant.ofEpochMilli(date.getTime()).atZone(ZoneId.systemDefault()).toLocalDateTime();
+			return Instant.ofEpochMilli(date.getTime()).atZone(getZone()).toLocalDateTime();
 		}
 
 		return null;
@@ -229,7 +285,7 @@ public class DateUtil {
 	 */
 	public static Date getDate(LocalDateTime dateTime) {
 		if (dateTime != null) {
-			return Date.from(dateTime.atZone(ZoneId.systemDefault()).toInstant());
+			return Date.from(dateTime.atZone(getZone()).toInstant());
 		}
 
 		return null;
@@ -296,11 +352,48 @@ public class DateUtil {
 		return null;
 	}
 
+	/**
+	 * 
+	 * @param date to convert
+	 * @return with timezone information
+	 */
 	public static ZonedDateTime getZonedDateTime(Date date) {
 		LocalDateTime dateTime = getDateTime(date);
 		if (dateTime != null) {
-			ZonedDateTime zonedDateTime = ZonedDateTime.now();
-			return ZonedDateTime.of(dateTime, zonedDateTime.getZone());
+			return ZonedDateTime.of(dateTime, getZone());
+		}
+
+		return null;
+	}
+
+	/**
+	 * 
+	 * @return {@link ZoneId} by current {@link Locale} or {@link ZoneId#systemDefault()} on failure
+	 */
+	public static ZoneId getZoneByLocale() {
+		Locale locale = CoreUtil.getCurrentLocale();
+		if (locale != null) {
+			if (locale.toString().equals("is_IS")) {
+				return ZoneId.of("Atlantic/Reykjavik");
+			} else if (locale.toString().equals("sv_SE")) {
+				return ZoneId.of("Europe/Stockholm");
+			} else if (locale.toString().equals("lt_LT")) {
+				return ZoneId.of("Europe/Vilnius");
+			}
+		}
+
+		return ZoneId.systemDefault();
+	}
+
+	public static Date getAjustedDate(Date date) {
+		if (date != null) {
+			ZonedDateTime systemTime = getZonedDateTime(date);
+			if (systemTime != null) {
+				ZonedDateTime localizedTime = systemTime.withZoneSameInstant(getZoneByLocale());
+				if (localizedTime != null) {
+					return getDate(localizedTime.toLocalDateTime());
+				}
+			}
 		}
 
 		return null;

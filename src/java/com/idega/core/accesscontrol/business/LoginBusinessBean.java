@@ -533,7 +533,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(request, RequestUtil.getServerURL(request), username, password, LoginType.CREDENTIALS, null, null));
+			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(
+					request,
+					RequestUtil.getServerURL(request),
+					username,
+					password,
+					LoginType.CREDENTIALS,
+					null,
+					null
+				)
+			);
 		}
 	}
 
@@ -598,7 +607,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return MapUtil.isEmpty(verficators) ? null : verficators.values();
 	}
 
-	private static ServletContext getServletContext(HttpServletRequest request, HttpSession session) {
+	public static ServletContext getServletContext(HttpServletRequest request, HttpSession session) {
 		ServletContext context = null;
 		try {
 			context = session == null ? null : session.getServletContext();
@@ -1134,9 +1143,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		String loginType = getLoginType(request, userLogin);
 		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, loginType);
-		if (user != null) {
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, loginType, request.getSession(true)));
-		}
+		doPublishLoggedInEvent(request, user, userName, loginType);
 		return true;
 	}
 
@@ -1156,6 +1163,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return loginType;
 	}
 
+	protected void doPublishLoggedInEvent(HttpServletRequest request, User user, String userName, String loginType) {
+		if (user == null) {
+			return;
+		}
+
+		ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, loginType, request.getSession(true)));
+	}
+
 	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, UserLogin userLogin) throws Exception {
 		User user = userLogin.getUser();
 
@@ -1165,9 +1180,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		String userName = userLogin.getUserLogin();
 		String loginType = getLoginType(request, userLogin);
 		storeLoggedOnInfoInSession(request, session, userLogin, userName, user, loginRecord, loginType);
-		if (user != null) {
-			ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, loginType, request.getSession(true)));
-		}
+		doPublishLoggedInEvent(request, user, userName, loginType);
 		return true;
 	}
 

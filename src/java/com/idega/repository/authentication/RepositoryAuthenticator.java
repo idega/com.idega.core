@@ -23,17 +23,25 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoggedOnInfo;
 import com.idega.core.accesscontrol.business.LoginBusinessBean;
+import com.idega.core.accesscontrol.business.LoginDBHandler;
 import com.idega.core.accesscontrol.business.LoginSession;
+import com.idega.core.accesscontrol.dao.UserLoginDAO;
+import com.idega.core.accesscontrol.data.LoginTable;
+import com.idega.core.accesscontrol.data.bean.UserLogin;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.RepositoryStartedEvent;
+import com.idega.presentation.IWContext;
 import com.idega.repository.RepositoryService;
 import com.idega.servlet.filter.BaseFilter;
 import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
+import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -92,6 +100,43 @@ public class RepositoryAuthenticator extends BaseFilter {
 		return false;
 	}
 
+	private LoggedOnInfo getLoggedOnInfo(HttpServletRequest req, HttpServletResponse res, HttpSession session) {
+		try {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc == null) {
+				iwc = new IWContext(req, res, LoginBusinessBean.getServletContext(req, session));
+			}
+			if (iwc == null || !iwc.isLoggedOn()) {
+				LOGGER.warning(
+						"Unable to get logged on info for session with ID " + (session == null ? "unknown" : session.getId()) +
+						" and request: " + req.getRequestURI() + ". " +
+								(iwc == null ? IWContext.class.getName() + " is not available" : "User is not logged in")
+				);
+				return null;
+			}
+
+			User user = iwc.getLoggedInUser();
+			LoginTable loginTable = LoginDBHandler.getUserLogin(user.getId());
+			LoggedOnInfo lInfo = new LoggedOnInfo();
+			UserLoginDAO userLoginDAO = ELUtil.getInstance().getBean(UserLoginDAO.class);
+			String username = loginTable.getUserLogin();
+			UserLogin userLogin = userLoginDAO.findLoginByUsername(username);
+			lInfo.setUserLogin(userLogin);
+			lInfo.setLogin(username);
+			lInfo.setTimeOfLogon(IWTimestamp.RightNow());
+			lInfo.setUser(user);
+
+			AccessController aController = iwc.getAccessController();
+			lInfo.setUserRoles(aController.getAllRolesForCurrentUser(iwc));
+
+			return lInfo;
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error constructing logged on info for session with ID " + (session == null ? "unknown" : session.getId()) +
+					" and request: " + req.getRequestURI(), e);
+		}
+		return null;
+	}
+
 	public void doAuthentication(ServletRequest request, ServletResponse response, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest req = (HttpServletRequest) request;
 		HttpServletResponse res = (HttpServletResponse) response;
@@ -102,7 +147,19 @@ public class RepositoryAuthenticator extends BaseFilter {
 			if (loginBusiness.isLoggedOn(req)) {
 				LoggedOnInfo lInfo = loginBusiness.getLoggedOnInfo(session);
 				if (lInfo == null) {
-					LOGGER.warning("Unable to get logged on info for session " + session);
+					LoginSession loginSession = null;
+					try {
+						loginSession = ELUtil.getInstance().getBean(LoginSession.class);
+					} catch (Exception e) {}
+					lInfo = loginSession == null ? null : loginSession.getLoggedOnInfo();
+					if (lInfo == null) {
+						lInfo = getLoggedOnInfo(req, res, session);
+						if (lInfo != null) {
+							loginBusiness.setLoggedOnInfo(lInfo, session);
+						}
+					}
+				}
+				if (lInfo == null) {
 					return;
 				}
 
@@ -141,9 +198,11 @@ public class RepositoryAuthenticator extends BaseFilter {
 		chain.doFilter(request, response);
 	}
 
-	private HttpServletRequest setAsAuthenticatedInRepository(HttpServletRequest request, String loginName, LoggedOnInfo lInfo)
-		throws RemoteException, IOException, RepositoryException {
-
+	private HttpServletRequest setAsAuthenticatedInRepository(
+			HttpServletRequest request,
+			String loginName,
+			LoggedOnInfo lInfo
+	) throws RemoteException, IOException, RepositoryException {
 		String repositoryPrincipal = loginName;
 		HttpSession session = request.getSession(true);
 		LoginBusinessBean loginBusiness = getLoginBusiness(request);

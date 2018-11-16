@@ -215,3 +215,6 @@ user_chooser.choose=Choose
 value=Value
 week_of_year.week=week {0}
 yes=Yes
+cookies.this_site_uses_cookies=This site uses cookies
+cookies.accept=Accept
+cookies.see_more_information=See more information

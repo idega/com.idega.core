@@ -141,6 +141,7 @@ public class IWBaseComponent extends UIComponentBase implements CacheableUICompo
 
 			super.encodeBegin(context);
 		}
+
 	}
 
 	/* (non-Javadoc)

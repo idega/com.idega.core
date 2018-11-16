@@ -11,7 +11,9 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 
+import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
+import com.idega.util.timer.DateUtil;
 
 /**
  * <code>IWTimestamp</code> is a class that can be used when working with SQL date/time
@@ -724,6 +726,45 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public IWTimestamp(java.util.Date date) {
 		this();
 		setAsDate();
+		setTime(date);
+	}
+
+	private Boolean adjustToLocalTimeZone = null;
+
+	private boolean isAdjustToLocalTimeZone() {
+		if (adjustToLocalTimeZone == null) {
+			adjustToLocalTimeZone = IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("adjust_to_local_time_zone", false);
+		}
+		return adjustToLocalTimeZone;
+	}
+
+	private void setTime(Timestamp timestamp) {
+		if (timestamp != null && isAdjustToLocalTimeZone()) {
+			java.util.Date date = new java.util.Date(timestamp.getTime());
+			date = DateUtil.getAjustedDate(date);
+			this.calendar.setTime(date);
+			return;
+		}
+
+		this.calendar.setTime(timestamp);
+	}
+
+	private void setTime(Time time) {
+		if (time != null && isAdjustToLocalTimeZone()) {
+			java.util.Date date = new java.util.Date(time.getTime());
+			date = DateUtil.getAjustedDate(date);
+			this.calendar.setTime(date);
+			return;
+		}
+
+		this.calendar.setTime(time);
+	}
+
+	private void setTime(java.util.Date date) {
+		if (date != null && isAdjustToLocalTimeZone()) {
+			date = DateUtil.getAjustedDate(date);
+		}
+
 		this.calendar.setTime(date);
 	}
 
@@ -735,7 +776,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public IWTimestamp(Locale locale, java.util.Date date) {
 		this(locale);
 		setAsDate();
-		this.calendar.setTime(date);
+		setTime(date);
 	}
 
 	/**
@@ -798,27 +839,29 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public IWTimestamp(Locale locale, String SQLFormat) {
 		this(locale);
 
-		if (SQLFormat.length() == 10) {
-			//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
-			this.calendar.setTime(Date.valueOf(SQLFormat));
-			setAsDate();
-		}
-		else if (SQLFormat.length() == 8) {
-			//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
-			this.calendar.setTime(Time.valueOf(SQLFormat));
-			setAsTime();
-		}
-		else if(SQLFormat.length() == 6) {
-			DateFormat dateFormatddmmyy = new SimpleDateFormat("ddMMyy");
-			try {
-				this.calendar.setTime(dateFormatddmmyy.parse(SQLFormat));
+		if (!StringUtil.isEmpty(SQLFormat)) {
+			if (SQLFormat.length() == 10) {
+				//SQLFormat = SQLFormat + " " + getDateString(TIME_PATTERN);
+				setTime(Date.valueOf(SQLFormat));
+				setAsDate();
 			}
-			catch (ParseException e) {
-				throw (IllegalArgumentException)new IllegalArgumentException().initCause(e);
+			else if (SQLFormat.length() == 8) {
+				//SQLFormat = getDateString(DATE_PATTERN) + " " + SQLFormat;
+				setTime(Time.valueOf(SQLFormat));
+				setAsTime();
 			}
-		}
-		else {
-			this.calendar.setTime(Timestamp.valueOf(SQLFormat));
+			else if(SQLFormat.length() == 6) {
+				DateFormat dateFormatddmmyy = new SimpleDateFormat("ddMMyy");
+				try {
+					setTime(dateFormatddmmyy.parse(SQLFormat));
+				}
+				catch (ParseException e) {
+					throw (IllegalArgumentException)new IllegalArgumentException().initCause(e);
+				}
+			}
+			else {
+				setTime(Timestamp.valueOf(SQLFormat));
+			}
 		}
 	}
 
@@ -830,7 +873,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	public IWTimestamp(Time time) {
 		this();
 		setAsTime();
-		this.calendar.setTime(time);
+		setTime(time);
 	}
 
 	/**
@@ -839,7 +882,7 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 	 */
 	public IWTimestamp(Timestamp time) {
 		this();
-		this.calendar.setTime(time);
+		setTime(time);
 	}
 
 ///////////////////////////////////////////////////

@@ -3,10 +3,12 @@
  */
 package com.idega.user.dao.impl;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -184,8 +186,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public User getUserBySHA1(String sha1) {
-		if (StringUtil.isEmpty(sha1))
+		if (StringUtil.isEmpty(sha1)) {
 			return null;
+		}
 
 		return getSingleResultByInlineQuery("from " + User.class.getName() + " u where u.sha1 = :sha1", User.class, new Param("sha1", sha1));
 	}
@@ -193,8 +196,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	@Override
 	public User getByEmailAddress(String emailAddress) {
 		List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
-		if (ListUtil.isEmpty(emails))
+		if (ListUtil.isEmpty(emails)) {
 			return null;
+		}
 
 		for (Email email: emails) {
 			List<User> users = email.getUsers();
@@ -235,6 +239,22 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		}
 
 		return users;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.dao.UserDAO#findAll(java.util.Collection, java.util.Collection, java.util.Collection)
+	 */
+	@Override
+	public List<User> findAll(
+			Collection<Integer> primaryKeys,
+			Collection<String> uuids,
+			Collection<String> personalIds) {
+		HashMap<String, Collection<? extends Serializable>> arguments = new HashMap<>(4);
+		arguments.put(User.PROPERTY_ID, primaryKeys);
+		arguments.put(User.PROPERTY_UUID, uuids);
+		arguments.put(User.PROPERTY_PERSONAL_ID, personalIds);
+		return findAll(User.class, arguments);
 	}
 
 	/*
@@ -451,8 +471,9 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 		List<User> usersList = new ArrayList<User>();
 		if (!StringUtil.isEmpty(emailAddress)) {
 			List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
-			if (ListUtil.isEmpty(emails))
+			if (ListUtil.isEmpty(emails)) {
 				return null;
+			}
 
 
 			for (Email email: emails) {

@@ -54,8 +54,9 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	 * @param params to set, skipped if <code>null</code>
 	 */
 	private void setParameters(Query q, Param... params) {
-		if (ArrayUtil.isEmpty(params))
+		if (ArrayUtil.isEmpty(params)) {
 			return;
+		}
 
 		setParameters(q, Arrays.asList(params));
 	}
@@ -67,8 +68,9 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	 * @param params to set, not <code>null</code>
 	 */
 	private void setParameters(Query q, Collection<Param> params) {
-		if (ListUtil.isEmpty(params))
+		if (ListUtil.isEmpty(params)) {
 			return;
+		}
 
 		for (Param param : params) {
 			String name = param.getParamName();
@@ -125,11 +127,10 @@ public class DaoFunctionsImpl implements DaoFunctions {
 					if (value instanceof Collection) {
 						@SuppressWarnings("unchecked")
 						List<V> paramValue = new ArrayList<V>((Collection<V>) value);
-
 						int allowedParamsInCollection = 5000;
-						if (paramValue.size() > allowedParamsInCollection) {
-							usableParams.add(new Param(param.getParamName(), paramValue.subList(0, allowedParamsInCollection)));
-							unusedParams.add(new Param(param.getParamName(), paramValue.subList(allowedParamsInCollection, paramValue.size())));
+ 						if (paramValue.size() > allowedParamsInCollection) {
+ 							usableParams.add(new Param(param.getParamName(), paramValue.subList(0, allowedParamsInCollection)));
+ 							unusedParams.add(new Param(param.getParamName(), paramValue.subList(allowedParamsInCollection, paramValue.size())));
 						} else {
 							usableParams.add(param);
 						}
@@ -188,10 +189,17 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		setParameters(q, queryParams.getUsableParams());
 
 		List<Expected> tmpResults = null;
-		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
-			tmpResults = getRealResults(q.getResultList(), expectedReturnType);
-		} else {
+		try {
 			tmpResults = q.getResultList();
+		} catch (Exception e) {
+			String error = "Error executing query " + DBUtil.getInstance().getQueryInfo(q) + ". Expected return type: " + expectedReturnType.getName() +
+					(ArrayUtil.isEmpty(params) ? CoreConstants.EMPTY : ", parameters: " + Arrays.asList(params));
+			LOGGER.log(Level.WARNING, error, e);
+			CoreUtil.sendExceptionNotification(error, e);
+		}
+
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
+			tmpResults = getRealResults(tmpResults, expectedReturnType);
 		}
 
 		if (ListUtil.isEmpty(tmpResults)) {
@@ -224,7 +232,7 @@ public class DaoFunctionsImpl implements DaoFunctions {
 	 * @return results casted to expectedReturnType objects or <code>null</code> on failure;
 	 */
 	@SuppressWarnings("unchecked")
-	private <Exptected> List<Exptected> getRealResults(List<Object> results, Class<Exptected> expectedReturnType) {
+	private <Exptected> List<Exptected> getRealResults(List<?> results, Class<Exptected> expectedReturnType) {
 		if (ListUtil.isEmpty(results)) {
 			return null;
 		}
@@ -286,6 +294,8 @@ public class DaoFunctionsImpl implements DaoFunctions {
 				message = "Error converting " + tmp + " (" + tmp.getClass() + ") to: " + expectedReturnType + ": such converter is not implemented yet!";
 			} else {
 				message = "Error converting null to: " + expectedReturnType + ": such converter is not implemented yet!";
+				LOGGER.warning(message);
+				CoreUtil.sendExceptionNotification(message, null);
 			}
 			LOGGER.log(Level.WARNING, message, e);
 			CoreUtil.sendExceptionNotification(message, e);
@@ -339,7 +349,8 @@ public class DaoFunctionsImpl implements DaoFunctions {
 			Query q,
 			Class<Expected> expectedReturnType,
 			String cachedRegionName,
-			Collection<Param> params) {
+			Collection<Param> params
+	) {
 		if (results == null) {
 			results = new ArrayList<Expected>();
 		}
@@ -351,10 +362,18 @@ public class DaoFunctionsImpl implements DaoFunctions {
 		setParameters(q, queryParams.getUsableParams());
 
 		List<Expected> tmpResults = null;
-		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
-			tmpResults = getRealResults(q.getResultList(), expectedReturnType);
-		} else {
+		tmpResults = q.getResultList();
+		try {
 			tmpResults = q.getResultList();
+		} catch (Exception e) {
+			String error = "Error executing query " + DBUtil.getInstance().getQueryInfo(q) + ". Expected return type: " + expectedReturnType.getName() +
+					(ListUtil.isEmpty(params) ? CoreConstants.EMPTY : ", parameters: " + params);
+			LOGGER.log(Level.WARNING, error, e);
+			CoreUtil.sendExceptionNotification(error, e);
+		}
+
+		if (IMPLEMENTED_CONVERTERS.contains(expectedReturnType)) {
+			tmpResults = getRealResults(tmpResults, expectedReturnType);
 		}
 
 		if (ListUtil.isEmpty(tmpResults)) {
