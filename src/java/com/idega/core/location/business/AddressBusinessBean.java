@@ -468,9 +468,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	public Commune getCommuneAndCreateIfDoesNotExist(String communeName, String communeCode) throws CreateException {
 		Commune commune = null;
 		try {
-			commune = getCommuneHome().findByCommuneCode(communeCode);
-		}
-		catch (FinderException e) {
+			commune = StringUtil.isEmpty(communeCode) ? null : getCommuneHome().findByCommuneCode(communeCode);
+		} catch (Exception e) {}
+		if (commune == null) {
 			try {
 				commune = getCommuneHome().findByCommuneName(communeName);
 			}
