@@ -50,6 +50,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		super(id);
 	}
 
+	@Override
 	public void initializeAttributes() {
 		addAttribute(getIDColumnName());
 		addAttribute(COLUMN_POSTAL_CODE, "Postalcode", true, true, String.class, 50);
@@ -65,6 +66,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		getEntityDefinition().setBeanCachingActiveByDefault(true);
 	}
 
+	@Override
 	public void insertStartData() throws Exception {
 		/*
 		 * java.util.List countries =
@@ -83,6 +85,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		 */
 	}
 
+	@Override
 	public String getEntityName() {
 		return TABLE_NAME;
 	}
@@ -91,11 +94,12 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		if (StringUtil.isEmpty(strip)) {
 			return null;
 		}
-		
+
 		String s = strip;
 		return s.replaceAll("\\s", "");
 	}
 
+	@Override
 	public void setPostalCode(String code) {
 		code = stripWhitespace(code);
 		setColumn(COLUMN_POSTAL_CODE, code);
@@ -109,23 +113,28 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		setColumn(COLUMN_POSTAL_ADDRESS, buffer.toString());
 	}
 
+	@Override
 	public String getPostalCode() {
 		return getStringColumnValue(COLUMN_POSTAL_CODE);
 	}
 
+	@Override
 	public void setCommuneID(String commune) {
 		// remove all whitespace from postal code
 		setColumn(COLUMN_COMMUNE_ID, commune);
 	}
 
+	@Override
 	public String getCommuneID() {
 		return getStringColumnValue(COLUMN_COMMUNE_ID);
 	}
 
+	@Override
 	public void setCommune(Commune commune) {
 		setColumn(COLUMN_COMMUNE_ID, commune);
 	}
 
+	@Override
 	public Commune getCommune() {
 		return (Commune) getColumnValue(COLUMN_COMMUNE_ID);
 	}
@@ -133,6 +142,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	/**
 	 * All names are stored in uppercase, uses String.toUpperCase();
 	 */
+	@Override
 	public void setName(String name) {
 		if (!StringUtil.isEmpty(name)) {
 			setColumn(COLUMN_NAME, name.toUpperCase());
@@ -148,22 +158,27 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		}
 	}
 
+	@Override
 	public String getName() {
 		return getStringColumnValue(COLUMN_NAME);
 	}
 
+	@Override
 	public void setCountry(Country country) {
 		setColumn(COLUMN_COUNTRY_ID, country);
 	}
 
+	@Override
 	public Country getCountry() {
 		return (Country) getColumnValue(COLUMN_COUNTRY_ID);
 	}
 
+	@Override
 	public void setCountryID(int country_id) {
 		setColumn(COLUMN_COUNTRY_ID, country_id);
 	}
 
+	@Override
 	public int getCountryID() {
 		return getIntColumnValue(COLUMN_COUNTRY_ID);
 	}
@@ -184,7 +199,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Finds primary keys by given postal codes.</p>
 	 * @param codes is {@link Collection} of {@link PostalCode#getPostalCode()},
 	 * not <code>null</code>;
@@ -196,7 +211,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		if (ListUtil.isEmpty(codes)) {
 			return Collections.emptyList();
 		}
-		
+
 		Table table = new Table(this);
 
 		SelectQuery query = new SelectQuery(table);
@@ -207,8 +222,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		try {
 			return idoFindPKsByQuery(query);
 		} catch (FinderException e) {
-			getLogger().log(Level.WARNING, 
-					"Failed to find primary keys by query: " + query + 
+			getLogger().log(Level.WARNING,
+					"Failed to find primary keys by query: " + query +
 					" cause of: ", e);
 		}
 
@@ -248,7 +263,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param countryId
 	 * @return Collection of strings, containing names
 	 * @throws FinderException
@@ -333,6 +348,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		return super.idoFindAllIDsOrderedBySQL(COLUMN_POSTAL_CODE);
 	}
 
+	@Override
 	public String getPostalAddress() {
 		String postalAddress = getStringColumnValue(COLUMN_POSTAL_ADDRESS);
 		if (postalAddress == null) {
@@ -409,7 +425,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	/**
 	 * Gets related addresses null if no found
 	 */
-	public Collection getAddresses() {
+	@Override
+	public Collection<Address> getAddresses() {
 		try {
 			return ((AddressHome) IDOLookup.getHome(Address.class)).findByPostalCode((Integer) getPrimaryKey());
 		}
@@ -421,7 +438,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		}
 		return null;
 	}
-	
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof PostalCode) {
 			PostalCode other = (PostalCode) obj;
@@ -432,9 +450,10 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 
 	/*
 	 * (non-Javadoc)
-	 * 
+	 *
 	 * @see com.idega.core.location.data.PostalCode#isEqualTo(com.idega.core.location.data.PostalCode)
 	 */
+	@Override
 	public boolean isEqualTo(PostalCode postal) {
 		if (postal != null) {
 			return (this.getPostalCode().equalsIgnoreCase(postal.getPostalCode()));
@@ -455,10 +474,11 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 		if (getName() != null) {
 			builder.append(getName());
 		}
-		
+
 		return builder.toString();
 	}
-	
+
+	@Override
 	public void store() throws IDOStoreException {
 		setPostalAddress(getPostalCode() + " " + getName());
 		super.store();

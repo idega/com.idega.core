@@ -10,14 +10,15 @@
 package com.idega.core.location.data;
 
 import java.util.Collection;
+
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOStoreException;
 
 
 /**
- * 
+ *
  *  Last modified: $Date: 2005/06/02 16:14:28 $ by $Author: gimmi $
- * 
+ *
  * @author <a href="mailto:gimmi@idega.com">gimmi</a>
  * @version $Revision: 1.6 $
  */
@@ -91,7 +92,7 @@ public interface PostalCode extends IDOEntity {
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#getAddresses
 	 */
-	public Collection getAddresses();
+	public Collection<Address> getAddresses();
 
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#isEqualTo
@@ -101,5 +102,6 @@ public interface PostalCode extends IDOEntity {
 	/**
 	 * @see com.idega.core.location.data.PostalCodeBMPBean#store
 	 */
+	@Override
 	public void store() throws IDOStoreException;
 }
