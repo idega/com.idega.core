@@ -1,6 +1,7 @@
 package com.idega.core.location.business;
 
 import java.rmi.RemoteException;
+import java.util.Collection;
 import java.util.NoSuchElementException;
 import java.util.StringTokenizer;
 
@@ -42,6 +43,8 @@ import com.idega.util.text.TextSoap;
  * @version 1.0
  */
 public class AddressBusinessBean extends IBOServiceBean implements AddressBusiness {
+
+	private static final long serialVersionUID = 3502953871117111526L;
 
 	public static final String NOT_AVAILABLE = "N/A";
 
@@ -200,7 +203,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	 */
 	@Override
 	public PostalCode changePostalCodeNameWhenOnlyOneAddressRelated(PostalCode postalCode, String newName) {
-		java.util.Collection addresses = postalCode.getAddresses();
+		Collection<Address> addresses = postalCode.getAddresses();
 		if (addresses != null && addresses.size() == 1) {
 			postalCode.setName(newName);
 			postalCode.store();
@@ -468,9 +471,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	public Commune getCommuneAndCreateIfDoesNotExist(String communeName, String communeCode) throws CreateException {
 		Commune commune = null;
 		try {
-			commune = getCommuneHome().findByCommuneCode(communeCode);
-		}
-		catch (FinderException e) {
+			commune = StringUtil.isEmpty(communeCode) ? null : getCommuneHome().findByCommuneCode(communeCode);
+		} catch (Exception e) {}
+		if (commune == null) {
 			try {
 				commune = getCommuneHome().findByCommuneName(communeName);
 			}
