@@ -240,4 +240,7 @@ public java.lang.String getIDColumnName();
 	 * @return age of user in years or <code>null</code> on failure;
 	 */
 	Long getAge();
+
+	Phone getPhone();
+
 }
