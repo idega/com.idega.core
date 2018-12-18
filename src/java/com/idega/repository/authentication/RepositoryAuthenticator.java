@@ -144,6 +144,16 @@ public class RepositoryAuthenticator extends BaseFilter {
 		LoginBusinessBean loginBusiness = getLoginBusiness(req);
 
 		try {
+			String uuid = req.getParameter(LoginBusinessBean.PARAM_LOGIN_BY_UNIQUE_ID);
+			if (!StringUtil.isEmpty(uuid)) {
+				String state = req.getParameter(LoginBusinessBean.LoginStateParameter);
+				if (state != null && state.equals(LoginBusinessBean.LOGIN_EVENT_LOGIN)) {
+					if (!loginBusiness.isLoggedOn(req)) {
+						loginBusiness.logInByUUID(req, uuid);
+					}
+				}
+			}
+
 			if (loginBusiness.isLoggedOn(req)) {
 				LoggedOnInfo lInfo = loginBusiness.getLoggedOnInfo(session);
 				if (lInfo == null) {
