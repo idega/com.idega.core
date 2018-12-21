@@ -395,4 +395,23 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		);
 	}
 
+	@Override
+	@Transactional(readOnly = false)
+	public void removeRole(String roleKey) {
+		if (StringUtil.isEmpty(roleKey)) {
+			getLogger().warning("Role key is not provided");
+			return;
+		}
+
+		try {
+			ICRole role = findRole(roleKey);
+			if (role != null) {
+				remove(role);
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not remove the role with key " + roleKey  + ". Error message was: " + e.getLocalizedMessage(), e);
+		}
+	}
+
+
 }

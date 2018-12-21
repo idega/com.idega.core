@@ -241,5 +241,6 @@ public java.lang.String getIDColumnName();
 	 */
 	Long getAge();
 
+	Phone getPhone();
 
 }

@@ -3210,8 +3210,9 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (obj instanceof com.idega.user.data.bean.User)
+		if (obj instanceof com.idega.user.data.bean.User) {
 			return getId().equals(String.valueOf(((com.idega.user.data.bean.User) obj).getId()));
+		}
 
 		return super.equals(obj);
 	}
@@ -3255,6 +3256,15 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 	@Override
 	public Integer addGroup(int groupId, Timestamp time, User addedBy) throws EJBException {
 		throw new UnsupportedOperationException("Method addGroup() is not implemented yet");
+	}
+
+	@Override
+	public Phone getPhone() {
+		try {
+			Collection<Phone> phones = getPhones();
+			return ListUtil.isEmpty(phones) ? null : phones.iterator().next();
+		} catch (Exception e) {}
+		return null;
 	}
 
 }

@@ -801,11 +801,11 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			return Collections.emptyList();
 		}
 
-		List<Integer> ids = new ArrayList<>();
+		Set<Integer> ids = new HashSet<>();
 		for (List<Integer> childGroupsIds: data.values()) {
 			ids.addAll(childGroupsIds);
 		}
-		return ids;
+		return new ArrayList<>(ids);
 	}
 
 	@Override

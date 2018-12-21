@@ -888,7 +888,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 */
 	public String[] getLoginNameAndPasswordFromBasicAuthenticationRequest(HttpServletRequest request) {
 		String sAuthorizationHeader = RequestUtil.getAuthorizationHeader(request);
-		if (sAuthorizationHeader != null) {
+		if (!StringUtil.isEmpty(sAuthorizationHeader)) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
 				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
@@ -901,7 +901,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					return toReturn;
 				}
 			} catch (Exception e) {
-				e.printStackTrace();
+				LOGGER.log(Level.WARNING, "Error getting login name and password from auth. request encoded in Base64: '" + sAuthorizationHeader + "'", e);
 			}
 		}
 		return null;

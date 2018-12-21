@@ -70,4 +70,6 @@ public interface PermissionDAO extends GenericDao {
 	 * on failure;
 	 */
 	List<ICPermission> findAll(String contextType, Collection<Integer> primaryKeys);
+
+	public void removeRole(String roleKey);
 }
