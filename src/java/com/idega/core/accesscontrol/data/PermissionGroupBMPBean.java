@@ -1,5 +1,6 @@
 package com.idega.core.accesscontrol.data;
 
+import com.idega.user.data.GroupTypeBMPBean;
 
 /**
  * Title:        AccessControl
@@ -11,31 +12,33 @@ package com.idega.core.accesscontrol.data;
  * @deprecated All hardcoded group "type" classes should be avoided. Just use a regular com.idega.user.data.Group and set its grouptype.
  */
 
+@Deprecated
 public class PermissionGroupBMPBean extends com.idega.user.data.GroupBMPBean implements com.idega.core.accesscontrol.data.PermissionGroup {
 
-  public String getGroupTypeValue(){
+  @Override
+public String getGroupTypeValue(){
 
-    return "permission";
+    return GroupTypeBMPBean.TYPE_PERMISSION_GROUP;
 
   }
 
   public static String getClassName(){
-
-    return "com.idega.core.accesscontrol.data.PermissionGroup";
-
+	  return PermissionGroup.class.getName();
   }
 
   /**
    * ONLY FOR BACKWARD COMPATABILTY ISSUES WITH ACCESSCONTROL
    */
-  public void setID(int id) {
+  @Override
+public void setID(int id) {
 	setColumn(getIDColumnName(), new Integer(id));
   }
 
   /**
    * ONLY FOR BACKWARD COMPATABILTY ISSUES WITH ACCESSCONTROL
    */
-  public int getID() {
+  @Override
+public int getID() {
 	return getIntColumnValue(getIDColumnName());
   }
 

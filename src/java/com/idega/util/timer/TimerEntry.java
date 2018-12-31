@@ -1,5 +1,6 @@
 package com.idega.util.timer;
 
+import java.io.Serializable;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -10,7 +11,10 @@ import java.util.Date;
   * @version 1.4, 01/02/2002
   * @modified Eirikur Hrafnsson eiki@idega.is
   */
-public class TimerEntry implements Comparable, java.io.Serializable {
+public class TimerEntry implements Comparable<TimerEntry>, Serializable {
+
+	private static final long serialVersionUID = 8063515545815678909L;
+
   public int minute = -1;
   public int hour = -1;
   public int dayOfMonth = -1;
@@ -23,7 +27,7 @@ public class TimerEntry implements Comparable, java.io.Serializable {
   public String timerName = "";
   public transient TimerListener listener;
   public boolean canRun = true;
-  
+
 /**
  * @return Returns the dayOfMonth.
  */
@@ -214,7 +218,7 @@ public void setYear(int year) {
     this.isRelative = true;
     updateTimerTime();
   }
- 
+
   /**
     * Creates a new TimerEntry.
     *
@@ -288,11 +292,11 @@ public void setYear(int year) {
     }
 
     if (this.hour != -1) {
-	timer.set(Calendar.HOUR_OF_DAY, this.hour);
+    	timer.set(Calendar.HOUR_OF_DAY, this.hour);
     }
 
     if (this.minute != -1) {
-	timer.set(Calendar.MINUTE, this.minute);
+    	timer.set(Calendar.MINUTE, this.minute);
     }
 
     timer.set(Calendar.SECOND, 0);
@@ -385,7 +389,8 @@ public void setYear(int year) {
     *
     * @return the string.
     */
-  public String toString() {
+  @Override
+public String toString() {
     if (this.year != -1) {
       return "Timer at " + new Date(this.timerTime);
     }
@@ -415,17 +420,16 @@ public void setYear(int year) {
     * @exception ClassCastException if the specified Object's type
     * prevents it from being compared to this TimerEntry.
     */
-  public int compareTo(Object obj) {
-    TimerEntry entry = (TimerEntry)obj;
+  @Override
+public int compareTo(TimerEntry entry) {
     if (this.timerTime < entry.timerTime) {
-			return -1;
-		}
+		return -1;
+	}
     if (this.timerTime > entry.timerTime) {
-			return 1;
-		}
+		return 1;
+	}
     return 0;
   }
-
 
   /**
     * Indicates whether some other TimerEntry is "equal to" this one.
@@ -435,20 +439,13 @@ public void setYear(int year) {
     * <code>timerTime</code> as the <code>timerTime</code> of the obj
     * argument; <code>false</code> otherwise.
     */
-  public boolean equals(Object obj) {
+  @Override
+public boolean equals(Object obj) {
     TimerEntry entry = (TimerEntry)obj;
     if ( (this.timerTime == entry.timerTime) && (this.timerName.equals(entry.timerName)) ){
       return true;
     }
     return false;
   }
+
 }
-
-
-
-
-
-
-
-
-
