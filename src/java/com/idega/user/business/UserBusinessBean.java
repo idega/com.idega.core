@@ -4902,7 +4902,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	protected User create(String fullName, String email) {
-		if (StringUtil.isEmpty(fullName) || StringUtil.isEmpty(email)) {
+		if (StringUtil.isEmpty(fullName)) {
 			return null;
 		}
 
@@ -4942,7 +4942,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		IWContext iwc = CoreUtil.getIWContext();
 		IWBundle iwrb = getUserBundle(iwc);
-		if (iwrb != null) {
+		if (iwrb != null && !StringUtil.isEmpty(email)) {
 			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
 			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
 			String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
@@ -4990,14 +4990,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						"Failed to get " + User.class.getName() +
 						" by primary key: " + primaryKey);
 			}
-		} else if (!StringUtil.isEmpty(uuid)) {
+		} 
+
+		if (user == null && !StringUtil.isEmpty(uuid)) {
 			try {
 				user = getUserHome().findUserByUniqueId(uuid);
 			} catch (FinderException e) {}
-		} else {
+		} 
+
+		if (user == null && !StringUtil.isEmpty(name) && !StringUtil.isEmpty(email)) {
 			/* Searching for existing one by email and name */
-			Collection<User> users = getUserHome().findAllByNameAndEmail(
-					name, email);
+			Collection<User> users = getUserHome().findAllByNameAndEmail(name, email);
 			if (!ListUtil.isEmpty(users)) {
 				user = users.iterator().next();
 				if (users.size() > 1) {
@@ -5006,9 +5009,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							"'s found by name: '" + name +
 							"' and  email: '" + email + "'");
 				}
-			} else {
-				user = create(name, email);
 			}
+		}
+
+		if (user == null) {
+			user = create(name, email);
 		}
 
 		if (user == null) {
