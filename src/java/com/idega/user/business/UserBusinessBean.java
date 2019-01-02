@@ -5033,6 +5033,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		if (!StringUtil.isEmpty(personalId)) {
 			user.setPersonalID(personalId);
+			user.setDateOfBirth(getUserDateOfBirthFromPersonalId(personalId));
 		}
 
 		/* Storing user... */
