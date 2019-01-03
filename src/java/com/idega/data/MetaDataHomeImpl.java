@@ -6,9 +6,9 @@ import javax.ejb.FinderException;
 
 
 public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaDataHome {
-	
+
  /**
-	 * 
+	 *
 	 */
 	private static final long serialVersionUID = -2779913911896861198L;
 
@@ -17,11 +17,13 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
   return MetaData.class;
  }
 
- public MetaData create() throws javax.ejb.CreateException{
-  return (MetaData) super.idoCreate(MetaData.class);
+ @Override
+public MetaData create() throws javax.ejb.CreateException{
+  return super.idoCreate(MetaData.class);
  }
 
- public MetaData createLegacy(){
+ @Override
+public MetaData createLegacy(){
 	try {
 		return create();
 	}
@@ -30,15 +32,18 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
 	}
  }
 
- public MetaData findByPrimaryKey(int id) throws javax.ejb.FinderException{
+ @Override
+public MetaData findByPrimaryKey(int id) throws javax.ejb.FinderException{
   return (MetaData) super.idoFindByPrimaryKey(id);
  }
 
- public MetaData findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
-  return (MetaData) super.idoFindByPrimaryKey(MetaData.class, pk);
+ @Override
+public MetaData findByPrimaryKey(Object pk) throws javax.ejb.FinderException{
+  return super.idoFindByPrimaryKey(MetaData.class, pk);
  }
 
- public MetaData findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
+ @Override
+public MetaData findByPrimaryKeyLegacy(int id) throws java.sql.SQLException{
 	try{
 		return findByPrimaryKey(id);
 	}
@@ -48,13 +53,23 @@ public class MetaDataHomeImpl extends com.idega.data.IDOFactory implements MetaD
 
  }
 
- 	public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException {
+ 	@Override
+	public Collection<MetaData> findAllByMetaDataValue(String value) throws FinderException {
+		IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<Object> ids = ((MetaDataBMPBean) entity).ejbFindAllByMetaDataValue(value);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+ 	@Override
+	public Collection<MetaData> findAllByMetaDataNameAndType(String name, String type) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Collection<Object> ids = ((MetaDataBMPBean) entity).ejbFindAllByMetaDataNameAndType(name, type);
 		this.idoCheckInPooledEntity(entity);
 		return this.getEntityCollectionForPrimaryKeys(ids);
 	}
 
+	@Override
 	public MetaData findByMetaDataNameAndValueAndType(String name, String value, String type) throws FinderException {
 		IDOEntity entity = this.idoCheckOutPooledEntity();
 		Object pk = ((MetaDataBMPBean) entity).ejbFindByMetaDataNameAndValueAndType(name, value, type);

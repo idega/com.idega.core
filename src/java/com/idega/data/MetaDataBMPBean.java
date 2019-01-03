@@ -132,6 +132,16 @@ public class MetaDataBMPBean extends com.idega.data.GenericEntity implements com
 		setColumn(COLUMN_META_TYPE, type);
 	}
 
+	public Collection<Object> ejbFindAllByMetaDataValue(String value) throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(new Column(table, getIDColumnName()));
+
+		query.addCriteria(new MatchCriteria(new Column(table, COLUMN_META_VALUE), MatchCriteria.EQUALS, value));
+
+		return this.idoFindPKsByQuery(query);
+	}
+
 	public Collection<Object> ejbFindAllByMetaDataNameAndType(String name, String type) throws FinderException {
 		Table table = new Table(this);
 		SelectQuery query = new SelectQuery(table);
