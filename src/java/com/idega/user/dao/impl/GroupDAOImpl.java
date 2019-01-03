@@ -39,7 +39,10 @@ import com.idega.core.contact.data.bean.Email;
 import com.idega.core.contact.data.bean.Phone;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.IDOLookup;
 import com.idega.data.IDOUtil;
+import com.idega.data.MetaData;
+import com.idega.data.MetaDataHome;
 import com.idega.data.SimpleQuerier;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWMainApplication;
@@ -50,6 +53,7 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.Property;
 import com.idega.user.data.GroupBMPBean;
+import com.idega.user.data.GroupHome;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.GroupTypeConstants;
@@ -63,6 +67,7 @@ import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
 
@@ -429,7 +434,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 
 		if (!ListUtil.isEmpty(havingTypes)) {
-			ArrayList<String> types = new ArrayList<String>();
+			List<String> types = new ArrayList<String>();
 			for (String havingType: havingTypes) {
 				if (havingType != null && !havingType.equals("null")) {
 					types.add(havingType);
@@ -462,7 +467,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			query.append(" and (gr.status = '").append(GroupRelationBMPBean.STATUS_ACTIVE).append("' or gr.status = '").append(GroupRelationBMPBean.STATUS_PASSIVE_PENDING).append("') ");
 
 			if (ListUtil.isEmpty(havingTypes) || havingTypes.contains("null")) {
-				//	Making sure only groups will be selected
+				//	Making sure only groups will be selected - skipping users
 				if (ListUtil.isEmpty(notHavingTypes) || notHavingTypes.contains("null")) {
 					notHavingTypes = new ArrayList<>();
 				}
@@ -822,18 +827,143 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		return groups;
 	}
 
-	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
+	private Map<String, Set<Integer>> getMetaDataForChildrenGroups(List<Integer> parentGroupsIds) {
+		if (ListUtil.isEmpty(parentGroupsIds)) {
+			return null;
+		}
+
+		if (!IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("children_groups.check_metadata", false)) {
+			return null;
+		}
+
+		Map<String, Set<Integer>> results = new HashMap<>();
+		try {
+			GroupHome groupHome = (GroupHome) IDOLookup.getHome(com.idega.user.data.Group.class);
+			MetaDataHome metaDataHome = (MetaDataHome) IDOLookup.getHome(MetaData.class);
+			for (Integer parentGroupId: parentGroupsIds) {
+				String value = String.valueOf(parentGroupId);
+				Collection<MetaData> allMmetaData = null;
+				try {
+					allMmetaData = metaDataHome.findAllByMetaDataValue(value);
+				} catch (Exception e) {}
+				if (ListUtil.isEmpty(allMmetaData)) {
+					continue;
+				}
+
+				getLogger().info("Found metadata for " + parentGroupId + ": " + allMmetaData);
+
+				MetaData metaData = allMmetaData.iterator().next();
+				Collection<com.idega.user.data.Group> availableChildrenFromMetaData = null;
+				try {
+					availableChildrenFromMetaData = groupHome.findGroupsByMetaData(metaData.getName(), metaData.getValue());	//	i.e. clubs' divisions (sport types)
+				} catch (Exception e) {}
+				if (ListUtil.isEmpty(availableChildrenFromMetaData)) {
+					getLogger().warning("No available children from metadata key=" + metaData.getName() + ", value=" + metaData.getValue() + " for parent group " + parentGroupId);
+					continue;
+				}
+
+				getLogger().info("Found available children from metadata key=" + metaData.getName() + ", value=" + metaData.getValue() + " for parent group " + parentGroupId + ": " + availableChildrenFromMetaData);
+				for (com.idega.user.data.Group group: availableChildrenFromMetaData) {
+					String id = group.getId();
+					if (StringHandler.isNumeric(id)) {
+						String type = group.getType();
+						Set<Integer> typeIds = results.get(type);
+						if (typeIds == null) {
+							typeIds = new HashSet<>();
+							results.put(type, typeIds);
+						}
+						typeIds.add(Integer.valueOf(id));
+					}
+				}
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting meta data for groups " + parentGroupsIds, e);
+		}
+		if (!MapUtil.isEmpty(results)) {
+			getLogger().info("Results for parent groups IDs: " + results);
+		}
+		return results;
+	}
+
+	private <T> List<T> getFilteredOutLevelResults(List<T> levelGroups, Map<String, Set<Integer>> allAvailableChildrenFromMetaData, Class<T> resultType) {
+		if (ListUtil.isEmpty(levelGroups)) {
+			return new ArrayList<>(0);
+		}
+
+		if (MapUtil.isEmpty(allAvailableChildrenFromMetaData)) {
+			return levelGroups;
+		}
+
+		boolean usingIDs = resultType.getName().equals(Integer.class.getName());
+		@SuppressWarnings("unchecked")
+		List<Group> levelChildGroups = usingIDs ?
+			findGroups((List<Integer>) levelGroups) :
+			(List<Group>) levelGroups;
+
+		if (ListUtil.isEmpty(levelChildGroups)) {
+			return levelGroups;
+		}
+
+		List<T> objectsToRemove = new ArrayList<>();
+
+		for (Group group: levelChildGroups) {
+			String type = group.getType();
+			Set<Integer> requiredIds = allAvailableChildrenFromMetaData.get(type);
+			if (ListUtil.isEmpty(requiredIds)) {
+				continue;
+			}
+
+			Integer id = group.getID();
+			if (!requiredIds.contains(id)) {
+				getLogger().warning("Results " + levelGroups + " do not contain required ID " + id + ", will remove it from results. Decided by " + allAvailableChildrenFromMetaData);
+
+				@SuppressWarnings("unchecked")
+				T objectToRemove = usingIDs ? (T) id : (T) group;
+				objectsToRemove.add(objectToRemove);
+			}
+		}
+
+		if (!ListUtil.isEmpty(objectsToRemove)) {
+			levelGroups = new ArrayList<>(levelGroups);
+			levelGroups.removeAll(objectsToRemove);
+		}
+		getLogger().info("Filtered out results to " + levelGroups + "\nfrom " + levelChildGroups + "\ndecided by " + allAvailableChildrenFromMetaData);
+		return levelGroups;
+	}
+
+	private <T> Map<Integer, List<T>> getChildGroups(
+			List<Integer> parentGroupsIds,
+			List<String> childGroupTypes,
+			List<String> notHavingChildGroupTypes,
+			Integer levels,
+			Class<T> resultType,
+			boolean loadAliases
+	) {
 		Map<Integer, List<T>> results = new TreeMap<Integer, List<T>>();
 		int currentLevel = 1;
 		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
+
+		Map<String, Set<Integer>> allAvailableChildrenFromMetaData = getMetaDataForChildrenGroups(parentGroupsIds);
+		if (allAvailableChildrenFromMetaData == null) {
+			allAvailableChildrenFromMetaData = new HashMap<>();
+		}
+
 		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
 			List<T> levelGroups = getChildGroups(resultType, parentGroupsIds, null, null, null, notHavingChildGroupTypes, childGroupTypes, null, null, loadAliases);
 			if (!ListUtil.isEmpty(levelGroups)) {
+				levelGroups = getFilteredOutLevelResults(levelGroups, allAvailableChildrenFromMetaData, resultType);
 				results.put(currentLevel, levelGroups);
 			}
 			currentLevel++;
 
+			//	Going level down: getting new parent groups IDs which are all children groups IDs for current parent groups IDs
 			parentGroupsIds = getChildGroupsIds(parentGroupsIds, null, null, null, null, null, null);
+			//	Group type -> groups IDs for type
+			Map<String, Set<Integer>> availableChildrenFromMetaData = getMetaDataForChildrenGroups(parentGroupsIds);
+			if (!MapUtil.isEmpty(availableChildrenFromMetaData)) {
+				MapUtil.append(allAvailableChildrenFromMetaData, availableChildrenFromMetaData);
+			}
+			parentGroupsIds = getFilteredOutLevelResults(parentGroupsIds, allAvailableChildrenFromMetaData, Integer.class);
 		}
 		return results;
 	}
