@@ -296,8 +296,8 @@ public class IWStartDataInserter implements Singleton {
 		logger.info("Creating locale '" + localeString + "'");
 		try {
 			ICLocale icLocale = home.create();
-			if (localeString.length() > 20) {
-				localeString = localeString.substring(0, 20);
+			if (localeString.length() > 25) {
+				localeString = localeString.substring(0, 25);
 			}
 			icLocale.setLocale(localeString);
 			icLocale.setInUse(localeString.equals(Locale.ENGLISH.toString()));

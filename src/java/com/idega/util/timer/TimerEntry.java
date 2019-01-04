@@ -301,7 +301,6 @@ public void setYear(int year) {
 
     timer.set(Calendar.SECOND, 0);
 
-
     // Increments minute if now >= timer (for every minute timers)
     if (this.minute == -1) {
       timer.add(Calendar.MINUTE, 1);
@@ -312,18 +311,17 @@ public void setYear(int year) {
       timer.add(Calendar.HOUR_OF_DAY, 1);
     }
 
-
-   // Incrementes dayOfYear if now >= timer (for everyday timers)
+    // Increments dayOfYear if now >= timer (for everyday timers)
     if (this.dayOfMonth == -1 &&
         this.dayOfWeek == -1 &&
-        this.hour != -1 && this.minute != -1 &&
-        (now.get(Calendar.HOUR_OF_DAY) > this.hour ||
-         (now.get(Calendar.HOUR_OF_DAY) == this.hour &&
-          now.get(Calendar.MINUTE) >= this.minute))) {
+        this.hour != -1 &&
+        this.minute != -1 &&
+        (now.get(Calendar.HOUR_OF_DAY) > this.hour || (now.get(Calendar.HOUR_OF_DAY) == this.hour && now.get(Calendar.MINUTE) >= this.minute))
+    ) {
       timer.roll(Calendar.DAY_OF_YEAR, true);
     }
 
-    // Incrementes year if now >= timer (for monthly or yearly timers)
+    // Increments year if now >= timer (for monthly or yearly timers)
     if (this.month != -1 && this.year == -1 &&
         (now.get(Calendar.MONTH) > this.month ||
          (now.get(Calendar.MONTH) == this.month &&
@@ -340,13 +338,11 @@ public void setYear(int year) {
       int deltaOfDay = (7 + (this.dayOfWeek - now.get(Calendar.DAY_OF_WEEK))) % 7;
       debug("deltaOfDay: " + deltaOfDay);
       if (deltaOfDay != 0) {
-	timer.add(Calendar.DAY_OF_YEAR, deltaOfDay);
+    	  timer.add(Calendar.DAY_OF_YEAR, deltaOfDay);
       }
       // Incrementes week if now >= timer
-      else if (now.get(Calendar.HOUR_OF_DAY) > this.hour ||
-	       (now.get(Calendar.HOUR_OF_DAY) == this.hour &&
-		now.get(Calendar.MINUTE) >= this.minute)) {
-	timer.add(Calendar.WEEK_OF_YEAR, 1);
+      else if (now.get(Calendar.HOUR_OF_DAY) > this.hour || (now.get(Calendar.HOUR_OF_DAY) == this.hour && now.get(Calendar.MINUTE) >= this.minute)) {
+    	  timer.add(Calendar.WEEK_OF_YEAR, 1);
       }
     }
 

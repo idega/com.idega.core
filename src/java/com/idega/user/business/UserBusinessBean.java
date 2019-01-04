@@ -5016,8 +5016,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 * @return created {@link User} or <code>null</code> on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	protected User create(String fullName, String email) {
-		if (StringUtil.isEmpty(fullName) || StringUtil.isEmpty(email)) {
+	protected User create(String fullName, String email, boolean sendLoginInfo) {
+		if (StringUtil.isEmpty(fullName)) {
 			return null;
 		}
 
@@ -5034,44 +5034,46 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 
-		LoginTable loginTable = null;
-		try {
-			loginTable = generateUserLogin(user);
-		} catch (Exception e) {
-			getLogger().log(Level.WARNING,
-					"Failed to create " + LoginTable.class.getName() +
-					" for user: " + user +
-					" cause of: ", e);
-		}
-
-		if (loginTable == null) {
-			return null;
-		}
-
-		LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
-		if (loginInfo != null) {
-			loginInfo.setChangeNextTime(Boolean.TRUE);
-			loginInfo.setAccountEnabled(Boolean.TRUE);
-			loginInfo.store();
-		}
-
-		IWContext iwc = CoreUtil.getIWContext();
-		IWBundle iwrb = getUserBundle(iwc);
-		if (iwrb != null) {
-			String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
-			String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
-			String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
-			StringBuilder text = null;
+		if (sendLoginInfo) {
+			LoginTable loginTable = null;
 			try {
-				text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
-						.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(loginTable.getUserLogin()).append(", ")
-						.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(loginTable.getUnencryptedUserPassword()).append(". ")
-						.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
-				sendEmail(email, subject, text.toString());
-			} catch (PasswordNotKnown e) {
+				loginTable = generateUserLogin(user);
+			} catch (Exception e) {
 				getLogger().log(Level.WARNING,
-						"Password for " + User.class.getName() +
-						" was lost, cause of: ", e);
+						"Failed to create " + LoginTable.class.getName() +
+						" for user: " + user +
+						" cause of: ", e);
+			}
+
+			if (loginTable == null) {
+				return null;
+			}
+
+			LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+			if (loginInfo != null) {
+				loginInfo.setChangeNextTime(Boolean.TRUE);
+				loginInfo.setAccountEnabled(Boolean.TRUE);
+				loginInfo.store();
+			}
+
+			IWContext iwc = CoreUtil.getIWContext();
+			IWBundle iwrb = getUserBundle(iwc);
+			if (iwrb != null && !StringUtil.isEmpty(email)) {
+				String portNumber = new StringBuilder(":").append(String.valueOf(iwc.getServerPort())).toString();
+				String serverLink = StringHandler.replace(iwc.getServerURL(), portNumber, CoreConstants.EMPTY);
+				String subject = iwrb.getLocalizedString("account_was_created", "Account was created");
+				StringBuilder text = null;
+				try {
+					text = new StringBuilder(iwrb.getLocalizedString("login_here", "Login here")).append(": ").append(serverLink).append("\n\r")
+							.append(iwrb.getLocalizedString("your_user_name", "Your user name")).append(": ").append(loginTable.getUserLogin()).append(", ")
+							.append(iwrb.getLocalizedString("your_password", "your password")).append(": ").append(loginTable.getUnencryptedUserPassword()).append(". ")
+							.append(iwrb.getLocalizedString("we_recommend_to_change_password_after_login", "We recommend to change password after login!"));
+					sendEmail(email, subject, text.toString());
+				} catch (PasswordNotKnown e) {
+					getLogger().log(Level.WARNING,
+							"Password for " + User.class.getName() +
+							" was lost, cause of: ", e);
+				}
 			}
 		}
 
@@ -5081,6 +5083,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		return user;
 	}
 
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#update(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, boolean)
+	 */
 	@Override
 	public User update(
 			String primaryKey,
@@ -5094,7 +5100,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			String email,
 			String phone,
 			String userName,
-			String password) {
+			String password,
+			boolean sendLoginInfo) {
 		User user = null;
 		if (!StringUtil.isEmpty(primaryKey)) {
 			/* Searching for existing one by primary key */
@@ -5105,14 +5112,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						"Failed to get " + User.class.getName() +
 						" by primary key: " + primaryKey);
 			}
-		} else if (!StringUtil.isEmpty(uuid)) {
+		} 
+
+		if (user == null && !StringUtil.isEmpty(uuid)) {
 			try {
 				user = getUserHome().findUserByUniqueId(uuid);
 			} catch (FinderException e) {}
-		} else {
+		} 
+
+		if (user == null && !StringUtil.isEmpty(name) && !StringUtil.isEmpty(email)) {
 			/* Searching for existing one by email and name */
-			Collection<User> users = getUserHome().findAllByNameAndEmail(
-					name, email);
+			Collection<User> users = getUserHome().findAllByNameAndEmail(name, email);
 			if (!ListUtil.isEmpty(users)) {
 				user = users.iterator().next();
 				if (users.size() > 1) {
@@ -5121,9 +5131,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							"'s found by name: '" + name +
 							"' and  email: '" + email + "'");
 				}
-			} else {
-				user = create(name, email);
 			}
+		}
+
+		if (user == null) {
+			user = create(name, email, sendLoginInfo);
 		}
 
 		if (user == null) {
@@ -5148,6 +5160,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		if (!StringUtil.isEmpty(personalId)) {
 			user.setPersonalID(personalId);
+			user.setDateOfBirth(getUserDateOfBirthFromPersonalId(personalId));
 		}
 
 		/* Storing user... */
@@ -5203,6 +5216,40 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				" by primary key: " + user.getPrimaryKey().toString() +
 				" successfully updated!");
 		return user;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.user.business.UserBusiness#update(java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String, java.lang.String)
+	 */
+	@Override
+	public User update(
+			String primaryKey,
+			String uuid,
+			String name,
+			String firstName,
+			String middleName,
+			String lastName,
+			String displayName,
+			String personalId,
+			String email,
+			String phone,
+			String userName,
+			String password) {
+		return update(
+				primaryKey, 
+				uuid, 
+				name, 
+				firstName, 
+				middleName, 
+				lastName, 
+				displayName, 
+				personalId, 
+				email, 
+				phone, 
+				userName, 
+				password, 
+				Boolean.TRUE);
 	}
 
 	/*

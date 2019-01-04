@@ -32,7 +32,7 @@ public class ICLocaleBMPBean extends com.idega.data.GenericEntity  implements IC
   @Override
 public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
-    this.addAttribute(getColumnNameLocale(),"Locale",true,true,String.class,20);
+    this.addAttribute(getColumnNameLocale(),"Locale",true,true,String.class,25);
     this.addAttribute(getColumnNameLanguageId(),"Language",true,true,Integer.class,"many-to-one",ICLanguage.class);
     this.addAttribute(getColumnNameCountryId(),"Country",true,true,Integer.class,"many-to-one",Country.class);
     this.addAttribute(getColumnNameInUse(),"In use",true,true,Boolean.class);

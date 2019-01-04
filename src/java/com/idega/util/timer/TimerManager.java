@@ -6,6 +6,8 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 /**
   * This class implements an timer manager similar to Unix <code>cron</code>
@@ -111,6 +113,8 @@ import java.util.TreeSet;
 
 public class TimerManager {
 
+	private static final Logger LOGGER = Logger.getLogger(TimerManager.class.getName());
+
   protected TimerThread waiter;
   protected SortedSet<TimerEntry> /* of TimerEntry */ queue; // was a PriorityQueue
   private boolean debug = false;
@@ -190,6 +194,9 @@ public class TimerManager {
   public synchronized TimerEntry addTimer(int delay, boolean isRepetitive,
                              TimerListener listener) throws PastDateException {
     TimerEntry entry = new TimerEntry(delay, isRepetitive, listener);
+    if (listener != null) {
+    	entry.setTimerName(listener.getClass().getSimpleName());
+    }
     addTimer(entry);
     return entry;
   }
@@ -209,6 +216,9 @@ public class TimerManager {
   public synchronized TimerEntry addTimer(int delay, boolean isRepetitive,
                              TimerListener listener, String name) throws PastDateException {
     TimerEntry entry = new TimerEntry(delay, isRepetitive, listener);
+    if (listener != null) {
+    	entry.setTimerName(listener.getClass().getSimpleName());
+    }
     entry.timerName = name;
     addTimer(entry);
     return entry;
@@ -244,11 +254,16 @@ public class TimerManager {
                              TimerListener listener)
     throws PastDateException {
 
-    TimerEntry entry = new TimerEntry(minute, hour,
-                                      dayOfMonth, month,
-                                      dayOfWeek,
-                                      year,
-                                      listener);
+    TimerEntry entry = new TimerEntry(
+    		minute,
+    		hour,
+            dayOfMonth,
+            month,
+            dayOfWeek,
+            year,
+            listener,
+            listener == null ? null : listener.getClass().getSimpleName()
+    );
     addTimer(entry);
     return entry;
   }
@@ -389,12 +404,11 @@ public class TimerManager {
     // Removes this timer and notifies the listener IF they previous run is finished ( use entry.isDone() )
     TimerEntry entry = this.queue.first();
     this.queue.remove(entry);
-    if(entry.canRun()){
+    if (entry.canRun()) {
 	    try {
 	      entry.listener.handleTimer(entry);
-	    }
-	    catch(Exception e) {
-	    		e.printStackTrace();
+	    } catch (Exception e) {
+	    	LOGGER.log(Level.WARNING, "Error handling timer " + entry, e);
 	    }
   	}
 
