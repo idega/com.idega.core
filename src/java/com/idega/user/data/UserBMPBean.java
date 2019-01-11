@@ -3266,4 +3266,19 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		return null;
 	}
 
+	@Override
+	public void updateChildGroupOrder(int groupId, int order) throws SQLException {
+		throw new UnsupportedOperationException("Method updateChildGroupOrder(int groupId, int order) is not implemented");
+	}
+
+	@Override
+	public int getChildGroupOrder(int groupId) throws SQLException {
+		throw new UnsupportedOperationException("Method getChildGroupOrder() is not implemented");
+	}
+
+	@Override
+	public List<Integer> getChildGroupIds() throws SQLException {
+		throw new UnsupportedOperationException("Method getChildGroupIds() is not implemented");
+	}
+
 }

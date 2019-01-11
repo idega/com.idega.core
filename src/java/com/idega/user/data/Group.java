@@ -10,6 +10,7 @@
 package com.idega.user.data;
 
 import java.io.Serializable;
+import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Iterator;
@@ -582,7 +583,6 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	 */
 	public SelectQuery getSelectQueryConstraints();
 
-
 	public User getModerator();
 
 	public void setModerator(User moderator);
@@ -591,5 +591,9 @@ public interface Group extends IDOEntity, ICTreeNode<Group>, MetaDataCapable, Un
 	public int getSystemImageID();
 	public void setSystemImageID(java.lang.Integer p0);
 	public void setSystemImageID(int fileID);
+
+	public void updateChildGroupOrder(int groupId, int order) throws SQLException;
+	public int getChildGroupOrder(int groupId) throws SQLException;
+	public List<Integer> getChildGroupIds() throws SQLException;
 
 }
