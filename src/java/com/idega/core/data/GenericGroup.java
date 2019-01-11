@@ -7,7 +7,6 @@ import java.util.List;
  *
  * @deprecated Class replaced with com.idega.user.data.Group
 */
-@Deprecated
 public interface GenericGroup extends com.idega.data.IDOLegacyEntity
 {
  public void addGroup(int p0)throws java.sql.SQLException;
