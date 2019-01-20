@@ -13,8 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -329,6 +331,43 @@ public class GenericDaoImpl implements GenericDao {
 	}
 
 	/**
+	 * 
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return JPA query to execute
+	 */
+	private <T> CriteriaQuery<Long> getAmountQuery(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments) {
+		CriteriaQuery<Long> criteriaQuery = getCriteriaBuilder().createQuery(Long.class);
+
+		/*
+		 * Table to select from
+		 */
+		Root<T> entityRoot = criteriaQuery.from(type);
+
+		/*
+		 * Count expression
+		 */
+		Expression<Long> expression = getCriteriaBuilder().count(entityRoot);
+
+		/*
+		 * Select count 
+		 */
+		criteriaQuery = criteriaQuery.select(expression);
+
+		/*
+		 * Appending arguments
+		 */
+		ArrayList<Predicate> predicates = getPredicates(entityRoot, arguments);
+		if (!ListUtil.isEmpty(predicates)) {
+			criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
+		}
+
+		return criteriaQuery;
+	}
+
+	/**
 	 * @param type of {@link Entity} to fetch, not <code>null</code>
 	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
 	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
@@ -341,5 +380,24 @@ public class GenericDaoImpl implements GenericDao {
 		}
 
 		return Collections.emptyList();
+	}
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities amount or <code>null</code> on failure
+	 */
+	protected <T> Long getAmount(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments) {
+		if (getEntityManager() != null && type != null) {
+			CriteriaQuery<Long> criteriaQuery = getAmountQuery(type, arguments);
+
+			TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+
+			return query.getSingleResult();
+		}
+
+		return null;
 	}
 }
