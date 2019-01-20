@@ -375,8 +375,30 @@ public class GenericDaoImpl implements GenericDao {
 	protected <T> List<T> findAll(
 			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments) {
+		return findAll(type, arguments, null, null);
+	}
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	 */
+	protected <T> List<T> findAll(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Integer index,
+			Integer amount) {
 		if (getEntityManager() != null && type != null) {
-			return getEntityManager().createQuery(getQuery(type, arguments)).getResultList();
+			TypedQuery<T> query = getEntityManager().createQuery(getQuery(type, arguments));
+			if (index != null) {
+				query.setFirstResult(index);
+			}
+
+			if (amount != null) {
+				query.setMaxResults(amount);
+			}
+
+			return query.getResultList();
 		}
 
 		return Collections.emptyList();
