@@ -303,15 +303,15 @@ public class GenericDaoImpl implements GenericDao {
 		return predicates;
 	}
 
-	/**
-	 * 
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return JPA query to execute
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQuery(java.lang.Class, java.util.Map, java.util.Collection)
 	 */
-	private <T> CriteriaQuery<T> getQuery(
+	@Override
+	public <T> CriteriaQuery<T> getQuery(
 			Class<T> type,
-			Map<String, Collection<? extends Serializable>> arguments) {
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
 		CriteriaQuery<T> criteriaQuery = getCriteriaBuilder().createQuery(type);
 
 		/*
@@ -324,21 +324,36 @@ public class GenericDaoImpl implements GenericDao {
 		 */
 		ArrayList<Predicate> predicates = getPredicates(entityRoot, arguments);
 		if (!ListUtil.isEmpty(predicates)) {
+			if (!ListUtil.isEmpty(additional)) {
+				predicates.addAll(additional);
+			}
+
 			criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
 		}
 
 		return criteriaQuery;
 	}
 
-	/**
-	 * 
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return JPA query to execute
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQuery(java.lang.Class, java.util.Map)
 	 */
-	private <T> CriteriaQuery<Long> getAmountQuery(
+	@Override
+	public <T> CriteriaQuery<T> getQuery(
 			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments) {
+		return getQuery(type, arguments, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmountQuery(java.lang.Class, java.util.Map, java.util.Collection)
+	 */
+	@Override
+	public <T> CriteriaQuery<Long> getAmountQuery(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
 		CriteriaQuery<Long> criteriaQuery = getCriteriaBuilder().createQuery(Long.class);
 
 		/*
@@ -361,31 +376,48 @@ public class GenericDaoImpl implements GenericDao {
 		 */
 		ArrayList<Predicate> predicates = getPredicates(entityRoot, arguments);
 		if (!ListUtil.isEmpty(predicates)) {
+			if (!ListUtil.isEmpty(additional)) {
+				predicates.addAll(additional);
+			}
+
 			criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
 		}
 
 		return criteriaQuery;
 	}
 
-	/**
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmountQuery(java.lang.Class, java.util.Map)
 	 */
-	protected <T> List<T> findAll(
+	@Override
+	public <T> CriteriaQuery<Long> getAmountQuery(
 			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments) {
-		return findAll(type, arguments, null, null);
+		return getAmountQuery(type, arguments, null);
 	}
 
-	/**
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#findAll(java.lang.Class, java.util.Map)
 	 */
-	protected <T> List<T> findAll(
+	@Override
+	public <T> List<T> findAll(
 			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
+		return findAll(type, arguments, additional, null, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#findAll(java.lang.Class, java.util.Map, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public <T> List<T> findAll(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional,
 			Integer index,
 			Integer amount) {
 		if (getEntityManager() != null && type != null) {
@@ -404,16 +436,28 @@ public class GenericDaoImpl implements GenericDao {
 		return Collections.emptyList();
 	}
 
-	/**
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return entities amount or <code>null</code> on failure
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#findAll(java.lang.Class, java.util.Map)
 	 */
-	protected <T> Long getAmount(
-			Class<T> type,
+	@Override
+	public <T> List<T> findAll(
+			Class<T> type, 
 			Map<String, Collection<? extends Serializable>> arguments) {
+		return findAll(type, arguments, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmount(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> Long getAmount(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
 		if (getEntityManager() != null && type != null) {
-			CriteriaQuery<Long> criteriaQuery = getAmountQuery(type, arguments);
+			CriteriaQuery<Long> criteriaQuery = getAmountQuery(type, arguments, additional);
 
 			TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
 
@@ -421,5 +465,16 @@ public class GenericDaoImpl implements GenericDao {
 		}
 
 		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmount(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> Long getAmount(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments) {
+		return getAmount(type, arguments, null);
 	}
 }

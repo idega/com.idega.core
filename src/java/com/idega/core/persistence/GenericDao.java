@@ -1,12 +1,18 @@
 package com.idega.core.persistence;
 
+import java.io.Serializable;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
+import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.NamedQuery;
 import javax.persistence.Query;
 import javax.persistence.criteria.CriteriaBuilder;
+import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Predicate;
 
 /**
  * @author <a href="mailto:civilis@idega.com">Vytautas Čivilis</a>
@@ -177,4 +183,98 @@ public interface GenericDao {
 	 * @see EntityManager#getCriteriaBuilder()
 	 */
 	CriteriaBuilder getCriteriaBuilder();
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities amount or <code>null</code> on failure
+	 */
+	<T> Long getAmount(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments);
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities amount or <code>null</code> on failure
+	 */
+	<T> Long getAmount(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional);
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	 */
+	<T> List<T> findAll(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments);
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	 */
+	<T> List<T> findAll(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional);
+
+	/**
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	 */
+	<T> List<T> findAll(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional,
+			Integer index,
+			Integer amount);
+
+	/**
+	 * 
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return JPA query to execute
+	 */
+	<T> CriteriaQuery<Long> getAmountQuery(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments);
+
+	/**
+	 * 
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @param additional custom {@link Predicate}s to add, skipped if <code>null</code>
+	 * @return JPA query to execute
+	 */
+	<T> CriteriaQuery<Long> getAmountQuery(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional);
+	
+	/**
+	 * 
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @return JPA query to execute
+	 */
+	<T> CriteriaQuery<T> getQuery(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments);
+
+	/**
+	 * 
+	 * @param type of {@link Entity} to fetch, not <code>null</code>
+	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
+	 * @param additional custom {@link Predicate}s to add, skipped if <code>null</code>
+	 * @return JPA query to execute
+	 */
+	<T> CriteriaQuery<T> getQuery(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional);
 }
