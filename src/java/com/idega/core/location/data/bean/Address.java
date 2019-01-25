@@ -39,7 +39,10 @@ import com.idega.util.text.TextSoap;
 			query = 	"SELECT DISTINCT a FROM Address a "
 					+ 	"JOIN a.users u "
 					+ 	"ON u.userID = :userID "
-					+ 	"JOIN a.addressType t ON t.uniqueName = :uniqueName")
+					+ 	"JOIN a.addressType t ON t.uniqueName = :uniqueName"),
+	@NamedQuery(name = Address.QUERY_FIND_BY_STREET_ADDRESS,
+				query = "select a from Address a where a.streetAddressNominative = :" + Address.PARAM_STREET_ADDRESS
+						+ " or (a.streetName = :" + Address.PARAM_STREET + " and a.streetNumber = :" + Address.PARAM_STREET_NUMBER + ")")
 })
 public class Address implements Serializable {
 
@@ -64,6 +67,11 @@ public class Address implements Serializable {
 	private static final String COLUMN_CITY = "city";
 
 	public static final String QUERY_FIND_BY_USER_AND_TYPE = "address.findByUserAndType";
+	public static final String QUERY_FIND_BY_STREET_ADDRESS = "address.findByStreetAddress";
+
+	public static final String PARAM_STREET_ADDRESS = "streetAddress";
+	public static final String PARAM_STREET = "street";
+	public static final String PARAM_STREET_NUMBER = "streetNumber";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

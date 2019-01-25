@@ -82,4 +82,6 @@ public interface AddressDAO {
 
 	public List<PostalCode> getAllIcelandicPostalCodes();
 
+	public Collection<Address> findByStreetAddress(String streetAddress, String street, String streetNumber);
+
 }
