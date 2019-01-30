@@ -153,11 +153,15 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			setRealFacesContext(fc);
 		}
 
-		if (request.getSession() == null) {
+		HttpSession session = null;
+		try {
+			session = request.getSession();
+		} catch (Exception e) {}
+		if (session == null) {
 			if (reInitializeRequest()) {
 				request = getRequest();
 			} else {
-				HttpSession session = request.getSession(true);
+				session = request.getSession(true);
 				if (session == null) {
 					throw new RuntimeException("There was an error while initializing IWContext: session is not available. Request object: " + request + ", session: " + session);
 				}
