@@ -1800,7 +1800,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 
 			return true;
-		} catch (EJBException e) {
+		} catch (FinderException e) {
+			LOGGER.warning("User with personal ID " + personalId + " does not exist");
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error checking if user with personal ID has login", e);
 		}
 
 		return false;
