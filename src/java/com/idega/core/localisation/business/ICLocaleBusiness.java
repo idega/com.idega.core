@@ -347,6 +347,20 @@ public class ICLocaleBusiness implements MutableClass {
      return returnValueIfNotFound;
   }
 
+  public static void makeLocaleInUse(String localeId, boolean inUse) {
+	  if (!StringUtil.isEmpty(localeId)) {
+		  try {
+			  ICLocaleHome home = (ICLocaleHome) com.idega.data.IDOLookup.getHome(ICLocale.class);
+			  ICLocale locale = home.findByPrimaryKey(Integer.valueOf(localeId));
+			  locale.setInUse(inUse);
+			  locale.store();
+		  } catch (Exception e) {
+			  e.printStackTrace();
+		  }
+		  reload();
+	  }
+  }
+  
   public static void makeLocalesInUse(List<String> listOfStringIds){
     if(listOfStringIds != null){
       Iterator<String> I = listOfStringIds.iterator();

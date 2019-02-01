@@ -1,7 +1,10 @@
 package com.idega.core.data;
 
+import java.sql.SQLException;
+import java.util.List;
+
 /**
- * 
+ *
  * @deprecated Class replaced with com.idega.user.data.Group
 */
 public interface GenericGroup extends com.idega.data.IDOLegacyEntity
@@ -22,14 +25,20 @@ public interface GenericGroup extends com.idega.data.IDOLegacyEntity
  public java.util.List getChildGroups(java.lang.String[] p0,boolean p1)throws java.sql.SQLException;
  public java.util.List getChildGroups()throws java.sql.SQLException;
  public java.util.List getParentGroups()throws java.sql.SQLException;
- public java.lang.String getName();
+ @Override
+public java.lang.String getName();
  public void removeGroup(com.idega.core.data.GenericGroup p0)throws java.sql.SQLException;
  public void removeGroup()throws java.sql.SQLException;
  public void removeGroup(int p0,boolean p1)throws java.sql.SQLException;
  public void removeUser(com.idega.core.user.data.User p0)throws java.sql.SQLException;
- public void setDefaultValues();
+ @Override
+public void setDefaultValues();
  public void setDescription(java.lang.String p0);
  public void setExtraInfo(java.lang.String p0);
  public void setGroupType(java.lang.String p0);
- public void setName(java.lang.String p0);
+ @Override
+public void setName(java.lang.String p0);
+ public void updateChildGroupOrder(int groupId, int order) throws SQLException;
+ public int getChildGroupOrder(int groupId) throws SQLException;
+ public List<Integer> getChildGroupIds() throws SQLException;
 }

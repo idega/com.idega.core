@@ -265,4 +265,19 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 
 		return null;
 	}
+
+	@Override
+	public Collection<Address> findByStreetAddress(String streetAddress, String street, String streetNumber) {
+		if (!StringUtil.isEmpty(streetAddress)) {
+			return getResultList(
+					Address.QUERY_FIND_BY_STREET_ADDRESS,
+					Address.class,
+					new Param(Address.PARAM_STREET_ADDRESS, streetAddress),
+					new Param(Address.PARAM_STREET, street),
+					new Param(Address.PARAM_STREET_NUMBER, streetNumber));
+		}
+
+		return Collections.emptyList();
+	}
+
 }

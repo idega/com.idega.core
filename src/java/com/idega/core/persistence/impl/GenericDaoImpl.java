@@ -13,8 +13,10 @@ import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.Query;
+import javax.persistence.TypedQuery;
 import javax.persistence.criteria.CriteriaBuilder;
 import javax.persistence.criteria.CriteriaQuery;
+import javax.persistence.criteria.Expression;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
@@ -302,15 +304,15 @@ public class GenericDaoImpl implements GenericDao {
 		return predicates;
 	}
 
-	/**
-	 * 
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return JPA query to execute
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQuery(java.lang.Class, java.util.Map, java.util.Collection)
 	 */
-	private <T> CriteriaQuery<T> getQuery(
+	@Override
+	public <T> CriteriaQuery<T> getQuery(
 			Class<T> type,
-			Map<String, Collection<? extends Serializable>> arguments) {
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
 		CriteriaQuery<T> criteriaQuery = getCriteriaBuilder().createQuery(type);
 
 		/*
@@ -323,24 +325,157 @@ public class GenericDaoImpl implements GenericDao {
 		 */
 		ArrayList<Predicate> predicates = getPredicates(entityRoot, arguments);
 		if (!ListUtil.isEmpty(predicates)) {
+			if (!ListUtil.isEmpty(additional)) {
+				predicates.addAll(additional);
+			}
+
 			criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
 		}
 
 		return criteriaQuery;
 	}
 
-	/**
-	 * @param type of {@link Entity} to fetch, not <code>null</code>
-	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
-	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getQuery(java.lang.Class, java.util.Map)
 	 */
-	protected <T> List<T> findAll(
+	@Override
+	public <T> CriteriaQuery<T> getQuery(
 			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments) {
+		return getQuery(type, arguments, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmountQuery(java.lang.Class, java.util.Map, java.util.Collection)
+	 */
+	@Override
+	public <T> CriteriaQuery<Long> getAmountQuery(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
+		CriteriaQuery<Long> criteriaQuery = getCriteriaBuilder().createQuery(Long.class);
+
+		/*
+		 * Table to select from
+		 */
+		Root<T> entityRoot = criteriaQuery.from(type);
+
+		/*
+		 * Count expression
+		 */
+		Expression<Long> expression = getCriteriaBuilder().count(entityRoot);
+
+		/*
+		 * Select count 
+		 */
+		criteriaQuery = criteriaQuery.select(expression);
+
+		/*
+		 * Appending arguments
+		 */
+		ArrayList<Predicate> predicates = getPredicates(entityRoot, arguments);
+		if (!ListUtil.isEmpty(predicates)) {
+			if (!ListUtil.isEmpty(additional)) {
+				predicates.addAll(additional);
+			}
+
+			criteriaQuery.where(predicates.toArray(new Predicate[predicates.size()]));
+		}
+
+		return criteriaQuery;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmountQuery(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> CriteriaQuery<Long> getAmountQuery(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments) {
+		return getAmountQuery(type, arguments, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#findAll(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> List<T> findAll(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
+		return findAll(type, arguments, additional, null, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#findAll(java.lang.Class, java.util.Map, java.lang.Integer, java.lang.Integer)
+	 */
+	@Override
+	public <T> List<T> findAll(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional,
+			Integer index,
+			Integer amount) {
 		if (getEntityManager() != null && type != null) {
-			return getEntityManager().createQuery(getQuery(type, arguments)).getResultList();
+			TypedQuery<T> query = getEntityManager().createQuery(getQuery(type, arguments));
+			if (index != null) {
+				query.setFirstResult(index);
+			}
+
+			if (amount != null) {
+				query.setMaxResults(amount);
+			}
+
+			return query.getResultList();
 		}
 
 		return Collections.emptyList();
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#findAll(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> List<T> findAll(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments) {
+		return findAll(type, arguments, null);
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmount(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> Long getAmount(
+			Class<T> type,
+			Map<String, Collection<? extends Serializable>> arguments,
+			Collection<Predicate> additional) {
+		if (getEntityManager() != null && type != null) {
+			CriteriaQuery<Long> criteriaQuery = getAmountQuery(type, arguments, additional);
+
+			TypedQuery<Long> query = getEntityManager().createQuery(criteriaQuery);
+
+			return query.getSingleResult();
+		}
+
+		return null;
+	}
+
+	/*
+	 * (non-Javadoc)
+	 * @see com.idega.core.persistence.GenericDao#getAmount(java.lang.Class, java.util.Map)
+	 */
+	@Override
+	public <T> Long getAmount(
+			Class<T> type, 
+			Map<String, Collection<? extends Serializable>> arguments) {
+		return getAmount(type, arguments, null);
 	}
 }

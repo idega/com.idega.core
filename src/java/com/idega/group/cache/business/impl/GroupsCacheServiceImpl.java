@@ -917,7 +917,7 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 		try {
 			cache = getCache("EPLATFORM_USERS_GROUPS_CACHE", 2592000, 2592000, Integer.MAX_VALUE, false);
 
-			if (userId != null && (MapUtil.isEmpty(cache) || !cache.containsKey(String.valueOf(userId)))) {
+			if (userId != null && (MapUtil.isEmpty(cache) || !cache.containsKey(userId.toString()))) {
 				ELUtil.getInstance().publishEvent(new GroupRelationChangedEvent(EventType.USER_UPDATE, false, userId));
 			}
 
