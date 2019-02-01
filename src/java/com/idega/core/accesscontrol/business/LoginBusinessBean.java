@@ -11,6 +11,7 @@ package com.idega.core.accesscontrol.business;
 import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -424,29 +425,35 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (request == null) {
 			return;
 		}
-		if (response == null) {
-			try {
-				RequestResponseProvider rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
-				response = rrProvider == null ? null : rrProvider.getResponse();
-			} catch (Exception e) {}
-		}
 
-		Cookie[] cookies = request.getCookies();
-		if (ArrayUtil.isEmpty(cookies)) {
-			return;
-		}
+		Cookie[] cookies = null;
+		try {
+			if (response == null) {
+				try {
+					RequestResponseProvider rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+					response = rrProvider == null ? null : rrProvider.getResponse();
+				} catch (Exception e) {}
+			}
 
-		String cookieToSkip = "currentLocale";
-		for (Cookie cookie: cookies) {
-			String name = cookie.getName();
-			if (!StringUtil.isEmpty(name) && !name.equals(cookieToSkip)) {
-				cookie.setValue(CoreConstants.EMPTY);
-				cookie.setPath(CoreConstants.SLASH);
-				cookie.setMaxAge(0);
-				if (response != null) {
-					response.addCookie(cookie);
+			cookies = request.getCookies();
+			if (ArrayUtil.isEmpty(cookies)) {
+				return;
+			}
+
+			String cookieToSkip = "currentLocale";
+			for (Cookie cookie: cookies) {
+				String name = cookie.getName();
+				if (!StringUtil.isEmpty(name) && !name.equals(cookieToSkip)) {
+					cookie.setValue(CoreConstants.EMPTY);
+					cookie.setPath(CoreConstants.SLASH);
+					cookie.setMaxAge(0);
+					if (response != null) {
+						response.addCookie(cookie);
+					}
 				}
 			}
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error clearing cookies" + (ArrayUtil.isEmpty(cookies) ? CoreConstants.EMPTY : Arrays.asList(cookies)), e);
 		}
 	}
 
