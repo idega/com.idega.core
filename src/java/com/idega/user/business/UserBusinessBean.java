@@ -3522,23 +3522,34 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException, CreateException {
-		if (fullAddressString != null && !"".equals(fullAddressString)) {
-			Address mainAddress = getUsersMainAddress(user);
-			boolean addAddress = false;
-			if (mainAddress == null) {
-				mainAddress = getAddressHome().create();
-				mainAddress.setAddressType(getAddressBusiness().getMainAddressType());
-				addAddress = true;
-			}
+		updateUsersAddressByFullAddressString(user, fullAddressString, null);
+	}
 
-			mainAddress = getAddressBusiness().getUpdatedAddressByFullAddressString(mainAddress, fullAddressString);
+	@Override
+	public void updateUsersAddressByFullAddressString(User user, String fullAddressString, AddressType addressType) throws RemoteException, CreateException {
+		if (StringUtil.isEmpty(fullAddressString)) {
+			return;
+		}
 
-			if (addAddress) {
-				try {
-					user.addAddress(mainAddress);
-				} catch (IDOAddRelationshipException e) {
-					e.printStackTrace();
-				}
+		AddressType mainAddressType = getAddressBusiness().getMainAddressType();
+		addressType = addressType == null ? mainAddressType : addressType;
+		Address address = addressType.getPrimaryKey().toString().equals(mainAddressType.getPrimaryKey().toString()) ?
+				getUsersMainAddress(user) :
+				getUsersCoAddress(user);
+		boolean addAddress = false;
+		if (address == null) {
+			address = getAddressHome().create();
+			address.setAddressType(addressType);
+			addAddress = true;
+		}
+
+		address = getAddressBusiness().getUpdatedAddressByFullAddressString(address, fullAddressString);
+
+		if (addAddress) {
+			try {
+				user.addAddress(address);
+			} catch (IDOAddRelationshipException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -4997,13 +5008,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						"Failed to get " + User.class.getName() +
 						" by primary key: " + primaryKey);
 			}
-		} 
+		}
 
 		if (user == null && !StringUtil.isEmpty(uuid)) {
 			try {
 				user = getUserHome().findUserByUniqueId(uuid);
 			} catch (FinderException e) {}
-		} 
+		}
 
 		if (user == null && !StringUtil.isEmpty(name) && !StringUtil.isEmpty(email)) {
 			/* Searching for existing one by email and name */
@@ -5122,18 +5133,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			String userName,
 			String password) {
 		return update(
-				primaryKey, 
-				uuid, 
-				name, 
-				firstName, 
-				middleName, 
-				lastName, 
-				displayName, 
-				personalId, 
-				email, 
-				phone, 
-				userName, 
-				password, 
+				primaryKey,
+				uuid,
+				name,
+				firstName,
+				middleName,
+				lastName,
+				displayName,
+				personalId,
+				email,
+				phone,
+				userName,
+				password,
 				Boolean.TRUE);
 	}
 
