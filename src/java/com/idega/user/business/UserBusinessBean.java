@@ -359,6 +359,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if (user != null) {
 			// found user with given personal id, use that user since no two
 			// users can have same personal id
+			Name name = new Name(fullName);
+			String firstName = name.getFirstName();
+			String middleName = name.getMiddleName();
+			String lastName = name.getLastName();
+			user.setFirstName(firstName);
+			user.setMiddleName(middleName);
+			user.setLastName(lastName);
+			fullName = name.getName();
 			user.setFullName(fullName);
 			if (!user.getDisplayNameSetManually()) {
 				user.setDisplayName(fullName);
@@ -372,7 +380,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			user.store();
 		} else {
 			Name name = new Name(fullName);
-			user = createUser(name.getFirstName(), name.getMiddleName(), name.getLastName(), fullName, personalID, null, gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
+			String firstName = name.getFirstName();
+			String middleName = name.getMiddleName();
+			String lastName = name.getLastName();
+			user = createUser(firstName, middleName, lastName, name.getName(), personalID, null, gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
 			// user = createUser(name.getFirstName(), name.getMiddleName() ,
 			// name.getLastName() , personalID, gender, dateOfBirth);
 		}
