@@ -325,3 +325,21 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
 	height: auto;
 }
 /** END: Searcher and SearchResults classes **/
+
+.clickable-div{
+    background-color: #ccc;
+    background-image: linear-gradient(#ccc, #fff, #ccc);
+    font-size: 13px;
+    display: inline-block;
+    padding: 3px;
+    border: 1px solid #444;
+    border-radius: 3px;
+    cursor: pointer;
+    vertical-align: middle;
+    text-align: center;
+    text-decoration: none;
+}
+.clickable-div:hover{
+	background-color: #ddd;
+	background-image: linear-gradient(#eee, #fff, #eee);
+}

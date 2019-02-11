@@ -24,6 +24,7 @@ import java.util.ResourceBundle;
 import java.util.TreeMap;
 
 import com.idega.exception.IWBundleDoesNotExist;
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.Image;
 import com.idega.util.EnumerationIteratorWrapper;
 import com.idega.util.SortedProperties;
@@ -302,7 +303,8 @@ public class IWResourceBundle extends ResourceBundle {
 
 	public Image getLocalizedImageButton(String key, String returnValueIfNull) {
 		String text = getLocalizedString(key, returnValueIfNull);
-		return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());
+		return new ClickableDiv(text);
+//		return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());
 	}
 
 	/**

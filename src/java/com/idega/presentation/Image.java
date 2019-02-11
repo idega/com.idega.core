@@ -15,8 +15,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
 import javax.ejb.EJBException;
 import javax.faces.context.FacesContext;
+
 import com.idega.core.file.business.FileSystemConstants;
 import com.idega.core.file.data.ICFile;
 import com.idega.core.localisation.business.ICLocaleBusiness;
@@ -574,7 +576,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		return getMarkupAttribute("alt");
 	}
-	private String getHTMLString(IWContext iwc) throws RemoteException
+	protected String getHTMLString(IWContext iwc) throws RemoteException
 	{
 		//Eiki: this does not seem to support over images or anything???
 		
