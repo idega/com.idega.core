@@ -113,6 +113,14 @@ public class Name {
 		this.fullName = null;
 	}
 
+	private String getCapitalized(String input) {
+		if (StringUtil.isEmpty(input) || input.length() < 2) {
+			return input;
+		}
+
+		return input.substring(0, 1).toUpperCase().concat(input.substring(1));
+	}
+
 	public void setName(String name) {
 		if ((name != null) && (name.length() > 0)) {
 			this.fullName = name;
@@ -121,6 +129,9 @@ public class Name {
 
 			if (token.hasMoreTokens()) {
 				this.firstName = token.nextToken();
+				if (!StringUtil.isEmpty(firstName)) {
+					firstName = getCapitalized(firstName);
+				}
 
 				if (countWithoutFirstAndLast >= 1) {
 					StringBuffer middleName = new StringBuffer();
@@ -135,12 +146,14 @@ public class Name {
 					}
 
 					this.middleName = middleName.toString();
+					this.middleName = getCapitalized(this.middleName);
 				} else { // set middle name == null
 					this.middleName = null;
 				}
 
 				if (countWithoutFirstAndLast >= 0) {
 					this.lastName = token.nextToken();
+					lastName = getCapitalized(lastName);
 				} else { // remove last name
 					this.lastName = null;
 				}

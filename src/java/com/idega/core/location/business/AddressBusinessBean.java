@@ -391,7 +391,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 		if (!NOT_AVAILABLE.equals(communeNameAndCommuneCode)) {
 			communeName = communeNameAndCommuneCode.substring(0, communeNameAndCommuneCode.indexOf(":"));
-			communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(":") + 1);
+			communeCode = null;
+			try {
+				communeCode = communeNameAndCommuneCode.substring(communeNameAndCommuneCode.indexOf(":") + 1);
+			} catch (Exception e) {}
 			// get commune by code or name
 			commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
 		}
@@ -418,6 +421,9 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			address.setStreetNumber("");
 		}
 
+		if (!StringUtil.isEmpty(communeName)) {
+			address.setCity(communeName);
+		}
 		address.setCountry(country);
 		address.setPostalCode(postal);
 		address.setCommune(commune);
@@ -482,6 +488,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 				commune = getCommuneHome().create();
 				commune.setCommuneName(communeName);
 				commune.setCommuneCode(communeCode);
+				commune.setIsDefault(false);
 				commune.store();
 			}
 		}

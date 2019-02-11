@@ -27,7 +27,6 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.TreeSet;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -362,6 +361,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		if (user != null) {
 			// found user with given personal id, use that user since no two
 			// users can have same personal id
+			Name name = new Name(fullName);
+			String firstName = name.getFirstName();
+			String middleName = name.getMiddleName();
+			String lastName = name.getLastName();
+			user.setFirstName(firstName);
+			user.setMiddleName(middleName);
+			user.setLastName(lastName);
+			fullName = name.getName();
 			user.setFullName(fullName);
 			if (!user.getDisplayNameSetManually()) {
 				user.setDisplayName(fullName);
@@ -375,7 +382,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			user.store();
 		} else {
 			Name name = new Name(fullName);
-			user = createUser(name.getFirstName(), name.getMiddleName(), name.getLastName(), fullName, personalID, null, gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
+			String firstName = name.getFirstName();
+			String middleName = name.getMiddleName();
+			String lastName = name.getLastName();
+			user = createUser(firstName, middleName, lastName, name.getName(), personalID, null, gender != null ? (Integer) gender.getPrimaryKey() : null, dateOfBirth, null);
 			// user = createUser(name.getFirstName(), name.getMiddleName() ,
 			// name.getLastName() , personalID, gender, dateOfBirth);
 		}
@@ -2554,17 +2564,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public Collection<Group> getUsersTopGroupNodesByViewAndOwnerPermissions(User user, IWUserContext iwuc) throws RemoteException {
-		long start = System.currentTimeMillis();
+		Collection<Group> topNodes = new ArrayList<>();
+
 		try {
-			Collection<Group> topNodes = new ArrayList<>();
-
-			boolean log = getIWMainApplication().getSettings().getBoolean("user_bussiness.log", false);
-
 			// check for the super user case first
 			boolean isSuperUser = false, currentUser = true;
 			if (iwuc == null) {
 				try {
-					isSuperUser = getAccessController().getAdministratorUser().getId().intValue() == ((Integer) user.getPrimaryKey()).intValue();
+					isSuperUser = user != null && getAccessController().getAdministratorUser().getId().intValue() == ((Integer) user.getPrimaryKey()).intValue();
 				} catch (Exception e) {}
 				currentUser = true;
 			} else {
@@ -2604,14 +2611,6 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return topNodes;
 			}
 
-			//				Object cachedTopNodes = user == null || iwuc == null ? null : iwuc.getSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString());
-			//				if (cachedTopNodes instanceof Collection) {
-			//					topNodes = (Collection<Group>) cachedTopNodes;
-			//				}
-			//				if (!ListUtil.isEmpty(topNodes)) {
-			//					return topNodes;
-			//				}
-
 			topNodes = getStoredTopNodeGroups(user);
 			if (!ListUtil.isEmpty(topNodes)) {
 				if (iwuc != null) {
@@ -2620,67 +2619,61 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				return topNodes;
 			}
 
-			if (log) {
-				log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
-			}
-
+			log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
 			Timer totalTime = new Timer();
 			totalTime.start();
 			Collection<Group> allViewAndOwnerPermissionGroups = new ArrayList<Group>();
 			try {
 				GroupBusiness groupBiz = getGroupBusiness();
 				/*if (false) {// (groupBiz.userGroupTreeImageProcedureTopNodeSearch())
-							// {
-							log("[UserBusinessBean]: using stored procedure topnode search");
-							Timer time = new Timer();
-							time.start();
-							Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
-							Iterator iterating = directlyRelatedParents.iterator();
-							List additionalGroups = new ArrayList();
-							while (iterating.hasNext()) {
-								Group parent = (Group) iterating.next();
-								if (parent != null && parent.getPermissionControllingGroupID() > 0) {
-									additionalGroups.add(parent.getPermissionControllingGroup());
-								}
-							}
-							directlyRelatedParents.addAll(additionalGroups);
-							Collection allPermissions = new ArrayList();
-							// get all view permissions for direct parent and put in
-							// a list
-							Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
-							allPermissions.addAll(viewPermissions);
-							Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
-							allPermissions.addAll(ownedPermissions);
-							time.stop();
-							log("[UserBusinessBean]: fetching complete " + time.getTimeString());
-							time.start();
-							try {
-								topNodes = searchForTopNodes(allPermissions, null, user);
-								// topNodes =
-								// searchForTopNodes(viewPermissions,searchForTopNodes(ownedPermissions,null));
-								for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
-									Group gr = (Group) iter.next();
-									if (gr.isAlias() && topNodes.contains(gr.getAlias())) {
-										iter.remove();
-									}
-								}
-								time.stop();
-								log("[UserBusinessBean]: searchForTopNodesFromTheTop complete " + time.getTimeString());
-							} catch (RemoteException e1) {
-								throw new EJBException(e1);
-							} catch (FinderException e1) {
-								throw new EJBException(e1);
-							}
-						}*/
-				if(true) {
-					if (log) {
-						log("[UserBusinessBean]: not using stored procedure topnode search");
+					// {
+					log("[UserBusinessBean]: using stored procedure topnode search");
+					Timer time = new Timer();
+					time.start();
+					Collection directlyRelatedParents = getGroupBusiness().getParentGroups(user);
+					Iterator iterating = directlyRelatedParents.iterator();
+					List additionalGroups = new ArrayList();
+					while (iterating.hasNext()) {
+						Group parent = (Group) iterating.next();
+						if (parent != null && parent.getPermissionControllingGroupID() > 0) {
+							additionalGroups.add(parent.getPermissionControllingGroup());
+						}
 					}
-
+					directlyRelatedParents.addAll(additionalGroups);
+					Collection allPermissions = new ArrayList();
+					// get all view permissions for direct parent and put in
+					// a list
+					Collection viewPermissions = AccessControl.getAllGroupViewPermissions(directlyRelatedParents);
+					allPermissions.addAll(viewPermissions);
+					Collection ownedPermissions = AccessControl.getAllGroupOwnerPermissionsByGroup(user);
+					allPermissions.addAll(ownedPermissions);
+					time.stop();
+					log("[UserBusinessBean]: fetching complete " + time.getTimeString());
+					time.start();
+					try {
+						topNodes = searchForTopNodes(allPermissions, null, user);
+						// topNodes =
+						// searchForTopNodes(viewPermissions,searchForTopNodes(ownedPermissions,null));
+						for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
+							Group gr = (Group) iter.next();
+							if (gr.isAlias() && topNodes.contains(gr.getAlias())) {
+								iter.remove();
+							}
+						}
+						time.stop();
+						log("[UserBusinessBean]: searchForTopNodesFromTheTop complete " + time.getTimeString());
+					} catch (RemoteException e1) {
+						throw new EJBException(e1);
+					} catch (FinderException e1) {
+						throw new EJBException(e1);
+					}
+				}*/
+				if(true) {
+					log("[UserBusinessBean]: not using stored procedure topnode search");
 					Timer time = new Timer();
 					time.start();
 					Map<Integer, Map<Integer, Group>> parents = new HashMap<Integer, Map<Integer, Group>>();
-					Map<Integer, Group> groupMap = new ConcurrentHashMap<Integer, Group>();// we need it to be
+					Map<Integer, Group> groupMap = new HashMap<Integer, Group>();// we need it to be
 					// synchronized so we can
 					// remove items while in a
 					// iterator
@@ -2713,44 +2706,38 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						e.printStackTrace();
 					}
 					time.stop();
-
-					if (log) {
-						log("[UserBusinessBean]: getting permission groups complete " + time.getTimeString());
-					}
-
+					log("[UserBusinessBean]: getting permission groups complete " + time.getTimeString());
 					time.start();
 					// searchForTopNodesFromTop=3000; //some suitable value
 					/*if (false) {// (allViewAndOwnerPermissionGroups.size() >
-								// this.searchForTopNodesFromTop) {
-								log("[UserBusinessBean]: using search from the top");
-								try {
-									topNodes = searchForTopNodesFromTheTop(allViewAndOwnerPermissionGroups);
-									for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
-										Group gr = (Group) iter.next();
-										if (gr.isAlias() && topNodes.contains(gr.getAlias())) {
-											iter.remove();
-										}
-									}
-									time.stop();
-									log("[UserBusinessBean]: searchForTopNodesFromTheTop complete " + time.getTimeString());
-									time.start();
-								} catch (IDORelationshipException e1) {
-									throw new EJBException(e1);
-								} catch (RemoteException e1) {
-									throw new EJBException(e1);
-								} catch (FinderException e1) {
-									throw new EJBException(e1);
+						// this.searchForTopNodesFromTop) {
+						log("[UserBusinessBean]: using search from the top");
+						try {
+							topNodes = searchForTopNodesFromTheTop(allViewAndOwnerPermissionGroups);
+							for (Iterator iter = topNodes.iterator(); iter.hasNext();) {
+								Group gr = (Group) iter.next();
+								if (gr.isAlias() && topNodes.contains(gr.getAlias())) {
+									iter.remove();
 								}
-							}*/
-					if(true) {
-						if (log) {
-							log("[UserBusinessBean]: using old topnode search");
+							}
+							time.stop();
+							log("[UserBusinessBean]: searchForTopNodesFromTheTop complete " + time.getTimeString());
+							time.start();
+						} catch (IDORelationshipException e1) {
+							throw new EJBException(e1);
+						} catch (RemoteException e1) {
+							throw new EJBException(e1);
+						} catch (FinderException e1) {
+							throw new EJBException(e1);
 						}
-
+					}*/
+					if(true) {
+						log("[UserBusinessBean]: using old topnode search");
 						// get all (recursively) parents for permission
+						Iterator<Group> permissions = allViewAndOwnerPermissionGroups.iterator();
 						Map<String, Collection<Integer>> cachedParents = new HashMap<String, Collection<Integer>>();
 						Map<String, Group> cachedGroups = new HashMap<String, Group>();
-						for (Iterator<Group> permissions = allViewAndOwnerPermissionGroups.iterator(); permissions.hasNext();) {
+						while (permissions.hasNext()) {
 							Group group = permissions.next();
 							if (group != null) {
 								Integer primaryKey = (Integer) group.getPrimaryKey();
@@ -2772,15 +2759,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									}
 								}
 							} else {
-								LOGGER.warning("Group in permissions collection = " + group + ". Content of permissions collection = " + permissions);
+								LOGGER.warning("Group in permissions collection = " + group);
+								LOGGER.warning("Content of permissions collection = " + permissions);
 							}
 						}
 						time.stop();
-
-						if (log) {
-							log("[UserBusinessBean]: getting all parents (recursively) complete " + time.getTimeString());
-						}
-
+						log("[UserBusinessBean]: getting all parents (recursively) complete " + time.getTimeString());
 						time.start();
 						// Filter out the real top nodes!
 						Map<Integer, Boolean> skipThese = new HashMap<Integer, Boolean>();
@@ -2803,9 +2787,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								Map<Integer, Group> theParents = parents.get(groupToCompareTo);
 								// or the permissiongroup has a shortcut
 								if (theParents != null && theParents.containsKey(thePermissionGroupsId)) {
-									// it's a parent of the comparing group so we don't have to check the comparing group again
+									// it's a parent of the comparing group
+									// so we don't have to check the
+									// comparing group again
 									skipThese.put(groupToCompareTo, Boolean.TRUE);// for
-									// the check  skip check
+									// the
+									// check
+									// skip
+									// check
 									groupMap.remove(groupToCompareTo);// the
 									// groups
 									// that
@@ -2821,11 +2810,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							}// inner while ends
 						}// outer while ends
 						time.stop();
-
-						if (log) {
-							log("[UserBusinessBean]: filter out the real topnodes complete " + time.getTimeString());
-						}
-
+						log("[UserBusinessBean]: filter out the real topnodes complete " + time.getTimeString());
 						time.start();
 						// Now we have to check if the remaining top nodes
 						// have a shortcut
@@ -2841,37 +2826,51 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									Integer topNodeId = keyIter.next();
 									Integer aliasGroupsId = aliasMap.get(topNodeId);
 									if (aliasGroupsId != null) {
-										if (!groupMap.containsKey(aliasGroupsId)) {
-											// only remove if they are not both top nodes
+										if (!groupMap.containsKey(aliasGroupsId)) {// only
+											// remove
+											// if
+											// they
+											// are
+											// not
+											// both
+											// top
+											// nodes
 											// groupMap.remove(topNodeId);
+											System.err.println("Here is the code that once returned concurrentException");
 										}
 									}
 								}
 							}
 							time.stop();
-
-							if (log) {
-								log("[UserBusinessBean]: some alias complete " + time.getTimeString());
-							}
-
+							log("[UserBusinessBean]: some alias complete " + time.getTimeString());
 							time.start();
 							// check the children recursively
 							List<Integer> groupsToRemove = new ArrayList<Integer>();
 							for (Iterator<Integer> keyIter = groupMap.keySet().iterator(); keyIter.hasNext();) {
 								Integer topNodeId = keyIter.next();
 								if (skipThese.containsKey(topNodeId)) {
-									continue;	//	It's going to be removed later
+									continue;// it's going to be removed
+									// later
 								} else {
 									try {
-										// also we need to check the children of the current top nodes recursively for aliases :s
+										// also we need to check the
+										// children of the current top nodes
+										// recursively for aliases :s
 										Group group = getGroupBusiness().getGroupByGroupID(topNodeId.intValue());
 										Collection<Group> aliasesRecursive = getGroupBusiness().getChildGroupsRecursiveResultFiltered(group, aliasGroupType, true);
 										if (aliasesRecursive != null && !aliasesRecursive.isEmpty()) {
 											for (Iterator<Group> aliasIter = aliasesRecursive.iterator(); aliasIter.hasNext();) {
 												Group alias = aliasIter.next();
 												Integer aliasGroupsId = new Integer(alias.getAliasID());
-												if (groupMap.containsKey(aliasGroupsId)) {
-													// only remove if they are not both top nodes
+												if (groupMap.containsKey(aliasGroupsId)) {// only
+													// remove
+													// if
+													// they
+													// are
+													// not
+													// both
+													// top
+													// nodes
 													groupsToRemove.add(aliasGroupsId);
 													skipThese.put(aliasGroupsId, Boolean.TRUE);
 												}
@@ -2883,10 +2882,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								}
 							}
 							time.stop();
-
-							if (log) {
-								log("[UserBusinessBean]: check children (recursively) complete " + time.getTimeString());
-							}
+							log("[UserBusinessBean]: check children (recursively) complete " + time.getTimeString());
 
 							time.start();
 							// remove the top nodes that have aliases under
@@ -2896,10 +2892,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 								groupMap.remove(removeIter.next());
 							}
 							time.stop();
-
-							if (log) {
-								log("[UserBusinessBean]: remove the aliases undr another top node complete " + time.getTimeString());
-							}
+							log("[UserBusinessBean]: remove the aliases undr another top node complete " + time.getTimeString());
 						}
 						// finally done! the remaining nodes are the top
 						// nodes
@@ -2910,23 +2903,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				e.printStackTrace();
 			}
 			totalTime.stop();
-
-			if (log) {
-				log("[UserBusinessBean]: topnode....(...) ends " + totalTime.getTimeString());
-			}
-
+			log("[UserBusinessBean]: topnode....(...) ends " + totalTime.getTimeString());
 			int numberOfPermissions = allViewAndOwnerPermissionGroups.size();
 			if (numberOfPermissions > NUMBER_OF_PERMISSIONS_CACHING_LIMIT) {
 				storeUserTopGroupNodes(user, topNodes, numberOfPermissions, totalTime.getTimeString(), null);
 			}
-
 			if (iwuc != null) {
 				iwuc.setSessionAttribute(SESSION_KEY_TOP_NODES + user.getPrimaryKey().toString(), topNodes);
 			}
-			return topNodes;
-		} finally {
-			CoreUtil.doDebug(start, System.currentTimeMillis(), getClass().getName() + ".getUsersTopGroupNodesByViewAndOwnerPermissions: user: " + user);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting top group nodes by view and owner permissions for " + user);
 		}
+		return topNodes;
 	}
 
 	@Override
@@ -3621,23 +3609,34 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException, CreateException {
-		if (fullAddressString != null && !CoreConstants.EMPTY.equals(fullAddressString)) {
-			Address mainAddress = getUsersMainAddress(user);
-			boolean addAddress = false;
-			if (mainAddress == null) {
-				mainAddress = getAddressHome().create();
-				mainAddress.setAddressType(getAddressBusiness().getMainAddressType());
-				addAddress = true;
-			}
+		updateUsersAddressByFullAddressString(user, fullAddressString, null);
+	}
 
-			mainAddress = getAddressBusiness().getUpdatedAddressByFullAddressString(mainAddress, fullAddressString);
+	@Override
+	public void updateUsersAddressByFullAddressString(User user, String fullAddressString, AddressType addressType) throws RemoteException, CreateException {
+		if (StringUtil.isEmpty(fullAddressString)) {
+			return;
+		}
 
-			if (addAddress) {
-				try {
-					user.addAddress(mainAddress);
-				} catch (IDOAddRelationshipException e) {
-					e.printStackTrace();
-				}
+		AddressType mainAddressType = getAddressBusiness().getMainAddressType();
+		addressType = addressType == null ? mainAddressType : addressType;
+		Address address = addressType.getPrimaryKey().toString().equals(mainAddressType.getPrimaryKey().toString()) ?
+				getUsersMainAddress(user) :
+				getUsersCoAddress(user);
+		boolean addAddress = false;
+		if (address == null) {
+			address = getAddressHome().create();
+			address.setAddressType(addressType);
+			addAddress = true;
+		}
+
+		address = getAddressBusiness().getUpdatedAddressByFullAddressString(address, fullAddressString);
+
+		if (addAddress) {
+			try {
+				user.addAddress(address);
+			} catch (IDOAddRelationshipException e) {
+				e.printStackTrace();
 			}
 		}
 	}
@@ -5112,13 +5111,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						"Failed to get " + User.class.getName() +
 						" by primary key: " + primaryKey);
 			}
-		} 
+		}
 
 		if (user == null && !StringUtil.isEmpty(uuid)) {
 			try {
 				user = getUserHome().findUserByUniqueId(uuid);
 			} catch (FinderException e) {}
-		} 
+		}
 
 		if (user == null && !StringUtil.isEmpty(name) && !StringUtil.isEmpty(email)) {
 			/* Searching for existing one by email and name */
@@ -5237,18 +5236,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			String userName,
 			String password) {
 		return update(
-				primaryKey, 
-				uuid, 
-				name, 
-				firstName, 
-				middleName, 
-				lastName, 
-				displayName, 
-				personalId, 
-				email, 
-				phone, 
-				userName, 
-				password, 
+				primaryKey,
+				uuid,
+				name,
+				firstName,
+				middleName,
+				lastName,
+				displayName,
+				personalId,
+				email,
+				phone,
+				userName,
+				password,
 				Boolean.TRUE);
 	}
 

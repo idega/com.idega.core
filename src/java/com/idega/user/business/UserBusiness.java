@@ -798,6 +798,8 @@ public interface UserBusiness extends IBOService {
 	public void updateUsersMainAddressByFullAddressString(User user, String fullAddressString) throws RemoteException,
 			CreateException;
 
+	public void updateUsersAddressByFullAddressString(User user, String fullAddressString, AddressType addressType) throws RemoteException, CreateException;
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#getUserByUniqueId
 	 */
@@ -1023,17 +1025,17 @@ public interface UserBusiness extends IBOService {
 	 * @return entity or <code>null</code> on failure
 	 */
 	User update(
-			String primaryKey, 
-			String uuid, 
-			String name, 
-			String firstName, 
-			String middleName, 
+			String primaryKey,
+			String uuid,
+			String name,
+			String firstName,
+			String middleName,
 			String lastName,
-			String displayName, 
-			String personalId, 
-			String email, 
-			String phone, 
-			String userName, 
+			String displayName,
+			String personalId,
+			String email,
+			String phone,
+			String userName,
 			String password);
 
 	/**
@@ -1053,17 +1055,17 @@ public interface UserBusiness extends IBOService {
 	 * @return entity or <code>null</code> on failure
 	 */
 	User update(
-			String primaryKey, 
-			String uuid, 
-			String name, 
-			String firstName, 
-			String middleName, 
+			String primaryKey,
+			String uuid,
+			String name,
+			String firstName,
+			String middleName,
 			String lastName,
-			String displayName, 
-			String personalId, 
-			String email, 
-			String phone, 
-			String userName, 
+			String displayName,
+			String personalId,
+			String email,
+			String phone,
+			String userName,
 			String password,
 			boolean sendLoginInfo);
 }
