@@ -5,6 +5,7 @@
 
 package com.idega.presentation.ui;
 
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
@@ -14,14 +15,37 @@ import com.idega.presentation.Image;
 */
 public class CloseButton extends GenericButton {
 
+	private void generalClose(){
+		setOnClick("top.window.close()");
+	}
+	private void generalClose(String displayString){
+		setName(displayString);
+		setValue(displayString);
+		setOnClick("top.window.close()");
+	}
+	private void defaultClose(){
+		setAsImageButton(true);
+		generalClose("close");
+	}
+	
+	private void stringClose(String displayString){
+		generalClose(displayString);
+		setInputType(INPUT_TYPE_BUTTON);
+	}
+	private void imageClose(Image image){
+		setAsImageButton(true);
+		generalClose("close");
+		if(image.getId().startsWith("id")){
+			image.setId(getId()+"_imagebutton");
+		}
+		setButtonImage(image);
+	}
+	
 	/**
 	 * Constructs a new <code>CloseButton</code> with the the default display label.
 	 */
 	public CloseButton() {
-		setAsImageButton(true);
-		setName("close");
-		setOnClick("top.window.close()");
-		setValue("close");
+		defaultClose();
 	}
 
 	/**
@@ -29,11 +53,7 @@ public class CloseButton extends GenericButton {
 	 * @param displayString	The string to display on the button.
 	 */
 	public CloseButton(String displayString) {
-		super();
-		setName("close");
-		setValue(displayString);
-		setInputType(INPUT_TYPE_BUTTON);
-		setOnClick("top.window.close()");
+		stringClose(displayString);
 	}
 
 	/**
@@ -41,13 +61,11 @@ public class CloseButton extends GenericButton {
 	 * @param defaultImage	The image to use as the close button.
 	 */
 	public CloseButton(Image image) {
-		super();
-		if(image.getId().startsWith("id")){
-			image.setId(getId()+"_imagebutton");
-		}
-		setName("close");
-		setButtonImage(image);
-		setOnClick("top.window.close()");
+		imageClose(image);
+	}
+	
+	public CloseButton(ClickableDiv div) {
+		stringClose(div.getText());
 	}
 	
 	public void printWML(IWContext main) {

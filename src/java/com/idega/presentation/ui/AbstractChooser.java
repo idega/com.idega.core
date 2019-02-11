@@ -8,11 +8,11 @@ package com.idega.presentation.ui;
 import java.net.URLEncoder;
 
 import javax.faces.component.UIComponent;
+import javax.faces.component.UIComponentBase;
 
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
 import com.idega.presentation.IWContext;
-import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.PresentationObjectContainer;
 import com.idega.presentation.Table;
@@ -38,7 +38,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 	private boolean _addForm = true;
 	private boolean _addTextInput = true;
 	private Form _form = null;
-	private Image _buttonImage = null;
+	private PresentationObject _buttonImage = null;
 	protected String _style = null;
 	protected String _stringValue;
 	protected String _stringDisplay;
@@ -315,7 +315,7 @@ public abstract class AbstractChooser extends PresentationObjectContainer {
 		this._addForm = addForm;
 	}
 
-	public void setChooseButtonImage(Image buttonImage) {
+	public void setChooseButtonImage(PresentationObject buttonImage) {
 		this._buttonImage = buttonImage;
 	}
 

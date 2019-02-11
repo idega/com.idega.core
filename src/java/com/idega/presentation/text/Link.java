@@ -38,6 +38,7 @@ import com.idega.event.IWPresentationEvent;
 import com.idega.idegaweb.IWConstants;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.UnavailableIWContext;
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.PresentationObject;
@@ -1084,6 +1085,12 @@ public class Link extends Text {
 			((Image) this._obj).setAlt(toolTip);
 		}
 		this._objectType = OBJECT_TYPE_IMAGE;
+		this._obj.setParentObject(this);
+	}
+	
+	public void setImage(ClickableDiv div) {
+		this._obj = div;
+		this._objectType = OBJECT_TYPE_MODULEOBJECT;
 		this._obj.setParentObject(this);
 	}
 

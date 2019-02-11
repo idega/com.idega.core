@@ -4,6 +4,7 @@
 */
 package com.idega.presentation.ui;
 
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.Image;
 
 /**
@@ -37,5 +38,9 @@ public class PrintButton extends GenericButton {
 		buttonImage.setId(getId()+"_im");
 		setOnClick("javascript:window.print();");
 		setButtonImage(buttonImage);
+	}
+	
+	public PrintButton(ClickableDiv div) {
+		this(div.getText());
 	}
 }

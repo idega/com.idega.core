@@ -13,8 +13,10 @@
 package com.idega.presentation.ui;
 
 import javax.faces.context.FacesContext;
+
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWResourceBundle;
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
@@ -83,6 +85,9 @@ public class BackButton extends GenericButton {
 		defaultImage.setId(getId()+"_im");
 		setButtonImage(defaultImage);
 		setOnClick("history.go(" + this.howFarBackOrForward + ")");
+	}
+	public BackButton(ClickableDiv div){
+		this(div.getText());
 	}
 	
 	/**

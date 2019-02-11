@@ -10,9 +10,11 @@
 package com.idega.presentation.ui;
 
 import javax.faces.context.FacesContext;
+
 import com.idega.event.IWSubmitEvent;
 import com.idega.event.IWSubmitListener;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
@@ -96,6 +98,10 @@ public class SubmitButton extends GenericButton {
 		setName(getDefaultName());
 		this.parameterName = getDefaultName();
 	}
+	
+	public SubmitButton(ClickableDiv div) {
+		this(div.getText());
+	}
 
 	/**
 	 * Constructs a new <code>SubmitButton</code> with the given name set, value set as 
@@ -106,6 +112,9 @@ public class SubmitButton extends GenericButton {
 		defaultImage.setId(getId()+"_im");
 		setButtonImage(defaultImage);
 		setInputType(INPUT_TYPE_IMAGE);
+	}
+	public SubmitButton(ClickableDiv div, String name) {
+		this(name, div.getText());
 	}
 
 	/**
@@ -121,6 +130,14 @@ public class SubmitButton extends GenericButton {
 		this.parameterName = name;
 		this.parameterValue = value;
 		this.usingControlParameter = true;
+	}
+	
+	public SubmitButton(ClickableDiv div, String name, String value) {
+		this(div.getText(), name, value);
+//		this(name, div.getText());
+//		this.parameterName = name;
+//		this.parameterValue = value;
+//		this.usingControlParameter = true;
 	}
 
 	/**

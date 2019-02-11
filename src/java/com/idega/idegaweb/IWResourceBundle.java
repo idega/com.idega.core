@@ -301,7 +301,7 @@ public class IWResourceBundle extends ResourceBundle {
 		}
 	}
 
-	public Image getLocalizedImageButton(String key, String returnValueIfNull) {
+	public ClickableDiv getLocalizedImageButton(String key, String returnValueIfNull) {
 		String text = getLocalizedString(key, returnValueIfNull);
 		return new ClickableDiv(text);
 //		return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());

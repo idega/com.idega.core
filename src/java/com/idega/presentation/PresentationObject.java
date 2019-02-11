@@ -12,7 +12,6 @@ package com.idega.presentation;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.rmi.RemoteException;
-import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Iterator;
 import java.util.List;
@@ -186,6 +185,11 @@ public class PresentationObject
 		}
 	}
 
+	public void setHorizontalSpacing(int spacing)
+	{
+		setStyleAttribute("padding-left", String.valueOf(spacing));
+		setStyleAttribute("padding-right", String.valueOf(spacing));
+	}
 	protected String generateID() {
 		int hashCode = hashCode();
 		String code;
