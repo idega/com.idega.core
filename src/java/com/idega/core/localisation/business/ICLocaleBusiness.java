@@ -410,7 +410,25 @@ public class ICLocaleBusiness implements MutableClass {
       reload();
     }
   }
-
+  
+  public static boolean isLocaleInUse(String locale) {
+	  if (StringUtil.isEmpty(locale)) {
+		  return false;
+	  }
+	  
+	  List<ICLocale> localesInUse = listOfLocales(true);
+	  if (ListUtil.isEmpty(localesInUse)) {
+		  return false;
+	  }
+	  
+	  for (ICLocale localeInUse : localesInUse) {
+		  if (locale.equalsIgnoreCase(localeInUse.toString())) {
+			  return true;
+		  }
+	  }
+	  
+	  return false;
+  }
 
   /**
  * In the DropdownMenu the keys (values) are the locale-stringrepresentations
