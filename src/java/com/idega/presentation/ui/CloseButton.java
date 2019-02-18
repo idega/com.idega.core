@@ -66,6 +66,7 @@ public class CloseButton extends GenericButton {
 	
 	public CloseButton(ClickableDiv div) {
 		stringClose(div.getText());
+		setStyleClass("clickable-div");
 	}
 	
 	public void printWML(IWContext main) {

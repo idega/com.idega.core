@@ -88,6 +88,7 @@ public class BackButton extends GenericButton {
 	}
 	public BackButton(ClickableDiv div){
 		this(div.getText());
+		setStyleClass("clickable-div");
 	}
 	
 	/**

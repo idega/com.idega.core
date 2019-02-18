@@ -338,6 +338,7 @@ html>body .LoadLayer .LoadLayerMiddle .LoadLayerContents {
     vertical-align: middle;
     text-align: center;
     text-decoration: none;
+  	user-select: none;
 }
 .clickable-div:hover{
 	background-color: #ddd;

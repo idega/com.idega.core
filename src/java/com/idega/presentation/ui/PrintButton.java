@@ -42,5 +42,6 @@ public class PrintButton extends GenericButton {
 	
 	public PrintButton(ClickableDiv div) {
 		this(div.getText());
+		setStyleClass("clickable-div");
 	}
 }

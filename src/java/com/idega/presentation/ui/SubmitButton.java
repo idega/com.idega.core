@@ -101,6 +101,7 @@ public class SubmitButton extends GenericButton {
 	
 	public SubmitButton(ClickableDiv div) {
 		this(div.getText());
+		setStyleClass("clickable-div");
 	}
 
 	/**
@@ -115,6 +116,7 @@ public class SubmitButton extends GenericButton {
 	}
 	public SubmitButton(ClickableDiv div, String name) {
 		this(name, div.getText());
+		setStyleClass("clickable-div");
 	}
 
 	/**
@@ -134,6 +136,7 @@ public class SubmitButton extends GenericButton {
 	
 	public SubmitButton(ClickableDiv div, String name, String value) {
 		this(div.getText(), name, value);
+		setStyleClass("clickable-div");
 //		this(name, div.getText());
 //		this.parameterName = name;
 //		this.parameterValue = value;
