@@ -161,7 +161,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				getIDOContainer().getEntityStaticInstances().put(this.getClass(), GenericEntity.instanciateEntity(this.getClass(), getDatasource()));
 			}
 			catch (Exception ex) {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error loading " + getClass().getName(), ex);
 			}
 			this.getGenericEntityDefinition().setInterfaceClass(getInterfaceClass());
 			// call the ializeAttributes that stores information about columns and
@@ -175,7 +175,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 					DatastoreInterface.getInstance(this).createEntityRecord(this);
 				}
 				catch (Exception ex) {
-					ex.printStackTrace();
+					getLogger().log(Level.WARNING, "Error auto creating record for " + this, ex);
 				}
 			}
 		}
@@ -1358,16 +1358,18 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * Inserts this entity as a record into the datastore
 	 */
 	public void insert() throws SQLException {
+		Object primaryKey = null;
 		try {
 			DatastoreInterface.getInstance(this).insert(this);
 			if (isBeanCachingActive()) {
-				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).putCachedEntity(getPrimaryKey(), this);
+				primaryKey = getPrimaryKey();
+				IDOContainer.getInstance().getBeanCache(getDatasource(),this.getInterfaceClass()).putCachedEntity(primaryKey, this);
 			}
 			flushQueryCache();
 		}
 		catch (Exception ex) {
 			if (isDebugActive()) {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error inserting " + getInterfaceClass().getName() + " with primary key " + primaryKey, ex);
 			}
 
 			try {
@@ -1376,12 +1378,11 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			catch (Exception e) {
 			}
 			if (ex instanceof SQLException) {
-				// ex.printStackTrace();
-				// throw (SQLException)ex.fillInStackTrace();
+				getLogger().log(Level.WARNING, "Error inserting " + getInterfaceClass().getName() + " with primary key " + primaryKey, ex);
 				throw (SQLException) ex;
 			}
 			else {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error inserting " + getInterfaceClass().getName() + " with primary key " + primaryKey, ex);
 				throw new SQLException("Exception rethrown: " + ex.getClass().getName() + " - " + ex.getMessage());
 			}
 		}
@@ -1401,11 +1402,11 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 		catch (Exception ex) {
 			if (ex instanceof SQLException) {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error updating metadata for " + getClass().getName() + ", table: " + getTableName(), ex);
 				throw (SQLException) ex.fillInStackTrace();
 			}
 			else {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error updating metadata for " + getClass().getName() + ", table: " + getTableName(), ex);
 			}
 		}
 	}
@@ -1426,7 +1427,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 		catch (Exception ex) {
 			if (ex instanceof SQLException) {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error deleting metadata for " + getClass().getName() + ", table: " + getTableName(), ex);
 				throw (SQLException) ex.fillInStackTrace();
 			}
 		}
@@ -1441,8 +1442,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			flushQueryCache();
 		}
 		catch (Exception ex) {
+			getLogger().log(Level.WARNING, "Error inserting " + getClass().getName() + ", table: " + getTableName(), ex);
 			if (ex instanceof SQLException) {
-				ex.printStackTrace();
 				throw (SQLException) ex.fillInStackTrace();
 			}
 		}
@@ -1461,11 +1462,11 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		}
 		catch (Exception ex) {
 			if (isDebugActive()) {
-				ex.printStackTrace();
+				getLogger().log(Level.WARNING, "Error updating " + this + ", class: " + getClass().getName() + ", table: " + getTableName(), ex);
 			}
 
+			getLogger().log(Level.WARNING, "Error updating " + this + ", class: " + getClass().getName() + ", table: " + getTableName(), ex);
 			if (ex instanceof SQLException) {
-				// ex.printStackTrace();
 				throw (SQLException) ex.fillInStackTrace();
 			}
 		}
@@ -1480,8 +1481,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			updateInCaches();
 		}
 		catch (Exception ex) {
+			getLogger().log(Level.WARNING, "Error updating " + this + ", class: " + getClass().getName() + ", table: " + getTableName(), ex);
 			if (ex instanceof SQLException) {
-				// ex.printStackTrace();
 				throw (SQLException) ex.fillInStackTrace();
 			}
 		}
@@ -1501,8 +1502,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			deleteInCaches();
 		}
 		catch (Exception ex) {
+			getLogger().log(Level.WARNING, "Error deleting " + this + ", class: " + getClass().getName() + ", table: " + getTableName(), ex);
 			if (ex instanceof SQLException) {
-				ex.printStackTrace();
 				throw (SQLException) ex.fillInStackTrace();
 			}
 		}
@@ -1514,8 +1515,8 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			deleteInCaches();
 		}
 		catch (Exception ex) {
+			getLogger().log(Level.WARNING, "Error deleting " + this + ", class: " + getClass().getName() + ", table: " + getTableName(), ex);
 			if (ex instanceof SQLException) {
-				ex.printStackTrace();
 				throw (SQLException) ex.fillInStackTrace();
 			}
 		}
@@ -3453,7 +3454,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 			}
 			catch (Exception ex) {
-				ex.printStackTrace();
+				Logger.getLogger(GenericEntity.class.getName()).log(Level.WARNING, "Error getting static instance " + entityClass.getName(), ex);
 			}
 		}
 		return theReturn;
@@ -3488,7 +3489,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			EntityControl.addManyToManyRelationShip(this.getClass().getName(), relatingEntityClassName);
 		}
 		catch (Exception ex) {
-			ex.printStackTrace();
+			getLogger().log(Level.WARNING, "Error adding many-to-many relationship " + this + ", class: " + relatingEntityClassName + ", table: " + getTableName(), ex);
 		}
 	}
 
@@ -4962,7 +4963,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			removeFrom(entityInterfaceClass);
 		}
 		catch (SQLException ex) {
-			// ex.printStackTrace();
+			getLogger().log(Level.WARNING, "Error removing from " + this + ", class: " + entityInterfaceClass.getName() + ", table: " + getTableName(), ex);
 			throw new IDORemoveRelationshipException(ex, this);
 		}
 	}
@@ -4983,7 +4984,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			removeFrom(entity);
 		}
 		catch (SQLException ex) {
-			// ex.printStackTrace();
+			getLogger().log(Level.WARNING, "Error removing from " + entity + ", table: " + getTableName(), ex);
 			throw new IDORemoveRelationshipException(ex, this);
 		}
 	}
@@ -5269,7 +5270,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 		}
 		catch (Exception ex) {
-			// ex.printStackTrace();
+			getLogger().log(Level.WARNING, "Error adding to " + middleTableName + ", primary key: " + primaryKey, ex);
 			throw new IDOAddRelationshipException(ex, this);
 		}
 	}
