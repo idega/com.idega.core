@@ -3976,8 +3976,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			}
 		}
 		catch (Exception e) {
-			e.printStackTrace();
-			throw new IDOStoreException(e.getMessage(), e);
+			String error = "Error storing object " + getClass().getName() + ". Primary key: " + (getPrimaryKey() == null ? "unknown" : getPrimaryKey());
+			getLogger().log(Level.WARNING, error, e);
+			throw new IDOStoreException(error + ". " + e.getMessage(), e);
 		}
 	}
 
