@@ -43,7 +43,7 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 				String message = null;
 				try {
 					User user = loginSession.getUserEntity();
-					message = "Session destroyed, logged out user " + user + ", personal ID: " + user.getPersonalID();
+					message = "Session (ID: " + destroyedSession.getId() + ") destroyed, logged out user " + user + ", personal ID: " + user.getPersonalID();
 					throw new RuntimeException(message);
 				} catch (Exception e) {
 					Logger.getLogger(getClass().getName()).log(Level.WARNING, StringUtil.isEmpty(message) ? "Session destroyed" : message, e);
