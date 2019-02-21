@@ -11,12 +11,14 @@ package com.idega.core.accesscontrol.business;
 
 public class NotLoggedOnException extends RuntimeException {
 
+	private static final long serialVersionUID = -2159070982963527071L;
 
-  public NotLoggedOnException(){
-    super("");
-  }
+	public NotLoggedOnException() {
+		super("");
+	}
 
-  public NotLoggedOnException(String s){
-    super("NotLoggedOnException: "+ s);
-  }
+	public NotLoggedOnException(String s) {
+		super("NotLoggedOnException: "+ s);
+	}
+
 }
