@@ -81,7 +81,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";
 
 	private static final String ENTITY_NAME = "ic_group";
-	static final String COLUMN_GROUP_ID = "IC_GROUP_ID";
+	public static final String COLUMN_GROUP_ID = "IC_GROUP_ID";
 	static final String COLUMN_NAME = "NAME";
 	static final String COLUMN_GROUP_TYPE = "GROUP_TYPE";
 	static final String COLUMN_DESCRIPTION = "DESCRIPTION";
