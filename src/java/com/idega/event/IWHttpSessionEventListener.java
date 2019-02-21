@@ -14,6 +14,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
+import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -43,7 +44,9 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 				String message = null;
 				try {
 					User user = loginSession.getUserEntity();
-					message = "Session (ID: " + destroyedSession.getId() + ") destroyed, logged out user " + user + ", personal ID: " + user.getPersonalID();
+					message = "Session (ID: " + destroyedSession.getId() + ", created at: " + new IWTimestamp(destroyedSession.getCreationTime()) +
+							", last accessed: " + new IWTimestamp(destroyedSession.getLastAccessedTime()) + ") destroyed, logged out user " + user +
+							", personal ID: " + user.getPersonalID();
 					throw new RuntimeException(message);
 				} catch (Exception e) {
 					Logger.getLogger(getClass().getName()).log(Level.WARNING, StringUtil.isEmpty(message) ? "Session destroyed" : message, e);
