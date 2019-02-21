@@ -708,6 +708,9 @@ public abstract class DatastoreInterface implements MutableClass {
 	protected void crunchMetaData(GenericEntity entity) throws SQLException {
 		if (entity.metaDataHasChanged()) { //else do nothing
 			TransactionManager t = IdegaTransactionManager.getInstance();
+			List<String> insert = null;
+			List<String> delete = null;
+			List<String> update = null;
 			try {
 				t.begin();
 				int length;
@@ -716,9 +719,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				Hashtable<String, Integer> ids = entity.getMetaDataIds();
 				Map<String, String> types = entity.getMetaDataTypes();
 
-				List<String> insert = entity.getMetaDataInsert();
-				List<String> delete = entity.getMetaDataDelete();
-				List<String> update = entity.getMetaDataUpdate();
+				insert = entity.getMetaDataInsert();
+				delete = entity.getMetaDataDelete();
+				update = entity.getMetaDataUpdate();
 				if (insert != null) {
 					length = insert.size();
 					for (int i = 0; i < length; i++) {
@@ -780,6 +783,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				catch (Exception e1) {
 					throw new SQLException(e1.getMessage());
 				}
+				getLogger().log(Level.WARNING, "Error updating metadata. Insert: " + insert + ", update: " + update + ", delete: " + delete, e);
 				throw new SQLException(e.getMessage());
 			}
 		}
