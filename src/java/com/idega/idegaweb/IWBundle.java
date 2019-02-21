@@ -24,6 +24,7 @@ import javax.faces.el.ValueBinding;
 
 import com.idega.core.component.data.ICObject;
 import com.idega.data.IDOLookupException;
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 
@@ -174,7 +175,7 @@ public interface IWBundle extends IWModule{
 
 	public abstract Image getImage(String urlInBundle, int width, int height);
 
-	public abstract Image getImageButton(String text);
+	public abstract ClickableDiv getImageButton(String text);
 
 	public abstract Image getImageTab(String text, boolean flip);
 

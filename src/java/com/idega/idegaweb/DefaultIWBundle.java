@@ -44,6 +44,7 @@ import com.idega.core.component.data.ICObjectHome;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
 import com.idega.presentation.Block;
+import com.idega.presentation.ClickableDiv;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.repository.data.RefactorClassRegistry;
@@ -924,9 +925,9 @@ public class DefaultIWBundle implements java.lang.Comparable, IWBundle
 	{
 		return getImage(urlInBundle, "", width, height);
 	}
-	public Image getImageButton(String text)
+	public ClickableDiv getImageButton(String text)
 	{
-		return this.getApplication().getImageFactory().createButton(text, this);
+		return new ClickableDiv(text);
 	}
 	public Image getImageTab(String text, boolean flip)
 	{

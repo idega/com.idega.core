@@ -291,10 +291,10 @@ public class IWResourceBundle extends ResourceBundle {
 	/**
 	 * Uses getLocalizedString but returns null if resource is not found
 	 */
-	public Image getLocalizedImageButton(String key) {
+	public ClickableDiv getLocalizedImageButton(String key) {
 		try {
 			String text = getLocalizedString(key);
-			return this.iwBundleParent.getApplication().getImageFactory().createButton(text, this.iwBundleParent, getLocale());
+			return new ClickableDiv(text);
 		}
 		catch (MissingResourceException e) {
 			return null;

@@ -22,7 +22,6 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
 import com.idega.presentation.Script;
-import com.idega.util.StringHandler;
 import com.idega.util.URLUtil;
 import com.idega.util.datastructures.list.KeyValueList;
 import com.idega.util.datastructures.list.KeyValuePair;
@@ -200,14 +199,6 @@ public class GenericButton extends GenericInput {
 	
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
-			if (this.asImageButton) {
-				String normalizedName = StringHandler.stripNonRomanCharacters(getValueAsString(),
-						new char[] { '0', '1', '2', '3',
-								'4', '5', '6', '7', '8',
-								'9', '-', '.' });
-				Image generatedImage = iwc.getIWMainApplication().getCoreBundle().getImageButton(normalizedName);
-				setButtonImage(generatedImage);
-			}
 			if (!this._onClickConfirm) {
 				if (this._windowClassToOpen != null) {
 					String URL =  Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
