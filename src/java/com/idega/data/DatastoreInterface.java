@@ -765,10 +765,18 @@ public abstract class DatastoreInterface implements MutableClass {
 				if (delete != null) {
 					length = delete.size();
 					for (int i = 0; i < length; i++) {
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.get(i)));
-						//data.setID();
-						entity.idoRemoveFrom(data);
-						data.remove();
+						data = null;
+						Integer id = null;
+						try {
+							id = ids.get(delete.get(i));
+							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(id);
+						} catch (Exception e) {
+							getLogger().log(Level.WARNING, "Error finding metadata with ID: " + id, e);
+						}
+						if (data != null) {
+							entity.idoRemoveFrom(data);
+							data.remove();
+						}
 					}
 				}
 				//else System.out.println("delete is null");
