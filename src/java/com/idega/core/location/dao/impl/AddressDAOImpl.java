@@ -22,6 +22,7 @@ import com.idega.core.location.data.bean.Province;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.user.data.bean.Group;
+import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
@@ -113,7 +114,12 @@ public class AddressDAOImpl extends GenericDaoImpl implements AddressDAO {
 	@Override
 	public PostalCode getPostalCode(String postalCode) {
 		Param param = new Param("postalCode", postalCode);
-		return getSingleResult("postalCode.findByPostalCode", PostalCode.class, param);
+		List<PostalCode> postalCodes = getResultList("postalCode.findByPostalCode", PostalCode.class, param);
+		PostalCode pc = null;
+		if (!ListUtil.isEmpty(postalCodes) && postalCodes.get(0) != null) {
+			pc = postalCodes.get(0);
+		}
+		return pc;
 	}
 
 	private String getPostalAddress(String postalCode, String name) {
