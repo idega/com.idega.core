@@ -681,11 +681,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
 			if (!ListUtil.isEmpty(groups)) {
+				List<Group> groupsTmp = new ArrayList<>(groups);
+
 				if (primaryGroup != null) {
-					groups.remove(primaryGroup);
+					groupsTmp.remove(primaryGroup);
 				}
 				List<String> groupIds = new ArrayList<String>();
-				for (Object o: groups) {
+				for (Object o: groupsTmp) {
 					if (o instanceof Group) {
 						Group group = (Group) o;
 						groupIds.add(Integer.toString(group.getID()));
