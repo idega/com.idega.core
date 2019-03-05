@@ -1590,6 +1590,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 					setDoPrint(false);
 				}
 				println("<head>");
+				println("<meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">");
 				println("<title>" + getLocalizedTitle(iwc) + "</title>\n");
 				/*
 				 * //shortcut icon println(getPrintableSchortCutIconURL(iwc)); print(getMetaInformation(markup, characterEncoding));
