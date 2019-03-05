@@ -24,13 +24,12 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 
 	private Integer loginId;
 
-	public LoggedInUserCredentials(HttpServletRequest request, String serverURL, String userName, String password, LoginType type, Integer loginId, String loginType) {
+	public LoggedInUserCredentials(HttpServletRequest request, String serverURL, String userName, LoginType type, Integer loginId, String loginType) {
 		super(request);
 
 		this.request = request;
 		this.serverURL = serverURL;
 		this.userName = userName;
-		this.password = password;
 		this.type = type;
 		this.loginId = loginId;
 		this.loginType = loginType;
@@ -54,6 +53,10 @@ public class LoggedInUserCredentials extends ApplicationEvent {
 
 	public String getPassword() {
 		return password;
+	}
+
+	public void setPassword(String password) {
+		this.password = password;
 	}
 
 	public LoginType getType() {

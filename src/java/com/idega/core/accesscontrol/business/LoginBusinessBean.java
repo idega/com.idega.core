@@ -540,16 +540,18 @@ public class LoginBusinessBean implements IWPageEventListener {
 		internalSetState(request, LoginState.LOGGED_ON);
 
 		if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(password)) {
-			ELUtil.getInstance().publishEvent(new LoggedInUserCredentials(
+			LoggedInUserCredentials event = new LoggedInUserCredentials(
 					request,
 					RequestUtil.getServerURL(request),
 					username,
-					password,
 					LoginType.CREDENTIALS,
 					null,
 					null
-				)
-			);
+				);
+			
+			event.setPassword(password);
+			
+			ELUtil.getInstance().publishEvent(event);
 		}
 	}
 
@@ -660,7 +662,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 						this.logOutAsAnotherUser(request);
 
 						UserLogin login = info.getUserLogin();
-						onLoginSuccessful(request, login == null ? null : login.getUserLogin(), login == null ? null : login.getUserPassword());
+						onLoginSuccessful(request, login == null ? null : login.getUserLogin(), null);
 					}
 					else {
 						IWContext iwc = CoreUtil.getIWContext();
@@ -1644,7 +1646,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (userLogin != null) {
 			returner = logIn(request, userLogin);
 			if (returner) {
-				onLoginSuccessful(request, login, userLogin.getUserPassword());
+				onLoginSuccessful(request, login, null);
 			}
 		}
 
@@ -1772,7 +1774,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			storeUserAndGroupInformationInSession(session, user);
 			LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 			storeLoggedOnInfoInSession(request, session, userLogin, login, user, loginRecord, LOGINTYPE_AS_ANOTHER_USER);
-			onLoginSuccessful(request, login, userLogin.getUserPassword());
+			onLoginSuccessful(request, login, null);
 			return true;
 		}
 		return false;
@@ -1864,7 +1866,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 						login != null ? login.getLoginType() : null
 				);
 
-				onLoginSuccessful(request, login != null ? login.getUserLogin() : null, login == null ? null : login.getUserPassword());
+				onLoginSuccessful(request, login != null ? login.getUserLogin() : null, null);
 				return Boolean.TRUE;
 			}
 		} catch (Exception e) {
@@ -1917,7 +1919,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 				returner = logIn(request, userLogin);
 				if (returner) {
-					onLoginSuccessful(request, userName, StringUtil.isEmpty(password) ? userLogin.getUserPassword() : password);
+					onLoginSuccessful(request, userName, password);
 				}
 			} else {
 				try {
@@ -1957,7 +1959,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			} else {
 				returner = logIn(request, userLogin);
 				if (returner) {
-					onLoginSuccessful(request, userLogin.getUserLogin(), userLogin.getUserPassword());
+					onLoginSuccessful(request, userLogin.getUserLogin(), null);
 				}
 			}
 		} catch (EJBException e) {
