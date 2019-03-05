@@ -708,6 +708,9 @@ public abstract class DatastoreInterface implements MutableClass {
 	protected void crunchMetaData(GenericEntity entity) throws SQLException {
 		if (entity.metaDataHasChanged()) { //else do nothing
 			TransactionManager t = IdegaTransactionManager.getInstance();
+			List<String> insert = null;
+			List<String> delete = null;
+			List<String> update = null;
 			try {
 				t.begin();
 				int length;
@@ -716,9 +719,9 @@ public abstract class DatastoreInterface implements MutableClass {
 				Hashtable<String, Integer> ids = entity.getMetaDataIds();
 				Map<String, String> types = entity.getMetaDataTypes();
 
-				List<String> insert = entity.getMetaDataInsert();
-				List<String> delete = entity.getMetaDataDelete();
-				List<String> update = entity.getMetaDataUpdate();
+				insert = entity.getMetaDataInsert();
+				delete = entity.getMetaDataDelete();
+				update = entity.getMetaDataUpdate();
 				if (insert != null) {
 					length = insert.size();
 					for (int i = 0; i < length; i++) {
@@ -762,10 +765,18 @@ public abstract class DatastoreInterface implements MutableClass {
 				if (delete != null) {
 					length = delete.size();
 					for (int i = 0; i < length; i++) {
-						data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(ids.get(delete.get(i)));
-						//data.setID();
-						entity.idoRemoveFrom(data);
-						data.remove();
+						data = null;
+						Integer id = null;
+						try {
+							id = ids.get(delete.get(i));
+							data = ((com.idega.data.MetaDataHome) com.idega.data.IDOLookup.getHomeLegacy(MetaData.class)).findByPrimaryKey(id);
+						} catch (Exception e) {
+							getLogger().log(Level.WARNING, "Error finding metadata with ID: " + id, e);
+						}
+						if (data != null) {
+							entity.idoRemoveFrom(data);
+							data.remove();
+						}
 					}
 				}
 				//else System.out.println("delete is null");
@@ -780,6 +791,7 @@ public abstract class DatastoreInterface implements MutableClass {
 				catch (Exception e1) {
 					throw new SQLException(e1.getMessage());
 				}
+				getLogger().log(Level.WARNING, "Error updating metadata. Insert: " + insert + ", update: " + update + ", delete: " + delete, e);
 				throw new SQLException(e.getMessage());
 			}
 		}

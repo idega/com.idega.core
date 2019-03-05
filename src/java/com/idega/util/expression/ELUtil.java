@@ -2,6 +2,7 @@ package com.idega.util.expression;
 
 import java.lang.reflect.Method;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -23,6 +24,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.business.SpringBeanName;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
@@ -78,8 +80,9 @@ public class ELUtil implements ApplicationContextAware {
 				@SuppressWarnings("unchecked")
 				T bean = (T) ve.getValue(fctx.getELContext());
 				return bean;
-			} else
+			} else {
 				throw new UnsupportedOperationException("Method binding without faces context not supported yet");
+			}
 		}
 
 		expression = cleanupExp(expression);
@@ -156,12 +159,17 @@ public class ELUtil implements ApplicationContextAware {
 		}
 
 		Object obj = ELUtil.getInstance().getBean(beanName);
+		if (obj == null) {
+			LOGGER.warning("Failed to get object for bean '" + beanName + "'");
+			return null;
+		}
+
 		Object returnedObj = null;
 		try {
 			Method method = obj.getClass().getMethod(methodName, classParams);
 			returnedObj = method.invoke(obj, strParams);
 		} catch (Exception e) {
-			throw new Exception("Exeption occured while trying to invoke method " + methodName, e);
+			throw new Exception("Exeption occured while trying to invoke method " + methodName + " for object " + obj + (ArrayUtil.isEmpty(classParams) ? CoreConstants.EMPTY : ", parameters: " + Arrays.asList(classParams)), e);
 		}
 
 		returnedObj = getPostConditionValue(exp, returnedObj, "==");

@@ -382,7 +382,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 	}
 
 	@Override
-	public List<String> findContextCaluesForPermissionsByRoles(List<String> roles) {
+	public List<String> findContextValuesForPermissionsByRoles(List<String> roles) {
 		if (ListUtil.isEmpty(roles)) {
 			return null;
 		}

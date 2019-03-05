@@ -1020,7 +1020,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (isLoggedOn(iwc)) {
 			LoginBusinessBean.getLoginSessionBean().setLoginAttribute(key, value);
 		} else {
-			throw new NotLoggedOnException();
+			HttpSession session = iwc == null ? null : iwc.getSession();
+			throw new NotLoggedOnException("Session ID: " + (session == null ? "unknown" : session.getId()));
 		}
 	}
 
@@ -1028,7 +1029,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (isLoggedOn(iwc)) {
 			return LoginBusinessBean.getLoginSessionBean().getLoginAttribute(key);
 		} else {
-			throw new NotLoggedOnException();
+			HttpSession session = iwc == null ? null : iwc.getSession();
+			throw new NotLoggedOnException("Session ID: " + (session == null ? "unknown" : session.getId()));
 		}
 	}
 
@@ -1445,7 +1447,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected void logOut(HttpServletRequest request, String userName) throws Exception {
 		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("test_logout_stack", false) && !"root".equals(userName)) {
 			try {
-				throw new RuntimeException("Logging out user '" + userName + "'. Rquest URI: " + request.getRequestURI());
+				throw new RuntimeException("Logging out user '" + userName + "'. Request URI: " + request.getRequestURI());
 			} catch (Exception e) {
 				String message = "Testing logout stack";
 				LOGGER.log(Level.WARNING, message, e);
@@ -1547,7 +1549,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			LoginBusinessBean.getLoginSessionBean().setLoggedOnInfo(lInfo);
 		}
 		else {
-			throw new NotLoggedOnException();
+			throw new NotLoggedOnException("Session ID: " + (session == null ? "unknown" : session.getId()));
 		}
 	}
 
@@ -2059,7 +2061,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return user;
 		}
 		else {
-			throw new NotLoggedOnException();
+			throw new NotLoggedOnException("Session ID: " + (session == null ? "unknown" : session.getId()));
 		}
 	}
 
@@ -2074,7 +2076,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			}
 		}
 		else {
-			throw new NotLoggedOnException();
+			throw new NotLoggedOnException("Session ID: " + (session == null ? "unknown" : session.getId()));
 		}
 	}
 
