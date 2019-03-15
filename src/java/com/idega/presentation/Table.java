@@ -941,7 +941,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 	}
 	
 	public void setRowStyleClass(int ypos, String styleClass) {
-		setRowAttribute(ypos, "class", styleClass);
+		for (int temp = 1; temp <= this.cols;temp++) {
+			setStyleClass(temp, ypos, styleClass);
+		}
 	}
 	
 	public void setRowWidth(int ypos, String width) {
@@ -1011,7 +1013,7 @@ public class Table extends PresentationObjectContainer implements TableType{
 		}
 		this.theCells[xpos - 1][ypos - 1].setMarkupAttribute("class",styleName);
 		*/
-		getCellAt(xpos,ypos).setMarkupAttribute("class",styleName);
+		getCellAt(xpos,ypos).setStyleClass(styleName);//.setMarkupAttribute("class",styleName);
 	}
 	
 	public void setAttribute(int xpos, int ypos, String attribute) {
