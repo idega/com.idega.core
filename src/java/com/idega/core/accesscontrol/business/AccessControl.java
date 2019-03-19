@@ -2289,8 +2289,6 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				tempRolesObject = getApplication().getAttribute(AccessController.PERMISSION_TEMP_ROLES + CoreConstants.UNDER + userId);
 			}
 
-			getLogger().info("Temp. roles for " + userId + ": " + tempRolesObject);
-
 			if (tempRolesObject instanceof Set<?>) {
 				@SuppressWarnings("unchecked")
 				Set<String> tempRoles = (Set<String>) tempRolesObject;
