@@ -292,16 +292,17 @@ public class SmallCalendar extends Block {
 			this.T.setAlignment(xpos, ypos, "center");
 
 			Integer yearValue = Integer.valueOf(year), monthValue = Integer.valueOf(month), dayValue = Integer.valueOf(n);
+			
+			
 			if (isNotAvailableDay(yearValue, monthValue, dayValue)) {
 				this.T.setStyleClass(xpos, ypos, "FAV_not_available");
 			} else if (isAllDaysFullyBooked() || isFullyBookedDay(yearValue, monthValue, dayValue)) {
 				this.T.setStyleClass(xpos, ypos, "travel_FullyBooked FAV_full");
-			} else {
-				if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
-					this.T.setStyleClass(xpos, ypos, this.todayBackgroundStyleClass);
-				} else if ((this.todayColor != null) && ((n == this.today.getDay()) && shadow)) {
-					this.T.setColor(xpos, ypos, this.todayColor);
-				}
+			}
+			if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
+				this.T.setStyleClass(xpos, ypos, this.todayBackgroundStyleClass);
+			} else if ((this.todayColor != null) && ((n == this.today.getDay()) && shadow)) {
+				this.T.setColor(xpos, ypos, this.todayColor);
 			}
 
 			if (this._highlight && !isAllDaysFullyBooked()) {
