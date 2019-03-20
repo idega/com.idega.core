@@ -88,6 +88,8 @@ public class SmallCalendar extends Block {
 	private Map fullyBookedDays;
 	private Map notAvailableDays;
 	
+	private int weekDayLetterCount = 1;
+	
 	public SmallCalendar() {
 		initialize();
 	}
@@ -145,7 +147,15 @@ public class SmallCalendar extends Block {
 			sMonth = this.cal.getMonthName(this.stamp.getMonth(), iwc.getCurrentLocale(), IWCalendar.SHORT);
 		}
 		String sYear = String.valueOf(this.stamp.getYear());
-		Text tMonth = getHeaderText(sMonth + " " + sYear);
+		Text tMonth = getHeaderText(
+				cal.getMonthName(
+						this.stamp.getMonth(), 
+						iwc.getCurrentLocale(), 
+						IWCalendar.FULL
+				) 
+						+ " " 
+						+ sYear
+		);
 		Link right = null;
 		if (this.iNextImage != null) {
 			right = new Link(this.iNextImage);
@@ -220,7 +230,11 @@ public class SmallCalendar extends Block {
 				if (weekday > 7) {
 					weekday = weekday - 7;
 				}
-				t = getHeaderText(this.cal.getDayName(weekday++, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
+				t = getHeaderText(
+						this.cal.getDayName(weekday++, iwc.getCurrentLocale(),
+						IWCalendar.LONG)
+								.substring(0, weekDayLetterCount).toUpperCase()
+				);
 				this.T.setAlignment(a, 1, "center");
 				this.T.setStyleClass(a, 1, "header");
 				this.T.add(t, a++, 1);
@@ -1118,6 +1132,14 @@ public class SmallCalendar extends Block {
 		}
 		Boolean invalidDay = (Boolean) days.get(day);
 		return invalidDay == null ? true : invalidDay.booleanValue();
+	}
+
+	public int getWeekDayLetterCount() {
+		return weekDayLetterCount;
+	}
+
+	public void setWeekDayLetterCount(int weekDayLetterCount) {
+		this.weekDayLetterCount = weekDayLetterCount;
 	}
 	
 }

@@ -902,7 +902,9 @@ public class Table extends PresentationObjectContainer implements TableType{
 	}
 	
 	public void setColumnStyleClass(int xpos, String styleClass) {
-		setColumnAttribute(xpos, "class", styleClass);
+		for (int temp = 1; temp <= this.rows;temp++) {
+			setStyleClass(xpos, temp, styleClass);
+		}
 	}
 	
 	public void setColumnStyle(int xpos, String styleAttribute, String styleValue) {
