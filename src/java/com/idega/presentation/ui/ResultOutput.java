@@ -2,6 +2,7 @@ package com.idega.presentation.ui;
 
 import java.util.List;
 import java.util.Vector;
+
 import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.presentation.Script;
@@ -33,6 +34,7 @@ public class ResultOutput extends GenericInput {
 	private String name;
 	private String extraForTotal = "";
 	private String extraForEach = "";
+	private String formatFunction;
 	
 	private static final String EMPTY_STRING = "";
 	private static final String UNSPECIFIC = "unspecific";
@@ -54,56 +56,104 @@ public class ResultOutput extends GenericInput {
 		this.content = content;
 	}
 	
-	public void main(IWContext iwc) throws Exception {
-		//super._main(iwc);
+	private void addCalculationScript() {
+		if (this.moduleObjects.size() < 0) {
+			return;
+		}
 		Script script = getParentPage().getAssociatedScript();
-		
+		StringBuffer theScript = new StringBuffer();
+		theScript.append("\n function " + this.functionName + "(myForm) {");
+		theScript.append("\n\t var value = (");
+		for (int i = 0; i < this.moduleObjects.size(); i++) {
+			if (i != 0) {
+				theScript.append((String) this.operatorVector.get(i));
+			}
+			PresentationObject moduleObject = null;
+			if (this.moduleObjects.get(i) instanceof TextInput) {
+				moduleObject = (TextInput) this.moduleObjects.get(i);
+			} else if (this.moduleObjects.get(i) instanceof IntegerInput) {
+				moduleObject = (IntegerInput) this.moduleObjects.get(i);
+			} else if (this.moduleObjects.get(i) instanceof DoubleInput) {
+				moduleObject = (DoubleInput) this.moduleObjects.get(i);
+			} else if (this.moduleObjects.get(i) instanceof FloatInput) {
+				moduleObject = (FloatInput) this.moduleObjects.get(i);
+			} else if (this.moduleObjects.get(i) instanceof ResultOutput) {
+				moduleObject = (ResultOutput) this.moduleObjects.get(i);
+			}
+			String extraTxt = (String) this.extraTextVector.get(i);
+			theScript.append("(1*myForm." + moduleObject.getName()
+					+ ".value");
+			theScript.append(")");
+			theScript.append(this.extraForEach);
+			theScript.append(extraTxt);
+		}
+		theScript.append(")");
+		theScript.append(this.extraForTotal);
+		theScript.append(";");
+		if(this.formatFunction != null) {
+			theScript.append(
+					"\n\t value = "
+							+ formatFunction
+							+ "(value);"
+			);
+		}
+		theScript.append(
+				"\n\t  myForm." 
+						+ this.getName()
+						+ ".value=value;"
+		);
+		theScript.append("\n }");
+		script.addFunction(this.functionName, theScript.toString());
+	}
+	public void main(IWContext iwc) throws Exception {
 		this.setName(this.name);
 		this.setValue(this.content);
-		PresentationObject moduleObject = null;
-		String extraTxt = "";
 		
-		if (this.moduleObjects.size() > 0) {
-			StringBuffer theScript = new StringBuffer();
-			theScript.append("function " + this.functionName + "(myForm) {");
-//			theScript.append("\nalert('using JS for "+functionName+"');");
-			theScript.append("\n  myForm." + this.getName()
-					+ ".value=(");
-			for (int i = 0; i < this.moduleObjects.size(); i++) {
-				if (i != 0) {
-					theScript.append((String) this.operatorVector.get(i));
-				}
-				if (this.moduleObjects.get(i) instanceof TextInput) {
-					moduleObject = (TextInput) this.moduleObjects.get(i);
-				} else if (this.moduleObjects.get(i) instanceof IntegerInput) {
-					moduleObject = (IntegerInput) this.moduleObjects.get(i);
-				} else if (this.moduleObjects.get(i) instanceof DoubleInput) {
-					moduleObject = (DoubleInput) this.moduleObjects.get(i);
-				} else if (this.moduleObjects.get(i) instanceof FloatInput) {
-					moduleObject = (FloatInput) this.moduleObjects.get(i);
-				} else if (this.moduleObjects.get(i) instanceof ResultOutput) {
-					moduleObject = (ResultOutput) this.moduleObjects.get(i);
-				}
-				extraTxt = (String) this.extraTextVector.get(i);
-				theScript.append("(1*myForm." + moduleObject.getName()
-						+ ".value");
-				theScript.append(")");
-				theScript.append(this.extraForEach);
-				theScript.append(extraTxt);
-			}
-			theScript.append(")");
-			theScript.append(this.extraForTotal);
-			theScript.append(";");
-			
-			theScript.append("\n}");
-			
-			script.addFunction(this.functionName, theScript.toString());
-		}
+		addCalculationScript();
 		
 		this.setDisabled(true);
 		for (int i = 0; i < this.onChangeVector.size(); i++) {
 			this.setOnKeyUp((String) this.onChangeVector.get(i));
 		}
+		
+		
+		
+//		if (this.moduleObjects.size() > 0) {
+//			StringBuffer theScript = new StringBuffer();
+//			theScript.append("function " + this.functionName + "(myForm) {");
+////			theScript.append("\nalert('using JS for "+functionName+"');");
+//			theScript.append("\n  myForm." + this.getName()
+//					+ ".value=(");
+//			for (int i = 0; i < this.moduleObjects.size(); i++) {
+//				if (i != 0) {
+//					theScript.append((String) this.operatorVector.get(i));
+//				}
+//				if (this.moduleObjects.get(i) instanceof TextInput) {
+//					moduleObject = (TextInput) this.moduleObjects.get(i);
+//				} else if (this.moduleObjects.get(i) instanceof IntegerInput) {
+//					moduleObject = (IntegerInput) this.moduleObjects.get(i);
+//				} else if (this.moduleObjects.get(i) instanceof DoubleInput) {
+//					moduleObject = (DoubleInput) this.moduleObjects.get(i);
+//				} else if (this.moduleObjects.get(i) instanceof FloatInput) {
+//					moduleObject = (FloatInput) this.moduleObjects.get(i);
+//				} else if (this.moduleObjects.get(i) instanceof ResultOutput) {
+//					moduleObject = (ResultOutput) this.moduleObjects.get(i);
+//				}
+//				extraTxt = (String) this.extraTextVector.get(i);
+//				theScript.append("(1*myForm." + moduleObject.getName()
+//						+ ".value");
+//				theScript.append(")");
+//				theScript.append(this.extraForEach);
+//				theScript.append(extraTxt);
+//			}
+//			theScript.append(")");
+//			theScript.append(this.extraForTotal);
+//			theScript.append(";");
+//			
+//			theScript.append("\n}");
+//			
+//			script.addFunction(this.functionName, theScript.toString());
+//		}
 		
 	}
 	
@@ -236,5 +286,13 @@ public class ResultOutput extends GenericInput {
 		if (pname != null) {
 			this.content = pname;
 		}
+	}
+
+	public String getFormatFunction() {
+		return formatFunction;
+	}
+
+	public void setFormatFunction(String formatFunction) {
+		this.formatFunction = formatFunction;
 	}
 }
