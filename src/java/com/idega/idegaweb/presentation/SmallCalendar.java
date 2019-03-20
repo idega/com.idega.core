@@ -202,11 +202,13 @@ public class SmallCalendar extends Block {
 
 		if (this.useNextAndPreviousLinks) {
 			T2.add(left, 1, 1);
+			T2.setStyleClass(1, 1, "left-link-container");
+			T2.add(right, 3, 1);
+			T2.setStyleClass(3, 1, "right-link-container");
 		}
 		T2.add(tMonth, 2, 1);
-		if (this.useNextAndPreviousLinks) {
-			T2.add(right, 3, 1);
-		}
+		T2.setStyleClass(2, 1, "month-container");
+		T2.setRowStyleClass(1, "month-row");
 
 		Text t;
 		if (this.showNameOfDays) {
