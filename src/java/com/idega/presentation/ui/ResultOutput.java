@@ -68,18 +68,7 @@ public class ResultOutput extends GenericInput {
 			if (i != 0) {
 				theScript.append((String) this.operatorVector.get(i));
 			}
-			PresentationObject moduleObject = null;
-			if (this.moduleObjects.get(i) instanceof TextInput) {
-				moduleObject = (TextInput) this.moduleObjects.get(i);
-			} else if (this.moduleObjects.get(i) instanceof IntegerInput) {
-				moduleObject = (IntegerInput) this.moduleObjects.get(i);
-			} else if (this.moduleObjects.get(i) instanceof DoubleInput) {
-				moduleObject = (DoubleInput) this.moduleObjects.get(i);
-			} else if (this.moduleObjects.get(i) instanceof FloatInput) {
-				moduleObject = (FloatInput) this.moduleObjects.get(i);
-			} else if (this.moduleObjects.get(i) instanceof ResultOutput) {
-				moduleObject = (ResultOutput) this.moduleObjects.get(i);
-			}
+			PresentationObject moduleObject = (PresentationObject) this.moduleObjects.get(i);;
 			String extraTxt = (String) this.extraTextVector.get(i);
 			theScript.append("(1*myForm." + moduleObject.getName()
 					+ ".value");
@@ -115,46 +104,6 @@ public class ResultOutput extends GenericInput {
 		for (int i = 0; i < this.onChangeVector.size(); i++) {
 			this.setOnKeyUp((String) this.onChangeVector.get(i));
 		}
-		
-		
-		
-//		if (this.moduleObjects.size() > 0) {
-//			StringBuffer theScript = new StringBuffer();
-//			theScript.append("function " + this.functionName + "(myForm) {");
-////			theScript.append("\nalert('using JS for "+functionName+"');");
-//			theScript.append("\n  myForm." + this.getName()
-//					+ ".value=(");
-//			for (int i = 0; i < this.moduleObjects.size(); i++) {
-//				if (i != 0) {
-//					theScript.append((String) this.operatorVector.get(i));
-//				}
-//				if (this.moduleObjects.get(i) instanceof TextInput) {
-//					moduleObject = (TextInput) this.moduleObjects.get(i);
-//				} else if (this.moduleObjects.get(i) instanceof IntegerInput) {
-//					moduleObject = (IntegerInput) this.moduleObjects.get(i);
-//				} else if (this.moduleObjects.get(i) instanceof DoubleInput) {
-//					moduleObject = (DoubleInput) this.moduleObjects.get(i);
-//				} else if (this.moduleObjects.get(i) instanceof FloatInput) {
-//					moduleObject = (FloatInput) this.moduleObjects.get(i);
-//				} else if (this.moduleObjects.get(i) instanceof ResultOutput) {
-//					moduleObject = (ResultOutput) this.moduleObjects.get(i);
-//				}
-//				extraTxt = (String) this.extraTextVector.get(i);
-//				theScript.append("(1*myForm." + moduleObject.getName()
-//						+ ".value");
-//				theScript.append(")");
-//				theScript.append(this.extraForEach);
-//				theScript.append(extraTxt);
-//			}
-//			theScript.append(")");
-//			theScript.append(this.extraForTotal);
-//			theScript.append(";");
-//			
-//			theScript.append("\n}");
-//			
-//			script.addFunction(this.functionName, theScript.toString());
-//		}
-		
 	}
 	
 	public void setSize(int size) {
@@ -199,30 +148,12 @@ public class ResultOutput extends GenericInput {
 				extraText = "";
 			}
 			this.extraTextVector.add(extraText);
-		} else if (mo instanceof IntegerInput) {
-			IntegerInput temp = (IntegerInput) mo;
-			temp.setOnKeyUp(this.functionName + "(this.form)");
-			this.moduleObjects.add(temp);
-			this.operatorVector.add(operatori);
-			if (extraText == null) {
-				extraText = "";
-			}
-			this.extraTextVector.add(extraText);
-		} else if (mo instanceof DoubleInput) {
-			DoubleInput temp = (DoubleInput) mo;
+		} else if (mo instanceof DropdownMenu) {
+			DropdownMenu temp = (DropdownMenu) mo;
 			temp.setOnChange(this.functionName + "(this.form)");
 			this.moduleObjects.add(temp);
 			this.operatorVector.add(operatori);
-			if (extraText == null) {
-				extraText = "";
-			}
-			this.extraTextVector.add(extraText);
-		} else if (mo instanceof FloatInput) {
-			FloatInput temp = (FloatInput) mo;
-			temp.setOnChange(this.functionName + "(this.form)");
-			this.moduleObjects.add(temp);
-			this.operatorVector.add(operatori);
-			if (extraText == null) {
+			if (extraText == null) { 
 				extraText = "";
 			}
 			this.extraTextVector.add(extraText);
@@ -260,16 +191,7 @@ public class ResultOutput extends GenericInput {
 			if (list.get(a) instanceof TextInput) {
 				TextInput text = (TextInput) list.get(a);
 				text.setOnKeyUp(this.functionName + "(this.form)");
-			} else if (list.get(a) instanceof IntegerInput) {
-				IntegerInput i = (IntegerInput) list.get(a);
-				i.setOnKeyUp(this.functionName + "(this.form)");
-			} else if (list.get(a) instanceof DoubleInput) {
-				DoubleInput f = (DoubleInput) list.get(a);
-				f.setOnChange(this.functionName + "(this.form)");
-			} else if (list.get(a) instanceof FloatInput) {
-				FloatInput f = (FloatInput) list.get(a);
-				f.setOnChange(this.functionName + "(this.form)");
-			} else if (list.get(a) instanceof ResultOutput) {
+			}else if (list.get(a) instanceof ResultOutput) {
 				handleAddResultOutput((ResultOutput) list.get(a), operatori);
 			}
 		}
