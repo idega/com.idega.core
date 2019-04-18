@@ -158,10 +158,12 @@ public static String getFileSeparator(){
   }
 
   public static String getFileNameWithPath(String path, String fileNameWithoutFullPath) {
-	  if (!path.endsWith(File.separator))
-		  path = path.concat(File.separator);
-	  if (fileNameWithoutFullPath.startsWith(File.separator))
-		  fileNameWithoutFullPath = fileNameWithoutFullPath.substring(1);
+	  if (!path.endsWith(File.separator)) {
+		path = path.concat(File.separator);
+	}
+	  if (fileNameWithoutFullPath.startsWith(File.separator)) {
+		fileNameWithoutFullPath = fileNameWithoutFullPath.substring(1);
+	}
 	  return path.concat(fileNameWithoutFullPath);
   }
 
@@ -355,8 +357,9 @@ public static String getFileSeparator(){
 	  String [] children = directory.list();
 	  for (int i = 0; i < children.length; i++) {
 	    boolean success = deleteNotEmptyDirectory(new File(directory,children[i]));
-	    if (!success)
-		return false;
+	    if (!success) {
+			return false;
+		}
 	}
 
     }
@@ -854,6 +857,31 @@ public static String getFileSeparator(){
   	newFile.setLastModified(oldTimestamp);
   }
 
+  public static void splitFileContentIntoLines(File sourceFile, File newFile, int lineLength) throws FileNotFoundException, IOException {
+	  InputStreamReader input = new InputStreamReader(new FileInputStream(sourceFile), CoreConstants.ENCODING_UTF8);
+	  if (!newFile.exists()) {
+		  newFile.createNewFile();
+	  }
+
+	  FileOutputStream output  = new FileOutputStream(newFile);
+	  int bufferSize = lineLength;
+	  char buffer[]= new char[bufferSize];
+	  int noRead = 0;
+
+	  noRead = input.read(buffer, 0, bufferSize);
+
+	  //Write out the stream to the file
+	  byte[] lineSeparator = System.lineSeparator().getBytes();
+	  while (noRead != -1) {
+		  output.write(new String(buffer).getBytes(CoreConstants.ENCODING_UTF8), 0, noRead);
+		  output.write(lineSeparator);
+		  noRead = input.read(buffer, 0, bufferSize);
+	  }
+
+	  output.flush();
+	  output.close();
+	  input.close();
+  }
 
   public static void copyFile(File sourceFile,File newFile)throws java.io.FileNotFoundException,java.io.IOException{
     java.io.FileInputStream input = new java.io.FileInputStream(sourceFile);
@@ -979,7 +1007,7 @@ public static String getFileSeparator(){
 
 	  for (RepositoryItem item: filesToZip) {
 		  if (item.isDirectory()) {
-			  Collection<RepositoryItem> children = (Collection<RepositoryItem>) item.getChildren();
+			  Collection<RepositoryItem> children = item.getChildren();
 			  doAddZipEntries(
 					  StringUtil.isEmpty(namePrefix) ? item.getName() : namePrefix + File.separator + item.getName(),
 					  children,
@@ -1091,9 +1119,9 @@ public static String getFileSeparator(){
   }
 
   /**
-   * 
+   *
    * @param folder to search filed and directories, not <code>null</code>;
-   * @return all folders and files in given directory or 
+   * @return all folders and files in given directory or
    * {@link Collections#emptyList()} on failure;
    * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
    */
@@ -1117,9 +1145,9 @@ public static String getFileSeparator(){
   }
 
   /**
-   * 
+   *
    * @param directory to search filed and directories, not <code>null</code>;
-   * @return all folders and files in given directory or 
+   * @return all folders and files in given directory or
    * {@link Collections#emptyList()} on failure;
    * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
    */

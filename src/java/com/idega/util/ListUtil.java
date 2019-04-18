@@ -10,7 +10,7 @@ import java.util.logging.Logger;
 
 /**
  * Title: idegaclasses Description: Copyright: Copyright (c) 2001 Company: idega
- * 
+ *
  * @author <a href="tryggvi@idega.is">Tryggvi Larusson</a>
  * @version 1.0
  */
@@ -27,7 +27,7 @@ public class ListUtil {
 	 * Copies first level of given {@link Collection}. It means, that every element
 	 * in original {@link Collection} was inserted into new one.
 	 * </p>
-	 * 
+	 *
 	 * @param <T>
 	 *            {@link Collection} type.
 	 * @return Copied {@link Collection} by first level. <code>null</code> on
@@ -48,7 +48,7 @@ public class ListUtil {
 
 	/**
 	 * Gets an instance of a list that is empty.
-	 * 
+	 *
 	 * @return An immutable unsynchronized List with no values
 	 **/
 	public static <T> ArrayList<T> getEmptyList() {
@@ -62,7 +62,7 @@ public class ListUtil {
 
 	/**
 	 * Converts an instance of List to an instance of Collection.
-	 * 
+	 *
 	 * @param <T>
 	 * @param coll
 	 *            An input Collection
@@ -91,7 +91,7 @@ public class ListUtil {
 
 	/**
 	 * Return a list of the strings or a null if the string array is empty
-	 * 
+	 *
 	 * @param stringArray
 	 * @return
 	 */
@@ -122,17 +122,15 @@ public class ListUtil {
 	public static String convertListToCommaseparatedString(List<?> list) {
 		StringBuffer sList = new StringBuffer();
 		if (list != null && !list.isEmpty()) {
-			Iterator<?> iter = list.iterator();
-			for (int g = 0; iter.hasNext(); g++) {
+			for (Iterator<?> iter = list.iterator(); iter.hasNext();) {
 				Object item = iter.next();
-				if (g > 0) {
-					sList.append(CoreConstants.COMMA);
-				}
-
 				if (item != null) {
 					sList.append(item.toString());
-				}
 
+					if (iter.hasNext()) {
+						sList.append(CoreConstants.COMMA);
+					}
+				}
 			}
 		}
 		return sList.toString();
@@ -140,7 +138,7 @@ public class ListUtil {
 
 	/**
 	 * Converts a comma separated string to a list of strings
-	 * 
+	 *
 	 * @param commaSeparatedString
 	 *            A comma separated string e.g. "value1,value2,value3,..."
 	 * @returns a List of Strings or an empty list if no values where found
@@ -151,7 +149,7 @@ public class ListUtil {
 
 	/**
 	 * Converts a [token] separated string to a list of strings
-	 * 
+	 *
 	 * @param tokenSeparatedString
 	 *            A [token] separated string e.g.
 	 *            "value1[token]value2[token]value3[token]..." like

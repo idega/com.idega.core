@@ -2258,7 +2258,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 			getLogger().log(Level.WARNING, "Error getting all roles for user " + user, e);
 		}
 
-		Set<String> tempRoles = getTempRoles();
+		Set<String> tempRoles = getTempRoles(user.getId());
 		if (!ListUtil.isEmpty(tempRoles)) {
 			s.addAll(tempRoles);
 		}
@@ -2266,7 +2266,12 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		return s;
 	}
 
-	private Set<String> getTempRoles() {
+	private Set<String> getTempRoles(Integer userId) {
+		if (userId == null) {
+			return null;
+		}
+
+		Object tempRolesObject = null;
 		try {
 			HttpServletRequest request = null;
 			IWContext iwc = CoreUtil.getIWContext();
@@ -2277,11 +2282,13 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				request = iwc.getRequest();
 			}
 			HttpSession session = request == null ? null : request.getSession(true);
-			if (session == null) {
-				return null;
+			if (session != null) {
+				tempRolesObject = session.getAttribute(AccessController.PERMISSION_TEMP_ROLES);
+			}
+			if (tempRolesObject == null) {
+				tempRolesObject = getApplication().getAttribute(AccessController.PERMISSION_TEMP_ROLES + CoreConstants.UNDER + userId);
 			}
 
-			Object tempRolesObject = session.getAttribute(AccessController.PERMISSION_TEMP_ROLES);
 			if (tempRolesObject instanceof Set<?>) {
 				@SuppressWarnings("unchecked")
 				Set<String> tempRoles = (Set<String>) tempRolesObject;

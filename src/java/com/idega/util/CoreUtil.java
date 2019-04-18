@@ -340,6 +340,9 @@ public class CoreUtil {
 		doDebugSQL(start, end, query, null);
 	}
 	public static final void doDebugSQL(long start, long end, String query, Collection<?> params) {
+		doDebugSQL(start, end, query, params, false);
+	}
+	private static final void doDebugSQL(long start, long end, String query, Collection<?> params, boolean checkUser) {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 		long minExecutionTime = Long.valueOf(settings.getProperty("sql_debug_min_exec_time", String.valueOf(100)));
 
@@ -353,7 +356,9 @@ public class CoreUtil {
 		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
 
 		StringBuffer message = new StringBuffer();
-		String user = iwc == null || !iwc.isLoggedOn() ? CoreConstants.EMPTY : iwc.getCurrentUser().getName();
+		String user = checkUser ?
+				iwc == null || !iwc.isLoggedOn() ? CoreConstants.EMPTY : iwc.getCurrentUser().getName() :
+				"not resolved user on purpose";
 		message.append("Query ").append(StringUtil.isEmpty(user) ? user : "for ".concat(user).concat(CoreConstants.SPACE)).append("'").append(query).append("' ");
 
 		if (!ListUtil.isEmpty(params)) {

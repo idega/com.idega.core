@@ -170,7 +170,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	public static LoginBusinessBean getLoginBusinessBean(HttpServletRequest request) {
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession();
 		return getLoginBusinessBean(session);
 	}
 
@@ -213,7 +213,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public boolean isLoggedOn(HttpServletRequest request) {
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession();
 		return isLoggedOn(session);
 	}
 
@@ -252,9 +252,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getLoginUserName(HttpServletRequest request) {
 		String username = request.getParameter(PARAMETER_USERNAME);
 		if (username == null) {
-			username = (String) request.getSession(true).getAttribute(PARAMETER_USERNAME);
+			username = (String) request.getSession().getAttribute(PARAMETER_USERNAME);
 			if (username != null) {
-				request.getSession(true).removeAttribute(PARAMETER_USERNAME);
+				request.getSession().removeAttribute(PARAMETER_USERNAME);
 			}
 		}
 
@@ -270,9 +270,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getLoginPassword(HttpServletRequest request) {
 		String password = request.getParameter(PARAMETER_PASSWORD);
 		if (password == null) {
-			password = (String) request.getSession(true).getAttribute(PARAMETER_PASSWORD);
+			password = (String) request.getSession().getAttribute(PARAMETER_PASSWORD);
 			if (password != null) {
-				request.getSession(true).removeAttribute(PARAMETER_PASSWORD);
+				request.getSession().removeAttribute(PARAMETER_PASSWORD);
 			}
 		}
 
@@ -288,9 +288,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getSMSCode(HttpServletRequest request) {
 		String smsCode = request.getParameter(PARAMETER_SMS_CODE);
 		if (smsCode == null) {
-			smsCode = (String) request.getSession(true).getAttribute(PARAMETER_SMS_CODE);
+			smsCode = (String) request.getSession().getAttribute(PARAMETER_SMS_CODE);
 			if (smsCode != null) {
-				request.getSession(true).removeAttribute(PARAMETER_SMS_CODE);
+				request.getSession().removeAttribute(PARAMETER_SMS_CODE);
 			}
 		}
 
@@ -305,9 +305,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getIsCancel(HttpServletRequest request) {
 		String isCancel = request.getParameter(PARAMETER_IS_CANCEL);
 		if (isCancel == null) {
-			isCancel = (String) request.getSession(true).getAttribute(PARAMETER_IS_CANCEL);
+			isCancel = (String) request.getSession().getAttribute(PARAMETER_IS_CANCEL);
 			if (isCancel != null) {
-				request.getSession(true).removeAttribute(PARAMETER_IS_CANCEL);
+				request.getSession().removeAttribute(PARAMETER_IS_CANCEL);
 			}
 		}
 
@@ -319,10 +319,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 *
 	 */
 	protected void removeAttributesFromSession(HttpServletRequest request) {
-		request.getSession(true).removeAttribute(PARAMETER_IS_CANCEL);
-		request.getSession(true).removeAttribute(PARAMETER_SMS_CODE);
-		request.getSession(true).removeAttribute(PARAMETER_PASSWORD);
-		request.getSession(true).removeAttribute(PARAMETER_USERNAME);
+		request.getSession().removeAttribute(PARAMETER_IS_CANCEL);
+		request.getSession().removeAttribute(PARAMETER_SMS_CODE);
+		request.getSession().removeAttribute(PARAMETER_PASSWORD);
+		request.getSession().removeAttribute(PARAMETER_USERNAME);
 	}
 
 
@@ -335,7 +335,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getLoginUserNameNoRemoveFromSession(HttpServletRequest request) {
 		String username = request.getParameter(PARAMETER_USERNAME);
 		if (username == null) {
-			username = (String) request.getSession(true).getAttribute(PARAMETER_USERNAME);
+			username = (String) request.getSession().getAttribute(PARAMETER_USERNAME);
 		}
 
 		return username;
@@ -350,7 +350,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getLoginPasswordNoRemoveFromSession(HttpServletRequest request) {
 		String password = request.getParameter(PARAMETER_PASSWORD);
 		if (password == null) {
-			password = (String) request.getSession(true).getAttribute(PARAMETER_PASSWORD);
+			password = (String) request.getSession().getAttribute(PARAMETER_PASSWORD);
 		}
 
 		return password;
@@ -365,7 +365,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getSMSCodeNoRemoveFromSession(HttpServletRequest request) {
 		String smsCode = request.getParameter(PARAMETER_SMS_CODE);
 		if (smsCode == null) {
-			smsCode = (String) request.getSession(true).getAttribute(PARAMETER_SMS_CODE);
+			smsCode = (String) request.getSession().getAttribute(PARAMETER_SMS_CODE);
 		}
 
 		return smsCode;
@@ -379,7 +379,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected String getIsCancelNoRemoveFromSession(HttpServletRequest request) {
 		String isCancel = request.getParameter(PARAMETER_IS_CANCEL);
 		if (isCancel == null) {
-			isCancel = (String) request.getSession(true).getAttribute(PARAMETER_IS_CANCEL);
+			isCancel = (String) request.getSession().getAttribute(PARAMETER_IS_CANCEL);
 		}
 
 		return isCancel;
@@ -635,7 +635,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 				if (context == null) {
 					try {
-						context = request.getSession(true).getServletContext();
+						context = request.getSession().getServletContext();
 					} catch (Exception e) {}
 				}
 			}
@@ -654,7 +654,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		try {
 			if (isLoggedOn(request)) {
 				if (isLogOffAction(request)) {
-					HttpSession session = request.getSession(true);
+					HttpSession session = request.getSession();
 					LoggedOnInfo info = getLoggedOnInfo(session);
 					if (LOGINTYPE_AS_ANOTHER_USER.equals(info.getLoginType())) {
 						this.logOutAsAnotherUser(request);
@@ -719,7 +719,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					canLogin = verifyPasswordWithoutLogin(request, username, password);
 					String sessionId = null;
 					if (canLogin != null && canLogin.getStateValue() == LoginState.USER_AND_PASSWORD_EXISTS.getStateValue()) {
-						HttpSession session = request.getSession(true);
+						HttpSession session = request.getSession();
 						ServletContext sc = getServletContext(request, session);
 						Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
 						boolean codeSent = false;
@@ -759,7 +759,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					String isCancel = getIsCancel(request);
 					LoginState canLogin = LoginState.LOGGED_OUT;
 
-					ServletContext sc = request.getSession(true).getServletContext();
+					ServletContext sc = request.getSession().getServletContext();
 					Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
 
 					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
@@ -839,7 +839,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	private String getSessionId(HttpServletRequest request, boolean onlyFromSession) {
 		HttpSession session = request.getSession(false);
 		if (session == null) {
-			session = request.getSession(true);
+			session = request.getSession();
 		}
 		String sessionId = session.getId();
 
@@ -875,7 +875,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected boolean isLoginByUUID(HttpServletRequest request) {
 		if (RequestUtil.isParameterSet(request, PARAM_LOGIN_BY_UNIQUE_ID)) {
 			String referer = RequestUtil.getReferer(request);
-			IWMainApplication iwma = getIWMainApplication(request, request.getSession(true));
+			IWMainApplication iwma = getIWMainApplication(request, request.getSession());
 			String allowedReferers = iwma.getSettings().getProperty(LOGIN_BY_UUID_AUTHORIZED_HOSTS_LIST);
 			if (allowedReferers == null || "".equals(allowedReferers)) {
 				return true;
@@ -958,7 +958,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		String username = null;
 		try {
 			if (sAuthorizationHeader != null) {
-				HttpSession session = request.getSession(true);
+				HttpSession session = request.getSession();
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
 				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
 				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
@@ -1062,7 +1062,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	 * @return
 	 */
 	public static User getUser(HttpServletRequest request) {
-		HttpSession session = request.getSession(true);
+		HttpSession session = request.getSession();
 		return getDefaultLoginBusinessBean().getUser(session);
 	}
 
@@ -1172,7 +1172,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return loginType;
 	}
 
-	protected void doPublishLoggedInEvent(HttpServletRequest request, User user, String userName, String loginType) {
+	public void doPublishLoggedInEvent(HttpServletRequest request, User user, String userName, String loginType) {
 		if (user == null) {
 			return;
 		}
@@ -1834,6 +1834,23 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return logInUser(iwc.getRequest(), user);
 	}
 
+	public void setUserLoggedIn(HttpServletRequest request, User user, UserLogin login) throws Exception {
+		HttpSession session = request.getSession();
+		storeUserAndGroupInformationInSession(session, user);
+		LoginRecord loginRecord = LoginDBHandler.recordLogin(login, request.getRemoteAddr());
+		storeLoggedOnInfoInSession(
+				request,
+				session,
+				login,
+				login != null ? login.getUserLogin() : null,
+				user,
+				loginRecord,
+				login != null ? login.getLoginType() : null
+		);
+
+		onLoginSuccessful(request, login != null ? login.getUserLogin() : null, login == null ? null : login.getUserPassword());
+	}
+
 	public boolean logInUser(HttpServletRequest request, User user) {
 		List<UserLogin> logins = null;
 		try {
@@ -1851,20 +1868,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		try {
 			if (logIn(request, login)) {
-				HttpSession session = request.getSession(true);
-				storeUserAndGroupInformationInSession(session, user);
-				LoginRecord loginRecord = LoginDBHandler.recordLogin(login, request.getRemoteAddr());
-				storeLoggedOnInfoInSession(
-						request,
-						session,
-						login,
-						login != null ? login.getUserLogin() : null,
-						user,
-						loginRecord,
-						login != null ? login.getLoginType() : null
-				);
-
-				onLoginSuccessful(request, login != null ? login.getUserLogin() : null, login == null ? null : login.getUserPassword());
+				setUserLoggedIn(request, user, login);
 				return Boolean.TRUE;
 			}
 		} catch (Exception e) {
@@ -2213,7 +2217,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 
 		User user = userLogin.getUser();
-		IWMainApplication iwma = getIWMainApplication(request, request.getSession(true));
+		IWMainApplication iwma = getIWMainApplication(request, request.getSession());
 		boolean isAdmin = user.equals(iwma.getAccessController().getAdministratorUser());
 		if (isLoginExpired(userLogin) && !isAdmin) {
 			return LoginState.EXPIRED;

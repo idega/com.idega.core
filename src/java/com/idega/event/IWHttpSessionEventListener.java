@@ -9,6 +9,7 @@ import javax.servlet.http.HttpSessionListener;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.business.LoginSession;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -36,14 +37,28 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 	public void sessionDestroyed(HttpSessionEvent sessionEvent) {
 		HttpSession destroyedSession = sessionEvent.getSession();
 
-		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
-		if (settings.getBoolean("test_logout_stack", false)) {
+		User user = null;
+		try {
 			LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
-			//	Checking if user was logged in
 			if (loginSession != null && loginSession.getUserEntity() != null) {
+				user = loginSession.getUserEntity();
+			}
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error getting user from destroyed session, ID: " + destroyedSession.getId() + ", created at: " + new IWTimestamp(destroyedSession.getCreationTime()) +
+					", last accessed: " + new IWTimestamp(destroyedSession.getLastAccessedTime()), e);
+		}
+
+		IWMainApplication iwma = IWMainApplication.getDefaultIWMainApplication();
+
+		if (user != null && iwma != null) {
+			iwma.removeAttribute(AccessController.PERMISSION_TEMP_ROLES + CoreConstants.UNDER + user.getId());
+		}
+
+		IWMainApplicationSettings settings = iwma == null ? null : iwma.getSettings();
+		if (settings != null && settings.getBoolean("test_logout_stack", false)) {
+			if (user != null) {
 				String message = null;
 				try {
-					User user = loginSession.getUserEntity();
 					message = "Session (ID: " + destroyedSession.getId() + ", created at: " + new IWTimestamp(destroyedSession.getCreationTime()) +
 							", last accessed: " + new IWTimestamp(destroyedSession.getLastAccessedTime()) + ") destroyed, logged out user " + user +
 							", personal ID: " + user.getPersonalID();
@@ -55,10 +70,9 @@ public class IWHttpSessionEventListener implements HttpSessionListener {
 		}
 
 		//	Redirecting only if property set
-		if (settings.getBoolean("redirect_when_session_timeout", Boolean.FALSE)) {
-			LoginSession loginSession = (LoginSession) destroyedSession.getAttribute("loginSession");
+		if (settings != null && settings.getBoolean("redirect_when_session_timeout", Boolean.FALSE)) {
 			//	Checking if user was logged in
-			if (loginSession != null && loginSession.getUserEntity() != null) {
+			if (user != null) {
 				//	If session is time out redirect user to /pages
 				if ((System.currentTimeMillis() - destroyedSession.getLastAccessedTime()) >= destroyedSession.getMaxInactiveInterval()) {
 					//	Redirect

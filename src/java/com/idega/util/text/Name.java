@@ -181,9 +181,17 @@ public class Name {
 		}
 
 		StringBuilder namePartCorrected = new StringBuilder();
+		boolean space = false;
 		for (Iterator<String> partsIter = Arrays.asList(parts).iterator(); partsIter.hasNext();) {
 			String part = partsIter.next();
+			space = part.startsWith(CoreConstants.SPACE);
+			if (space) {
+				part = part.trim();
+			}
 			part = TextSoap.capitalize(part);
+			if (space) {
+				namePartCorrected.append(CoreConstants.SPACE);
+			}
 			namePartCorrected.append(part);
 			if (partsIter.hasNext() || parts.length == 1) {
 				namePartCorrected.append(CoreConstants.DOT);
