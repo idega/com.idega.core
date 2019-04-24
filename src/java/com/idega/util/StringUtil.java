@@ -11,6 +11,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 
 public class StringUtil {
 
@@ -315,4 +316,19 @@ public class StringUtil {
 
 		return value;
 	}
+
+	public static String getCapitalized(String value, Locale locale) {
+		if (isEmpty(value)) {
+			return value;
+		}
+
+		if (value.length() < 2) {
+			return locale == null ? value.toUpperCase() : value.toUpperCase(locale);
+		}
+
+		String capitalized = value.substring(0, 1);
+		capitalized = locale == null ? capitalized.toUpperCase() : capitalized.toUpperCase(locale);
+		return capitalized.concat(value.substring(1));
+	}
+
 }
