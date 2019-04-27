@@ -22,6 +22,7 @@ import javax.sql.DataSource;
 
 import com.idega.transaction.IdegaTransaction;
 import com.idega.transaction.IdegaTransactionManager;
+import com.idega.util.StringUtil;
 /**
  *<p>
  * This class is an abstraction of the underlying Database Pool.<br>
@@ -167,7 +168,7 @@ public class ConnectionBroker {
 	 * Frees (Reallocates) a Datastore connection to the datasource
 	 */
 	public static void freeConnection(String dataSourceName, Connection connection, boolean doTransactionCheck) {
-		if (dataSourceName == null) {
+		if (StringUtil.isEmpty(dataSourceName)) {
 			freeConnection(connection, doTransactionCheck);
 		} else {
 			if (doTransactionCheck && !((IdegaTransactionManager) IdegaTransactionManager.getInstance(dataSourceName)).hasCurrentThreadBoundTransaction()) {
