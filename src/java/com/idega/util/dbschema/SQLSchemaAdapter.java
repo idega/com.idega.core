@@ -31,6 +31,7 @@ import java.util.logging.Logger;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringUtil;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
@@ -152,11 +153,18 @@ public abstract class SQLSchemaAdapter implements MutableClass {
 		return this.dataStoreType;
 	}
 
+	public static String getDatastoreType() {
+		return getDatastoreType(null);
+	}
 	public static String getDatastoreType(String datasourceName) {
 		Connection conn = null;
 		String theReturn = "";
 		try {
-			conn = ConnectionBroker.getConnection(datasourceName);
+			if (StringUtil.isEmpty(datasourceName)) {
+				conn = ConnectionBroker.getConnection();
+			} else {
+				conn = ConnectionBroker.getConnection(datasourceName);
+			}
 			theReturn = detectDataStoreType(conn);
 		}
 		finally {
