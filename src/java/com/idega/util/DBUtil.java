@@ -6,6 +6,7 @@ import java.util.List;
 import javax.persistence.Query;
 
 import com.idega.business.SpringBeanName;
+import com.idega.util.dbschema.SQLSchemaAdapter;
 import com.idega.util.expression.ELUtil;
 
 @SpringBeanName(DBUtil.BEAN_NAME)
@@ -56,5 +57,9 @@ public abstract class DBUtil {
 	public abstract <S> void finalizeSession(S session);
 
 	public abstract String getQueryInfo(Query q);
+
+	public static String getDatastoreType() {
+		return SQLSchemaAdapter.getDatastoreType();
+	}
 
 }
