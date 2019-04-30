@@ -154,7 +154,6 @@ public class WebUtil extends DefaultSpringBean {
     	}
 
     	if (!iwc.isLoggedOn()) {
-    		getLogger().warning("User is not logged in!");
     		return null;
     	}
 
@@ -183,8 +182,9 @@ public class WebUtil extends DefaultSpringBean {
     }
     public Boolean isLoggedIn() {
     	IWContext iwc = CoreUtil.getIWContext();
-    	if (iwc == null)
-    		return Boolean.FALSE;
+    	if (iwc == null) {
+			return Boolean.FALSE;
+		}
     	try {
     		return iwc.isLoggedOn();
     	} catch (Exception e) {
@@ -196,15 +196,17 @@ public class WebUtil extends DefaultSpringBean {
 
     @Override
 	public String getApplicationProperty(String name) {
-    	if (StringUtil.isEmpty(name))
-    		return null;
+    	if (StringUtil.isEmpty(name)) {
+			return null;
+		}
 
     	return getApplication().getSettings().getProperty(name);
     }
 
     public Boolean getBooleanApplicationProperty(String name, boolean defaultValue) {
-    	if (StringUtil.isEmpty(name))
-    		return false;
+    	if (StringUtil.isEmpty(name)) {
+			return false;
+		}
 
     	return getApplication().getSettings().getBoolean(name, defaultValue);
     }
