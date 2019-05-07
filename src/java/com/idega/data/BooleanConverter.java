@@ -3,12 +3,9 @@ package com.idega.data;
 import javax.persistence.AttributeConverter;
 import javax.persistence.Converter;
 
-import org.springframework.stereotype.Service;
-
 import com.idega.util.CoreConstants;
 
-@Service
-@Converter(autoApply = true)
+@Converter(autoApply = false)
 public class BooleanConverter implements AttributeConverter<Boolean, Character> {
  
     @Override
