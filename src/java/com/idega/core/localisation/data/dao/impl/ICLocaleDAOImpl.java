@@ -59,6 +59,15 @@ public class ICLocaleDAOImpl extends GenericDaoImpl implements ICLocaleDAO {
 		persist(icLocale);
 		return icLocale.getId() == null ? null : icLocale;
 	}
+	
+	@Override
+	public List<ICLocale> getByLocales(List<String> locales){
+		return getResultList(
+				ICLocale.QUERY_GET_BY_LOCALES, 
+				ICLocale.class,
+				new Param("locales", locales)
+		);
+	}
 
 	@Override
 	public List<ICLocale> getAllLocales() {

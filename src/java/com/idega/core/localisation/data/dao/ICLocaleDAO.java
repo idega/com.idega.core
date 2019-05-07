@@ -21,5 +21,7 @@ public interface ICLocaleDAO extends GenericDao {
 	public List<ICLocale> getAllLocales();
 
 	public List<ICLocale> doFindLocalesByLanguage(String language);
-
+	
+	public List<ICLocale> getByLocales(List<String> locales);
+	
 }
