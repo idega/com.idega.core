@@ -4607,6 +4607,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 * Finds one primary key by an SQL query
 	 */
 	protected <PK> PK idoFindOnePKBySQL(String sqlQuery, SelectQuery selectQuery) throws FinderException {
+		if (selectQuery != null) {
+			selectQuery.setLimit(1);
+		}
 		Collection<PK> coll = idoFindPKsBySQL(sqlQuery, 1, -1, selectQuery);
 		try {
 			if (!ListUtil.isEmpty(coll)) {
@@ -5589,6 +5592,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if nothing found or there is an error with the query.
 	 */
 	protected <PK> PK idoFindOnePKByQuery(IDOQuery query) throws FinderException {
+		if (query != null) {
+			query.setLimit(1);
+		}
 		return idoFindOnePKBySQL(query.toString(), null);
 	}
 
@@ -5603,6 +5609,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           if nothing found or there is an error with the query.
 	 */
 	protected Object idoFindOnePKByQuery(SelectQuery query) throws FinderException {
+		if (query != null) {
+			query.setLimit(1);
+		}
 		return idoFindOnePKBySQL(query.toString(), query);
 	}
 

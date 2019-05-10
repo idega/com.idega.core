@@ -15,10 +15,12 @@ import java.util.logging.Logger;
 import com.idega.data.query.SelectQuery;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
+import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
+import com.idega.util.dbschema.SQLSchemaAdapter;
 
 /**
  * <p>Title: idegaWeb</p>
@@ -93,6 +95,16 @@ public class IDOQuery implements Cloneable {
 	private IDOEntity entityToSelect = null;
 
 	private int joinNumber = 0;
+
+	private Integer limit;
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
 
 	protected IDOEntity getEntityToSelect() {
 		if (this.entityToSelect == null) {
@@ -171,7 +183,7 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Constructs JOIN ON... part for related EJB entities</p>
 	 * @param entities to search by, should be only one type, not <code>null</code>;
 	 * @return query for filtering required entity by these given entities;
@@ -229,7 +241,7 @@ public class IDOQuery implements Cloneable {
 			append(JOIN).append(middleTableName);
 			append(AS).append(middleName).append(CoreConstants.SPACE);
 			append(ON).appendEquals(
-					getPrimaryKeyColumnNameForSelectedEntity(), 
+					getPrimaryKeyColumnNameForSelectedEntity(),
 					middleTableCurrentKeyColumn);
 			append(CoreConstants.SPACE);
 
@@ -279,7 +291,7 @@ public class IDOQuery implements Cloneable {
 			append(JOIN).append(relatedTableName);
 			append(AS).append(relatedName).append(CoreConstants.SPACE);
 			append(ON).appendEquals(
-					getPrimaryKeyColumnNameForSelectedEntity(), 
+					getPrimaryKeyColumnNameForSelectedEntity(),
 					foreignKeyColumn);
 			append(CoreConstants.SPACE);
 		}
@@ -296,18 +308,18 @@ public class IDOQuery implements Cloneable {
 
 		return this;
 	}
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Constructs JOIN ON... part for related EJB entities</p>
-	 * @param sortedEntities is {@link IDOEntity}s sorted by 
+	 * @param sortedEntities is {@link IDOEntity}s sorted by
 	 * their table names, not <code>null</code>;
 	 * @return query for filtering required entity by these given entities;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	protected IDOQuery appendJoinOn(Map<String, Collection<IDOEntity>> sortedEntities) {
 		if (MapUtil.isEmpty(sortedEntities)) {
-			return this;	
+			return this;
 		}
 
 		Set<String> types = sortedEntities.keySet();
@@ -329,7 +341,7 @@ public class IDOQuery implements Cloneable {
 					appendSelectIDColumnFrom(getEntityToSelect());
 					appendJoinOnEntity(sortedEntities.get(typeIterator.next()));
 				} catch (IDOCompositePrimaryKeyException e) {
-					Logger.getLogger(getClass().getName()).log(Level.WARNING, 
+					Logger.getLogger(getClass().getName()).log(Level.WARNING,
 							"No solution for composite keys: ", e);
 				}
 
@@ -346,7 +358,7 @@ public class IDOQuery implements Cloneable {
 			append(relatedView);
 			append(CoreConstants.SPACE);
 			append(ON).appendEquals(
-					viewKeyColumn, 
+					viewKeyColumn,
 					getPrimaryKeyColumnNameForSelectedEntity());
 		} else {
 			appendJoinOnEntity(sortedEntities.get(types.iterator().next()));
@@ -408,8 +420,8 @@ public class IDOQuery implements Cloneable {
 
 	protected IDOQuery(int length) {
 		this(length, false);
-	}		
-	
+	}
+
 	protected IDOQuery(int length, boolean useDefaultAlias) {
 		this.useDefaultAlias = useDefaultAlias;
 		this._buffer = new StringBuffer(length);
@@ -418,7 +430,7 @@ public class IDOQuery implements Cloneable {
 	protected IDOQuery(String str) {
 		this(str, false);
 	}
-		
+
 	protected IDOQuery(String str, boolean useDefaultAlias) {
 		this.useDefaultAlias = useDefaultAlias;
 		this._buffer = new StringBuffer(str);
@@ -539,7 +551,7 @@ public class IDOQuery implements Cloneable {
 			Logger.getLogger(IDOQuery.class.getName()).warning("Provided IDOEntity is null!");
 			return this;
 		}
-		
+
 		Object pk = entity.getPrimaryKey();
 		if (pk instanceof Integer) {
 			return this.append(pk);
@@ -712,7 +724,16 @@ public class IDOQuery implements Cloneable {
 	 */
 	@Override
 	public String toString() {
-		return this._buffer.toString();
+		String sql = this._buffer.toString();
+
+		if (limit != null) {
+			String dataStoreType = DBUtil.getDatastoreType();
+			if (!StringUtil.isEmpty(dataStoreType) && SQLSchemaAdapter.DBTYPE_MYSQL.equals(dataStoreType)) {
+				sql += " LIMIT " + limit;
+			}
+		}
+
+		return sql;
 	}
 
 	public IDOQuery appendLeftParenthesis() {
@@ -864,7 +885,7 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param entity to select from, not <code>null</code>;
 	 * @return SELECT selected_entity.* FROM given entity;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -874,7 +895,7 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>Selects SQL DISTINCT entity or given column name.</p>
 	 * @param entity to select from, not <code>null</code>;
 	 * @param columnName to select from entity, skipped if <code>null</code>;
@@ -908,7 +929,7 @@ public class IDOQuery implements Cloneable {
 
 		return this;
 	}
-	
+
 	public IDOQuery appendSelectAllFrom(String entityName) {
 		this.append(SELECT_ALL_FROM);
 		this.append(entityName);
@@ -1101,10 +1122,10 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param columnNames to ORDER BY, not <code>null</code>;
 	 * @return query appended with ORDER BY column1 DESC, column2 DESC,..
-	 * or same query on failure; 
+	 * or same query on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
 	public IDOQuery appendOrderByDescending(String[] columnNames) {
@@ -1228,7 +1249,7 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * <p>TODO</p>
 	 * @param columnName
 	 * @param columnValue
@@ -1610,7 +1631,7 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return query appended with SQL JOIN;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
@@ -1619,10 +1640,10 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param selectedEntityColumn is column name of {@link IDOEntity}
 	 * to filter by, not <code>null</code>;
-	 * @param joinedEntityColumn is column name of {@link IDOEntity} 
+	 * @param joinedEntityColumn is column name of {@link IDOEntity}
 	 * to be matched by, not <code>null</code>;
 	 * @return query appended with SQL ON selectedEntityColumn = joinedEntityColumn
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
@@ -1632,10 +1653,10 @@ public class IDOQuery implements Cloneable {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param selectedEntityColumn is column name of {@link IDOEntity}
 	 * to filter by, not <code>null</code>;
-	 * @param joinedEntityColumn is column name of {@link IDOEntity} 
+	 * @param joinedEntityColumn is column name of {@link IDOEntity}
 	 * to be matched by, not <code>null</code>;
 	 * @return query appended with SQL ON selectedEntityColumn != joinedEntityColumn
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
