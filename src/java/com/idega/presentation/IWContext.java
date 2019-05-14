@@ -669,7 +669,6 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 			getExternalContext().setRequest(getRequest());
 		} catch(Exception e) {
 			LOGGER.log(Level.SEVERE, "Error while re-initializing request", e);
-			CoreUtil.sendExceptionNotification(e);
 			return false;
 		}
 		return true;
