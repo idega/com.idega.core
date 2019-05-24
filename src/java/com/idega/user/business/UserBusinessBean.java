@@ -4903,10 +4903,18 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	@Override
 	public boolean changeUserPassword(User user, String newPassword) {
 		if (user == null || StringUtil.isEmpty(newPassword)) {
+			getLogger().warning("User (" + user + ") or new password (" + newPassword + ") are unknown");
 			return Boolean.FALSE;
 		}
 
 		LoginTable loginTable = LoginDBHandler.getUserLogin(user);
+		if (loginTable == null) {
+			try {
+				loginTable = LoginDBHandler.createLogin(user, user.getPersonalID(), newPassword);
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Failed to create login for " + user, e);
+			}
+		}
 		if (loginTable == null) {
 			getLogger().warning("Login table not found for: " + user.getName());
 			return Boolean.FALSE;
@@ -4943,11 +4951,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled,
 					IWTimestamp.RightNow(), 5000, passwordNeverExpires,
 					userAllowedToChangePassword, mustChangePasswordNextTime,
-					null);
+					null
+			);
 			getLogger().info("Password for user " + user.getName() + " has been changed");
 			return Boolean.TRUE;
-		} catch(Exception ex) {
-			getLogger().log(Level.WARNING, "Failed to update login info for user: " + user.getName() + " cause of: ", ex);
+		} catch (Exception ex) {
+			getLogger().log(Level.WARNING, "Failed to update login info for user: " + user.getName(), ex);
 		}
 
 		return Boolean.FALSE;

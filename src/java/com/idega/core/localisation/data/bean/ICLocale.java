@@ -15,6 +15,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.NamedQueries;
+import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlTransient;
 
@@ -28,6 +30,13 @@ import com.idega.util.StringUtil;
 @Table(name = ICLocale.ENTITY_NAME)
 @XmlTransient
 @Cacheable
+@NamedQueries({
+	@NamedQuery(
+			name = ICLocale.QUERY_GET_BY_LOCALES,
+			query = "SELECT l FROM ICLocale l "
+					+ "WHERE l.locale in (:locales) "
+	)
+})
 public class ICLocale implements Serializable {
 
 	private static final long serialVersionUID = -6482804106633989994L;
@@ -38,6 +47,8 @@ public class ICLocale implements Serializable {
 	private static final String COLUMN_LANGUAGE_ID = "ic_language_id",
 								COLUMN_COUNTRY_ID = "ic_country_id",
 								COLUMN_IN_USE = "in_use";
+	
+	public static final String QUERY_GET_BY_LOCALES = "ICLocale.getByLocale";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)

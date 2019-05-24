@@ -68,6 +68,8 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_ENCODED_URL = "application/x-www-form-urlencoded";
 	public static final String MIME_TYPE_JSON = "application/json";
 	public static final String MIME_TYPE_CSV = "text/csv";
+	public static final String MIME_TYPE_DOCX = "vnd.openxmlformats-officedocument.wordprocessingml.document";
+	public static final String MIME_TYPE_DOTX = "vnd.openxmlformats-officedocument.wordprocessingml.template";
 
 	private String pathToConfigFile;
 	private Properties properties;

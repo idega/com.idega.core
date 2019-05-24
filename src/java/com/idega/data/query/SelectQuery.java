@@ -14,6 +14,9 @@ import com.idega.data.IDOEntityField;
 import com.idega.data.IDORelationshipException;
 import com.idega.data.query.output.Output;
 import com.idega.data.query.output.Outputable;
+import com.idega.util.DBUtil;
+import com.idega.util.StringUtil;
+import com.idega.util.dbschema.SQLSchemaAdapter;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
@@ -33,6 +36,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
     private boolean _distinct =false;
     private boolean flag = false;
 
+    private Integer limit;
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
@@ -317,6 +321,12 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 			out.unindent();
 		}
 
+		if (limit != null) {
+			String dataStoreType = DBUtil.getDatastoreType();
+			if (!StringUtil.isEmpty(dataStoreType) && SQLSchemaAdapter.DBTYPE_MYSQL.equals(dataStoreType)) {
+				out.println(" LIMIT " + limit);
+			}
+        }
 	}
 
 	/**
@@ -474,4 +484,13 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 	public void clearLeftJoins() {
 	    this.leftJoins.clear();
 	}
+
+	public Integer getLimit() {
+		return limit;
+	}
+
+	public void setLimit(Integer limit) {
+		this.limit = limit;
+	}
+
 }
