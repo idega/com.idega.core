@@ -924,18 +924,26 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	}
 
 	public String getRequestURI() {
-		if (IWMainApplication.useJSF) {
-			FacesContext facesContext = getRealFacesContext();
-			if (facesContext != null) {
-				return FacesUtil.getRequestUri(facesContext);
+		try {
+			if (IWMainApplication.useJSF) {
+				FacesContext facesContext = getRealFacesContext();
+				if (facesContext != null) {
+					return FacesUtil.getRequestUri(facesContext);
+				}
+				else {
+					return getRequest().getRequestURI();
+				}
 			}
 			else {
 				return getRequest().getRequestURI();
 			}
+		} catch (Exception e) {
+			LOGGER.log(Level.WARNING, "Error while trying to get a requested URI.", e);
+			if (getRequest() != null) {
+				return getRequest().getRequestURI();
+			}
 		}
-		else {
-			return getRequest().getRequestURI();
-		}
+		return CoreConstants.EMPTY;
 	}
 
 	public String getRequestURI(boolean https) {
