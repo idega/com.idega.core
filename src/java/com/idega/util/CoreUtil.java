@@ -24,7 +24,10 @@ import java.util.logging.Logger;
 import javax.faces.component.UIComponent;
 import javax.faces.context.FacesContext;
 import javax.jcr.RepositoryException;
+import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import javax.servlet.http.HttpSession;
 
 import org.apache.commons.codec.binary.Base64;
 import org.reflections.Reflections;
@@ -70,6 +73,31 @@ public class CoreUtil {
 	 * @return
 	 */
 	public static IWContext getIWContext() {
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("iw_context.initialize_with_rr_provider", false)) {
+			RequestResponseProvider rrProvider = null;
+			try {
+				rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+			} catch (Exception e) {}
+			if (rrProvider != null) {
+				try {
+					HttpServletRequest request = rrProvider.getRequest();
+					HttpServletResponse response = rrProvider.getResponse();
+					if (request != null && response != null) {
+						ServletContext context = request.getServletContext();
+						if (context == null) {
+							HttpSession session = request.getSession();
+							if (session != null) {
+								context = session.getServletContext();
+							}
+						}
+						if (context != null) {
+							return new IWContext(request, response, context);
+						}
+					}
+				} catch (Exception e) {}
+			}
+		}
+
 		try {
 			FacesContext context = FacesContext.getCurrentInstance();
 			if (context == null) {
