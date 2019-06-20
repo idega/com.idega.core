@@ -24,6 +24,7 @@ public class MessagingSettings {
 	public static final String PROPERTY_EMAIL_ENABLED = "can_send_email";
 	public static final String PROP_SYSTEM_SMTP_USE_AUTHENTICATION = "messagebox_smtp_authenticate";
 	public static final String PROP_SYSTEM_SMTP_USE_SSL = "messagebox_smtp_ssl";
+	public static final String PROP_SYSTEM_SMTP_USE_TLS = "messagebox_smtp_tls";
 	public static final String PROP_SYSTEM_SMTP_PORT = "messagebox_smtp_port";
 
 

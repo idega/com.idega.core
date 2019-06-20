@@ -248,6 +248,11 @@ public class SendMail {
 			props.put("mail.smtp.port", port);
 		}
 
+		boolean tlsOn = settings.getBoolean(MessagingSettings.PROP_SYSTEM_SMTP_USE_TLS, Boolean.FALSE);
+		if (tlsOn) {
+			props.put("mail.smtp.starttls.enable", true);
+		}
+
 		// Start a session
 		Session session;
 		if (useSmtpAuthentication) {

@@ -927,12 +927,18 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 		try {
 			if (IWMainApplication.useJSF) {
 				FacesContext facesContext = getRealFacesContext();
+				String uri = null;
 				if (facesContext != null) {
-					return FacesUtil.getRequestUri(facesContext);
+					try {
+						uri = FacesUtil.getRequestUri(facesContext);
+					} catch (Exception e) {}
 				}
-				else {
-					return getRequest().getRequestURI();
+
+				if (StringUtil.isEmpty(uri)) {
+					uri = getRequest().getRequestURI();
 				}
+
+				return uri;
 			}
 			else {
 				return getRequest().getRequestURI();
