@@ -145,10 +145,6 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	@Override
 	public User getUserEntity() {
-		if (emulatedUser != null) {
-			return emulatedUser;
-		}
-		
 		try {
 			IWContext iwc = CoreUtil.getIWContext();
 			if (iwc != null) {
