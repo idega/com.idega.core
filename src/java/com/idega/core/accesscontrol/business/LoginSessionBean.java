@@ -18,6 +18,8 @@ import java.util.Stack;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.bean.PermissionGroup;
 import com.idega.idegaweb.IWApplicationContext;
@@ -25,10 +27,13 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.presentation.IWContext;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserProperties;
+import com.idega.user.business.UserSession;
+import com.idega.user.dao.UserDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreUtil;
+import com.idega.util.expression.ELUtil;
 
 /**
  *
@@ -46,6 +51,17 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
 	private Locale currentLocale;
 	private com.idega.user.data.User legacyUser;
+	private User emulatedUser;
+	
+	@Autowired
+	private UserDAO userDAO;
+	
+	private UserDAO getUserDAO() {
+		if (userDAO == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return userDAO;
+	}
 
 	@Override
 	public void reset() {
@@ -129,6 +145,26 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	@Override
 	public User getUserEntity() {
+		if (emulatedUser != null) {
+			return emulatedUser;
+		}
+		
+		try {
+			IWContext iwc = CoreUtil.getIWContext();
+			if (iwc != null) {
+				UserSession userSession = IBOLookup.getSessionInstance(iwc, UserSession.class);
+				com.idega.user.data.User user = userSession.getUser();
+				if (user != null) {
+					emulatedUser = getUserDAO().getUser(user.getPersonalID());
+					if (emulatedUser != null) {
+						return emulatedUser;
+					}
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		return this.sessionHelper.user;
 	}
 
