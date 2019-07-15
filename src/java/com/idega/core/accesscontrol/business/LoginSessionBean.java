@@ -376,4 +376,9 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	public boolean isLoggedIn() {
 		return getUser() != null;
 	}
+	
+	@Override
+	public User getRealUser() {
+		return this.sessionHelper.user;
+	}
 }

@@ -147,4 +147,6 @@ public interface LoginSession {
     public Locale getCurrentLocale();
 
     public abstract boolean isLoggedIn();
+    
+    public User getRealUser();
 }
