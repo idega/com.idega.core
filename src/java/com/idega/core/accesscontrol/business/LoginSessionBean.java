@@ -381,4 +381,9 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	public User getRealUser() {
 		return this.sessionHelper.user;
 	}
+
+	@Override
+	public void resetLegacyUser() {
+		legacyUser = null;
+	}
 }

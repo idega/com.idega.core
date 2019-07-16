@@ -149,4 +149,6 @@ public interface LoginSession {
     public abstract boolean isLoggedIn();
     
     public User getRealUser();
+    
+    public void resetLegacyUser();
 }
