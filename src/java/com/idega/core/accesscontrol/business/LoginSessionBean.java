@@ -46,16 +46,18 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	private static final long serialVersionUID = 919604997496929169L;
 
+	private static final Logger LOGGER = Logger.getLogger(LoginSessionBean.class.getName());
+
 	private IWApplicationContext iwac;
 	private SessionHelper sessionHelper = new SessionHelper();
 	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
 	private Locale currentLocale;
 	private com.idega.user.data.User legacyUser;
 	private User emulatedUser;
-	
+
 	@Autowired
 	private UserDAO userDAO;
-	
+
 	private UserDAO getUserDAO() {
 		if (userDAO == null) {
 			ELUtil.getInstance().autowire(this);
@@ -126,12 +128,14 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 */
 	@Override
 	public com.idega.user.data.User getUser() {
-		if (legacyUser != null)
+		if (legacyUser != null) {
 			return legacyUser;
+		}
 
 		User user = getUserEntity();
-		if (user == null)
+		if (user == null) {
 			return null;
+		}
 
 		try {
 			UserBusiness userBusiness = IBOLookup.getServiceInstance(IWMainApplication.getDefaultIWApplicationContext(), UserBusiness.class);
@@ -149,18 +153,23 @@ public class LoginSessionBean implements LoginSession, Serializable {
 			IWContext iwc = CoreUtil.getIWContext();
 			if (iwc != null) {
 				UserSession userSession = IBOLookup.getSessionInstance(iwc, UserSession.class);
-				com.idega.user.data.User user = userSession.getUser();
-				if (user != null) {
-					emulatedUser = getUserDAO().getUser(user.getPersonalID());
+				com.idega.user.data.User userToEmulate = userSession.getUser();
+				if (userToEmulate != null) {
+					Integer userToEmulateId = Integer.valueOf(userToEmulate.getId());
+					if (emulatedUser != null && userToEmulateId.intValue() == emulatedUser.getId().intValue()) {
+						return emulatedUser;
+					}
+
+					emulatedUser = getUserDAO().getUser(userToEmulateId);
 					if (emulatedUser != null) {
 						return emulatedUser;
 					}
 				}
 			}
 		} catch (Exception e) {
-			e.printStackTrace();
+			LOGGER.log(Level.WARNING, "Error getting emulated user", e);
 		}
-		
+
 		return this.sessionHelper.user;
 	}
 
@@ -334,7 +343,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 			superAdmin = userBusiness.isMemberOfGroup(permGroup.getID(), userBusiness.getUser(user.getId()));
 			return superAdmin;
 		} catch (Exception e) {
-			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error resolving if " + user + " is super admin", e);
+			LOGGER.log(Level.WARNING, "Error resolving if " + user + " is super admin", e);
 			superAdmin = false;
 		}
 
@@ -364,7 +373,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	public Locale getCurrentLocale() {
 		IWContext iwc = CoreUtil.getIWContext();
 		if (iwc == null) {
-			Logger.getLogger(getClass().getName()).warning(IWContext.class.getName() + " is unavailable!");
+			LOGGER.warning(IWContext.class.getName() + " is unavailable!");
 			return null;
 		}
 
@@ -376,7 +385,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	public boolean isLoggedIn() {
 		return getUser() != null;
 	}
-	
+
 	@Override
 	public User getRealUser() {
 		return this.sessionHelper.user;
