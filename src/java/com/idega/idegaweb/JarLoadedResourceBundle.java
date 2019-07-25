@@ -37,6 +37,8 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 
 	private IWResourceBundle resource;
 
+	private long lastModified = -1;
+
 	public IWResourceBundle getResource() {
 		return resource;
 	}
@@ -48,7 +50,7 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 	}
 
 	@Override
-	public void initialize(String bundleIdentifier, Locale locale) throws OperationNotSupportedException {
+	public void initialize(String bundleIdentifier, Locale locale, long lastModified) throws OperationNotSupportedException {
 		if (!bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
 			IWBundle bundle = IWMainApplication.getDefaultIWMainApplication().getBundle(bundleIdentifier);
 			try {
@@ -58,6 +60,7 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 					Logger.getLogger(JarLoadedResourceBundle.class.getName()).warning("Bundle " + bundle.getClass() + " doesn't support this method!");
 				}
 				initProperities();
+				this.lastModified = lastModified;
 			} catch (IOException e) {
 				throw new OperationNotSupportedException("Initialization of this resource is not supported in test environment");
 			}
@@ -88,7 +91,7 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 		if (getResource() != null) {
 			return getResource().getIdentifier();
 		}
-		
+
 		return RESOURCE_IDENTIFIER;
 	}
 
@@ -113,7 +116,7 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 	public boolean isAutoInsert() {
 		if (getResource() != null) {
 			return getResource().isAutoInsert();
-		} 
+		}
 
 		throw new NullPointerException("No resource is loaded!");
 	}
@@ -234,5 +237,10 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 	@Override
 	public String toString() {
 		return "Jar loaded resource: " + getBundleIdentifier();
+	}
+
+	@Override
+	public long lastModified() {
+		return lastModified;
 	}
 }

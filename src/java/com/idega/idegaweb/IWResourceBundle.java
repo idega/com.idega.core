@@ -96,6 +96,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	private boolean autoInsert;
 	private String bundleIdentifier;
 
+	private long lastModified = -1;
+
 	/**
 	 * Empty constructor for use in extending classes
 	 *
@@ -192,15 +194,16 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	}
 
 	@Override
-	public void initialize(String bundleIdentifier, Locale newLocale) throws IOException, OperationNotSupportedException {
+	public void initialize(String bundleIdentifier, Locale newLocale, long lastModified) throws IOException, OperationNotSupportedException {
 		if (bundleIdentifier == null || bundleIdentifier.equals(MessageResource.NO_BUNDLE)) {
 			throw new OperationNotSupportedException("Empty bundle is not supported supported");
 		} else {
 			setBundleIdentifier(bundleIdentifier);
 			IWContext iwc = IWContext.getCurrentInstance();
 
-			if (newLocale == null)
+			if (newLocale == null) {
 				newLocale = iwc.getCurrentLocale();
+			}
 
 			IWBundle bundle = getIWMainApplication().getBundle(bundleIdentifier);
 
@@ -211,6 +214,8 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			}
 
 			initialize(bundle, new FileInputStream(file), file, newLocale);
+
+			this.lastModified = lastModified;
 		}
 	}
 
@@ -632,8 +637,9 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		try {
 			Map<String, String> stringMap = new HashMap<String, String>();
 
-			for (Object key : values.keySet())
+			for (Object key : values.keySet()) {
 				stringMap.put(String.valueOf(key), String.valueOf(values.get(key)));
+			}
 
 			setStrings(stringMap);
 		} catch (Exception e) {
@@ -767,4 +773,10 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	public boolean isModificationAllowed() {
 		return Boolean.TRUE;
 	}
+
+	@Override
+	public long lastModified() {
+		return lastModified;
+	}
+
 }

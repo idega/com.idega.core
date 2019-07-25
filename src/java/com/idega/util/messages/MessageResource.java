@@ -51,7 +51,7 @@ public interface MessageResource {
 
 	void setIdentifier(String identifier);
 
-	void initialize(String bundleIdentifier, Locale locale) throws IOException, OperationNotSupportedException;
+	void initialize(String bundleIdentifier, Locale locale, long lastModified) throws IOException, OperationNotSupportedException;
 
 	String getBundleIdentifier();
 
@@ -60,4 +60,7 @@ public interface MessageResource {
 	boolean isModificationAllowed();
 
 	void store();
+
+	long lastModified();
+
 }
