@@ -426,6 +426,10 @@ public class CoreUtil {
 	}
 
 	public static final void doDebug(long start, long end, String method) {
+		doDebug(getIWContext(), start, end, method);
+	}
+
+	public static final void doDebug(IWContext iwc, long start, long end, String method) {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 		long minExecutionTime = Long.valueOf(settings.getProperty("debug_min_exec_time", String.valueOf(100)));
 
@@ -434,7 +438,6 @@ public class CoreUtil {
 			return;
 		}
 
-		IWContext iwc = getIWContext();
 		String request = iwc == null ? "unknown" : iwc.getRequestURI();
 		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
 
