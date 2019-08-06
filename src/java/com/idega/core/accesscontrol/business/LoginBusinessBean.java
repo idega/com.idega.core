@@ -897,13 +897,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (!StringUtil.isEmpty(sAuthorizationHeader)) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				byte[] decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
-				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
-				int seperator = unencodedNamePassword.indexOf(':');
+				byte[] decodedBytes = null;
+				try {
+					decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				} catch (Exception e) {}
+				String decodedNamePassword = decodedBytes == null ? encodedNamePassword : new String(decodedBytes, CoreConstants.ENCODING_UTF8);
+				int seperator = decodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
 					String[] toReturn = new String[2];
-					toReturn[0] = unencodedNamePassword.substring(0, seperator);
-					toReturn[1] = unencodedNamePassword.substring(seperator + 1);
+					toReturn[0] = decodedNamePassword.substring(0, seperator);
+					toReturn[1] = decodedNamePassword.substring(seperator + 1);
 					return toReturn;
 				}
 			} catch (Exception e) {
@@ -920,7 +923,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
 				byte[] decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
 				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
-				int seperator = unencodedNamePassword.indexOf(':');
+				int seperator = unencodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
 					return unencodedNamePassword.substring(0, seperator);
 				}
