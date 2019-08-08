@@ -93,7 +93,11 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected Locale getCurrentLocale() {
-		IWContext iwc = CoreUtil.getIWContext();
+		return getCurrentLocale(null);
+	}
+
+	protected Locale getCurrentLocale(IWContext iwc) {
+		iwc = iwc == null ? CoreUtil.getIWContext() : iwc;
 		Locale locale = iwc == null ? null : iwc.getCurrentLocale();
 
 		if (locale == null) {
@@ -252,11 +256,14 @@ public abstract class DefaultSpringBean {
 	}
 
 	protected IWResourceBundle getResourceBundle(IWBundle bundle) {
+		return getResourceBundle(bundle, null);
+	}
+
+	protected IWResourceBundle getResourceBundle(IWBundle bundle, IWContext iwc) {
 		if (bundle != null) {
-			Locale locale = getCurrentLocale();
-			IWContext iwc = null;
+			Locale locale = getCurrentLocale(iwc);
 			if (locale == null) {
-				iwc = CoreUtil.getIWContext();
+				iwc = iwc == null ? CoreUtil.getIWContext() : iwc;
 			}
 
 			if (locale == null && iwc == null) {
@@ -277,21 +284,24 @@ public abstract class DefaultSpringBean {
 		} catch (Exception e) {}
 
 		HttpSession session = null;
-		if (provider != null && provider.getRequest() != null)
+		if (provider != null && provider.getRequest() != null) {
 			session = provider.getRequest().getSession(Boolean.TRUE);
+		}
 
 		if (session == null) {
 			IWContext iwc = CoreUtil.getIWContext();
-			if (iwc != null)
+			if (iwc != null) {
 				session = iwc.getSession();
+			}
 		}
 
 		return session;
 	}
 
 	protected RepositoryService getRepositoryService() {
-		if (repositoryService == null)
+		if (repositoryService == null) {
 			repositoryService = ELUtil.getInstance().getBean(RepositoryService.class);
+		}
 		return repositoryService;
 	}
 
@@ -309,8 +319,9 @@ public abstract class DefaultSpringBean {
 	protected void doSortValues(List<AdvancedProperty> values, Map<String, String> container, Locale locale, boolean descending) {
 		Collections.sort(values, new AdvancedPropertyComparator(locale, descending));
 
-		for (AdvancedProperty value: values)
+		for (AdvancedProperty value: values) {
 			container.put(value.getId(), value.getValue());
+		}
 	}
 
 	/**
@@ -332,8 +343,9 @@ public abstract class DefaultSpringBean {
 	}
 	protected <T> Collection<T> getBeans(Class<T> type) {
 		Map<String, T> beans = getBeansOfType(type);
-		if (MapUtil.isEmpty(beans))
+		if (MapUtil.isEmpty(beans)) {
 			return Collections.emptyList();
+		}
 		return beans.values();
 	}
 }

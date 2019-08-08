@@ -13,6 +13,7 @@ import java.io.IOException;
 import java.nio.ByteBuffer;
 import java.nio.CharBuffer;
 import java.nio.charset.Charset;
+import java.util.Base64;
 import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
@@ -28,7 +29,6 @@ import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.accesscontrol.business.AccessController;
@@ -59,7 +59,7 @@ import com.idega.util.expression.ELUtil;
 public class WebServiceAuthorizationFilter implements Filter {
 
 	private static final Logger LOGGER = Logger.getLogger(WebServiceAuthorizationFilter.class.getName());
-	
+
 	private final String WEB_SERVICE_USER_ROLE = "web_service_user";
 
 	private final String DO_BASIC_AUTHENTICATION = "WS_DO_BASIC_AUTHENTICATION";
@@ -81,7 +81,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 	public void doFilter(ServletRequest myRequest, ServletResponse myResponse, FilterChain chain) throws IOException, ServletException {
 		HttpServletRequest request = (HttpServletRequest) myRequest;
 		HttpServletResponse response = (HttpServletResponse) myResponse;
-		
+
 		ServletContext myServletContext = request.getSession().getServletContext();
 	   	// getting the application context
     	IWMainApplication mainApplication = IWMainApplication.getIWMainApplication(myServletContext);
@@ -115,7 +115,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 	    		LOGGER.log(Level.WARNING, "Error determening if IP address (" + clientIP + ") is valid to access " +  request.getRequestURI() + request.getQueryString());
 	    		isValid = false;
 	    	}
-	
+
 	    	if (!isValid) {
 	    		LOGGER.warning("Invalid request: client's IP address (" + clientIP + ") is not a valid IP (valid IPs: " + validIP + ") " + request.getRequestURI() + request.getQueryString());
 	    		//send a 403 error
@@ -195,7 +195,7 @@ public class WebServiceAuthorizationFilter implements Filter {
 		}
 		String namePassword = basicNamePassword.substring(6);
 		try {
-			byte[] decodedNamePasswordArray = Base64.decodeBase64(namePassword.getBytes());
+			byte[] decodedNamePasswordArray = Base64.getDecoder().decode(namePassword.getBytes());
 			ByteBuffer wrappedDecodedNamePasswordArray = ByteBuffer.wrap(decodedNamePasswordArray);
 			Charset charset = Charset.forName("ISO-8859-1");
 			CharBuffer buffer = charset.decode(wrappedDecodedNamePasswordArray);

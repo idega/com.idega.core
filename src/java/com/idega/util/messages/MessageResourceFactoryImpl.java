@@ -20,6 +20,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import com.idega.core.cache.IWCacheManager2;
+import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
@@ -76,7 +77,13 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		for (Iterator<MessageResource> resourcesIter = uninitializedResources.iterator(); resourcesIter.hasNext();) {
 			MessageResource resource = resourcesIter.next();
 			try {
-				resource.initialize(bundleIdentifier, locale);
+				long lastModified = -1;
+				IWBundle bundle = getIWMainApplication().getBundle(bundleIdentifier);
+				if (bundle != null) {
+					lastModified = bundle.getResourceTime("resources/" + locale + ".locale/Localized.strings");
+				}
+
+				resource.initialize(bundleIdentifier, locale, lastModified);
 				resourcesMap.put(resource.getIdentifier(), resource);
 			} catch (IOException e) {
 				LOGGER.log(Level.SEVERE, "Error initializing bundle: " + bundleIdentifier, e);

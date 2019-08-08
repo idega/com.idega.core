@@ -10,6 +10,7 @@ import java.io.Writer;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
@@ -29,7 +30,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.Base64;
 import org.reflections.Reflections;
 import org.springframework.aop.framework.Advised;
 import org.springframework.aop.support.AopUtils;
@@ -139,7 +139,7 @@ public class CoreUtil {
 		if (originalValue == null) {
 			return null;
 		}
-		return new String(Base64.encodeBase64(originalValue.getBytes()));
+		return new String(Base64.getEncoder().encode(originalValue.getBytes()));
 	}
 
 	public static String getDecodedValue(String encodedValue) {
@@ -147,7 +147,7 @@ public class CoreUtil {
 			return null;
 		}
 		try {
-			return new String(Base64.decodeBase64(encodedValue.getBytes()));
+			return new String(Base64.getDecoder().decode(encodedValue.getBytes()));
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error decoding: " + encodedValue, e);
 		}
@@ -426,6 +426,10 @@ public class CoreUtil {
 	}
 
 	public static final void doDebug(long start, long end, String method) {
+		doDebug(getIWContext(), start, end, method);
+	}
+
+	public static final void doDebug(IWContext iwc, long start, long end, String method) {
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 		long minExecutionTime = Long.valueOf(settings.getProperty("debug_min_exec_time", String.valueOf(100)));
 
@@ -434,7 +438,6 @@ public class CoreUtil {
 			return;
 		}
 
-		IWContext iwc = getIWContext();
 		String request = iwc == null ? "unknown" : iwc.getRequestURI();
 		Map<String, String[]> parameters = iwc == null ? null : iwc.getRequest().getParameterMap();
 

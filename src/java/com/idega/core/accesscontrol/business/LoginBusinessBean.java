@@ -12,6 +12,7 @@ import java.io.IOException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
@@ -31,8 +32,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
-import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.BeanCreationException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
@@ -762,7 +761,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 					ServletContext sc = request.getSession().getServletContext();
 					Collection<TwoStepLoginVerificator> verificators = getVerificators(sc);
 
-					if (StringUtils.isNotBlank(isCancel) && Boolean.parseBoolean(isCancel)) {
+					if (!StringUtil.isEmpty(isCancel) && Boolean.parseBoolean(isCancel)) {
 						//	Canceling login, invalidate SMS code
 						for (TwoStepLoginVerificator verificator: verificators) {
 							//Invalidating SMS code
@@ -779,7 +778,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 						LOGGER.info("Session ID to verify SMS code (" + smsCode + ") for user '" + username + "': " + sessionId);	//	TODO
 
 						//	Logging in
-						if (!StringUtil.isEmpty(username) && StringUtils.isNotBlank(smsCode)) {
+						if (!StringUtil.isEmpty(username) && !StringUtil.isEmpty(smsCode)) {
 							boolean smsCodePassed = false;
 							if (!ListUtil.isEmpty(verificators)) {
 								for (TwoStepLoginVerificator verificator: verificators) {
@@ -791,7 +790,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 								LOGGER.info("Passed verification. Username: " + username + ", SMS code: " + smsCode + ", session ID: " + sessionId);	//	TODO
 
 								String password = getLoginPassword(request);
-								if (StringUtils.isNotBlank(password)) {
+								if (!StringUtil.isEmpty(password)) {
 									canLogin = verifyPasswordAndLogin(request, username, password);
 									//Remove attributes from session
 									removeAttributesFromSession(request);
@@ -898,13 +897,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (!StringUtil.isEmpty(sAuthorizationHeader)) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
-				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
-				int seperator = unencodedNamePassword.indexOf(':');
+				byte[] decodedBytes = null;
+				try {
+					decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				} catch (Exception e) {}
+				String decodedNamePassword = decodedBytes == null ? encodedNamePassword : new String(decodedBytes, CoreConstants.ENCODING_UTF8);
+				int seperator = decodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
 					String[] toReturn = new String[2];
-					toReturn[0] = unencodedNamePassword.substring(0, seperator);
-					toReturn[1] = unencodedNamePassword.substring(seperator + 1);
+					toReturn[0] = decodedNamePassword.substring(0, seperator);
+					toReturn[1] = decodedNamePassword.substring(seperator + 1);
 					return toReturn;
 				}
 			} catch (Exception e) {
@@ -919,9 +921,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				byte[] decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
 				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
-				int seperator = unencodedNamePassword.indexOf(':');
+				int seperator = unencodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
 					return unencodedNamePassword.substring(0, seperator);
 				}
@@ -937,7 +939,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		if (sAuthorizationHeader != null) {
 			try {
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				byte[] decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
 				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
 				int seperator = unencodedNamePassword.indexOf(':');
 				if (seperator != -1) {
@@ -960,13 +962,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (sAuthorizationHeader != null) {
 				HttpSession session = request.getSession();
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				byte[] decodedBytes = Base64.decodeBase64(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
-				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
+				byte[] decodedBytes = null;
+				try {
+					decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				} catch (Exception e) {}
+				String decodedNamePassword = decodedBytes == null ? encodedNamePassword : new String(decodedBytes, CoreConstants.ENCODING_UTF8);
 
-				int seperator = unencodedNamePassword.indexOf(':');
+				int seperator = decodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
-					username = unencodedNamePassword.substring(0, seperator);
-					String password = unencodedNamePassword.substring(seperator + 1);
+					username = decodedNamePassword.substring(0, seperator);
+					String password = decodedNamePassword.substring(seperator + 1);
 
 					LoginState canLogin = LoginState.LOGGED_OUT;
 					LoggedOnInfo lInfo = getLoggedOnInfo(session, username);
