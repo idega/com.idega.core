@@ -962,13 +962,16 @@ public class LoginBusinessBean implements IWPageEventListener {
 			if (sAuthorizationHeader != null) {
 				HttpSession session = request.getSession();
 				String encodedNamePassword = sAuthorizationHeader.substring(6);
-				byte[] decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
-				String unencodedNamePassword = new String(decodedBytes, CoreConstants.ENCODING_UTF8);
+				byte[] decodedBytes = null;
+				try {
+					decodedBytes = Base64.getDecoder().decode(encodedNamePassword.getBytes(CoreConstants.ENCODING_UTF8));
+				} catch (Exception e) {}
+				String decodedNamePassword = decodedBytes == null ? encodedNamePassword : new String(decodedBytes, CoreConstants.ENCODING_UTF8);
 
-				int seperator = unencodedNamePassword.indexOf(':');
+				int seperator = decodedNamePassword.indexOf(CoreConstants.COLON);
 				if (seperator != -1) {
-					username = unencodedNamePassword.substring(0, seperator);
-					String password = unencodedNamePassword.substring(seperator + 1);
+					username = decodedNamePassword.substring(0, seperator);
+					String password = decodedNamePassword.substring(seperator + 1);
 
 					LoginState canLogin = LoginState.LOGGED_OUT;
 					LoggedOnInfo lInfo = getLoggedOnInfo(session, username);
