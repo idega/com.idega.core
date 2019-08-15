@@ -29,6 +29,7 @@ import com.idega.util.database.ConnectionBroker;
  * @author <a href="mailto:gummi@idega.is">Gu�mundur �g�st S�mundsson</a>
  * @version 1.0
  */
+@Deprecated
 public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements com.idega.core.data.GenericGroup
 {
 	private static final String ENTITY_NAME = "IC_GROUP";
@@ -192,6 +193,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	/**
 	 * @deprecated Old implementation. Uses IC_GROUP_TREE to find parent groups.
 	 **/
+	@Deprecated
 	protected List getListOfAllGroupsContaining(int group_id) throws SQLException
 	{
 		String tableToSelectFrom = "IC_GROUP_TREE";
@@ -274,6 +276,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	/**
 	 * @deprecated Replaced with getChildGroups
 	 */
+	@Deprecated
 	public List getListOfAllGroupsContained() throws SQLException
 	{
 		try
@@ -305,6 +308,7 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	 * @deprecated The implementation belonging to the old user system.
 	 * Gets the groups that are direct children of this group. Uses the IC_GROUP_TREE table to find children.
 	 **/
+	@Deprecated
 	protected Collection getChildGroupsLegacy() throws SQLException
 	{
 		String tableToSelectFrom = "IC_GROUP_TREE";
@@ -433,8 +437,11 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 		this.addGroup(groupToAdd.getID());
 	}
 	@Override
-	public void addGroup(int groupId) throws SQLException
-	{
+	public void addGroup(int groupId) throws SQLException {
+		addGroupToTree(groupId);
+	}
+
+	private void addGroupToTree(int groupId) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
 		try
@@ -666,6 +673,10 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	@Override
 	public void updateChildGroupOrder(int groupId, int order) throws SQLException
 	{
+		if (getChildGroupOrder(groupId) <= 0) {
+			addGroupToTree(groupId);
+		}
+
 		Connection conn = null;
 		Statement Stmt = null;
 		try {
