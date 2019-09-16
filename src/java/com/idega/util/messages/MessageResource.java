@@ -17,7 +17,6 @@ import javax.naming.OperationNotSupportedException;
  * Last modified: Nov 16, 2008 by Author: Anton
  *
  */
-
 public interface MessageResource {
 
 	static final String NO_BUNDLE = "no bundle";
@@ -40,6 +39,8 @@ public interface MessageResource {
 	 * @return String that was found in resource, null - if there are no values with specified key
 	 */
 	String getMessage(String key);
+
+	String getMessage(String key, boolean loadDefaultLocalization);
 
 	void removeMessage(String key);
 

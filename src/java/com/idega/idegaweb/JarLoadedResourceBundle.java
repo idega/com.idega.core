@@ -207,10 +207,14 @@ public class JarLoadedResourceBundle implements MessageResource, Serializable {
 	 * (non-Javadoc)
 	 * @see com.idega.util.messages.MessageResource#getMessage(java.lang.String)
 	 */
-	@Override
 	public String getMessage(String key) {
+		return getMessage(key, true);
+	}
+
+	@Override
+	public String getMessage(String key, boolean loadDefaultLocalization) {
 		if (getResource() != null) {
-			return getResource().getMessage(key);
+			return getResource().getMessage(key, loadDefaultLocalization);
 		}
 
 		return null;
