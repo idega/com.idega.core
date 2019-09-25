@@ -637,7 +637,11 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	private boolean reInitializeRequest() {
 		try {
-			HttpServletRequest request = ELUtil.getInstance().getBean(RequestResponseProvider.class).getRequest();
+			RequestResponseProvider rrProvider = null;
+			try {
+				rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+			} catch (Exception e) {}
+			HttpServletRequest request = rrProvider == null ? null : rrProvider.getRequest();
 			if (request == null) {
 				LOGGER.warning("Request is null, failed to re-initialize");
 				return false;
