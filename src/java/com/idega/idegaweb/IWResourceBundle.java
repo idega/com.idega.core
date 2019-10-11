@@ -206,6 +206,10 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			}
 
 			IWBundle bundle = getIWMainApplication().getBundle(bundleIdentifier);
+			if (bundle == null) {
+				LOGGER.warning("Bundle with identifier '" + bundleIdentifier + "' does not exist");
+				return;
+			}
 
 			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
 				file = FileUtil.getFileAndCreateIfNotExists(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
@@ -384,10 +388,14 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	 * @param returnValueIfNotFound
 	 * @return a string localized in the IWRB locale or the default value from Localizable.strings or the returnValueIfNotFound if that is null or empty.
 	 */
-	private String getBundleLocalizedString(String key, String returnValueIfNotFound) {
+	private String getBundleLocalizedString(String key, String returnValueIfNotFound, boolean loadDefaultLocalization) {
 		String localization = getBundleLocalizedString(key);
-		if (StringUtil.isEmpty(localization)) {
+		if (StringUtil.isEmpty(localization) && loadDefaultLocalization) {
 			IWBundle bundle = getIWBundleParent();
+			if (bundle == null) {
+				return returnValueIfNotFound;
+			}
+
 			String defaultLocalization = bundle.getLocalizableStringDefaultValue(key);
 
 			if (StringUtil.isEmpty(defaultLocalization) && returnValueIfNotFound != null) {
@@ -615,7 +623,12 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 	 */
 	@Override
 	public String getMessage(String key) {
-		return getBundleLocalizedString(String.valueOf(key), null);
+		return getMessage(key, true);
+	}
+
+	@Override
+	public String getMessage(String key, boolean loadDefaultLocalization) {
+		return getBundleLocalizedString(String.valueOf(key), null, loadDefaultLocalization);
 	}
 
 	/**

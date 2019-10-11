@@ -123,7 +123,7 @@ public class MessageResourceFactoryImpl implements MessageResourceFactory {
 		for (Iterator<MessageResource> resourcesIter = resources.iterator(); resourcesIter.hasNext();) {
 			MessageResource resource = resourcesIter.next();
 			if (!resource.getLevel().equals(MessageResourceImportanceLevel.OFF)) {
-				String message = resource.getMessage(key);
+				String message = resource.getMessage(key, true);
 				if (!StringUtil.isEmpty(message)) {
 					return message;
 				}

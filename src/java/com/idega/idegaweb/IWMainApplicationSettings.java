@@ -219,8 +219,9 @@ public class IWMainApplicationSettings implements MutableClass {
 
 	public int getInt(String key, int defaultValue) {
 		String value = getProperty(key, String.valueOf(defaultValue));
-		if (StringHandler.isNumeric(value))
+		if (StringHandler.isNumeric(value)) {
 			return Integer.valueOf(value);
+		}
 		return -1;
 	}
 
@@ -229,8 +230,12 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	public void setProperty(String key, String value, String type) {
-		key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
-		putInApplicationBinding(key, value, type);
+		try {
+			key = StringHandler.shortenToLength(key, MAX_KEY_LENGTH);
+			putInApplicationBinding(key, value, type);
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Error setting property " + key + "=" + value, e);
+		}
 	}
 
 	public void removeProperty(String key) {
@@ -802,8 +807,9 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	void setApplicationBindingInMap(String key, String value) {
-		if (key == null || value == null)
+		if (key == null || value == null) {
 			return;
+		}
 
 		// note that on the other servers the cache might be active!
 		iwApplicationSettingsEventClient.setApplicationBindingInMap(key, value);
@@ -843,8 +849,9 @@ public class IWMainApplicationSettings implements MutableClass {
 	}
 
 	private ApplicationBindingDAO getApplicationBindingBusiness() {
-		if (this.applicationBindingDAO == null)
+		if (this.applicationBindingDAO == null) {
 			ELUtil.getInstance().autowire(this);
+		}
 
 		return this.applicationBindingDAO;
 	}
