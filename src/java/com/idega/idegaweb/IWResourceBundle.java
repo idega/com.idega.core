@@ -206,6 +206,10 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 			}
 
 			IWBundle bundle = getIWMainApplication().getBundle(bundleIdentifier);
+			if (bundle == null) {
+				LOGGER.warning("Bundle with identifier '" + bundleIdentifier + "' does not exist");
+				return;
+			}
 
 			if (IWMainApplicationSettings.isAutoCreateStringsActive()) {
 				file = FileUtil.getFileAndCreateIfNotExists(bundle.getResourcesRealPath(newLocale), getLocalizedStringsFileName());
@@ -389,7 +393,6 @@ public class IWResourceBundle extends ResourceBundle implements MessageResource,
 		if (StringUtil.isEmpty(localization) && loadDefaultLocalization) {
 			IWBundle bundle = getIWBundleParent();
 			if (bundle == null) {
-				LOGGER.warning("Bundle with identifier " + getBundleIdentifier() + " and type " + getIdentifier() + " not found. Can not localize " + key + ", returning default value: " + returnValueIfNotFound);
 				return returnValueIfNotFound;
 			}
 
