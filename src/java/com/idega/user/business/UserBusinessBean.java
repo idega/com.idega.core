@@ -507,7 +507,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson) throws CreateException, RemoteException {
 		try {
-			User userToAdd = getUserHome().create();
+			User userToAdd = null;
+			if (!StringUtil.isEmpty(personalID)) {
+				try {
+					userToAdd = getUserHome().findByPersonalID(personalID);
+				} catch (Exception e) {}
+			}
+			if (userToAdd == null) {
+				userToAdd = getUserHome().create();
+			}
 
 			if (fullName == null) {
 
