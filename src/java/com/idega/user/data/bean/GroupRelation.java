@@ -104,6 +104,13 @@ import com.idega.util.expression.ELUtil;
 			query = "select gr from GroupRelation gr where (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING +
 					"') and gr.initiationDate >= :" + GroupRelation.PARAM_INITIATION_DATE_START + " and gr.initiationDate <= :" + GroupRelation.PARAM_INITIATION_DATE_END +
 					" and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_INVALID_RELATIONS,
+			query = "SELECT gr "
+					+ "FROM GroupRelation gr "
+					+ "WHERE (gr.status IS NULL) "
+					+ "OR (gr.groupRelationType.type IS NULL)"
 	)
 })
 @Cacheable
@@ -127,7 +134,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
 								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses",
 								QUERY_FIND_BY_INITIATION_DATE = "groupRelation.findByInitiationDate",
-								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "groupRelation.findByGroupsIdsAndDeletedAtGivenTimeframe";
+								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "groupRelation.findByGroupsIdsAndDeletedAtGivenTimeframe",
+								QUERY_FIND_INVALID_RELATIONS = "groupRelation.findInvalidRelations";
 
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";

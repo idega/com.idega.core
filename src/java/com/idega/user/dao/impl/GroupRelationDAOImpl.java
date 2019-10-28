@@ -19,7 +19,10 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.group.cache.business.GroupsCacheService;
 import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.dao.GroupRelationDAO;
+import com.idega.user.data.GroupTypeBMPBean;
 import com.idega.user.data.bean.GroupRelation;
+import com.idega.user.data.bean.GroupRelationType;
+import com.idega.user.data.bean.GroupType;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -516,6 +519,32 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 				q.executeUpdate();
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Could not update group relations with a new termination date: " + newDate, e);
+		}
+	}
+	
+	@Override
+	@Transactional(readOnly = false)
+	public void fixInvalidRelations() {
+		List<GroupRelation> invalidRelations = getResultList(
+				GroupRelation.QUERY_FIND_INVALID_RELATIONS,
+				GroupRelation.class
+		);
+		if(ListUtil.isEmpty(invalidRelations)) {
+			return;
+		}
+		GroupRelationType relationType = find(
+				GroupRelationType.class, 
+				GroupRelation.RELATION_TYPE_GROUP_PARENT
+		);
+		GroupType relatedGroupType = find(
+				GroupType.class, 
+				GroupTypeBMPBean.TYPE_PERMISSION_GROUP
+		);
+		for(GroupRelation relation : invalidRelations) {
+			relation.setStatus(GroupRelation.STATUS_ACTIVE);
+			relation.setGroupRelationType(relationType);
+			relation.setRelatedGroupType(relatedGroupType);
+			merge(relation);
 		}
 	}
 
