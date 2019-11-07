@@ -5172,9 +5172,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 
-		getLogger().info(User.class.getName() +
-				" by primary key: " + user.getPrimaryKey().toString() +
-				" successfully updated!");
+		CoreUtil.clearAllCaches();
+
+		getLogger().info(User.class.getName() + " by primary key: " + user.getPrimaryKey().toString() + " successfully updated!");
 		return user;
 	}
 
