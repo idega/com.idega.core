@@ -843,11 +843,12 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 				}
 			}
 			else {
+				IDOHome home = null;
 				try {
 					// returnObj =
 					// this.findByPrimaryInOtherClass(getRelationShipClass(columnName),((Integer)value).intValue());
 					if (value != null) {
-						IDOHome home = IDOLookup.getHome(relationClass);
+						home = IDOLookup.getHome(relationClass);
 						if (this.getDatasource() != null) {
 							home = IDOLookup.getHome(relationClass, getDatasource());
 						}
@@ -855,8 +856,12 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 					}
 				}
 				catch (Exception ex) {
-					System.err.println("Exception in com.idega.data.GenericEntity.getColumnValue(String columnName): of type+ " + ex.getClass().getName() + " , Message = " + ex.getMessage());
-					ex.printStackTrace(System.err);
+					getLogger().log(
+							Level.WARNING,
+							"Error getting column's '" + columnName + "' value from entity " + this.getClass().getName() + " (DB table name: " + this.getEntityName() + ", PK: " + this.getPrimaryKey() + "). Relation: " +
+							(relationClass == null ? "unknown" : relationClass.getName()) + " (class: " + (home == null ? "unknown" : home.getClass().getName()) + "). Error message: " + ex.getMessage(),
+							ex
+					);
 				}
 				finally {
 				}
