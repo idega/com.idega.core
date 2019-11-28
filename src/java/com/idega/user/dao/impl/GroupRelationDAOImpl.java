@@ -20,9 +20,11 @@ import com.idega.group.cache.business.GroupsCacheService;
 import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.dao.GroupRelationDAO;
 import com.idega.user.data.GroupTypeBMPBean;
+import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
+import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -547,5 +549,79 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			merge(relation);
 		}
 	}
+	
+	@Override
+	public List<GroupRelation> findParentGroupRelationsForGroup(Integer id) {
+		return getResultList(
+				GroupRelation.QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP,
+				GroupRelation.class,
+				new Param("id", id)
+		);
+	}
 
+	@Override
+	public List<Group> findParentGroupsForGroup(Integer id) {
+		return getResultList(
+				GroupRelation.QUERY_FIND_PARENT_GROUPS_FOR_GROUP,
+				Group.class,
+				new Param("id", id)
+		);
+	}
+
+	@Override
+	@Transactional
+	public void removeParentGroupsForGroup(
+			Integer group, 
+			List<Integer> parents,
+			User byUser
+	) {
+		List<GroupRelation> parentRelations = getResultList(
+				GroupRelation.QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP_BY_PARENT_GROUPS,
+				GroupRelation.class,
+				new Param("group", group),
+				new Param("parents", parents)
+		);
+		if(parentRelations == null) {
+			return;
+		}
+		Date time = new Date();
+//		TODO: possible to do with one query and then publish events possibly 
+//		in separate thread
+		for(GroupRelation relation : parentRelations) {
+			setRemoved(relation, byUser, time);
+			merge(relation);
+		}
+	}
+	
+	private void setRemoved(GroupRelation relation,User byUser,Date time) {
+		relation.setStatus(GroupRelation.STATUS_PASSIVE);
+		relation.setPassiveBy(byUser);
+		relation.setTerminationDate(time);
+	}
+
+	@Override
+	@Transactional
+	public void storeGroupAsChildForGroups(
+			Group group, 
+			List<Group> parents, 
+			User byUser
+	) {
+		Date time = new Date();
+		GroupType type = group.getGroupType();
+		GroupRelationType relationType = find(
+				GroupRelationType.class, 
+				GroupRelation.RELATION_TYPE_GROUP_PARENT
+		);
+		for(Group parent : parents) {
+			GroupRelation relation = new GroupRelation();
+			relation.setGroup(parent);
+			relation.setRelatedGroup(group);
+			relation.setGroupRelationType(relationType);
+			relation.setRelatedGroupType(type);
+			relation.setCreatedBy(byUser);
+			relation.setInitiationDate(time);
+			persist(relation);
+		}
+	}
+	
 }
