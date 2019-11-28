@@ -10,6 +10,7 @@ public class RepositoryItemVersionInfo implements Serializable {
 	private Date created;
 	private String id, name, path, comment, checkedOut, checkedIn;
 	private Double version;
+	private byte[] bytes = null;
 
 	public Date getCreated() {
 		return created;
@@ -61,6 +62,14 @@ public class RepositoryItemVersionInfo implements Serializable {
 	}
 	public void setComment(String comment) {
 		this.comment = comment;
+	}
+
+	public byte[] getBytes() {
+		return bytes;
+	}
+
+	public void setBytes(byte[] bytes) {
+		this.bytes = bytes;
 	}
 
 	@Override
