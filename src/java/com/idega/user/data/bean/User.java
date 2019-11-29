@@ -283,7 +283,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
     @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
     private String sha1;
 
-    @OneToMany(fetch = FetchType.LAZY, mappedBy="user")
+    @OneToMany(fetch = FetchType.LAZY, mappedBy="user", cascade = CascadeType.ALL)
     private List<UserLogin> logins;
 
     @Column(name = com.idega.user.data.UserBMPBean.COLUMN_RESUME, length = 2048)

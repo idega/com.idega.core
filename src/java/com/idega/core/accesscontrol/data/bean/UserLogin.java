@@ -228,6 +228,17 @@ public class UserLogin implements Serializable {
 	public LoginInfo getLoginInfo() {
 		return this.loginInfo;
 	}
+	
+	public void setLoginInfo(LoginInfo loginInfo) {
+		this.loginInfo = loginInfo;
+		if(
+				(loginID != null) 
+				&& (loginInfo != null) 
+				&& !loginID.equals(loginInfo.getId())
+		) {
+			loginInfo.setId(loginID);
+		}
+	}
 
 	public List<LoginRecord> getLoginRecords() {
 		loginRecords = DBUtil.getInstance().lazyLoad(loginRecords);
