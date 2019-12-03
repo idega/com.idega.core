@@ -1339,6 +1339,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					// Fix when entering unnumbered addresses (Aron )
 					address.setStreetNumber("");
 				}
+				address.setStreetAddressNominative(streetNameAndNumber);
 				if (communeID == null || communeID.intValue() == -1) {
 					address.setCommune(null);
 				} else {
