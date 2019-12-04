@@ -163,10 +163,12 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 	@Override
 	public Phone findByPhoneNumber(String phoneNumber) {
 		if (!StringUtil.isEmpty(phoneNumber)) {
-			return getSingleResult(
+			List<Phone> phones = getResultList(
 					Phone.QUERY_FIND_BY_NUMBER,
 					Phone.class,
-					new Param("phoneNumber", phoneNumber));
+					new Param("phoneNumber", phoneNumber)
+			);
+			return ListUtil.isEmpty(phones) ? null : phones.iterator().next();
 		}
 
 		return null;
