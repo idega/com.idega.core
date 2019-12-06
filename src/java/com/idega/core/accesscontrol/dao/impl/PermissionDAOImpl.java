@@ -20,18 +20,23 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.accesscontrol.dao.PermissionDAO;
+import com.idega.core.accesscontrol.data.ICPermissionHome;
 import com.idega.core.accesscontrol.data.bean.ICPermission;
 import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.PermissionGroup;
 import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
+import com.idega.data.IDOLookup;
 import com.idega.data.SimpleQuerier;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
+import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.bean.Group;
 import com.idega.util.CoreConstants;
+import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.expression.ELUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("permissionDAO")
@@ -59,6 +64,42 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		Param param = new Param("name", name);
 
 		return getSingleResult("permissionGroup.findByName", PermissionGroup.class, param);
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public ICPermission createPermission(String contextType, String contextValue, Integer groupId, String permissionString, boolean permissionValue) {
+		Group group = null;
+		if (groupId != null && groupId > 0) {
+			GroupDAO groupDAO = ELUtil.getInstance().getBean(GroupDAO.class);
+			group = groupDAO.findGroup(groupId);
+			if (group == null) {
+				Integer permissionId = null;
+				ICPermission perm = null;
+				try {
+					ICPermissionHome permissionHome = (ICPermissionHome) IDOLookup.getHome(com.idega.core.accesscontrol.data.ICPermission.class);
+					com.idega.core.accesscontrol.data.ICPermission permission = permissionHome.create();
+					permission.setContextType(contextType);
+					permission.setContextValue(contextValue);
+					permission.setGroupID(groupId);
+					permission.setPermissionString(permissionString);
+					permission.setPermissionValue(permissionValue);
+					permission.store();
+					permissionId = (Integer) permission.getPrimaryKey();
+				} catch (Exception e) {}
+				if (permissionId != null) {
+					CoreUtil.clearAllCaches();
+					perm = find(ICPermission.class, permissionId);
+				}
+				if (perm == null) {
+					getLogger().warning("Can not find group by ID: " + groupId);
+				} else {
+					return perm;
+				}
+			}
+		}
+
+		return createPermission(contextType, contextValue, group, permissionString, permissionValue);
 	}
 
 	@Override
@@ -144,7 +185,19 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		Param param3 = new Param("permissionString", permissionString);
 		Param param4 = new Param("group", group);
 
-		return getSingleResult(ICPermission.BY_CRITERIA, ICPermission.class, param1, param2, param3, param4);
+		List<ICPermission> permissions = getResultList(ICPermission.BY_CRITERIA, ICPermission.class, param1, param2, param3, param4);
+		return ListUtil.isEmpty(permissions) ? null : permissions.iterator().next();
+	}
+
+	@Override
+	public ICPermission findPermission(String contextType, String contextValue, String permissionString, Integer groupId) {
+		Param param1 = new Param("contextType", contextType);
+		Param param2 = new Param("contextValue", contextValue);
+		Param param3 = new Param("permissionString", permissionString);
+		Param param4 = new Param("groupId", groupId);
+
+		List<ICPermission> permissions = getResultList(ICPermission.BY_CRITERIA_AND_GROUP_ID, ICPermission.class, param1, param2, param3, param4);
+		return ListUtil.isEmpty(permissions) ? null : permissions.iterator().next();
 	}
 
 	@Override

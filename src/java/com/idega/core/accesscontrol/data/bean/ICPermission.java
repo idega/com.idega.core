@@ -27,6 +27,7 @@ import com.idega.user.data.bean.User;
 @Table(name = ICPermission.ENTITY_NAME)
 @NamedQueries({
 		@NamedQuery(name = ICPermission.BY_CRITERIA, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup = :group"),
+		@NamedQuery(name = ICPermission.BY_CRITERIA_AND_GROUP_ID, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionGroup.groupID = :groupId"),
 		@NamedQuery(name = ICPermission.BY_VALUES, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString = :permissionString and i.permissionValue = :permissionValue"),
 		@NamedQuery(name = ICPermission.BY_GROUP_AND_CONTEXT, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue in (:contextValues) and i.permissionGroup = :group"),
 		@NamedQuery(name = ICPermission.BY_CONTEXTS, query = "select i from ICPermission i where i.contextType = :contextType and i.contextValue in (:contextValues)"),
@@ -88,6 +89,7 @@ public class ICPermission implements Serializable {
 								BY_GROUP_AND_CONTEXT = "permission.findByGroupAndContext",
 								BY_VALUES = "permission.findByValues",
 								BY_CRITERIA = "permission.findByCriteria",
+								BY_CRITERIA_AND_GROUP_ID = "permission.findByCriteriaAndGroupId",
 								BY_CONTEXT_TYPE_AND_PERMISSION = "permission.findByContextTypeAndPermission",
 								BY_CONTEXT_TYPE_AND_PERMISSIONS = "permission.findByContextTypeAndPermissions",
 								CONTEXT_VALUE_BY_CONTEXT_TYPE_AND_PERMISSIONS = "permission.findContextValueByContextTypeAndPermissions",
@@ -260,4 +262,5 @@ public class ICPermission implements Serializable {
 		}
 		return false;
 	}
+
 }

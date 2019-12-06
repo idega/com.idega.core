@@ -80,6 +80,7 @@ import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 import com.idega.util.reflect.FieldAccessor;
@@ -1180,40 +1181,40 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	public ICPermission setPermission(int permissionCategory, IWApplicationContext iwac, String permissionGroupId, String identifier, String permissionKey, Boolean permissionValue) throws Exception {
-		Group group = getGroupDAO().findGroup(new Integer(permissionGroupId));
-		if (group == null) {
-			getLogger().warning("Can not find group by ID: " + permissionGroupId);
+		if (!StringHandler.isNumeric(permissionGroupId)) {
+			getLogger().warning("Wrong group's ID: " + permissionGroupId);
 			return null;
 		}
 
+		Integer groupId = Integer.valueOf(permissionGroupId);
 		ICPermission permission = null;
 		switch (permissionCategory) {
 			case AccessController.CATEGORY_OBJECT_INSTANCE :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_OBJECT_INSTANCE_ID, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_OBJECT :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_IC_OBJECT_ID, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_BUNDLE :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_BUNDLE_IDENTIFIER, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_PAGE_INSTANCE :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE_ID, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_PAGE :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_PAGE, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_JSP_PAGE :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_JSP_PAGE, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_FILE_ID :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_FILE_ID, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_FILE_ID, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_GROUP_ID :
-				permission = getPermissionDAO().findPermission(CATEGORY_STRING_GROUP_ID, identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(CATEGORY_STRING_GROUP_ID, identifier, permissionKey, groupId);
 				break;
 			case AccessController.CATEGORY_ROLE :
-				permission = getPermissionDAO().findPermission(RoleHelperObject.getStaticInstance().toString(), identifier, permissionKey, group);
+				permission = getPermissionDAO().findPermission(RoleHelperObject.getStaticInstance().toString(), identifier, permissionKey, groupId);
 				break;
 		}
 
@@ -1250,7 +1251,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					break;
 			}
 
-			permission = getPermissionDAO().createPermission(contextType, identifier, group, permissionKey, permissionValue);
+			permission = getPermissionDAO().createPermission(contextType, identifier, groupId, permissionKey, permissionValue);
 			created = permission != null;
 		}
 
