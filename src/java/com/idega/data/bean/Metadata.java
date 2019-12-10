@@ -27,12 +27,11 @@ public class Metadata implements Serializable {
 
 	public static final String	ENTITY_NAME = "ic_metadata",
 								COLUMN_METADATA_ID = "ic_metadata_id",
+								COLUMN_KEY = "metadata_name",
+								COLUMN_VALUE = "metadata_value",
+								COLUMN_TYPE = "meta_data_type",
 
 								QUERY_FIND_BY_GROUP_ID_AND_KEY = "metadata.findByGroupIdAndKey";
-
-	private static final String COLUMN_KEY = "metadata_name";
-	private static final String COLUMN_VALUE = "metadata_value";
-	private static final String COLUMN_TYPE = "meta_data_type";
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
@@ -58,19 +57,24 @@ public class Metadata implements Serializable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (this == obj)
+		if (this == obj) {
 			return true;
-		if (obj == null)
+		}
+		if (obj == null) {
 			return false;
-		if (getClass() != obj.getClass())
+		}
+		if (getClass() != obj.getClass()) {
 			return false;
+		}
 		Metadata other = (Metadata) obj;
 		if (this.metadataID == null) {
-			if (other.metadataID != null)
+			if (other.metadataID != null) {
 				return false;
+			}
 		}
-		else if (!this.metadataID.equals(other.metadataID))
+		else if (!this.metadataID.equals(other.metadataID)) {
 			return false;
+		}
 		return true;
 	}
 

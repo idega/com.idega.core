@@ -123,14 +123,14 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	private static final long serialVersionUID = 3393646538663696610L;
 
-	public static final String ENTITY_NAME = "ic_user";
-	public static final String COLUMN_USER_ID = "ic_user_id";
+	public static final String	ENTITY_NAME = "ic_user",
+								COLUMN_USER_ID = "ic_user_id",
+								COLUMN_DISPLAY_NAME = "display_name";
 
 	private static final String COLUMN_UNIQUE_ID = "unique_id";
 	private static final String COLUMN_FIRST_NAME = "first_name";
 	private static final String COLUMN_MIDDLE_NAME = "middle_name";
 	private static final String COLUMN_LAST_NAME = "last_name";
-	private static final String COLUMN_DISPLAY_NAME = "display_name";
 	private static final String COLUMN_DESCRIPTION = "description";
 	private static final String COLUMN_DATE_OF_BIRTH = "date_of_birth";
 	private static final String COLUMN_GENDER = "ic_gender_id";
@@ -331,15 +331,18 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Override
 	public boolean equals(Object obj) {
-		if (!(obj instanceof User))
+		if (!(obj instanceof User)) {
 			return false;
+		}
 
 		User other = (User) obj;
 		if (this.userID == null) {
-			if (other.userID != null)
+			if (other.userID != null) {
 				return false;
-		} else if (!this.userID.equals(other.userID))
+			}
+		} else if (!this.userID.equals(other.userID)) {
 			return false;
+		}
 
 		return true;
 	}
