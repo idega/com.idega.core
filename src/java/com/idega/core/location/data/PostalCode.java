@@ -104,4 +104,7 @@ public interface PostalCode extends IDOEntity {
 	 */
 	@Override
 	public void store() throws IDOStoreException;
+
+	public void setConvertToUpperCase(boolean upperCase);
+
 }

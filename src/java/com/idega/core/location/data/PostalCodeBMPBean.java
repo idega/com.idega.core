@@ -42,6 +42,8 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	static final String COLUMN_COUNTRY_ID = "IC_COUNTRY_ID";
 	static final String COLUMN_COMMUNE_ID = "IC_COMMUNE_ID";
 
+	private boolean upperCase = true;
+
 	public PostalCodeBMPBean() {
 		super();
 	}
@@ -145,7 +147,7 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	@Override
 	public void setName(String name) {
 		if (!StringUtil.isEmpty(name)) {
-			setColumn(COLUMN_NAME, name.toUpperCase());
+			setColumn(COLUMN_NAME, upperCase ? name.toUpperCase() : name);
 
 			String code = getPostalCode();
 			StringBuffer buffer = new StringBuffer();
@@ -482,5 +484,10 @@ public class PostalCodeBMPBean extends GenericEntity implements PostalCode {
 	public void store() throws IDOStoreException {
 		setPostalAddress(getPostalCode() + " " + getName());
 		super.store();
+	}
+
+	@Override
+	public void setConvertToUpperCase(boolean upperCase) {
+		this.upperCase = upperCase;
 	}
 }
