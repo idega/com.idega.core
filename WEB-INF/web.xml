@@ -693,6 +693,10 @@
         <extension>doc</extension>
         <mime-type>application/msword</mime-type>
     </mime-mapping>
+    <mime-mapping>
+        <extension>svg</extension>
+        <mime-type>image/svg+xml</mime-type>
+    </mime-mapping>
   
 	<!-- Definition of the standard Default DataSource -->
 	<resource-ref>

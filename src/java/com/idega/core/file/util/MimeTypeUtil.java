@@ -10,8 +10,6 @@ import java.util.Properties;
 
 import javax.activation.MimetypesFileTypeMap;
 
-import sun.net.www.MimeTable;
-
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.Singleton;
@@ -19,6 +17,8 @@ import com.idega.util.CoreConstants;
 import com.idega.util.FileUtil;
 import com.idega.util.SortedProperties;
 import com.idega.util.StringUtil;
+
+import sun.net.www.MimeTable;
 
 /**
  * Title: MimeTypeUtil
@@ -48,7 +48,7 @@ public class MimeTypeUtil implements Singleton {
 
 
 
-
+public static final String MIME_TYPE_SVG = "image/svg+xml";
 public static final String MIME_TYPE_WORD = "application/msword";
 public static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 public static final String MIME_TYPE_POWERPOINT = "application/vnd.ms-powerpoint";
@@ -514,6 +514,7 @@ public static final String MIME_TYPE_PDF_1 = "application/pdf",
 		MIME_TYPES_MAPPING.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
 		MIME_TYPES_MAPPING.put("ppt", MIME_TYPE_POWERPOINT);
 		MIME_TYPES_MAPPING.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
+		MIME_TYPES_MAPPING.put("svg", MIME_TYPE_SVG);
 	}
 	
 	private static String getMimeType(String fileName) {
