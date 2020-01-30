@@ -249,7 +249,7 @@ public class ELUtil implements ApplicationContextAware {
 		return methodName;
 	}
 
-	private List<String> getArgs(String exp) {
+	public List<String> getArgs(String exp) {
 		List<String> returnArray = new ArrayList<String>();
 		int pre = exp.indexOf(CoreConstants.BRACKET_LEFT);
 		if (pre >= 0) {
