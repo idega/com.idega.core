@@ -95,6 +95,7 @@ import java.time.format.DateTimeFormatter;
 import java.time.format.FormatStyle;
 import java.util.Date;
 import java.util.Locale;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import com.idega.idegaweb.IWMainApplication;
@@ -153,7 +154,7 @@ public class DateUtil {
 
 		return null;
 	}
-	
+
 	public static String getJSONDate(Date date) {
 		if (date == null) {
 			return null;
@@ -174,8 +175,12 @@ public class DateUtil {
 		}
 
 		try {
-			if (date.contains("T")) date = date.replace("T", CoreConstants.SPACE);
-			if (date.contains("Z")) date = date.replace("Z", "+0000");
+			if (date.contains("T")) {
+				date = date.replace("T", CoreConstants.SPACE);
+			}
+			if (date.contains("Z")) {
+				date = date.replace("Z", "+0000");
+			}
 			return JSON_DATE_FORMAT.parse(date);
 		} catch (Exception e) {
 			Logger.getLogger(DateUtil.class.getName()).warning("Unable to parse '" + date + "' into Date object");
@@ -185,12 +190,12 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return current {@link ZoneId} of {@link ZoneId} defined in {@link DateUtil#PROPERTY_ZONE_ID}
 	 */
 	public static ZoneId getZone() {
 		String zoneId = getApplicationProperty(
-				PROPERTY_ZONE_ID, 
+				PROPERTY_ZONE_ID,
 				ZoneId.systemDefault().getId());
 		if (!StringUtil.isEmpty(zoneId)) {
 			return ZoneId.of(zoneId);
@@ -340,20 +345,28 @@ public class DateUtil {
 
 	public static Timestamp getDateTime(String dateTimeString) {
 		if (!StringUtil.isEmpty(dateTimeString)) {
-			String[] splittedString = dateTimeString.split("T");
-			LocalDate date = DateUtil.getDate(splittedString[0]);
-			LocalTime time = DateUtil.getTime(splittedString[1].substring(0, splittedString[1].indexOf("Z")));
-			LocalDateTime dateTime = LocalDateTime.of(date, time);
-			Date javaDate = DateUtil.getDate(dateTime);
-			return new Timestamp(javaDate.getTime());
+			try {
+				String[] splittedString = dateTimeString.split("T");
+				LocalDate date = DateUtil.getDate(splittedString[0]);
+				LocalTime time = null;
+				if (splittedString[1].indexOf("Z") == -1) {
+					time = DateUtil.getTime(splittedString[1].substring(0));
+				} else {
+					time = DateUtil.getTime(splittedString[1].substring(0, splittedString[1].indexOf("Z")));
+				}
+				LocalDateTime dateTime = LocalDateTime.of(date, time);
+				Date javaDate = DateUtil.getDate(dateTime);
+				return new Timestamp(javaDate.getTime());
+			} catch (Exception e) {
+				Logger.getLogger(DateUtil.class.getName()).log(Level.WARNING, "Error parsing '" + dateTimeString + "' into Timestamp", e);
+			}
 		}
-
 
 		return null;
 	}
 
 	/**
-	 * 
+	 *
 	 * @param date to convert
 	 * @return with timezone information
 	 */
@@ -367,7 +380,7 @@ public class DateUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return {@link ZoneId} by current {@link Locale} or {@link ZoneId#systemDefault()} on failure
 	 */
 	public static ZoneId getZoneByLocale() {
