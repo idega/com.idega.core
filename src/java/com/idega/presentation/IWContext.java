@@ -857,7 +857,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	public void setSessionAttribute(String attributeName, Object attribute) {
 		HttpSession session = getSession();
 		if (session != null) {
-			getSession().setAttribute(attributeName, attribute);
+			session.setAttribute(attributeName, attribute);
 		}
 	}
 
