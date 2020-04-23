@@ -4,6 +4,8 @@ import javax.servlet.http.HttpSession;
 
 import org.springframework.context.ApplicationEvent;
 
+import com.idega.presentation.IWContext;
+
 public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	private static final long serialVersionUID = 2519397058875073171L;
@@ -13,6 +15,8 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 	private String userName, loginType;
 
 	private HttpSession session;
+
+	private IWContext iwc;
 
 	public UserHasLoggedInEvent(Integer userId) {
 		super(userId);
@@ -33,6 +37,12 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 		this.session = session;
 	}
 
+	public UserHasLoggedInEvent(IWContext iwc, Integer userId, String userName, String loginType, HttpSession session) {
+		this(userId, userName, loginType, iwc == null ? session : iwc.getSession());
+
+		this.iwc = iwc;
+	}
+
 	public Integer getUserId() {
 		return userId;
 	}
@@ -47,6 +57,10 @@ public class UserHasLoggedInEvent extends ApplicationEvent {
 
 	public HttpSession getSession() {
 		return session;
+	}
+
+	public IWContext getIwc() {
+		return iwc;
 	}
 
 	@Override
