@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
@@ -15,7 +16,7 @@ import com.idega.util.datastructures.map.MapUtil;
  * @version 1.0
  */
 public class LocaleUtil {
-	
+
 	private static Map<String, Locale> locales = new TreeMap<String, Locale>();
 
 	private static Locale icelandicLocale;
@@ -44,8 +45,9 @@ public class LocaleUtil {
 	}
 
 	public static Locale getLocale(String localeIdentifier) {
-		if (StringUtil.isEmpty(localeIdentifier))
+		if (StringUtil.isEmpty(localeIdentifier)) {
 			return null;
+		}
 
 		if (localeIdentifier.equals(ICELANDIC_IDENTIFIER)) {
 			return getIcelandicLocale();
@@ -63,7 +65,7 @@ public class LocaleUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @return {@link Map} of {@link Locale#getCountry()} and {@link Locale};
 	 */
 	public static Map<String, Locale> getLocales() {
@@ -82,7 +84,7 @@ public class LocaleUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param locales {@link Map} of {@link Locale#getCountry()} and {@link Locale};
 	 */
 	public static void setLocales(Map<String, Locale> locales) {
@@ -90,7 +92,7 @@ public class LocaleUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param countryCode is {@link Locale#getCountry()}, not <code>null</code>;
 	 * @return {@link Locale} or <code>null</code> on failure;
 	 */
@@ -101,7 +103,7 @@ public class LocaleUtil {
 
 		return null;
 	}
-	
+
 	public static String getLocalizedCountryName(Locale localeIn, String defaultName, String isoAbbreviation) {
 		if (localeIn == null || StringUtil.isEmpty(isoAbbreviation)) {
 			return defaultName;
@@ -119,4 +121,36 @@ public class LocaleUtil {
 
 		return localizedCountryName;
 	}
+
+	public static String getLocalizedLanguageName(Locale localeIn, String defaultName, String isoAbbreviation) {
+		if (localeIn == null || StringUtil.isEmpty(isoAbbreviation)) {
+			return defaultName;
+		}
+
+		Map<String, Locale> locales = getLocales();
+		if (MapUtil.isEmpty(locales)) {
+			return defaultName;
+		}
+
+		Locale languageLocale = null;
+		for (Iterator<Locale> iter = locales.values().iterator(); (languageLocale == null && iter.hasNext());) {
+			Locale locale = iter.next();
+			if (isoAbbreviation.equals(locale.getLanguage()) || isoAbbreviation.equals(locale.getCountry())) {
+				languageLocale = locale;
+			}
+		}
+
+		if (languageLocale == null) {
+			return defaultName;
+		}
+
+		String localizedLanguageName = languageLocale.getDisplayLanguage(localeIn);
+		if (StringUtil.isEmpty(localizedLanguageName)) {
+			return defaultName;
+		}
+
+		localizedLanguageName = StringUtil.getCapitalized(localizedLanguageName, localeIn);
+		return localizedLanguageName;
+	}
+
 }
