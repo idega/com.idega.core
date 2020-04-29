@@ -1182,7 +1182,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			return;
 		}
 
-		IWContext iwc = new IWContext(request, response, context);
+		IWContext iwc = request == null || response == null || context == null ? CoreUtil.getIWContext() : new IWContext(request, response, context);
 		ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(iwc, user.getId(), userName, loginType, request.getSession(true)));
 	}
 
