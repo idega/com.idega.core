@@ -354,6 +354,11 @@ public class DateUtil {
 				if (parsedDate != null) {
 					return new Timestamp(parsedDate.getTime());
 				}
+				
+				Timestamp timestamp = getDateIfMonthIsWord(dateTimeString);
+				if (timestamp != null) {
+					return timestamp;
+				}
 
 				String[] splittedString = dateTimeString.split("T");
 				LocalDate date = DateUtil.getDate(splittedString[0]);
@@ -372,6 +377,17 @@ public class DateUtil {
 		}
 
 		return null;
+	}
+	
+	private static Timestamp getDateIfMonthIsWord(String dateTimeString) {
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d. MMMM yyyy");
+			LocalDate date = LocalDate.parse(dateTimeString, formatter);
+			Date javaDate = DateUtil.getDate(date);
+			return new Timestamp(javaDate.getTime());
+		} catch (Exception e) {
+			return null;
+		}	
 	}
 
 	/**
