@@ -1,6 +1,7 @@
 package com.idega.util;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -320,6 +321,14 @@ public class SendMail {
 				attachment.setDataHandler(attachmentHandler);
 				attachment.setFileName(attachedFile.getName());
 				attachment.setDescription("Attached file: " + attachment.getFileName());
+				
+				try {
+					String contentType = Files.probeContentType(attachedFile.toPath());
+					if (!StringUtil.isEmpty(contentType)) {
+						attachment.setHeader("Content-Type", contentType);
+					}
+				} catch (Exception e) {}
+				
 				multipart.addBodyPart(attachment);
 			}
 
