@@ -149,27 +149,28 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	@Override
 	public User getUserEntity() {
-		try {
-			IWContext iwc = CoreUtil.getIWContext();
-			if (iwc != null) {
-				UserSession userSession = IBOLookup.getSessionInstance(iwc, UserSession.class);
-				com.idega.user.data.User userToEmulate = userSession.getUser();
-				if (userToEmulate != null) {
-					Integer userToEmulateId = Integer.valueOf(userToEmulate.getId());
-					if (emulatedUser != null && userToEmulateId.intValue() == emulatedUser.getId().intValue()) {
-						return emulatedUser;
-					}
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("access.emulated_user_as_current", false)) {
+			try {
+				IWContext iwc = CoreUtil.getIWContext();
+				if (iwc != null) {
+					UserSession userSession = IBOLookup.getSessionInstance(iwc, UserSession.class);
+					com.idega.user.data.User userToEmulate = userSession.getUser();
+					if (userToEmulate != null) {
+						Integer userToEmulateId = Integer.valueOf(userToEmulate.getId());
+						if (emulatedUser != null && userToEmulateId.intValue() == emulatedUser.getId().intValue()) {
+							return emulatedUser;
+						}
 
-					emulatedUser = getUserDAO().getUser(userToEmulateId);
-					if (emulatedUser != null) {
-						return emulatedUser;
+						emulatedUser = getUserDAO().getUser(userToEmulateId);
+						if (emulatedUser != null) {
+							return emulatedUser;
+						}
 					}
 				}
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error getting emulated user", e);
 			}
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting emulated user", e);
 		}
-
 		return this.sessionHelper.user;
 	}
 
