@@ -439,16 +439,32 @@ public class LoginBusinessBean implements IWPageEventListener {
 				return;
 			}
 
-			String cookieToSkip = "currentLocale";
+			String cookieToSkipProp = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("cookies_to_remain_on_logout", "currentLocale,casesListPageSize_,casesListPageNr_");
+			List<String> cookiesToSkip = StringUtil.isEmpty(cookieToSkipProp) ? null : StringUtil.getValuesFromString(cookieToSkipProp, CoreConstants.COMMA);
 			for (Cookie cookie: cookies) {
 				String name = cookie.getName();
-				if (!StringUtil.isEmpty(name) && !name.equals(cookieToSkip)) {
-					cookie.setValue(CoreConstants.EMPTY);
-					cookie.setPath(CoreConstants.SLASH);
-					cookie.setMaxAge(0);
-					if (response != null) {
-						response.addCookie(cookie);
+				if (StringUtil.isEmpty(name)) {
+					continue;
+				}
+
+				boolean skip = false;
+				if (!ListUtil.isEmpty(cookiesToSkip)) {
+					for (Iterator<String> iter = cookiesToSkip.iterator(); (iter.hasNext() && !skip);) {
+						String cookieToSkip = iter.next();
+						if (!StringUtil.isEmpty(cookieToSkip) && name.indexOf(cookieToSkip) == 0) {
+							skip = true;
+						}
 					}
+				}
+				if (skip) {
+					continue;
+				}
+
+				cookie.setValue(CoreConstants.EMPTY);
+				cookie.setPath(CoreConstants.SLASH);
+				cookie.setMaxAge(0);
+				if (response != null) {
+					response.addCookie(cookie);
 				}
 			}
 		} catch (Exception e) {
