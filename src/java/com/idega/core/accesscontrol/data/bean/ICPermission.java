@@ -20,6 +20,7 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 
@@ -59,7 +60,41 @@ import com.idega.user.data.bean.User;
 		@NamedQuery(name = ICPermission.DELETE_BY_CRITERIA, query = "delete from ICPermission i where i.contextType = :contextType and i.contextValue = :contextValue and i.permissionString in (:permissionStrings) and i.permissionGroup in (:groups)"),
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSION, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString = :permissionString"),
 		@NamedQuery(name = ICPermission.BY_CONTEXT_TYPE_AND_PERMISSIONS, query = "select i from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings)"),
-		@NamedQuery(name = ICPermission.CONTEXT_VALUE_BY_CONTEXT_TYPE_AND_PERMISSIONS, query = "select i.contextValue from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup is null")
+		@NamedQuery(name = ICPermission.CONTEXT_VALUE_BY_CONTEXT_TYPE_AND_PERMISSIONS, query = "select i.contextValue from ICPermission i where i.contextType = :contextType and i.permissionString in (:permissionStrings) and i.permissionGroup is null"),
+		@NamedQuery(
+				name = ICPermission.QUERY_FIND_USERS_WITH_PERMISSION, 
+				query = "SELECT u FROM User u\n"
+						+ "WHERE u.id in ("
+						+ "SELECT p.permissionGroup.id \n"
+						+ "FROM ICPermission p \n"
+						+ "WHERE p.contextValue = '"
+								+ AccessController.PERMISSION_KEY_ROLE+"'\n"
+						+ "AND p.status = '" 
+								+ ICPermission.STATUS_ACTIVE + "'\n"
+						+ "AND p.permissionString = :permissionString)"
+		),
+		@NamedQuery(
+				name = ICPermission.QUERY_FIND_USER_IDS_WITH_ROLE_AND_WITHOUT_ROLE, 
+				query = "SELECT u.id\n"
+						+ "FROM User u, ICPermission p\n"
+						+ "WHERE u.id = p.permissionGroup.id\n"
+						+ "AND p.contextValue = '"
+								+ AccessController.PERMISSION_KEY_ROLE+"'\n"
+						+ "AND p.status = '" 
+								+ ICPermission.STATUS_ACTIVE + "'\n"
+						+ "AND p.permissionString = :roleKeyWith\n"
+						+ "AND (\n"
+						+ "SELECT count(ui.id) FROM ICPermission pi, User ui\n"
+						+ "WHERE ui.id = pi.permissionGroup.id\n"
+						+ "AND ui.id = u.id\n"
+						+ "AND pi.contextValue = '"
+								+ AccessController.PERMISSION_KEY_ROLE+"'\n"
+						+ "AND pi.status = '" 
+								+ ICPermission.STATUS_ACTIVE + "'\n"
+						+ "AND pi.permissionString = :roleKeyWithout\n"
+						+ ") = 0"
+						
+		)
 })
 @Cacheable
 public class ICPermission implements Serializable {
@@ -105,6 +140,9 @@ public class ICPermission implements Serializable {
 								COLUMN_PASSIVE_BY = "set_passive_by",
 								COLUMN_STATUS = "status",
 								COLUMN_INHERIT_TO_CHILDREN = "inherit";
+	public static final String QUERY_FIND_USERS_WITH_PERMISSION = "ICPermission.findUsersWithPermission";
+	public static final String QUERY_FIND_USER_IDS_WITH_ROLE_AND_WITHOUT_ROLE = "ICPermission.findUserIDSWithRoleAndWithoutRole";
+
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
