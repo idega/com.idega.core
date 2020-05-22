@@ -100,6 +100,7 @@ import java.util.logging.Logger;
 
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.presentation.ui.handlers.IWDatePickerHandler;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.StringUtil;
@@ -346,6 +347,19 @@ public class DateUtil {
 	public static Timestamp getDateTime(String dateTimeString) {
 		if (!StringUtil.isEmpty(dateTimeString)) {
 			try {
+				Date parsedDate = null;
+				try {
+					parsedDate = IWDatePickerHandler.getParsedDate(dateTimeString);
+				} catch (Exception e) {}
+				if (parsedDate != null) {
+					return new Timestamp(parsedDate.getTime());
+				}
+				
+				Timestamp timestamp = getDateIfMonthIsWord(dateTimeString);
+				if (timestamp != null) {
+					return timestamp;
+				}
+
 				String[] splittedString = dateTimeString.split("T");
 				LocalDate date = DateUtil.getDate(splittedString[0]);
 				LocalTime time = null;
@@ -363,6 +377,17 @@ public class DateUtil {
 		}
 
 		return null;
+	}
+	
+	private static Timestamp getDateIfMonthIsWord(String dateTimeString) {
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("d. MMMM yyyy");
+			LocalDate date = LocalDate.parse(dateTimeString, formatter);
+			Date javaDate = DateUtil.getDate(date);
+			return new Timestamp(javaDate.getTime());
+		} catch (Exception e) {
+			return null;
+		}	
 	}
 
 	/**

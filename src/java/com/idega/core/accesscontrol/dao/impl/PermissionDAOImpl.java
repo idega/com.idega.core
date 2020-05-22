@@ -32,6 +32,7 @@ import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWMainApplicationStartedEvent;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -404,6 +405,34 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Could not remove the role with key " + roleKey  + ". Error message was: " + e.getLocalizedMessage(), e);
 		}
+	}
+	
+	public List<User> findUsersWithRole(String roleKey,int start, int max){
+		return getResultList(
+				ICPermission.QUERY_FIND_USERS_WITH_PERMISSION,
+				User.class,
+				start,
+				max,
+				null,
+				new Param("permissionString", roleKey)
+		);
+	}
+	
+	public List<Integer> findUserIdsWithRoleAndWithoutRole(
+			String roleKeyWith, 
+			String roleKeyWithout, 
+			int start, 
+			int max
+	){
+		return getResultList(
+				ICPermission.QUERY_FIND_USER_IDS_WITH_ROLE_AND_WITHOUT_ROLE,
+				Integer.class,
+				start,
+				max,
+				null,
+				new Param("roleKeyWith", roleKeyWith),
+				new Param("roleKeyWithout", roleKeyWithout)
+		);
 	}
 
 

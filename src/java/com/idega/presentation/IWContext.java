@@ -148,9 +148,13 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 
 	private IWContext(HttpServletRequest request, HttpServletResponse response, ServletContext context, boolean createFacesContext) {
 		if (createFacesContext && getRealFacesContext() == null) {
-			FacesContextInitializer facesContextInitializer = getFacesContextInitializer();
-			FacesContext fc = facesContextInitializer.getInitializedFacesContext(context, request, response);
-			setRealFacesContext(fc);
+			try {
+				FacesContextInitializer facesContextInitializer = getFacesContextInitializer();
+				FacesContext fc = facesContextInitializer.getInitializedFacesContext(context, request, response);
+				setRealFacesContext(fc);
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error initializing " + FacesContext.class.getName(), e);
+			}
 		}
 
 		HttpSession session = null;
@@ -857,7 +861,7 @@ public class IWContext extends FacesContext implements IWUserContext, IWApplicat
 	public void setSessionAttribute(String attributeName, Object attribute) {
 		HttpSession session = getSession();
 		if (session != null) {
-			getSession().setAttribute(attributeName, attribute);
+			session.setAttribute(attributeName, attribute);
 		}
 	}
 

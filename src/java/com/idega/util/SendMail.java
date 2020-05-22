@@ -1,6 +1,7 @@
 package com.idega.util;
 
 import java.io.File;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -274,6 +275,9 @@ public class SendMail {
 		// Construct a message
 		//	Sender
 		if (StringUtil.isEmpty(from)) {
+			from = settings.getProperty(MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS);
+		}
+		if (StringUtil.isEmpty(from)) {
 			throw new MessagingException("From address is null.");
 		}
 		MimeMessage message = new MimeMessage(session);
@@ -320,6 +324,14 @@ public class SendMail {
 				attachment.setDataHandler(attachmentHandler);
 				attachment.setFileName(attachedFile.getName());
 				attachment.setDescription("Attached file: " + attachment.getFileName());
+
+				try {
+					String contentType = Files.probeContentType(attachedFile.toPath());
+					if (!StringUtil.isEmpty(contentType)) {
+						attachment.setHeader("Content-Type", contentType);
+					}
+				} catch (Exception e) {}
+
 				multipart.addBodyPart(attachment);
 			}
 
