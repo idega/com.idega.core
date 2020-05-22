@@ -1391,4 +1391,12 @@ public class StringHandler {
 		return new BufferedInputStream(new ByteArrayInputStream(content.getBytes(CoreConstants.ENCODING_UTF8)));
 	}
 
+	public static final String getNumbersOnly(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return null;
+		}
+
+		return value.replaceAll("\\D+", CoreConstants.EMPTY);
+	}
+
 }
