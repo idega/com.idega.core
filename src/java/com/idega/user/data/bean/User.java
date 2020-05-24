@@ -115,7 +115,13 @@ import com.idega.util.StringUtil;
 					"AND gr.terminationModificationDate IS NOT NULL AND gr.terminationModificationDate >= :dateFrom) " +
 			") " +
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
-	)
+	),
+	@NamedQuery(
+			name = User.QUERY_FIND_ALL_USERS, 
+			query = "select u from User u where u.deleted != 'Y'"),
+	@NamedQuery(
+			name = User.QUERY_COUNT_ALL, 
+			query = "select count(u) from User u where u.deleted != 'Y'"),
 })
 @XmlTransient
 @Cacheable
@@ -161,8 +167,10 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveAtGivenTimeframe",
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_ONLY_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveOnlyAtGivenTimeframe",
 								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndDeletedAtGivenTimeframe",
-								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndBeforeGivenTimeframe";
-
+								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndBeforeGivenTimeframe",
+								QUERY_FIND_ALL_USERS = "user.findAllUsers",
+								QUERY_COUNT_ALL = "user.countAll";
+								
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
 	public static final String PROPERTY_ID = "userID";

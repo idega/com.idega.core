@@ -570,4 +570,14 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 		return user;
 	}
+	
+	@Override
+	public List<User> findUsers(int start,int max){
+		return getResultList(User.QUERY_FIND_ALL_USERS, User.class, start, max, null);
+	}
+	
+	@Override
+	public Long countUsers(){
+		return getSingleResult(User.QUERY_COUNT_ALL, Long.class);
+	}
 }
