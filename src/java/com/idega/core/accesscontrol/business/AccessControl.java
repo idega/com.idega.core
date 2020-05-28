@@ -2185,8 +2185,14 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	@Override
 	@Deprecated
 	public Set<String> getAllRolesForUser(com.idega.user.data.User user) {
+		return getAllRolesForUser(null, user);
+	}
+
+	@Override
+	@Deprecated
+	public Set<String> getAllRolesForUser(IWContext iwc, com.idega.user.data.User user) {
 		User u = getUserDAO().getUser(new Integer(user.getPrimaryKey().toString()));
-		return getAllRolesForUser(u);
+		return getAllRolesForUser(iwc, u);
 	}
 
 	@Override
@@ -2222,7 +2228,23 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 
 	@Override
 	public Set<String> getAllRolesForUser(User user) {
+		return getAllRolesForUser(null, user);
+	}
+
+	@Override
+	public Set<String> getAllRolesForUser(IWContext iwc, User user) {
 		Set<String> s = new HashSet<String>();
+
+		if (iwc != null) {
+			String activeRole = null;
+			try {
+				activeRole = (String) iwc.getSessionAttribute(CoreConstants.ACTIVE_ROLE);
+			} catch (Exception e) {}
+			if (!StringUtil.isEmpty(activeRole)) {
+				s.add(activeRole);
+				return s;
+			}
+		}
 
 		Group userGroup = user.getGroup();
 		Collection<String> userRolesFromGroup = getAllRolesKeysForGroup(userGroup);
