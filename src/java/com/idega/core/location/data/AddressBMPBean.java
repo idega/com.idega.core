@@ -13,6 +13,7 @@ import com.idega.data.EntityAttribute;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOQuery;
 import com.idega.util.CoreConstants;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.text.TextSoap;
 
@@ -21,7 +22,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private static final long serialVersionUID = 4314572105071916583L;
 
 	public static final String SYNCHRONIZATION_KEY = "com.idega.core.location.data.Address";
-	
+
 	public static final String COLUMN_IC_COMMUNE_ID = "IC_COMMUNE_ID";
 	public static final String ENTITY_NAME = "IC_ADDRESS";
 	public static final String STREET_NAME = "STREET_NAME";
@@ -40,7 +41,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	private static AddressType type2; //for caching
 	public static final String STREET_ADDRESS_NOMINATIVE = "street_address_nominative";
 	private boolean synchronizationEnabled = true;
-	
+
 	public AddressBMPBean() {
 		super();
 	}
@@ -366,7 +367,14 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		if (number != null) {
 			addr.append(number);
 		}
-		return TextSoap.capitalize(addr.toString(), CoreConstants.SPACE);
+		String address = TextSoap.capitalize(addr.toString(), CoreConstants.SPACE);
+		if (!StringUtil.isEmpty(number) && !StringHandler.isNumeric(number)) {
+			String numberInLowerCase = number.toLowerCase();
+			if (address.indexOf(numberInLowerCase) != -1) {
+				address = StringHandler.replace(address, numberInLowerCase, number);
+			}
+		}
+		return address;
 	}
 
 	/**
