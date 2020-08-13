@@ -541,4 +541,15 @@ public class ICFileWrapperBean extends TreeableEntityWrapper<ICFile> implements 
 	public void setHash(Integer hash) {
 		throw new UnsupportedOperationException("This method is not yet implemented  in ICFileWrapper");
 	}
+
+	@Override
+	public String getUniqueId() {
+		return ((ICFile) this.getMainEntity()).getFileUri();
+	}
+
+	@Override
+	public void setUniqueId(String uniqueId) {
+		((ICFile) this.getMainEntity()).setUniqueId(uniqueId);
+	}
+
 }
