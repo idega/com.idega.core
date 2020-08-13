@@ -101,6 +101,8 @@ public class CoreConstants {
 	public final static String ARTICLE_FILENAME_SCOPE = "article";
 	public final static String ARTICLE_RESOURCE_PATH_PROPERTY_NAME = "resourcePath";
 
+	public static final String FILE_SERVLET = "/file";
+
 	public static final String IW_USER_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
