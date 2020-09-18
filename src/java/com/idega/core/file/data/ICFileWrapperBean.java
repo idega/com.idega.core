@@ -544,7 +544,7 @@ public class ICFileWrapperBean extends TreeableEntityWrapper<ICFile> implements 
 
 	@Override
 	public String getUniqueId() {
-		return ((ICFile) this.getMainEntity()).getFileUri();
+		return ((ICFile) this.getMainEntity()).getUniqueId();
 	}
 
 	@Override
