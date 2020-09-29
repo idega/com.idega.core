@@ -190,7 +190,9 @@ public class MimeTypeUtil implements Singleton {
 	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
 
 	private static void initializeMimeTypesMap() {
-		if (!MIME_TYPES_MAPPING.isEmpty()) return;
+		if (!MIME_TYPES_MAPPING.isEmpty()) {
+			return;
+		}
 
 		MIME_TYPES_MAPPING.put("doc", MIME_TYPE_WORD);
 		MIME_TYPES_MAPPING.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
@@ -201,6 +203,7 @@ public class MimeTypeUtil implements Singleton {
 		MIME_TYPES_MAPPING.put("css", "text/css");
 		MIME_TYPES_MAPPING.put("js", "text/javascript");
 		MIME_TYPES_MAPPING.put("woff", "application/font-woff");
+		MIME_TYPES_MAPPING.put("pkpass", "application/vnd.apple.pkpass");
 	}
 
 	protected MimeTypeUtil() {
@@ -433,23 +436,26 @@ public class MimeTypeUtil implements Singleton {
 		String fileType = fileName.substring(lastDot + 1).toLowerCase();
 		try {
 			MimeType type = MimeType.valueOf(fileType);
-			if (type != null)
+			if (type != null) {
 				return type.getMimeType();
+			}
 		} catch (Exception e) {}
 
 		initializeMimeTypesMap();
 
 		String mimeType = MIME_TYPES_MAPPING.get(fileType);
-		if (!StringUtil.isEmpty(mimeType))
+		if (!StringUtil.isEmpty(mimeType)) {
 			return mimeType;
+		}
 
 		return null;
 	}
 
 	public static String resolveMimeTypeFromFileName(String fileName) {
 		String mimeType = getMimeType(fileName);
-		if (!StringUtil.isEmpty(mimeType))
+		if (!StringUtil.isEmpty(mimeType)) {
 			return mimeType;
+		}
 
 		return StringUtil.isEmpty(mimeType) ? new MimetypesFileTypeMap().getContentType(fileName) : mimeType;
 	}
