@@ -70,6 +70,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_CSV = "text/csv";
 	public static final String MIME_TYPE_DOCX = "vnd.openxmlformats-officedocument.wordprocessingml.document";
 	public static final String MIME_TYPE_DOTX = "vnd.openxmlformats-officedocument.wordprocessingml.template";
+	public static final String MIME_TYPE_IOS_PASS = "application/vnd.apple.pkpass";
 
 	private String pathToConfigFile;
 	private Properties properties;
@@ -203,7 +204,7 @@ public class MimeTypeUtil implements Singleton {
 		MIME_TYPES_MAPPING.put("css", "text/css");
 		MIME_TYPES_MAPPING.put("js", "text/javascript");
 		MIME_TYPES_MAPPING.put("woff", "application/font-woff");
-		MIME_TYPES_MAPPING.put("pkpass", "application/vnd.apple.pkpass");
+		MIME_TYPES_MAPPING.put("pkpass", MIME_TYPE_IOS_PASS);
 	}
 
 	protected MimeTypeUtil() {
