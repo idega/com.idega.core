@@ -35,7 +35,8 @@ public class CountryBMPBean extends GenericEntity implements Country{
     super(id);
   }
 
-  public void initializeAttributes() {
+  @Override
+public void initializeAttributes() {
     this.addAttribute(this.getIDColumnName());
     this.addAttribute(getColumnNameName(),"Nafn",true,true,String.class,255);
     this.addAttribute(getColumnNameDescription(),"Lýsing",true,true,String.class,500);
@@ -43,7 +44,8 @@ public class CountryBMPBean extends GenericEntity implements Country{
     this.getEntityDefinition().setBeanCachingActiveByDefault(true);
   }
 
-  public String getEntityName() {
+  @Override
+public String getEntityName() {
     return "ic_country";
   }
 
@@ -52,14 +54,15 @@ public class CountryBMPBean extends GenericEntity implements Country{
   public static String getColumnNameIsoAbbreviation(){return "iso_abbreviation";}
 
 
-  public void insertStartData()throws Exception{
+  @Override
+public void insertStartData()throws Exception{
     String[] JavaLocales = java.util.Locale.getISOCountries();
     Country country;
     Locale locale = Locale.ENGLISH;
     Locale l = null;
     String lang = Locale.ENGLISH.getISO3Language();
     for (int i = 0; i < JavaLocales.length; i++) {
-      country = (Country) IDOLookup.create(Country.class);
+      country = IDOLookup.create(Country.class);
       l = new Locale(lang,JavaLocales[i]);
       country.setName(l.getDisplayCountry(locale));
       country.setIsoAbbreviation(JavaLocales[i]);
@@ -68,30 +71,36 @@ public class CountryBMPBean extends GenericEntity implements Country{
   }
 
 
-  public String getName(){
+  @Override
+public String getName(){
     return this.getStringColumnValue(getColumnNameName());
   }
 
-  public String getDescription(){
+  @Override
+public String getDescription(){
     return this.getStringColumnValue(getColumnNameDescription());
   }
 
- public String getIsoAbbreviation(){
+ @Override
+public String getIsoAbbreviation(){
     return this.getStringColumnValue(getColumnNameIsoAbbreviation());
   }
 
 
 
-  public void setName(String Name){
+  @Override
+public void setName(String Name){
     this.setColumn(getColumnNameName(),Name);
   }
 
-  public void setDescription(String Description){
+  @Override
+public void setDescription(String Description){
     this.setColumn(getColumnNameDescription(),Description);
   }
 
 
-  public void setIsoAbbreviation(String IsoAbbreviation){
+  @Override
+public void setIsoAbbreviation(String IsoAbbreviation){
     this.setColumn(getColumnNameIsoAbbreviation(),IsoAbbreviation);
   }
 
@@ -109,7 +118,7 @@ public class CountryBMPBean extends GenericEntity implements Country{
 			throw new FinderException("Country was not found");
 		}
   }
-  
+
  public Integer ejbFindByCountryName(String name)throws FinderException{
     Collection countries = idoFindAllIDsByColumnBySQL(CountryBMPBean.getColumnNameName(),name);
     if(!countries.isEmpty()){
@@ -124,38 +133,43 @@ public class CountryBMPBean extends GenericEntity implements Country{
   		query.appendSelectAllFrom(this).appendOrderBy(getColumnNameName());
 		  return super.idoFindPKsByQuery(query);
   }
-  
+
   public Collection ejbFindAllFromPostalCodes(Collection postalCodes) throws FinderException {
   	Table table = new Table(PostalCode.class);
   	Column postalCol = new Column(table, PostalCodeBMPBean.COLUMN_POSTAL_CODE_ID);
-  	
+
   	SelectQuery query = new SelectQuery(table);
   	query.addColumn(table, PostalCodeBMPBean.COLUMN_COUNTRY_ID, true);
   	if (postalCodes != null && !postalCodes.isEmpty()) {
   		query.addCriteria(new InCriteria(postalCol, postalCodes));
   	}
-  	
-  	return this.idoFindPKsByQuery(query); 
+
+  	return this.idoFindPKsByQuery(query);
   }
 
 	@Override
-	public String getLocalizedName() {
+	public String getLocalizedName(Locale localeToTranslate) {
 		String abbreviation = getIsoAbbreviation();
 		if (!StringUtil.isEmpty(abbreviation)) {
-			Locale locale = LocaleUtil.getLocaleByCountry(abbreviation);
-			if (locale != null) {
-				return locale.getDisplayCountry(locale);
+			Locale countryLocale = LocaleUtil.getLocaleByCountry(abbreviation);
+			if (countryLocale != null) {
+				return countryLocale.getDisplayCountry(localeToTranslate == null ? countryLocale : localeToTranslate);
 			}
 		}
 
 		return getName();
 	}
-	
+
+	@Override
+	public String getLocalizedName() {
+		return getLocalizedName(null);
+	}
+
   	@Override
 	public String getName(Locale locale) {
 		return getName(locale, this.getStringColumnValue(getColumnNameName()));
   	}
-  	
+
 	private String getName(Locale locale, String defaultName) {
 		return LocaleUtil.getLocalizedCountryName(locale, defaultName, getIsoAbbreviation());
 	}

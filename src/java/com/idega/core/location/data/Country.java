@@ -14,7 +14,7 @@ public interface Country extends IDOEntity {
 	 * @see com.idega.core.location.data.CountryBMPBean#getName
 	 */
 	public String getName();
-	
+
 	public String getName(Locale locale);
 
 	/**
@@ -43,4 +43,6 @@ public interface Country extends IDOEntity {
 	public void setIsoAbbreviation(String IsoAbbreviation);
 
 	public String getLocalizedName();
+	public String getLocalizedName(Locale locale);
+
 }
