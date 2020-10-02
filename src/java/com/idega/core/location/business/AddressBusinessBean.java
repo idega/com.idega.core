@@ -435,6 +435,13 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		}
 		address.setCountry(country);
 		address.setPostalCode(postal);
+		if (postal != null && commune == null) {
+			if (StringUtil.isEmpty(address.getCity())) {
+				address.setCity(postal.getName());
+			}
+
+			commune = postal.getCommune();
+		}
 		address.setCommune(commune);
 		// and store
 		address.store();
