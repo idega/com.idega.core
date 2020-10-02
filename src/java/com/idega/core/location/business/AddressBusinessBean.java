@@ -407,6 +407,15 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 		// Set what we have and erase what we don't have
 		if (streetName != null) {
 			address.setStreetName(streetName);
+
+			//	Nominative address
+			if (
+					StringUtil.isEmpty(address.getStreetAddressNominative()) &&
+					!StringUtil.isEmpty(streetName) &&
+					!StringUtil.isEmpty(streetNumber)
+			) {
+				address.setStreetAddressNominative(streetName.concat(CoreConstants.SPACE).concat(streetNumber));
+			}
 		}
 		else {
 			// no nasty nullpointer there please..
