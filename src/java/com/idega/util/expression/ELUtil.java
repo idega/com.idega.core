@@ -65,6 +65,7 @@ public class ELUtil implements ApplicationContextAware {
 	}
 
 	public <T>T getBean(String expression) throws BeanCreationException {
+		String originalExpression = expression;
 		if (expression.contains(CoreConstants.DOT)) {
 			FacesContext fctx = FacesContext.getCurrentInstance();
 			if (fctx != null) {
@@ -86,7 +87,11 @@ public class ELUtil implements ApplicationContextAware {
 		}
 
 		expression = cleanupExp(expression);
-
+		if (StringUtil.isEmpty(expression) || "''".equals(expression.trim())) {
+			LOGGER.info("Will use original expression '" + originalExpression + "' because cleaned expression '" + expression + "' is invalid");
+			expression = originalExpression;
+		}
+		
 		ApplicationContext ac = getApplicationContext();
 		@SuppressWarnings("unchecked")
 		T val = (T) ac.getBean(expression);
