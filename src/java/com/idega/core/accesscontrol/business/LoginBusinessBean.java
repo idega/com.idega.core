@@ -1104,7 +1104,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	public static List<Group> getPermissionGroups(IWUserContext iwc) {
+	public static List<com.idega.user.data.Group> getPermissionGroups(IWUserContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getPermissionGroups();
 	}
 
@@ -1120,7 +1120,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginBusinessBean.getLoginSessionBean().setUser(user);
 	}
 
-	protected static void setPermissionGroups(IWUserContext iwc, List<Group> value) throws RemoteException {
+	protected static void setPermissionGroups(IWUserContext iwc, List<com.idega.user.data.Group> value) throws RemoteException {
 		LoginBusinessBean.getLoginSessionBean().setPermissionGroups(value);
 	}
 
@@ -1216,7 +1216,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	}
 
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
-		List<Group> groups = null;
+		List<com.idega.user.data.Group> groups = null;
 		LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
 		if (isUsingOldUserSystem()) {
 			// Old user system
@@ -1235,15 +1235,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			com.idega.user.data.User newUser = userbusiness.getUser(user.getId());
 			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
 			if (userGroups != null) {
-				List<Integer> ids = new ArrayList<>();
-				try {
-					for (com.idega.user.data.Group group: userGroups) {
-						ids.add((Integer) group.getPrimaryKey());
-					}
-					groups = getGroupDAO().findGroups(ids);
-				} catch (Exception e) {
-					Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to load groups by IDs: " + ids);
-				}
+				groups = new ArrayList<>(userGroups);
 
 			// New user system end
 			}
@@ -1516,7 +1508,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> loggedOnMap = (Map<String, Object>) sc.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
 		if (loggedOnMap == null) {
-			loggedOnMap = new TreeMap<String, Object>();
+			loggedOnMap = new TreeMap<>();
 			sc.setAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnMap);
 		}
 		return loggedOnMap;

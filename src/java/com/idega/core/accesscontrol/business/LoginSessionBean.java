@@ -50,7 +50,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	private IWApplicationContext iwac;
 	private SessionHelper sessionHelper = new SessionHelper();
-	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
+	private Stack<SessionHelper> reservedSessionHelpers = new Stack<>();
 	private Locale currentLocale;
 	private com.idega.user.data.User legacyUser;
 	private User emulatedUser;
@@ -68,7 +68,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	@Override
 	public void reset() {
 		sessionHelper = new SessionHelper();
-		reservedSessionHelpers = new Stack<SessionHelper>();
+		reservedSessionHelpers = new Stack<>();
 		legacyUser = null;
 	}
 
@@ -76,7 +76,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @return Returns the permissionGroups.
 	 */
 	@Override
-	public List<Group> getPermissionGroups() {
+	public List<com.idega.user.data.Group> getPermissionGroups() {
 		return this.sessionHelper.permissionGroups;
 	}
 
@@ -85,7 +85,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 *          The permissionGroups to set.
 	 */
 	@Override
-	public void setPermissionGroups(List<Group> permissionGroups) {
+	public void setPermissionGroups(List<com.idega.user.data.Group> permissionGroups) {
 		this.sessionHelper.permissionGroups = permissionGroups;
 	}
 
@@ -242,7 +242,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	@Override
 	public Object getLoginAttribute(String key) {
 		if (this.sessionHelper.mapOfExtraAttributes == null) {
-			this.sessionHelper.mapOfExtraAttributes = new Hashtable<String, Object>();
+			this.sessionHelper.mapOfExtraAttributes = new Hashtable<>();
 		}
 		return this.sessionHelper.mapOfExtraAttributes.get(key);
 	}
@@ -302,14 +302,14 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		private static final long serialVersionUID = 8659431184858479401L;
 
 		protected User user = null;
-		protected List<Group> permissionGroups = null;
+		protected List<com.idega.user.data.Group> permissionGroups = null;
 		protected Group primaryGroup = null;
 		protected UserGroupRepresentative repGroup = null;
 		protected LoggedOnInfo loggedOnInfo = null;
 		protected LoginState loginState = LoginState.NO_STATE;
 		protected String userLoginName = null;
 		protected UserProperties userProperties = null;
-		protected Map<String, Object> mapOfExtraAttributes = new Hashtable<String, Object>();
+		protected Map<String, Object> mapOfExtraAttributes = new Hashtable<>();
 		protected User reserveUser = null;
 	}
 

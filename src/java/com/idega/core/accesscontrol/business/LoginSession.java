@@ -29,12 +29,12 @@ public interface LoginSession {
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPermissionGroups
      */
-    public List<Group> getPermissionGroups();
+    public List<com.idega.user.data.Group> getPermissionGroups();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setPermissionGroups
      */
-    public void setPermissionGroups(List<Group> permissionGroups);
+    public void setPermissionGroups(List<com.idega.user.data.Group> permissionGroups);
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPrimaryGroup
@@ -147,8 +147,8 @@ public interface LoginSession {
     public Locale getCurrentLocale();
 
     public abstract boolean isLoggedIn();
-    
+
     public User getRealUser();
-    
+
     public void resetLegacyUser();
 }
