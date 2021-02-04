@@ -117,10 +117,10 @@ import com.idega.util.StringUtil;
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	),
 	@NamedQuery(
-			name = User.QUERY_FIND_ALL_USERS, 
+			name = User.QUERY_FIND_ALL_USERS,
 			query = "select u from User u where u.deleted != 'Y'"),
 	@NamedQuery(
-			name = User.QUERY_COUNT_ALL, 
+			name = User.QUERY_COUNT_ALL,
 			query = "select count(u) from User u where u.deleted != 'Y'"),
 })
 @XmlTransient
@@ -170,10 +170,11 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndBeforeGivenTimeframe",
 								QUERY_FIND_ALL_USERS = "user.findAllUsers",
 								QUERY_COUNT_ALL = "user.countAll";
-								
+
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 
 	public static final String PROPERTY_ID = "userID";
+
 	@Id
 	@Column(name = User.COLUMN_USER_ID)
 	private Integer userID;
@@ -219,8 +220,11 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	private ICFile systemImage;
 
 	@ManyToOne(fetch = FetchType.LAZY)
-	@JoinColumn(name = COLUMN_PRIMARY_GROUP)
+	@JoinColumn(name = COLUMN_PRIMARY_GROUP, referencedColumnName = Group.COLUMN_GROUP_ID, insertable = false, updatable = false)
 	private Group primaryGroup;
+
+	@Column(name = COLUMN_PRIMARY_GROUP, nullable = false)
+	private Integer primaryGroupId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_HOME_PAGE)
@@ -286,7 +290,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	private Group userRepresentative;
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "pk.user")
-    private List<TopNodeGroup> topNodeGroups = new ArrayList<TopNodeGroup>();
+    private List<TopNodeGroup> topNodeGroups = new ArrayList<>();
 
     @Column(name = com.idega.user.data.User.FIELD_SHA1, length = 40)
     private String sha1;
@@ -461,6 +465,10 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return this.primaryGroup;
 	}
 
+	public Integer getPrimaryGroupId() {
+		return primaryGroupId;
+	}
+
 	public void setPrimaryGroup(Group primaryGroup) {
 		this.primaryGroup = primaryGroup;
 	}
@@ -589,6 +597,10 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return this.userRepresentative;
 	}
 
+	public Integer getUserRepresentativeId() {
+		return getId();
+	}
+
 	private <T> T getInitialized(T notInitialized) {
 		T initialized = DBUtil.getInstance().lazyLoad(notInitialized);
 		return initialized;
@@ -625,7 +637,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Override
 	public Map<String, String> getMetaDataAttributes() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -637,7 +649,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	@Override
 	public Map<String, String> getMetaDataTypes() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
