@@ -528,7 +528,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				groups = ListUtil.isEmpty(ids) ? Collections.emptyList() : getGroupHome().findGroups(new ArrayList<>(ids));
 			}
 
-			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
+			com.idega.user.data.Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
 			if (groups != null && !groups.isEmpty()) {
 				String primaryGroupId = null;
@@ -722,7 +722,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 				groups = ListUtil.isEmpty(ids) ? Collections.emptyList() : getGroupHome().findGroups(new ArrayList<>(ids));
 			}
 
-			Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
+			com.idega.user.data.Group primaryGroup = LoginBusinessBean.getPrimaryGroup(iwuc);
 
 			if (!ListUtil.isEmpty(groups)) {
 				String primaryGroupId = null;
@@ -3299,7 +3299,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 		 * @param pageUri the URI for a page request e.g. '/pages/1234'
 		 */
 	  @Override
-	public boolean hasViewPermissionForPageURI(String pageUri,HttpServletRequest request){
+	public boolean hasViewPermissionForPageURI(String pageUri, HttpServletRequest request) {
 
 	  	HttpSession session = request.getSession();
 	  	ServletContext sc = session.getServletContext();
@@ -3315,7 +3315,7 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 	  			return hasViewPermissionForPageKey(pageKey,iwuc);
 	  		}
 	  		else{
-	  			//getLogger().warning("No pageKey found for : "+pageUri);
+	  			getLogger().warning("No pageKey found for : " + pageUri);
 	  			return false;
 	  		}
 		}

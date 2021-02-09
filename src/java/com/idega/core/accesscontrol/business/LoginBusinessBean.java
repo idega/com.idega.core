@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.bean.UserHasLoggedInEvent;
 import com.idega.core.accesscontrol.bean.UserHasLoggedOutEvent;
@@ -60,10 +61,10 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserProperties;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
-import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.ArrayUtil;
@@ -1112,7 +1113,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return LoginBusinessBean.getLoginSessionBean().getRepresentativeGroup();
 	}
 
-	public static Group getPrimaryGroup(IWUserContext iwc) {
+	public static com.idega.user.data.Group getPrimaryGroup(IWUserContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getPrimaryGroup();
 	}
 
@@ -1128,7 +1129,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginBusinessBean.getLoginSessionBean().setRepresentativeGroup(value);
 	}
 
-	protected static void setPrimaryGroup(IWUserContext iwc, Group value) throws RemoteException {
+	protected static void setPrimaryGroup(IWUserContext iwc, com.idega.user.data.Group value) throws RemoteException {
 		LoginBusinessBean.getLoginSessionBean().setPrimaryGroup(value);
 	}
 
@@ -1218,6 +1219,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
 		List<com.idega.user.data.Group> groups = null;
 		LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
+		IWApplicationContext iwac = null;
 		if (isUsingOldUserSystem()) {
 			// Old user system
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
@@ -1230,7 +1232,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 			// LoginBusinessBean.setUser(iwc, user);
 			lSession.setUser(user);
-			IWApplicationContext iwac = getIWApplicationContext(null, session);
+			iwac = getIWApplicationContext(null, session);
 			com.idega.user.business.UserBusiness userbusiness = getUserBusiness(iwac);
 			com.idega.user.data.User newUser = userbusiness.getUser(user.getId());
 			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
@@ -1245,8 +1247,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		lSession.setRepresentativeGroup(user.getGroup());
 
-		Group primaryGroup = user.getPrimaryGroup();
-		if (primaryGroup != null) {
+		Integer primaryGroupId = user.getPrimaryGroupId();
+		if (primaryGroupId != null) {
+			iwac = iwac == null ? getIWApplicationContext(null, session) : iwac;
+			com.idega.user.data.Group primaryGroup = getGroupBusiness(iwac).getGroupByGroupID(primaryGroupId);
 			lSession.setPrimaryGroup(primaryGroup);
 		}
 
@@ -2169,11 +2173,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return Boolean.FALSE;
 	}
 
-	private GroupDAO getGroupDAO() {
-		if (groupDAO == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-		return groupDAO;
+	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws IBOLookupException {
+		return IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext() : iwac, GroupBusiness.class);
 	}
 
 	private UserDAO getUserDAO() {
@@ -2280,7 +2281,5 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		return LoginState.FAILED;
 	}
-
-
 
 }

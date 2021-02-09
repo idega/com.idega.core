@@ -29,7 +29,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserProperties;
 import com.idega.user.business.UserSession;
 import com.idega.user.dao.UserDAO;
-import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreUtil;
@@ -93,7 +92,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @return Returns the primaryGroup.
 	 */
 	@Override
-	public Group getPrimaryGroup() {
+	public com.idega.user.data.Group getPrimaryGroup() {
 		return this.sessionHelper.primaryGroup;
 	}
 
@@ -102,7 +101,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 *          The primaryGroup to set.
 	 */
 	@Override
-	public void setPrimaryGroup(Group primaryGroup) {
+	public void setPrimaryGroup(com.idega.user.data.Group primaryGroup) {
 		this.sessionHelper.primaryGroup = primaryGroup;
 	}
 
@@ -303,7 +302,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 		protected User user = null;
 		protected List<com.idega.user.data.Group> permissionGroups = null;
-		protected Group primaryGroup = null;
+		protected com.idega.user.data.Group primaryGroup = null;
 		protected UserGroupRepresentative repGroup = null;
 		protected LoggedOnInfo loggedOnInfo = null;
 		protected LoginState loginState = LoginState.NO_STATE;
