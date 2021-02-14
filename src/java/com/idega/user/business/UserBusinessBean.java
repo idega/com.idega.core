@@ -1617,6 +1617,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public User getUser(String personalID) throws FinderException {
+		if (StringUtil.isEmpty(personalID) || "null".equalsIgnoreCase(personalID)) {
+			return null;
+		}
+
 		return getUserHome().findByPersonalID(personalID);
 	}
 
