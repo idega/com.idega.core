@@ -471,6 +471,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public void setPrimaryGroup(Group primaryGroup) {
 		this.primaryGroup = primaryGroup;
+		if (primaryGroup != null) {
+			this.primaryGroupId = primaryGroup.getID();
+		}
 	}
 
 	public ICPage getHomePage() {
