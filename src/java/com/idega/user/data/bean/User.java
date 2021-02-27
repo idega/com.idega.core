@@ -223,7 +223,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	@JoinColumn(name = COLUMN_PRIMARY_GROUP, referencedColumnName = Group.COLUMN_GROUP_ID, insertable = false, updatable = false)
 	private Group primaryGroup;
 
-	@Column(name = COLUMN_PRIMARY_GROUP, nullable = false)
+	@Column(name = COLUMN_PRIMARY_GROUP, nullable = true)
 	private Integer primaryGroupId;
 
 	@ManyToOne(fetch = FetchType.LAZY)
