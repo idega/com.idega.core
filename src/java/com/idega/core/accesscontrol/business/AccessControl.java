@@ -76,6 +76,7 @@ import com.idega.user.data.bean.GroupRelation;
 import com.idega.user.data.bean.GroupRelationType;
 import com.idega.user.data.bean.GroupType;
 import com.idega.user.data.bean.User;
+import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
@@ -2601,6 +2602,11 @@ public class AccessControl extends IWServiceImpl implements AccessController {
 					}
 
 					group = dbUtil.lazyLoad(group);
+					if (group instanceof UserGroupRepresentative) {
+						usersIds.add(group.getID());
+						continue;
+					}
+
 					Collection<com.idega.user.data.User> users = userBusiness.getUsersInGroup(group.getID());
 					if (ListUtil.isEmpty(users)) {
 						continue;
