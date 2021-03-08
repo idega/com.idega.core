@@ -126,11 +126,6 @@ import com.idega.util.StringUtil;
 	@NamedQuery(
 			name = User.QUERY_FIND_ACTIVE_OR_PASSIVE_BY_GROUPS_IDS,
 			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id IN (:groupsIds) " +
-			" AND (" +
-				"((gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_ACTIVE_PENDING + "') " + "AND gr.initiationDate IS NOT NULL) " +
-				"OR ((gr.status = '" + GroupRelation.STATUS_PASSIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
-				"AND gr.initiationDate IS NOT NULL AND gr.terminationModificationDate IS NOT NULL) " +
-			") " +
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	),
 	@NamedQuery(
