@@ -117,6 +117,13 @@ import com.idega.util.StringUtil;
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	),
 	@NamedQuery(
+			name = User.QUERY_FIND_BY_GROUPS_IDS_DELETED,
+			query = "SELECT DISTINCT user FROM User AS user, GroupRelation AS gr WHERE gr.group.id in (:groupsIds) AND (" +
+				"gr.status IN ('" + GroupRelation.STATUS_ACTIVE_PENDING + "', '" + GroupRelation.STATUS_PASSIVE + "', '" + GroupRelation.STATUS_PASSIVE_PENDING + "') " +
+			") " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
 			name = User.QUERY_FIND_ALL_USERS,
 			query = "select u from User u where u.deleted != 'Y'"),
 	@NamedQuery(
@@ -168,6 +175,7 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_ONLY_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndActiveOnlyAtGivenTimeframe",
 								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndDeletedAtGivenTimeframe",
 								QUERY_FIND_BY_GROUPS_IDS_AND_ACTIVE_BEFORE_GIVEN_TIMEFRAME = "user.findByGroupsIdsAndBeforeGivenTimeframe",
+								QUERY_FIND_BY_GROUPS_IDS_DELETED = "user.findByGroupsIdsAndDeleted",
 								QUERY_FIND_ALL_USERS = "user.findAllUsers",
 								QUERY_COUNT_ALL = "user.countAll";
 
