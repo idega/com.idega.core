@@ -130,6 +130,11 @@ import com.idega.util.StringUtil;
 			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	),
 	@NamedQuery(
+			name = User.QUERY_FIND_ALL_USER_IDS_BY_GROUPS_IDS,
+			query = "SELECT DISTINCT user.userID FROM User AS user, GroupRelation AS gr WHERE gr.group.id IN (:groupsIds) " +
+			"AND user.id = gr.relatedGroup.id AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
 			name = User.QUERY_FIND_ALL_USERS,
 			query = "select u from User u where u.deleted != 'Y'"),
 	@NamedQuery(
@@ -184,7 +189,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_BY_GROUPS_IDS_DELETED = "user.findByGroupsIdsAndDeleted",
 								QUERY_FIND_ACTIVE_OR_PASSIVE_BY_GROUPS_IDS = "user.findActiveOrPassiveByGroupIds",
 								QUERY_FIND_ALL_USERS = "user.findAllUsers",
-								QUERY_COUNT_ALL = "user.countAll";
+								QUERY_COUNT_ALL = "user.countAll",
+								QUERY_FIND_ALL_USER_IDS_BY_GROUPS_IDS = "user.findAllUserIdsByGroupIds";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 

@@ -523,7 +523,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			getLogger().log(Level.WARNING, "Could not update group relations with a new termination date: " + newDate, e);
 		}
 	}
-	
+
 	@Override
 	@Transactional(readOnly = false)
 	public void fixInvalidRelations() {
@@ -535,11 +535,11 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			return;
 		}
 		GroupRelationType relationType = find(
-				GroupRelationType.class, 
+				GroupRelationType.class,
 				GroupRelation.RELATION_TYPE_GROUP_PARENT
 		);
 		GroupType relatedGroupType = find(
-				GroupType.class, 
+				GroupType.class,
 				GroupTypeBMPBean.TYPE_PERMISSION_GROUP
 		);
 		for(GroupRelation relation : invalidRelations) {
@@ -549,7 +549,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			merge(relation);
 		}
 	}
-	
+
 	@Override
 	public List<GroupRelation> findParentGroupRelationsForGroup(Integer id) {
 		return getResultList(
@@ -571,7 +571,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	@Override
 	@Transactional
 	public void removeParentGroupsForGroup(
-			Integer group, 
+			Integer group,
 			List<Integer> parents,
 			User byUser
 	) {
@@ -585,14 +585,14 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			return;
 		}
 		Date time = new Date();
-//		TODO: possible to do with one query and then publish events possibly 
+//		TODO: possible to do with one query and then publish events possibly
 //		in separate thread
 		for(GroupRelation relation : parentRelations) {
 			setRemoved(relation, byUser, time);
 			merge(relation);
 		}
 	}
-	
+
 	private void setRemoved(GroupRelation relation,User byUser,Date time) {
 		relation.setStatus(GroupRelation.STATUS_PASSIVE);
 		relation.setPassiveBy(byUser);
@@ -602,14 +602,14 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	@Override
 	@Transactional
 	public void storeGroupAsChildForGroups(
-			Group group, 
-			List<Group> parents, 
+			Group group,
+			List<Group> parents,
 			User byUser
 	) {
 		Date time = new Date();
 		GroupType type = group.getGroupType();
 		GroupRelationType relationType = find(
-				GroupRelationType.class, 
+				GroupRelationType.class,
 				GroupRelation.RELATION_TYPE_GROUP_PARENT
 		);
 		for(Group parent : parents) {
@@ -623,5 +623,25 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			persist(relation);
 		}
 	}
-	
+
+	@Override
+	public List<GroupRelation> getByGroupIdsAndRelatedGroupIds(List<Integer> groupIds, List<Integer> relatedGroupIds) {
+		if (ListUtil.isEmpty(groupIds) || ListUtil.isEmpty(relatedGroupIds)) {
+			getLogger().log(Level.WARNING, "Group ids or date from, or date to are empty.");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS,
+					GroupRelation.class,
+					new Param("groupsIds", groupIds),
+					new Param("relatedGroupsIds", relatedGroupIds)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations by group ids (" + groupIds + ") and related group ids ( " + relatedGroupIds + " )" , e);
+		}
+		return null;
+	}
+
 }

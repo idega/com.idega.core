@@ -58,19 +58,20 @@ public interface GroupRelationDAO extends GenericDao {
 	public List<GroupRelation> getTerminatedGroupRelationsByGroupIdsAndPeriod(List<Integer> groupIds, Date dateFrom, Date dateTo);
 
 	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate);
-	
+
 	public void fixInvalidRelations();
 	public List<GroupRelation> findParentGroupRelationsForGroup(Integer id);
 	public List<Group> findParentGroupsForGroup(Integer id);
 	public void removeParentGroupsForGroup(
-			Integer group, 
+			Integer group,
 			List<Integer> parents,
 			User byUser
 	);
 	public void storeGroupAsChildForGroups(
-			Group group, 
+			Group group,
 			List<Group> parents,
 			User byUser
 	);
-	
+
+	public List<GroupRelation> getByGroupIdsAndRelatedGroupIds(List<Integer> groupIds, List<Integer> relatedGroupIds);
 }

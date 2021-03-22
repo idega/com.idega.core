@@ -126,7 +126,7 @@ import com.idega.util.expression.ELUtil;
 					+ "FROM GroupRelation gr "
 					+ "WHERE gr.relatedGroup.id = :group "
 					+ "AND " + GroupRelation.PART_PARENT
-					+ "AND " + GroupRelation.PART_ACTIVE 
+					+ "AND " + GroupRelation.PART_ACTIVE
 					+ "AND gr.group.id IN (:parents)"
 	),
 	@NamedQuery(
@@ -136,8 +136,13 @@ import com.idega.util.expression.ELUtil;
 					+ "WHERE gr.relatedGroup.id = :id "
 					+ "AND " + GroupRelation.PART_PARENT
 					+ "AND " + GroupRelation.PART_ACTIVE
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS,
+			query = "SELECT gr FROM GroupRelation gr WHERE gr.group.id in (:groupsIds) AND gr.relatedGroup.id in (:relatedGroupsIds) " +
+			" AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
 	)
-	
+
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
@@ -164,12 +169,13 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 			QUERY_FIND_INVALID_RELATIONS = "groupRelation.findInvalidRelations",
 			QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP = "groupRelation.findParentGroupRelationsForGroup",
 			QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP_BY_PARENT_GROUPS = "groupRelation.findParentGroupRelationsForGroupByParentGroups",
-			QUERY_FIND_PARENT_GROUPS_FOR_GROUP = "groupRelation.findParentGroupsForGroup";
+			QUERY_FIND_PARENT_GROUPS_FOR_GROUP = "groupRelation.findParentGroupsForGroup",
+			QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS = "groupRelation.findByGroupsIdsAndRelatedGroupsIds";
 
-	public static final String PART_ACTIVE = " (gr.status = '" 
-			+ GroupRelation.STATUS_ACTIVE 
-			+ "' OR gr.status = '" 
-			+ GroupRelation.STATUS_PASSIVE_PENDING 
+	public static final String PART_ACTIVE = " (gr.status = '"
+			+ GroupRelation.STATUS_ACTIVE
+			+ "' OR gr.status = '"
+			+ GroupRelation.STATUS_PASSIVE_PENDING
 			+ "') ";
 	public static final String PART_PARENT = " (gr.groupRelationType.type='"
 			+ GroupRelation.RELATION_TYPE_GROUP_PARENT
