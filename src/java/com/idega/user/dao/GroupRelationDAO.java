@@ -74,4 +74,8 @@ public interface GroupRelationDAO extends GenericDao {
 	);
 
 	public List<GroupRelation> getByGroupIdsAndRelatedGroupIds(List<Integer> groupIds, List<Integer> relatedGroupIds);
+
+	public List<GroupRelation> getPassiveGroupByParentGroupIdsAndGroupTypes(List<Integer> groupIds, List<String> groupTypes);
+
+	public void activateTerminatedRelation(GroupRelation groupRelation);
 }

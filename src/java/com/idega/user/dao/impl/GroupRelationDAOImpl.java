@@ -627,7 +627,7 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 	@Override
 	public List<GroupRelation> getByGroupIdsAndRelatedGroupIds(List<Integer> groupIds, List<Integer> relatedGroupIds) {
 		if (ListUtil.isEmpty(groupIds) || ListUtil.isEmpty(relatedGroupIds)) {
-			getLogger().log(Level.WARNING, "Group ids or date from, or date to are empty.");
+			getLogger().log(Level.WARNING, "Group ids or related group ids are empty.");
 			return null;
 		}
 
@@ -643,5 +643,38 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 		}
 		return null;
 	}
+
+	@Override
+	public List<GroupRelation> getPassiveGroupByParentGroupIdsAndGroupTypes(List<Integer> groupIds, List<String> groupTypes) {
+		if (ListUtil.isEmpty(groupIds) || ListUtil.isEmpty(groupTypes)) {
+			getLogger().log(Level.WARNING, "Group ids or group types are empty.");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					GroupRelation.QUERY_FIND_PASSIVE_GROUPS_BY_PARENT_GROUPS_AND_TYPES,
+					GroupRelation.class,
+					new Param(GroupRelation.PARAM_GROUP_IDS, groupIds),
+					new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations by group ids (" + groupIds + ") and group types ( " + groupTypes + " )" , e);
+		}
+		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void activateTerminatedRelation(GroupRelation groupRelation) {
+		if (groupRelation != null) {
+			groupRelation.setStatus(GroupRelation.STATUS_ACTIVE);
+			groupRelation.setPassiveBy(null);
+			groupRelation.setTerminationDate(null);
+			groupRelation.setTerminationModificationDate(null);
+			merge(groupRelation);
+		}
+	}
+
 
 }

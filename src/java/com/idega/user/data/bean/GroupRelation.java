@@ -141,6 +141,13 @@ import com.idega.util.expression.ELUtil;
 			name = GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS,
 			query = "SELECT gr FROM GroupRelation gr WHERE gr.group.id in (:groupsIds) AND gr.relatedGroup.id in (:relatedGroupsIds) " +
 			" AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_PASSIVE_GROUPS_BY_PARENT_GROUPS_AND_TYPES,
+			query = "SELECT gr FROM GroupRelation gr WHERE gr.group.id IN (:" + GroupRelation.PARAM_GROUP_IDS + ") "
+					+ " AND gr.relatedGroupType.groupType in (:" + GroupRelation.PARAM_GROUP_TYPES + ")"
+					+ " AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) "
+					+ " AND (gr.status = '" + GroupRelation.STATUS_PASSIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
 	)
 
 })
@@ -170,7 +177,8 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 			QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP = "groupRelation.findParentGroupRelationsForGroup",
 			QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP_BY_PARENT_GROUPS = "groupRelation.findParentGroupRelationsForGroupByParentGroups",
 			QUERY_FIND_PARENT_GROUPS_FOR_GROUP = "groupRelation.findParentGroupsForGroup",
-			QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS = "groupRelation.findByGroupsIdsAndRelatedGroupsIds";
+			QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS = "groupRelation.findByGroupsIdsAndRelatedGroupsIds",
+			QUERY_FIND_PASSIVE_GROUPS_BY_PARENT_GROUPS_AND_TYPES = "groupRelation.findPassiveGroupsByParentGroupsAndTypes";
 
 	public static final String PART_ACTIVE = " (gr.status = '"
 			+ GroupRelation.STATUS_ACTIVE
@@ -192,6 +200,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public static final String PARAM_INITIATION_DATE = "initiationDate";
 	public static final String PARAM_INITIATION_DATE_START = "initiationDateStart";
 	public static final String PARAM_INITIATION_DATE_END = "initiationDateEnd";
+	public static final String PARAM_GROUP_IDS = "groupIds";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";
@@ -563,4 +572,10 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public void updateMetaData() throws SQLException {
 		//Does nothing...
 	}
+
+	public void setTerminationModificationDate(Date terminationModificationDate) {
+		this.terminationModificationDate = terminationModificationDate;
+	}
+
+
 }
