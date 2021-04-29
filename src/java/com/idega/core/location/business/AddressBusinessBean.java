@@ -140,7 +140,10 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 	public PostalCode getPostalCodeAndCreateIfDoesNotExist(String postCode, String name, Country country) throws CreateException {
 		PostalCode code;
 		try {
-			code = getPostalCodeHome().findByPostalCodeAndCountryId(postCode, ((Integer) country.getPrimaryKey()).intValue());
+			PostalCodeHome postalCodeHome = getPostalCodeHome();
+			code = country == null ?
+					postalCodeHome.findByPostalCode(postCode) :
+					postalCodeHome.findByPostalCodeAndCountryId(postCode, ((Integer) country.getPrimaryKey()).intValue());
 		}
 		catch (FinderException ex) {
 			code = getPostalCodeHome().create();
@@ -398,7 +401,7 @@ public class AddressBusinessBean extends IBOServiceBean implements AddressBusine
 			// get commune by code or name
 			commune = getCommuneAndCreateIfDoesNotExist(communeName, communeCode);
 		}
-		if (!NOT_AVAILABLE.equals(postalCodeAndPostalAddress) && country != null) {
+		if (!NOT_AVAILABLE.equals(postalCodeAndPostalAddress)) {
 			postalCode = postalCodeAndPostalAddress.substring(0, postalCodeAndPostalAddress.indexOf(" "));
 			postalName = postalCodeAndPostalAddress.substring(postalCodeAndPostalAddress.indexOf(" ") + 1);
 			postal = getPostalCodeAndCreateIfDoesNotExist(postalCode, postalName, country);
