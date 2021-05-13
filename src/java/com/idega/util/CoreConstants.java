@@ -123,6 +123,7 @@ public class CoreConstants {
 	public static final String PDF_ICON_LINK =  "idegaweb/bundles/org.jboss.jbpm.bundle/resources/images/pdf.gif";
 
 	public static final String UNDEFINED_VALUE = "-1";
+	public static final String UNDEFINED = "undefined";
 
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;
