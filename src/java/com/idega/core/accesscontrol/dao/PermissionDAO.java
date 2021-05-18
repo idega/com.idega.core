@@ -16,6 +16,7 @@ import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.PermissionGroup;
 import com.idega.core.persistence.GenericDao;
 import com.idega.user.data.bean.Group;
+import com.idega.user.data.bean.User;
 
 @SpringBeanName("permissionDAO")
 public interface PermissionDAO extends GenericDao {
@@ -31,9 +32,13 @@ public interface PermissionDAO extends GenericDao {
 	public ICPermission createPermission(String contextType, String contextValue, Group group, String permissionString, boolean permissionValue);
 
 	@Transactional(readOnly = false)
+	public ICPermission createPermission(String contextType, String contextValue, Integer groupId, String permissionString, boolean permissionValue);
+
+	@Transactional(readOnly = false)
 	public void removePermissions(String contextType, String contextValue, String permissionString, Collection<Group> groups);
 
 	public ICPermission findPermission(String contextType, String contextValue, String permissionString, Group group);
+	public ICPermission findPermission(String contextType, String contextValue, String permissionString, Integer groupId);
 
 	public List<ICPermission> findPermissions(String contextType);
 	public List<ICPermission> findPermissions(String contextType, String contextValue);
@@ -72,4 +77,11 @@ public interface PermissionDAO extends GenericDao {
 	List<ICPermission> findAll(String contextType, Collection<Integer> primaryKeys);
 
 	public void removeRole(String roleKey);
+	public List<User> findUsersWithRole(String roleKey,int start, int max);
+	public List<Integer> findUserIdsWithRoleAndWithoutRole(
+			String roleKeyWith, 
+			String roleKeyWithout, 
+			int start, 
+			int max
+	);
 }

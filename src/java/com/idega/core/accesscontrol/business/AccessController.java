@@ -27,6 +27,7 @@ import com.idega.core.component.data.bean.ICObject;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWUserContext;
+import com.idega.presentation.IWContext;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
@@ -211,6 +212,7 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public String getRoleIdentifier();
   public Set<String> getAllRolesForCurrentUser(IWUserContext iwc);
   public Set<String> getAllRolesForUser(User user);
+  public Set<String> getAllRolesForUser(IWContext iwc, User user);
   public Collection<Group> getAllUserGroupsForRoleKey(String roleKey, IWUserContext iwuc, User user);
   public Collection<String> getAllRolesKeysForGroup(Group group);
 
@@ -241,6 +243,7 @@ public interface AccessController extends com.idega.idegaweb.IWService {
   public Collection<com.idega.core.accesscontrol.data.ICPermission> getAllRolesWithRolePermissionsForGroup(com.idega.user.data.Group group);
   public boolean hasRole(com.idega.user.data.User user, String roleKey);
   public Set<String> getAllRolesForUser(com.idega.user.data.User user);
+  public Set<String> getAllRolesForUser(IWContext iwc, com.idega.user.data.User user);
   public Collection<String> getAllRolesKeysForGroup(com.idega.user.data.Group group);
   public Collection<com.idega.core.accesscontrol.data.ICPermission> getAllRolesForGroup(com.idega.user.data.Group group);
   public boolean hasPermitPermissionFor(com.idega.user.data.Group group, IWUserContext iwuc);

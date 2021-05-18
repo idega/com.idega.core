@@ -101,6 +101,8 @@ public class CoreConstants {
 	public final static String ARTICLE_FILENAME_SCOPE = "article";
 	public final static String ARTICLE_RESOURCE_PATH_PROPERTY_NAME = "resourcePath";
 
+	public static final String FILE_SERVLET = "/portal/file";
+
 	public static final String IW_USER_BUNDLE_IDENTIFIER = "com.idega.user";
 
 	public static final String GROUP_SERVICE_DWR_INTERFACE_SCRIPT = "/dwr/interface/GroupService.js";
@@ -121,6 +123,7 @@ public class CoreConstants {
 	public static final String PDF_ICON_LINK =  "idegaweb/bundles/org.jboss.jbpm.bundle/resources/images/pdf.gif";
 
 	public static final String UNDEFINED_VALUE = "-1";
+	public static final String UNDEFINED = "undefined";
 
 	public void setArticleConstantsInstance(Object o) {
 		CoreConstants.ARTICLE_CONSTANTS = o;

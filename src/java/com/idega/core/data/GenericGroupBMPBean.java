@@ -442,6 +442,16 @@ public class GenericGroupBMPBean extends com.idega.data.GenericEntity implements
 	}
 
 	private void addGroupToTree(int groupId) throws SQLException {
+		if (groupId > 0) {
+			List<Integer> currentChildGroups = null;
+			try {
+				currentChildGroups = getChildGroupIds();
+			} catch (Exception e) {}
+			if (!ListUtil.isEmpty(currentChildGroups) && currentChildGroups.contains(Integer.valueOf(groupId))) {
+				return;
+			}
+		}
+
 		Connection conn = null;
 		Statement Stmt = null;
 		try

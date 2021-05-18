@@ -53,7 +53,7 @@ public interface UserLoginDAO extends GenericDao {
 
 	public LoginRecord getLastRecordByLogin(UserLogin userLogin);
 
-	public Integer getNumberOfLogins(User user);
+	public Long getNumberOfLogins(User user);
 
 	public void updateFailedLoginAttempts(LoginInfo info, int attempts);
 

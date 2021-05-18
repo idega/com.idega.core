@@ -279,7 +279,15 @@ public class IWStartDataInserter implements Singleton {
 				try {
 					home.findByLocaleName(localeString);
 				} catch (FinderException e) {
-					doCreateMissingLocale(home, localeString);
+					try {
+						doCreateMissingLocale(home, localeString);
+					}catch (Exception ex) {
+						Logger.getLogger(getClass().getName()).log(
+								Level.WARNING, 
+								"Failed creating locale: (" + localeString + ")",
+								ex
+						);
+					}
 				}
 			}
 		} catch (Exception e) {

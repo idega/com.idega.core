@@ -195,7 +195,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	private Gender male, female;
 
-	private Map<String, Collection<UserGroupPlugInBusiness>> pluginsForGroupTypeCachMap = new HashMap<String, Collection<UserGroupPlugInBusiness>>();
+	private Map<String, Collection<UserGroupPlugInBusiness>> pluginsForGroupTypeCachMap = new HashMap<>();
 
 	private UserStatusBusiness statusBusiness = null;
 
@@ -509,7 +509,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson) throws CreateException, RemoteException {
 		try {
-			User userToAdd = getUserHome().create();
+			User userToAdd = null;
+			if (!StringUtil.isEmpty(personalID)) {
+				try {
+					userToAdd = getUserHome().findByPersonalID(personalID);
+				} catch (Exception e) {}
+			}
+			if (userToAdd == null) {
+				userToAdd = getUserHome().create();
+			}
 
 			if (fullName == null) {
 
@@ -1333,6 +1341,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					// Fix when entering unnumbered addresses (Aron )
 					address.setStreetNumber(CoreConstants.EMPTY);
 				}
+				address.setStreetAddressNominative(streetNameAndNumber);
 				if (communeID == null || communeID.intValue() == -1) {
 					address.setCommune(null);
 				} else {
@@ -1610,6 +1619,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public User getUser(String personalID) throws FinderException {
+		boolean verified = false;
+		if (getSettings().getBoolean("user.personal_id_digits_only", false)) {
+			verified = !StringUtil.isEmpty(personalID);
+		} else {
+			String digitsOnly = StringHandler.getNumbersOnly(personalID);
+			verified = !StringUtil.isEmpty(digitsOnly);
+		}
+
+		if (!verified) {
+			getLogger().warning("Invalid personal ID '" + personalID + "'");
+			return null;
+		}
+
 		return getUserHome().findByPersonalID(personalID);
 	}
 
@@ -2076,7 +2098,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public Group getUsersHighestTopGroupNode(User user, List<String> groupTypes, IWUserContext iwuc) throws RemoteException {
-		Map<String, Group> groupTypeGroup = new HashMap<String, Group>();
+		Map<String, Group> groupTypeGroup = new HashMap<>();
 		Collection<Group> topNodes = getUsersTopGroupNodesByViewAndOwnerPermissions(user, iwuc);
 		Iterator<Group> iterator = topNodes.iterator();
 		while (iterator.hasNext()) {
@@ -2299,7 +2321,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public Collection<Group> getUsersTopGroupNodesByViewAndOwnerPermissionsInThread(User user, Collection<Group> sessionTopNodes, boolean isSuperUser, User currentUser) throws RemoteException {
-		Collection<Group> topNodes = new ArrayList<Group>();
+		Collection<Group> topNodes = new ArrayList<>();
 		long start = System.currentTimeMillis();
 		try {
 			//check for the super user case first
@@ -2309,7 +2331,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					return topNodes;
 				}
 				catch (Exception e1) {
-					topNodes = new ArrayList<Group>();
+					topNodes = new ArrayList<>();
 					e1.printStackTrace();
 				}
 			}
@@ -2330,7 +2352,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					}
 					Timer totalTime = new Timer();
 					totalTime.start();
-					Collection<Group> allViewAndOwnerPermissionGroups = new ArrayList<Group>();
+					Collection<Group> allViewAndOwnerPermissionGroups = new ArrayList<>();
 					try {
 						GroupBusiness groupBiz = getGroupBusiness();
 						if (log) {
@@ -2384,7 +2406,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						//get all (recursively) parents for permission
 						Iterator<Group> permissions = allViewAndOwnerPermissionGroups.iterator();
 						Map<String, Collection<Integer>> cachedParents = new HashMap<>();
-						Map<String, Group> cachedGroups = new HashMap<String, Group>();
+						Map<String, Group> cachedGroups = new HashMap<>();
 						while (permissions.hasNext()) {
 							Group group = permissions.next();
 							if (group != null) {
@@ -2622,7 +2644,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			log("[UserBusinessBean]: getUsersTopGroupNodesByViewAndOwnerPermissions(...) begins");
 			Timer totalTime = new Timer();
 			totalTime.start();
-			Collection<Group> allViewAndOwnerPermissionGroups = new ArrayList<Group>();
+			Collection<Group> allViewAndOwnerPermissionGroups = new ArrayList<>();
 			try {
 				GroupBusiness groupBiz = getGroupBusiness();
 				/*if (false) {// (groupBiz.userGroupTreeImageProcedureTopNodeSearch())
@@ -2672,17 +2694,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					log("[UserBusinessBean]: not using stored procedure topnode search");
 					Timer time = new Timer();
 					time.start();
-					Map<Integer, Map<Integer, Group>> parents = new HashMap<Integer, Map<Integer, Group>>();
-					Map<Integer, Group> groupMap = new HashMap<Integer, Group>();// we need it to be
+					Map<Integer, Map<Integer, Group>> parents = new HashMap<>();
+					Map<Integer, Group> groupMap = new HashMap<>();// we need it to be
 					// synchronized so we can
 					// remove items while in a
 					// iterator
-					Map<Integer, Integer> aliasMap = new HashMap<Integer, Integer>();
+					Map<Integer, Integer> aliasMap = new HashMap<>();
 					IDOUtil idoUtil = IDOUtil.getInstance();
 					GroupHome grHome = getGroupHome();
 					Collection<Group> directlyRelatedParents = getGroupBusiness().getParentGroups(user);
 					Iterator<Group> iterating = directlyRelatedParents.iterator();
-					List<Group> additionalGroups = new ArrayList<Group>();
+					List<Group> additionalGroups = new ArrayList<>();
 					while (iterating.hasNext()) {
 						Group parent = iterating.next();
 						if (parent != null && parent.getPermissionControllingGroupID() > 0) {
@@ -2690,7 +2712,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						}
 					}
 					directlyRelatedParents.addAll(additionalGroups);
-					Collection<Object> allViewAndOwnerPermissionGroupPKs = new ArrayList<Object>();
+					Collection<Object> allViewAndOwnerPermissionGroupPKs = new ArrayList<>();
 					// get all view permissions for direct parent and put in
 					// a list
 					Collection<ICPermission> viewPermissions = AccessControl.getAllGroupViewPermissionsLegacy(directlyRelatedParents);
@@ -2735,8 +2757,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						log("[UserBusinessBean]: using old topnode search");
 						// get all (recursively) parents for permission
 						Iterator<Group> permissions = allViewAndOwnerPermissionGroups.iterator();
-						Map<String, Collection<Integer>> cachedParents = new HashMap<String, Collection<Integer>>();
-						Map<String, Group> cachedGroups = new HashMap<String, Group>();
+						Map<String, Collection<Integer>> cachedParents = new HashMap<>();
+						Map<String, Group> cachedGroups = new HashMap<>();
 						while (permissions.hasNext()) {
 							Group group = permissions.next();
 							if (group != null) {
@@ -2767,7 +2789,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						log("[UserBusinessBean]: getting all parents (recursively) complete " + time.getTimeString());
 						time.start();
 						// Filter out the real top nodes!
-						Map<Integer, Boolean> skipThese = new HashMap<Integer, Boolean>();
+						Map<Integer, Boolean> skipThese = new HashMap<>();
 						Set<Integer> keys = parents.keySet();
 						for (Iterator<Integer> iter = keys.iterator(); iter.hasNext();) {
 							Integer thePermissionGroupsId = iter.next();
@@ -2819,7 +2841,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						// unless there is only one node left or if the
 						// alias and the real group are both top nodes
 						if (groupMap != null && !groupMap.isEmpty()) {
-							List<String> aliasGroupType = new ArrayList<String>();
+							List<String> aliasGroupType = new ArrayList<>();
 							aliasGroupType.add("alias");
 							if (!aliasMap.isEmpty()) {
 								for (Iterator<Integer> keyIter = groupMap.keySet().iterator(); keyIter.hasNext();) {
@@ -2845,7 +2867,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 							log("[UserBusinessBean]: some alias complete " + time.getTimeString());
 							time.start();
 							// check the children recursively
-							List<Integer> groupsToRemove = new ArrayList<Integer>();
+							List<Integer> groupsToRemove = new ArrayList<>();
 							for (Iterator<Integer> keyIter = groupMap.keySet().iterator(); keyIter.hasNext();) {
 								Integer topNodeId = keyIter.next();
 								if (skipThese.containsKey(topNodeId)) {
@@ -3018,7 +3040,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public Collection<Group> getAllGroupsWithEditPermission(User user, IWUserContext iwuc) {
-		Collection<Object> resultGroups = new TreeSet<Object>(); // important to use Set so
+		Collection<Object> resultGroups = new TreeSet<>(); // important to use Set so
 		// there will not be any
 		// doubles
 		GroupHome grHome = getGroupHome();
@@ -3041,7 +3063,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		// permissions.removeAll(editPermissions); // avoid double entries
 		// permissions.addAll(editPermissions);
-		Collection<ICPermission> allPermissions = new ArrayList<ICPermission>();
+		Collection<ICPermission> allPermissions = new ArrayList<>();
 		allPermissions.addAll(permissions);
 		if (editPermissions != null) {
 			allPermissions.addAll(editPermissions);
@@ -3083,7 +3105,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public Collection<Group> getAllGroupsWithViewPermission(User user, IWUserContext iwuc) {
-		Collection<Object> resultGroups = new TreeSet<Object>(); // important to use Set so
+		Collection<Object> resultGroups = new TreeSet<>(); // important to use Set so
 		// there will not be any
 		// doubles
 		// Group userGroup = null;
@@ -3109,7 +3131,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		// permissions.addAll(viewPermissions); //Sigtryggur: this caused an
 		// error because both of the collection are now prefetched and are
 		// therefore IDOPrimaryKeyLists, not normal collections
-		Collection<ICPermission> allPermissions = new ArrayList<ICPermission>();
+		Collection<ICPermission> allPermissions = new ArrayList<>();
 		allPermissions.addAll(permissions);
 		if (viewPermissions != null) {
 			allPermissions.addAll(viewPermissions);
@@ -3170,7 +3192,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		Locale locale = iwuc.getCurrentLocale();
 
 		IWResourceBundle iwrb = bundle.getResourceBundle(locale);
-		Map<Integer, String> result = new HashMap<Integer, String>();
+		Map<Integer, String> result = new HashMap<>();
 		// check if the source and the target are the same
 		if (parentGroup != null) {
 			int parentGroupId = ((Integer) parentGroup.getPrimaryKey()).intValue();
@@ -3246,15 +3268,15 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		String noSuitableGroupMessage = iwrb.getLocalizedString("user_suitable_group_could_not_be_found", "A suitable group for the user could not be found.");
 		String moreThanOneSuitableGroupMessage = iwrb.getLocalizedString("user_more_than_one_suitable_group_was_found_prefix", "More than one suitable groups where found. The system could not decide where to put the user. The possible groups are: ");
 		// key groups id, value group
-		Map<String, Group> groupIdGroup = new HashMap<String, Group>();
+		Map<String, Group> groupIdGroup = new HashMap<>();
 		// key group id, value users
-		Map<String, Collection<User>> groupIdUsers = new HashMap<String, Collection<User>>();
+		Map<String, Collection<User>> groupIdUsers = new HashMap<>();
 		// key group id, value id of users
-		Map<String, Collection<String>>  groupIdUsersId = new HashMap<String, Collection<String>> ();
+		Map<String, Collection<String>>  groupIdUsersId = new HashMap<> ();
 		// key user id, value user's parent group
-		Map<User, Group> userParentGroup = new HashMap<User, Group>();
+		Map<User, Group> userParentGroup = new HashMap<>();
 		// key user id, value user's target group
-		Map<User, Collection<Group>> userTargetGroup = new HashMap<User, Collection<Group>>();
+		Map<User, Collection<Group>> userTargetGroup = new HashMap<>();
 		// get all groups
 		try {
 			GroupBusiness groupBiz = getGroupBusiness();
@@ -3320,7 +3342,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					}
 					if (result) {
 						if (possibleTargets == null) {
-							possibleTargets = new ArrayList<Group>();
+							possibleTargets = new ArrayList<>();
 						}
 						possibleTargets.add(targetGroup);
 					}
@@ -3330,7 +3352,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 		// perform moving
-		Map<Integer, Map<Object, String>> result = new HashMap<Integer, Map<Object, String>>();
+		Map<Integer, Map<Object, String>> result = new HashMap<>();
 		Iterator<Map.Entry<User, Collection<Group>>> userIterator = userTargetGroup.entrySet().iterator();
 		while (userIterator.hasNext()) {
 			Map.Entry<User, Collection<Group>> entry = userIterator.next();
@@ -3340,7 +3362,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			Integer sourceId = (Integer) source.getPrimaryKey();
 			Map<Object, String> map = result.get(sourceId);
 			if (map == null) {
-				map = new HashMap<Object, String>();
+				map = new HashMap<>();
 				result.put(sourceId, map);
 			}
 			if (target != null) {
@@ -3382,7 +3404,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		groupIdGroup.put(groupId, group);
 		Collection<User> usersInGroup = getUsersInGroup(group);
 		groupIdUsers.put(groupId, usersInGroup);
-		Collection<String> userIds = new ArrayList<String>();
+		Collection<String> userIds = new ArrayList<>();
 		Iterator<User> iterator = usersInGroup.iterator();
 		while (iterator.hasNext()) {
 			User user = iterator.next();
@@ -3763,7 +3785,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				String mainEmailAddress = mainEmail.getEmailAddress();
 				user.removeEmail(mainEmail);
 				// "delete" other mails (cut the links)
-				List<String> list = new ArrayList<String>();
+				List<String> list = new ArrayList<>();
 				Collection<Email> otherEmails = getEmailHome().findEmailsForUser(user);
 				Iterator<Email> firstOtherEmailsIterator = otherEmails.iterator();
 				while (firstOtherEmailsIterator.hasNext()) {
@@ -3877,11 +3899,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return false;
 		}
 
-		if ("is_IS".equals(locale.toString())) {
+		if (LocaleUtil.getIcelandicLocale().toString().equals(locale.toString())) {
 			return validateIcelandicSSN(personalId);
-		} else if ("sv_SE".equals(locale.toString())) {
+
+		} else if (LocaleUtil.getSwedishLocale().toString().equals(locale.toString())) {
 			return SocialSecurityNumber.isValidSocialSecurityNumber(personalId, locale);
-		} else if ("en".equals(locale.toString())) {
+
+		} else if (Locale.ENGLISH.toString().equals(locale.toString())) {
 			return true;	//	Default locale, no validator needed
 		}
 
@@ -3996,7 +4020,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 		Group group = null;
 		IWContext iwc = CoreUtil.getIWContext();
-		List<GroupMemberDataBean> members = new ArrayList<GroupMemberDataBean>();
+		List<GroupMemberDataBean> members = new ArrayList<>();
 
 		for (int i = 0; i < uniqueIds.size(); i++) {
 			try {
@@ -4168,8 +4192,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 
 		// Finding users with status
-		List<GroupMemberDataBean> allMembers = new ArrayList<GroupMemberDataBean>();
-		List<GroupMemberDataBean> membersWithStatusInfo = new ArrayList<GroupMemberDataBean>();
+		List<GroupMemberDataBean> allMembers = new ArrayList<>();
+		List<GroupMemberDataBean> membersWithStatusInfo = new ArrayList<>();
 		GroupMemberDataBean memberInfo = null;
 		for (int i = 0; i < members.size(); i++) {
 			memberInfo = members.get(i);
@@ -4298,7 +4322,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		Object o = null;
 		Email email = null;
-		List<String> emailsAddresses = new ArrayList<String>();
+		List<String> emailsAddresses = new ArrayList<>();
 		for (Iterator<Email> it = emails.iterator(); it.hasNext();) {
 			o = it.next();
 			if (o instanceof Email) {
@@ -4524,7 +4548,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 
-		List<Group> userGroups = new ArrayList<Group>();
+		List<Group> userGroups = new ArrayList<>();
 		GroupBusiness groupBusiness = getGroupBusiness();
 		Collection<Group> parentUserGroups = groupBusiness.getParentGroups(user);
 		if (parentUserGroups == null) {
@@ -4540,7 +4564,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 
-		List<String> groupsIds = new ArrayList<String>();
+		List<String> groupsIds = new ArrayList<>();
 		Collection<ICPermission> permissionsByUserGroups = AccessControl.getAllGroupPermitPermissionsOld(userGroups);
 		addIdsFromPermissions(permissionsByUserGroups, groupsIds);
 
@@ -4572,7 +4596,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 
-		List<Group> allUserGroups = new ArrayList<Group>();
+		List<Group> allUserGroups = new ArrayList<>();
 		Object o = null;
 		for (Iterator<Group> it = groups.iterator(); it.hasNext();) {
 			o = it.next();
@@ -4781,7 +4805,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public List<ICRole> getAvailableRolesForUserAsPreferredRoles(User user) {
-		List<ICRole> rolesForUser = new ArrayList<ICRole>();
+		List<ICRole> rolesForUser = new ArrayList<>();
 		AccessController accessController = getAccessController();
 		Collection<Group> groups = user.getParentGroups();
 		for (Group group : groups) {
@@ -4823,7 +4847,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			e.printStackTrace();
 		}
 
-		Collection<User> moderators = new ArrayList<User>();
+		Collection<User> moderators = new ArrayList<>();
 		Collection<Group> userGroups = getUserGroups(user);
 		if (userGroups != null) {
 			for (Group group : userGroups) {
@@ -4968,7 +4992,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return null;
 		}
 
-		Set<User> usersBynameEmailAndPhone  = new HashSet<User>();
+		Set<User> usersBynameEmailAndPhone  = new HashSet<>();
 
 		Collection<User> usersByNames = getUsersByName(nameEmailOrPhone);
 
@@ -4991,7 +5015,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public Collection<User> getUsers(String name, String personalID) {
-		Collection<User> users = new ArrayList<User>();
+		Collection<User> users = new ArrayList<>();
 
 		if (!StringUtil.isEmpty(personalID)) {
 			try {
@@ -5220,9 +5244,9 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 		}
 
-		getLogger().info(User.class.getName() +
-				" by primary key: " + user.getPrimaryKey().toString() +
-				" successfully updated!");
+		CoreUtil.clearAllCaches();
+
+		getLogger().info(User.class.getName() + " by primary key: " + user.getPrimaryKey().toString() + " successfully updated!");
 		return user;
 	}
 

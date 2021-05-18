@@ -147,7 +147,10 @@ public class WebUtil extends DefaultSpringBean {
     }
 
     public String logOut() {
-    	IWContext iwc = CoreUtil.getIWContext();
+    	return logOff(CoreUtil.getIWContext());
+    }
+
+    public String logOff(IWContext iwc) {
     	if (iwc == null) {
     		getLogger().warning(IWContext.class.getName() + " is not available!");
     		return null;

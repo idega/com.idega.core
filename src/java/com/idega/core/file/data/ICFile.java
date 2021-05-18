@@ -7,11 +7,12 @@ import com.idega.data.IDOEntity;
 import com.idega.data.IDORemoveRelationshipException;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntity;
+import com.idega.data.UniqueIDCapable;
 import com.idega.io.serialization.Storable;
 import com.idega.repository.data.Resource;
 import com.idega.user.data.User;
 
-public interface ICFile extends IDOEntity, TreeableEntity<ICFile>, MetaDataCapable, Resource, Storable {
+public interface ICFile extends IDOEntity, TreeableEntity<ICFile>, MetaDataCapable, Resource, Storable, UniqueIDCapable {
  public final static String UFN_NAME = "NAME";
  public java.sql.Timestamp getCreationDate();
  public boolean getDeleted();
@@ -61,7 +62,7 @@ public interface ICFile extends IDOEntity, TreeableEntity<ICFile>, MetaDataCapab
 
 	@Override
 	public ICFile getParentNode();
-	
+
 	@Override
 	public int getIndex(ICFile node);
 }

@@ -43,8 +43,9 @@ public class GenericDaoImpl implements GenericDao {
 	private static Logger LOGGER;
 
 	protected Logger getLogger() {
-		if (LOGGER == null)
+		if (LOGGER == null) {
 			LOGGER = Logger.getLogger(getClass().getName());
+		}
 		return LOGGER;
 	}
 
@@ -96,6 +97,11 @@ public class GenericDaoImpl implements GenericDao {
 	@Transactional(readOnly = true)
 	public Query createNamedQuery(String queryName) {
 		return entityManager.createNamedQuery(queryName);
+	}
+
+	@Override
+	public Query createNativeQuery(String sqlString) {
+		return getEntityManager().createNativeQuery(sqlString);
 	}
 
 	@Override
@@ -280,7 +286,7 @@ public class GenericDaoImpl implements GenericDao {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param root of {@link Entity} to query, created by {@link CriteriaQuery#from(Class)}, not <code>null</code>
 	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped <code>null</code>
 	 * @return array of parameters suitable for {@link CriteriaQuery#where(Predicate...)} query or empty array on failure
@@ -288,7 +294,7 @@ public class GenericDaoImpl implements GenericDao {
 	private <T> ArrayList<Predicate> getPredicates(
 			Root<T> root,
 			Map<String, Collection<? extends Serializable>> arguments) {
-		ArrayList<Predicate> predicates = new ArrayList<Predicate>();
+		ArrayList<Predicate> predicates = new ArrayList<>();
 		if (!MapUtil.isEmpty(arguments) && root != null) {
 			for (Entry<String, Collection<? extends Serializable>> entry : arguments.entrySet()) {
 				Path<String> attribute = root.get(entry.getKey());
@@ -368,7 +374,7 @@ public class GenericDaoImpl implements GenericDao {
 		Expression<Long> expression = getCriteriaBuilder().count(entityRoot);
 
 		/*
-		 * Select count 
+		 * Select count
 		 */
 		criteriaQuery = criteriaQuery.select(expression);
 
@@ -443,7 +449,7 @@ public class GenericDaoImpl implements GenericDao {
 	 */
 	@Override
 	public <T> List<T> findAll(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments) {
 		return findAll(type, arguments, null);
 	}
@@ -474,7 +480,7 @@ public class GenericDaoImpl implements GenericDao {
 	 */
 	@Override
 	public <T> Long getAmount(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments) {
 		return getAmount(type, arguments, null);
 	}

@@ -2,10 +2,12 @@ package com.idega.presentation;
 
 import java.util.ArrayList;
 import java.util.Iterator;
+
+import com.idega.util.CoreConstants;
 /**
- * 
+ *
  * @author birna
- * consrtucts a Level for the <code>DynamicJSMenu</code> 
+ * consrtucts a Level for the <code>DynamicJSMenu</code>
  */
 public class MenuLevelElement extends PresentationObject {
 	private int width = 110;
@@ -23,22 +25,22 @@ public class MenuLevelElement extends PresentationObject {
 	private int arrowHeight = 0;
 	private String align = "bottom";
 	private String menuLevel; // = "0";
-	
+
 	protected ArrayList theLevels = new ArrayList();
 	/**
 	 * The default constructor
 	 *
 	 */
 	public MenuLevelElement(){
-		this("undefined");
+		this(CoreConstants.UNDEFINED);
 	}
 	/**
-	 * 
+	 *
 	 * @param level
 	 */
 	public MenuLevelElement(String level){
 		setLevel(level);
-		initialLevelValues();		
+		initialLevelValues();
 	}
 //	public MenuLevelElement(String name, int level){
 //		this(name, String.valueOf(level));
@@ -84,14 +86,14 @@ public class MenuLevelElement extends PresentationObject {
 //		setAttribute("level", l);
 	}
 	/**
-	 * 
+	 *
 	 * @param l
 	 */
 	public void setLevel(int l){
 		setLevel(Integer.toString(l));
 	}
 	/**
-	 * 
+	 *
 	 * @return the level of the <code> MenuLevelElement </code>
 	 */
 	public String getLevel(){
@@ -99,7 +101,7 @@ public class MenuLevelElement extends PresentationObject {
 //		return getAttribute("level");
 	}
 	/**
-	 * 
+	 *
 	 * @return an iterator containing the levels of the <code>MenuLevelElement </code>
 	 */
 	public Iterator getLevels(){
@@ -136,14 +138,14 @@ public class MenuLevelElement extends PresentationObject {
 		setMarkupAttribute("overClass", "\"" + overCl + "\"");
 	}
 	/**
-	 * 
+	 *
 	 * @param bX
 	 */
 	public void setBorderX(int bX){
 		setMarkupAttribute("borderX", bX);
 	}
 	/**
-	 * 
+	 *
 	 * @param bY
 	 */
 	public void setBorderY(int bY){
@@ -179,28 +181,28 @@ public class MenuLevelElement extends PresentationObject {
 		setMarkupAttribute("rows", r);
 	}
 	/**
-	 * 
+	 *
 	 * @param a
 	 */
 	public void setArrow(int a){
 		setMarkupAttribute("arrow", a);
 	}
 	/**
-	 * 
+	 *
 	 * @param aWidth
 	 */
 	public void setArrowWidth(int aWidth){
 		setMarkupAttribute("arrowWidth", aWidth);
 	}
 	/**
-	 * 
+	 *
 	 * @param aHeight
 	 */
 	public void setArrowHeight(int aHeight){
 		setMarkupAttribute("arrowHeight", aHeight);
 	}
 	/**
-	 * 
+	 *
 	 * @param ali
 	 */
 	public void setAlign(String ali){
@@ -208,9 +210,9 @@ public class MenuLevelElement extends PresentationObject {
 	}
 //	public String output(){
 //		StringBuffer buffer = new StringBuffer();
-//		
+//
 ////		MenuLevelElement levelElement = new MenuLevelElement();
-//		
+//
 //		Map levelMap = this.attributes;
 //		Map.Entry mapEntry;
 //

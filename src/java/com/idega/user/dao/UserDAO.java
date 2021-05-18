@@ -135,4 +135,8 @@ public interface UserDAO extends GenericDao {
 	User update(Integer id, String personalId, String eMail, String name, String gender);
 
 	public List<User> findByPersonalIds(Collection<String> personalIds);
+	
+	public List<User> findUsers(int start,int max);
+	
+	public Long countUsers();
 }

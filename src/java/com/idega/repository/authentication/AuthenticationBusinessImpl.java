@@ -279,12 +279,14 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 			List<String> privileges = Arrays.asList(Privilege.JCR_READ, Privilege.JCR_WRITE);
 			for (String role : roles) {
 				for (String privilege: privileges) {
-					if (hasPermission(entries, role, privilege))
+					if (hasPermission(entries, role, privilege)) {
 						continue;
+					}
 
-					if (role.length() > ICRole.ROLE_KEY_MAX_LENGTH)
+					if (role.length() > ICRole.ROLE_KEY_MAX_LENGTH) {
 						role = role.substring(0, ICRole.ROLE_KEY_MAX_LENGTH + 1);
-					ICPermission permission = getPermissionDAO().createPermission(path, role, null, privilege, Boolean.TRUE);
+					}
+					ICPermission permission = getPermissionDAO().createPermission(path, role, -1, privilege, Boolean.TRUE);
 					acl.addPermission(permission);
 				}
 			}
@@ -298,16 +300,18 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	}
 
 	private boolean hasPermission(AccessControlEntry[] entries, String principal, String privilege) {
-		if (ArrayUtil.isEmpty(entries))
+		if (ArrayUtil.isEmpty(entries)) {
 			return false;
+		}
 
 		for (AccessControlEntry ace: entries) {
 			if (principal.equals(ace.getPrincipal().getName())) {
 				Privilege[] privileges = ace.getPrivileges();
 				if (!ArrayUtil.isEmpty(privileges)) {
 					for (Privilege priv: privileges) {
-						if (privilege.equals(priv.getName()))
+						if (privilege.equals(priv.getName())) {
 							return true;
+						}
 					}
 				}
 			}
@@ -317,8 +321,9 @@ public class AuthenticationBusinessImpl extends DefaultSpringBean implements Aut
 	}
 
 	private PermissionDAO getPermissionDAO() {
-		if (permissionDAO == null)
+		if (permissionDAO == null) {
 			ELUtil.getInstance().autowire(this);
+		}
 		return permissionDAO;
 	}
 }

@@ -65,6 +65,7 @@ public class ELUtil implements ApplicationContextAware {
 	}
 
 	public <T>T getBean(String expression) throws BeanCreationException {
+		String originalExpression = expression;
 		if (expression.contains(CoreConstants.DOT)) {
 			FacesContext fctx = FacesContext.getCurrentInstance();
 			if (fctx != null) {
@@ -86,7 +87,11 @@ public class ELUtil implements ApplicationContextAware {
 		}
 
 		expression = cleanupExp(expression);
-
+		if (StringUtil.isEmpty(expression) || "''".equals(expression.trim())) {
+			LOGGER.info("Will use original expression '" + originalExpression + "' because cleaned expression '" + expression + "' is invalid");
+			expression = originalExpression;
+		}
+		
 		ApplicationContext ac = getApplicationContext();
 		@SuppressWarnings("unchecked")
 		T val = (T) ac.getBean(expression);
@@ -147,7 +152,14 @@ public class ELUtil implements ApplicationContextAware {
 	 */
 	public Object evaluateExpression(String exp) throws Exception {
 		String beanName = getBeanName(exp);
+		if (StringUtil.isEmpty(beanName)) {
+			return null;
+		}
 		String methodName = getMethodName(exp);
+		if (StringUtil.isEmpty(methodName)) {
+			return null;
+		}
+
 		List<String> argsList = getArgs(exp);
 
 		Class<?>[] classParams = new Class[argsList.size()];
@@ -210,9 +222,13 @@ public class ELUtil implements ApplicationContextAware {
 		return returnedObj;
 	}
 
-	private String getBeanName(String exp){
+	private String getBeanName(String exp) {
+		if (StringUtil.isEmpty(exp) || exp.indexOf(CoreConstants.DOT) == -1) {
+			return null;
+		}
+
 		String beanName = cleanupExp(exp);
-		while(true){
+		while (true) {
 			beanName = beanName.substring(0, beanName.lastIndexOf(CoreConstants.DOT));
 			if (beanName.matches("[a-zA-Z0-9.]+") || beanName.indexOf(CoreConstants.DOT) == -1) {
 				break;
@@ -223,6 +239,10 @@ public class ELUtil implements ApplicationContextAware {
 
 	private String getMethodName(String exp){
 		String beanName = getBeanName(exp);
+		if (StringUtil.isEmpty(beanName)) {
+			return null;
+		}
+
 		String methodName = cleanupExp(exp);
 		int index = methodName.indexOf(CoreConstants.BRACKET_LEFT);
 		if (index >= 0) {
@@ -234,7 +254,7 @@ public class ELUtil implements ApplicationContextAware {
 		return methodName;
 	}
 
-	private List<String> getArgs(String exp) {
+	public List<String> getArgs(String exp) {
 		List<String> returnArray = new ArrayList<String>();
 		int pre = exp.indexOf(CoreConstants.BRACKET_LEFT);
 		if (pre >= 0) {

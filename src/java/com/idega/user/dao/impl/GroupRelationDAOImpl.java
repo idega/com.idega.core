@@ -19,7 +19,12 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.group.cache.business.GroupsCacheService;
 import com.idega.user.bean.GroupRelationBean;
 import com.idega.user.dao.GroupRelationDAO;
+import com.idega.user.data.GroupTypeBMPBean;
+import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
+import com.idega.user.data.bean.GroupRelationType;
+import com.idega.user.data.bean.GroupType;
+import com.idega.user.data.bean.User;
 import com.idega.util.ArrayUtil;
 import com.idega.util.CoreUtil;
 import com.idega.util.ListUtil;
@@ -518,5 +523,158 @@ public class GroupRelationDAOImpl extends GenericDaoImpl implements GroupRelatio
 			getLogger().log(Level.WARNING, "Could not update group relations with a new termination date: " + newDate, e);
 		}
 	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void fixInvalidRelations() {
+		List<GroupRelation> invalidRelations = getResultList(
+				GroupRelation.QUERY_FIND_INVALID_RELATIONS,
+				GroupRelation.class
+		);
+		if(ListUtil.isEmpty(invalidRelations)) {
+			return;
+		}
+		GroupRelationType relationType = find(
+				GroupRelationType.class,
+				GroupRelation.RELATION_TYPE_GROUP_PARENT
+		);
+		GroupType relatedGroupType = find(
+				GroupType.class,
+				GroupTypeBMPBean.TYPE_PERMISSION_GROUP
+		);
+		for(GroupRelation relation : invalidRelations) {
+			relation.setStatus(GroupRelation.STATUS_ACTIVE);
+			relation.setGroupRelationType(relationType);
+			relation.setRelatedGroupType(relatedGroupType);
+			merge(relation);
+		}
+	}
+
+	@Override
+	public List<GroupRelation> findParentGroupRelationsForGroup(Integer id) {
+		return getResultList(
+				GroupRelation.QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP,
+				GroupRelation.class,
+				new Param("id", id)
+		);
+	}
+
+	@Override
+	public List<Group> findParentGroupsForGroup(Integer id) {
+		return getResultList(
+				GroupRelation.QUERY_FIND_PARENT_GROUPS_FOR_GROUP,
+				Group.class,
+				new Param("id", id)
+		);
+	}
+
+	@Override
+	@Transactional
+	public void removeParentGroupsForGroup(
+			Integer group,
+			List<Integer> parents,
+			User byUser
+	) {
+		List<GroupRelation> parentRelations = getResultList(
+				GroupRelation.QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP_BY_PARENT_GROUPS,
+				GroupRelation.class,
+				new Param("group", group),
+				new Param("parents", parents)
+		);
+		if(parentRelations == null) {
+			return;
+		}
+		Date time = new Date();
+//		TODO: possible to do with one query and then publish events possibly
+//		in separate thread
+		for(GroupRelation relation : parentRelations) {
+			setRemoved(relation, byUser, time);
+			merge(relation);
+		}
+	}
+
+	private void setRemoved(GroupRelation relation,User byUser,Date time) {
+		relation.setStatus(GroupRelation.STATUS_PASSIVE);
+		relation.setPassiveBy(byUser);
+		relation.setTerminationDate(time);
+	}
+
+	@Override
+	@Transactional
+	public void storeGroupAsChildForGroups(
+			Group group,
+			List<Group> parents,
+			User byUser
+	) {
+		Date time = new Date();
+		GroupType type = group.getGroupType();
+		GroupRelationType relationType = find(
+				GroupRelationType.class,
+				GroupRelation.RELATION_TYPE_GROUP_PARENT
+		);
+		for(Group parent : parents) {
+			GroupRelation relation = new GroupRelation();
+			relation.setGroup(parent);
+			relation.setRelatedGroup(group);
+			relation.setGroupRelationType(relationType);
+			relation.setRelatedGroupType(type);
+			relation.setCreatedBy(byUser);
+			relation.setInitiationDate(time);
+			persist(relation);
+		}
+	}
+
+	@Override
+	public List<GroupRelation> getByGroupIdsAndRelatedGroupIds(List<Integer> groupIds, List<Integer> relatedGroupIds) {
+		if (ListUtil.isEmpty(groupIds) || ListUtil.isEmpty(relatedGroupIds)) {
+			getLogger().log(Level.WARNING, "Group ids or related group ids are empty.");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS,
+					GroupRelation.class,
+					new Param("groupsIds", groupIds),
+					new Param("relatedGroupsIds", relatedGroupIds)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations by group ids (" + groupIds + ") and related group ids ( " + relatedGroupIds + " )" , e);
+		}
+		return null;
+	}
+
+	@Override
+	public List<GroupRelation> getPassiveGroupByParentGroupIdsAndGroupTypes(List<Integer> groupIds, List<String> groupTypes) {
+		if (ListUtil.isEmpty(groupIds) || ListUtil.isEmpty(groupTypes)) {
+			getLogger().log(Level.WARNING, "Group ids or group types are empty.");
+			return null;
+		}
+
+		try {
+			return getResultList(
+					GroupRelation.QUERY_FIND_PASSIVE_GROUPS_BY_PARENT_GROUPS_AND_TYPES,
+					GroupRelation.class,
+					new Param(GroupRelation.PARAM_GROUP_IDS, groupIds),
+					new Param(GroupRelation.PARAM_GROUP_TYPES, groupTypes)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting group relations by group ids (" + groupIds + ") and group types ( " + groupTypes + " )" , e);
+		}
+		return null;
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void activateTerminatedRelation(GroupRelation groupRelation) {
+		if (groupRelation != null) {
+			groupRelation.setStatus(GroupRelation.STATUS_ACTIVE);
+			groupRelation.setPassiveBy(null);
+			groupRelation.setTerminationDate(null);
+			groupRelation.setTerminationModificationDate(null);
+			merge(groupRelation);
+		}
+	}
+
 
 }

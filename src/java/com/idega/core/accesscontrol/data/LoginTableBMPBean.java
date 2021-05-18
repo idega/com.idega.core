@@ -43,7 +43,7 @@ public class LoginTableBMPBean extends GenericEntity implements LoginTable, Encr
 	public void initializeAttributes() {
 		addAttribute(this.getIDColumnName());
 		addAttribute(getColumnNameUserID(), "User id", true, true, Integer.class, "many-to-one", User.class);
-		addAttribute(getUserLoginColumnName(), "User name", true, true, String.class, 32);
+		addAttribute(getUserLoginColumnName(), "User name", true, true, String.class, 255);
 		addAttribute(getNewUserPasswordColumnName(), "Password (encrypted)", true, true, String.class, 255);
 		// deprecated column
 		addAttribute(getOldUserPasswordColumnName(), "Password (deprecated)", true, true, String.class, 20);

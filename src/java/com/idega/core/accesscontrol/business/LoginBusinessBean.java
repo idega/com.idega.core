@@ -37,6 +37,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.business.IBOLookup;
+import com.idega.business.IBOLookupException;
 import com.idega.business.IBORuntimeException;
 import com.idega.core.accesscontrol.bean.UserHasLoggedInEvent;
 import com.idega.core.accesscontrol.bean.UserHasLoggedOutEvent;
@@ -60,10 +61,10 @@ import com.idega.idegaweb.IWUserContext;
 import com.idega.idegaweb.IWUserContextImpl;
 import com.idega.presentation.IWContext;
 import com.idega.servlet.filter.RequestResponseProvider;
+import com.idega.user.business.GroupBusiness;
 import com.idega.user.business.UserProperties;
 import com.idega.user.dao.GroupDAO;
 import com.idega.user.dao.UserDAO;
-import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.ArrayUtil;
@@ -439,16 +440,32 @@ public class LoginBusinessBean implements IWPageEventListener {
 				return;
 			}
 
-			String cookieToSkip = "currentLocale";
+			String cookieToSkipProp = IWMainApplication.getDefaultIWMainApplication().getSettings().getProperty("cookies_to_remain_on_logout", "currentLocale,casesListPageSize_,casesListPageNr_");
+			List<String> cookiesToSkip = StringUtil.isEmpty(cookieToSkipProp) ? null : StringUtil.getValuesFromString(cookieToSkipProp, CoreConstants.COMMA);
 			for (Cookie cookie: cookies) {
 				String name = cookie.getName();
-				if (!StringUtil.isEmpty(name) && !name.equals(cookieToSkip)) {
-					cookie.setValue(CoreConstants.EMPTY);
-					cookie.setPath(CoreConstants.SLASH);
-					cookie.setMaxAge(0);
-					if (response != null) {
-						response.addCookie(cookie);
+				if (StringUtil.isEmpty(name)) {
+					continue;
+				}
+
+				boolean skip = false;
+				if (!ListUtil.isEmpty(cookiesToSkip)) {
+					for (Iterator<String> iter = cookiesToSkip.iterator(); (iter.hasNext() && !skip);) {
+						String cookieToSkip = iter.next();
+						if (!StringUtil.isEmpty(cookieToSkip) && name.indexOf(cookieToSkip) == 0) {
+							skip = true;
+						}
 					}
+				}
+				if (skip) {
+					continue;
+				}
+
+				cookie.setValue(CoreConstants.EMPTY);
+				cookie.setPath(CoreConstants.SLASH);
+				cookie.setMaxAge(0);
+				if (response != null) {
+					response.addCookie(cookie);
 				}
 			}
 		} catch (Exception e) {
@@ -1088,7 +1105,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 	}
 
-	public static List<Group> getPermissionGroups(IWUserContext iwc) {
+	public static List<com.idega.user.data.Group> getPermissionGroups(IWUserContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getPermissionGroups();
 	}
 
@@ -1096,7 +1113,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return LoginBusinessBean.getLoginSessionBean().getRepresentativeGroup();
 	}
 
-	public static Group getPrimaryGroup(IWUserContext iwc) {
+	public static com.idega.user.data.Group getPrimaryGroup(IWUserContext iwc) {
 		return LoginBusinessBean.getLoginSessionBean().getPrimaryGroup();
 	}
 
@@ -1104,7 +1121,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginBusinessBean.getLoginSessionBean().setUser(user);
 	}
 
-	protected static void setPermissionGroups(IWUserContext iwc, List<Group> value) throws RemoteException {
+	protected static void setPermissionGroups(IWUserContext iwc, List<com.idega.user.data.Group> value) throws RemoteException {
 		LoginBusinessBean.getLoginSessionBean().setPermissionGroups(value);
 	}
 
@@ -1112,7 +1129,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginBusinessBean.getLoginSessionBean().setRepresentativeGroup(value);
 	}
 
-	protected static void setPrimaryGroup(IWUserContext iwc, Group value) throws RemoteException {
+	protected static void setPrimaryGroup(IWUserContext iwc, com.idega.user.data.Group value) throws RemoteException {
 		LoginBusinessBean.getLoginSessionBean().setPrimaryGroup(value);
 	}
 
@@ -1157,7 +1174,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		LoginRecord loginRecord = getUserLoginDAO().createLoginRecord(userLogin, request.getRemoteAddr(), user);
 		String loginType = getLoginType(request, userLogin);
 		storeLoggedOnInfoInSession(request, session, userLogin, userLogin.getUserLogin(), user, loginRecord, loginType);
-		doPublishLoggedInEvent(request, user, userName, loginType);
+		doPublishLoggedInEvent(request, response, getServletContext(request, session), user, userName, loginType);
 		return true;
 	}
 
@@ -1177,12 +1194,13 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return loginType;
 	}
 
-	public void doPublishLoggedInEvent(HttpServletRequest request, User user, String userName, String loginType) {
+	public void doPublishLoggedInEvent(HttpServletRequest request, HttpServletResponse response, ServletContext context, User user, String userName, String loginType) {
 		if (user == null) {
 			return;
 		}
 
-		ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(user.getId(), userName, loginType, request.getSession(true)));
+		IWContext iwc = request == null || response == null || context == null ? CoreUtil.getIWContext() : new IWContext(request, response, context);
+		ELUtil.getInstance().publishEvent(new UserHasLoggedInEvent(iwc, user.getId(), userName, loginType, request.getSession(true)));
 	}
 
 	protected boolean logIn(HttpServletRequest request, HttpServletResponse response, UserLogin userLogin) throws Exception {
@@ -1194,13 +1212,14 @@ public class LoginBusinessBean implements IWPageEventListener {
 		String userName = userLogin.getUserLogin();
 		String loginType = getLoginType(request, userLogin);
 		storeLoggedOnInfoInSession(request, session, userLogin, userName, user, loginRecord, loginType);
-		doPublishLoggedInEvent(request, user, userName, loginType);
+		doPublishLoggedInEvent(request, response, getServletContext(request, session), user, userName, loginType);
 		return true;
 	}
 
 	protected void storeUserAndGroupInformationInSession(HttpSession session, User user) throws Exception {
-		List<Group> groups = null;
+		List<com.idega.user.data.Group> groups = null;
 		LoginSession lSession = LoginBusinessBean.getLoginSessionBean();
+		IWApplicationContext iwac = null;
 		if (isUsingOldUserSystem()) {
 			// Old user system
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
@@ -1213,20 +1232,12 @@ public class LoginBusinessBean implements IWPageEventListener {
 			// iwc.setSessionAttribute(LoginAttributeParameter, new Hashtable());
 			// LoginBusinessBean.setUser(iwc, user);
 			lSession.setUser(user);
-			IWApplicationContext iwac = getIWApplicationContext(null, session);
+			iwac = getIWApplicationContext(null, session);
 			com.idega.user.business.UserBusiness userbusiness = getUserBusiness(iwac);
 			com.idega.user.data.User newUser = userbusiness.getUser(user.getId());
 			Collection<com.idega.user.data.Group> userGroups = userbusiness.getUserGroups(newUser);
 			if (userGroups != null) {
-				List<Integer> ids = new ArrayList<>();
-				try {
-					for (com.idega.user.data.Group group: userGroups) {
-						ids.add((Integer) group.getPrimaryKey());
-					}
-					groups = getGroupDAO().findGroups(ids);
-				} catch (Exception e) {
-					Logger.getLogger(this.getClass().getName()).log(Level.INFO, "Failed to load groups by IDs: " + ids);
-				}
+				groups = new ArrayList<>(userGroups);
 
 			// New user system end
 			}
@@ -1236,8 +1247,10 @@ public class LoginBusinessBean implements IWPageEventListener {
 		}
 		lSession.setRepresentativeGroup(user.getGroup());
 
-		Group primaryGroup = user.getPrimaryGroup();
-		if (primaryGroup != null) {
+		Integer primaryGroupId = user.getPrimaryGroupId();
+		if (primaryGroupId != null) {
+			iwac = iwac == null ? getIWApplicationContext(null, session) : iwac;
+			com.idega.user.data.Group primaryGroup = getGroupBusiness(iwac).getGroupByGroupID(primaryGroupId);
 			lSession.setPrimaryGroup(primaryGroup);
 		}
 
@@ -1499,7 +1512,7 @@ public class LoginBusinessBean implements IWPageEventListener {
 		@SuppressWarnings("unchecked")
 		Map<String, Object> loggedOnMap = (Map<String, Object>) sc.getAttribute(_APPADDRESS_LOGGED_ON_LIST);
 		if (loggedOnMap == null) {
-			loggedOnMap = new TreeMap<String, Object>();
+			loggedOnMap = new TreeMap<>();
 			sc.setAttribute(_APPADDRESS_LOGGED_ON_LIST, loggedOnMap);
 		}
 		return loggedOnMap;
@@ -2160,11 +2173,8 @@ public class LoginBusinessBean implements IWPageEventListener {
 		return Boolean.FALSE;
 	}
 
-	private GroupDAO getGroupDAO() {
-		if (groupDAO == null) {
-			ELUtil.getInstance().autowire(this);
-		}
-		return groupDAO;
+	private GroupBusiness getGroupBusiness(IWApplicationContext iwac) throws IBOLookupException {
+		return IBOLookup.getServiceInstance(iwac == null ? IWMainApplication.getDefaultIWApplicationContext() : iwac, GroupBusiness.class);
 	}
 
 	private UserDAO getUserDAO() {
@@ -2271,7 +2281,5 @@ public class LoginBusinessBean implements IWPageEventListener {
 
 		return LoginState.FAILED;
 	}
-
-
 
 }

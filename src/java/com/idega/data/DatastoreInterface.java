@@ -23,6 +23,7 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Time;
 import java.sql.Timestamp;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Hashtable;
@@ -38,9 +39,12 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.repository.data.MutableClass;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.transaction.IdegaTransactionManager;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.Gender;
 import com.idega.util.IWTimestamp;
+import com.idega.util.ListUtil;
+import com.idega.util.StringUtil;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.logging.LoggingHelper;
 
@@ -1464,6 +1468,11 @@ public abstract class DatastoreInterface implements MutableClass {
 					}
 				}
 			}
+
+			if (returnString == null || StringUtil.isEmpty(returnString.toString()) && !ArrayUtil.isEmpty(names)) {
+				List<String> columnNames = Arrays.asList(names);
+				newCachedColumnNameList = ListUtil.convertListOfStringsToCommaseparatedString(columnNames);
+			} else {
 			/*
 			 * TODO thi: Bad implementation: If there aren't any valid columns the
 			 * returnString is null, that is a null pointer exception is thrown (see:
@@ -1474,7 +1483,8 @@ public abstract class DatastoreInterface implements MutableClass {
 			 * is invoked. The problem is: what should be returned if the returnString
 			 * is null? An empty string or a null value causes a wrong SQLStatement.
 			 */
-			newCachedColumnNameList = returnString == null ? CoreConstants.EMPTY : returnString.toString();
+				newCachedColumnNameList = returnString == null ? CoreConstants.EMPTY : returnString.toString();
+			}
 		}
 		return newCachedColumnNameList;
 	}

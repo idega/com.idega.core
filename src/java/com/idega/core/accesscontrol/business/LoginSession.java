@@ -14,7 +14,6 @@ import java.util.Locale;
 
 import com.idega.business.SpringBeanName;
 import com.idega.user.business.UserProperties;
-import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 
@@ -29,22 +28,22 @@ public interface LoginSession {
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPermissionGroups
      */
-    public List<Group> getPermissionGroups();
+    public List<com.idega.user.data.Group> getPermissionGroups();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setPermissionGroups
      */
-    public void setPermissionGroups(List<Group> permissionGroups);
+    public void setPermissionGroups(List<com.idega.user.data.Group> permissionGroups);
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getPrimaryGroup
      */
-    public Group getPrimaryGroup();
+    public com.idega.user.data.Group getPrimaryGroup();
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#setPrimaryGroup
      */
-    public void setPrimaryGroup(Group primaryGroup);
+    public void setPrimaryGroup(com.idega.user.data.Group primaryGroup);
 
     /**
      * @see com.idega.core.accesscontrol.business.LoginSessionBean#getRepresentativeGroup
@@ -147,8 +146,8 @@ public interface LoginSession {
     public Locale getCurrentLocale();
 
     public abstract boolean isLoggedIn();
-    
+
     public User getRealUser();
-    
+
     public void resetLegacyUser();
 }

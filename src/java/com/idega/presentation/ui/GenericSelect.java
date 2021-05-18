@@ -12,6 +12,7 @@ import javax.faces.context.FacesContext;
 import com.idega.data.IDOEntity;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Script;
+import com.idega.util.CoreConstants;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -154,7 +155,7 @@ public class GenericSelect extends InterfaceObject {
 	 * Creates a new <code>GenericSelect</code> with the name "undefined".
 	 */
 	public GenericSelect() {
-		this("undefined");
+		this(CoreConstants.UNDEFINED);
 	}
 
 	/**

@@ -9,9 +9,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
+import java.util.Set;
 
 public class StringUtil {
 
@@ -289,11 +291,11 @@ public class StringUtil {
 	 * or {@link Collections#emptyList()} on failure;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
 	 */
-	public static ArrayList<Integer> toIntegers(Collection<String> strings) {
-		ArrayList<Integer> integers = new ArrayList<Integer>();
+	public static Collection<Integer> toIntegers(Collection<String> strings) {
+		Set<Integer> integers = new HashSet<>();
 
 		if (!ListUtil.isEmpty(strings)) {
-			for(String string : strings) {
+			for (String string: strings) {
 				try {
 					integers.add(Integer.valueOf(string));
 				} catch (Exception e) {}
@@ -301,6 +303,22 @@ public class StringUtil {
 		}
 
 		return integers;
+	}
+
+	public static Collection<String> toStrings(Collection<Integer> integers) {
+		Set<String> strings = new HashSet<>();
+
+		if (!ListUtil.isEmpty(integers)) {
+			for (Integer integer: integers) {
+				if (integer == null) {
+					continue;
+				}
+
+				strings.add(integer.toString());
+			}
+		}
+
+		return strings;
 	}
 
 	public static String getValueFromBrackets(String value) {

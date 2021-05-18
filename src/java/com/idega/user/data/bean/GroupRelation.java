@@ -104,7 +104,52 @@ import com.idega.util.expression.ELUtil;
 			query = "select gr from GroupRelation gr where (gr.status = '" + GroupRelation.STATUS_ACTIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING +
 					"') and gr.initiationDate >= :" + GroupRelation.PARAM_INITIATION_DATE_START + " and gr.initiationDate <= :" + GroupRelation.PARAM_INITIATION_DATE_END +
 					" and gr.groupRelationType.type = '" + GroupRelation.RELATION_TYPE_GROUP_PARENT + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_INVALID_RELATIONS,
+			query = "SELECT gr "
+					+ "FROM GroupRelation gr "
+					+ "WHERE (gr.status IS NULL) "
+					+ "OR (gr.groupRelationType.type IS NULL)"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP,
+			query = "SELECT gr "
+					+ "FROM GroupRelation gr "
+					+ "WHERE gr.relatedGroup.id = :id "
+					+ "AND " + GroupRelation.PART_PARENT
+					+ "AND " + GroupRelation.PART_ACTIVE
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP_BY_PARENT_GROUPS,
+			query = "SELECT gr "
+					+ "FROM GroupRelation gr "
+					+ "WHERE gr.relatedGroup.id = :group "
+					+ "AND " + GroupRelation.PART_PARENT
+					+ "AND " + GroupRelation.PART_ACTIVE
+					+ "AND gr.group.id IN (:parents)"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_PARENT_GROUPS_FOR_GROUP,
+			query = "SELECT gr.group "
+					+ "FROM GroupRelation gr "
+					+ "WHERE gr.relatedGroup.id = :id "
+					+ "AND " + GroupRelation.PART_PARENT
+					+ "AND " + GroupRelation.PART_ACTIVE
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS,
+			query = "SELECT gr FROM GroupRelation gr WHERE gr.group.id in (:groupsIds) AND gr.relatedGroup.id in (:relatedGroupsIds) " +
+			" AND gr.relatedGroupType.groupType = '" + UserGroupRepresentative.GROUP_TYPE_USER_REPRESENTATIVE + "'"
+	),
+	@NamedQuery(
+			name = GroupRelation.QUERY_FIND_PASSIVE_GROUPS_BY_PARENT_GROUPS_AND_TYPES,
+			query = "SELECT gr FROM GroupRelation gr WHERE gr.group.id IN (:" + GroupRelation.PARAM_GROUP_IDS + ") "
+					+ " AND gr.relatedGroupType.groupType in (:" + GroupRelation.PARAM_GROUP_TYPES + ")"
+					+ " AND (gr.groupRelationType.type='GROUP_PARENT' OR gr.groupRelationType.type IS NULL) "
+					+ " AND (gr.status = '" + GroupRelation.STATUS_PASSIVE + "' OR gr.status = '" + GroupRelation.STATUS_PASSIVE_PENDING + "')"
 	)
+
 })
 @Cacheable
 public class GroupRelation implements Serializable, MetaDataCapable {
@@ -112,23 +157,37 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	private static final long serialVersionUID = 5850270896539731950L;
 
 	public static final String	QUERY_FIND_ALL = "groupRelation.findAll",
-								QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
-								QUERY_FIND_BY_ID = "groupRelation.findById",
-								QUERY_FIND_BY_RELATED_GROUP_AND_TYPE = "groupRelation.findByRelatedGroupAndType",
-								QUERY_FIND_BY_GROUP_ID_AND_RELATED_GROUP_ID = "groupRelation.findByGroupIdAndRelatedGroupId",
-								QUERY_GET_HISTORY = "groupRelation.getHistory",
-								QUERY_FIND_PARENT_IDS = "groupRelation.findParentIds",
-								QUERY_COUNT_BY_RELATED_GROUP_TYPE = "groupRelation.countByRelatedGroupType",
-								QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER = "groupRelation.findDirectGroupIdsForUser",
-								QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE = "groupRelation.findDirectGroupsForUserByType",
-								QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE = "groupRelation.findByRelatedGroupIdAndType",
-								QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES = "groupRelation.findByRelatedGroupsIdAndTypes",
-								QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
-								QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
-								QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses",
-								QUERY_FIND_BY_INITIATION_DATE = "groupRelation.findByInitiationDate",
-								QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "groupRelation.findByGroupsIdsAndDeletedAtGivenTimeframe";
+			QUERY_FIND_BY_RELATED_GROUP = "groupRelation.findByRelatedGroup",
+			QUERY_FIND_BY_ID = "groupRelation.findById",
+			QUERY_FIND_BY_RELATED_GROUP_AND_TYPE = "groupRelation.findByRelatedGroupAndType",
+			QUERY_FIND_BY_GROUP_ID_AND_RELATED_GROUP_ID = "groupRelation.findByGroupIdAndRelatedGroupId",
+			QUERY_GET_HISTORY = "groupRelation.getHistory",
+			QUERY_FIND_PARENT_IDS = "groupRelation.findParentIds",
+			QUERY_COUNT_BY_RELATED_GROUP_TYPE = "groupRelation.countByRelatedGroupType",
+			QUERY_FIND_DIRECT_GROUP_IDS_FOR_USER = "groupRelation.findDirectGroupIdsForUser",
+			QUERY_FIND_DIRECT_GROUPS_FOR_USER_BY_TYPE = "groupRelation.findDirectGroupsForUserByType",
+			QUERY_FIND_BY_RELATED_GROUP_ID_AND_TYPE = "groupRelation.findByRelatedGroupIdAndType",
+			QUERY_FIND_BY_RELATED_GROUPS_IDS_AND_TYPES = "groupRelation.findByRelatedGroupsIdAndTypes",
+			QUERY_FIND_GROUPS_IDS_ACTIVE_FROM = "groupRelation.findGroupsIdsActiveFrom",
+			QUERY_FIND_GROUPS_ACTIVE_FROM = "groupRelation.findGroupsActiveFrom",
+			QUERY_FIND_GROUPS_IDS_BY_STATUSES = "groupRelation.findGroupsIdsByStatuses",
+			QUERY_FIND_BY_INITIATION_DATE = "groupRelation.findByInitiationDate",
+			QUERY_FIND_BY_GROUPS_IDS_AND_DELETED_AT_GIVEN_TIMEFRAME = "groupRelation.findByGroupsIdsAndDeletedAtGivenTimeframe",
+			QUERY_FIND_INVALID_RELATIONS = "groupRelation.findInvalidRelations",
+			QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP = "groupRelation.findParentGroupRelationsForGroup",
+			QUERY_FIND_PARENT_GROUP_RELATIONS_FOR_GROUP_BY_PARENT_GROUPS = "groupRelation.findParentGroupRelationsForGroupByParentGroups",
+			QUERY_FIND_PARENT_GROUPS_FOR_GROUP = "groupRelation.findParentGroupsForGroup",
+			QUERY_FIND_BY_GROUPS_IDS_AND_RELATED_GROUP_IDS = "groupRelation.findByGroupsIdsAndRelatedGroupsIds",
+			QUERY_FIND_PASSIVE_GROUPS_BY_PARENT_GROUPS_AND_TYPES = "groupRelation.findPassiveGroupsByParentGroupsAndTypes";
 
+	public static final String PART_ACTIVE = " (gr.status = '"
+			+ GroupRelation.STATUS_ACTIVE
+			+ "' OR gr.status = '"
+			+ GroupRelation.STATUS_PASSIVE_PENDING
+			+ "') ";
+	public static final String PART_PARENT = " (gr.groupRelationType.type='"
+			+ GroupRelation.RELATION_TYPE_GROUP_PARENT
+			+ "' OR gr.groupRelationType.type IS NULL) ";
 	public static final String PARAM_GROUP_RELATION_ID = "groupRelationId";
 	public static final String PARAM_RELATED_GROUP_ID = "relatedGroupId";
 	public static final String PARAM_RELATED_GROUP_TYPE = "relatedGroupType";
@@ -141,6 +200,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public static final String PARAM_INITIATION_DATE = "initiationDate";
 	public static final String PARAM_INITIATION_DATE_START = "initiationDateStart";
 	public static final String PARAM_INITIATION_DATE_END = "initiationDateEnd";
+	public static final String PARAM_GROUP_IDS = "groupIds";
 
 	public final static String STATUS_ACTIVE = "ST_ACTIVE";
 	public final static String STATUS_PASSIVE = "ST_PASSIVE";
@@ -512,4 +572,10 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public void updateMetaData() throws SQLException {
 		//Does nothing...
 	}
+
+	public void setTerminationModificationDate(Date terminationModificationDate) {
+		this.terminationModificationDate = terminationModificationDate;
+	}
+
+
 }

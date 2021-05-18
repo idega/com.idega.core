@@ -163,12 +163,12 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 	}
 
 	@Override
-	public Integer getNumberOfLogins(User user) {
+	public Long getNumberOfLogins(User user) {
 		if (user == null) {
 			return null;
 		}
 
-		return getSingleResult(LoginRecord.GET_NUMBER_OF_LOGINS_FOR_USER, Integer.class, new Param("user", user));
+		return getSingleResult(LoginRecord.GET_NUMBER_OF_LOGINS_FOR_USER, Long.class, new Param("user", user));
 	}
 
 	@Override

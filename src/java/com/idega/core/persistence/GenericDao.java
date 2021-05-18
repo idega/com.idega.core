@@ -30,6 +30,8 @@ public interface GenericDao {
 
 	public abstract Query createNamedQuery(String queryName);
 
+	public abstract Query createNativeQuery(String sqlString);
+
 	public abstract void remove(Object obj);
 
 	public abstract boolean contains(Object obj);
@@ -46,7 +48,7 @@ public interface GenericDao {
 	public abstract void refresh(Object product);
 
 	/**
-	 * 
+	 *
 	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
 	 * <li>Creates {@link Query} if does not exist</li>
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
@@ -62,7 +64,7 @@ public interface GenericDao {
 	<Expected> List<Expected> getResultList(String namedQueryName, Class<Expected> expectedReturnType, Param... params);
 
 	/**
-	 * 
+	 *
 	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
 	 * <li>Creates {@link Query} if does not exist</li>
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
@@ -79,15 +81,15 @@ public interface GenericDao {
 	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
 	<Expected> List<Expected> getResultList(
-			String namedQueryName, 
-			Class<Expected> expectedReturnType, 
-			Integer firstResult, 
-			Integer maxResults, 
-			String cachedRegionName, 
+			String namedQueryName,
+			Class<Expected> expectedReturnType,
+			Integer firstResult,
+			Integer maxResults,
+			String cachedRegionName,
 			Param... params);
 
 	/**
-	 * 
+	 *
 	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
 	 * <li>Creates {@link Query} if does not exist</li>
 	 * <li>Caches query</li>
@@ -102,7 +104,7 @@ public interface GenericDao {
 	<Expected> Expected getSingleResult(String namedQueryName,  Class<Expected> expectedReturnType, Param... params);
 
 	/**
-	 * 
+	 *
 	 * <p>Executes {@link Query#getResultList()}, but with some problems fixed:
 	 * <li>Creates {@link Query} if does not exist</li>
 	 * <li>Caches query</li>
@@ -117,7 +119,7 @@ public interface GenericDao {
 	<Expected> Expected getSingleResultByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
 
 	/**
-	 * 
+	 *
 	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
 	 * <li>Creates {@link Query} if does not exist</li>
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
@@ -131,9 +133,9 @@ public interface GenericDao {
 	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
 	<Expected> List<Expected> getResultListByInlineQuery(String query, Class<Expected> expectedReturnType, Param... params);
-	
+
 	/**
-	 * 
+	 *
 	 * <p>Creates named query and executes {@link Query#getResultList()} with some problems fixed:
 	 * <li>Creates {@link Query} if does not exist</li>
 	 * <li>Fixes problem of loading more than 1000 entities at once</li>
@@ -150,11 +152,11 @@ public interface GenericDao {
 	 * @return entities or {@link Collections#emptyList()} on failure;
 	 */
 	<Expected> List<Expected> getResultListByInlineQuery(
-			String query, 
-			Class<Expected> expectedReturnType, 
-			Integer firstResult, 
-			Integer maxResults, 
-			String cachedRegionName, 
+			String query,
+			Class<Expected> expectedReturnType,
+			Integer firstResult,
+			Integer maxResults,
+			String cachedRegionName,
 			Param... params);
 
 	/**
@@ -209,7 +211,7 @@ public interface GenericDao {
 	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
 	 */
 	<T> List<T> findAll(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments);
 
 	/**
@@ -218,7 +220,7 @@ public interface GenericDao {
 	 * @return entities found in database, filtered by given criteria or {@link Collections#emptyList()} on failure
 	 */
 	<T> List<T> findAll(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments,
 			Collection<Predicate> additional);
 
@@ -235,46 +237,46 @@ public interface GenericDao {
 			Integer amount);
 
 	/**
-	 * 
+	 *
 	 * @param type of {@link Entity} to fetch, not <code>null</code>
 	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
 	 * @return JPA query to execute
 	 */
 	<T> CriteriaQuery<Long> getAmountQuery(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments);
 
 	/**
-	 * 
+	 *
 	 * @param type of {@link Entity} to fetch, not <code>null</code>
 	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
 	 * @param additional custom {@link Predicate}s to add, skipped if <code>null</code>
 	 * @return JPA query to execute
 	 */
 	<T> CriteriaQuery<Long> getAmountQuery(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments,
 			Collection<Predicate> additional);
-	
+
 	/**
-	 * 
+	 *
 	 * @param type of {@link Entity} to fetch, not <code>null</code>
 	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
 	 * @return JPA query to execute
 	 */
 	<T> CriteriaQuery<T> getQuery(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments);
 
 	/**
-	 * 
+	 *
 	 * @param type of {@link Entity} to fetch, not <code>null</code>
 	 * @param arguments is {@link Map} of POJO field name and {@link Collection} of values to be matched, skipped if <code>null</code>
 	 * @param additional custom {@link Predicate}s to add, skipped if <code>null</code>
 	 * @return JPA query to execute
 	 */
 	<T> CriteriaQuery<T> getQuery(
-			Class<T> type, 
+			Class<T> type,
 			Map<String, Collection<? extends Serializable>> arguments,
 			Collection<Predicate> additional);
 }

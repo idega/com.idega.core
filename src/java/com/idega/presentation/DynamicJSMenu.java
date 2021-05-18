@@ -5,14 +5,16 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import com.idega.util.CoreConstants;
+
 /**
- * 
+ *
  * @author birna
- * 
+ *
  * Creates a dynamic JavaScript menu using external javaScript; coolmenus4.js
  * see <a
  * href="http://www.dhtmlcentral.com/projects/coolmenus/">http://www.dhtmlcentral.com/projects/coolmenus/</a>
- * 
+ *
  */
 public class DynamicJSMenu extends PresentationObject {
 
@@ -87,16 +89,16 @@ public class DynamicJSMenu extends PresentationObject {
 
 	/**
 	 * the default constructor
-	 * 
+	 *
 	 */
 	public DynamicJSMenu() {
-		this("undefined");
+		this(CoreConstants.UNDEFINED);
 	}
 
 	/**
 	 * constructor to creating a <code> DynamicJSMenu </code> object with a
 	 * specific name.
-	 * 
+	 *
 	 * @param name
 	 */
 	public DynamicJSMenu(String name) {
@@ -110,7 +112,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param map
 	 * @return a string of the attributes for the <code> DynamicJSMenu </code> on
 	 *         the form menuName.attributeName=attributeValue
@@ -145,7 +147,7 @@ public class DynamicJSMenu extends PresentationObject {
 
 	/**
 	 * adds a level to the <code> DynamicJSMenu </code>
-	 * 
+	 *
 	 * @param level
 	 */
 	public void addLevel(String level) {
@@ -160,7 +162,7 @@ public class DynamicJSMenu extends PresentationObject {
 	/**
 	 * Adds a link to the i=th menu. Before a link is added to the i-th menu, make
 	 * sure to add links to all preceeding menus, i.e. zeroth to (i-1)th.
-	 * 
+	 *
 	 * @param i
 	 *          the menu to add the link to, starting at zero.
 	 * @param text
@@ -300,7 +302,7 @@ public class DynamicJSMenu extends PresentationObject {
 
 	/**
 	 * sets the initial values for the <code> DynamicJSMenu </code>
-	 * 
+	 *
 	 */
 	public void initialMenuValues() {
 		setBarBorderClass(this.barBorderClass);
@@ -388,7 +390,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param fileName -
 	 *          the file containing the javascript
 	 * @param iwc -
@@ -402,7 +404,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param barBordCl
 	 */
 	public void setBarBorderClass(String barBordCl) {
@@ -410,7 +412,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param barBordX
 	 */
 	public void setBarBorderX(int barBordX) {
@@ -418,7 +420,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param barBordY
 	 */
 	public void setBarBorderY(int barBordY) {
@@ -426,7 +428,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param barCl
 	 */
 	public void setBarClass(String barCl) {
@@ -434,7 +436,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param barH
 	 */
 	public void setBarHeight(String barH) {
@@ -461,7 +463,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param barW
 	 */
 	public void setBarWidth(String barW) {
@@ -469,7 +471,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bX
 	 */
 	public void setBarX(String bX) {
@@ -477,7 +479,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param bY
 	 */
 	public void setBarY(String bY) {
@@ -485,7 +487,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param fImg
 	 */
 	public void setFillImg(String fImg) {
@@ -493,7 +495,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param f
 	 */
 	public void setFrames(int f) {
@@ -503,7 +505,7 @@ public class DynamicJSMenu extends PresentationObject {
 	/**
 	 * sets the position the menu is located at from the left of the
 	 * browserwindow, x-coordinate
-	 * 
+	 *
 	 * @param fromL
 	 */
 	public void setFromLeft(int fromL) {
@@ -513,7 +515,7 @@ public class DynamicJSMenu extends PresentationObject {
 	/**
 	 * sets the position the menu is located at from the top of the browserwindow,
 	 * y-coordinates
-	 * 
+	 *
 	 * @param fromT
 	 */
 	public void setFromTop(int fromT) {
@@ -552,7 +554,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param menuPlace
 	 */
 	public void setMenuPlacement(String menuPlace) {
@@ -560,7 +562,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param offlineR
 	 */
 	public void setOfflineRoot(String offlineR) {
@@ -568,7 +570,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param onlineR
 	 */
 	public void setOnlineRoot(String onlineR) {
@@ -585,7 +587,7 @@ public class DynamicJSMenu extends PresentationObject {
 
 	/**
 	 * sets the pixles between <code> MenuElements </code>
-	 * 
+	 *
 	 * @param pxB
 	 */
 	public void setPxBetween(int pxB) {
@@ -593,7 +595,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param resizeCh
 	 */
 	public void setResizeCheck(int resizeCh) {
@@ -602,7 +604,7 @@ public class DynamicJSMenu extends PresentationObject {
 
 	/**
 	 * sets if the menu should appear horizontal (r=0) or vertical (r=0)
-	 * 
+	 *
 	 * @param r
 	 */
 	public void setRows(int r) {
@@ -670,7 +672,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param useB
 	 */
 	public void setUseBar(int useB) {
@@ -678,7 +680,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param w
 	 */
 	public void setWait(int w) {
@@ -686,7 +688,7 @@ public class DynamicJSMenu extends PresentationObject {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param zIn
 	 */
 	public void setZIndex(int zIn) {
@@ -707,7 +709,7 @@ public class DynamicJSMenu extends PresentationObject {
 	/**
 	 * This table + layer + image hack is needed to position the layer within
 	 * tables
-	 * 
+	 *
 	 * @return
 	 */
 	private String getTableWithLayer(IWContext iwc) {

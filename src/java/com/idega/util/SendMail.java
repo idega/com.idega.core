@@ -1,6 +1,10 @@
 package com.idega.util;
 
 import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.file.Files;
 import java.util.Collections;
 import java.util.List;
 import java.util.Properties;
@@ -34,6 +38,14 @@ import com.idega.core.messaging.SMTPAuthenticator;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.sendgrid.Method;
+import com.sendgrid.Request;
+import com.sendgrid.Response;
+import com.sendgrid.SendGrid;
+import com.sendgrid.helpers.mail.Mail;
+import com.sendgrid.helpers.mail.objects.Attachments;
+import com.sendgrid.helpers.mail.objects.Content;
+import com.sendgrid.helpers.mail.objects.Personalization;
 import com.sun.mail.smtp.SMTPTransport;
 
 /**
@@ -154,6 +166,106 @@ public class SendMail {
 		return send(from, to, cc, bcc, replyTo, host, subject, text, mailType, headers, useThread, deleteFiles, false, attachedFiles);
 	}
 
+	private static boolean sendViaSendGridAPI(
+			String key,
+			String from,
+			String to,
+			String cc,
+			String bcc,
+			String replyTo,
+			String subject,
+			String text,
+			List<AdvancedProperty> headers,
+			final boolean deleteFiles,
+			final File... attachedFiles
+	) throws MessagingException {
+		//	From, to, content
+		com.sendgrid.helpers.mail.objects.Email fromEmail = new com.sendgrid.helpers.mail.objects.Email(from);
+		com.sendgrid.helpers.mail.objects.Email toEmail = new com.sendgrid.helpers.mail.objects.Email(to);
+	    Content content = new Content(MimeTypeUtil.MIME_TYPE_HTML, text);
+	    Mail mail = new Mail(fromEmail, subject, toEmail, content);
+
+	    //	CC and BCC
+	    Personalization personalization = null;
+	    if (!StringUtil.isEmpty(cc)) {
+	    	personalization = new Personalization();
+	    	personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(cc));
+		}
+		if (!StringUtil.isEmpty(bcc)) {
+			personalization = personalization == null ? new Personalization() : personalization;
+	    	personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(bcc));
+		}
+		if (personalization != null) {
+			mail.addPersonalization(personalization);
+		}
+
+		//	Reply to
+		if (!StringUtil.isEmpty(replyTo)) {
+			com.sendgrid.helpers.mail.objects.Email replyToEmail = new com.sendgrid.helpers.mail.objects.Email(replyTo);
+			mail.setReplyTo(replyToEmail);
+		}
+
+		//	Headers
+		if (!ListUtil.isEmpty(headers)) {
+			for (AdvancedProperty header: headers) {
+				mail.addHeader(header.getId(), header.getValue());
+			}
+		}
+
+		//	Attachments
+		if (!ArrayUtil.isEmpty(attachedFiles)) {
+			for (File attachment: attachedFiles) {
+				if (attachment == null || !attachment.exists() || !attachment.canRead()) {
+					LOGGER.warning("File '" + attachment + "' does not exist!");
+					continue;
+				}
+
+				InputStream contentStream = null;
+				try {
+					contentStream = new FileInputStream(attachment);
+					String type = Files.probeContentType(attachment.toPath());
+					Attachments attachments = new Attachments.Builder(attachment.getName(), contentStream)
+			                .withType(type)
+			                .build();
+					mail.addAttachments(attachments);
+				} catch (IOException e) {
+					LOGGER.log(Level.WARNING, "Error adding attachment " + attachment + ". Can not send email to " + to + " with subject " + subject, e);
+					return false;
+				} finally {
+					IOUtil.close(contentStream);
+				}
+			}
+		}
+
+		boolean success = false;
+	    SendGrid sg = new SendGrid(key);
+	    Request request = new Request();
+	    try {
+	    	request.setMethod(Method.POST);
+	    	request.setEndpoint("mail/send");
+	    	request.setBody(mail.build());
+	    	Response response = sg.api(request);
+	    	int statusCode = response.getStatusCode();
+	    	success = statusCode == 200 || statusCode == 201 || statusCode == 202;
+	    	if (!success) {
+	    		LOGGER.warning("Error sending email to " + to + " with subject " + subject + ". Status code: " + statusCode + ", response: " + response.getBody() + ", response headers: " + response.getHeaders());
+	    	}
+	    	return success;
+	    } catch (Exception e) {
+	    	String error = "Error sending email to " + to + " with subject " + subject;
+	    	LOGGER.log(Level.WARNING, error, e);
+	    	throw new MessagingException(error, e);
+	    } finally {
+	    	if (success && deleteFiles && !ArrayUtil.isEmpty(attachedFiles)) {
+	    		for (File attachment: attachedFiles) {
+					if (attachment != null && attachment.exists()) {
+						attachment.delete();
+					}
+	    		}
+	    	}
+	    }
+	}
+
 	/**
 	 * <p>
 	 * Method that uses the Java Mail API to send an email message.<br/> It is
@@ -216,6 +328,13 @@ public class SendMail {
 			return null;
 		}
 
+		boolean viaSendGrindAPI = settings.getBoolean("mail.send_via_api", false);
+		String sendGridKey = viaSendGrindAPI ? settings.getProperty("mail.send_grid_key") : null;
+		if (viaSendGrindAPI && !StringUtil.isEmpty(sendGridKey)) {
+			sendViaSendGridAPI(sendGridKey, from, to, cc, bcc, replyTo, subject, text, headers, deleteFiles, attachedFiles);
+			return null;
+		}
+
 		if (!DefaultIWBundle.isProductionEnvironment()) {
 			LOGGER.log(Level.INFO, "to: " + to + " mail: " + text);
 			return null;
@@ -274,6 +393,9 @@ public class SendMail {
 		// Construct a message
 		//	Sender
 		if (StringUtil.isEmpty(from)) {
+			from = settings.getProperty(MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS);
+		}
+		if (StringUtil.isEmpty(from)) {
 			throw new MessagingException("From address is null.");
 		}
 		MimeMessage message = new MimeMessage(session);
@@ -320,6 +442,14 @@ public class SendMail {
 				attachment.setDataHandler(attachmentHandler);
 				attachment.setFileName(attachedFile.getName());
 				attachment.setDescription("Attached file: " + attachment.getFileName());
+
+				try {
+					String contentType = Files.probeContentType(attachedFile.toPath());
+					if (!StringUtil.isEmpty(contentType)) {
+						attachment.setHeader("Content-Type", contentType);
+					}
+				} catch (Exception e) {}
+
 				multipart.addBodyPart(attachment);
 			}
 

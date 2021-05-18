@@ -345,6 +345,50 @@ public class GroupsCacheServiceImpl extends DefaultSpringBean implements GroupsC
 			addRelations(relation, parent, child);
 
 			addGroupRelationBean(relation, groupTypesForChangesAtEntities);
+
+			//FIXME: Missing part to cache alias?
+			Map<Integer, Integer> aliasesIds = new HashMap<>();
+			if (GroupTypeConstants.GROUP_TYPE_ALIAS.equals(relatedGroupType)) {
+				aliasesIds.put(relatedGroupId, groupId);
+			}
+			if (!MapUtil.isEmpty(aliasesIds)) {
+				int aliasColumns = 4;
+				List<Object[]> aliases = groupDAO.getResultListByInlineQuery(
+						"select g.id, g.alias.id, g.alias.name, g.alias.groupType.groupType from " + Group.class.getName() + " g where g.id in :aliasesIds",
+						Object[].class,
+						new Param("aliasesIds", new ArrayList<>(aliasesIds.keySet()))
+				);
+				if (!ListUtil.isEmpty(aliases)) {
+					for (Object[] alias: aliases) {
+						if (ArrayUtil.isEmpty(alias) || alias.length != aliasColumns) {
+							continue;
+						}
+
+						Integer aliasId = ((Number) alias[0]).intValue();
+						Integer parentId = aliasesIds.get(aliasId);
+
+						CachedGroup parentAl = parentId == null ? null : groups.get(parentId);
+
+						Integer relatedGroupIdAl = ((Number) alias[1]).intValue();
+						String relatedGroupNameAl = (String) alias[2];
+						String relatedGroupTypeAl = (String) alias[3];
+
+						addRelations(
+								null,
+								parent,
+								new CachedGroup(parentAl == null ? null : parentAl.getGroupRelationId(), relatedGroupIdAl, relatedGroupNameAl, relatedGroupTypeAl, true)
+						);
+
+						if (aliasId != null && relatedGroupIdAl != null) {
+							Map<Integer, Integer> aliasesCache = getAliases();
+							Map<Integer, Integer> groupsAliasesCache = getGroupsAliases();
+							aliasesCache.put(aliasId, relatedGroupIdAl);
+							groupsAliasesCache.put(relatedGroupIdAl, aliasId);
+						}
+					}
+				}
+			}
+			//---- Caching alias end --------
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Error updating group relation: " + event.getGroupRelationId(), e);
 		}

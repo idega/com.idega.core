@@ -16,7 +16,9 @@ import java.util.List;
 import com.idega.business.SpringBeanName;
 import com.idega.core.persistence.GenericDao;
 import com.idega.user.bean.GroupRelationBean;
+import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.GroupRelation;
+import com.idega.user.data.bean.User;
 
 @SpringBeanName(GroupRelationDAO.BEAN_NAME)
 public interface GroupRelationDAO extends GenericDao {
@@ -56,4 +58,24 @@ public interface GroupRelationDAO extends GenericDao {
 	public List<GroupRelation> getTerminatedGroupRelationsByGroupIdsAndPeriod(List<Integer> groupIds, Date dateFrom, Date dateTo);
 
 	public void updateTerminationDate(List<Integer> groupRelationIds, Date newDate);
+
+	public void fixInvalidRelations();
+	public List<GroupRelation> findParentGroupRelationsForGroup(Integer id);
+	public List<Group> findParentGroupsForGroup(Integer id);
+	public void removeParentGroupsForGroup(
+			Integer group,
+			List<Integer> parents,
+			User byUser
+	);
+	public void storeGroupAsChildForGroups(
+			Group group,
+			List<Group> parents,
+			User byUser
+	);
+
+	public List<GroupRelation> getByGroupIdsAndRelatedGroupIds(List<Integer> groupIds, List<Integer> relatedGroupIds);
+
+	public List<GroupRelation> getPassiveGroupByParentGroupIdsAndGroupTypes(List<Integer> groupIds, List<String> groupTypes);
+
+	public void activateTerminatedRelation(GroupRelation groupRelation);
 }

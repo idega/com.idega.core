@@ -36,7 +36,7 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
     private boolean _distinct =false;
     private boolean flag = false;
 
-    private Integer limit;
+    private Integer limit, offset;
 
 	public SelectQuery(Table baseTable) {
 		this.baseTable = baseTable;
@@ -327,6 +327,13 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 				out.println(" LIMIT " + limit);
 			}
         }
+
+		if (offset != null) {
+			String dataStoreType = DBUtil.getDatastoreType();
+			if (!StringUtil.isEmpty(dataStoreType) && SQLSchemaAdapter.DBTYPE_MYSQL.equals(dataStoreType)) {
+				out.println(" OFFSET " + offset);
+			}
+		}
 	}
 
 	/**
@@ -491,6 +498,14 @@ public class SelectQuery implements Outputable,PlaceHolder,Cloneable,Flag {
 
 	public void setLimit(Integer limit) {
 		this.limit = limit;
+	}
+
+	public Integer getOffset() {
+		return offset;
+	}
+
+	public void setOffset(Integer offset) {
+		this.offset = offset;
 	}
 
 }

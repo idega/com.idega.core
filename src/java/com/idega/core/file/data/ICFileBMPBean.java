@@ -122,6 +122,8 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 		addAttribute(getColumnNameLocalizationKey(), "Localization key", true, true, String.class, 255);
 		addAttribute(FILE_URI_IN_REPO, "File URI", true, true, String.class, 1000);
 
+		addUniqueIDColumn();
+
 		addManyToManyRelationShip(ICItem.class, TABLENAME_ICFILE_ICITEM);
 		addManyToManyRelationShip(ICVersion.class, TABLENAME_ICFILE_ICVERSION);
 		addManyToManyRelationShip(com.idega.user.data.User.class, FILE_DOWNLOADERS);

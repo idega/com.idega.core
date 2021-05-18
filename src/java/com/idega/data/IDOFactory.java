@@ -359,6 +359,11 @@ public void remove(Object primaryKey){
 		    for (Object pk: collectionOfPrimaryKeys) {
 		      if (pk instanceof IDOEntity) {
 		      	theReturn.add((T) pk);
+		      } else if (pk instanceof Collection) {
+		    	  for (Object id: (Collection<?>) pk) {
+		    		  T entityObject = this.findByPrimaryKeyIDO(id, theClass);
+				      theReturn.add(entityObject);
+		    	  }
 		      } else {
 			      T entityObject = this.findByPrimaryKeyIDO(pk, theClass);
 			      theReturn.add(entityObject);

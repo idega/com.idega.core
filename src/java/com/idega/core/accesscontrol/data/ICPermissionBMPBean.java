@@ -248,9 +248,11 @@ public class ICPermissionBMPBean extends com.idega.data.GenericEntity implements
 		.appendAnd().appendEqualsQuoted(getContextValueColumnName(),contextValue)
 		.appendAnd().append(getPermissionStringColumnName())
 		.appendInForStringCollectionWithSingleQuotes(permissionStrings)
-		.appendAnd().appendEqualsQuoted(getPermissionValueColumnName(),CoreConstants.Y)
-		.appendAnd().appendEquals(getGroupIDColumnName(),group.getPrimaryKey().toString())
-		.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
+		.appendAnd().appendEqualsQuoted(getPermissionValueColumnName(),CoreConstants.Y);
+		if (group != null) {
+			sql.appendAnd().appendEquals(getGroupIDColumnName(),group.getPrimaryKey().toString());
+		}
+		sql.appendAnd().append(" ( "+STATUS_COLUMN+" = '"+STATUS_ACTIVE+"' OR "+STATUS_COLUMN+" is null )");
 
 		return super.idoFindPKsByQuery(sql);
 	}

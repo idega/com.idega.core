@@ -11,20 +11,22 @@ import javax.faces.context.FacesContext;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWUserContext;
 import com.idega.presentation.IWContext;
+import com.idega.util.CoreConstants;
 import com.idega.util.text.TextSoap;
 
 /**
  * @author laddi
  */
 public class SelectOption extends InterfaceObject implements Comparable<SelectOption> {
-	
+
 	private Class windowClass;
 	private Map parameterMap;
 	private String target;
 	private int fileID = -1;
-	
+
 	private static final String SELECTED_PROPERTY = "selected";
 
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[8];
 		values[0] = super.saveState(ctx);
@@ -34,6 +36,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		values[4] = new Integer(this.fileID);
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -42,7 +45,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		this.target = (String) values[3];
 		this.fileID = ((Integer) values[4]).intValue();
 	}
-	
+
 	public SelectOption() {
 		this("untitled");
 	}
@@ -50,13 +53,13 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 	public SelectOption(String value) {
 		this(value, value);
 	}
-	
+
 	public SelectOption(String name, int value) {
-		this(name, String.valueOf(value));	
+		this(name, String.valueOf(value));
 	}
-	
+
 	public SelectOption(String name, char value) {
-		this(name, String.valueOf(value));	
+		this(name, String.valueOf(value));
 	}
 
 	public SelectOption(String name, String value) {
@@ -80,15 +83,16 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 			this.removeMarkupAttribute("selected");
 		}
 	}
-	
+
 	/**
 	 * Sets the label for the <code>SelectOption</code>.
 	 * @param label	The label to set.
 	 */
+	@Override
 	public void setLabel(String label) {
 		setMarkupAttribute("label", label);
 	}
-	
+
 	/**
 	 * Returns the selected status of the <code>SelectOption</code>.
 	 * @return boolean	True if <code>SelectOption</code> is selected, false otherwise.
@@ -97,9 +101,9 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		if (isMarkupAttributeSet("selected")) {
 			return true;
 		}
-		return false;	
+		return false;
 	}
-	
+
 	@Override
 	public void encodeBegin(FacesContext context) throws IOException {
     	ValueExpression ve = getValueExpression(SELECTED_PROPERTY);
@@ -107,16 +111,17 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 	    	boolean selected = ((Boolean) ve.getValue(context.getELContext())).booleanValue();
 	    	setSelected(selected);
     	}
-    	
+
     	super.encodeBegin(context);
 	}
-	
+
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		if (this.windowClass != null) {
 			String URL = Window.getWindowURLWithParameters(this.windowClass, iwc, this.parameterMap);
 			String arguments = Window.getWindowArgumentCallingScript(this.windowClass);
 			setValue(URL + "$" + arguments + "$" + this.target);
-			
+
 			getParentSelect().addSelectScript(true);
 		}
 		if (this.fileID != -1) {
@@ -125,7 +130,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 			setValue(URL + "$" + arguments + "$" + "_blank");
 		}
 	}
-	
+
 	protected GenericSelect getParentSelect() {
 		UIComponent parent = this.getParent();
 		if (parent != null && parent instanceof GenericSelect) {
@@ -134,10 +139,11 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		return null;
 	}
 
+	@Override
 	public String getName(){
 		return getName(true);
 	}
-	
+
 	public String getName(boolean xhtmlEncode){
 		if (xhtmlEncode && super.getName() != null) {
 			return xhtmlEncode(super.getName());
@@ -147,6 +153,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		}
 	}
 
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			print("<option " + getMarkupAttributesString() + " >");
@@ -163,7 +170,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 	public void setWindowToOpenOnSelect(Class windowClass, Map parameterMap) {
 		this.windowClass = windowClass;
 		this.parameterMap = parameterMap;
-		this.target = "undefined";
+		this.target = CoreConstants.UNDEFINED;
 	}
 
 	public void setWindowToOpenOnSelect(Class windowClass, Map parameterMap, String target) {
@@ -171,7 +178,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		this.parameterMap = parameterMap;
 		this.target = target;
 	}
-	
+
 	public void setFileToOpenOnSelect(int fileID) {
 		this.fileID = fileID;
 	}
@@ -179,28 +186,32 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 	}
 
 	/* (non-Javadoc)
 	 * @see com.idega.presentation.PresentationObject#isContainer()
 	 */
+	@Override
 	public boolean isContainer() {
 		return false;
 	}
-	
-	
+
+
 	/**
-	 * This method is overrided from the PresentationObjectContainer superclass here 
+	 * This method is overrided from the PresentationObjectContainer superclass here
 	 * to call clone(iwc,false) and sets the askForPermission value always to false
 	 */
+	@Override
 	public Object clonePermissionChecked(IWUserContext iwc, boolean askForPermission)
 	{
 		//This method is overridden is because the SelectOption instances do not have a direct ICObjectInstanceId (in the Builder)
 		// - this is because the Dropdownmenu is inserted in the Builder, not a SelectOption
 		return this.clone(iwc,false);
 	}
-	
+
+	@Override
 	public boolean equals(Object obj) {
 		if (obj instanceof SelectOption) {
 			SelectOption option = (SelectOption) obj;
@@ -208,10 +219,11 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 				return true;
 			}
 		}
-		
+
 		return false;
 	}
 
+	@Override
 	public int compareTo(SelectOption o) {
 		String value = this.getValueAsString();
 		String otherValue = this.getValueAsString();
@@ -221,10 +233,10 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 		else if (otherValue.length() == 0) {
 			return 1;
 		}
-		
+
 		String name = this.getName();
 		String otherName = o.getName();
-		
+
 		return Collator.getInstance(IWMainApplication.getDefaultIWApplicationContext().getApplicationSettings().getDefaultLocale()).compare(name, otherName);
 	}
 }

@@ -157,16 +157,21 @@ public void setIsoAbbreviation(String IsoAbbreviation){
   }
 
 	@Override
-	public String getLocalizedName() {
+	public String getLocalizedName(Locale localeToTranslate) {
 		String abbreviation = getIsoAbbreviation();
 		if (!StringUtil.isEmpty(abbreviation)) {
-			Locale locale = LocaleUtil.getLocaleByCountry(abbreviation);
-			if (locale != null) {
-				return locale.getDisplayCountry(locale);
+			Locale countryLocale = LocaleUtil.getLocaleByCountry(abbreviation);
+			if (countryLocale != null) {
+				return countryLocale.getDisplayCountry(localeToTranslate == null ? countryLocale : localeToTranslate);
 			}
 		}
 
 		return getName();
+	}
+
+	@Override
+	public String getLocalizedName() {
+		return getLocalizedName(null);
 	}
 
 }

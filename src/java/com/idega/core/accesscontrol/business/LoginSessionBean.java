@@ -29,7 +29,6 @@ import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserProperties;
 import com.idega.user.business.UserSession;
 import com.idega.user.dao.UserDAO;
-import com.idega.user.data.bean.Group;
 import com.idega.user.data.bean.User;
 import com.idega.user.data.bean.UserGroupRepresentative;
 import com.idega.util.CoreUtil;
@@ -50,7 +49,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	private IWApplicationContext iwac;
 	private SessionHelper sessionHelper = new SessionHelper();
-	private Stack<SessionHelper> reservedSessionHelpers = new Stack<SessionHelper>();
+	private Stack<SessionHelper> reservedSessionHelpers = new Stack<>();
 	private Locale currentLocale;
 	private com.idega.user.data.User legacyUser;
 	private User emulatedUser;
@@ -68,7 +67,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	@Override
 	public void reset() {
 		sessionHelper = new SessionHelper();
-		reservedSessionHelpers = new Stack<SessionHelper>();
+		reservedSessionHelpers = new Stack<>();
 		legacyUser = null;
 	}
 
@@ -76,7 +75,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @return Returns the permissionGroups.
 	 */
 	@Override
-	public List<Group> getPermissionGroups() {
+	public List<com.idega.user.data.Group> getPermissionGroups() {
 		return this.sessionHelper.permissionGroups;
 	}
 
@@ -85,7 +84,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 *          The permissionGroups to set.
 	 */
 	@Override
-	public void setPermissionGroups(List<Group> permissionGroups) {
+	public void setPermissionGroups(List<com.idega.user.data.Group> permissionGroups) {
 		this.sessionHelper.permissionGroups = permissionGroups;
 	}
 
@@ -93,7 +92,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 * @return Returns the primaryGroup.
 	 */
 	@Override
-	public Group getPrimaryGroup() {
+	public com.idega.user.data.Group getPrimaryGroup() {
 		return this.sessionHelper.primaryGroup;
 	}
 
@@ -102,7 +101,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	 *          The primaryGroup to set.
 	 */
 	@Override
-	public void setPrimaryGroup(Group primaryGroup) {
+	public void setPrimaryGroup(com.idega.user.data.Group primaryGroup) {
 		this.sessionHelper.primaryGroup = primaryGroup;
 	}
 
@@ -149,27 +148,28 @@ public class LoginSessionBean implements LoginSession, Serializable {
 
 	@Override
 	public User getUserEntity() {
-		try {
-			IWContext iwc = CoreUtil.getIWContext();
-			if (iwc != null) {
-				UserSession userSession = IBOLookup.getSessionInstance(iwc, UserSession.class);
-				com.idega.user.data.User userToEmulate = userSession.getUser();
-				if (userToEmulate != null) {
-					Integer userToEmulateId = Integer.valueOf(userToEmulate.getId());
-					if (emulatedUser != null && userToEmulateId.intValue() == emulatedUser.getId().intValue()) {
-						return emulatedUser;
-					}
+		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("access.emulated_user_as_current", false)) {
+			try {
+				IWContext iwc = CoreUtil.getIWContext();
+				if (iwc != null) {
+					UserSession userSession = IBOLookup.getSessionInstance(iwc, UserSession.class);
+					com.idega.user.data.User userToEmulate = userSession.getUser();
+					if (userToEmulate != null) {
+						Integer userToEmulateId = Integer.valueOf(userToEmulate.getId());
+						if (emulatedUser != null && userToEmulateId.intValue() == emulatedUser.getId().intValue()) {
+							return emulatedUser;
+						}
 
-					emulatedUser = getUserDAO().getUser(userToEmulateId);
-					if (emulatedUser != null) {
-						return emulatedUser;
+						emulatedUser = getUserDAO().getUser(userToEmulateId);
+						if (emulatedUser != null) {
+							return emulatedUser;
+						}
 					}
 				}
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error getting emulated user", e);
 			}
-		} catch (Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting emulated user", e);
 		}
-
 		return this.sessionHelper.user;
 	}
 
@@ -241,7 +241,7 @@ public class LoginSessionBean implements LoginSession, Serializable {
 	@Override
 	public Object getLoginAttribute(String key) {
 		if (this.sessionHelper.mapOfExtraAttributes == null) {
-			this.sessionHelper.mapOfExtraAttributes = new Hashtable<String, Object>();
+			this.sessionHelper.mapOfExtraAttributes = new Hashtable<>();
 		}
 		return this.sessionHelper.mapOfExtraAttributes.get(key);
 	}
@@ -301,14 +301,14 @@ public class LoginSessionBean implements LoginSession, Serializable {
 		private static final long serialVersionUID = 8659431184858479401L;
 
 		protected User user = null;
-		protected List<Group> permissionGroups = null;
-		protected Group primaryGroup = null;
+		protected List<com.idega.user.data.Group> permissionGroups = null;
+		protected com.idega.user.data.Group primaryGroup = null;
 		protected UserGroupRepresentative repGroup = null;
 		protected LoggedOnInfo loggedOnInfo = null;
 		protected LoginState loginState = LoginState.NO_STATE;
 		protected String userLoginName = null;
 		protected UserProperties userProperties = null;
-		protected Map<String, Object> mapOfExtraAttributes = new Hashtable<String, Object>();
+		protected Map<String, Object> mapOfExtraAttributes = new Hashtable<>();
 		protected User reserveUser = null;
 	}
 
