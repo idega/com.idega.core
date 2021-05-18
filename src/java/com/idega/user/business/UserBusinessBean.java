@@ -1617,7 +1617,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 	 */
 	@Override
 	public User getUser(String personalID) throws FinderException {
-		if (StringUtil.isEmpty(StringHandler.getNumbersOnly(personalID))) {
+		boolean verified = false;
+		if (getSettings().getBoolean("user.personal_id_digits_only", false)) {
+			verified = !StringUtil.isEmpty(personalID);
+		} else {
+			String digitsOnly = StringHandler.getNumbersOnly(personalID);
+			verified = !StringUtil.isEmpty(digitsOnly);
+		}
+
+		if (!verified) {
+			getLogger().warning("Invalid personal ID '" + personalID + "'");
 			return null;
 		}
 
