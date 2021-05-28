@@ -42,6 +42,8 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.data.IDOUtil;
 import com.idega.data.SimpleQuerier;
 import com.idega.data.bean.Metadata;
+import com.idega.event.GroupChangedEvent;
+import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.idegaweb.IWUserContext;
@@ -65,6 +67,7 @@ import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
 import com.idega.util.datastructures.map.MapUtil;
+import com.idega.util.expression.ELUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
 @Repository("groupDAO")
@@ -179,7 +182,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		if (param1 != null && param2 != null) {
 			return getSingleResult("group.findByGroupTypeAndName", Group.class, param1, param2);
 		} else {
-			List<Param> params = new ArrayList<Param>();
+			List<Param> params = new ArrayList<>();
 			String query = "select g from " + Group.class.getName() + " g where ";
 			if (param1 != null) {
 				query += " g.groupType = :groupType";
@@ -267,7 +270,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	public List<Group> getParentGroups(Group group) {
 		if (group == null) {
 			getLogger().warning("Parent group is not provided");
-			return new ArrayList<Group>();
+			return new ArrayList<>();
 		}
 
 		return getResultList(GroupRelation.QUERY_FIND_BY_RELATED_GROUP, Group.class, new Param("relatedGroup", group));
@@ -277,7 +280,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	public List<Group> getParentGroups(Group group, Collection<GroupType> groupTypes) {
 		if (group == null) {
 			getLogger().warning("Parent group is not provided");
-			return new ArrayList<Group>();
+			return new ArrayList<>();
 		}
 
 		Param param1 = new Param("relatedGroup", group);
@@ -289,7 +292,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	public List<Group> getParentGroups(Integer groupId, Collection<String> groupTypes) {
 		if (groupId == null) {
 			getLogger().warning("Child group id is not provided");
-			return new ArrayList<Group>();
+			return new ArrayList<>();
 		}
 
 		Param param1 = new Param("relatedGroupId", groupId);
@@ -429,7 +432,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 		}
 
 		if (!ListUtil.isEmpty(havingTypes)) {
-			ArrayList<String> types = new ArrayList<String>();
+			ArrayList<String> types = new ArrayList<>();
 			for (String havingType: havingTypes) {
 				if (havingType != null && !havingType.equals("null")) {
 					types.add(havingType);
@@ -544,7 +547,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 				return null;
 			}
 
-			List<Param> params = new ArrayList<Param>();
+			List<Param> params = new ArrayList<>();
 			StringBuilder query = new StringBuilder("select distinct r.group.id from ");
 			query.append(GroupRelation.class.getName()).append(" r join r.group g where r.relatedGroup.id in (:ids) ");
 			if (!selectPassive) {
@@ -820,7 +823,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 	}
 
 	private <T> Map<Integer, List<T>> getChildGroups(List<Integer> parentGroupsIds, List<String> childGroupTypes, List<String> notHavingChildGroupTypes, Integer levels, Class<T> resultType, boolean loadAliases) {
-		Map<Integer, List<T>> results = new TreeMap<Integer, List<T>>();
+		Map<Integer, List<T>> results = new TreeMap<>();
 		int currentLevel = 1;
 		levels = levels == null || levels < 0 ? Integer.MAX_VALUE : levels;
 		while (currentLevel <= levels && !ListUtil.isEmpty(parentGroupsIds)) {
@@ -1140,7 +1143,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			List<Property<Integer, String>> results = new ArrayList<>();
 			for (Object[] dataItem: data) {
 				if (!ArrayUtil.isEmpty(dataItem) && dataItem.length > 1 && dataItem[0] != null && dataItem[1] != null) {
-					results.add(new Property<Integer, String>((Integer) dataItem[0], (String) dataItem[1]));
+					results.add(new Property<>((Integer) dataItem[0], (String) dataItem[1]));
 				}
 			}
 
@@ -1375,6 +1378,7 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 		return getMetaData(group.getID(), key);
 	}
+
 	@Override
 	public String getMetaData(Integer groupId, String key) {
 		if (groupId == null || StringUtil.isEmpty(key)) {
@@ -1383,6 +1387,30 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 
 		List<String> results = getResultList(Metadata.QUERY_FIND_BY_GROUP_ID_AND_KEY, String.class, new Param("groupId", groupId), new Param("key", key));
 		return ListUtil.isEmpty(results) ? null : results.iterator().next();
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public <T> T merge(T product) {
+		try {
+			return super.merge(product);
+		} finally {
+			if (product instanceof Group) {
+				ELUtil.getInstance().publishEvent(new GroupChangedEvent((Group) product));
+			}
+		}
+	}
+
+	@Override
+	@Transactional(readOnly = false)
+	public void persist(Object product) {
+		try {
+			super.persist(product);
+		} finally {
+			if (product instanceof Group) {
+				ELUtil.getInstance().publishEvent(new GroupCreatedEvent((Group) product));
+			}
+		}
 	}
 
 }

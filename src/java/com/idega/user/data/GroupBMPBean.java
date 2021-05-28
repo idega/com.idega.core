@@ -19,6 +19,8 @@ import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
 
+import org.springframework.context.ApplicationEvent;
+
 import com.idega.core.accesscontrol.business.AccessController;
 import com.idega.core.builder.data.ICDomain;
 import com.idega.core.builder.data.ICPage;
@@ -50,6 +52,7 @@ import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
+import com.idega.event.GroupChangedEvent;
 import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWApplicationContext;
 import com.idega.idegaweb.IWMainApplication;
@@ -785,7 +788,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 */
 	@Override
 	public List<Group> getChildGroups(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
-		List<Group> theReturn = new ArrayList<Group>();
+		List<Group> theReturn = new ArrayList<>();
 		List<String> types = null;
 
 		if (groupTypes != null && groupTypes.length > 0) {
@@ -802,7 +805,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	@Override
 	public List<Integer> getChildGroupsIDs(String[] groupTypes, boolean returnSpecifiedGroupTypes) throws EJBException {
-		List<Integer> theReturn = new ArrayList<Integer>();
+		List<Integer> theReturn = new ArrayList<>();
 
 		List<String> types = null;
 
@@ -1105,7 +1108,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public Collection<Group> getRelatedBy(String relationType) throws FinderException {
 		GroupRelation rel = null;
-		Collection<Group> theReturn = new ArrayList<Group>();
+		Collection<Group> theReturn = new ArrayList<>();
 		Collection<GroupRelation> rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationType);
 		Iterator<GroupRelation> iter = rels.iterator();
 		while (iter.hasNext()) {
@@ -1118,7 +1121,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	@Override
 	public Collection<Group> getRelated(Collection<String> relationTypes){
 		GroupRelation rel = null;
-		Collection<Group> theReturn = new ArrayList<Group>();
+		Collection<Group> theReturn = new ArrayList<>();
 		Collection<GroupRelation> rels = null;
 		rels = this.getGroupRelationHome().findGroupsRelationshipsContaining(this.getID(), relationTypes);
 		Iterator<GroupRelation> iter = rels.iterator();
@@ -1141,7 +1144,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	protected Collection<Group> getReverseRelatedBy(Integer groupId, String relationType) throws FinderException {
 		GroupRelation rel = null;
-		Collection<Group> theReturn = new ArrayList<Group>();
+		Collection<Group> theReturn = new ArrayList<>();
 		Collection<GroupRelation> rels = null;
 		rels = this.getGroupRelationHome().findGroupsRelationshipsByRelatedGroup(groupId, relationType);
 		Iterator<GroupRelation> iter = rels.iterator();
@@ -1465,7 +1468,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	 * or {@link Collections#emptyList()} on failure;
 	 */
 	public Collection<Integer> ejbFindParentGroupsRecursively(Collection<Integer> groups) {
-		Set<Integer> parentGroupsTree = new TreeSet<Integer>();
+		Set<Integer> parentGroupsTree = new TreeSet<>();
 
 		while (!ListUtil.isEmpty(groups)) {
 			parentGroupsTree.addAll(groups);
@@ -1488,7 +1491,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	private List<String> getUserGroupTypeList() {
 		if (userGroupTypeSingletonList == null) {
-			userGroupTypeSingletonList = new ArrayList<String>();
+			userGroupTypeSingletonList = new ArrayList<>();
 			userGroupTypeSingletonList.add(getUserHome().getGroupType());
 		}
 
@@ -1682,10 +1685,12 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 	public void store() {
 		String id = getId();
 		super.store();
-		if (StringUtil.isEmpty(id)) {
-			GroupCreatedEvent groupCreatedEvent = new GroupCreatedEvent(this);
-			ELUtil.getInstance().publishEvent(groupCreatedEvent);
-		}
+
+		ApplicationEvent event = StringUtil.isEmpty(id) ?
+				new GroupCreatedEvent(this) :
+				new GroupChangedEvent(this);
+
+		ELUtil.getInstance().publishEvent(event);
 	}
 
 	/**
@@ -2042,7 +2047,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 			Map<String, Group> cachedGroups) throws EJBException {
 		Collection<Group> groups = getGroupHome().findParentGroups((Integer) getPrimaryKey());
 		if (!ListUtil.isEmpty(groups)) {
-			return new ArrayList<Group>(groups);
+			return new ArrayList<>(groups);
 		}
 
 		return Collections.emptyList();
