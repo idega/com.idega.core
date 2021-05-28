@@ -42,6 +42,8 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.data.IDOUtil;
 import com.idega.data.SimpleQuerier;
 import com.idega.data.bean.Metadata;
+import com.idega.event.GroupChangedEvent;
+import com.idega.event.GroupCreatedEvent;
 import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
