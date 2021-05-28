@@ -42,7 +42,6 @@ import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.data.IDOUtil;
 import com.idega.data.SimpleQuerier;
 import com.idega.data.bean.Metadata;
-import com.idega.event.GroupChangedEvent;
 import com.idega.event.GroupCreatedEvent;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -1412,5 +1411,25 @@ public class GroupDAOImpl extends GenericDaoImpl implements GroupDAO {
 			}
 		}
 	}
+
+
+	@Override
+	public Group findGroupByUUID(String groupUUID) {
+		if (StringUtil.isEmpty(groupUUID)) {
+			getLogger().warning("groupUUID is not provided");
+			return null;
+		}
+
+		try {
+			Group group = getSingleResult(Group.QUERY_FIND_BY_UNIQUE_ID, Group.class, new Param("uniqueID", groupUUID));
+			return group;
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error while trying to get the group by UUID: " + groupUUID, e);
+		}
+
+		return null;
+	}
+
+
 
 }

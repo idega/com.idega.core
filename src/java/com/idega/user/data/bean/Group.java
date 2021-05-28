@@ -83,7 +83,7 @@ import com.idega.util.expression.ELUtil;
 	@NamedQuery(name = "group.findAllByGroupTypes", query = "select g from Group g where g.groupType in (:groupTypes)"),
 	@NamedQuery(name = "group.findByGroupTypeAndName", query = "select g from Group g where g.groupType = :groupType and g.name = :name"),
 	@NamedQuery(name = "group.findAllByAbbreviation", query = "select g from Group g where g.abbreviation = :abbreviation"),
-	@NamedQuery(name = "group.findByUniqueID", query = "select g from Group g where g.uniqueID = :uniqueID"),
+	@NamedQuery(name = Group.QUERY_FIND_BY_UNIQUE_ID, query = "select g from Group g where g.uniqueID = :uniqueID"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_GROUP_ID, query = "select g from Group g where g.groupID = :groupId"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_IDS, query = "select g from Group g where g.groupID in (:ids) order by g.name"),
 	@NamedQuery(name = Group.QUERY_FIND_BY_ALIAS, query = "select g from Group g where g.alias = :alias"),
@@ -176,6 +176,7 @@ public abstract class Group implements Serializable, UniqueIDCapable, MetaDataCa
 								QUERY_FIND_IDS_BY_TYPES = "group.findIdsByGroupTypes",
 								QUERY_FIND_IDS_BY_ALIASES_IDS = "group.findIdsByAliasesIds",
 								QUERY_FIND_IDS_BY_TYPE_AND_METADATA = "group.findIdsByTypeAndMetadata",
+								QUERY_FIND_BY_UNIQUE_ID = "group.findByUniqueID",
 
 								ENTITY_NAME = "ic_group",
 								COLUMN_GROUP_ID = "ic_group_id",
