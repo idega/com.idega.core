@@ -38,6 +38,7 @@ import com.idega.core.messaging.SMTPAuthenticator;
 import com.idega.idegaweb.DefaultIWBundle;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
+import com.idega.util.mail.DummyMessage;
 import com.sendgrid.Method;
 import com.sendgrid.Request;
 import com.sendgrid.Response;
@@ -331,8 +332,8 @@ public class SendMail {
 		boolean viaSendGrindAPI = settings.getBoolean("mail.send_via_api", false);
 		String sendGridKey = viaSendGrindAPI ? settings.getProperty("mail.send_grid_key") : null;
 		if (viaSendGrindAPI && !StringUtil.isEmpty(sendGridKey)) {
-			sendViaSendGridAPI(sendGridKey, from, to, cc, bcc, replyTo, subject, text, headers, deleteFiles, attachedFiles);
-			return null;
+			boolean success = sendViaSendGridAPI(sendGridKey, from, to, cc, bcc, replyTo, subject, text, headers, deleteFiles, attachedFiles);
+			return success ? new DummyMessage() : null;
 		}
 
 		if (!DefaultIWBundle.isProductionEnvironment()) {
