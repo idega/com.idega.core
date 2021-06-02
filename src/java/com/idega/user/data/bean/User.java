@@ -795,7 +795,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 			}
 		}
 
-		return null;
+		//	Did not find main email
+		return emails.iterator().next().getAddress();
 	}
 
 	public Address getMainAddress() {
