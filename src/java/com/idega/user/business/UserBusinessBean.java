@@ -123,6 +123,7 @@ import com.idega.user.data.UserStatus;
 import com.idega.user.data.UserStatusHome;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.EmailValidator;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -506,6 +507,11 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson) throws CreateException, RemoteException {
+		return createUser(firstName, middleName, lastName, displayname, personalID, description, gender, date_of_birth, primary_group, fullName, null, null);
+	}
+
+	@Override
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson, String userName) throws CreateException, RemoteException {
 		try {
 			User userToAdd = null;
 			if (!StringUtil.isEmpty(personalID)) {
@@ -513,6 +519,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					userToAdd = getUserHome().findByPersonalID(personalID);
 				} catch (Exception e) {}
 			}
+			//If user is not found by personal id, searching by email
+			if (userToAdd == null && !StringUtil.isEmpty(userName)) {
+				getLogger().info("Did not find user by personal id: " + personalID + ". Will be searching by email: " + userName);
+				userToAdd = getUserByEmail(personalID, userName);
+			}
+
 			if (userToAdd == null) {
 				userToAdd = getUserHome().create();
 			}
@@ -698,7 +710,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			// newUser = insertUser(firstname,middlename,
 			// lastname,null,null,null,null,primary_group);
-			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName, juridicalPerson);
+			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName, juridicalPerson, userLogin);
 			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
 				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 			}
@@ -5661,6 +5673,31 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 
 		return false;
+	}
+
+
+	@Override
+	public User getUserByEmail(String personalId, String email) {
+		User user = null;
+		try {
+			if (getSettings().getBoolean("user.can_search_by_email", true)) {
+				if (!StringUtil.isEmpty(email) && EmailValidator.getInstance().isValid(email)) {
+					Collection<User> usersByEmail = getUsersByEmail(email);
+					if (!ListUtil.isEmpty(usersByEmail)) {
+						for (User userByEmail : usersByEmail) {
+							if (userByEmail != null) {
+								user = userByEmail;
+								getLogger().info("Found user by email: " + email + ". User: " + user);
+								break;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception eEm) {
+			getLogger().log(Level.WARNING, "Could not get the user by email: " + email, eEm);
+		}
+		return user;
 	}
 
 }

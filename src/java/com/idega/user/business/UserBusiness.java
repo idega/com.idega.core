@@ -1069,4 +1069,9 @@ public interface UserBusiness extends IBOService {
 			String userName,
 			String password,
 			boolean sendLoginInfo);
+
+	public User getUserByEmail(String personalId, String email);
+
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson, String userName) throws CreateException, RemoteException;
 }
+
