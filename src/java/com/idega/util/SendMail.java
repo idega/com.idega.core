@@ -183,7 +183,8 @@ public class SendMail {
 		//	From, to, content
 		com.sendgrid.helpers.mail.objects.Email fromEmail = new com.sendgrid.helpers.mail.objects.Email(from);
 		com.sendgrid.helpers.mail.objects.Email toEmail = new com.sendgrid.helpers.mail.objects.Email(to);
-	    Content content = new Content(MimeTypeUtil.MIME_TYPE_HTML, text);
+	    text = StringUtil.isEmpty(text) ? subject : text;
+		Content content = new Content(MimeTypeUtil.MIME_TYPE_HTML, text);
 	    Mail mail = new Mail(fromEmail, subject, toEmail, content);
 
 	    //	CC and BCC
