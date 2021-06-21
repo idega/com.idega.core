@@ -516,13 +516,8 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			User userToAdd = null;
 			if (!StringUtil.isEmpty(personalID)) {
 				try {
-					userToAdd = getUserHome().findByPersonalID(personalID);
+					userToAdd = getCorrectUserCheckedByEmail(personalID, userName);
 				} catch (Exception e) {}
-			}
-			//If user is not found by personal id, searching by email
-			if (userToAdd == null && !StringUtil.isEmpty(userName)) {
-				getLogger().info("Did not find user by personal id: " + personalID + ". Will be searching by email: " + userName);
-				userToAdd = getUserByEmail(personalID, userName);
 			}
 
 			if (userToAdd == null) {
@@ -5699,5 +5694,82 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 		return user;
 	}
+
+
+	@Override
+	public User getCorrectUserCheckedByEmail(String personalId, String email) {
+		User user = null;
+
+		//Get user by personal id
+		try {
+			user = getUser(personalId);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not get the user by personal id: " + personalId, e);
+		}
+
+		//Get the users by email
+		try {
+			if (getSettings().getBoolean("user.can_search_by_email", true)) {
+				if (!StringUtil.isEmpty(email) && EmailValidator.getInstance().isValid(email)) {
+					Collection<User> usersByEmail = getUsersByEmail(email);
+					if (!ListUtil.isEmpty(usersByEmail)) {
+						for (User ubm : usersByEmail) {
+							if (
+									ubm != null
+									&&
+									(user == null || !ubm.getPrimaryKey().toString().equalsIgnoreCase(user.getPrimaryKey().toString()))
+							) {
+								getLogger().info("Found user by email: " + email + ". User: " + ubm + ". Different than user found by personal id: " + user);
+								//1. If user by personal id is not found, return the user found by email
+								if (user == null) {
+									getLogger().info("User by personal id is NULL. Will return user by email. User: " + ubm + " will be updated with the personal id: " + personalId);
+									ubm.setPersonalID(personalId);
+									ubm.store();
+									return ubm;
+								} else {
+									//Get user's by personal id groups
+									Collection<Group> userGroups = getUserGroups(user);
+									boolean userHasRealGroups = false;
+									if (ListUtil.isEmpty(userGroups)) {
+										userHasRealGroups = false;
+									} else {
+										for (Group userGroup : userGroups) {
+											if (userGroup != null && !StringUtil.isEmpty(userGroup.getName()) && !userGroup.getName().equalsIgnoreCase(CoreConstants.COMMUNE_ACCPETED_CITIZENS)) {
+												userHasRealGroups = true;
+												break;
+											}
+										}
+									}
+									//2. If user belongs to a real group, not only to "Commune Accepted Citizens", return that user and delete user by email
+									if (userHasRealGroups) {
+										getLogger().info("User by personal id has real groups. Will return user by personal id. User: " + ubm + " will be deleted");
+										ubm.setDeleted(true);
+										ubm.store();
+										return user;
+									} else {
+										//3. Return the user by email, change the personal id into the correct one and delete the user by personal id
+										getLogger().info("User by personal id does not have real groups. Will return user by email. User by personal id: " + user + " will be deleted. And user by email will be updated with personal id: " + personalId);
+										ubm.setPersonalID(personalId);
+										ubm.store();
+										user.setDeleted(true);
+										user.store();
+										return ubm;
+									}
+								}
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception eEm) {
+			getLogger().log(Level.WARNING, "Could not get the user by personal id: by email: " + email, eEm);
+		} finally {
+			CoreUtil.clearAllCaches();
+		}
+
+
+		return user;
+	}
+
 
 }

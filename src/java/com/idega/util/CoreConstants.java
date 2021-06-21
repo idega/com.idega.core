@@ -212,4 +212,7 @@ public class CoreConstants {
 
 	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "skjalaver@reykjavik.is";
 	public static final String ACOUSTIC_PERMISSION_PROCESS_NAME = "AcousticsPermission";
+
+	public static final String COMMUNE_ACCPETED_CITIZENS = "Commune Accepted Citizens";
+
 }
