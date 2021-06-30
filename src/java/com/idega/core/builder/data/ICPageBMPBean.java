@@ -16,6 +16,7 @@ import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.util.Collection;
 import java.util.Locale;
+import java.util.logging.Level;
 
 import javax.ejb.CreateException;
 import javax.ejb.FinderException;
@@ -318,10 +319,18 @@ public class ICPageBMPBean extends com.idega.data.TreeableEntityBMPBean implemen
 		// if we already have an instance of the file we do not
 		// want to loose it, especially not if a filevalue has been
 		// written to it, else the filevalue gets lost.
-		if(this._file==null){
+		if (this._file==null) {
 			int fileID = getFileID();
-			if ( fileID != -1) {
-				this._file = (ICFile)getColumnValue(getColumnFile());
+			if (fileID != -1) {
+				Object file = null;
+				try {
+					file = getColumnValue(getColumnFile());
+				} catch (Throwable e) {
+					getLogger().log(Level.WARNING, "Error getting value with type " + ICFile.class.getName() + " for file with ID: " + fileID, e);
+				}
+				if (file instanceof ICFile) {
+					this._file = (ICFile) file;
+				}
 			}
 		}
 		return (this._file);
