@@ -38,6 +38,8 @@ public class CoreConstants {
 	public static final String CURLY_BRACKET_RIGHT = "}";
 	public static final String QOUTE_MARK = "\"";
 	public static final String QOUTE_SINGLE_MARK = "'";
+	public static final String Y = "Y";
+	public static final String N = "N";
 	
 	public static final String PROP_SYSTEM_SMTP_MAILSERVER = MessagingSettings.PROP_SYSTEM_SMTP_MAILSERVER;
 	public static final String PROP_SYSTEM_MAIL_FROM_ADDRESS = MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS;
