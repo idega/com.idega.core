@@ -833,8 +833,7 @@ public abstract class GenericEntity implements java.io.Serializable, IDOEntity, 
 				}
 			}
 			catch (Exception ex) {
-				System.err.println("Exception in com.idega.data.GenericEntity.getColumnValue(String columnName): of type+ " + ex.getClass().getName() + " , Message = " + ex.getMessage());
-				ex.printStackTrace(System.err);
+				getLogger().log(Level.WARNING, "Error getting column's '" + columnName + "' value from " + relationClass.getName() + " with value " + value, ex);
 			}
 			finally {
 			}
