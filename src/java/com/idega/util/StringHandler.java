@@ -9,7 +9,14 @@
  */
 package com.idega.util;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.nio.charset.Charset;
 import java.text.CharacterIterator;
 import java.text.StringCharacterIterator;
 import java.util.ArrayList;
@@ -24,8 +31,6 @@ import java.util.NoSuchElementException;
 import java.util.SortedSet;
 import java.util.StringTokenizer;
 import java.util.TreeSet;
-import java.io.ByteArrayInputStream;
-import java.io.BufferedInputStream;
 
 /**
  * This class has utility methods to work with strings. <br>
@@ -1185,4 +1190,52 @@ public class StringHandler {
 		}
 		return new BufferedInputStream(new ByteArrayInputStream(content.getBytes(CoreConstants.ENCODING_UTF8)));
 	}
+	
+	public static boolean isNumeric(String value) {
+		return !StringUtil.isEmpty(value) && value.matches("[+-]?\\d*(\\.\\d+)?");
+	}
+	
+	public static String getContentFromInputStream(InputStream stream) throws Exception {
+		if (stream == null) {
+			return null;
+		}
+
+		BufferedReader br = new BufferedReader(new InputStreamReader(stream, Charset.forName(CoreConstants.ENCODING_UTF8)));
+		try {
+			return getContentFromReader(br);
+		} finally {
+			IOUtil.close(stream);
+		}
+	}
+
+	public static String getContentFromReader(Reader reader) throws Exception {
+		if (reader == null) {
+			return null;
+		}
+
+		BufferedReader bReader = null;
+		if (reader instanceof BufferedReader) {
+			bReader = (BufferedReader) reader;
+		} else {
+			bReader = new BufferedReader(reader);
+		}
+
+		StringBuffer sb = new StringBuffer();
+		String line = null;
+
+		try {
+			while ((line = bReader.readLine()) != null) {
+				sb.append(line).append("\n");
+			}
+		} catch (IOException e) {
+			e.printStackTrace();
+			return null;
+		} finally {
+			IOUtil.closeReader(reader);
+			IOUtil.closeReader(bReader);
+		}
+
+		return sb.toString();
+	}
+	
 }

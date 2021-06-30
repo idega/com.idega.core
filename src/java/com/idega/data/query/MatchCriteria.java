@@ -2,14 +2,15 @@ package com.idega.data.query;
 
 import java.sql.Date;
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.Vector;
 
 import com.idega.data.DatastoreInterface;
 import com.idega.data.IDOEntity;
 import com.idega.data.query.output.Output;
+import com.idega.util.CoreConstants;
 
 /**
  * @author <a href="joe@truemesh.com">Joe Walnes </a>
@@ -38,7 +39,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
 	 * NULL...)
-	 * 
+	 *
 	 * @param column
 	 */
 	public MatchCriteria(Column column) {
@@ -50,7 +51,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	/**
 	 * Adds a null value to the given <code>Column</code> (...AND columnName IS
 	 * NULL...)
-	 * 
+	 *
 	 * @param column
 	 */
 	public MatchCriteria(Column column, boolean notNull) {
@@ -64,7 +65,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 		}
 	}
 
-	public MatchCriteria(Column column, String matchType, String value) {
+	public MatchCriteria(Column column, String matchType, boolean addPercents, String value) {
 		this.column = column;
 		this.matchType = matchType;
 		if (value == null) {
@@ -77,11 +78,14 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 			this.value = value;
 		}
 		else {
-			this.value = quote(value);
-			//if(!matchType.equalsIgnoreCase(LIKE))
+			this.value = quote(value, addPercents);
 			this.placeHolderValue = value;
 		}
 
+	}
+
+	public MatchCriteria(Column column, String matchType, String value) {
+		this(column, matchType, false, value);
 	}
 
 	public MatchCriteria(Column column, String matchType, String value, boolean addQuotes) {
@@ -119,13 +123,13 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	public MatchCriteria(Column column, String matchType, boolean value) {
 		this.column = column;
 		if (value) {
-			this.value = quote("Y");
+			this.value = quote(CoreConstants.Y);
 			if (!matchType.equalsIgnoreCase(LIKE)) {
 				this.placeHolderValue = Boolean.TRUE;
 			}
 		}
 		else {
-			this.value = quote("N");
+			this.value = quote(CoreConstants.N);
 			if (!matchType.equalsIgnoreCase(LIKE)) {
 				this.placeHolderValue = Boolean.FALSE;
 			}
@@ -248,7 +252,7 @@ public class MatchCriteria extends Criteria implements PlaceHolder {
 	}
 
 	public List getValues() {
-		Vector v = new Vector(1);
+		List v = new ArrayList(1);
 		if (this.placeHolderValue != null) {
 			v.add(this.placeHolderValue);
 		}
