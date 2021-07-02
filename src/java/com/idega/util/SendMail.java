@@ -194,14 +194,14 @@ public class SendMail {
 	    boolean newPersonalization = personalization == null;
 
 	    //	CC and BCC
-	    if (validator.isValid(cc)) {
+	    if (validator.isValid(cc) && !cc.equalsIgnoreCase(to)) {
 	    	personalization = newPersonalization ? new Personalization() : personalization;
 	    	personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(cc));
 	    	if (newPersonalization) {
 	    		mail.addPersonalization(personalization);
 	    	}
 		}
-		if (validator.isValid(bcc)) {
+		if (validator.isValid(bcc) && !bcc.equalsIgnoreCase(cc)) {
 			personalization = newPersonalization ? new Personalization() : personalization;
 	    	personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(bcc));
 	    	if (newPersonalization) {
