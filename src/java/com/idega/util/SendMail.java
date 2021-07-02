@@ -5,9 +5,14 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.nio.file.Files;
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
@@ -167,6 +172,61 @@ public class SendMail {
 		return send(from, to, cc, bcc, replyTo, host, subject, text, mailType, headers, useThread, deleteFiles, false, attachedFiles);
 	}
 
+	private static List<String> getReceivers(String receivers) {
+		if (StringUtil.isEmpty(receivers)) {
+			return null;
+		}
+
+		receivers = receivers.toLowerCase();
+		String[] multipleReceivers = receivers.split(CoreConstants.COMMA);
+		if (ArrayUtil.isEmpty(multipleReceivers)) {
+			return null;
+		}
+
+		Set<String> uniqueReceivers = new HashSet<>();
+		EmailValidator validator = EmailValidator.getInstance();
+		for (String receiver: multipleReceivers) {
+			if (validator.isValid(receiver)) {
+				uniqueReceivers.add(receiver);
+			}
+		}
+		return ListUtil.isEmpty(uniqueReceivers) ? null : new ArrayList<>(uniqueReceivers);
+	}
+
+	private static void addReceivers(Mail mail, List<String> receivers, Map<String, Boolean> usedAddresses, boolean to, boolean cc, boolean bcc) {
+		if (mail == null || ListUtil.isEmpty(receivers)) {
+			return;
+		}
+
+		List<Personalization> personalizations = mail.getPersonalization();
+	    Personalization personalization = ListUtil.isEmpty(personalizations) ? null : personalizations.iterator().next();
+		boolean newPersonalization = personalization == null;
+		personalization = newPersonalization ? new Personalization() : personalization;
+
+		usedAddresses = usedAddresses == null ? new HashMap<>() : usedAddresses;
+
+		EmailValidator validator = EmailValidator.getInstance();
+		for (String receiver: receivers) {
+			if (!validator.isValid(receiver) || usedAddresses.containsKey(receiver)) {
+				continue;
+			}
+
+			usedAddresses.put(receiver, Boolean.TRUE);
+			com.sendgrid.helpers.mail.objects.Email email = new com.sendgrid.helpers.mail.objects.Email(receiver);
+			if (to) {
+				personalization.addTo(email);
+			} else if (cc) {
+				personalization.addCc(email);
+			} else if (bcc) {
+				personalization.addBcc(email);
+			}
+		}
+
+		if (newPersonalization) {
+	    	mail.addPersonalization(personalization);
+	    }
+	}
+
 	private static boolean sendViaSendGridAPI(
 			String key,
 			String from,
@@ -180,34 +240,32 @@ public class SendMail {
 			final boolean deleteFiles,
 			final File... attachedFiles
 	) throws MessagingException {
+		List<String> receiversTO = getReceivers(to);
+		if (ListUtil.isEmpty(receiversTO)) {
+			throw new MessagingException("There are no TO receivers defined. FROM: '" + from + "', TO: '" + to + "', subject: " + subject);
+		}
+
+		Map<String, Boolean> addresses = new HashMap<>();
+		String firstTo = receiversTO.iterator().next();
+		addresses.put(firstTo, Boolean.TRUE);
+
 		//	From, to, content
 		com.sendgrid.helpers.mail.objects.Email fromEmail = new com.sendgrid.helpers.mail.objects.Email(from);
-		com.sendgrid.helpers.mail.objects.Email toEmail = new com.sendgrid.helpers.mail.objects.Email(to);
+		com.sendgrid.helpers.mail.objects.Email toEmail = new com.sendgrid.helpers.mail.objects.Email(firstTo);
 	    text = StringUtil.isEmpty(text) ? subject : text;
 		Content content = new Content(MimeTypeUtil.MIME_TYPE_HTML, text);
 	    Mail mail = new Mail(fromEmail, subject, toEmail, content);
 
-	    EmailValidator validator = EmailValidator.getInstance();
+	    //	TO
+	    addReceivers(mail, receiversTO, addresses, true, false, false);
 
-	    List<Personalization> personalizations = mail.getPersonalization();
-	    Personalization personalization = ListUtil.isEmpty(personalizations) ? null : personalizations.iterator().next();
-	    boolean newPersonalization = personalization == null;
+	    //	CC
+	    List<String> receiversCC = getReceivers(cc);
+	    addReceivers(mail, receiversCC, addresses, false, true, false);
 
-	    //	CC and BCC
-	    if (validator.isValid(cc) && !cc.equalsIgnoreCase(to)) {
-	    	personalization = newPersonalization ? new Personalization() : personalization;
-	    	personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(cc));
-	    	if (newPersonalization) {
-	    		mail.addPersonalization(personalization);
-	    	}
-		}
-		if (validator.isValid(bcc) && !bcc.equalsIgnoreCase(cc)) {
-			personalization = newPersonalization ? new Personalization() : personalization;
-	    	personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(bcc));
-	    	if (newPersonalization) {
-	    		mail.addPersonalization(personalization);
-	    	}
-		}
+		//	BCC
+	    List<String> receiversBCC = getReceivers(bcc);
+	    addReceivers(mail, receiversBCC, addresses, false, false, true);
 
 		//	Reply to
 		if (!StringUtil.isEmpty(replyTo)) {
@@ -258,7 +316,8 @@ public class SendMail {
 	    	int statusCode = response.getStatusCode();
 	    	success = statusCode == 200 || statusCode == 201 || statusCode == 202;
 	    	if (!success) {
-	    		LOGGER.warning("Error sending email to " + to + " with subject " + subject + ". Status code: " + statusCode + ", response: " + response.getBody() + ", response headers: " + response.getHeaders());
+	    		LOGGER.warning("Error sending email to " + to + " with subject " + subject + ". Status code: " + statusCode + ", response: " + response.getBody() +
+	    				", response headers: " + response.getHeaders());
 	    	}
 	    	return success;
 	    } catch (Exception e) {
