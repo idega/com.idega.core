@@ -187,18 +187,26 @@ public class SendMail {
 		Content content = new Content(MimeTypeUtil.MIME_TYPE_HTML, text);
 	    Mail mail = new Mail(fromEmail, subject, toEmail, content);
 
+	    EmailValidator validator = EmailValidator.getInstance();
+
+	    List<Personalization> personalizations = mail.getPersonalization();
+	    Personalization personalization = ListUtil.isEmpty(personalizations) ? null : personalizations.iterator().next();
+	    boolean newPersonalization = personalization == null;
+
 	    //	CC and BCC
-	    Personalization personalization = null;
-	    if (!StringUtil.isEmpty(cc)) {
-	    	personalization = new Personalization();
+	    if (validator.isValid(cc)) {
+	    	personalization = newPersonalization ? new Personalization() : personalization;
 	    	personalization.addCc(new com.sendgrid.helpers.mail.objects.Email(cc));
+	    	if (newPersonalization) {
+	    		mail.addPersonalization(personalization);
+	    	}
 		}
-		if (!StringUtil.isEmpty(bcc)) {
-			personalization = personalization == null ? new Personalization() : personalization;
+		if (validator.isValid(bcc)) {
+			personalization = newPersonalization ? new Personalization() : personalization;
 	    	personalization.addBcc(new com.sendgrid.helpers.mail.objects.Email(bcc));
-		}
-		if (personalization != null) {
-			mail.addPersonalization(personalization);
+	    	if (newPersonalization) {
+	    		mail.addPersonalization(personalization);
+	    	}
 		}
 
 		//	Reply to
