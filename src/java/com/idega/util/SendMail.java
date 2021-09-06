@@ -379,7 +379,7 @@ public class SendMail {
 		}
 
 		String alwaysBCC = settings.getProperty("custom_mail_bcc_receiver");
-		if (EmailValidator.getInstance().isValid(alwaysBCC) && to != null && !to.equals(settings.getProperty("exception_report_receiver", "abuse@idega.com"))) {
+		if (EmailValidator.getInstance().isValid(alwaysBCC) && to != null && !to.equals(settings.getProperty(CoreConstants.EXCEPTION_REPORT_RECEIVER, "abuse@idega.com"))) {
 			bcc = EmailValidator.getInstance().isValid(bcc) ? bcc.concat(CoreConstants.COMMA).concat(alwaysBCC) : alwaysBCC;
 		}
 

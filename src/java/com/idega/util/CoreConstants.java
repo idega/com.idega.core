@@ -215,4 +215,6 @@ public class CoreConstants {
 
 	public static final String COMMUNE_ACCPETED_CITIZENS = "Commune Accepted Citizens";
 
+	public static final String EXCEPTION_REPORT_RECEIVER = "exception_report_receiver";
+
 }
