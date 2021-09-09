@@ -9,6 +9,9 @@
  */
 package com.idega.util;
 
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -21,6 +24,7 @@ import javax.servlet.http.HttpServletResponse;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.servlet.filter.IWAuthenticator;
+import com.idega.util.datastructures.map.MapUtil;
 
 /**
  *
@@ -286,6 +290,32 @@ public class RequestUtil {
 
 	public static String getRequestParametersAsString(HttpServletRequest request){
 		return CoreConstants.EMPTY;
+	}
+
+	public static Map<String, List<String>> getAllParameters(HttpServletRequest request) {
+		if (request == null) {
+			return null;
+		}
+
+		Map<String, List<String>> params = new HashMap<>();
+		Map<String, String[]> requestParams = request.getParameterMap();
+		if (!MapUtil.isEmpty(requestParams)) {
+			for (String param: requestParams.keySet()) {
+				String[] values = requestParams.get(param);
+				params.put(param, ArrayUtil.isEmpty(values) ? Collections.emptyList() : Arrays.asList(values));
+			}
+		}
+		return params;
+	}
+
+	public static List<String> getParameterValues(HttpServletRequest request, String param) {
+		if (StringUtil.isEmpty(param)) {
+			return null;
+		}
+
+		Map<String, List<String>> params = getAllParameters(request);
+		List<String> values = MapUtil.isEmpty(params) ? null : params.get(param);
+		return values;
 	}
 
 }
