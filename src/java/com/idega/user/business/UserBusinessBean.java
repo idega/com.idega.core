@@ -3853,7 +3853,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return false;
 		}
 		if (locale == null) {
-			LOGGER.warning("Unkown locale!");
+			LOGGER.warning("Unknown locale!");
 			return false;
 		}
 
