@@ -16,11 +16,20 @@ import javax.faces.context.FacesContext;
 
 import org.springframework.beans.BeansException;
 import org.springframework.beans.factory.BeanCreationException;
+import org.springframework.beans.factory.BeanFactory;
 import org.springframework.beans.factory.config.BeanDefinition;
+import org.springframework.beans.factory.config.BeanExpressionContext;
+import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
 import org.springframework.context.ApplicationEvent;
 import org.springframework.context.annotation.Scope;
+import org.springframework.context.expression.BeanExpressionContextAccessor;
+import org.springframework.context.expression.BeanFactoryResolver;
+import org.springframework.expression.Expression;
+import org.springframework.expression.ExpressionParser;
+import org.springframework.expression.spel.standard.SpelExpressionParser;
+import org.springframework.expression.spel.support.StandardEvaluationContext;
 import org.springframework.stereotype.Service;
 
 import com.idega.business.SpringBeanName;
@@ -67,6 +76,35 @@ public class ELUtil implements ApplicationContextAware {
 	public <T>T getBean(String expression) throws BeanCreationException {
 		String originalExpression = expression;
 		if (expression.contains(CoreConstants.DOT)) {
+			String springExpr = null;
+			try {
+				ApplicationContext appContext = getApplicationContext();
+				BeanFactory beanFactory = appContext;
+
+				StandardEvaluationContext context = new StandardEvaluationContext();
+				context.setBeanResolver(new BeanFactoryResolver(beanFactory));
+				context.addPropertyAccessor(new BeanExpressionContextAccessor());
+
+				springExpr = expression.startsWith(CoreConstants.AT) ? expression : CoreConstants.AT.concat(expression);
+				final ExpressionParser parser = new SpelExpressionParser();
+				Expression exp = parser.parseExpression(springExpr);
+
+				BeanExpressionContext rootObject = null;
+				if (beanFactory instanceof ConfigurableBeanFactory) {
+					rootObject = new BeanExpressionContext((ConfigurableBeanFactory) beanFactory, null);
+				}
+				Object o = rootObject == null ?
+						exp.getValue(context) :
+						exp.getValue(context, rootObject);
+				if (o != null) {
+					@SuppressWarnings("unchecked")
+					T result = (T) o;
+					return result;
+				}
+			} catch (Exception e) {
+				LOGGER.log(Level.WARNING, "Error evaluating expression " + springExpr + " with Spring", e);
+			}
+
 			FacesContext fctx = FacesContext.getCurrentInstance();
 			if (fctx != null) {
 				if (!expression.startsWith(EXPRESSION_BEGIN)) {
@@ -91,7 +129,7 @@ public class ELUtil implements ApplicationContextAware {
 			LOGGER.info("Will use original expression '" + originalExpression + "' because cleaned expression '" + expression + "' is invalid");
 			expression = originalExpression;
 		}
-		
+
 		ApplicationContext ac = getApplicationContext();
 		@SuppressWarnings("unchecked")
 		T val = (T) ac.getBean(expression);
@@ -255,7 +293,7 @@ public class ELUtil implements ApplicationContextAware {
 	}
 
 	public List<String> getArgs(String exp) {
-		List<String> returnArray = new ArrayList<String>();
+		List<String> returnArray = new ArrayList<>();
 		int pre = exp.indexOf(CoreConstants.BRACKET_LEFT);
 		if (pre >= 0) {
 			String argsList = exp.substring(pre + 1, exp.lastIndexOf(CoreConstants.BRACKET_RIGHT));
