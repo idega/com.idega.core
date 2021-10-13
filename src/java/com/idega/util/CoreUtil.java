@@ -73,29 +73,27 @@ public class CoreUtil {
 	 * @return
 	 */
 	public static IWContext getIWContext() {
-		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("iw_context.initialize_with_rr_provider", false)) {
-			RequestResponseProvider rrProvider = null;
+		RequestResponseProvider rrProvider = null;
+		try {
+			rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+		} catch (Exception e) {}
+		if (rrProvider != null) {
 			try {
-				rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
-			} catch (Exception e) {}
-			if (rrProvider != null) {
-				try {
-					HttpServletRequest request = rrProvider.getRequest();
-					HttpServletResponse response = rrProvider.getResponse();
-					if (request != null && response != null) {
-						ServletContext context = request.getServletContext();
-						if (context == null) {
-							HttpSession session = request.getSession();
-							if (session != null) {
-								context = session.getServletContext();
-							}
-						}
-						if (context != null) {
-							return new IWContext(request, response, context);
+				HttpServletRequest request = rrProvider.getRequest();
+				HttpServletResponse response = rrProvider.getResponse();
+				if (request != null && response != null) {
+					ServletContext context = request.getServletContext();
+					if (context == null) {
+						HttpSession session = request.getSession();
+						if (session != null) {
+							context = session.getServletContext();
 						}
 					}
-				} catch (Exception e) {}
-			}
+					if (context != null) {
+						return new IWContext(request, response, context);
+					}
+				}
+			} catch (Exception e) {}
 		}
 
 		try {
