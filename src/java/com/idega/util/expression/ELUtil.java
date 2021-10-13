@@ -102,7 +102,7 @@ public class ELUtil implements ApplicationContextAware {
 					return result;
 				}
 			} catch (Exception e) {
-				LOGGER.log(Level.WARNING, "Error evaluating expression " + springExpr + " with Spring", e);
+				LOGGER.log(Level.WARNING, "Error evaluating expression " + springExpr + " with Spring");
 			}
 
 			FacesContext fctx = FacesContext.getCurrentInstance();
