@@ -5703,13 +5703,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		//Get user by personal id
 		try {
 			user = getUser(personalId);
+		} catch (FinderException e) {
 		} catch (Exception e) {
 			getLogger().log(Level.WARNING, "Could not get the user by personal id: " + personalId, e);
 		}
 
 		//Get the users by email
-		try {
-			if (getSettings().getBoolean("user.can_search_by_email", true)) {
+		if (getSettings().getBoolean("user.can_search_by_email", false)) {
+			try {
 				if (!StringUtil.isEmpty(email) && EmailValidator.getInstance().isValid(email)) {
 					Collection<User> usersByEmail = getUsersByEmail(email);
 					if (!ListUtil.isEmpty(usersByEmail)) {
@@ -5760,16 +5761,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 						}
 					}
 				}
+			} catch (Exception eEm) {
+				getLogger().log(Level.WARNING, "Could not get the user by personal id: by email: " + email, eEm);
+			} finally {
+				CoreUtil.clearAllCaches();
 			}
-		} catch (Exception eEm) {
-			getLogger().log(Level.WARNING, "Could not get the user by personal id: by email: " + email, eEm);
-		} finally {
-			CoreUtil.clearAllCaches();
 		}
-
 
 		return user;
 	}
-
 
 }
