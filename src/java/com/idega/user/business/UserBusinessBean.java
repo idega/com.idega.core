@@ -4918,6 +4918,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return Boolean.FALSE;
 		}
 
+		//	Make sure account is enabled
+		try {
+			LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+			if (loginInfo != null) {
+				loginInfo.setFailedAttemptCount(0);
+				loginInfo.setAccessClosed(false);
+				loginInfo.setAccountEnabled(Boolean.TRUE);
+				loginInfo.store();
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Errro updating login info for login " + loginTable, e);
+		}
+
 		return doUpdateLoginInfo(user, loginTable, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
 	}
 
