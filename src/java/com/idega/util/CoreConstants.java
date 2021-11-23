@@ -198,6 +198,8 @@ public class CoreConstants {
 
 	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration",
 
+			PROPERTY_PORTAL_LOCALIZER_BUNDLE_ID = "portal.localizer_bundle_id",
+
 			PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
 			PAGE_VIEW_TYPE_REGULAR = "regular",
 			PAGE_VIEW_TYPE_MOBILE = "mobile",
