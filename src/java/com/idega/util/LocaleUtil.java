@@ -215,4 +215,26 @@ public class LocaleUtil {
 		return bundles;
 	}
 
+	public static final String getLocalizedGroupName(IWMainApplication iwma, Locale locale, String defaultBundleIdentifier, String id) {
+		if (StringUtil.isEmpty(id) || locale == null) {
+			return null;
+		}
+
+		Collection<IWResourceBundle> bundles = getEnabledResources(iwma, locale, defaultBundleIdentifier);
+		if (ListUtil.isEmpty(bundles)) {
+			return null;
+		}
+
+		String localization = null;
+		String key = CoreConstants.GROUP_LOC_NAME_PREFIX.concat(id);
+		for (Iterator<IWResourceBundle> iter = bundles.iterator(); (iter.hasNext() && StringUtil.isEmpty(localization));) {
+			IWResourceBundle iwrb = iter.next();
+			localization = iwrb.getLocalizedString(key, key);
+			if (localization.equals(key)) {
+				localization = null;
+			}
+		}
+		return localization;
+	}
+
 }
