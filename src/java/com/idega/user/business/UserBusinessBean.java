@@ -4902,19 +4902,12 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return Boolean.FALSE;
 		}
 
-		// encrypt new password
-		String encryptedPassword = Encrypter.encryptOneWay(newPassword);
-		if (StringUtil.isEmpty(encryptedPassword)) {
-			getLogger().warning("Failed to encrypt password for user " + user.getName());
-			return Boolean.FALSE;
-		}
-
-		// store new password
-		loginTable.setUserPassword(encryptedPassword, newPassword);
 		try {
-			loginTable.store();
+			String login = loginTable.getUserLogin();
+			login = StringUtil.isEmpty(login) ? user.getPersonalID() : login;
+			LoginDBHandler.updateLogin(loginTable, (Integer) user.getPrimaryKey(), login, newPassword);
 		} catch (Exception e) {
-			getLogger().warning("Failed to store password for user " + user.getName());
+			getLogger().log(Level.WARNING, "Failed to store password for user " + user, e);
 			return Boolean.FALSE;
 		}
 
@@ -4923,7 +4916,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
 			if (loginInfo != null) {
 				loginInfo.setFailedAttemptCount(0);
-				loginInfo.setAccessClosed(false);
+				loginInfo.setAccessClosed(Boolean.FALSE);
 				loginInfo.setAccountEnabled(Boolean.TRUE);
 				loginInfo.store();
 			}
@@ -4936,12 +4929,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	private boolean doUpdateLoginInfo(User user, LoginTable loginTable, boolean accountEnabled, boolean passwordNeverExpires, boolean userAllowedToChangePassword, boolean mustChangePasswordNextTime) {
 		try {
-			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled,
-					IWTimestamp.RightNow(), 5000, passwordNeverExpires,
-					userAllowedToChangePassword, mustChangePasswordNextTime,
+			LoginDBHandler.updateLoginInfo(
+					loginTable,
+					accountEnabled,
+					IWTimestamp.RightNow(),
+					5000,
+					passwordNeverExpires,
+					userAllowedToChangePassword,
+					mustChangePasswordNextTime,
 					null
 			);
-			getLogger().info("Password for user " + user.getName() + " has been changed");
+			getLogger().info("Login info for user " + user.getName() + " has been updated");
 			return Boolean.TRUE;
 		} catch (Exception ex) {
 			getLogger().log(Level.WARNING, "Failed to update login info for user: " + user.getName(), ex);
