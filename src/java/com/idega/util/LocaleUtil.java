@@ -1,11 +1,18 @@
 package com.idega.util;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TreeMap;
 
 import com.idega.core.localisation.business.ICLocaleBusiness;
+import com.idega.idegaweb.IWBundle;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWResourceBundle;
 import com.idega.util.datastructures.map.MapUtil;
 
 /**
@@ -174,6 +181,60 @@ public class LocaleUtil {
 
 		localizedLanguageName = StringUtil.getCapitalized(localizedLanguageName, localeIn);
 		return localizedLanguageName;
+	}
+
+	public static Collection<IWResourceBundle> getEnabledResources(IWMainApplication iwma, Locale locale, String defaultIdentifier) {
+		if (iwma == null || locale == null) {
+			return null;
+		}
+
+		Collection<IWResourceBundle> bundles = new ArrayList<>();
+		String bundleIdentifiersProp = iwma.getSettings().getProperty(
+				CoreConstants.PROPERTY_PORTAL_LOCALIZER_BUNDLE_ID,
+				defaultIdentifier
+		);
+		List<String> bundleIdentifiers = Arrays.asList(bundleIdentifiersProp.split(CoreConstants.COMMA));
+		for (String bundleIdentifier: bundleIdentifiers) {
+			if (StringUtil.isEmpty(bundleIdentifier)) {
+				continue;
+			}
+
+			IWBundle bundle = iwma.getBundle(bundleIdentifier);
+			if (bundle == null) {
+				continue;
+			}
+
+			IWResourceBundle iwrb = bundle.getResourceBundle(locale);
+			if (iwrb == null) {
+				continue;
+			}
+
+			bundles.add(iwrb);
+		}
+
+		return bundles;
+	}
+
+	public static final String getLocalizedGroupName(IWMainApplication iwma, Locale locale, String defaultBundleIdentifier, String id) {
+		if (StringUtil.isEmpty(id) || locale == null) {
+			return null;
+		}
+
+		Collection<IWResourceBundle> bundles = getEnabledResources(iwma, locale, defaultBundleIdentifier);
+		if (ListUtil.isEmpty(bundles)) {
+			return null;
+		}
+
+		String localization = null;
+		String key = CoreConstants.GROUP_LOC_NAME_PREFIX.concat(id);
+		for (Iterator<IWResourceBundle> iter = bundles.iterator(); (iter.hasNext() && StringUtil.isEmpty(localization));) {
+			IWResourceBundle iwrb = iter.next();
+			localization = iwrb.getLocalizedString(key, key);
+			if (localization.equals(key)) {
+				localization = null;
+			}
+		}
+		return localization;
 	}
 
 }

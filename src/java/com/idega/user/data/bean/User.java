@@ -65,7 +65,7 @@ import com.idega.util.StringUtil;
 @NamedQueries({
 	@NamedQuery(name = "user.findAll", query = "select u from User u where u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
 	@NamedQuery(name = "user.findAllByPrimaryGroup", query = "select u from User u where u.primaryGroup = :primaryGroup and u.deleted != 'Y' order by u.firstName, u.lastName, u.middleName"),
-	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID"),
+	@NamedQuery(name = "user.findByPersonalID", query = "select u from User u where u.personalID = :personalID and u.deleted != 'Y'"),
 	@NamedQuery(name = User.QUERY_FIND_BY_PERSONAL_IDS, query = "select u from User u where u.personalID IN (:personalIDs)"),
 	@NamedQuery(name = "user.findByUniqueID", query = "select u from User u where u.uniqueId = :uniqueId"),
 	@NamedQuery(name = "user.findByLastName", query = "select u from User u where u.lastName = :lastName"),
@@ -795,7 +795,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 			}
 		}
 
-		return null;
+		//	Did not find main email
+		return emails.iterator().next().getAddress();
 	}
 
 	public Address getMainAddress() {

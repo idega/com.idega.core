@@ -198,6 +198,9 @@ public class CoreConstants {
 
 	public static final String APPLICATION_PROPERTY_OMIT_DECLARATION = "xhtml.format.omit.declaration",
 
+			PROPERTY_PORTAL_LOCALIZER_BUNDLE_ID = "portal.localizer_bundle_id",
+			GROUP_LOC_NAME_PREFIX = "organisation.group.name.",
+
 			PARAMETER_PAGE_VIEW_TYPE = "page_view_type",
 			PAGE_VIEW_TYPE_REGULAR = "regular",
 			PAGE_VIEW_TYPE_MOBILE = "mobile",
@@ -212,4 +215,9 @@ public class CoreConstants {
 
 	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "skjalaver@reykjavik.is";
 	public static final String ACOUSTIC_PERMISSION_PROCESS_NAME = "AcousticsPermission";
+
+	public static final String COMMUNE_ACCPETED_CITIZENS = "Commune Accepted Citizens";
+
+	public static final String EXCEPTION_REPORT_RECEIVER = "exception_report_receiver";
+
 }

@@ -418,6 +418,10 @@ public interface UserBusiness extends IBOService {
 			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID)
 			throws CreateException, RemoteException;
 
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, String appartmentNumber
+	) throws CreateException, RemoteException;
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressOrCreateIfDoesNotExist
 	 */
@@ -438,6 +442,10 @@ public interface UserBusiness extends IBOService {
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
 			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID)
 			throws CreateException, RemoteException;
+
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, String appartmentNumber
+	) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersCoAddressOrCreateIfDoesNotExist
@@ -1068,4 +1076,11 @@ public interface UserBusiness extends IBOService {
 			String userName,
 			String password,
 			boolean sendLoginInfo);
+
+	public User getUserByEmail(String personalId, String email);
+
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson, String userName) throws CreateException, RemoteException;
+
+	public User getCorrectUserCheckedByEmail(String personalId, String email);
 }
+

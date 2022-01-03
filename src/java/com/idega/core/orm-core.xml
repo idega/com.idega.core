@@ -65,5 +65,6 @@
     <entity class="com.idega.user.data.bean.UserGroupRepresentative" />
     <entity class="com.idega.user.data.bean.UserInfoColumns" />
     <entity class="com.idega.user.data.bean.UserStatus" />
+    <entity class="com.idega.user.data.bean.GroupAlias" />
 
  </entity-mappings>

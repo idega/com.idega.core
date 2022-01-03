@@ -22,6 +22,7 @@ import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
 import javax.persistence.Table;
 
+import com.idega.core.location.data.AddressBMPBean;
 import com.idega.user.data.bean.User;
 import com.idega.util.CoreConstants;
 import com.idega.util.DBUtil;
@@ -105,6 +106,9 @@ public class Address implements Serializable {
 
 	@Column(name = COLUMN_CITY, length = 50)
 	private String city;
+
+	@Column(name = AddressBMPBean.APPARTMENT_NUMBER, length = 50)
+	private String appartmentNumber;
 
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name = COLUMN_COMMUNE)
@@ -326,6 +330,14 @@ public class Address implements Serializable {
 
 	public void setCity(String city) {
 		this.city = city;
+	}
+
+	public String getAppartmentNumber() {
+		return appartmentNumber;
+	}
+
+	public void setAppartmentNumber(String appartmentNumber) {
+		this.appartmentNumber = appartmentNumber;
 	}
 
 	public String getStreetAddress() {

@@ -73,29 +73,27 @@ public class CoreUtil {
 	 * @return
 	 */
 	public static IWContext getIWContext() {
-		if (IWMainApplication.getDefaultIWMainApplication().getSettings().getBoolean("iw_context.initialize_with_rr_provider", false)) {
-			RequestResponseProvider rrProvider = null;
+		RequestResponseProvider rrProvider = null;
+		try {
+			rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
+		} catch (Exception e) {}
+		if (rrProvider != null) {
 			try {
-				rrProvider = ELUtil.getInstance().getBean(RequestResponseProvider.class);
-			} catch (Exception e) {}
-			if (rrProvider != null) {
-				try {
-					HttpServletRequest request = rrProvider.getRequest();
-					HttpServletResponse response = rrProvider.getResponse();
-					if (request != null && response != null) {
-						ServletContext context = request.getServletContext();
-						if (context == null) {
-							HttpSession session = request.getSession();
-							if (session != null) {
-								context = session.getServletContext();
-							}
-						}
-						if (context != null) {
-							return new IWContext(request, response, context);
+				HttpServletRequest request = rrProvider.getRequest();
+				HttpServletResponse response = rrProvider.getResponse();
+				if (request != null && response != null) {
+					ServletContext context = request.getServletContext();
+					if (context == null) {
+						HttpSession session = request.getSession();
+						if (session != null) {
+							context = session.getServletContext();
 						}
 					}
-				} catch (Exception e) {}
-			}
+					if (context != null) {
+						return new IWContext(request, response, context);
+					}
+				}
+			} catch (Exception e) {}
 		}
 
 		try {
@@ -113,7 +111,7 @@ public class CoreUtil {
 	public static final List<String> getResourcesForChooser(IWContext iwc) {
 		IWBundle iwb = getCoreBundle();
 
-		List<String> resources = new ArrayList<String>();
+		List<String> resources = new ArrayList<>();
 
 		//	DWR
 		resources.add(CoreConstants.DWR_ENGINE_SCRIPT);
@@ -265,7 +263,7 @@ public class CoreUtil {
 					}
 		    		notification.append("Stack trace:\n").append(writer == null ? "Unavailable" : writer.toString());
 
-		    		String receiver = settings.getProperty("exception_report_receiver", "abuse@idega.com");
+		    		String receiver = settings.getProperty(CoreConstants.EXCEPTION_REPORT_RECEIVER, "abuse@idega.com");
 		    		String subject = "EXCEPTION: on ePlatform, server: " + server;
 		    		String text = notification.toString();
 		    		if (EmailValidator.getInstance().validateEmail(receiver)) {
@@ -541,7 +539,7 @@ public class CoreUtil {
 			return Collections.emptyList();
 		}
 
-		List<String> ids = new ArrayList<String>(entities.size());
+		List<String> ids = new ArrayList<>(entities.size());
 		for (IDOEntity entity : entities) {
 			Object id = entity.getPrimaryKey();
 			if (id == null) {
@@ -558,7 +556,7 @@ public class CoreUtil {
 			return Collections.emptyList();
 		}
 
-		List<Integer> ids = new ArrayList<Integer>(entities.size());
+		List<Integer> ids = new ArrayList<>(entities.size());
 		for (IDOEntity entity : entities) {
 			Object id = entity.getPrimaryKey();
 			if (id == null) {
@@ -705,14 +703,14 @@ public class CoreUtil {
 		Reflections reflections = new Reflections("com.idega", "is.idega", "sv.idega", "is.illuminati");
 		Set<Class<? extends T>> subTypes = reflections.getSubTypesOf(theClass);
 		if (subTypes == null) {
-			subTypes = new HashSet<Class<? extends T>>();
+			subTypes = new HashSet<>();
 		}
 		if (!onlyInterfaces) {
 			cache.put(key, subTypes);
 			return subTypes;
 		}
 
-		Set<Class<? extends T>> subInterfaces = new HashSet<Class<? extends T>>();
+		Set<Class<? extends T>> subInterfaces = new HashSet<>();
 		for (Class<? extends T> subType: subTypes) {
 			if (subType.isInterface()) {
 				subInterfaces.add(subType);

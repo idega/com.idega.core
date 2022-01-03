@@ -125,6 +125,7 @@ import com.idega.user.data.UserStatus;
 import com.idega.user.data.UserStatusHome;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
+import com.idega.util.EmailValidator;
 import com.idega.util.Encrypter;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
@@ -508,13 +509,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson) throws CreateException, RemoteException {
+		return createUser(firstName, middleName, lastName, displayname, personalID, description, gender, date_of_birth, primary_group, fullName, null, null);
+	}
+
+	@Override
+	public User createUser(String firstName, String middleName, String lastName, String displayname, String personalID, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String fullName, Boolean juridicalPerson, String userName) throws CreateException, RemoteException {
 		try {
 			User userToAdd = null;
 			if (!StringUtil.isEmpty(personalID)) {
 				try {
-					userToAdd = getUserHome().findByPersonalID(personalID);
+					userToAdd = getCorrectUserCheckedByEmail(personalID, userName);
 				} catch (Exception e) {}
 			}
+
 			if (userToAdd == null) {
 				userToAdd = getUserHome().create();
 			}
@@ -701,7 +708,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			// newUser = insertUser(firstname,middlename,
 			// lastname,null,null,null,null,primary_group);
 			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName, juridicalPerson);
-			if (userLogin != null && password != null && !userLogin.equals(CoreConstants.EMPTY) && !password.equals(CoreConstants.EMPTY)) {
+			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
 				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 			}
 			transaction.commit();
@@ -1246,14 +1253,19 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
+		return updateUsersMainAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, null);
+	}
+
+	@Override
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, String appartmentNumber) throws CreateException, RemoteException {
 		AddressType mainAddressType = getAddressHome().getAddressType1();
-		return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, mainAddressType);
+		return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, appartmentNumber, communeID, mainAddressType);
 	}
 
 	@Override
 	public Address updateUsersMainAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
 		AddressType mainAddressType = getAddressHome().getAddressType1();
-		return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, mainAddressType);
+		return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null, communeID, mainAddressType);
 	}
 
 	/**
@@ -1278,17 +1290,24 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
+		return updateUsersCoAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, null);
+	}
+
+	@Override
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, String appartmentNumber
+	) throws CreateException, RemoteException {
 		AddressType coAddressType = getAddressHome().getAddressType2();
-		return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, communeID, coAddressType);
+		return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, postalCode, country, city, province, poBox, appartmentNumber, communeID, coAddressType);
 	}
 
 	@Override
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID) throws CreateException, RemoteException {
 		AddressType coAddressType = getAddressHome().getAddressType2();
-		return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, communeID, coAddressType);
+		return updateUsersAddressOrCreateIfDoesNotExist(userId, streetNameAndNumber, postalCodeId, countryName, city, province, poBox, null, communeID, coAddressType);
 	}
 
-	private Address updateUsersAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, Integer communeID, AddressType addressType) throws CreateException, RemoteException {
+	private Address updateUsersAddressOrCreateIfDoesNotExist(Integer userId, String streetNameAndNumber, Integer postalCodeId, String countryName, String city, String province, String poBox, String appartmentNumber, Integer communeID, AddressType addressType) throws CreateException, RemoteException {
 		try {
 			User user = getUser(userId);
 			Country country = null;
@@ -1303,14 +1322,25 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 					code = ((PostalCodeHome) getIDOHome(PostalCode.class)).findByPrimaryKey(postalCodeId);
 				}
 			}
-			return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, code, country, city, province, poBox, communeID, addressType);
+			return updateUsersAddressOrCreateIfDoesNotExist(user, streetNameAndNumber, code, country, city, province, poBox, appartmentNumber, communeID, addressType);
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error updating address for user: " + userId, e);
 		}
 		return null;
 	}
 
-	protected Address updateUsersAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber, PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, AddressType addressType) throws CreateException, RemoteException {
+	private Address updateUsersAddressOrCreateIfDoesNotExist(
+			User user,
+			String streetNameAndNumber,
+			PostalCode postalCode,
+			Country country,
+			String city,
+			String province,
+			String poBox,
+			String appartmentNumber,
+			Integer communeID,
+			AddressType addressType
+	) throws CreateException, RemoteException {
 		Address address = null;
 		if (streetNameAndNumber != null && user != null) {
 			String streetName = null, streetNumber = null;
@@ -1334,6 +1364,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				address.setProvince(province);
 				address.setCity(city);
 				address.setPOBox(poBox);
+				address.setAppartmentNumber(appartmentNumber);
 				address.setStreetName(streetName);
 				if (streetNumber != null) {
 					address.setStreetNumber(streetNumber);
@@ -4944,15 +4975,16 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			return Boolean.FALSE;
 		}
 
-		// encrypt new password
-		String encryptedPassword = Encrypter.encryptOneWay(newPassword);
-		if (StringUtil.isEmpty(encryptedPassword)) {
-			getLogger().warning("Failed to encrypt password for user " + user.getName());
+		try {
+			String login = loginTable.getUserLogin();
+			login = StringUtil.isEmpty(login) ? user.getPersonalID() : login;
+			LoginDBHandler.updateLogin(loginTable, (Integer) user.getPrimaryKey(), login, newPassword);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Failed to store password for user " + user, e);
 			return Boolean.FALSE;
 		}
 
-		// store new password
-		loginTable.setUserPassword(encryptedPassword, newPassword);
+		//	Make sure account is enabled
 		try {
 			IWContext iwc = CoreUtil.getIWContext();
 			if (iwc != null && iwc.isLoggedOn()) {
@@ -4961,10 +4993,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			loginTable.setLastChanged(IWTimestamp.RightNow().getTimestamp());
 			loginTable.store();
 
+			LoginInfo loginInfo = LoginDBHandler.getLoginInfo(loginTable);
+			if (loginInfo != null) {
+				loginInfo.setFailedAttemptCount(0);
+				loginInfo.setAccessClosed(Boolean.FALSE);
+				loginInfo.setAccountEnabled(Boolean.TRUE);
+				loginInfo.store();
+			}
+
 			CoreUtil.clearAllCaches();
 		} catch (Exception e) {
-			getLogger().warning("Failed to store password for user " + user.getName());
-			return Boolean.FALSE;
+			getLogger().log(Level.WARNING, "Errro updating login info for login " + loginTable, e);
 		}
 
 		return doUpdateLoginInfo(user, loginTable, Boolean.TRUE, Boolean.FALSE, Boolean.TRUE, Boolean.FALSE);
@@ -4972,12 +5011,17 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	private boolean doUpdateLoginInfo(User user, LoginTable loginTable, boolean accountEnabled, boolean passwordNeverExpires, boolean userAllowedToChangePassword, boolean mustChangePasswordNextTime) {
 		try {
-			LoginDBHandler.updateLoginInfo(loginTable, accountEnabled,
-					IWTimestamp.RightNow(), 5000, passwordNeverExpires,
-					userAllowedToChangePassword, mustChangePasswordNextTime,
+			LoginDBHandler.updateLoginInfo(
+					loginTable,
+					accountEnabled,
+					IWTimestamp.RightNow(),
+					5000,
+					passwordNeverExpires,
+					userAllowedToChangePassword,
+					mustChangePasswordNextTime,
 					null
 			);
-			getLogger().info("Password for user " + user.getName() + " has been changed");
+			getLogger().info("Login info for user " + user.getName() + " has been updated");
 			return Boolean.TRUE;
 		} catch (Exception ex) {
 			getLogger().log(Level.WARNING, "Failed to update login info for user: " + user.getName(), ex);
@@ -5717,6 +5761,107 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 		}
 
 		return false;
+	}
+
+
+	@Override
+	public User getUserByEmail(String personalId, String email) {
+		User user = null;
+		try {
+			if (getSettings().getBoolean("user.can_search_by_email", true)) {
+				if (!StringUtil.isEmpty(email) && EmailValidator.getInstance().isValid(email)) {
+					Collection<User> usersByEmail = getUsersByEmail(email);
+					if (!ListUtil.isEmpty(usersByEmail)) {
+						for (User userByEmail : usersByEmail) {
+							if (userByEmail != null) {
+								user = userByEmail;
+								getLogger().info("Found user by email: " + email + ". User: " + user);
+								break;
+							}
+						}
+					}
+				}
+			}
+		} catch (Exception eEm) {
+			getLogger().log(Level.WARNING, "Could not get the user by email: " + email, eEm);
+		}
+		return user;
+	}
+
+
+	@Override
+	public User getCorrectUserCheckedByEmail(String personalId, String email) {
+		User user = null;
+
+		//Get user by personal id
+		try {
+			user = getUser(personalId);
+		} catch (FinderException e) {
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Could not get the user by personal id: " + personalId, e);
+		}
+
+		//Get the users by email
+		if (getSettings().getBoolean("user.can_search_by_email", false)) {
+			try {
+				if (!StringUtil.isEmpty(email) && EmailValidator.getInstance().isValid(email)) {
+					Collection<User> usersByEmail = getUsersByEmail(email);
+					if (!ListUtil.isEmpty(usersByEmail)) {
+						for (User ubm : usersByEmail) {
+							if (
+									ubm != null
+									&&
+									(user == null || !ubm.getPrimaryKey().toString().equalsIgnoreCase(user.getPrimaryKey().toString()))
+							) {
+								getLogger().info("Found user by email: " + email + ". User: " + ubm + ". Different than user found by personal id: " + user);
+								//1. If user by personal id is not found, return the user found by email
+								if (user == null) {
+									getLogger().info("User by personal id is NULL. Will return user by email. User: " + ubm + " will be updated with the personal id: " + personalId);
+									ubm.setPersonalID(personalId);
+									ubm.store();
+									return ubm;
+								} else {
+									//Get user's by personal id groups
+									Collection<Group> userGroups = getUserGroups(user);
+									boolean userHasRealGroups = false;
+									if (ListUtil.isEmpty(userGroups)) {
+										userHasRealGroups = false;
+									} else {
+										for (Group userGroup : userGroups) {
+											if (userGroup != null && !StringUtil.isEmpty(userGroup.getName()) && !userGroup.getName().equalsIgnoreCase(CoreConstants.COMMUNE_ACCPETED_CITIZENS)) {
+												userHasRealGroups = true;
+												break;
+											}
+										}
+									}
+									//2. If user belongs to a real group, not only to "Commune Accepted Citizens", return that user and delete user by email
+									if (userHasRealGroups) {
+										getLogger().info("User by personal id has real groups. Will return user by personal id. User: " + ubm + " will be deleted");
+										ubm.setDeleted(true);
+										ubm.store();
+										return user;
+									} else {
+										//3. Return the user by email, change the personal id into the correct one and delete the user by personal id
+										getLogger().info("User by personal id does not have real groups. Will return user by email. User by personal id: " + user + " will be deleted. And user by email will be updated with personal id: " + personalId);
+										ubm.setPersonalID(personalId);
+										ubm.store();
+										user.setDeleted(true);
+										user.store();
+										return ubm;
+									}
+								}
+							}
+						}
+					}
+				}
+			} catch (Exception eEm) {
+				getLogger().log(Level.WARNING, "Could not get the user by personal id: by email: " + email, eEm);
+			} finally {
+				CoreUtil.clearAllCaches();
+			}
+		}
+
+		return user;
 	}
 
 }

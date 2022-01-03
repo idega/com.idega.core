@@ -102,7 +102,7 @@ public interface UserStatusBusiness extends IBOService {
 
     public Status getStatusByStatusId(int statusId) throws RemoteException;
 
-	public Collection<Status> getAllUserStatuses(int userId) throws RemoteException;
+	public Collection<UserStatus> getAllUserStatuses(int userId) throws RemoteException;
 
 	public Collection<User> getAllUsersWithStatus(int statusId);
 
