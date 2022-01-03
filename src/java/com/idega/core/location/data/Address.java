@@ -202,4 +202,8 @@ public interface Address extends IDOLegacyEntity, ExplicitlySynchronizedEntity {
 
 	public String getAddress();
 
+	public String getAppartmentNumber();
+
+	public void setAppartmentNumber(String appartmentNumber);
+
 }

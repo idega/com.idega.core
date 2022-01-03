@@ -31,6 +31,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	public static final String CITY = "CITY";
 	public static final String PROVINCE = "PROVINCE";
 	public static final String P_O_BOX = "P_O_BOX";
+	public static final String APPARTMENT_NUMBER = "APPARTMENT_NUMBER";
 	public static final String POSTAL_CODE_ID = "POSTAL_CODE_ID";
 	public static final String IC_ADDRESS_TYPE_ID = "IC_ADDRESS_TYPE_ID";
 	public static final String IC_COUNTRY_ID = "IC_COUNTRY_ID";
@@ -67,6 +68,7 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 		addAttribute(CITY, "City", true, true, String.class, 50);
 		addAttribute(PROVINCE, "Province", true, true, String.class, 50);
 		addAttribute(P_O_BOX, "PostBox", true, true, String.class, 50);
+		addAttribute(APPARTMENT_NUMBER, "Appartment number", true, true, String.class, 50);
 		addManyToOneRelationship(POSTAL_CODE_ID, "PostalCode", PostalCode.class);
 		addManyToOneRelationship(IC_COUNTRY_ID, "Country", Country.class);
 		this.addManyToManyRelationShip(User.class, "ic_user_address");
@@ -506,6 +508,16 @@ public class AddressBMPBean extends com.idega.data.GenericEntity implements Addr
 	@Override
 	public boolean isSynchronizationEnabled() {
 		return synchronizationEnabled;
+	}
+
+	@Override
+	public String getAppartmentNumber() {
+		return getStringColumnValue(APPARTMENT_NUMBER);
+	}
+
+	@Override
+	public void setAppartmentNumber(String appartmentNumber) {
+		setColumn(APPARTMENT_NUMBER, appartmentNumber);
 	}
 
 }
