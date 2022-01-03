@@ -419,6 +419,10 @@ public interface UserBusiness extends IBOService {
 			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID)
 			throws CreateException, RemoteException;
 
+	public Address updateUsersMainAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, String appartmentNumber
+	) throws CreateException, RemoteException;
+
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersMainAddressOrCreateIfDoesNotExist
 	 */
@@ -439,6 +443,10 @@ public interface UserBusiness extends IBOService {
 	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
 			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID)
 			throws CreateException, RemoteException;
+
+	public Address updateUsersCoAddressOrCreateIfDoesNotExist(User user, String streetNameAndNumber,
+			PostalCode postalCode, Country country, String city, String province, String poBox, Integer communeID, String appartmentNumber
+	) throws CreateException, RemoteException;
 
 	/**
 	 * @see com.idega.user.business.UserBusinessBean#updateUsersCoAddressOrCreateIfDoesNotExist
