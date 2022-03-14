@@ -17,7 +17,7 @@ import java.util.logging.Logger;
 
 public class ListUtil {
 
-	private static final ArrayList<Object> emptyVector = new EmptyList<Object>();
+	private static final ArrayList<Object> emptyVector = new EmptyList<>();
 
 	private ListUtil() {
 	}
@@ -35,7 +35,7 @@ public class ListUtil {
 	 * @author <a href="mailto:martynas@idega.com">Martynas Stakė</a>
 	 */
 	public static <T> Collection<T> getDeepCopy(Collection<T> original) {
-		Collection<T> copy = new ArrayList<T>();
+		Collection<T> copy = new ArrayList<>();
 
 		if (!isEmpty(original)) {
 			for (T instance : original) {
@@ -73,12 +73,12 @@ public class ListUtil {
 		if (coll instanceof List) {
 			return (List<T>) coll;
 		} else {
-			return new ArrayList<T>(coll);
+			return new ArrayList<>(coll);
 		}
 	}
 
 	public static <T> List<T> reverseList(List<T> list) {
-		List<T> theReturn = new ArrayList<T>();
+		List<T> theReturn = new ArrayList<>();
 		int size = list.size();
 		for (int i = size - 1; i >= 0; i--) {
 			T item = list.get(i);
@@ -97,7 +97,7 @@ public class ListUtil {
 	 */
 	public static List<String> convertStringArrayToList(String[] stringArray) {
 		if (stringArray != null && stringArray.length > 0) {
-			List<String> returnList = new ArrayList<String>();
+			List<String> returnList = new ArrayList<>();
 
 			for (int i = 0; i < stringArray.length; i++) {
 				returnList.add(stringArray[i]);
@@ -159,7 +159,7 @@ public class ListUtil {
 	 * @returns a List of Strings or an empty list if no values where found
 	 */
 	public static List<String> convertTokenSeparatedStringToList(String tokenSeparatedString, String tokenSeparator) {
-		List<String> list = new ArrayList<String>();
+		List<String> list = new ArrayList<>();
 
 		if (tokenSeparatedString != null && tokenSeparator != null) {
 			StringTokenizer tokens = new StringTokenizer(tokenSeparatedString, tokenSeparator);
@@ -182,7 +182,7 @@ public class ListUtil {
 	}
 
 	public static <E> List<E> getFilteredList(Collection<E> collection) {
-		List<E> filtered = new ArrayList<E>();
+		List<E> filtered = new ArrayList<>();
 		for (E object : collection) {
 			if (object != null && !StringUtil.isEmpty(object.toString())) {
 				filtered.add(object);
@@ -207,6 +207,20 @@ public class ListUtil {
 		}
 		;
 		return results;
+	}
+
+	public static <T> boolean containsAny(Collection<T> collection, Collection<T> objects) {
+		if (isEmpty(collection) || isEmpty(objects)) {
+			return false;
+		}
+
+		for (T object: objects) {
+			if (object != null && collection.contains(object)) {
+				return true;
+			}
+		}
+
+		return false;
 	}
 
 	protected static class EmptyList<T> extends ArrayList<T> {
