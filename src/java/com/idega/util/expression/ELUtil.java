@@ -3,6 +3,7 @@ package com.idega.util.expression;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -309,14 +310,26 @@ public class ELUtil implements ApplicationContextAware {
 				}
 
 				arg = arg.trim();
+				if (arg.startsWith("[") && arg.length() > 1) {
+					arg = arg.substring(1);
+				}
+				if (arg.endsWith("]") && arg.length() > 1) {
+					arg = arg.substring(0, arg.length() - 1);
+				}
 				if (arg.startsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
 					arg = arg.replaceFirst(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
 				}
 				if (arg.endsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
 					arg = arg.substring(0, arg.length() - 1);
 				}
+				if (arg.startsWith(CoreConstants.QOUTE_MARK)) {
+					arg = arg.replaceFirst(CoreConstants.QOUTE_MARK, CoreConstants.EMPTY);
+				}
+				if (arg.endsWith(CoreConstants.QOUTE_MARK)) {
+					arg = arg.substring(0, arg.length() - 1);
+				}
 
-				returnArray.add(arg);
+				returnArray.add(arg == null || "null".equals(arg) ? null : arg);
 			}
 		}
 		return returnArray;
