@@ -219,6 +219,20 @@ public class ELUtil implements ApplicationContextAware {
 		try {
 			Method method = obj.getClass().getMethod(methodName, classParams);
 			returnedObj = method.invoke(obj, strParams);
+		} catch (NoSuchMethodException e) {
+			List<Method> methods = Arrays.asList(obj.getClass().getMethods());
+			Method method = null;
+			for (Iterator<Method> iter = methods.iterator(); (method == null && iter.hasNext());) {
+				Method m = iter.next();
+				if (methodName.equals(m.getName())) {
+					method = m;
+				}
+			}
+			int count = method.getParameterCount();
+			if (count == 1) {
+				strParams = new Object[] {strParams};
+			}
+			returnedObj = method.invoke(obj, strParams);
 		} catch (Exception e) {
 			throw new Exception("Exeption occured while trying to invoke method " + methodName + " for object " + obj + (ArrayUtil.isEmpty(classParams) ? CoreConstants.EMPTY : ", parameters: " + Arrays.asList(classParams)), e);
 		}
