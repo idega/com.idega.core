@@ -9,7 +9,11 @@
  */
 package com.idega.util;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -317,6 +321,18 @@ public class RequestUtil {
 		Map<String, List<String>> params = getAllParameters(request);
 		List<String> values = MapUtil.isEmpty(params) ? null : params.get(param);
 		return values;
+	}
+
+	public static final String getBasicAuthorizationHeader(String clientId, String clientSecret) {
+		StringBuilder sb = new StringBuilder();
+
+		try {
+			sb.append(URLEncoder.encode(clientId, StandardCharsets.UTF_8.name()));
+			sb.append(CoreConstants.COLON);
+			sb.append(URLEncoder.encode(clientSecret, StandardCharsets.UTF_8.name()));
+		} catch (UnsupportedEncodingException e) {}
+
+		return "Basic " + new String(Base64.getEncoder().encode(sb.toString().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
 	}
 
 }
