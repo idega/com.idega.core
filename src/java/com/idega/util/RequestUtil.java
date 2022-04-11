@@ -9,8 +9,6 @@
  */
 package com.idega.util;
 
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.Base64;
@@ -326,11 +324,9 @@ public class RequestUtil {
 	public static final String getBasicAuthorizationHeader(String clientId, String clientSecret) {
 		StringBuilder sb = new StringBuilder();
 
-		try {
-			sb.append(URLEncoder.encode(clientId, StandardCharsets.UTF_8.name()));
-			sb.append(CoreConstants.COLON);
-			sb.append(URLEncoder.encode(clientSecret, StandardCharsets.UTF_8.name()));
-		} catch (UnsupportedEncodingException e) {}
+		sb.append(clientId);
+		sb.append(CoreConstants.COLON);
+		sb.append(clientSecret);
 
 		return "Basic " + new String(Base64.getEncoder().encode(sb.toString().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
 	}
