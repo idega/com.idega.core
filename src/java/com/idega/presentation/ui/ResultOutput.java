@@ -34,6 +34,7 @@ public class ResultOutput extends GenericInput {
 	private String name;
 	private String extraForTotal = "";
 	private String extraForEach = "";
+	private String formatFunction;
 
 	private static final String EMPTY_STRING = "";
 	private static final String UNSPECIFIC = "unspecific";
@@ -53,6 +54,45 @@ public class ResultOutput extends GenericInput {
 		nameBuffer.append(INPUT_APPEND);
 		this.name = nameBuffer.toString();
 		this.content = content;
+	}
+
+	private void addCalculationScript() {
+		if (this.moduleObjects.size() < 0) {
+			return;
+		}
+		Script script = getParentPage().getAssociatedScript();
+		StringBuffer theScript = new StringBuffer();
+		theScript.append("\n function " + this.functionName + "(myForm) {");
+		theScript.append("\n\t var value = (");
+		for (int i = 0; i < this.moduleObjects.size(); i++) {
+			if (i != 0) {
+				theScript.append((String) this.operatorVector.get(i));
+			}
+			PresentationObject moduleObject = (PresentationObject) this.moduleObjects.get(i);;
+			String extraTxt = (String) this.extraTextVector.get(i);
+			theScript.append("(1*myForm." + moduleObject.getName()
+					+ ".value");
+			theScript.append(")");
+			theScript.append(this.extraForEach);
+			theScript.append(extraTxt);
+		}
+		theScript.append(")");
+		theScript.append(this.extraForTotal);
+		theScript.append(";");
+		if(this.formatFunction != null) {
+			theScript.append(
+					"\n\t value = "
+							+ formatFunction
+							+ "(value);"
+			);
+		}
+		theScript.append(
+				"\n\t  myForm."
+						+ this.getName()
+						+ ".value=value;"
+		);
+		theScript.append("\n }");
+		script.addFunction(this.functionName, theScript.toString());
 	}
 
 	@Override
@@ -100,6 +140,7 @@ public class ResultOutput extends GenericInput {
 
 			script.addFunction(this.functionName, theScript.toString());
 		}
+		addCalculationScript();
 
 		this.setDisabled(true);
 		for (int i = 0; i < this.onChangeVector.size(); i++) {
@@ -176,6 +217,11 @@ public class ResultOutput extends GenericInput {
 			temp.setOnChange(this.functionName + "(this.form)");
 			this.moduleObjects.add(temp);
 			this.operatorVector.add(operatori);
+		} else if (mo instanceof DropdownMenu) {
+			DropdownMenu temp = (DropdownMenu) mo;
+			temp.setOnChange(this.functionName + "(this.form)");
+			this.moduleObjects.add(temp);
+			this.operatorVector.add(operatori);
 			if (extraText == null) {
 				extraText = "";
 			}
@@ -248,5 +294,13 @@ public class ResultOutput extends GenericInput {
 		if (pname != null) {
 			this.content = pname;
 		}
+	}
+
+	public String getFormatFunction() {
+		return formatFunction;
+	}
+
+	public void setFormatFunction(String formatFunction) {
+		this.formatFunction = formatFunction;
 	}
 }
