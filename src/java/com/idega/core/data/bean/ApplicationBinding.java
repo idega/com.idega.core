@@ -35,7 +35,7 @@ public class ApplicationBinding implements Serializable {
 	@Column(name = COLUMN_KEY, length = MAX_KEY_LENGTH)
 	private String key;
 
-	@Column(name = COLUMN_VALUE)
+	@Column(name = COLUMN_VALUE, length = 3000)
 	private String value;
 
 	@Column(name = COLUMN_TYPE)
