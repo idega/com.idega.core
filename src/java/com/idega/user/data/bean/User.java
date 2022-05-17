@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -36,6 +37,9 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.bean.ICRole;
 import com.idega.core.accesscontrol.data.bean.UserLogin;
@@ -54,11 +58,13 @@ import com.idega.data.UniqueIDCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGuardian;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 
 @Entity
 @Table(name = User.ENTITY_NAME)
@@ -513,7 +519,35 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 		return this.deleted == 'Y';
 	}
 
+	private boolean canDelete() {
+		try {
+			WebApplicationContext webAppContext = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext());
+			Map<String, UserGuardian> guardians = webAppContext.getBeansOfType(UserGuardian.class);
+			if (MapUtil.isEmpty(guardians)) {
+				return true;
+			}
+
+			boolean canDelete = true;
+			Integer userId = getId();
+			for (Iterator<UserGuardian> iter = guardians.values().iterator(); (canDelete && iter.hasNext());) {
+				UserGuardian guardian = iter.next();
+				canDelete = guardian.canDelete(userId);
+			}
+			return canDelete;
+		} catch (Exception e) {}
+		return true;
+	}
+
 	public void setDeleted(boolean deleted) {
+		if (deleted) {
+			if (!canDelete()) {
+				String error = "Can not delete " + this + ". ID: " + getId() + ", personal ID: " + getPersonalID() + " by " + CoreUtil.getCurrentUser();
+				RuntimeException e = new RuntimeException(error);
+				CoreUtil.sendExceptionNotification(error, e);
+				throw e;
+			}
+		}
+
 		this.deleted = deleted ? 'Y' : 'N';
 	}
 

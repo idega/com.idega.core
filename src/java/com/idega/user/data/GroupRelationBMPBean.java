@@ -9,11 +9,15 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
+
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
 
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOQuery;
@@ -21,8 +25,8 @@ import com.idega.data.IDOStoreException;
 import com.idega.data.IDOUtil;
 import com.idega.data.query.MatchCriteria;
 import com.idega.data.query.SelectQuery;
+import com.idega.group.business.GroupRelationGuardian;
 import com.idega.idegaweb.IWMainApplication;
-import com.idega.presentation.IWContext;
 import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.CoreConstants;
@@ -30,6 +34,7 @@ import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -612,10 +617,10 @@ public boolean equals(Object obj) {
   public void remove()  throws RemoveException  {
     User currentUser;
     try {
-      currentUser = IWContext.getInstance().getCurrentUser();
+      currentUser = CoreUtil.getCurrentUser();
     }
     catch (Exception ex)  {
-    currentUser = null;
+    	currentUser = null;
     }
     removeBy(currentUser);
   }
@@ -629,12 +634,41 @@ public void removeBy(User currentUser) throws RemoveException{
 
   }
 
+  	private boolean canDelete() {
+  		try {
+			WebApplicationContext webAppContext = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext());
+			Map<String, GroupRelationGuardian> guardians = webAppContext.getBeansOfType(GroupRelationGuardian.class);
+			if (MapUtil.isEmpty(guardians)) {
+				return true;
+			}
+
+			boolean canDelete = true;
+			Integer relationId = (Integer) getPrimaryKey();
+			Integer groupId = getGroupID();
+			Integer relatedGroupId = getRelatedGroupPK();
+			for (Iterator<GroupRelationGuardian> iter = guardians.values().iterator(); (canDelete && iter.hasNext());) {
+				GroupRelationGuardian guardian = iter.next();
+				canDelete = guardian.canDelete(relationId, groupId, relatedGroupId);
+			}
+			return canDelete;
+		} catch (Exception e) {}
+		return true;
+  	}
+
 	/*
 	 * (non-Javadoc)
 	 * @see com.idega.user.data.GroupRelation#removeBy(com.idega.user.data.User, java.sql.Timestamp)
 	 */
 	@Override
-	public void removeBy(User currentUser, Timestamp time) throws RemoveException{
+	public void removeBy(User currentUser, Timestamp time) throws RemoveException {
+		if (!canDelete()) {
+			String error = "Can not delete group relation " + this + ". ID: " + getPrimaryKey() + ", group ID: " + getGroupID() + ", related group ID: " + getRelatedGroupPK() +
+					" by " + CoreUtil.getCurrentUser();
+			RemoveException e = new RemoveException(error);
+			CoreUtil.sendExceptionNotification(error, e);
+			throw e;
+		}
+
 		if (currentUser != null && currentUser.getPrimaryKey() != null) {
 			Integer userId = null;
 			String primaryKey = currentUser.getPrimaryKey().toString();

@@ -7,6 +7,7 @@ import java.io.Serializable;
 import java.sql.SQLException;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
 import java.util.logging.Level;
@@ -36,14 +37,21 @@ import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
+import com.idega.group.business.GroupRelationGuardian;
+import com.idega.idegaweb.IWMainApplication;
+import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.user.events.GroupRelationChangedEvent.EventType;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.expression.ELUtil;
 
 @Entity
@@ -416,7 +424,47 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 		this.groupRelationType = groupRelationType;
 	}
 
+	private boolean canDelete() {
+  		try {
+			WebApplicationContext webAppContext = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext());
+			Map<String, GroupRelationGuardian> guardians = webAppContext.getBeansOfType(GroupRelationGuardian.class);
+			if (MapUtil.isEmpty(guardians)) {
+				return true;
+			}
+
+			boolean canDelete = true;
+			Integer relationId = getId();
+
+			Group group = getGroup();
+			Integer groupId = group == null ? null : group.getID();
+
+			Group relatedGroup = getRelatedGroup();
+			Integer relatedGroupId = relatedGroup == null ? null : relatedGroup.getID();
+			for (Iterator<GroupRelationGuardian> iter = guardians.values().iterator(); (canDelete && iter.hasNext());) {
+				GroupRelationGuardian guardian = iter.next();
+				canDelete = guardian.canDelete(relationId, groupId, relatedGroupId);
+			}
+			return canDelete;
+		} catch (Exception e) {}
+		return true;
+  	}
+
 	public void setStatus(String status) {
+		if (
+				status != null &&
+				(
+						GroupRelationBMPBean.STATUS_PASSIVE.equals(status) ||
+						GroupRelationBMPBean.STATUS_PASSIVE_PENDING.equals(status)
+				)
+		) {
+			if (!canDelete()) {
+				String error = "Can not delete group relation " + this + ". ID: " + getId() + " by " + CoreUtil.getCurrentUser();
+				RuntimeException e = new RuntimeException(error);
+				CoreUtil.sendExceptionNotification(error, e);
+				throw e;
+			}
+		}
+
 		this.status = status;
 	}
 
@@ -483,7 +531,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 
 	@Override
 	public Map<String, String> getMetaDataAttributes() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -495,7 +543,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 
 	@Override
 	public Map<String, String> getMetaDataTypes() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
