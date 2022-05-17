@@ -67,6 +67,14 @@ public class CoreUtil {
 		return IWMainApplication.getDefaultIWMainApplication().getBundle(CoreConstants.CORE_IW_BUNDLE_IDENTIFIER);
 	}
 
+	public static com.idega.user.data.User getCurrentUser() {
+		try {
+			IWContext iwc = getIWContext();
+			return iwc == null || !iwc.isLoggedOn() ? null : iwc.getCurrentUser();
+		} catch (Exception e) {}
+		return null;
+	}
+
 	/**
 	 * Almost identical method to {@link IWContext#getInstance()} just this one doesn't throw any exception - it's very important
 	 * using it with DWR
