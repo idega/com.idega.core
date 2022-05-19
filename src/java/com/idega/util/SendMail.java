@@ -227,6 +227,22 @@ public class SendMail {
 	    }
 	}
 
+	private static final String getFileType(File file) {
+		if (file == null) {
+			return null;
+		}
+
+		String type = null;
+		try {
+			type = Files.probeContentType(file.toPath());
+		} catch (Throwable e) {}
+		if (StringUtil.isEmpty(type)) {
+			type = MimeTypeUtil.resolveMimeTypeFromFileName(file.getName());
+		}
+
+		return StringUtil.isEmpty(type) ? MimeTypeUtil.MIME_TYPE_APPLICATION : type;
+	}
+
 	private static boolean sendViaSendGridAPI(
 			String key,
 			String from,
@@ -291,7 +307,7 @@ public class SendMail {
 				InputStream contentStream = null;
 				try {
 					contentStream = new FileInputStream(attachment);
-					String type = Files.probeContentType(attachment.toPath());
+					String type = getFileType(attachment);
 					Attachments attachments = new Attachments.Builder(attachment.getName(), contentStream)
 			                .withType(type)
 			                .build();
