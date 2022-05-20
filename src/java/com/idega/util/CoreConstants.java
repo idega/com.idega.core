@@ -45,6 +45,8 @@ public class CoreConstants {
 	public static final String CURLY_BRACKET_RIGHT = "}";
 	public static final String BRACKET_LEFT = "(";
 	public static final String BRACKET_RIGHT = ")";
+	public static final String SQUARE_BRACKET_LEFT = "[";
+	public static final String SQUARE_BRACKET_RIGHT = "]";
 	public static final String QOUTE_MARK = "\"";
 	public static final String QOUTE_SINGLE_MARK = "'";
 	public static final String GRAVE_ACCENT_MARK = "`";

@@ -3,6 +3,7 @@ package com.idega.util.expression;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Iterator;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
@@ -218,6 +219,20 @@ public class ELUtil implements ApplicationContextAware {
 		try {
 			Method method = obj.getClass().getMethod(methodName, classParams);
 			returnedObj = method.invoke(obj, strParams);
+		} catch (NoSuchMethodException e) {
+			List<Method> methods = Arrays.asList(obj.getClass().getMethods());
+			Method method = null;
+			for (Iterator<Method> iter = methods.iterator(); (method == null && iter.hasNext());) {
+				Method m = iter.next();
+				if (methodName.equals(m.getName())) {
+					method = m;
+				}
+			}
+			int count = method.getParameterCount();
+			if (count == 1) {
+				strParams = new Object[] {strParams};
+			}
+			returnedObj = method.invoke(obj, strParams);
 		} catch (Exception e) {
 			throw new Exception("Exeption occured while trying to invoke method " + methodName + " for object " + obj + (ArrayUtil.isEmpty(classParams) ? CoreConstants.EMPTY : ", parameters: " + Arrays.asList(classParams)), e);
 		}
@@ -309,14 +324,26 @@ public class ELUtil implements ApplicationContextAware {
 				}
 
 				arg = arg.trim();
+				if (arg.startsWith("[") && arg.length() > 1) {
+					arg = arg.substring(1);
+				}
+				if (arg.endsWith("]") && arg.length() > 1) {
+					arg = arg.substring(0, arg.length() - 1);
+				}
 				if (arg.startsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
 					arg = arg.replaceFirst(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
 				}
 				if (arg.endsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
 					arg = arg.substring(0, arg.length() - 1);
 				}
+				if (arg.startsWith(CoreConstants.QOUTE_MARK)) {
+					arg = arg.replaceFirst(CoreConstants.QOUTE_MARK, CoreConstants.EMPTY);
+				}
+				if (arg.endsWith(CoreConstants.QOUTE_MARK)) {
+					arg = arg.substring(0, arg.length() - 1);
+				}
 
-				returnArray.add(arg);
+				returnArray.add(arg == null || "null".equals(arg) ? null : arg);
 			}
 		}
 		return returnArray;

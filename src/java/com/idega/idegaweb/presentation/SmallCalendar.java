@@ -6,10 +6,12 @@ import java.util.Calendar;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.StringTokenizer;
 import java.util.Vector;
 
 import com.idega.core.builder.data.ICPage;
+import com.idega.core.idgenerator.business.UUIDGenerator;
 import com.idega.presentation.Block;
 import com.idega.presentation.IWContext;
 import com.idega.presentation.Image;
@@ -36,6 +38,7 @@ public class SmallCalendar extends Block {
 	private boolean showNameOfDays = true;
 	private boolean _highlight = false;
 	private boolean LINE_VIEW = false;
+	private boolean allDaysFullyBooked = false;
 
 	private String textColor = "#000000";
 	private String highlightedText = "#660000";
@@ -69,18 +72,24 @@ public class SmallCalendar extends Block {
 	private Hashtable dayFontColors = null;
 	private Hashtable dayStyleClass = null;
 	private Hashtable dayBackgroundStyleClass = null;
-	
+
 	private boolean useTarget = false;
 	private String onClickMessageFormat = null;
 	private int displayFormat = DateFormat.MEDIUM;
 	private String dateParameterName = null;
-	
+
 	public static final String PRM_SETTINGS = "settings";
 
 	public Table T;
-	
+
 	private int iCellpadding = 2;
-	
+
+	// <Map<Year, Map<Month, Map<Day, Boolean>>> Year, Month & Day: Integer
+	private Map fullyBookedDays;
+	private Map notAvailableDays;
+
+	private int weekDayLetterCount = 1;
+
 	public SmallCalendar() {
 		initialize();
 	}
@@ -96,10 +105,11 @@ public class SmallCalendar extends Block {
 		this.stamp.setMonth(month);
 		this.stamp.setYear(year);
 	}
-	
+
+	@Override
 	public void main(IWContext iwc) {
 		this.cal = new IWCalendar(iwc.getCurrentLocale());
-		
+
 		if (this.stamp == null) {
 			String day = iwc.getParameter(CalendarParameters.PARAMETER_DAY);
 			String month = iwc.getParameter(CalendarParameters.PARAMETER_MONTH);
@@ -138,7 +148,15 @@ public class SmallCalendar extends Block {
 			sMonth = this.cal.getMonthName(this.stamp.getMonth(), iwc.getCurrentLocale(), IWCalendar.SHORT);
 		}
 		String sYear = String.valueOf(this.stamp.getYear());
-		Text tMonth = getHeaderText(sMonth + " " + sYear);
+		Text tMonth = getHeaderText(
+				cal.getMonthName(
+						this.stamp.getMonth(),
+						iwc.getCurrentLocale(),
+						IWCalendar.FULL
+				)
+						+ " "
+						+ sYear
+		);
 		Link right = null;
 		if (this.iNextImage != null) {
 			right = new Link(this.iNextImage);
@@ -195,11 +213,13 @@ public class SmallCalendar extends Block {
 
 		if (this.useNextAndPreviousLinks) {
 			T2.add(left, 1, 1);
+			T2.setStyleClass(1, 1, "left-link-container");
+			T2.add(right, 3, 1);
+			T2.setStyleClass(3, 1, "right-link-container");
 		}
 		T2.add(tMonth, 2, 1);
-		if (this.useNextAndPreviousLinks) {
-			T2.add(right, 3, 1);
-		}
+		T2.setStyleClass(2, 1, "month-container");
+		T2.setRowStyleClass(1, "month-row");
 
 		Text t;
 		if (this.showNameOfDays) {
@@ -211,7 +231,11 @@ public class SmallCalendar extends Block {
 				if (weekday > 7) {
 					weekday = weekday - 7;
 				}
-				t = getHeaderText(this.cal.getDayName(weekday++, iwc.getCurrentLocale(), IWCalendar.LONG).substring(0, 1).toUpperCase());
+				t = getHeaderText(
+						this.cal.getDayName(weekday++, iwc.getCurrentLocale(),
+						IWCalendar.LONG)
+								.substring(0, weekDayLetterCount).toUpperCase()
+				);
 				this.T.setAlignment(a, 1, "center");
 				this.T.setStyleClass(a, 1, "header");
 				this.T.add(t, a++, 1);
@@ -284,13 +308,21 @@ public class SmallCalendar extends Block {
 			}
 			this.T.setAlignment(xpos, ypos, "center");
 
+			Integer yearValue = Integer.valueOf(year), monthValue = Integer.valueOf(month), dayValue = Integer.valueOf(n);
+
+
+			if (isNotAvailableDay(yearValue, monthValue, dayValue)) {
+				this.T.setStyleClass(xpos, ypos, "FAV_not_available");
+			} else if (isAllDaysFullyBooked() || isFullyBookedDay(yearValue, monthValue, dayValue)) {
+				this.T.setStyleClass(xpos, ypos, "travel_FullyBooked FAV_full");
+			}
 			if (this.todayBackgroundStyleClass != null && ((n == this.today.getDay()) && shadow)) {
 				this.T.setStyleClass(xpos, ypos, this.todayBackgroundStyleClass);
 			} else if ((this.todayColor != null) && ((n == this.today.getDay()) && shadow)) {
 				this.T.setColor(xpos, ypos, this.todayColor);
 			}
 
-			if (this._highlight) {
+			if (this._highlight && !isAllDaysFullyBooked()) {
 				if (n == this.stamp.getDay() && month == this.stamp.getMonth() && year == this.stamp.getYear()) {
 					if (this.selectedBackgroundStyleClass != null) {
 						this.T.setStyleClass(xpos, ypos, this.selectedBackgroundStyleClass);
@@ -336,11 +368,11 @@ public class SmallCalendar extends Block {
 				if(this.onClickMessageFormat!=null){
 					Object[] s = new Object[2];
 					IWTimestamp timeStamp = new IWTimestamp(n,this.stamp.getMonth(),this.stamp.getYear());
-					
+
 					s[0]="'"+dateValueFormat.format(timeStamp.getDate())+"'";
 					//s[1]="'"+timeStamp.getTimestamp().toString()+"'";
 					s[1] = "'"+df.format(timeStamp.getDate())+"'";
-					String onClickString = java.text.MessageFormat.format(this.onClickMessageFormat, s);
+					String onClickString = java.text.MessageFormat.format(this.onClickMessageFormat,s);
 					theLink.setOnClick(onClickString);
 				}
 				this.T.add(theLink, xpos, ypos);
@@ -403,7 +435,7 @@ public class SmallCalendar extends Block {
 		}
 		return text;
 	}
-	
+
 	private Text getHeaderText(String content) {
 		Text text = new Text(content);
 		if (this.headerTextStyleClass != null) {
@@ -416,7 +448,7 @@ public class SmallCalendar extends Block {
 		}
 		return text;
 	}
-	
+
 	public void addNextMonthPrm(Link L, IWTimestamp idts) {
 		if (idts.getMonth() == 12) {
 			L.addParameter(CalendarParameters.PARAMETER_MONTH, String.valueOf(1));
@@ -485,7 +517,7 @@ public class SmallCalendar extends Block {
 		}
 		return null;
 	}
-	
+
 	private String getDayStyleClass(String dateString) {
 		String dayStyle = null;
 		if (this.dayStyleClass != null) {
@@ -498,7 +530,7 @@ public class SmallCalendar extends Block {
 		}
 		return dayStyle;
 	}
-	
+
 	public String getDayFontColor(String dateString) {
 		if (this.dayFontColors != null) {
 			if (this.dayFontColors.get(dateString) != null) {
@@ -580,6 +612,7 @@ public class SmallCalendar extends Block {
 		this.daysAreLinks = use;
 	}
 
+	@Override
 	public void setWidth(String width) {
 		this.width = width;
 	}
@@ -588,6 +621,7 @@ public class SmallCalendar extends Block {
 		setWidth(Integer.toString(width));
 	}
 
+	@Override
 	public void setHeight(String height) {
 		this.height = height;
 	}
@@ -616,7 +650,7 @@ public class SmallCalendar extends Block {
 		}
 		this.dayStyleClass.put(getDateString(year, month, day), styleClass);
 	}
-	
+
 	public void setDayFontStyleClass(IWTimestamp timestamp, String color) {
 		setDayFontStyleClass(timestamp.getYear(), timestamp.getMonth(), timestamp.getDay(), color);
 	}
@@ -654,7 +688,7 @@ public class SmallCalendar extends Block {
 	public void setDayStyleClass(IWTimestamp timestamp, String color) {
 		this.setDayStyleClass(timestamp.getYear(), timestamp.getMonth(), timestamp.getDay(), color);
 	}
-	
+
 	public void setDayColor(int year, int month, int day, String color) {
 		if (this.dayColors == null) {
 			this.dayColors = new Hashtable();
@@ -685,7 +719,7 @@ public class SmallCalendar extends Block {
 		}
 
 	}
-	
+
 	public void setDayOfWeekStyleClass(int dayOfWeek, String styleClass) {
 		int startingY = 1;
 		if (this.showNameOfDays) {
@@ -701,7 +735,7 @@ public class SmallCalendar extends Block {
 
 		for (int i = startingY; i <= maxY; i++) {
 			this.T.setStyleClass(dayOfWeek, i, styleClass);
-		}		
+		}
 	}
 
 	/**
@@ -722,7 +756,7 @@ public class SmallCalendar extends Block {
 		int dayOfWeek = this.cal.getDayOfWeek(year, month, 1);
 		int firstDayOfWeek = this.cal.getCalendar().getFirstDayOfWeek();
 		int daynr = dayOfWeek - firstDayOfWeek;
-		
+
 		int x = (daynr + day) % 7;
 		int y = ((daynr + day) / 7) + 1;
 		if (x == 0) {
@@ -760,6 +794,7 @@ public class SmallCalendar extends Block {
 			setAsObjectInstanceTarget(this._link);
 		}
 
+		this._link.setId(UUIDGenerator.getInstance().generateId());
 		return (Link) this._link.clone();
 	}
 
@@ -804,7 +839,7 @@ public class SmallCalendar extends Block {
 		this.parameterName.add(name);
 		this.parameterValue.add(value);
 	}
-	
+
 	/**
 	 * Set the message format to be parsed with MessageFormat
 	 * with the {0} parameter for the chosen dates long value
@@ -814,7 +849,7 @@ public class SmallCalendar extends Block {
 	public void setOnClickMessageFormat(String format){
 		this.onClickMessageFormat = format;
 	}
-	
+
 	/**
 	 * Sets the display format of the date when calendar user to choose
 	 * date, default set to DateFormat.MEDIUM, can be DateFormat.SHORT
@@ -825,6 +860,7 @@ public class SmallCalendar extends Block {
 		this.displayFormat = format;
 	}
 
+	@Override
 	public synchronized Object clone() {
 		SmallCalendar obj = null;
 		try {
@@ -870,7 +906,7 @@ public class SmallCalendar extends Block {
 			obj.inactiveCellColor = this.inactiveCellColor;
 			obj.backgroundColor = this.backgroundColor;
 			obj.todayColor = this.todayColor;
-			
+
 			obj.textStyleClass = this.textStyleClass;
 			obj.headerTextStyleClass = this.headerTextStyleClass;
 			obj.inactiveBackgroundCellStyleClass = this.inactiveBackgroundCellStyleClass;
@@ -882,7 +918,7 @@ public class SmallCalendar extends Block {
 		}
 		return obj;
 	}
-	
+
 	public void setInitializingString(String initializingString){
 		StringTokenizer tok = new StringTokenizer(initializingString,",");
 		if(tok.countTokens()==8){
@@ -918,10 +954,10 @@ public class SmallCalendar extends Block {
 			if(t!=null) {
 				setTodayFontColor(t);
 			}
-		
+
 		}
 	}
-	
+
 	public static String getInitializingString(boolean showNameOfDays,String textColor,String headerTextColor,String headerColor,String bodyColor,String inactiveCellColor,String backgroundColor,String todayColor){
 		StringBuffer buf = new StringBuffer();
 		String sep = ",";
@@ -935,7 +971,7 @@ public class SmallCalendar extends Block {
 		buf.append(todayColor);
 		return buf.toString();
 	}
-	
+
 	/*
 	 * This method is not a presentation but was moved here because of compilation issues
 	 */
@@ -968,25 +1004,25 @@ public class SmallCalendar extends Block {
 	public void setBackgroundStyleName(String style) {
 		this.backgroundStyleClass = style;
 	}
-	
+
 	public void setHeaderFontStyleName(String style) {
 		this.headerTextStyleClass = style;
 	}
-	
+
 	public void setTextStyleName(String style) {
 		this.textStyleClass = style;
 	}
-	
+
 	public void setHighlightedTextStyleName(String style) {
 	}
-	
+
 	public void setDayTextStyleName(String style) {
 	}
-	
+
 	public void setLinkStyle(String style) {
 		this.linkStyle = style;
 	}
-	
+
 	public void setInactiveBackgroundCellStyleName(String style) {
 		this.inactiveBackgroundCellStyleClass = style;
 	}
@@ -1002,7 +1038,7 @@ public class SmallCalendar extends Block {
 	public void setNextImage(Image nextImage) {
 		this.iNextImage = nextImage;
 	}
-	
+
 	public void setPreviousImage(Image previousImage) {
 		this.iPreviousImage = previousImage;
 	}
@@ -1018,7 +1054,7 @@ public class SmallCalendar extends Block {
 	public void setClassToLinkTo(Class classToLinkTo) {
 		this._class = classToLinkTo;
 	}
-	
+
 	public void setUrlToLinkTo(String urlToLinkTo) {
 		this._url = urlToLinkTo;
 	}
@@ -1026,4 +1062,88 @@ public class SmallCalendar extends Block {
 	public void setDateParameterName(String dateParameterName) {
 		this.dateParameterName = dateParameterName;
 	}
+
+	public boolean isAllDaysFullyBooked() {
+		return allDaysFullyBooked;
+	}
+
+	public void setAllDaysFullyBooked(boolean allDaysFullyBooked) {
+		this.allDaysFullyBooked = allDaysFullyBooked;
+	}
+
+	public Map getFullyBookedDays() {
+		return fullyBookedDays;
+	}
+
+	public void setIFullyBookedDays(Map fullyBookedDays) {
+		this.fullyBookedDays = fullyBookedDays;
+	}
+
+	public Map getNotAvailableDays() {
+		return notAvailableDays;
+	}
+
+	public void setNotAvailableDays(Map notAvailableDays) {
+		this.notAvailableDays = notAvailableDays;
+	}
+
+	public void addFullyBookedDay(Integer year, Integer month, Integer day) {
+		if (fullyBookedDays == null) {
+			fullyBookedDays = new java.util.HashMap();
+		}
+		addInvalidDayDay(fullyBookedDays, year, month, day);
+	}
+	public void addNotAvailableDay(Integer year, Integer month, Integer day) {
+		if (notAvailableDays == null) {
+			notAvailableDays = new java.util.HashMap();
+		}
+		addInvalidDayDay(notAvailableDays, year, month, day);
+	}
+
+	private void addInvalidDayDay(Map info, Integer year, Integer month, Integer day) {
+		Map months = (Map) info.get(year);
+		if (months == null) {
+			months = new java.util.HashMap();
+			info.put(year, months);
+		}
+		Map days = (Map) months.get(month);
+		if (days == null) {
+			days = new java.util.HashMap();
+			months.put(month, days);
+		}
+		days.put(day, Boolean.FALSE);
+	}
+
+	public boolean isFullyBookedDay(Integer year, Integer month, Integer day) {
+		return !isValidDay(fullyBookedDays, year, month, day);
+	}
+
+	public boolean isNotAvailableDay(Integer year, Integer month, Integer day) {
+		return !isValidDay(notAvailableDays, year, month, day);
+	}
+
+	private boolean isValidDay(Map info, Integer year, Integer month, Integer day) {
+		if (info == null) {
+			return true;
+		}
+		Map months = (Map) info.get(year);
+		if (months == null) {
+			return true;
+		}
+		Map days = (Map) months.get(month);
+		if (days == null) {
+			return true;
+		}
+		Boolean invalidDay = (Boolean) days.get(day);
+		return invalidDay == null ? true : invalidDay.booleanValue();
+	}
+
+	public int getWeekDayLetterCount() {
+		return weekDayLetterCount;
+	}
+
+	public void setWeekDayLetterCount(int weekDayLetterCount) {
+		this.weekDayLetterCount = weekDayLetterCount;
+	}
+
 }

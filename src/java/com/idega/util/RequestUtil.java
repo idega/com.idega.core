@@ -9,7 +9,9 @@
  */
 package com.idega.util;
 
+import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
+import java.util.Base64;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -41,7 +43,8 @@ public class RequestUtil {
 
 	public static final String	HEADER_ACCEPT_LANGUAGE = "Accept-Language",
 								HEADER_USER_AGENT = "User-agent",
-								HEADER_AUTHORIZATION = "Authorization";
+								HEADER_AUTHORIZATION = "Authorization",
+								HEADER_CONTENT_TYPE = "Content-Type";
 
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it
@@ -316,6 +319,16 @@ public class RequestUtil {
 		Map<String, List<String>> params = getAllParameters(request);
 		List<String> values = MapUtil.isEmpty(params) ? null : params.get(param);
 		return values;
+	}
+
+	public static final String getBasicAuthorizationHeader(String clientId, String clientSecret) {
+		StringBuilder sb = new StringBuilder();
+
+		sb.append(clientId);
+		sb.append(CoreConstants.COLON);
+		sb.append(clientSecret);
+
+		return "Basic " + new String(Base64.getEncoder().encode(sb.toString().getBytes(StandardCharsets.UTF_8)), StandardCharsets.UTF_8);
 	}
 
 }

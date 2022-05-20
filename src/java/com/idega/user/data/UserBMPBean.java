@@ -17,6 +17,9 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 
+import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.context.support.WebApplicationContextUtils;
+
 import com.idega.business.IBOLookup;
 import com.idega.core.accesscontrol.data.ICRole;
 import com.idega.core.builder.data.ICPage;
@@ -60,6 +63,7 @@ import com.idega.data.query.Table;
 import com.idega.data.query.WildCardColumn;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
+import com.idega.user.business.UserGuardian;
 import com.idega.user.business.UserStatusBusinessBean;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
@@ -67,6 +71,7 @@ import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
+import com.idega.util.datastructures.map.MapUtil;
 import com.idega.util.text.Name;
 import com.idega.util.text.TextSoap;
 
@@ -855,8 +860,36 @@ public Email getUsersEmail() throws EJBException, RemoteException {
 		}
 	}
 
+	private boolean canDelete() {
+		try {
+			WebApplicationContext webAppContext = WebApplicationContextUtils.getWebApplicationContext(IWMainApplication.getDefaultIWMainApplication().getServletContext());
+			Map<String, UserGuardian> guardians = webAppContext.getBeansOfType(UserGuardian.class);
+			if (MapUtil.isEmpty(guardians)) {
+				return true;
+			}
+
+			boolean canDelete = true;
+			Integer userId = (Integer) getPrimaryKey();
+			for (Iterator<UserGuardian> iter = guardians.values().iterator(); (canDelete && iter.hasNext());) {
+				UserGuardian guardian = iter.next();
+				canDelete = guardian.canDelete(userId);
+			}
+			return canDelete;
+		} catch (Exception e) {}
+		return true;
+	}
+
   @Override
-public void setDeleted(boolean isDeleted) {
+  public void setDeleted(boolean isDeleted) {
+	  if (isDeleted) {
+		  if (!canDelete()) {
+			  String error = "Can not delete " + this + ". ID: " + getId() + ", personal ID: " + getPersonalID() + " by " + CoreUtil.getCurrentUser();
+			  RuntimeException e = new RuntimeException(error);
+			  CoreUtil.sendExceptionNotification(error, e);
+			  throw e;
+		  }
+	  }
+
   	if(!isDeleted){
   		removeFromColumn(getColumnNameDeletedBy());
   		removeFromColumn(getColumnNameDeletedWhen());
@@ -3161,7 +3194,7 @@ public void removeUser(User user, User currentUse, Timestamp time) {
 		if(ListUtil.isEmpty(rels)){
 			return Collections.emptyList();
 		}
-		ArrayList<Integer> pks = new ArrayList<Integer>(rels.size());
+		ArrayList<Integer> pks = new ArrayList<>(rels.size());
 		for(GroupRelation rel : rels){
 			Integer pk = rel.getRelatedGroupPK();
 			pks.add(pk);

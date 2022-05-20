@@ -5749,6 +5749,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 				if (!StringUtil.isEmpty(email) && EmailValidator.getInstance().isValid(email)) {
 					Collection<User> usersByEmail = getUsersByEmail(email);
 					if (!ListUtil.isEmpty(usersByEmail)) {
+						Integer currentUserId = null;
+						try {
+							IWContext iwc = CoreUtil.getIWContext();
+							User currentUser = iwc.getCurrentUser();
+							currentUserId = currentUser == null ? null : (Integer) currentUser.getPrimaryKey();
+						} catch (Exception e) {}
+						Timestamp deletedAt = new Timestamp(System.currentTimeMillis());
 						for (User ubm : usersByEmail) {
 							if (
 									ubm != null
@@ -5762,6 +5769,7 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									ubm.setPersonalID(personalId);
 									ubm.store();
 									return ubm;
+
 								} else {
 									//Get user's by personal id groups
 									Collection<Group> userGroups = getUserGroups(user);
@@ -5780,6 +5788,10 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 									if (userHasRealGroups) {
 										getLogger().info("User by personal id has real groups. Will return user by personal id. User: " + ubm + " will be deleted");
 										ubm.setDeleted(true);
+										if (currentUserId != null) {
+											ubm.setDeletedBy(currentUserId);
+										}
+										ubm.setDeletedWhen(deletedAt);
 										ubm.store();
 										return user;
 									} else {
@@ -5787,8 +5799,14 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 										getLogger().info("User by personal id does not have real groups. Will return user by email. User by personal id: " + user + " will be deleted. And user by email will be updated with personal id: " + personalId);
 										ubm.setPersonalID(personalId);
 										ubm.store();
+
 										user.setDeleted(true);
+										if (currentUserId != null) {
+											user.setDeletedBy(currentUserId);
+										}
+										user.setDeletedWhen(deletedAt);
 										user.store();
+
 										return ubm;
 									}
 								}

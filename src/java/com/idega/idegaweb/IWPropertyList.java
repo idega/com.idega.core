@@ -158,7 +158,6 @@ public class IWPropertyList {
 	XMLElement getMapElement() {
 		if (this.mapElement == null) {
 			if (parentElement == null) {
-				logger.warning("Parent element is unknown, can not get element '" + mapTag + "' for file " + xmlFile);
 				return new XMLElement(mapTag);
 			}
 
@@ -362,7 +361,7 @@ public class IWPropertyList {
 		XMLElement mapElement = getMapElement();
 		if (mapElement != null) {
 			List<XMLElement> list = mapElement.getChildren();
-			List<String> keys = new ArrayList<String>();
+			List<String> keys = new ArrayList<>();
 			for (Iterator<XMLElement> iter = list.iterator(); iter.hasNext();) {
 				XMLElement keyElement = iter.next();
 				XMLElement nameElement = keyElement.getChild(nameTag);
