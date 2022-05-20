@@ -73,15 +73,15 @@ public interface UserDAO extends GenericDao {
 	public List<User> findAll(Collection<Integer> primaryKeys);
 
 	/**
-	 * 
+	 *
 	 * @param primaryKeys is {@link Collection} of {@link User#getId()}, skipped if <code>null</code>
 	 * @param uuids is {@link Collection} of {@link User#getUniqueId()}, skipped if <code>null</code>
 	 * @param personalIds is {@link Collection} of {@link User#getPersonalID()}, skipped if <code>null</code>
 	 * @return filtered data by given criteria or {@link Collections#emptyList()} on failure;
 	 */
 	public List<User> findAll(
-			Collection<Integer> primaryKeys, 
-			Collection<String> uuids, 
+			Collection<Integer> primaryKeys,
+			Collection<String> uuids,
 			Collection<String> personalIds);
 
 	/**
@@ -135,8 +135,10 @@ public interface UserDAO extends GenericDao {
 	User update(Integer id, String personalId, String eMail, String name, String gender);
 
 	public List<User> findByPersonalIds(Collection<String> personalIds);
-	
+
 	public List<User> findUsers(int start,int max);
-	
+
 	public Long countUsers();
+
+	public List<User> findAllActiveUsers();
 }

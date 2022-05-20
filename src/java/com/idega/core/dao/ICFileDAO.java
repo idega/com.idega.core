@@ -3,16 +3,18 @@ package com.idega.core.dao;
 import java.util.Date;
 import java.util.List;
 
+import com.idega.business.SpringBeanName;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.file.data.bean.ICMimeType;
 import com.idega.core.persistence.GenericDao;
 
+@SpringBeanName(ICFileDAO.BEAN_NAME)
 public interface ICFileDAO extends GenericDao {
 
 	public static final String BEAN_NAME = "icFileDAO";
 
 	/**
-	 * 
+	 *
 	 * <p>Updates or creates file</p>
 	 * @param file to update/create, not <code>null</code>
 	 * @return {@link ICFile} or <code>null</code> on failure;
@@ -20,7 +22,7 @@ public interface ICFileDAO extends GenericDao {
 	public ICFile update(ICFile file);
 
 	/**
-	 * 
+	 *
 	 * <p>Updates or creates file</p>
 	 * @param id is {@link ICFile#getId()}
 	 * @param name is {@link ICFile#getName()}
@@ -34,18 +36,18 @@ public interface ICFileDAO extends GenericDao {
 	 */
 	public ICFile update(
 			Integer id,
-			String name, 
-			String description, 
-			byte[] fileValue, 
-			Date creationDate, 
-			Date modificationDate, 
-			Integer fileSize, 
+			String name,
+			String description,
+			byte[] fileValue,
+			Date creationDate,
+			Date modificationDate,
+			Integer fileSize,
 			ICMimeType type);
-	
+
 	public ICFile findById(Integer id);
-	
+
 	public List<ICFile> findAll();
-	
+
 	public boolean removeFile(Integer id);
-	
+
 }
