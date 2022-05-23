@@ -343,7 +343,7 @@ public class SendMail {
 	    } finally {
 	    	if (success && deleteFiles && !ArrayUtil.isEmpty(attachedFiles)) {
 	    		for (File attachment: attachedFiles) {
-					if (attachment != null && attachment.exists()) {
+					if (attachment != null && attachment.exists() && attachment.canWrite()) {
 						attachment.delete();
 					}
 	    		}
@@ -570,7 +570,7 @@ public class SendMail {
 				} finally {
 					if (deleteFiles && !ArrayUtil.isEmpty(attachedFiles)) {
 						for (File attachment: attachedFiles) {
-							if (attachment != null && attachment.exists()) {
+							if (attachment != null && attachment.exists() && attachment.canWrite()) {
 								attachment.delete();
 							}
 						}
