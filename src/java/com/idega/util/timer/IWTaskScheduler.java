@@ -9,6 +9,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
 import org.springframework.scheduling.support.CronTrigger;
 
+import com.idega.util.CoreConstants;
+
 @Configuration
 @EnableScheduling
 public class IWTaskScheduler {
@@ -33,10 +35,24 @@ public class IWTaskScheduler {
 	 * @param hour
 	 * @param runnable
 	 */
-	public void schedule(int minute, int hour, Runnable runnable
-    ) {
+	public void schedule(int minute, int hour, Runnable runnable) {
+		schedule(0, minute, hour, runnable);
+	}
+
+	/**
+	 * Schedules to run daemon every day at specified hour and minute
+	 * @param second
+	 * @param minute
+	 * @param hour
+	 * @param runnable
+	 */
+	public void schedule(int second, int minute, int hour, Runnable runnable) {
 		//	second, minute, hour, day of month, month, day(s) of week
-		StringBuilder expression = new StringBuilder("0 ").append(minute).append(" ").append(hour).append(" * * ?");
+		StringBuilder expression = new StringBuilder()
+				.append((second < 0 ? 0 : second)).append(CoreConstants.SPACE)
+				.append((minute < 0 ? CoreConstants.STAR : minute)).append(CoreConstants.SPACE)
+				.append((hour < 0 ? CoreConstants.STAR : hour))
+				.append(" * * ?");
 		CronTrigger trigger = new CronTrigger(expression.toString());
 		taskScheduler().schedule(runnable, trigger);
 		Logger.getLogger(getClass().getName()).info("Scheduled " + runnable.getClass().getName() + " at " + expression);
