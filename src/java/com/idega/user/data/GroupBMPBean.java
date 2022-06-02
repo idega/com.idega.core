@@ -78,7 +78,7 @@ public class GroupBMPBean extends GenericGroupBMPBean implements Group, MetaData
 
 	private static final int PREFETCH_SIZE = Integer.MAX_VALUE;
 
-	public static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
+	public static final String RELATION_TYPE_GROUP_PARENT = CoreConstants.GROUP_RELATION_PARENT;
 	private static final String SQL_RELATION_ADDRESS = "IC_GROUP_ADDRESS";
 	public final static String SQL_RELATION_EMAIL = "IC_GROUP_EMAIL";
 	public final static String SQL_RELATION_PHONE = "IC_GROUP_PHONE";

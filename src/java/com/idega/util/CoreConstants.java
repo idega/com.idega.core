@@ -213,7 +213,17 @@ public class CoreConstants {
 			ACTIVE_ROLE = "iw_session_user_active_role",
 
 			GROUP_TREE_CACHE = "group_tree",
-			DOMAIN_GROUP_TREE_CACHE = "domain_group_tree";
+			DOMAIN_GROUP_TREE_CACHE = "domain_group_tree",
+
+			GROUP_RELATION_PARENT = "GROUP_PARENT",
+			GROUP_RELATION_FAMILY = "GROUP_FAMILY",
+
+			FAM_RELATION_SPOUSE = "FAM_SPOUSE",
+			FAM_RELATION_CHILD = "FAM_CHILD",
+			FAM_RELATION_PARENT = "FAM_PARENT",
+			FAM_RELATION_CUSTODIAN = "FAM_CUSTODIAN",
+			FAM_RELATION_SIBLING = "FAM_SIBLING",
+			FAM_RELATION_COHABITANT	= "FAM_COHABITANT";
 
 	public static final String EMAIL_ACOUSTICS_PERMISSION_DEFAULT_CC = "skjalaver@reykjavik.is";
 	public static final String ACOUSTIC_PERMISSION_PROCESS_NAME = "AcousticsPermission";

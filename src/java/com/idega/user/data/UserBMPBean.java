@@ -92,7 +92,7 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 
 	private static String sClassName = User.class.getName();
 	static final String USER_GROUP_TYPE=User.USER_GROUP_TYPE;
-	private static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
+	private static final String RELATION_TYPE_GROUP_PARENT = CoreConstants.GROUP_RELATION_PARENT;
 	private static final int PREFETCH_SIZE = 100;
 	private static final int SUBLIST_SIZE = 1000;
 	private boolean synchronizationEnabled = true;

@@ -47,6 +47,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.events.GroupRelationChangedEvent;
 import com.idega.user.events.GroupRelationChangedEvent.EventType;
+import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.DBUtil;
 import com.idega.util.IWTimestamp;
@@ -215,7 +216,7 @@ public class GroupRelation implements Serializable, MetaDataCapable {
 	public final static String STATUS_PASSIVE_PENDING = "PASS_PEND";
 	public final static String STATUS_ACTIVE_PENDING = "ACT_PEND";
 
-	public static final String RELATION_TYPE_GROUP_PARENT = "GROUP_PARENT";
+	public static final String RELATION_TYPE_GROUP_PARENT = CoreConstants.GROUP_RELATION_PARENT;
 
 	public static final String ENTITY_NAME = "ic_group_relation";
 	public static final String COLUMN_GROUP_RELATION_ID = "ic_group_relation_id";

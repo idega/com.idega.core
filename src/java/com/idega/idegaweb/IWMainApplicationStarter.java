@@ -57,6 +57,7 @@ import com.idega.repository.data.SingletonRepository;
 import com.idega.user.data.GroupRelationBMPBean;
 import com.idega.user.data.GroupRelationType;
 import com.idega.user.data.GroupRelationTypeHome;
+import com.idega.util.CoreConstants;
 import com.idega.util.database.ConnectionBroker;
 import com.idega.util.database.PoolManager;
 import com.idega.util.expression.ELUtil;
@@ -680,12 +681,12 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		catch (IDOException e) {
 			log.throwing(this.getClass().getName(), "updateStartDataGroupRelationType", e);
 		}
-		insertGroupRelationType("GROUP_PARENT");
-		insertGroupRelationType("FAM_CHILD");
-		insertGroupRelationType("FAM_PARENT");
-		insertGroupRelationType("FAM_SPOUSE");
-		insertGroupRelationType("FAM_CUSTODIAN");
-		insertGroupRelationType("FAM_SIBLING");
+		insertGroupRelationType(CoreConstants.GROUP_RELATION_PARENT);
+		insertGroupRelationType(CoreConstants.FAM_RELATION_CHILD);
+		insertGroupRelationType(CoreConstants.FAM_RELATION_PARENT);
+		insertGroupRelationType(CoreConstants.FAM_RELATION_SPOUSE);
+		insertGroupRelationType(CoreConstants.FAM_RELATION_CUSTODIAN);
+		insertGroupRelationType(CoreConstants.FAM_RELATION_SIBLING);
 	}
 
 	private void updateStartTypeEmailType() {
@@ -790,7 +791,7 @@ public class IWMainApplicationStarter implements ServletContextListener  {
 		// get the current classloader (it is the same that is used for "Class.forName()" )
 		ClassLoader currentClassLoader = getClass().getClassLoader();
 		try {
-			SortedSet<String> classNames = new TreeSet<String>();
+			SortedSet<String> classNames = new TreeSet<>();
 			Collection<ICObject> allICObjects = home.findAll();
 			for (Iterator<ICObject> iterator = allICObjects.iterator(); iterator.hasNext();) {
 				ICObject object = iterator.next();
