@@ -24,6 +24,7 @@ import com.idega.idegaweb.IWApplicationContext;
 import com.idega.presentation.Page;
 import com.idega.presentation.PresentationObject;
 import com.idega.user.data.bean.Group;
+import com.idega.util.ListUtil;
 import com.idega.util.expression.ELUtil;
 
 /**
@@ -49,7 +50,9 @@ class PermissionCacher {
 	private static final String PERMISSION_MAP_JSP_PAGE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_JSP_PAGE;
 	private static final String PERMISSION_MAP_FILE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_FILE_ID;
 	private static final String PERMISSION_MAP_GROUP = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_GROUP_ID;
-	private static final String PERMISSION_MAP_ROLE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_ROLE;
+	private static final String PERMISSION_MAP_ROLE = PERMISSION_MAP_PREFIX + AccessController.CATEGORY_ROLE,
+
+								MINUS_ONE = "-1";
 
 	//for performance Gummi
 	private final String _SOME_VIEW_PERMISSION_SET = "ic_viewpermission_set";
@@ -391,7 +394,7 @@ class PermissionCacher {
 	public Boolean hasPermission(ICObject obj, IWApplicationContext iwac, String permissionKey, List<?> groups)
 			throws SQLException {
 		String permissionMapKey = PERMISSION_MAP_OBJECT;
-		String identifier="-1";
+		String identifier=MINUS_ONE;
 		Object primaryKey = obj.getId();
 		if(primaryKey!=null){
 			identifier=primaryKey.toString();
@@ -527,18 +530,16 @@ class PermissionCacher {
 			permissions = getPermissionDAO().findByContextTypeAndContextValueAndPermissionString(contextType, identifier, permissionKey);
 		}
 
-		if (permissions != null) {
+		if (!ListUtil.isEmpty(permissions)) {
 			Iterator<ICPermission> iter = permissions.iterator();
 			Map<String, Boolean> mapToPutTo = new Hashtable<>();
 			while (iter.hasNext()) {
 				ICPermission item = iter.next();
 				Group group = item.getPermissionGroup();
-				if (group == null) {
-					continue;
-				}
+				String id = group == null ? MINUS_ONE : group.getID().toString();
 
 				mapToPutTo.put(
-						Integer.toString(group.getID()),
+						id,
 						item.getPermissionValue() ? Boolean.TRUE : Boolean.FALSE);
 			}
 			// THIS IS DONE SO YOU ALWAYS HAVE VIEW PERMISSION IF NO PERMISSION
