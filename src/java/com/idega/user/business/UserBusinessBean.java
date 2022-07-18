@@ -34,8 +34,6 @@ import javax.ejb.CreateException;
 import javax.ejb.EJBException;
 import javax.ejb.FinderException;
 import javax.ejb.RemoveException;
-import javax.transaction.SystemException;
-import javax.transaction.UserTransaction;
 
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -694,29 +692,20 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 
 	@Override
 	public User createUserWithLogin(String firstname, String middlename, String lastname, String SSN, String displayname, String description, Integer gender, IWTimestamp date_of_birth, Integer primary_group, String userLogin, String password, Boolean accountEnabled, IWTimestamp modified, int daysOfValidity, Boolean passwordExpires, Boolean userAllowedToChangePassw, Boolean changeNextTime, String encryptionType, String fullName, Boolean juridicalPerson) throws CreateException {
-		UserTransaction transaction = this.getSessionContext().getUserTransaction();
 		AccessController controller = getIWMainApplication().getAccessController();
 		try {
-			transaction.begin();
 			User newUser;
 			// added by Aron 07.01.2002 ( aron@idega.is )
 			if (primary_group == null) {
 				primary_group = new Integer(controller.getUsersGroupID());
 			}
-			// newUser = insertUser(firstname,middlename,
-			// lastname,null,null,null,null,primary_group);
 			newUser = createUser(firstname, middlename, lastname, displayname, SSN, description, gender, date_of_birth, primary_group, fullName, juridicalPerson, userLogin);
 			if (userLogin != null && password != null && !userLogin.equals("") && !password.equals("")) {
 				LoginDBHandler.createLogin(newUser, userLogin, password, accountEnabled, modified, daysOfValidity, passwordExpires, userAllowedToChangePassw, changeNextTime, encryptionType);
 			}
-			transaction.commit();
 			return newUser;
 		} catch (Exception e) {
 			e.printStackTrace();
-			try {
-				transaction.rollback();
-			} catch (SystemException se) {
-			}
 			throw new CreateException(e.getMessage());
 		}
 	}
