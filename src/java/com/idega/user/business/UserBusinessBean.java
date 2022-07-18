@@ -560,21 +560,13 @@ public class UserBusinessBean extends com.idega.business.IBOServiceBean implemen
 			}
 			userToAdd.store();
 			setUserUnderDomain(this.getIWApplicationContext().getDomain(), userToAdd, (GroupDomainRelationType) null);
-			// UserGroupRepresentative group =
-			// (UserGroupRepresentative)this.getUserGroupRepresentativeHome().create();
-			// group.setName(userToAdd.getName());
-			// group.setDescription("User representative in table ic_group");
-			// group.store();
-			// userToAdd.setGroup(group);
-			// userToAdd.store();
 			if (primary_group != null) {
 				Group prgr = userToAdd.getPrimaryGroup();
 				prgr.addGroup(userToAdd);
 			}
 			return userToAdd;
 		} catch (Exception e) {
-			e.printStackTrace();
-			getLogger().warning("Error creating user with personalID=" + personalID + ", firstName=" + firstName + ", lastName" + lastName);
+			getLogger().log(Level.WARNING, "Error creating user with personalID=" + personalID + ", firstName=" + firstName + ", lastName" + lastName, e);
 			throw new IDOCreateException(e);
 		}
 	}
