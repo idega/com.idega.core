@@ -78,9 +78,12 @@ public interface PermissionDAO extends GenericDao {
 	public void removeRole(String roleKey);
 	public List<User> findUsersWithRole(String roleKey,int start, int max);
 	public List<Integer> findUserIdsWithRoleAndWithoutRole(
-			String roleKeyWith, 
-			String roleKeyWithout, 
-			int start, 
+			String roleKeyWith,
+			String roleKeyWithout,
+			int start,
 			int max
 	);
+
+	List<ICPermission> findByContextTypeAndContextValueAndPermissionString(String contextType, String contextValue, String permissionString);
+
 }

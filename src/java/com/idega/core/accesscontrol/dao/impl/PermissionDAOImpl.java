@@ -230,7 +230,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public List<ICPermission> findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(Group group, String permissionString, String contextType) {
-		Collection<String> strings = new ArrayList<String>();
+		Collection<String> strings = new ArrayList<>();
 		strings.add(permissionString);
 
 		return findAllPermissionsByPermissionGroupAndPermissionStringAndContextTypeOrderedByContextValue(group, strings, contextType);
@@ -295,7 +295,7 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 
 	@Override
 	public List<ICPermission> findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(Collection<Group> groups, String permissionString, String contextType) {
-		Collection<String> strings = new ArrayList<String>();
+		Collection<String> strings = new ArrayList<>();
 		strings.add(permissionString);
 
 		return findAllPermissionsByPermissionGroupsCollectionAndPermissionStringAndContextTypeOrderedByContextValue(groups, strings, contextType);
@@ -406,7 +406,8 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 			getLogger().log(Level.WARNING, "Could not remove the role with key " + roleKey  + ". Error message was: " + e.getLocalizedMessage(), e);
 		}
 	}
-	
+
+	@Override
 	public List<User> findUsersWithRole(String roleKey,int start, int max){
 		return getResultList(
 				ICPermission.QUERY_FIND_USERS_WITH_PERMISSION,
@@ -417,11 +418,12 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 				new Param("permissionString", roleKey)
 		);
 	}
-	
+
+	@Override
 	public List<Integer> findUserIdsWithRoleAndWithoutRole(
-			String roleKeyWith, 
-			String roleKeyWithout, 
-			int start, 
+			String roleKeyWith,
+			String roleKeyWithout,
+			int start,
 			int max
 	){
 		return getResultList(
@@ -435,5 +437,30 @@ public class PermissionDAOImpl extends GenericDaoImpl implements PermissionDAO, 
 		);
 	}
 
+	@Override
+	@Transactional(readOnly = true)
+	public List<ICPermission> findByContextTypeAndContextValueAndPermissionString(String contextType, String contextValue, String permissionString) {
+		if (StringUtil.isEmpty(contextType) || StringUtil.isEmpty(contextValue) || StringUtil.isEmpty(permissionString)) {
+			return null;
+		}
+
+		try {
+			return getResultList(
+					ICPermission.BY_CONTEXT_TYPE_AND_CONTEXT_VALUE_AND_PERMISSION_STRING,
+					ICPermission.class,
+					new Param(ICPermission.PROP_CONTEXT_TYPE, contextType),
+					new Param(ICPermission.PROP_CONTEXT_VALUE, contextValue),
+					new Param(ICPermission.PROP_PERMISSION_STRING, permissionString)
+			);
+		} catch (Exception e) {
+			getLogger().log(
+					Level.WARNING,
+					"Error getting permission(s) by context type " + contextType + ", context value " + contextValue + " and permission string " + permissionString,
+					e
+			);
+		}
+
+		return null;
+	}
 
 }
