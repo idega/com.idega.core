@@ -1,7 +1,7 @@
 /*
  * Created on 28.2.2003
  *
- * To change this generated comment go to 
+ * To change this generated comment go to
  * Window>Preferences>Java>Code Generation>Code Template
  */
 package com.idega.data;
@@ -11,6 +11,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashMap;
+import java.util.logging.Level;
 
 import com.idega.util.database.ConnectionBroker;
 /**
@@ -19,17 +20,18 @@ import com.idega.util.database.ConnectionBroker;
  * Copyright:  (C) 2003 idega software All Rights Reserved.
  * Company:      idega software
  * @author <a href="mailto:tryggvi@idega.is">Tryggvi Larusson</a>
- * @version 1.0  
+ * @version 1.0
  */
 public class MSSQLServerDatastoreInterface extends DatastoreInterface
 {
 	public MSSQLServerDatastoreInterface(){
 		super.useTransactionsInEntityCreation=false;
 	}
-	
+
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#getSQLType(java.lang.String, int)
 	 */
+	@Override
 	public String getSQLType(String javaClassName, int maxlength)
 	{
 		String theReturn;
@@ -97,6 +99,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	/* (non-Javadoc)
 	 * @see com.idega.data.DatastoreInterface#createTrigger(com.idega.data.IDOLegacyEntity)
 	 */
+	@Override
 	public void createTrigger(GenericEntity entity) throws Exception
 	{
 	}
@@ -104,6 +107,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	 * @param entity
 	 * @param conn
 	 */
+	@Override
 	protected void updateNumberGeneratedValue(GenericEntity entity, Connection conn){
 		Statement stmt = null;
 		ResultSet rs = null;
@@ -138,10 +142,12 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 	/**
 	 * @return boolean
 	 */
+	@Override
 	protected boolean updateNumberGeneratedValueAfterInsert()
 	{
 		return true;
 	}
+	@Override
 	public String getIDColumnType(GenericEntity entity)
 	{
 		if (entity.getIfAutoIncrement()) {
@@ -170,7 +176,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		}
 		super.executeBeforeInsert(entity);
 	}
-	
+
 	protected void executeAfterInsert(IDOLegacyEntity entity) throws Exception
 	{
 		try
@@ -188,17 +194,18 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		super.executeAfterInsert(entity);
 	}*/
 	/**
-	 * 
+	 *
 	 * Hacked version of the insert method.
 	 * @todo: Implement in a better way.
 	 */
+	@Override
 	public void insert(GenericEntity entity, Connection conn) throws Exception
 	{
 		executeBeforeInsert(entity);
 		PreparedStatement Stmt = null;
 		ResultSet RS = null;
-		try
-		{
+		StringBuffer statement = null;
+		try {
 			boolean entityInsertModeIsOn = false;
 			if (entity.getIfAutoIncrement()) {
 				entityInsertModeIsOn = turnOnIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
@@ -206,7 +213,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			else {
 				entityInsertModeIsOn = true;
 			}
-			StringBuffer statement = new StringBuffer("");
+			statement = new StringBuffer("");
 			statement.append("insert into ");
 			statement.append(entity.getTableName());
 			statement.append("(");
@@ -222,7 +229,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 			setForPreparedStatement(STATEMENT_INSERT, Stmt, entity);
 			Stmt.execute();
 			Stmt.close();
-			
+
 			if (entity.getIfAutoIncrement()) {
 				if (updateNumberGeneratedValueAfterInsert())
 				{
@@ -230,9 +237,11 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 				}
 				turnOffIdentityInsertFlag(entity, conn, entityInsertModeIsOn);
 			}
-		}
-		finally
-		{
+		} catch (Exception e) {
+			String error = "Error inserting " + entity.getClass().getName() + ". SQL: " + statement + ", statement: " + Stmt;
+    		getLogger().log(Level.WARNING, error, e);
+    		throw new IDOStoreException(error, e);
+		} finally {
 			if (RS != null)
 			{
 				RS.close();
@@ -266,7 +275,7 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		}
 		catch (Exception e)
 		{
-			e.printStackTrace();
+			getLogger().log(Level.WARNING, "Error turning on identity for " + entity + ", class: " + (entity == null ? "unknown" : entity.getClass().getName()), e);
 		}
 		return false;
 	}
@@ -337,7 +346,8 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		entity.setEntityState(entity.STATE_IN_SYNCH_WITH_DATASTORE);
 	}
 */
-	
+
+	@Override
 	public HashMap getTableIndexes(String dataSourceName, String tableName) {
 		Connection conn = null;
 		ResultSet rs = null;
@@ -392,24 +402,27 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		 * if(v!=null && !v.isEmpty()) return (String[])v.toArray(new String[0]);
 		 * return null;
 		 */
-	}	
-	
+	}
+
+	@Override
 	public boolean isCabableOfRSScroll(){
 		return true;
 	}
-	
+
 	/**
 	 * returns the optimal or allowed fetch size when going to database to load IDOEntities using 'where primarikey_name in (list_of_priamrykeys)'
 	 */
+	@Override
 	public int getOptimalEJBLoadFetchSize(){
 		return 1000;
 	}
-	
-	
+
+
 	/**
 	 * Overridden because unique columns cannot be created if the table already has data.
 	 * @see com.idega.data.DatastoreInterface
 	 */
+	@Override
 	public String getAddColumnCommand(String columnName, GenericEntity entity) {
 		String SQLString = "alter table "+entity.getTableName()+" add "+getColumnSQLDefinition(columnName,entity);
 		//remove the UNIQUE definition
@@ -417,8 +430,8 @@ public class MSSQLServerDatastoreInterface extends DatastoreInterface
 		if(uniqueIndex>=0){
 			SQLString = SQLString.substring(0,uniqueIndex);
 		}
-		
+
 		return SQLString;
 	}
-	
+
 }
