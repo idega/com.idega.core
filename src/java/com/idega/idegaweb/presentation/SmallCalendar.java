@@ -1119,6 +1119,27 @@ public class SmallCalendar extends Block {
 	}
 	
 	private boolean isValidDay(Map info, Integer year, Integer month, Integer day) {
+		if (
+				year != null && year.intValue() > 0 &&
+				month != null && month.intValue() > 0 &&
+				day != null && day.intValue() > 0
+		) {
+			IWTimestamp date = new IWTimestamp(day.intValue(), month.intValue(), year.intValue());
+			date.setHour(0);
+			date.setMinute(0);
+			date.setSecond(0);
+			date.setMilliSecond(0);
+			IWTimestamp now = IWTimestamp.RightNow();
+			now.setHour(0);
+			now.setMinute(0);
+			now.setSecond(0);
+			now.setMilliSecond(0);
+			if (date.getTime().getTime() < now.getTime().getTime()) {
+				getLogger().warning(date + " is from the past");
+				return false;
+			}
+		}
+		
 		if (info == null) {
 			return true;
 		}
