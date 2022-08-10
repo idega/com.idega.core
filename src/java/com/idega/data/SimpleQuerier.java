@@ -107,7 +107,7 @@ public class SimpleQuerier {
         try {
             Stmt= conn.createStatement();
             ResultSet RS= Stmt.executeQuery(sqlQuery);
-            List<String> results = new ArrayList<String>();
+            List<String> results = new ArrayList<>();
             while (RS.next()) {
             	results.add(RS.getString(1));
             }
@@ -150,7 +150,7 @@ public class SimpleQuerier {
         	stmt = conn.createStatement();
             ResultSet results = stmt.executeQuery(sqlQuery);
 
-            objects = new ArrayList<Serializable[]>();
+            objects = new ArrayList<>();
             while (results.next()) {
                 Serializable[] data = new Serializable[columns];
             	for (int i = 0; i < columns; i++) {
@@ -311,7 +311,7 @@ public class SimpleQuerier {
      *  @returns true if there was an update, false if there was no update
      *  @throws SQLException if there was an error
      */
-    protected static boolean executeUpdate(String sqlString, String dataSource, boolean flushCache) throws SQLException {
+    public static boolean executeUpdate(String sqlString, String dataSource, boolean flushCache) throws SQLException {
         Connection conn = null;
         Statement stmt = null;
         boolean result = false;
