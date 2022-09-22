@@ -44,7 +44,8 @@ public class RequestUtil {
 	public static final String	HEADER_ACCEPT_LANGUAGE = "Accept-Language",
 								HEADER_USER_AGENT = "User-agent",
 								HEADER_AUTHORIZATION = "Authorization",
-								HEADER_CONTENT_TYPE = "Content-Type";
+								HEADER_CONTENT_TYPE = "Content-Type",
+								HEADER_ACCEPT = "Accept";
 
 	/**
 	 * Calls the method HttpServletRequest.getRequestURI() and cuts front of it
