@@ -316,34 +316,55 @@ public class ELUtil implements ApplicationContextAware {
 				return returnArray;
 			}
 
-			String[] args = argsList.split(CoreConstants.COMMA);
-			for (String arg: args) {
-				if (StringUtil.isEmpty(arg)) {
-					returnArray.add(CoreConstants.EMPTY);
-					continue;
-				}
+			String[] args = null;
+			if (argsList.contains("],")) {
+				args = argsList.split("],");
+				for (String arg: args) {
+					if (StringUtil.isEmpty(arg)) {
+						returnArray.add(CoreConstants.EMPTY);
+						continue;
+					}
 
-				arg = arg.trim();
-				if (arg.startsWith("[") && arg.length() > 1) {
-					arg = arg.substring(1);
-				}
-				if (arg.endsWith("]") && arg.length() > 1) {
-					arg = arg.substring(0, arg.length() - 1);
-				}
-				if (arg.startsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
-					arg = arg.replaceFirst(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
-				}
-				if (arg.endsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
-					arg = arg.substring(0, arg.length() - 1);
-				}
-				if (arg.startsWith(CoreConstants.QOUTE_MARK)) {
-					arg = arg.replaceFirst(CoreConstants.QOUTE_MARK, CoreConstants.EMPTY);
-				}
-				if (arg.endsWith(CoreConstants.QOUTE_MARK)) {
-					arg = arg.substring(0, arg.length() - 1);
-				}
+					arg = arg.trim();
+					if (arg.startsWith("[") && arg.length() > 1) {
+						arg = arg.substring(1);
+					}
+					if (arg.endsWith("]") && arg.length() > 1) {
+						arg = arg.substring(0, arg.length() - 1);
+					}
 
-				returnArray.add(arg == null || "null".equals(arg) ? null : arg);
+					returnArray.add(arg == null || "null".equals(arg) ? null : arg);
+				}
+			} else {
+				args = argsList.split(CoreConstants.COMMA);
+				for (String arg: args) {
+					if (StringUtil.isEmpty(arg)) {
+						returnArray.add(CoreConstants.EMPTY);
+						continue;
+					}
+
+					arg = arg.trim();
+					if (arg.startsWith("[") && arg.length() > 1) {
+						arg = arg.substring(1);
+					}
+					if (arg.endsWith("]") && arg.length() > 1) {
+						arg = arg.substring(0, arg.length() - 1);
+					}
+					if (arg.startsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
+						arg = arg.replaceFirst(CoreConstants.QOUTE_SINGLE_MARK, CoreConstants.EMPTY);
+					}
+					if (arg.endsWith(CoreConstants.QOUTE_SINGLE_MARK)) {
+						arg = arg.substring(0, arg.length() - 1);
+					}
+					if (arg.startsWith(CoreConstants.QOUTE_MARK)) {
+						arg = arg.replaceFirst(CoreConstants.QOUTE_MARK, CoreConstants.EMPTY);
+					}
+					if (arg.endsWith(CoreConstants.QOUTE_MARK)) {
+						arg = arg.substring(0, arg.length() - 1);
+					}
+
+					returnArray.add(arg == null || "null".equals(arg) ? null : arg);
+				}
 			}
 		}
 		return returnArray;
