@@ -141,4 +141,7 @@ public interface UserDAO extends GenericDao {
 	public Long countUsers();
 
 	public List<User> findAllActiveUsers();
+
+	public List<String> getAllPersonalIds();
+
 }

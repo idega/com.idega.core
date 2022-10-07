@@ -142,10 +142,16 @@ import com.idega.util.datastructures.map.MapUtil;
 	),
 	@NamedQuery(
 			name = User.QUERY_FIND_ALL_USERS,
-			query = "select u from User u where u.deleted != 'Y'"),
+			query = "select u from User u where u.deleted != 'Y'"
+	),
 	@NamedQuery(
 			name = User.QUERY_COUNT_ALL,
-			query = "select count(u) from User u where u.deleted != 'Y'"),
+			query = "select count(u) from User u where u.deleted != 'Y'"
+	),
+	@NamedQuery(
+			name = User.QUERY_FIND_ALL_PERSONAL_IDS,
+			query = "select distinct u.personalID from User u where u.deleted != 'Y' and u.personalID is not null"
+	)
 })
 @XmlTransient
 @Cacheable
@@ -196,7 +202,8 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 								QUERY_FIND_ACTIVE_OR_PASSIVE_BY_GROUPS_IDS = "user.findActiveOrPassiveByGroupIds",
 								QUERY_FIND_ALL_USERS = "user.findAllUsers",
 								QUERY_COUNT_ALL = "user.countAll",
-								QUERY_FIND_ALL_USER_IDS_BY_GROUPS_IDS = "user.findAllUserIdsByGroupIds";
+								QUERY_FIND_ALL_USER_IDS_BY_GROUPS_IDS = "user.findAllUserIdsByGroupIds",
+								QUERY_FIND_ALL_PERSONAL_IDS = "user.findAllPersonalIds";
 
 	public static final String PROP_ID = ENTITY_NAME + "_" + COLUMN_USER_ID;
 

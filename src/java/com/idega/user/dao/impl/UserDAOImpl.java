@@ -244,7 +244,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 */
 	@Override
 	public List<User> findAll(Collection<Integer> primaryKeys) {
-		ArrayList<User> users = new ArrayList<User>();
+		ArrayList<User> users = new ArrayList<>();
 
 		if (!ListUtil.isEmpty(primaryKeys)) {
 			return getResultList(User.QUERY_FIND_BY_PRIMARY_KEYS, User.class,
@@ -276,7 +276,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 */
 	@Override
 	public Set<String> getEmailAddresses(User user) {
-		Set<String> emailAddresses = new HashSet<String>();
+		Set<String> emailAddresses = new HashSet<>();
 
 		if (user != null) {
 			List<Email> emails = user.getEmails();
@@ -408,7 +408,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	 */
 	@Override
 	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName, Integer firstResult, Integer maxResults) {
-		ArrayList<Param> parameters = new ArrayList<Param>();
+		ArrayList<Param> parameters = new ArrayList<>();
 		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
 		query.append("WHERE u.deletedWhen IS NULL ");
 
@@ -472,7 +472,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 
 	@Override
 	public List<User> getUsersByEmailAddress(String emailAddress) {
-		List<User> usersList = new ArrayList<User>();
+		List<User> usersList = new ArrayList<>();
 		if (!StringUtil.isEmpty(emailAddress)) {
 			List<Email> emails = getResultList("email.findByAddress", Email.class, new Param("address", emailAddress));
 			if (ListUtil.isEmpty(emails)) {
@@ -585,6 +585,11 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	@Override
 	public List<User> findAllActiveUsers() {
 		return getResultList(User.QUERY_FIND_ALL_USERS, User.class);
+	}
+
+	@Override
+	public List<String> getAllPersonalIds() {
+		return getResultList(User.QUERY_FIND_ALL_PERSONAL_IDS, String.class);
 	}
 
 }
