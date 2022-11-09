@@ -1320,7 +1320,9 @@ public class LoginBusinessBean implements IWPageEventListener {
 		IWUserContext iwuc = new IWUserContextImpl(session, getServletContext(request, session));
 		lInfo.setUserRoles(aController.getAllRolesForCurrentUser(iwuc));
 		Map<String, Object> m = getLoggedOnInfoMap(session);
-		m.put(lInfo.getLogin(), lInfo);
+		if (lInfo != null && lInfo.getLogin() != null) {
+			m.put(lInfo.getLogin(), lInfo);
+		}
 		setLoggedOnInfo(lInfo, session);
 
 		//	Setting current locale for user that just logged in
