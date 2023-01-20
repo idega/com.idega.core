@@ -87,6 +87,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 
 import com.idega.util.ListUtil;
 
@@ -134,7 +135,7 @@ public class MapUtil {
 
 		if (MapUtil.isEmpty(original)) {
 			if (original == null)
-				original = new HashMap<K, L>();
+				original = new HashMap<>();
 
 			original.putAll(appending);
 			return Boolean.TRUE;
@@ -143,7 +144,7 @@ public class MapUtil {
 		if (MapUtil.isEmpty(appending))
 			return Boolean.FALSE;
 
-		Map<K, L> appendingCopy = new HashMap<K, L>(appending);
+		Map<K, L> appendingCopy = new ConcurrentHashMap<>(appending);
 
 		for (Iterator<K> keyIterator = appendingCopy.keySet().iterator(); keyIterator.hasNext();) {
 			K key = keyIterator.next();
@@ -195,10 +196,10 @@ public class MapUtil {
 	@SuppressWarnings("unchecked")
 	public static <K extends Serializable, V, T> Map<K, V> deepCopy(Map<K, V> original) {
 		if (isEmpty(original)) {
-			return new HashMap<K, V>();
+			return new HashMap<>();
 		}
 
-		Map<K, V> copy = new HashMap<K, V>();
+		Map<K, V> copy = new HashMap<>();
 
 		for (Iterator<K> keyIterator = original.keySet().iterator(); keyIterator.hasNext();) {
 			K key = keyIterator.next();
@@ -219,7 +220,7 @@ public class MapUtil {
 	}
 
 	/**
-	 * 
+	 *
 	 * @param source to remove elements from, not <code>null</code>;
 	 * @param elements to remove from source, not <code>null</code>;
 	 * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
