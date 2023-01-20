@@ -325,5 +325,9 @@
 	    <artifactId>sendgrid-java</artifactId>
 	    <version>4.7.2</version>
 	</dependency>
+	<dependency>
+	    <groupId>com.google.code.gson</groupId>
+	    <artifactId>gson</artifactId>
+	</dependency>
   </dependencies>
 </project>

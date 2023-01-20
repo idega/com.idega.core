@@ -1,5 +1,6 @@
 package com.idega.util;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -7,6 +8,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
+
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
 
 /**
  * Title: idegaclasses Description: Copyright: Copyright (c) 2001 Company: idega
@@ -18,6 +22,8 @@ import java.util.logging.Logger;
 public class ListUtil {
 
 	private static final ArrayList<Object> emptyVector = new EmptyList<>();
+
+	private static final Gson GSON = new Gson();
 
 	private ListUtil() {
 	}
@@ -252,6 +258,23 @@ public class ListUtil {
 			throw new RuntimeException("This empty list is final and cannot be modified");
 		}
 
+	}
+
+	public static final <T> List<T> getListFromJSON(String value) {
+		value = value == null ? null : value.trim();
+		if (StringUtil.isEmpty(value)) {
+			return null;
+		}
+		if (!value.startsWith(CoreConstants.SQUARE_BRACKET_LEFT) && !value.endsWith(CoreConstants.SQUARE_BRACKET_RIGHT)) {
+			return null;
+		}
+
+		try {
+			Type type = new TypeToken<ArrayList<T>>(){}.getType();
+			return GSON.fromJson(value, type);
+		} catch (Exception e) {}
+
+		return null;
 	}
 
 }
