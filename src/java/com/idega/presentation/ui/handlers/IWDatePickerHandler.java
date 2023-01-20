@@ -137,7 +137,7 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			try {
 				date = new IWTimestamp(DATE_FORMATTER.parse(source));
 			} catch (Exception e) {
-				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: " + source + " by locale: " +
+				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: '" + source + "' by locale: " +
 						locale.toString());
 			}
 		}
