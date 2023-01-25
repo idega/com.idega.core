@@ -477,7 +477,7 @@ public class StringHandler {
 	 * result is: "A rat is not a rateurpillaur"
 	 */
 	public static Map<Integer, String> getReplaceMapIgnoreCase(String str, String pattern, String replace) {
-		Map<Integer, String> indexMap = new HashMap<Integer, String>();
+		Map<Integer, String> indexMap = new HashMap<>();
 		int s = 0;
 		int e = 0;
 		String upperPattern = pattern.toUpperCase();
@@ -620,7 +620,7 @@ public class StringHandler {
 	 * @author thomas
 	 */
 	public static List<String> getElementsIgnoreCase(String str, Collection<String> allowedWords) {
-		List<String> words = new ArrayList<String>(allowedWords.size());
+		List<String> words = new ArrayList<>(allowedWords.size());
 		String string = str.toUpperCase();
 
 		for (Iterator<String> iterator = allowedWords.iterator(); iterator.hasNext();) {
@@ -777,6 +777,24 @@ public class StringHandler {
 		return !StringUtil.isEmpty(value) && value.matches("[+-]?\\d*(\\.\\d+)?");
 	}
 
+	public static int getIndexOfFirstDigit(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return -1;
+		}
+
+		for (int i = 0; i < value.length(); i++) {
+			int next = i + 1;
+			String tmp = next < value.length() ?
+					value.substring(i, next) :
+					value.substring(i);
+			if (isNumeric(tmp)) {
+				return i;
+			}
+		}
+
+		return -1;
+	}
+
 	private final static String	tagStart = "\\<\\w+((\\s+\\w+(\\s*\\=\\s*(?:\".*?\"|'.*?'|[^'\"\\>\\s]+))?)+\\s*|\\s*)\\>",
 								tagEnd = "\\</\\w+\\>",
 								tagSelfClosing = "\\<\\w+((\\s+\\w+(\\s*\\=\\s*(?:\".*?\"|'.*?'|[^'\"\\>\\s]+))?)+\\s*|\\s*)/\\>",
@@ -805,9 +823,9 @@ public class StringHandler {
 	 * @author thomas
 	 */
 	public static List<String> getElements(String string, Collection<String> allowedWords) {
-		List<String> result = new ArrayList<String>();
+		List<String> result = new ArrayList<>();
 		// order of conditions
-		SortedSet<String> orderedWords = new TreeSet<String>(new Comparator<String>() {
+		SortedSet<String> orderedWords = new TreeSet<>(new Comparator<String>() {
 
 			@Override
 			public int compare(String first, String second) {
@@ -1050,7 +1068,7 @@ public class StringHandler {
 				s4 = st.nextToken();
 			}
 			else if (index == 5) {
-				list = new ArrayList<String>();
+				list = new ArrayList<>();
 				list.add(s1);
 				list.add(s2);
 				list.add(s3);
@@ -1250,7 +1268,7 @@ public class StringHandler {
 		}
 
 		StringBuffer replaceBuffer = new StringBuffer(text);
-		List<Pattern> patterns = new ArrayList<Pattern>();
+		List<Pattern> patterns = new ArrayList<>();
 		Pattern p1 = Pattern.compile("(<a[^>]+href=\")([^#][^\"]+)([^>]+>)", Pattern.CASE_INSENSITIVE);
 		Pattern p2 = Pattern.compile("(<img[^>]+src=\")([^#][^\"]+)([^>]+>)", Pattern.CASE_INSENSITIVE);
 		patterns.add(p1);
