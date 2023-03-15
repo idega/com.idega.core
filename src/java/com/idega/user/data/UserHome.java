@@ -39,6 +39,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public abstract Collection<User> findUsersByEmail(String email, boolean useLoweredValue, boolean useLikeExpression) throws javax.ejb.FinderException;
 
  public Collection<User> findUsers(String[] userIDs)throws javax.ejb.FinderException;
+ public Collection<User> findUsersByUniqueIds(Collection<String> uniqueIds)throws FinderException;
  public Collection<User> findAllUsersOrderedByFirstName()throws javax.ejb.FinderException;
  public Collection<User> findUsersByYearOfBirth (int minYear, int maxYear)  throws  FinderException;
  public int getUserCount()throws com.idega.data.IDOException;
@@ -65,7 +66,7 @@ public interface UserHome extends com.idega.data.IDOHome
  public Collection <User> ejbAutocompleteRequest(String request, int groupId, int maxAmount, int startingEntry);
 
 	/**
-	 * 
+	 *
 	 * @param name is {@link User#getName()}, not <code>null</code>;
 	 * @param email is {@link Email#getEmailAddress()}, not <code>null</code>;
 	 * @return {@link User}s in data source by given criteria or
@@ -74,7 +75,7 @@ public interface UserHome extends com.idega.data.IDOHome
 	public Collection<User> findAllByNameAndEmail(String name, String email);
 
 	/**
-	 * 
+	 *
 	 * <p>Best for autocomplete</p>
 	 * @param personalID is part of {@link User#getPersonalID()} to search by,
 	 * not <code>null</code>;

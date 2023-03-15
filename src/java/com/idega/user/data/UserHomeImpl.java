@@ -347,6 +347,14 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 	}
 
 	@Override
+	public Collection<User> findUsersByUniqueIds(Collection<String> uniqueIds)throws FinderException {
+		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+		Collection<?> ids = ((UserBMPBean) entity).ejbFindUsersByUniqueIds(uniqueIds);
+		this.idoCheckInPooledEntity(entity);
+		return this.getEntityCollectionForPrimaryKeys(ids);
+	}
+
+	@Override
 	public Collection findAllUsersOrderedByFirstName()
 			throws javax.ejb.FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -569,7 +577,7 @@ public class UserHomeImpl extends com.idega.data.IDOFactory implements UserHome 
 		}
 
 		/* Filtering users by name */
-		users = new ArrayList<User>(usersByEmail.size());
+		users = new ArrayList<>(usersByEmail.size());
 		for (User user : usersByEmail) {
 			boolean nameMatches = Boolean.TRUE;
 

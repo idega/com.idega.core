@@ -65,6 +65,7 @@ import com.idega.idegaweb.IWMainApplication;
 import com.idega.user.business.UserBusiness;
 import com.idega.user.business.UserGuardian;
 import com.idega.user.business.UserStatusBusinessBean;
+import com.idega.util.ArrayUtil;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
@@ -2535,6 +2536,19 @@ public void delete(int userId) throws SQLException {
     appendIsNotDeleted(query);
 
   	return super.idoFindPKsBySQL(query.toString());
+  }
+
+  public Collection<?> ejbFindUsersByUniqueIds(Collection<String> uniqueIds) throws FinderException {
+	  IDOQuery query = idoQuery();
+	  query
+	      .appendSelectAllFrom(this)
+	      .appendWhere()
+	      .append(getUniqueIdColumnName())
+	      .appendInArrayWithSingleQuotes(ArrayUtil.convertListToArray(uniqueIds))
+	      .appendAnd();
+	  appendIsNotDeleted(query);
+
+	  return super.idoFindPKsBySQL(query.toString());
   }
 
   public Collection ejbFindUsersInQuery(IDOQuery query) throws FinderException {
