@@ -9,7 +9,7 @@ public class AdvancedProperty implements Serializable {
 	private static final long serialVersionUID = 8520116287821698275L;
 
 	private boolean selected;
-	private String id, value, name;
+	private String id, value, name, originalValue;
 	private Long externalId;
 
 	public AdvancedProperty() {
@@ -83,6 +83,14 @@ public class AdvancedProperty implements Serializable {
 
 	public void setName(String name) {
 		this.name = name;
+	}
+
+	public String getOriginalValue() {
+		return originalValue;
+	}
+
+	public void setOriginalValue(String originalValue) {
+		this.originalValue = originalValue;
 	}
 
 	@Override
