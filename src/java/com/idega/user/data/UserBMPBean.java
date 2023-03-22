@@ -121,10 +121,10 @@ public class UserBMPBean extends AbstractGroupBMPBean implements User, Group, co
 	public void initializeAttributes() {
 		//      addAttribute(getIDColumnName());
 		super.addGeneralGroupRelation();
-		addAttribute(getColumnNameFirstName(), "First name", true, true, java.lang.String.class, 45);
-		addAttribute(getColumnNameMiddleName(), "Middle name", true, true, java.lang.String.class, 90);
-		addAttribute(getColumnNameLastName(), "Last name", true, true, java.lang.String.class, 45);
-		addAttribute(getColumnNameDisplayName(), "Display name", true, true, java.lang.String.class, 180);
+		addAttribute(getColumnNameFirstName(), "First name", true, true, java.lang.String.class, 255);
+		addAttribute(getColumnNameMiddleName(), "Middle name", true, true, java.lang.String.class, 255);
+		addAttribute(getColumnNameLastName(), "Last name", true, true, java.lang.String.class, 255);
+		addAttribute(getColumnNameDisplayName(), "Display name", true, true, java.lang.String.class, 255);
 		addAttribute(getColumnNameDescription(), "Description", true, true, java.lang.String.class);
 		addAttribute(getColumnNameDateOfBirth(), "Birth date", true, true, java.sql.Date.class);
 		addAttribute(getColumnNamePersonalID(), "Personal ID", true, true, String.class, 20);
