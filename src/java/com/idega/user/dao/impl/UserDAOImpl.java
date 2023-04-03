@@ -410,7 +410,7 @@ public class UserDAOImpl extends GenericDaoImpl implements UserDAO {
 	public List<User> findFilteredBy(String personalId, String firstName, String middleName, String lastName, Integer firstResult, Integer maxResults) {
 		ArrayList<Param> parameters = new ArrayList<>();
 		StringBuilder query = new StringBuilder("FROM " + User.class.getName() + " u ");
-		query.append("WHERE u.deletedWhen IS NULL ");
+		query.append("WHERE u.deletedWhen IS NULL and (u.deleted IS NULL or u.deleted = '" + CoreConstants.N + "') ");
 
 		if (!StringUtil.isEmpty(firstName)) {
 			parameters.add(new Param("firstName", getLikeExpression(firstName)));
