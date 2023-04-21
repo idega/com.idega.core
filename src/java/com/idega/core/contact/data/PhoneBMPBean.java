@@ -11,6 +11,10 @@ import com.idega.core.user.data.User;
 import com.idega.data.EntityControl;
 import com.idega.data.IDOFinderException;
 import com.idega.data.IDOQuery;
+import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.SelectQuery;
+import com.idega.data.query.Table;
+import com.idega.user.data.UserBMPBean;
 import com.idega.util.StringUtil;
 /**
  * Title:        IW Core
@@ -27,7 +31,7 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 
 	public static final String SYNCHRONIZATION_KEY = "com.idega.core.contact.data.PhoneBMPBean";
 	private boolean synchronizationEnabled = true;
-	
+
 	public PhoneBMPBean()
 	{
 		super();
@@ -301,6 +305,20 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 		return Collections.emptyList();
 	}
 
+	public Collection<Integer> ejbFindUsersPhones(int userId) throws FinderException {
+		Table phones = new Table(this);
+		SelectQuery query = new SelectQuery(phones);
+
+		Table usersEmails = new Table(UserBMPBean.SQL_RELATION_PHONE);
+		query.addJoin(phones, getIDColumnName(), usersEmails, getIDColumnName());
+
+		Table usersTable = new Table(com.idega.user.data.User.class);
+		query.addJoin(usersEmails, com.idega.user.data.User.FIELD_USER_ID, usersTable, com.idega.user.data.User.FIELD_USER_ID);
+		query.addCriteria(new MatchCriteria(usersTable.getColumn(com.idega.user.data.User.FIELD_USER_ID), MatchCriteria.EQUALS, userId));
+
+    	return idoFindPKsByQuery(query);
+	}
+
 	public Collection ejbFindUsersPhones(int userId,int type) throws FinderException {
 		try{
 			String sql = getSelectWithPhoneType(userId,type);
@@ -325,4 +343,5 @@ public class PhoneBMPBean extends ContactBmpBean implements com.idega.core.conta
 	public boolean isSynchronizationEnabled() {
 		return synchronizationEnabled;
 	}
+
 }

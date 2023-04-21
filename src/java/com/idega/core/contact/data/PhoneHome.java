@@ -39,4 +39,7 @@ public Phone findUsersFaxPhone(com.idega.user.data.User user)throws javax.ejb.Fi
 	public Collection<Phone> findByPhoneNumber(String phoneNumber);
 
 	public Collection<Phone> findUsersPhones(int userId,int type);
+
+	public Collection<Phone> findUsersPhones(int userId);
+
 }

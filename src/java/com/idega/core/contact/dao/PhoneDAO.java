@@ -155,4 +155,7 @@ public interface PhoneDAO {
 	 * @param userId
 	 */
 	public void removeAllByUserId(Integer userId);
+
+	public Collection<Phone> getPhones(Integer userId);
+
 }

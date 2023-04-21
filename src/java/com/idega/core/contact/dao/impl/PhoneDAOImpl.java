@@ -87,6 +87,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.logging.Level;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.BeanDefinition;
@@ -231,7 +232,7 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 				/*
 				 * Allowing only one user to have this particular phone number
 				 */
-				entity.setUsers(new ArrayList<User>(Arrays.asList(user)));
+				entity.setUsers(new ArrayList<>(Arrays.asList(user)));
 			}
 		}
 
@@ -244,7 +245,7 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 	 */
 	@Override
 	public Collection<Phone> update(Integer userId, Collection<String> phoneNumbers) {
-		ArrayList<Phone> entities = new ArrayList<Phone>();
+		ArrayList<Phone> entities = new ArrayList<>();
 
 		if (!ListUtil.isEmpty(phoneNumbers)) {
 			for (String phoneNumber : phoneNumbers) {
@@ -258,17 +259,34 @@ public class PhoneDAOImpl extends GenericDaoImpl implements PhoneDAO {
 		return entities;
 	}
 
+	@Override
+	public Collection<Phone> getPhones(Integer userId) {
+		try {
+			return getResultList(
+					Phone.QUERY_FIND_BY_USER_ID,
+					Phone.class,
+					new Param(Phone.PARAM_USER_ID, userId)
+			);
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting phone(s) for user " + userId, e);
+		}
+		return null;
+	}
 
 	@Override
 	public void removeAllByUserId(Integer userId) {
-		if (userId != null) {
-			List<Phone> results = getResultList(Phone.QUERY_FIND_BY_USER_ID, Phone.class, new com.idega.core.persistence.Param(Phone.PARAM_USER_ID, userId));
-			if (!ListUtil.isEmpty(results)) {
-				for (Phone phone : results) {
-					if (phone != null) {
-						remove(phone);
-					}
-				}
+		if (userId == null) {
+			return;
+		}
+
+		Collection<Phone> results = getPhones(userId);
+		if (ListUtil.isEmpty(results)) {
+			return;
+		}
+
+		for (Phone phone : results) {
+			if (phone != null) {
+				remove(phone);
 			}
 		}
 	}

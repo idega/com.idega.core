@@ -179,6 +179,20 @@ public Phone findUsersFaxPhone(com.idega.user.data.User user)throws javax.ejb.Fi
 	}
 
 	@Override
+	public Collection<Phone> findUsersPhones(int userId) {
+		try {
+			com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+			Collection<?> pks = ((PhoneBMPBean) entity).ejbFindUsersPhones(userId);
+			this.idoCheckInPooledEntity(entity);
+			return getEntityCollectionForPrimaryKeys(pks);
+		} catch (FinderException e) {
+		} catch (Exception e) {
+			Logger.getLogger(getClass().getName()).log(Level.WARNING, "Failed to find phones for user " + userId, e);
+		}
+		return Collections.emptyList();
+	}
+
+	@Override
 	public Collection<Phone> findUsersPhones(int userId,int type){
 		try{
 			com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
