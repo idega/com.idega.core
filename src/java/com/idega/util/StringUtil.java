@@ -27,7 +27,7 @@ public class StringUtil {
 			return Collections.emptyList();
 		}
 
-		return new ArrayList<String>(Arrays.asList(values));
+		return new ArrayList<>(Arrays.asList(values));
 	}
 
 	public static String getValue(Collection<String> values) {
@@ -261,7 +261,7 @@ public class StringUtil {
 	}
 
 	public static List<String> getLinesFromString(String content) {
-		List<String> strings = new ArrayList<String>();
+		List<String> strings = new ArrayList<>();
 		if (isEmpty(content)) {
 			return strings;
 		}
@@ -347,6 +347,18 @@ public class StringUtil {
 		String capitalized = value.substring(0, 1);
 		capitalized = locale == null ? capitalized.toUpperCase() : capitalized.toUpperCase(locale);
 		return capitalized.concat(value.substring(1));
+	}
+
+	public static final String getAlphaNumericString(int n) {
+		String alphaNumericString = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789abcdefghijklmnopqrstuvxyz";
+
+		StringBuilder sb = new StringBuilder(n);
+		for (int i = 0; i < n; i++) {
+			int index = (int)(alphaNumericString.length() * Math.random());
+			sb.append(alphaNumericString.charAt(index));
+		}
+
+		return sb.toString();
 	}
 
 }
