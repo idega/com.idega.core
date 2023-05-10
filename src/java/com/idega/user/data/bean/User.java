@@ -9,6 +9,7 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -650,6 +651,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 
 	public Set<Metadata> getMetadata() {
 		metadata = getInitialized(metadata);
+		if (metadata == null) {
+			metadata = new HashSet<>();
+		}
 		return this.metadata;
 	}
 
@@ -679,6 +683,9 @@ public class User implements Serializable, UniqueIDCapable, MetaDataCapable {
 	/* MetaDataCapable implementation */
 	private Metadata getMetadata(String key) {
 		Set<Metadata> list = getMetadata();
+		if (ListUtil.isEmpty(list)) {
+			return null;
+		}
 		for (Metadata metaData : list) {
 			if (metaData.getKey().equals(key)) {
 				return metaData;
