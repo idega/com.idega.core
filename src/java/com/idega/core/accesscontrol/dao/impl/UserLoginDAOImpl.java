@@ -68,6 +68,9 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		login.setUserLogin(username);
 		login.setUserPassword(password);
 		persist(login);
+		if (login.getId() == null) {
+			return null;
+		}
 
 		LoginInfo info = login.getLoginInfo();
 		if (info == null) {
@@ -80,6 +83,9 @@ public class UserLoginDAOImpl extends GenericDaoImpl implements UserLoginDAO {
 		info.setDaysOfValidity(daysOfValidity);
 		info.setPasswordExpires(passwordExpires);
 		persist(info);
+		if (info.getId() == null) {
+			return null;
+		}
 
 		return login;
 	}
