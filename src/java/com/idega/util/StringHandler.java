@@ -777,6 +777,20 @@ public class StringHandler {
 		return !StringUtil.isEmpty(value) && value.matches("[+-]?\\d*(\\.\\d+)?");
 	}
 
+	public static String getAlphaNumeric(String value) {
+		if (StringUtil.isEmpty(value)) {
+			return value;
+		}
+
+		StringBuilder builder = new StringBuilder();
+		for (char c: value.toCharArray()) {
+			if (Character.isLetter(c) || Character.isDigit(c)) {
+				builder.append(c);
+			}
+		}
+		return builder.toString();
+	}
+
 	public static int getIndexOfFirstDigit(String value) {
 		if (StringUtil.isEmpty(value)) {
 			return -1;
