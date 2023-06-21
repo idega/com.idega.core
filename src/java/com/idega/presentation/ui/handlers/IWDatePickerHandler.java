@@ -22,6 +22,7 @@ import com.idega.presentation.ui.IWDatePicker;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
 import com.idega.util.IWTimestamp;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
 /**
@@ -97,6 +98,19 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 
 		if (source.endsWith(".0")) {
 			source = source.substring(0, source.lastIndexOf(".0"));
+		}
+
+		String t = "T";
+		if (source.indexOf(t) != -1) {
+			Date parsedDate = null;
+			try {
+				parsedDate = JSON_DATE_TIME_FORMATTER.parse(source);
+			} catch (Exception e) {}
+			if (parsedDate == null) {
+				source = StringHandler.replace(source, t, CoreConstants.SPACE);
+			} else {
+				return parsedDate;
+			}
 		}
 
 		if (locale == null) {
