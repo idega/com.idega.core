@@ -39,6 +39,10 @@ public class IWTaskScheduler {
 		schedule(0, minute, hour, runnable);
 	}
 
+	public void schedule(int everyMinutes, Runnable runnable) {
+		schedule(-1, everyMinutes, -1, true, runnable);
+	}
+
 	/**
 	 * Schedules to run daemon every day at specified hour and minute
 	 * @param second
@@ -47,10 +51,14 @@ public class IWTaskScheduler {
 	 * @param runnable
 	 */
 	public void schedule(int second, int minute, int hour, Runnable runnable) {
+		schedule(second, minute, hour, false, runnable);
+	}
+
+	private void schedule(int second, int minute, int hour, boolean everyMinutes, Runnable runnable) {
 		//	second, minute, hour, day of month, month, day(s) of week
 		StringBuilder expression = new StringBuilder()
 				.append((second < 0 ? 0 : second)).append(CoreConstants.SPACE)
-				.append((minute < 0 ? CoreConstants.STAR : minute)).append(CoreConstants.SPACE)
+				.append((minute < 0 ? CoreConstants.STAR : (everyMinutes ? CoreConstants.STAR.concat(CoreConstants.SLASH).concat(String.valueOf(minute)) : minute))).append(CoreConstants.SPACE)
 				.append((hour < 0 ? CoreConstants.STAR : hour))
 				.append(" * * ?");
 		CronTrigger trigger = new CronTrigger(expression.toString());
