@@ -321,23 +321,25 @@ public class SendMail {
 			}
 		}
 
+		String json = null;
 		boolean success = false;
 	    SendGrid sg = new SendGrid(key);
 	    Request request = new Request();
 	    try {
 	    	request.setMethod(Method.POST);
 	    	request.setEndpoint("mail/send");
-	    	request.setBody(mail.build());
+	    	json = mail.build();
+	    	request.setBody(json);
 	    	Response response = sg.api(request);
 	    	int statusCode = response.getStatusCode();
 	    	success = statusCode == 200 || statusCode == 201 || statusCode == 202;
 	    	if (!success) {
-	    		LOGGER.warning("Error sending email to " + to + " with subject " + subject + ". Status code: " + statusCode + ", response: " + response.getBody() +
-	    				", response headers: " + response.getHeaders());
+	    		LOGGER.warning("Error sending email to " + to + " with subject " + subject + " (from: '" + from + "', CC: '" + cc + "', BCC: '" + bcc + "'). Status code: " +
+	    				statusCode + ", response: " + response.getBody() + ", response headers: " + response.getHeaders() + ". JSON:\n" + json);
 	    	}
 	    	return success;
 	    } catch (Exception e) {
-	    	String error = "Error sending email to " + to + " with subject " + subject;
+	    	String error = "Error sending email to " + to + " with subject " + subject + " (from: '" + from + "', CC: '" + cc + "', BCC: '" + bcc + "'). JSON:\n" + json;
 	    	LOGGER.log(Level.WARNING, error, e);
 	    	throw new MessagingException(error, e);
 	    } finally {
