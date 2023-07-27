@@ -386,7 +386,6 @@ public class SendMail {
 			boolean simpleMessage,
 			final File... attachedFiles
 	) throws MessagingException {
-
 		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
 		String customTo = settings.getProperty("custom_mail_receiver");
 		if (EmailValidator.getInstance().isValid(customTo)) {
@@ -406,6 +405,13 @@ public class SendMail {
 
 		if (settings.getBoolean("always_use_html_mail", false) || StringHandler.isHTML(text)) {
 			mailType = MimeTypeUtil.MIME_TYPE_HTML;
+		}
+
+		if (StringUtil.isEmpty(from)) {
+			from = settings.getProperty(MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS);
+		}
+		if (StringUtil.isEmpty(from)) {
+			throw new MessagingException("From address is null.");
 		}
 
 		if (simpleMessage) {
@@ -476,13 +482,6 @@ public class SendMail {
 		session.setDebug(settings.isDebugActive());
 
 		// Construct a message
-		//	Sender
-		if (StringUtil.isEmpty(from)) {
-			from = settings.getProperty(MessagingSettings.PROP_MESSAGEBOX_FROM_ADDRESS);
-		}
-		if (StringUtil.isEmpty(from)) {
-			throw new MessagingException("From address is null.");
-		}
 		MimeMessage message = new MimeMessage(session);
 		message.setFrom(new InternetAddress(from));
 
