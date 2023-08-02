@@ -9,7 +9,6 @@ import java.util.List;
 import java.util.StringTokenizer;
 import java.util.logging.Logger;
 
-import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 
 /**
@@ -22,8 +21,6 @@ import com.google.gson.reflect.TypeToken;
 public class ListUtil {
 
 	private static final ArrayList<Object> emptyVector = new EmptyList<>();
-
-	private static final Gson GSON = new Gson();
 
 	private ListUtil() {
 	}
@@ -271,7 +268,7 @@ public class ListUtil {
 
 		try {
 			Type type = new TypeToken<ArrayList<T>>(){}.getType();
-			return GSON.fromJson(value, type);
+			return CoreConstants.GSON.fromJson(value, type);
 		} catch (Exception e) {}
 
 		return null;

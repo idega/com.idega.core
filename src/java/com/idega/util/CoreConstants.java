@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.servlet.http.HttpServletResponse;
 
+import com.google.gson.Gson;
 import com.idega.business.SpringBeanName;
 import com.idega.core.messaging.MessagingSettings;
 
@@ -231,5 +232,7 @@ public class CoreConstants {
 	public static final String COMMUNE_ACCPETED_CITIZENS = "Commune Accepted Citizens";
 
 	public static final String EXCEPTION_REPORT_RECEIVER = "exception_report_receiver";
+
+	public static final Gson GSON = new Gson();
 
 }
