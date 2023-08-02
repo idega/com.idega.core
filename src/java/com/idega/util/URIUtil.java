@@ -38,7 +38,7 @@ public class URIUtil {
 	public Map<String, String> getParameters() {
 
 		if(parameters == null)
-			parameters = new HashMap<String, String>();
+			parameters = new HashMap<>();
 
 		if(uri != null) {
 
@@ -73,7 +73,7 @@ public class URIUtil {
 	}
 
 	public void setParameter(String key, String value) {
-		if (StringUtil.isEmpty(key) || StringUtil.isEmpty(value)) {
+		if (StringUtil.isEmpty(key) || value == null) {
 			return;
 		}
 
