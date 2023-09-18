@@ -417,8 +417,8 @@ public class SendMail {
 		}
 
 		if (simpleMessage) {
-			sendSimpleMail(from, to, subject, text);
-			return null;
+			boolean success = sendSimpleMail(from, to, subject, text);
+			return success ? new DummyMessage() : null;
 		}
 
 		boolean viaSendGrindAPI = settings.getBoolean("mail.send_via_api", false);
