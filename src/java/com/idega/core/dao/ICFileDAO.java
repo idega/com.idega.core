@@ -42,7 +42,20 @@ public interface ICFileDAO extends GenericDao {
 			Date creationDate,
 			Date modificationDate,
 			Integer fileSize,
-			ICMimeType type);
+			ICMimeType type
+	);
+
+	public ICFile update(
+			Integer id,
+			String name,
+			String description,
+			byte[] fileValue,
+			Date creationDate,
+			Date modificationDate,
+			Integer fileSize,
+			ICMimeType type,
+			Boolean publiclyAvailable
+	);
 
 	public ICFile findById(Integer id);
 

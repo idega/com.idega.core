@@ -17,6 +17,8 @@ import javax.ejb.FinderException;
 
 import com.idega.core.dao.ApplicationBindingDAO;
 import com.idega.core.data.bean.ApplicationBinding;
+import com.idega.core.idgenerator.business.IdGenerator;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.localisation.data.ICLocale;
 import com.idega.core.persistence.Param;
 import com.idega.core.user.data.User;
@@ -25,6 +27,7 @@ import com.idega.core.version.data.ICVersion;
 import com.idega.core.version.util.ICVersionQuery;
 import com.idega.data.BlobWrapper;
 import com.idega.data.EntityControl;
+import com.idega.data.GenericEntity;
 import com.idega.data.IDOAddRelationshipException;
 import com.idega.data.IDOCompositePrimaryKeyException;
 import com.idega.data.IDOQuery;
@@ -36,6 +39,7 @@ import com.idega.data.MetaDataCapable;
 import com.idega.data.TreeableEntityBMPBean;
 import com.idega.data.query.Column;
 import com.idega.data.query.MatchCriteria;
+import com.idega.data.query.OR;
 import com.idega.data.query.SelectQuery;
 import com.idega.data.query.Table;
 import com.idega.idegaweb.IWApplicationContext;
@@ -53,6 +57,7 @@ import com.idega.util.FileUtil;
 import com.idega.util.IOUtil;
 import com.idega.util.IWTimestamp;
 import com.idega.util.ListUtil;
+import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
 
@@ -78,17 +83,20 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 	public static String IC_APPLICATION_BINDING_TYPE_SYSTEM_FOLDER = "system_folder";
 	public static final String FILE_URI_IN_REPO = "FILE_URI_IN_SLIDE";
 
-	public static final int NODETYPE_FOLDER = 0;
-	public static final int NODETYPE_FILE = 1;
+	public static final int NODETYPE_FOLDER = 0,
+							NODETYPE_FILE = 1,
+							TOKEN_MAX_LENGTH = 128;
 
-	public final static String DELETED = CoreConstants.Y;
-	public final static String NOT_DELETED = "N";
+	public final static String	DELETED = CoreConstants.Y,
+								NOT_DELETED = CoreConstants.N,
+								COLUMN_TOKEN = "TOKEN",
+								COLUMN_PUBLIC = "PUBLICLY_AVAILABLE";
 
-	private static final String COLUMN_HASH = "HASH_VALUE";
+	private static final String COLUMN_HASH = "HASH_VALUE",
 
-	private static final String TABLENAME_ICFILE_ICITEM = "ic_file_ic_item";
-	private static final String TABLENAME_ICFILE_ICVERSION = "ic_file_ic_version";
-	private static final String FILE_DOWNLOADERS = ENTITY_NAME + "_DOWNLOADERS";
+								TABLENAME_ICFILE_ICITEM = "ic_file_ic_item",
+								TABLENAME_ICFILE_ICVERSION = "ic_file_ic_version",
+								FILE_DOWNLOADERS = ENTITY_NAME + "_DOWNLOADERS";
 
 	public ICFileBMPBean() {
 		super();
@@ -115,6 +123,8 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 		addAttribute(getColumnNameModificationDate(), "Modification date", true, true, java.sql.Timestamp.class);
 		addAttribute(getColumnNameFileSize(), "file size in bytes", true, true, Integer.class);
 		addAttribute(COLUMN_HASH, "Hash value", true, true, Integer.class);
+		addAttribute(COLUMN_TOKEN, "Token", true, true, String.class, TOKEN_MAX_LENGTH);
+		addAttribute(COLUMN_PUBLIC, "Is publicly available?", String.class, 1);
 
 		addAttribute(getColumnDeleted(), "Deleted", true, true, String.class, 1);
 		addAttribute(getColumnDeletedBy(), "Deleted by", true, true, Integer.class, "many-to-one", User.class);
@@ -516,6 +526,17 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 		}
 	}
 
+	public Integer ejbFindByToken(String token) throws FinderException {
+		Collection<Integer> files = idoFindPKsBySQL("select " + getIDColumnName() + " from " + getTableName() + " where " + COLUMN_TOKEN + " = '" + token + "' and (" +
+				ICFileBMPBean.getColumnDeleted() + "='N' or " + ICFileBMPBean.getColumnDeleted() + " is null)");
+		if (!ListUtil.isEmpty(files)) {
+			return files.iterator().next();
+		}
+		else {
+			throw new FinderException("File was not found");
+		}
+	}
+
 	public Integer ejbFindEntityOfSpecificVersion(ICVersion version) throws FinderException {
 		ICVersionQuery query = new ICVersionQuery();
 		query.appendFindEntityOfSpecificVersionQuery(TABLENAME_ICFILE_ICVERSION, version);
@@ -661,6 +682,18 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 	 **/
 	@Override
 	public void store() throws IDOStoreException {
+		String token = getToken();
+		if (StringUtil.isEmpty(token)) {
+			token = StringHandler.getRandomString(TOKEN_MAX_LENGTH);
+			setToken(token);
+		}
+
+		String uniqueId = getUniqueId();
+		if (StringUtil.isEmpty(uniqueId)) {
+			IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
+			setUniqueId(uidGenerator.generateId());
+		}
+
 		super.store();
 		BlobWrapper wrapper = getBlobColumnValue(getColumnNameFileValue());
 		wrapper.setInputStreamForBlobWrite(null);
@@ -715,4 +748,51 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 
 		return this.idoFindOnePKByQuery(query);
 	}
+
+	@Override
+	public String getToken() {
+		String token = getStringColumnValue(COLUMN_TOKEN);
+		if (StringUtil.isEmpty(token)) {
+			token = StringHandler.getRandomString(ICFileBMPBean.TOKEN_MAX_LENGTH);
+			setToken(token);
+			store();
+		}
+		return token;
+	}
+
+	@Override
+	public void setToken(String token) {
+		setStringColumn(COLUMN_TOKEN, token);
+	}
+
+	@Override
+	public boolean isPublic() {
+		String publiclyAvailable = getStringColumnValue(COLUMN_PUBLIC);
+		return !StringUtil.isEmpty(publiclyAvailable) && publiclyAvailable.equals(CoreConstants.Y);
+	}
+
+	@Override
+	public void setPublic(boolean publiclyAvailable) {
+		String value = publiclyAvailable ? CoreConstants.Y : CoreConstants.N;
+		setColumn(COLUMN_PUBLIC, value);
+	}
+
+	public Collection<Integer> ejbFindFilesWithoutUniqueIds() throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addCriteria(new MatchCriteria(new Column(table, GenericEntity.UNIQUE_ID_COLUMN_NAME), MatchCriteria.IS, MatchCriteria.NULL));
+		query.addColumn(table.getColumn(getIDColumnName()));
+		return idoFindPKsByQuery(query);
+	}
+
+	public Collection<Integer> ejbFindFilesWithoutTokens() throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		MatchCriteria isNull = new MatchCriteria(new Column(table, COLUMN_TOKEN), MatchCriteria.IS, MatchCriteria.NULL);
+		MatchCriteria isEmpty = new MatchCriteria(new Column(table, COLUMN_TOKEN), MatchCriteria.EQUALS, CoreConstants.EMPTY);
+		query.addCriteria(new OR(isNull, isEmpty));
+		query.addColumn(table.getColumn(getIDColumnName()));
+		return idoFindPKsByQuery(query);
+	}
+
 }

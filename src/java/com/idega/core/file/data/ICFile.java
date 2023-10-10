@@ -65,4 +65,13 @@ public interface ICFile extends IDOEntity, TreeableEntity<ICFile>, MetaDataCapab
 
 	@Override
 	public int getIndex(ICFile node);
+
+	public String getToken();
+
+	public void setToken(String token);
+
+	public boolean isPublic();
+
+	public void setPublic(boolean publiclyAvailable);
+
 }

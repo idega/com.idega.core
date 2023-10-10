@@ -28,24 +28,32 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.NamedQueries;
 import javax.persistence.NamedQuery;
+import javax.persistence.PrePersist;
+import javax.persistence.PreUpdate;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 
 import com.idega.core.file.data.ICFileBMPBean;
+import com.idega.core.idgenerator.business.IdGenerator;
+import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.core.localisation.data.bean.ICLocale;
 import com.idega.core.version.data.bean.ICItem;
 import com.idega.core.version.data.bean.ICVersion;
+import com.idega.data.GenericEntity;
 import com.idega.data.MetaDataCapable;
 import com.idega.data.bean.Metadata;
 import com.idega.user.data.bean.User;
+import com.idega.util.CoreConstants;
 import com.idega.util.DBUtil;
+import com.idega.util.StringHandler;
+import com.idega.util.StringUtil;
 
 @Entity
 @Table(name = ICFile.ENTITY_NAME)
 @NamedQueries({
 	@NamedQuery(
-			name = ICFile.QUERY_FIND_BY_ID, 
+			name = ICFile.QUERY_FIND_BY_ID,
 			query = "FROM ICFile f WHERE f.fileId = :id"),
 	@NamedQuery(name = ICFile.QUERY_FIND_ALL, query = "select f from ICFile f")
 })
@@ -151,6 +159,15 @@ public class ICFile implements Serializable, MetaDataCapable {
 	@Basic(fetch = FetchType.LAZY)
 	@Column(name = COLUMN_VALUE)
 	private byte[] value;
+
+	@Column(name = GenericEntity.UNIQUE_ID_COLUMN_NAME, unique = true, nullable = false)
+	private String uniqueId;
+
+	@Column(name = ICFileBMPBean.COLUMN_TOKEN, length = ICFileBMPBean.TOKEN_MAX_LENGTH, unique = true, nullable = false)
+	private String token;
+
+	@Column(name = ICFileBMPBean.COLUMN_PUBLIC, length = 1)
+	private Character publiclyAvailable;
 
 	public Integer getFileId() {
 		return fileId;
@@ -288,7 +305,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 		if (this.deleted == null) {
 			return false;
 		}
-		return this.deleted == 'Y';
+		return this.deleted == CoreConstants.CHAR_Y;
 	}
 
 	/**
@@ -296,7 +313,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 	 *          the deleted to set
 	 */
 	public void setDeleted(boolean deleted) {
-		this.deleted = deleted ? 'Y' : 'N';
+		this.deleted = deleted ? CoreConstants.CHAR_Y : CoreConstants.CHAR_N;
 	}
 
 	/**
@@ -461,7 +478,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 
 	@Override
 	public Map<String, String> getMetaDataAttributes() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -473,7 +490,7 @@ public class ICFile implements Serializable, MetaDataCapable {
 
 	@Override
 	public Map<String, String> getMetaDataTypes() {
-		Map<String, String> map = new HashMap<String, String>();
+		Map<String, String> map = new HashMap<>();
 
 		Set<Metadata> list = getMetadata();
 		for (Metadata metaData : list) {
@@ -551,6 +568,18 @@ public class ICFile implements Serializable, MetaDataCapable {
 		//Does nothing...
 	}
 
+	@PrePersist
+	@PreUpdate
+	public void setDefaultValues() {
+		if (StringUtil.isEmpty(uniqueId)) {
+			IdGenerator uidGenerator = IdGeneratorFactory.getUUIDGenerator();
+			setUniqueId(uidGenerator.generateId());
+		}
+		if (StringUtil.isEmpty(token)) {
+			setToken(StringHandler.getRandomString(ICFileBMPBean.TOKEN_MAX_LENGTH));
+		}
+	}
+
 	public String getUriInRepo() {
 		return uriInRepo;
 	}
@@ -566,4 +595,32 @@ public class ICFile implements Serializable, MetaDataCapable {
 	public void setValue(byte[] value) {
 		this.value = value;
 	}
+
+	public String getUniqueId() {
+		return uniqueId;
+	}
+
+	public void setUniqueId(String uniqueId) {
+		this.uniqueId = uniqueId;
+	}
+
+	public String getToken() {
+		return token;
+	}
+
+	public void setToken(String token) {
+		this.token = token;
+	}
+
+	public Boolean getPublicl() {
+		if (this.publiclyAvailable == null) {
+			return false;
+		}
+		return this.publiclyAvailable == CoreConstants.CHAR_Y;
+	}
+
+	public void setPubliclyAvailable(Boolean publiclyAvailable) {
+		this.publiclyAvailable = publiclyAvailable != null && publiclyAvailable ? CoreConstants.CHAR_Y : CoreConstants.CHAR_N;
+	}
+
 }

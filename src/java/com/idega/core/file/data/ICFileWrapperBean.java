@@ -552,4 +552,24 @@ public class ICFileWrapperBean extends TreeableEntityWrapper<ICFile> implements 
 		((ICFile) this.getMainEntity()).setUniqueId(uniqueId);
 	}
 
+	@Override
+	public String getToken() {
+		return ((ICFile) this.getMainEntity()).getToken();
+	}
+
+	@Override
+	public void setToken(String token) {
+		((ICFile) this.getMainEntity()).setToken(token);
+	}
+
+	@Override
+	public boolean isPublic() {
+		return ((ICFile) this.getMainEntity()).isPublic();
+	}
+
+	@Override
+	public void setPublic(boolean publiclyAvailable) {
+		((ICFile) this.getMainEntity()).setPublic(publiclyAvailable);
+	}
+
 }

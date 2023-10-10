@@ -82,7 +82,6 @@ public java.util.Collection findChildren(ICFile parent, java.util.Collection vis
 
 }
 
-
 	@Override
 	public ICFile findByHash(Integer hash) throws FinderException {
 		com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
@@ -145,4 +144,52 @@ public java.util.Collection findChildren(ICFile parent, java.util.Collection vis
 
 		return null;
 	}
+
+	@Override
+	public Collection<Integer> getFilesWithoutUniqueIds() {
+		try {
+			IDOEntity entity = this.idoCheckOutPooledEntity();
+			Collection<Integer> ids = ((ICFileBMPBean) entity).ejbFindFilesWithoutUniqueIds();
+			this.idoCheckInPooledEntity(entity);
+			return ids;
+		} catch (FinderException e) {
+		} catch (Exception e) {
+			getLog().log(Level.WARNING, "Error getting files without unique IDs", e);
+		}
+		return null;
+	}
+
+	@Override
+	public Collection<Integer> getFilesWithoutTokens() {
+		try {
+			IDOEntity entity = this.idoCheckOutPooledEntity();
+			Collection<Integer> ids = ((ICFileBMPBean) entity).ejbFindFilesWithoutTokens();
+			this.idoCheckInPooledEntity(entity);
+			return ids;
+		} catch (FinderException e) {
+		} catch (Exception e) {
+			getLog().log(Level.WARNING, "Error getting files without tokens", e);
+		}
+		return null;
+	}
+
+	@Override
+	public ICFile findByToken(String token) {
+		if (StringUtil.isEmpty(token)) {
+			return null;
+		}
+
+		try {
+			com.idega.data.IDOEntity entity = this.idoCheckOutPooledEntity();
+			Object pk = ((ICFileBMPBean) entity).ejbFindByToken(token);
+			this.idoCheckInPooledEntity(entity);
+			return this.findByPrimaryKey(pk);
+		} catch (FinderException e) {
+		} catch (Exception e) {
+			getLog().log(Level.WARNING, "Error getting file by token " + token, e);
+		}
+
+		return null;
+	}
+
 }

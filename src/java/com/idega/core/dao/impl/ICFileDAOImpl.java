@@ -1,14 +1,9 @@
 package com.idega.core.dao.impl;
 
-import java.io.ByteArrayInputStream;
 import java.sql.Timestamp;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 import java.util.logging.Level;
-
-import javax.ejb.CreateException;
-import javax.ejb.FinderException;
 
 import org.springframework.beans.factory.config.BeanDefinition;
 import org.springframework.context.annotation.Scope;
@@ -19,7 +14,6 @@ import com.idega.core.dao.ICFileDAO;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.file.data.bean.ICFile;
 import com.idega.core.file.data.bean.ICMimeType;
-import com.idega.core.persistence.Param;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
@@ -90,20 +84,32 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 		return null;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 * @see com.idega.core.dao.ICFileDAO#update(java.lang.Integer, java.lang.String, java.lang.String, java.sql.Blob, java.util.Date, java.util.Date, java.lang.Integer)
-	 */
 	@Override
 	public ICFile update(
-			Integer id, 
-			String name, 
-			String description, 
-			byte[] fileValue, 
+			Integer id,
+			String name,
+			String description,
+			byte[] fileValue,
 			Date creationDate,
-			Date modificationDate, 
-			Integer fileSize, 
-			ICMimeType type) {
+			Date modificationDate,
+			Integer fileSize,
+			ICMimeType type
+	) {
+		return update(id, name, description, fileValue, creationDate, modificationDate, fileSize, type, Boolean.FALSE);
+	}
+
+	@Override
+	public ICFile update(
+			Integer id,
+			String name,
+			String description,
+			byte[] fileValue,
+			Date creationDate,
+			Date modificationDate,
+			Integer fileSize,
+			ICMimeType type,
+			Boolean publiclyAvailable
+	) {
 		ICFile entity = findById(id);
 		if (entity == null) {
 			entity = new ICFile();
@@ -133,9 +139,10 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 			entity.setValue(fileValue);
 		}
 
+		entity.setPubliclyAvailable(publiclyAvailable);
+
 		entity = update(entity);
 		if (entity != null) {
-//			entity.setMetaData("uuid", UUID.randomUUID().toString());
 			if (type != null) {
 				entity.setMimetype(type);
 			}
@@ -143,4 +150,5 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 
 		return update(entity);
 	}
+
 }

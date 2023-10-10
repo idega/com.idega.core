@@ -79,17 +79,17 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	public static final String ONE_TO_MANY = "one-to-many";
 	public static final String MANY_TO_MANY = "many-to-many";
 	public static final String ONE_TO_ONE = "one-to-one";
-	protected static final String UNIQUE_ID_COLUMN_NAME = "UNIQUE_ID";
+	public static final String UNIQUE_ID_COLUMN_NAME = "UNIQUE_ID";
 
 	static String DEFAULT_DATASOURCE = "default";
 	private int _state = IDOLegacyEntity.STATE_NEW;
 
-	private Map<String, Object> _columns = new Hashtable<String, Object>();
+	private Map<String, Object> _columns = new Hashtable<>();
 	private Map<String, Boolean> _updatedColumns;
 	private String _dataSource;
 	String[] _cachedColumnNameList;
 
-	private Map<String, EJBLocalHome> _ejbHomes = new HashMap<String, EJBLocalHome>();
+	private Map<String, EJBLocalHome> _ejbHomes = new HashMap<>();
 
 	private Object _primaryKey;
 	private Map<String, String> _theMetaDataAttributes;
@@ -320,7 +320,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 */
 	@Override
 	public Collection<Integer> decode(String[] primaryKeys) {
-		Collection<Integer> c = new ArrayList<Integer>();
+		Collection<Integer> c = new ArrayList<>();
 		for (int i = 0; i < primaryKeys.length; i++) {
 			c.add(decode(primaryKeys[i]));
 		}
@@ -1261,7 +1261,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		String[] theReturn = getCachedColumnNames();
 
 		if (theReturn == null) {
-			Collection<String> results = new ArrayList<String>();
+			Collection<String> results = new ArrayList<>();
 			// int i = 0;
 			// for (Enumeration e = columns.keys(); e.hasMoreElements();i++){
 			// for (Enumeration e = getAttributes().elements(); e.hasMoreElements();
@@ -1296,7 +1296,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 	/** @todo this should not be done every time cache!!* */
 	public String[] getVisibleColumnNames() {
-		List<String> theColumns = new ArrayList<String>();
+		List<String> theColumns = new ArrayList<>();
 		for (Iterator<EntityAttribute> iter = getAttributes().iterator(); iter.hasNext();) {
 			String tempName = iter.next().getColumnName();
 			if (getIfVisible(tempName)) {
@@ -1307,7 +1307,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	}
 
 	public String[] getEditableColumnNames() {
-		Collection<String> theColumns = new ArrayList<String>();
+		Collection<String> theColumns = new ArrayList<>();
 		for (Iterator<EntityAttribute> iter = getAttributes().iterator(); iter.hasNext();) {
 			String tempName = iter.next().getColumnName();
 			if (getIfEditable(tempName)) {
@@ -2116,7 +2116,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	protected IDOLegacyEntity[] findRelated(IDOLegacyEntity entity, String SQLString) throws SQLException {
 		Connection conn = null;
 		Statement Stmt = null;
-		Collection<IDOLegacyEntity> results = new ArrayList<IDOLegacyEntity>();
+		Collection<IDOLegacyEntity> results = new ArrayList<>();
 		/*
 		 * String tableToSelectFrom = ""; if (entity.getEntityName().endsWith("_")) {
 		 * tableToSelectFrom = entity.getEntityName() + this.getEntityName(); } else {
@@ -2211,7 +2211,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		Statement Stmt = null;
 		int[] toReturn = null;
 		int length;
-		Collection<Integer> results = new ArrayList<Integer>();
+		Collection<Integer> results = new ArrayList<>();
 		/*
 		 * String tableToSelectFrom = ""; if (entity.getEntityName().endsWith("_")) {
 		 * tableToSelectFrom = entity.getEntityName() + this.getEntityName(); } else {
@@ -3559,9 +3559,9 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 	// fetches the metadata for this id and puts it in a HashTable
 	private void getMetaData() {
-		this._theMetaDataAttributes = new Hashtable<String, String>();
-		this._theMetaDataIds = new Hashtable<String, Integer>();
-		this._theMetaDataTypes = new Hashtable<String, String>();
+		this._theMetaDataAttributes = new Hashtable<>();
+		this._theMetaDataIds = new Hashtable<>();
+		this._theMetaDataTypes = new Hashtable<>();
 		// _theMetaDataOrdering = new Hashtable();
 
 		if (getEntityState() == IDOLegacyEntity.STATE_NEW || getEntityState() == IDOLegacyEntity.STATE_NEW_AND_NOT_IN_SYNCH_WITH_DATASTORE) {
@@ -3756,13 +3756,13 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			if (dataHasChanged) {
 				if (obj == null) { // is new
 					if (this._insertMetaData == null) {
-						this._insertMetaData = new ArrayList<String>();
+						this._insertMetaData = new ArrayList<>();
 					}
 					this._insertMetaData.add(metaDataKey);
 				}
 				else { // is old
 					if (this._updateMetaData == null) {
-						this._updateMetaData = new ArrayList<String>();
+						this._updateMetaData = new ArrayList<>();
 					}
 					if (this._insertMetaData != null) {
 						if (this._insertMetaData.indexOf(metaDataKey) == -1) { // is old
@@ -3796,7 +3796,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 			getMetaData(); // get all meta data first if null
 		}
 		if (this._deleteMetaData == null) {
-			this._deleteMetaData = new ArrayList<String>();
+			this._deleteMetaData = new ArrayList<>();
 		}
 		if (this._theMetaDataAttributes != null) {
 			Set keySet = this._theMetaDataAttributes.keySet();
@@ -3827,7 +3827,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 
 		if (this._theMetaDataAttributes.get(metaDataKey) != null) {
 			if (this._deleteMetaData == null) {
-				this._deleteMetaData = new ArrayList<String>();
+				this._deleteMetaData = new ArrayList<>();
 			}
 			this._deleteMetaData.add(metaDataKey);
 
@@ -4134,7 +4134,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	void flagColumnUpdate(String columnName) {
 		if (this.canRegisterColumnsForUpdate) {
 			if (this._updatedColumns == null) {
-				this._updatedColumns = new HashMap<String, Boolean>();
+				this._updatedColumns = new HashMap<>();
 			}
 			this._updatedColumns.put(columnName.toUpperCase(), Boolean.TRUE);
 		}
@@ -4328,7 +4328,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 		boolean measure = CoreUtil.isSQLMeasurementOn();
 		long start = measure ? System.currentTimeMillis() : 0;
 
-		Collection<PK> results = new ArrayList<PK>();
+		Collection<PK> results = new ArrayList<>();
 		try {
 			conn = getConnection(getDatasource());
 			rsh = prepareResultSet(conn, sqlQuery, query);
@@ -4510,7 +4510,7 @@ public abstract class GenericEntity implements Serializable, IDOEntity, IDOEntit
 	 *           or an error with the query
 	 */
 	private <PK, T extends IDOEntity> Collection<T> idoGetRelatedEntitiesBySQL(T returningEntity, String sqlQuery) throws IDORelationshipException {
-		Collection<T> results = new ArrayList<T>();
+		Collection<T> results = new ArrayList<>();
 		Collection<PK> ids = idoGetRelatedEntityPKs(returningEntity, sqlQuery);
 		try {
 			IDOHome home = IDOLookup.getHome(returningEntity.getClass(), getDatasource());
