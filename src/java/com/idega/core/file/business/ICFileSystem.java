@@ -7,6 +7,7 @@ import java.rmi.RemoteException;
 
 import com.idega.business.IBOService;
 import com.idega.core.file.data.ICFile;
+import com.idega.presentation.IWContext;
 
 /**
  * FileSystem: This is the interface to the file system in idegaWeb.
@@ -28,14 +29,14 @@ public interface ICFileSystem extends IBOService {
 	 * @return A String which is the url to the file
 	 * @throws RemoteException
 	 */
-	public String getFileURI(ICFile file)throws RemoteException;
+	public String getFileURI(IWContext iwc, ICFile file) throws RemoteException;
 	/**
 	 * Get the URI to a file on the webserver.
 	 * @param fileId The id of the file to get the url to
 	 * @return A String which is the url to the file
 	 * @throws RemoteException
 	 */
-	public String getFileURI(int fileId)throws RemoteException;
+	public String getFileURI(IWContext iwc, String fileUniqueId, String fileToken)throws RemoteException;
 
 	/**
 	 * Get the URI to a file on the webserver.
@@ -44,7 +45,7 @@ public interface ICFileSystem extends IBOService {
 	 * @return A String which is the url to the file
 	 * @throws RemoteException
 	 */
-	public String getFileURI(int fileId, String datasource)throws RemoteException;
+	public String getFileURI(IWContext iwc, String fileUniqueId, String fileToken, String datasource)throws RemoteException;
 
 	/**
 	 * DRAFT OF METHODS TO BE IN THIS CLASS:

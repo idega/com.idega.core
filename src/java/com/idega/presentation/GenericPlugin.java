@@ -164,7 +164,7 @@ public class GenericPlugin extends PresentationObject implements InvisibleInBuil
 		{
 			if (this.file != null)
 			{
-				String url = getICFileSystem(iwc).getFileURI(this.file);
+				String url = getICFileSystem(iwc).getFileURI(iwc, this.file);
 				setURL(url);
 			}
 			if (getMarkupLanguage().equals("HTML"))

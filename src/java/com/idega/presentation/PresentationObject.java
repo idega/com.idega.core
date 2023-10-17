@@ -24,6 +24,7 @@ import java.util.StringTokenizer;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
+import javax.ejb.FinderException;
 import javax.el.ValueExpression;
 import javax.faces.component.UIComponent;
 import javax.faces.component.UIComponentBase;
@@ -46,7 +47,10 @@ import com.idega.core.component.data.ICObjectInstance;
 import com.idega.core.component.data.ICObjectInstanceHome;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.business.ICFileSystemFactory;
+import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
 import com.idega.core.idgenerator.business.UUIDGenerator;
+import com.idega.data.IDOLookup;
 import com.idega.event.GenericState;
 import com.idega.event.IWActionListener;
 import com.idega.event.IWEvent;
@@ -465,7 +469,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	 */
 	protected static Map<String, String> getAttributeMap(String attributeString)
 	{
-		Map<String, String> map = new Hashtable<String, String>();
+		Map<String, String> map = new Hashtable<>();
 		if (attributeString != null && attributeString.length() > 1)
 		{
 			StringTokenizer tokens = new StringTokenizer(attributeString), tok;
@@ -510,14 +514,14 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 
 	public Map<String, String> getMarkupAttributes() {
 		if(this.attributes==null){
-			this.attributes = new Hashtable<String, String>();
+			this.attributes = new Hashtable<>();
 		}
 
 		if (!isEscaped()) {
 			return this.attributes;
 		}
 
-		Map<String, String> modifiedMap = new HashMap<String, String>();
+		Map<String, String> modifiedMap = new HashMap<>();
 		if (!MapUtil.isEmpty(this.attributes)) {
 			for (String attributeName : this.attributes.keySet()) {
 				String attributeValue = this.attributes.get(attributeName);
@@ -1231,7 +1235,7 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 	{
 		if (this.eventAttributes == null)
 		{
-			this.eventAttributes = new Hashtable<String, Object>();
+			this.eventAttributes = new Hashtable<>();
 		}
 		this.eventAttributes.put(attributeName, attributeValue);
 	}
@@ -2797,4 +2801,23 @@ public class PresentationObject extends UIComponentBase implements Cloneable, Pr
 		RepositorySession repositorySession = ELUtil.getInstance().getBean(RepositorySession.class);
 		return repositorySession;
 	}
+
+	protected ICFile getFile(int fileId) {
+		if (fileId > 0) {
+			try {
+				ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
+				return fileHome.findByPrimaryKey(fileId);
+			} catch (FinderException e) {
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "Error getting file by ID " + fileId, e);
+			}
+		}
+		return null;
+	}
+
+	protected String getFileUniqueId(int fileId) {
+		ICFile file = getFile(fileId);
+		return file == null ? null : file.getUniqueId();
+	}
+
 }

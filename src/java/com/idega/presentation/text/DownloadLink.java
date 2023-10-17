@@ -9,11 +9,14 @@
 package com.idega.presentation.text;
 
 import java.io.IOException;
+import java.util.logging.Level;
 
 import javax.el.ValueExpression;
 import javax.faces.context.FacesContext;
 
 import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
+import com.idega.data.IDOLookup;
 import com.idega.idegaweb.IWMainApplication;
 import com.idega.io.DownloadWriter;
 import com.idega.io.MediaWritable;
@@ -131,12 +134,31 @@ public class DownloadLink extends Link {
 
     @Override
 	public void setFile(ICFile file) {
-        addParameter(DownloadWriter.PRM_FILE_ID,((Integer)file.getPrimaryKey()).intValue());
+    	if (file == null) {
+    		return;
+    	}
+
+        addParameter(DownloadWriter.PRM_FILE_UNIQUE_ID, file.getUniqueId());
+        String token = file.getToken();
+		if (!StringUtil.isEmpty(token)) {
+			addParameter(DownloadWriter.PRM_FILE_TOKEN, token);
+		}
     }
 
     @Override
 	public void setFile(int fileId) {
-        addParameter(DownloadWriter.PRM_FILE_ID,fileId);
+    	if (fileId <= 0) {
+    		return;
+    	}
+
+    	ICFile file = null;
+    	try {
+    		ICFileHome fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
+    		file = fileHome.findByPrimaryKey(fileId);
+    	} catch (Exception e) {
+    		getLogger().log(Level.WARNING, "Error setting file by ID " + fileId, e);
+    	}
+    	setFile(file);
     }
 
     public void setMediaWriterClass(Class<? extends MediaWritable> writerClass){

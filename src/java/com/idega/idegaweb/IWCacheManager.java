@@ -20,15 +20,18 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 
-import javax.ejb.FinderException;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import com.idega.core.file.data.ICFile;
+import com.idega.core.file.data.ICFileHome;
 import com.idega.data.CacheableEntity;
 import com.idega.data.GenericEntity;
 import com.idega.data.IDOEntity;
 import com.idega.data.IDOHome;
 import com.idega.data.IDOLegacyEntity;
 import com.idega.data.IDOLookup;
+import com.idega.file.security.FileAccessService;
+import com.idega.presentation.IWContext;
 import com.idega.repository.RepositoryService;
 import com.idega.repository.data.RefactorClassRegistry;
 import com.idega.repository.data.Singleton;
@@ -71,6 +74,16 @@ public class IWCacheManager implements Singleton {
   private IWCacheManagerEventClient iwCacheManagerEventClient = null;
 
   private static final long CACHE_NEVER_EXPIRES = -1;
+
+  	@Autowired
+	private FileAccessService fileAccessService;
+
+	private FileAccessService getFileAccessService() {
+		if (fileAccessService == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return fileAccessService;
+	}
 
   private IWCacheManager() {
 	  iwCacheManagerEventClient = new IWCacheManagerEventClient(this);
@@ -135,7 +148,7 @@ public class IWCacheManager implements Singleton {
 
   private Map<String, List<String>> getKeysMap(){
     if(this._keysMap==null){
-      this._keysMap=new ConcurrentHashMap<String, List<String>>();
+      this._keysMap=new ConcurrentHashMap<>();
     }
     return this._keysMap;
   }
@@ -143,7 +156,7 @@ public class IWCacheManager implements Singleton {
   public void registerDerivedKey(String key,String derivedKey){
     List<String> derived = getKeysMap().get(key);
     if(derived==null){
-      derived=new ArrayList<String>();
+      derived=new ArrayList<>();
       getKeysMap().put(key,derived);
     }
     derived.add(derivedKey);
@@ -235,34 +248,34 @@ public class IWCacheManager implements Singleton {
 
   private Map<String, Long> getTimesMap(){
     if(this.timesMap==null){
-      this.timesMap = new ConcurrentHashMap<String, Long>();
+      this.timesMap = new ConcurrentHashMap<>();
     }
     return this.timesMap;
   }
 
   private Map<String, Object> getObjectsMap(){
     if(this.objectsMap==null){
-      this.objectsMap = new ConcurrentHashMap<String, Object>();
+      this.objectsMap = new ConcurrentHashMap<>();
     }
     return this.objectsMap;
   }
 
   private Map<String, Long> getIntervalsMap(){
     if(this.intervalsMap==null){
-      this.intervalsMap = new ConcurrentHashMap<String, Long>();
+      this.intervalsMap = new ConcurrentHashMap<>();
     }
     return this.intervalsMap;
   }
 
-  public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma){
-	  return getCachedBlobObject(entityClassString, id, iwma, null);
+  public Cache getCachedBlobObject(IWContext iwc, String entityClassString, String fileUniqueID, String fileToken, IWMainApplication iwma){
+	  return getCachedBlobObject(iwc, entityClassString, fileUniqueID, fileToken, iwma, null);
   }
 
-  public Cache getCachedBlobObject( String entityClassString, int id, IWMainApplication iwma, String datasource){
+  public Cache getCachedBlobObject(IWContext iwc, String entityClassString, String fileUniqueID, String fileToken, IWMainApplication iwma, String datasource){
     //check if this blob has already been cached
-    Cache cache = (Cache) getObject(entityClassString+id+datasource);
+    Cache cache = (Cache) getObject(entityClassString + fileUniqueID + CoreConstants.UNDER + fileToken + datasource);
     if (cache == null || !isBlobCached(cache)) {//if null cache it for next time
-     cache = cacheBlob(entityClassString,id,iwma, datasource);
+     cache = cacheBlob(iwc, entityClassString, fileUniqueID, fileToken, iwma, datasource);
     }
     return cache;
   }
@@ -272,12 +285,16 @@ public class IWCacheManager implements Singleton {
  * @param cache
  * @return true if the cached file exists
  */
-private boolean isBlobCached(Cache cache){
+  private boolean isBlobCached(Cache cache) {
+	  if (FileUtil.isFilesCacheTurneOff(IWMainApplication.getDefaultIWMainApplication().getSettings())) {
+		  return false;
+	  }
+
   	java.io.File f = new java.io.File(cache.getRealPathToFile());
     return f.exists() && f.canRead() && f.length() > 0;
   }
 
-  private Cache cacheBlob(String entityClassString, int id , IWMainApplication iwma, String datasource){
+  private Cache cacheBlob(IWContext iwc, String entityClassString, String fileUniqueID, String fileToken, IWMainApplication iwma, String datasource) {
     InputStream input = null;
     Cache cacheObject = null;
     String fileName = null;
@@ -292,9 +309,14 @@ private boolean isBlobCached(Cache cache){
     	GenericEntity ent = null;
     	if (home != null) {
 	    	try {
-	    		ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(id));
-	    	} catch (FinderException e) {
-	    		log.warning("Error getting entity by ID " + id);
+	    		if (home instanceof ICFileHome) {
+	    			ent = (GenericEntity) ((ICFileHome) home).findByUUID(fileUniqueID);
+
+	    		} else {
+	    			ent = (GenericEntity) home.findByPrimaryKeyIDO(new Integer(fileUniqueID));
+	    		}
+	    	} catch (Exception e) {
+	    		log.log(Level.WARNING, "Error getting entity by unique ID " + fileUniqueID + " from " + home.getClass().getName() + " for " + entityClassString, e);
 	    	}
     	}
 
@@ -304,10 +326,21 @@ private boolean isBlobCached(Cache cache){
 
     	if (ent instanceof ICFile) {
     		ICFile file = (ICFile) ent;
+
     		String uri = file.getFileUri();
     		if (!StringUtil.isEmpty(uri)) {
-    			RepositoryService repository = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
-    			input = repository.getInputStreamAsRoot(uri);
+    			if (getFileAccessService().hasPermission(iwc, uri)) {
+    				RepositoryService repository = ELUtil.getInstance().getBean(RepositoryService.BEAN_NAME);
+    				input = repository.getInputStreamAsRoot(uri);
+    			} else {
+    				log.warning("No permission to access " + uri);
+    				return null;
+    			}
+    		}
+
+    		if (!getFileAccessService().isAvailable(iwc, file, fileUniqueID, fileToken)) {
+    			log.warning("File " + file + " (unique ID: " + fileUniqueID + ") is not available");
+    			return null;
     		}
     	}
 
@@ -315,40 +348,49 @@ private boolean isBlobCached(Cache cache){
 	    	try {
 	    		input = ent.getInputStreamColumnValue(ent.getLobColumnName());
 	    	} catch (Exception e) {
-	    		log.log(Level.WARNING, "Error getting input stream for " + entityClassString + ", ID: " + id, e);
+	    		log.log(Level.WARNING, "Error getting input stream for " + entityClassString + ", unique ID: " + fileUniqueID, e);
 	    	}
     	}
     	if (input == null) {
-    		log.warning("Unable to resolve input stream for " + ent + ". DB entity: " +	entityClassString + ", ID " + id + ", datasource " + datasource);
+    		log.warning("Unable to resolve input stream for " + ent + ". DB entity: " +	entityClassString + ", unique ID " + fileUniqueID + ", token: " + fileToken +
+    				", datasource " + datasource);
     	}
 
     	realPath = iwma.getApplicationRealPath() + FileUtil.getFileSeparator() + IW_ROOT_CACHE_DIRECTORY;
     	String appVPath = iwma.getApplicationContextURI();
 
     	String virtualPath;
-    	if (appVPath.endsWith(CoreConstants.SLASH)) {
+    	if (appVPath.endsWith(FileUtil.getFileSeparator())) {
 			virtualPath = appVPath + IW_ROOT_CACHE_DIRECTORY;
 		} else {
-			virtualPath = appVPath + CoreConstants.SLASH + IW_ROOT_CACHE_DIRECTORY;
+			virtualPath = appVPath + FileUtil.getFileSeparator() + IW_ROOT_CACHE_DIRECTORY;
 		}
 
-    	fileName = ent.getID() + CoreConstants.UNDER + ent.getName();
-    	fileName = TextSoap.findAndCut(fileName,CoreConstants.SPACE);
-    	fileName = StringHandler.stripNonRomanCharacters(fileName, new char[] {'_', '.', '0', '1','2','3','4','5','6','7','8','9'});
+    	fileName = ent.getUniqueId() + (StringUtil.isEmpty(fileToken) ? CoreConstants.EMPTY : (CoreConstants.UNDER + fileToken)) +  CoreConstants.UNDER + ent.getName();
+    	fileName = TextSoap.findAndCut(fileName, CoreConstants.SPACE);
+    	fileName = StringHandler.stripNonRomanCharacters(fileName, new char[] {'_', '-', '.', '0', '1','2','3','4','5','6','7','8','9'});
+    	if (fileName.length() > 256) {
+    		fileName = fileName.substring(0, 256);
+    	}
 
     	if (input == null) {
     		log.warning("Unable to write file " + fileName + " to " + realPath + " because input stream for " +
-    				entityClassString + ", ID " + id + ", datasource " + datasource + " is not defined");
+    				entityClassString + ", unique ID " + fileUniqueID + ", token " + fileToken + ", datasource " + datasource + " is not defined");
     	} else {
     		FileUtil.streamToFile(input, realPath, fileName);
     		cacheObject = new Cache();
     		cacheObject.setEntity(ent);
-    		cacheObject.setRealPathToFile(realPath+FileUtil.getFileSeparator()+fileName);
-    		cacheObject.setVirtualPathToFile(virtualPath+CoreConstants.SLASH+URLEncoder.encode(fileName));//used to url encode here
-    		setObject(entityClassString+id+datasource,cacheObject,0);
+    		cacheObject.setRealPathToFile(realPath + FileUtil.getFileSeparator() + fileName);
+    		cacheObject.setVirtualPathToFile(virtualPath + FileUtil.getFileSeparator() + URLEncoder.encode(fileName));//used to url encode here
+    		setObject(entityClassString + fileUniqueID + CoreConstants.UNDER + fileToken + datasource, cacheObject, 0);
     	}
     } catch (Exception e) {
-    	log.log(Level.WARNING, "Some error occured while writing file " + fileName + " to " + realPath + ". DB entity: " + entityClassString + ", ID " + id + ", datasource " + datasource, e);
+    	log.log(
+    			Level.WARNING,
+    			"Some error occured while writing file " + fileName + " to " + realPath + ". DB entity: " + entityClassString + ", unique ID " + fileUniqueID + ", token " +
+    			fileToken + ", datasource " + datasource,
+    			e
+    	);
     } finally {
     	IOUtil.close(input);
     }
@@ -378,7 +420,7 @@ private boolean isBlobCached(Cache cache){
 	  }
 
 	  if( this.entityMaps == null ){
-      this.entityMaps = new ConcurrentHashMap<Object, Object>();
+      this.entityMaps = new ConcurrentHashMap<>();
     }
     this.entityMaps.put(cacheKey, entity);
   }
@@ -425,14 +467,14 @@ private boolean isBlobCached(Cache cache){
   public void cacheTable(CacheableEntity entity, String columnNameForKey ,String columnNameForSecondKey){
 
     if( this.entityMaps == null ){
-      this.entityMaps = new ConcurrentHashMap<Object, Object>();
-      this.entityMapsKeys = new ConcurrentHashMap<Class<?>, List<String>>();
+      this.entityMaps = new ConcurrentHashMap<>();
+      this.entityMapsKeys = new ConcurrentHashMap<>();
     }
 
 
     if( this.entityMaps.get(getCorrectClassForEntity(entity)) == null ){
-      Map<String, Object> entityMap = new ConcurrentHashMap<String, Object>();
-      List<String> keys = new ArrayList<String>();
+      Map<String, Object> entityMap = new ConcurrentHashMap<>();
+      List<String> keys = new ArrayList<>();
 
       IDOLegacyEntity[] e;
       try {

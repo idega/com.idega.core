@@ -96,7 +96,7 @@ public class ImageSlideShow extends Block {
 						}
 					}
 					try {
-						String url = getICFileSystem(iwc).getFileURI(fileImage);
+						String url = getICFileSystem(iwc).getFileURI(iwc, fileImage);
 						urls.add(url);
 					}
 					catch (Exception e) {
@@ -112,7 +112,7 @@ public class ImageSlideShow extends Block {
 				while (iter.hasNext()) {
 					fileImage = (ICFile) iter.next();
 					try {
-						String url = getICFileSystem(iwc).getFileURI(fileImage);
+						String url = getICFileSystem(iwc).getFileURI(iwc, fileImage);
 						if (!urls.contains(url)) {
 							urls.add(url);
 						}

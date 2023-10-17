@@ -240,7 +240,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setStyleDefinition(String styleName, String styleAttribute) {
 		if (this._styleDefinitions == null) {
-			this._styleDefinitions = new Hashtable<String, String>();
+			this._styleDefinitions = new Hashtable<>();
 		}
 		this._styleDefinitions.put(styleName, styleAttribute);
 	}
@@ -255,7 +255,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	protected void addStyleSheetURL(String URL, String mediaType) {
 		if (this._styleSheets == null) {
-			this._styleSheets = new QueueMap<String, StyleSheetLink>();
+			this._styleSheets = new QueueMap<>();
 		}
 		this._styleSheets.put(URL, new StyleSheetLink(URL, StringUtil.isEmpty(mediaType) ? PageResourceConstants.MEDIA_ALL : mediaType));
 	}
@@ -310,7 +310,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	public void addJavaScriptAction(String action) {
 		if (this.javaScriptActions == null) {
-			this.javaScriptActions = new QueueMap<String, JavaScriptLink>();
+			this.javaScriptActions = new QueueMap<>();
 		}
 
 		addScript(this.javaScriptActions, action, action);
@@ -330,7 +330,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	public void addJavascriptURL(String URL) {
 		if (this._javascripts == null)
-			this._javascripts = new QueueMap<String, JavaScriptLink>();
+			this._javascripts = new QueueMap<>();
 
 		if (!this._javascripts.containsKey(URL))
 			this._javascripts.put(URL, new JavaScriptLink(URL));
@@ -464,7 +464,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setMetaTag(String tagName, String tagValue) {
 		if (this._metaTags == null) {
-			this._metaTags = new Hashtable<String, String>();
+			this._metaTags = new Hashtable<>();
 		}
 		this._metaTags.put(tagName, tagValue);
 	}
@@ -479,7 +479,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void setHTTPEquivTag(String tagName, String tagValue) {
 		if (this._HTTPEquivs == null) {
-			this._HTTPEquivs = new Hashtable<String, String>();
+			this._HTTPEquivs = new Hashtable<>();
 		}
 		this._HTTPEquivs.put(tagName, tagValue);
 	}
@@ -1281,7 +1281,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 		/* get the files cached url */
 		if (this.styleFile != null) {
 			ICFileSystem fsystem = getICFileSystem(iwc);
-			String styleSheetURL = fsystem.getFileURI(((Integer) this.styleFile.getPrimaryKey()).intValue());
+			String styleSheetURL = fsystem.getFileURI(iwc, getFile(((Integer) this.styleFile.getPrimaryKey()).intValue()));
 			setStyleSheetURL(styleSheetURL);
 		}
 	}
@@ -1378,7 +1378,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void addJavaScriptBeforeJavaScriptURLs(String keyInMap, String script) {
 		if (this._javascriptStringsBeforeJSUrls == null) {
-			this._javascriptStringsBeforeJSUrls = new QueueMap<String, JavaScriptLink>();
+			this._javascriptStringsBeforeJSUrls = new QueueMap<>();
 		}
 
 		addScript(this._javascriptStringsBeforeJSUrls, keyInMap, script);
@@ -1391,7 +1391,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 	 */
 	public void addJavaScriptAfterJavaScriptURLs(String keyInMap, String script) {
 		if (this._javascriptStringsAfterJSUrls == null) {
-			this._javascriptStringsAfterJSUrls = new QueueMap<String, JavaScriptLink>();
+			this._javascriptStringsAfterJSUrls = new QueueMap<>();
 		}
 
 		addScript(this._javascriptStringsAfterJSUrls, keyInMap, script);
@@ -2142,7 +2142,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 			ICFileSystem fsystem;
 			try {
 				fsystem = getICFileSystem(iwc);
-				url = fsystem.getFileURI(getShortCutIconID());
+				url = fsystem.getFileURI(iwc, getFile(getShortCutIconID()));
 			}
 			catch (RemoteException e) {
 				e.printStackTrace();
@@ -2389,7 +2389,7 @@ public class Page extends PresentationObjectContainer implements PropertyDescrip
 
 	@Override
 	public List<PropertyDescription> getPropertyDescriptions() {
-		List<PropertyDescription> list = new ArrayList<PropertyDescription>();
+		List<PropertyDescription> list = new ArrayList<>();
 		list.add(new PropertyDescription("method:1:implied:void:setStyleSheetURL:java.lang.String:", "1", File.class.getName(), FileObjectReader.class.getName(),
 				false));
 		list.add(new PropertyDescription(":method:1:implied:void:setTemplateId:java.lang.String:", "1", ICPage.class.getName(), ICPage.class.getName(), true));

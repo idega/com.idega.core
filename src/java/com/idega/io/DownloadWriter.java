@@ -33,6 +33,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.core.file.data.ICFileHome;
 import com.idega.core.file.util.MimeTypeUtil;
 import com.idega.data.IDOLookup;
+import com.idega.file.security.FileAccessService;
 import com.idega.presentation.IWContext;
 import com.idega.repository.RepositoryService;
 import com.idega.user.data.User;
@@ -53,15 +54,13 @@ import com.idega.util.expression.ELUtil;
  */
 public class DownloadWriter implements MediaWritable {
 
-	private static final Logger LOGGER = Logger.getLogger(DownloadWriter.class.getName());
+	public final static String	PRM_ABSOLUTE_FILE_PATH = "abs_fpath",
+								PRM_RELATIVE_FILE_PATH = "rel_fpath",
+								PRM_FILE_NAME = "alt_f_name",
+								PRM_FILE_UNIQUE_ID = "fileUUId",
+								PRM_FILE_TOKEN = "fileToken";
 
-	public final static String PRM_ABSOLUTE_FILE_PATH = "abs_fpath";
-
-	public final static String PRM_RELATIVE_FILE_PATH = "rel_fpath";
-
-	public final static String PRM_FILE_NAME = "alt_f_name";
-
-	public final static String PRM_FILE_ID = "fileId";
+	private Logger LOGGER = null;
 
 	private File file = null;
 
@@ -72,30 +71,42 @@ public class DownloadWriter implements MediaWritable {
 	private String fileName;
 
 	@Autowired
+	private FileAccessService fileAccessService;
+
+	@Autowired
 	private RepositoryService repositoryService;
+
+	protected FileAccessService getFileAccessService() {
+		if (fileAccessService == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return fileAccessService;
+	}
+
+	protected Logger getLogger() {
+		if (LOGGER == null) {
+			LOGGER = Logger.getLogger(getClass().getName());
+		}
+		return LOGGER;
+	}
 
 	protected void setFile(File file) {
 		if (file == null) {
-			LOGGER.warning("File is undefined!");
+			getLogger().warning("File is undefined!");
 			return;
 		}
 		if (!file.exists()) {
-			LOGGER.warning("File " + file + " does not exist!");
+			getLogger().warning("File " + file + " does not exist!");
 			return;
 		}
 		if (!file.canRead()) {
-			LOGGER.warning("There are no rights provided to read from file: " + file);
+			getLogger().warning("There are no rights provided to read from file: " + file);
 			return;
 		}
 
 		this.file = file;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.idega.io.MediaWritable#getMimeType()
-	 */
 	@Override
 	public String getMimeType() {
 		if (fileName == null)
@@ -105,34 +116,82 @@ public class DownloadWriter implements MediaWritable {
 		return StringUtil.isEmpty(mimeType) ? MimeTypeUtil.MIME_TYPE_APPLICATION : mimeType;
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.idega.io.MediaWritable#init(javax.servlet.http.HttpServletRequest,
-	 *      com.idega.presentation.IWContext)
-	 */
+	protected boolean isAvailable(IWContext iwc, ICFile file, String fileUniqueId, String fileToken) throws Exception {
+		boolean available = getFileAccessService().isAvailable(iwc, file, fileUniqueId, fileToken);
+
+		if (!available) {
+			this.icFile = null;
+		}
+
+		return available;
+	}
+
+	protected boolean hasPermission(IWContext iwc, String path) throws Exception {
+		return getFileAccessService().hasPermission(iwc, path);
+	}
+
+	protected boolean hasPermission(IWContext iwc, User user, Collection<String> paths) throws Exception {
+		return getFileAccessService().hasPermission(iwc, user, paths);
+	}
+
 	@Override
 	public void init(HttpServletRequest req, IWContext iwc) {
-		String fileId = iwc.getParameter(PRM_FILE_ID);
+		String fileUniqueId = iwc.getParameter(PRM_FILE_UNIQUE_ID);
+
+		String fileToken = iwc.getParameter(PRM_FILE_TOKEN);
+		if (StringUtil.isEmpty(fileToken) && !StringUtil.isEmpty(fileUniqueId)) {
+			getLogger().warning("File's token not provided");
+			this.icFile = null;
+			return;
+		}
+
 		String absPath = iwc.getParameter(PRM_ABSOLUTE_FILE_PATH);
 		String relPath = iwc.getParameter(PRM_RELATIVE_FILE_PATH);
 		String altFileName = iwc.getParameter(PRM_FILE_NAME);
-		if (fileId != null) {
+		if (fileUniqueId != null) {
 			try {
+				ICFile icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByUUID(fileUniqueId);
+				if (icFile == null) {
+					getLogger().warning("Did not find file by unique ID " + fileUniqueId);
+					this.icFile = null;
+					return;
+				}
+
+				if (!isAvailable(iwc, icFile, fileUniqueId, fileToken)) {
+					this.icFile = null;
+					return;
+				}
+
+				this.icFile = icFile;
+
 				ICFileSystem fsystem = ICFileSystemFactory.getFileSystem(iwc);
-				String fileURL = fsystem.getFileURI(Integer.valueOf(fileId).intValue());
+				String fileURL = fsystem.getFileURI(iwc, fileUniqueId, fileToken);
 				this.file = new File(iwc.getIWMainApplication().getRealPath(fileURL));
-				this.icFile = ((ICFileHome) IDOLookup.getHome(ICFile.class)).findByPrimaryKey(Integer.valueOf(fileId));
-				setAsDownload(iwc, this.file.getName(), (int) this.file.length(), fileId);
+				setAsDownload(iwc, this.file.getName(), (int) this.file.length(), icFile.getId());
 			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "No access to file + " + fileUniqueId, e);
 				this.icFile = null;
 			}
+
 		} else if (absPath != null) {
+			try {
+				if (!getFileAccessService().hasPermission(iwc, absPath)) {
+					this.url = null;
+					this.file = null;
+					return;
+				}
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "No access to abs. path " + absPath, e);
+				this.url = null;
+				this.file = null;
+				return;
+			}
+
 			if (absPath.startsWith("http")) {
 				try {
 					this.url = new URL(absPath);
 				} catch (MalformedURLException e) {
-					LOGGER.log(Level.WARNING, "Error creating URL: " + absPath, e);
+					getLogger().log(Level.WARNING, "Error creating URL: " + absPath, e);
 				}
 				setAsDownload(iwc, altFileName, -1);
 			} else {
@@ -141,43 +200,82 @@ public class DownloadWriter implements MediaWritable {
 					setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 				}
 			}
+
 		} else if (relPath != null && altFileName == null) {
+			try {
+				if (!getFileAccessService().hasPermission(iwc, relPath)) {
+					this.url = null;
+					this.file = null;
+					return;
+				}
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "No access to rel. path " + relPath, e);
+				this.url = null;
+				this.file = null;
+				return;
+			}
+
 			this.file = new File(iwc.getIWMainApplication().getRealPath(relPath));
 			if (this.file != null && this.file.exists() && this.file.canRead()) {
 				setAsDownload(iwc, this.file.getName(), (int) this.file.length());
 			}
+
 		} else if (relPath != null && altFileName != null) {
 			try {
-				if(relPath.startsWith("/")){
+				if (!getFileAccessService().hasPermission(iwc, relPath)) {
+					this.url = null;
+					this.file = null;
+					return;
+				}
+			} catch (Exception e) {
+				getLogger().log(Level.WARNING, "No access to rel. path " + relPath + " and file " + altFileName, e);
+				this.url = null;
+				this.file = null;
+				return;
+			}
+
+			try {
+				if (relPath.startsWith(CoreConstants.SLASH)) {
 					relPath = relPath.substring(1);
 				}
-				this.url = new URL(iwc.getServerURL()+relPath);
+				this.url = new URL(iwc.getServerURL() + relPath);
 				setAsDownload(iwc, altFileName, -1);
 			} catch (MalformedURLException e) {
-				LOGGER.log(Level.WARNING, "Error creating URL: " + relPath, e);
+				getLogger().log(Level.WARNING, "Error creating URL: " + relPath, e);
 			}
+
+		} else {
+			getLogger().warning("Can not download: file's unique ID: " + fileUniqueId + ", file's token: " + fileToken + ", abs. path: " + absPath + ", rel. path: " + relPath +
+					", alt. file name: " + altFileName);
 		}
 	}
 
-	protected File getFileFromRepository(String pathInRepository) throws IOException {
-		return CoreUtil.getFileFromRepository(pathInRepository);
+	protected File getFileFromRepository(IWContext iwc, String pathInRepository) throws IOException {
+		try {
+			if (getFileAccessService().hasPermission(iwc, pathInRepository)) {
+				return CoreUtil.getFileFromRepository(pathInRepository);
+			}
+		} catch (Exception e) {
+			getLogger().log(Level.WARNING, "Error getting file " + pathInRepository, e);
+			throw new IOException(e);
+		}
+
+		throw new IOException("No access to " + pathInRepository);
 	}
 
-	/*
-	 * (non-Javadoc)
-	 *
-	 * @see com.idega.io.MediaWritable#writeTo(java.io.OutputStream)
-	 */
 	@Override
-	public void writeTo(OutputStream out) throws IOException {
+	public void writeTo(IWContext iwc, OutputStream out) throws IOException {
 		InputStream downloadStream = null;
 		if (this.file != null && this.file.exists() && this.file.canRead() && this.file.length() > 0) {
-			LOGGER.info("Dowloading file: " + file);
+			getLogger().info("Dowloading file: " + file);
 			downloadStream = new BufferedInputStream(new FileInputStream(this.file));
+
 		} else if (this.icFile != null) {
+			getLogger().info("Dowloading IC file: " + icFile);
 			downloadStream = new BufferedInputStream(this.icFile.getFileValue());
+
 		} else if (this.url != null) {
-			//added for real relative path streaming
+			getLogger().info("Dowloading from URL: " + url);
 			downloadStream = new BufferedInputStream(this.url.openStream());
 		}
 
@@ -188,7 +286,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			FileUtil.streamToOutputStream(downloadStream, out);
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error streaming from input to output streams", e);
+			getLogger().log(Level.WARNING, "Error streaming from input to output streams", e);
 		} finally {
 			out.flush();
 			IOUtil.closeOutputStream(out);
@@ -203,8 +301,10 @@ public class DownloadWriter implements MediaWritable {
 	public void setAsDownload(IWContext iwc, String filename, int fileLength, Object icFileIdOrHashValue) {
 		if (icFileIdOrHashValue instanceof String) {
 			setAsDownload(iwc, filename, fileLength, icFileIdOrHashValue.toString());
+
 		} else if (icFileIdOrHashValue instanceof Integer) {
 			setAsDownload(iwc, filename, fileLength, (Integer) icFileIdOrHashValue);
+
 		} else {
 			setAsDownload(iwc, filename, fileLength);
 		}
@@ -271,7 +371,7 @@ public class DownloadWriter implements MediaWritable {
 			attachment.store();
 			return true;
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error while setting that user " + user + " has downloaded file " + attachment, e);
+			getLogger().log(Level.WARNING, "Error while setting that user " + user + " has downloaded file " + attachment, e);
 		}
 
 		return false;
@@ -286,7 +386,7 @@ public class DownloadWriter implements MediaWritable {
 		try {
 			fileHome = (ICFileHome) IDOLookup.getHome(ICFile.class);
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting instance of " + ICFileHome.class, e);
+			getLogger().log(Level.WARNING, "Error getting instance of " + ICFileHome.class, e);
 		}
 		if (fileHome == null) {
 			return null;
@@ -297,7 +397,7 @@ public class DownloadWriter implements MediaWritable {
 			file = fileHome.findByHash(hash);
 		} catch(FinderException e) {
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error getting file by hash: " + hash, e);
+			getLogger().log(Level.WARNING, "Error getting file by hash: " + hash, e);
 		}
 
 		if (file == null) {
@@ -319,7 +419,7 @@ public class DownloadWriter implements MediaWritable {
 			file.store();
 			return file;
 		} catch(Exception e) {
-			LOGGER.log(Level.WARNING, "Error while creating file using hash: " + hash, e);
+			getLogger().log(Level.WARNING, "Error while creating file using hash: " + hash, e);
 		}
 		return null;
 	}
@@ -362,4 +462,5 @@ public class DownloadWriter implements MediaWritable {
 	protected void setICFile(ICFile icFile) {
 		this.icFile = icFile;
 	}
+
 }

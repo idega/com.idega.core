@@ -530,7 +530,7 @@ public class LinkContainer extends PresentationObjectContainer {
 			else {
 				if (this._file != null) {
 					ICFileSystem fsystem = getICFileSystem(iwc);
-					setFinalUrl(fsystem.getFileURI(this._file));
+					setFinalUrl(fsystem.getFileURI(iwc, this._file));
 				}
 				else {
 					setFinalUrl(oldURL + getParameterString(iwc, oldURL));

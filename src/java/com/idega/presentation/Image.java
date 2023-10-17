@@ -31,6 +31,7 @@ import com.idega.repository.data.NonEJBResource;
 import com.idega.repository.data.PropertyDescription;
 import com.idega.repository.data.PropertyDescriptionHolder;
 import com.idega.repository.data.ResourceDescription;
+import com.idega.util.CoreUtil;
 import com.idega.util.text.TextSoap;
 
 /**
@@ -39,7 +40,7 @@ import com.idega.util.text.TextSoap;
  * In JSF there is now a more recent javax.faces.component.UIGraphic object that is prefered to use in pure JSF applications.
  * </p>
  *  Last modified: $Date: 2006/04/24 01:41:26 $ by $Author: gimmi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @modified <a href="mailto:eiki@idega.is">Eirikur Hrafnson</a>
  * @version $Revision: 1.97 $
@@ -78,9 +79,10 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	protected int imageId = -1;
 	private int maxImageWidth = 140;
 	private String datasource = null;
-	
 
-	
+
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[17];
 		values[0] = super.saveState(ctx);
@@ -102,6 +104,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		values[16] = this.datasource;
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -122,7 +125,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		this.maxImageWidth = ((Integer)values[15]).intValue();
 		this.datasource = (String) values[16];
 	}
-	
+
 	public Image()
 	{
 		this("");
@@ -177,8 +180,8 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 	/**
 	*Fetches an image from the database through the imageservlet or blobcache
-	 * @throws SQLException 
-	 * @throws EJBException 
+	 * @throws SQLException
+	 * @throws EJBException
 	*/
 	public Image(ICFile file) throws EJBException, SQLException {
 		this(((Integer)file.getPrimaryKey()).intValue());
@@ -213,23 +216,22 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		setWidth(width);
 		setHeight(height);
 	}
-	
+
 	private void initialize() {
 		setTransient(false);
 	}
-	
-	protected void setImageURL(IWContext iwc) throws Exception{
 
-	
+	protected void setImageURL(IWContext iwc) throws Exception{
 		String url;
+		ICFile file = getFile(this.imageId);
 		if(this.datasource != null){
-			url = getICFileSystem(iwc).getFileURI(this.imageId, this.datasource);
+			url = getICFileSystem(iwc).getFileURI(iwc, file.getUniqueId(), file.getToken(), this.datasource);
 		} else {
-			url = getICFileSystem(iwc).getFileURI(this.imageId);
+			url = getICFileSystem(iwc).getFileURI(iwc, file.getUniqueId(), file.getToken());
 		}
 		setURL(url);
 	}
-	
+
 	/**
 	 * Sets the over image url and its javascript. locales always win
 	 * @param iwc
@@ -244,23 +246,23 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			if (overImageId == null){
 				overImageId = (Integer) this.getImageLocalizationMap().get(iwc.getIWMainApplication().getSettings().getDefaultLocale());
 			}
-		
+
 			if(overImageId!=null){
-				finalOverImageUrl = getICFileSystem(iwc).getFileURI(overImageId.intValue());
+				finalOverImageUrl = getICFileSystem(iwc).getFileURI(iwc, getFile(overImageId));
 			}
 		}else if(this.overImageUrl!=null){
 			finalOverImageUrl = this.overImageUrl;
 		}
-			
-		
+
+
 		if(finalOverImageUrl!=null){
 			setOnMouseOut("swapImgRestore()");
 			setOnMouseOver("swapImage('" + getName() + "','','" + finalOverImageUrl + "',1)");
 		}
-		
+
 	}
-	
-	
+
+
 	public void setLocalizedImage(String localeString, int imageID)
 	{
 		setLocalizedImage(ICLocaleBusiness.getLocaleFromLocaleString(localeString), imageID);
@@ -269,17 +271,17 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		getImageLocalizationMap().put(locale, new Integer(imageID));
 	}
-	
+
 	public void setLocalizedOverImage(String localeString, int overImageID)
 	{
 		setLocalizedOverImage(ICLocaleBusiness.getLocaleFromLocaleString(localeString), overImageID);
 	}
-	
+
 	public void setLocalizedOverImage(Locale locale, int overImageID)
 	{
 		getOverImageLocalizationMap().put(locale, new Integer(overImageID));
 	}
-	
+
 	private Map getImageLocalizationMap()
 	{
 		if (this._ImageLocalizationMap == null)
@@ -288,7 +290,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		}
 		return this._ImageLocalizationMap;
 	}
-	
+
 	private Map getOverImageLocalizationMap()
 	{
 		if (this._overImageLocalizationMap == null){
@@ -296,11 +298,12 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		}
 		return this._overImageLocalizationMap;
 	}
-	
+
 	public void setOverImageLocalizationMap(Map overImagesmap){
 		this._overImageLocalizationMap = overImagesmap;
 	}
-	
+
+	@Override
 	public void setProperty(String key, String values[])
 	{
 		if (key.equalsIgnoreCase("url")) {
@@ -358,6 +361,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		setWidth(Integer.toString(width));
 	}
+	@Override
 	public void setWidth(String width)
 	{
 		setMarkupAttribute("width", width);
@@ -366,6 +370,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		setHeight(Integer.toString(height));
 	}
+	@Override
 	public void setHeight(String height)
 	{
 		setMarkupAttribute("height", height);
@@ -378,7 +383,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		return this.imageId;
 	}
-	
+
 	/**
 	 * Gets the dominating image id, locales always win
 	 * @param iwc
@@ -410,7 +415,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			return this.imageId;
 		}
 	}
-		
+
 
 
 	public void setVerticalSpacing(int spacing)
@@ -425,10 +430,12 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		this.textBgColor = color;
 	}
+	@Override
 	public String getHeight()
 	{
 		return getMarkupAttribute("height");
 	}
+	@Override
 	public String getWidth()
 	{
 		return getMarkupAttribute("width");
@@ -444,6 +451,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		return ((getURL() != null) || this.imageId != -1);
 	}
+	@Override
 	public void setOnClick(String action)
 	{
 		setMarkupAttribute("onclick", action);
@@ -477,7 +485,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		this.overImageUrl = image.getMediaURL();
 	}
-	
+
 	public void setImageToOpenInPopUp(Image image)
 	{
 		this.setOnClick(
@@ -489,6 +497,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		return this.overImageUrl;
 	}
+	@Override
 	public void addMarkupAttributes(Map attributeMap)
 	{
 		if (attributeMap.containsKey(FileSystemConstants.ZOOMIMAGE) && attributeMap.containsKey(FileSystemConstants.ZOOMPAGE))
@@ -509,13 +518,14 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			attributeMap.remove(FileSystemConstants.ZOOMPAGE);
 			attributeMap.remove(FileSystemConstants.ZOOMWIDTH);
 			attributeMap.remove(FileSystemConstants.ZOOMHEIGHT);
-		}		
+		}
 
 		super.addMarkupAttributes(attributeMap);
 	}
 	//TODO: remove this variable declaration and move totally to facets:
 	//This variable is kept because of legacy reasons but should be replaced with a Facet
 	private Script theOldAssociatedScript;
+	@Override
 	public void setAssociatedScript(Script myScript)
 	{
 		if(IWMainApplication.useJSF){
@@ -525,6 +535,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			this.theOldAssociatedScript = myScript;
 		}
 	}
+	@Override
 	public Script getAssociatedScript()
 	{
 		if(IWMainApplication.useJSF){
@@ -578,7 +589,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	private String getHTMLString(IWContext iwc) throws RemoteException
 	{
 		//Eiki: this does not seem to support over images or anything???
-		
+
 		String markup = iwc.getApplicationSettings().getDefaultMarkupLanguage();
 		StringBuffer sPrint = new StringBuffer();
 		sPrint.append("<img ");
@@ -637,7 +648,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		{
 			setImageURL(iwc);
 			setOverImageURLAndJavascript(iwc);
-			
+
 				if (this.limitImageWidth)
 				{
 					setWidth(this.maxImageWidth);
@@ -672,7 +683,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	}
 
 	/**
-	 * 
+	 *
 	 * @uml.property name="maxImageWidth"
 	 */
 	public void setMaxImageWidth(int maxImageWidth) {
@@ -709,7 +720,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			//return MediaBusiness.getMediaURL(imageId, ImageEntity.class, iwc.getApplication());
 			try
 			{
-				theReturn = getICFileSystem(iwc).getFileURI(this.imageId);
+				theReturn = getICFileSystem(iwc).getFileURI(iwc instanceof IWContext ? ((IWContext) iwc) : CoreUtil.getIWContext(), getFile(this.imageId));
 			}
 			catch (RemoteException e)
 			{
@@ -730,6 +741,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 	{
 		return "preLoadImages('" + url + "')";
 	}
+	@Override
 	public Object clone()
 	{
 		Image obj = null;
@@ -749,7 +761,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			obj.maxImageWidth = this.maxImageWidth;
 			obj._ImageLocalizationMap = this._ImageLocalizationMap;
 			obj._overImageLocalizationMap = this._overImageLocalizationMap;
-			
+
 		}
 		catch (Exception ex)
 		{
@@ -757,6 +769,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		}
 		return obj;
 	}
+	@Override
 	public void main(IWContext iwc)
 	{
 		if (iwc.isParameterSet(PARAM_IMAGE_ID)){
@@ -766,6 +779,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			setURL(iwc.getParameter(PARAM_IMAGE_URL));
 		}
 	}
+	@Override
 	public void print(IWContext iwc) throws Exception
 	{
 		if (this.zoomImageID != null)
@@ -794,7 +808,7 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 		}
 		if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_HTML))
 		{
-		
+
 			this.imageId = this.getImageID(iwc);
 			if (this.imageId == -1){ //from an url
 				if (this.zoomView){
@@ -828,68 +842,73 @@ public class Image extends PresentationObject implements NonEJBResource, Propert
 			markup = TextSoap.findAndReplace(markup, "height", "plainheight");
 			print(markup);
     }
-    
+
   }
 
 	public void setPadding(int padding) {
 		setStyleAttribute("padding: "+padding+"px;");
 	}
-	
+
 	public void setPaddingLeft(int padding) {
 		setStyleAttribute("padding-left: "+padding+"px;");
 	}
-	
+
 	public void setPaddingRight(int padding) {
 		setStyleAttribute("padding-right: "+padding+"px;");
 	}
-	
+
 	public void setPaddingTop(int padding) {
 		setStyleAttribute("padding-top: "+padding+"px;");
 	}
-	
+
 	public void setPaddingBottom(int padding) {
 		setStyleAttribute("padding-bottom: "+padding+"px;");
 	}
 
+	@Override
 	public String getName() {
 		return getMarkupAttribute("name");
 	}
-	
+
+	@Override
 	public void setName(String name) {
 		setMarkupAttribute("name",name);
 	}
-	
+
 	public void setDatasource(String source) {
 		this.datasource = source;
 	}
 	 /**
 	  * Returns wheather the "goneThroughMain" variable is reset back to false in the restore phase.
 	  */
-	 protected boolean resetGoneThroughMainInRestore(){
+	 @Override
+	protected boolean resetGoneThroughMainInRestore(){
 	 	return true;
 	 }
-	 
-	 
-	 /** 
+
+
+	 /**
 	  * implements NonEJBResource
 	  */
+	@Override
 	public ResourceDescription getResourceDescription() {
 		return new ResourceDescription(ICFile.class.getName(), ICFile.class.getName(), true);
 	}
 
 	/**
-	 * 
+	 *
 	 * implements PropertyDescriptionHolder
 	 */
+	@Override
 	public List getPropertyDescriptions() {
 		List list = new ArrayList();
-		list.add( 
+		list.add(
 			new PropertyDescription(
 					"image_id",
 					"1",
 					getResourceDescription()));
 		return list;
-	}	
+	}
 
-	
+
 }

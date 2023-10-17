@@ -209,7 +209,8 @@ public class Link extends Text {
 		this("File");
 		String uri;
 		try	{
-			uri = this.getICFileSystem(IWContext.getInstance()).getFileURI(icFileId);
+			IWContext iwc = IWContext.getInstance();
+			uri = this.getICFileSystem(iwc).getFileURI(iwc, getFile(icFileId));
 			setURL(uri);
 		} catch (RemoteException e)	{
 			e.printStackTrace();
@@ -344,7 +345,8 @@ public class Link extends Text {
 	public void main(IWContext iwc) throws Exception {
 		if (this.fileId != -1){
 			ICFileSystem fsystem = getICFileSystem(iwc);
-			String fileURL = datasource != null ? fsystem.getFileURI(this.fileId, datasource) : fsystem.getFileURI(this.fileId);
+			ICFile file = getFile(this.fileId);
+			String fileURL = datasource != null ? fsystem.getFileURI(iwc, file.getUniqueId(), file.getToken(), datasource) : fsystem.getFileURI(iwc, file);
 			setURL(fileURL);
 		}
 		setURIToClassToInstanciate(iwc);
@@ -671,7 +673,7 @@ public class Link extends Text {
 
 	public void setToMaintainParameter(String name, boolean maintain) {
 		if (this.maintainedParameters == null) {
-			this.maintainedParameters = new ArrayList<String>();
+			this.maintainedParameters = new ArrayList<>();
 		}
 		if (maintain) {
 			this.maintainedParameters.add(name);
@@ -689,7 +691,7 @@ public class Link extends Text {
 	 */
 	public void setToMaintainParameters(Collection<String> parameterNames){
 		if (this.maintainedParameters == null) {
-			this.maintainedParameters = new ArrayList<String>();
+			this.maintainedParameters = new ArrayList<>();
 		}
 		this.maintainedParameters.addAll(parameterNames);
 	}
@@ -746,6 +748,7 @@ public class Link extends Text {
 	/**
 	 *
 	 */
+	@Override
 	public void setOnClick(String s) {
 		setOnEvent("onclick", s);
 	}
@@ -1061,14 +1064,14 @@ public class Link extends Text {
 
 	private Map<Locale, Object> getImageLocalizationMap() {
 		if (this._ImageLocalizationMap == null) {
-			this._ImageLocalizationMap = new HashMap<Locale, Object>();
+			this._ImageLocalizationMap = new HashMap<>();
 		}
 		return this._ImageLocalizationMap;
 	}
 
 	private Map<Locale, Object> getOverImageLocalizationMap() {
 		if (this._overImageLocalizationMap == null) {
-			this._overImageLocalizationMap = new HashMap<Locale, Object>();
+			this._overImageLocalizationMap = new HashMap<>();
 		}
 		return this._overImageLocalizationMap;
 	}
@@ -2023,7 +2026,7 @@ public void setWindowToOpen(String className) {
 
 	public void addIWPOListener(PresentationObject obj) {
 		if (this.listenerInstances == null) {
-			this.listenerInstances = new ArrayList<Object>();
+			this.listenerInstances = new ArrayList<>();
 		}
 		if (!this.listenerInstances.contains(obj)) {
 			this.listenerInstances.add(obj);
@@ -2032,7 +2035,7 @@ public void setWindowToOpen(String className) {
 
 	public void addIWPOListener(String page_instID) {
 		if (this.listenerInstances == null) {
-			this.listenerInstances = new ArrayList<Object>();
+			this.listenerInstances = new ArrayList<>();
 		}
 		if (page_instID != null) {
 			StringTokenizer token = new StringTokenizer(page_instID, ",", false);
@@ -2269,7 +2272,7 @@ public void setWindowToOpen(String className) {
 
 	private Map<Locale, String> getToolTipLocalizationMap() {
 		if (this._toolTipLocalizationMap == null) {
-			this._toolTipLocalizationMap = new HashMap<Locale, String>();
+			this._toolTipLocalizationMap = new HashMap<>();
 		}
 		return this._toolTipLocalizationMap;
 	}

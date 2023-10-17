@@ -20,6 +20,6 @@ public interface MediaWritable {
   public final static String PRM_WRITABLE_CLASS = "wrcls";
   public String getMimeType();
   public void init(HttpServletRequest req, IWContext iwc);
-  public void writeTo(OutputStream out) throws java.io.IOException;
+  public void writeTo(IWContext iwc, OutputStream out) throws java.io.IOException;
 
 }

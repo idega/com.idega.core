@@ -125,7 +125,7 @@ public class SelectOption extends InterfaceObject implements Comparable<SelectOp
 			getParentSelect().addSelectScript(true);
 		}
 		if (this.fileID != -1) {
-			String URL = getICFileSystem(iwc).getFileURI(this.fileID);
+			String URL = getICFileSystem(iwc).getFileURI(iwc, getFile(this.fileID));
 			String arguments = Window.getWindowArgumentCallingScript(false, false, false, false, false, true, true, true, false, 640, 480, null, null);
 			setValue(URL + "$" + arguments + "$" + "_blank");
 		}

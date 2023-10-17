@@ -14,6 +14,7 @@ import java.rmi.RemoteException;
 import com.idega.business.IBOService;
 import com.idega.core.file.business.ICFileSystem;
 import com.idega.core.file.data.ICFile;
+import com.idega.presentation.IWContext;
 
 /**
  *
@@ -28,13 +29,13 @@ public interface MediaFileSystem extends IBOService, ICFileSystem {
 	 * @see com.idega.block.media.business.MediaFileSystemBean#getFileURI
 	 */
 	@Override
-	public String getFileURI(ICFile file) throws java.rmi.RemoteException;
+	public String getFileURI(IWContext iwc, ICFile file) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.block.media.business.MediaFileSystemBean#getFileURI
 	 */
 	@Override
-	public String getFileURI(int fileId) throws java.rmi.RemoteException;
+	public String getFileURI(IWContext iwc, String fileUniqueId, String fileToken) throws java.rmi.RemoteException;
 
 	/**
 	 * @see com.idega.block.media.business.MediaFileSystemBean#initialize

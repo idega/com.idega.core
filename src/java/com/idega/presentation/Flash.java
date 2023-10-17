@@ -52,6 +52,7 @@ public class Flash extends GenericPlugin {
 		setHeight(height);
 	}
 
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		Random random = new Random();
 
@@ -63,27 +64,29 @@ public class Flash extends GenericPlugin {
 		if (files != null && !files.isEmpty()) {
 			int randomPosition = random.nextInt(files.size());
 			ICFile file = (ICFile) files.get(randomPosition);
-			url = getICFileSystem(iwc).getFileURI(file);
+			url = getICFileSystem(iwc).getFileURI(iwc, file);
 		}
 
 		setParam("movie", url);
 		setMarkupAttribute("src", url);
 	}
-	
+
+	@Override
 	public String getParams() {
 		String params = super.getParams();
-		
+
 		if (this.imageURL != null) {
 			params = "<img src=\"" + this.imageURL + "\" width=\"" + this.getWidth() + "\" height=\"" + this.getHeight() + "\" alt=\"\" />" + params;
 		}
-		
+
 		return params;
 	}
-	
+
 	public void setImageURL(String url) {
 		this.imageURL = url;
 	}
 
+	@Override
 	public void setURL(String url) {
 		if (sources == null) {
 			sources = new ArrayList();
@@ -91,6 +94,7 @@ public class Flash extends GenericPlugin {
 		sources.add(url);
 	}
 
+	@Override
 	public void setFile(ICFile file) {
 		if (files == null) {
 			files = new ArrayList();

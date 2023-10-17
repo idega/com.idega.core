@@ -11,7 +11,9 @@ package com.idega.presentation.ui;
 
 import java.util.Iterator;
 import java.util.Map;
+
 import javax.faces.context.FacesContext;
+
 import com.idega.core.builder.business.BuilderService;
 import com.idega.core.builder.data.ICPage;
 import com.idega.core.file.business.ICFileSystem;
@@ -30,7 +32,7 @@ import com.idega.util.text.TextSoap;
  * This component is for rendering out a input element of type button.
  * </p>
  *  Last modified: $Date: 2006/08/01 15:47:06 $ by $Author: gimmi $
- * 
+ *
  * @author <a href="mailto:tryggvil@idega.com">Tryggvi Larusson</a>
  * @version $Revision: 1.39 $
  */
@@ -38,7 +40,7 @@ public class GenericButton extends GenericInput {
 
 	//constants:
 	private static final String buttonImageStyle = "cursor:hand;";
-	
+
 	//Instance variables
 	private int _pageID = -1;
 	private int _fileID = -1;
@@ -54,7 +56,8 @@ public class GenericButton extends GenericInput {
 	private String templateForObjectInstanciation;
 	private String _URL;
 
-	
+
+	@Override
 	public Object saveState(FacesContext ctx) {
 		Object values[] = new Object[14];
 		values[0] = super.saveState(ctx);
@@ -73,6 +76,7 @@ public class GenericButton extends GenericInput {
 		values[13] = this._publicWindowClassToOpen;
 		return values;
 	}
+	@Override
 	public void restoreState(FacesContext ctx, Object state) {
 		Object values[] = (Object[]) state;
 		super.restoreState(ctx, values[0]);
@@ -90,7 +94,7 @@ public class GenericButton extends GenericInput {
 		this._URL = (String)values[12];
 		this._publicWindowClassToOpen = (Class)values[13];
 	}
-	
+
 	public GenericButton() {
 		this("untitled", "");
 	}
@@ -101,7 +105,7 @@ public class GenericButton extends GenericInput {
 		setValue(value);
 		setInputType(INPUT_TYPE_BUTTON);
 	}
-	
+
 	public GenericButton(String content) {
 		this();
 		setContent(content);
@@ -123,7 +127,7 @@ public class GenericButton extends GenericInput {
 			this.oldDefaultImage =image;
 		}
 	}
-	
+
 	protected Image getButtonImage(){
 		if(IWMainApplication.useJSF){
 			return (Image)getFacet("buttonimage");
@@ -140,20 +144,21 @@ public class GenericButton extends GenericInput {
 	/**
 	 * @see com.idega.presentation.PresentationObject#main(IWContext)
 	 */
+	@Override
 	public void main(IWContext iwc) throws Exception {
 		if (this._onClickConfirm) {
 			Script script = getParentPage().getAssociatedScript();
 			if (script != null) {
 				script = new Script();
 			}
-					
+
 			boolean addFunction = false;
-					
+
 			StringBuffer buffer = new StringBuffer();
 			buffer.append("function onClickConfirm(message) {").append("\n\t");
 			buffer.append("var submit = confirm(message);").append("\n\t");
 			buffer.append("if (submit)").append("\n\t\t");
-					
+
 			if (this._windowClassToOpen != null) {
 				String URL = Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList());
 				buffer.append(Window.getCallingScriptString(this._windowClassToOpen, URL, true, iwc)).append(";\n");
@@ -174,7 +179,7 @@ public class GenericButton extends GenericInput {
 			}
 			if (this._fileID != -1) {
 				ICFileSystem fsystem = getICFileSystem(iwc);
-				buffer.append(Window.getCallingScript(fsystem.getFileURI(this._fileID))).append(";\n");
+				buffer.append(Window.getCallingScript(fsystem.getFileURI(iwc, getFile(this._fileID)))).append(";\n");
 				addFunction = true;
 			}
 			if(this.classToInstanciate!=null){
@@ -194,7 +199,8 @@ public class GenericButton extends GenericInput {
 			}
 		}
 	}
-	
+
+	@Override
 	public void print(IWContext iwc) throws Exception {
 		if (getMarkupLanguage().equals("HTML")) {
 			if (this.asImageButton) {
@@ -203,11 +209,11 @@ public class GenericButton extends GenericInput {
 			}
 			if (!this._onClickConfirm) {
 				if (this._windowClassToOpen != null) {
-					String URL =  Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
+					String URL =  Window.getWindowURLWithParameters(this._windowClassToOpen, iwc, getConvertedAndCheckedParameterList());
 					setOnClick("javascript:" + Window.getCallingScriptString(this._windowClassToOpen, URL, true, iwc));
 				}
 				if (this._publicWindowClassToOpen != null) {
-					String URL =  Window.getPublicWindowURLWithParameters(this._publicWindowClassToOpen, iwc, getConvertedAndCheckedParameterList()); 
+					String URL =  Window.getPublicWindowURLWithParameters(this._publicWindowClassToOpen, iwc, getConvertedAndCheckedParameterList());
 					setOnClick("javascript:" + Window.getCallingScriptString(this._publicWindowClassToOpen, URL, true, iwc));
 				}
 				if (this._pageID != -1) {
@@ -218,7 +224,7 @@ public class GenericButton extends GenericInput {
 				}
 				if (this._fileID != -1) {
 					ICFileSystem fsystem = getICFileSystem(iwc);
-					setOnClick("javascript:"+Window.getCallingScript(fsystem.getFileURI(this._fileID)));	
+					setOnClick("javascript:"+Window.getCallingScript(fsystem.getFileURI(iwc, getFile(this._fileID))));
 				}
 				if (this.classToInstanciate != null) {
 					setOnClick("javascript:location='"+getURIToClassToInstanciate(iwc)+"';");
@@ -227,7 +233,7 @@ public class GenericButton extends GenericInput {
 					setOnClick("javascript:"+Window.getWindowCallingScript(this._URL, "_blank", true, true, true, true, true, true, true, true, false, 640, 480));
 				}
 			}
-			
+
 			getParentPage();
 			Image buttonImage = getButtonImage();
 			if (buttonImage == null) {
@@ -252,7 +258,7 @@ public class GenericButton extends GenericInput {
 //							protocol = "http://";
 //						}
 //						URL = protocol + serverName + URL;
-//						
+//
 						URL = serverUrl + URL;
 					}
 				}*/
@@ -270,7 +276,7 @@ public class GenericButton extends GenericInput {
 					print("<img " + buttonImage.getMarkupAttributesString() + " />");
 				}
 			}
-		} 
+		}
 		else if (getMarkupLanguage().equals(IWConstants.MARKUP_LANGUAGE_WML)) {
 			if(normalPrintSequence()) {
 				printWML(iwc);
@@ -278,6 +284,7 @@ public class GenericButton extends GenericInput {
 		}
 	}
 
+	@Override
 	public Object clone() {
 		GenericButton obj = (GenericButton) super.clone();
 		if (this.oldDefaultImage != null) {
@@ -285,14 +292,15 @@ public class GenericButton extends GenericInput {
 		}
 		return obj;
 	}
-	
+
 	/**
 	 * @see com.idega.presentation.ui.InterfaceObject#handleKeepStatus(IWContext)
 	 */
+	@Override
 	public void handleKeepStatus(IWContext iwc) {
 		//does nothing...
 	}
-	
+
 	public void setWindowToOpen(Class windowClassToOpen) {
 		this._windowClassToOpen = windowClassToOpen;
 	}
@@ -300,41 +308,41 @@ public class GenericButton extends GenericInput {
 	public void setPublicWindowToOpen(Class windowClassToOpen) {
 		this._publicWindowClassToOpen = windowClassToOpen;
 	}
-	
+
 	public void setPageToOpen(int pageID) {
 		this._pageID = pageID;
 	}
-	
+
 	public void setPageToOpen(ICPage page) {
 		if (page != null && page.getID() != -1) {
 			setPageToOpen(page.getID());
 		}
 	}
-	
+
 	public void setParentPageToOpen(int pageID) {
 		this._parentPageID = pageID;
 	}
-	
+
 	public void setParentPageToOpen(ICPage page) {
 		if (page != null && page.getID() != -1) {
 			setParentPageToOpen(page.getID());
 		}
 	}
-	
+
 	public void setURLToOpen(String URL) {
 		this._URL = URL;
 	}
-	
+
 	public void addParameter(String name, String value) {
 		if (this.parameterList == null) {
 			this.parameterList = new KeyValueList();
 		}
 		this.parameterList.put(name, value);
 	}
-	
+
 	/**
 	 * Adds a whole map of parameters to the button
-	 * @param parameterMap 
+	 * @param parameterMap
 	 */
 	public void addParameters(Map prmMap){
 		Iterator iterator = prmMap.keySet().iterator();
@@ -345,7 +353,7 @@ public class GenericButton extends GenericInput {
 		}
 	}
 
-	
+
 	public void addParameter(String name, int value) {
 		addParameter(name, String.valueOf(value));
 	}
@@ -381,8 +389,8 @@ public class GenericButton extends GenericInput {
 	public void addParameterToPage(String name, int value) {
 		addParameter(name,value);
 	}
-	
-	
+
+
 	private KeyValueList getConvertedAndCheckedParameterList() {
 		if (this.parameterList == null) {
 			return null;
@@ -399,10 +407,10 @@ public class GenericButton extends GenericInput {
 				convertedList.put(convertedName, convertedValue);
 			}
 		}
-		return convertedList;		
+		return convertedList;
 	}
-	
-	
+
+
 	private String getURLString(IWContext iwc, int pageID, boolean convert) throws Exception{
 		BuilderService bservice = getBuilderService(iwc);
 		URLUtil url = new URLUtil(bservice.getPageURI(pageID), convert);
@@ -427,12 +435,12 @@ public class GenericButton extends GenericInput {
 	public void setFileToOpen(int fileID) {
 		this._fileID = fileID;
 	}
-	
+
 	public void setOnClickConfirm(String confirmMessage) {
 		this._onClickConfirm = true;
 		this._confirmMessage = confirmMessage;
 	}
-	
+
 	private String getURIToClassToInstanciate(IWContext iwc) {
 		if (this.classToInstanciate == null) {
 			return "";
@@ -475,7 +483,7 @@ public class GenericButton extends GenericInput {
 		}
 		return buffer.toString();
 	}
-	
+
 	public void setClassToInstanciate(Class presentationObjectClass) {
 		this.classToInstanciate = presentationObjectClass;
 	}
