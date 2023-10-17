@@ -795,4 +795,11 @@ public class ICFileBMPBean extends TreeableEntityBMPBean<ICFile> implements ICFi
 		return idoFindPKsByQuery(query);
 	}
 
+	public Collection<Integer> ejbFindIdsOfAllFiles() throws FinderException {
+		Table table = new Table(this);
+		SelectQuery query = new SelectQuery(table);
+		query.addColumn(table.getColumn(getIDColumnName()));
+		return idoFindPKsByQuery(query);
+	}
+
 }

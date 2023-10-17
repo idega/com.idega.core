@@ -28,4 +28,6 @@ public interface ICFileHome extends com.idega.data.IDOHome {
 
  public Collection<Integer> getFilesWithoutTokens();
 
+ public Collection<Integer> getIdsOfAllFiles();
+
 }

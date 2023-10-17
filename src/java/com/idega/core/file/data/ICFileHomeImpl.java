@@ -192,4 +192,19 @@ public java.util.Collection findChildren(ICFile parent, java.util.Collection vis
 		return null;
 	}
 
+
+	@Override
+	public Collection<Integer> getIdsOfAllFiles() {
+		try {
+			IDOEntity entity = this.idoCheckOutPooledEntity();
+			Collection<Integer> ids = ((ICFileBMPBean) entity).ejbFindIdsOfAllFiles();
+			this.idoCheckInPooledEntity(entity);
+			return ids;
+		} catch (FinderException e) {
+		} catch (Exception e) {
+			getLog().log(Level.WARNING, "Error getting IDs of all files", e);
+		}
+		return null;
+	}
+
 }

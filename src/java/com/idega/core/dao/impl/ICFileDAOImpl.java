@@ -17,6 +17,7 @@ import com.idega.core.file.data.bean.ICMimeType;
 import com.idega.core.persistence.impl.GenericDaoImpl;
 import com.idega.data.IDOLookup;
 import com.idega.data.IDOLookupException;
+import com.idega.util.CoreConstants;
 import com.idega.util.StringUtil;
 
 @Scope(BeanDefinition.SCOPE_SINGLETON)
@@ -139,7 +140,7 @@ public class ICFileDAOImpl extends GenericDaoImpl implements ICFileDAO {
 			entity.setValue(fileValue);
 		}
 
-		entity.setPubliclyAvailable(publiclyAvailable);
+		entity.setPubliclyAvailable(publiclyAvailable ? CoreConstants.CHAR_Y : CoreConstants.CHAR_N);
 
 		entity = update(entity);
 		if (entity != null) {

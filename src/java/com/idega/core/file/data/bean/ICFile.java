@@ -612,15 +612,12 @@ public class ICFile implements Serializable, MetaDataCapable {
 		this.token = token;
 	}
 
-	public Boolean getPublicl() {
-		if (this.publiclyAvailable == null) {
-			return false;
-		}
-		return this.publiclyAvailable == CoreConstants.CHAR_Y;
+	public Character getPubliclyAvailable() {
+		return publiclyAvailable;
 	}
 
-	public void setPubliclyAvailable(Boolean publiclyAvailable) {
-		this.publiclyAvailable = publiclyAvailable != null && publiclyAvailable ? CoreConstants.CHAR_Y : CoreConstants.CHAR_N;
+	public void setPubliclyAvailable(Character publiclyAvailable) {
+		this.publiclyAvailable = publiclyAvailable;
 	}
 
 }

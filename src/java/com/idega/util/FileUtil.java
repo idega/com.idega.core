@@ -42,6 +42,7 @@ import com.idega.core.file.data.ICFile;
 import com.idega.file.bean.EmptyItem;
 import com.idega.file.bean.FileItem;
 import com.idega.idegaweb.IWMainApplication;
+import com.idega.idegaweb.IWMainApplicationSettings;
 import com.idega.repository.bean.RepositoryItem;
 import com.idega.servlet.filter.IWBundleResourceFilter;
 
@@ -503,7 +504,7 @@ public static String getFileSeparator(){
 	}
 
   public static List<String> getLinesFromFile(File fromFile) throws IOException{
-    List<String> strings = new ArrayList<String>();
+    List<String> strings = new ArrayList<>();
 
     FileReader reader;
     LineNumberReader lineReader = null;
@@ -764,7 +765,7 @@ public static String getFileSeparator(){
 
    public static List<StringTokenizer> getCommaSeperatedTokensFromLinesFromFile(String pathAndFile, String seperatorToken) throws IOException{
     List<String> lines = getLinesFromFile(pathAndFile);
-    List<StringTokenizer> tokens = new ArrayList<StringTokenizer>();
+    List<StringTokenizer> tokens = new ArrayList<>();
 
     StringTokenizer tokenizer;
 
@@ -939,7 +940,7 @@ public static String getFileSeparator(){
 		  return null;
 	  }
 
-	  Collection<RepositoryItem> files = new ArrayList<RepositoryItem>(filesToZip.size());
+	  Collection<RepositoryItem> files = new ArrayList<>(filesToZip.size());
 	  for (File file: filesToZip) {
 		  files.add(new FileItem(file));
 	  }
@@ -973,7 +974,7 @@ public static String getFileSeparator(){
 		  zippedFile.createNewFile();
 	  }
 	  if (filesToZip == null) {
-		  filesToZip = new ArrayList<RepositoryItem>(1);
+		  filesToZip = new ArrayList<>(1);
 	  }
 	  if (filesToZip.size() == 0) {
 		  filesToZip.add(new EmptyItem(CoreConstants.EMPTY));
@@ -1070,7 +1071,7 @@ public static String getFileSeparator(){
 		  return null;
 	  }
 
-	  ArrayList<RepositoryItem> files = new ArrayList<RepositoryItem> (filesToZip.size());
+	  ArrayList<RepositoryItem> files = new ArrayList<> (filesToZip.size());
 	  for (ICFile file : filesToZip) {
 		  files.add(new FileItem(file));
 	  }
@@ -1126,7 +1127,7 @@ public static String getFileSeparator(){
    * @author <a href="mailto:martynas@idega.is">Martynas Stakė</a>
    */
   public static List<String> getAllFilesRecursively(File folder){
-	  ArrayList<String> filepaths = new ArrayList<String>();
+	  ArrayList<String> filepaths = new ArrayList<>();
 
 	  if (folder != null) {
 		  if (folder.isDirectory()) {
@@ -1232,7 +1233,7 @@ public static String getFileSeparator(){
       //assert numberOfLinesToRead > 0;
       //assert encoding != null;
 
-      LinkedList<String> lines = new LinkedList<String>();
+      LinkedList<String> lines = new LinkedList<>();
       BufferedReader reader= new BufferedReader(new InputStreamReader(new FileInputStream(file), encoding));
       for (String line = null; (numberOfLinesToRead-- > 0) && (line = reader.readLine()) != null;)
       {
@@ -1272,7 +1273,7 @@ public static String getFileSeparator(){
       //assert numberOfLinesToRead > 0;
       //assert (encoding != null) && encoding.matches("(?i)(iso-8859|ascii|us-ascii).*");
 
-      LinkedList<String> lines = new LinkedList<String>();
+      LinkedList<String> lines = new LinkedList<>();
       BufferedReader reader= new BufferedReader(new InputStreamReader(new BackwardsFileInputStream(file), encoding));
       for (String line = null; (numberOfLinesToRead-- > 0) && (line = reader.readLine()) != null;)
       {
@@ -1289,4 +1290,15 @@ public static String getFileSeparator(){
       reader.close();
       return lines;
   }
+
+  public static final boolean isDownloadFileViaUniqueIdOnly(IWMainApplicationSettings settings) {
+	  settings = settings == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : settings;
+	  return settings.getBoolean("file.access_via_unique_id_and_token", true);
+  }
+
+  public static final boolean isFilesCacheTurneOff(IWMainApplicationSettings settings) {
+	  settings = settings == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : settings;
+	  return settings.getBoolean("file.cache_turned_off", true);
+  }
+
 }

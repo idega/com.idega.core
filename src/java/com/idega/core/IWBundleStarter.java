@@ -16,6 +16,7 @@ import com.idega.core.idgenerator.business.IdGenerator;
 import com.idega.core.idgenerator.business.IdGeneratorFactory;
 import com.idega.data.IDOLookup;
 import com.idega.data.SimpleQuerier;
+import com.idega.file.security.FileTokenChanger;
 import com.idega.idegaweb.IWBundle;
 import com.idega.idegaweb.IWBundleStartable;
 import com.idega.idegaweb.IWMainApplicationSettings;
@@ -23,6 +24,7 @@ import com.idega.util.ListUtil;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 import com.idega.util.expression.ELUtil;
+import com.idega.util.timer.IWTaskScheduler;
 
 public class IWBundleStarter implements IWBundleStartable {
 
@@ -31,11 +33,21 @@ public class IWBundleStarter implements IWBundleStartable {
 	@Autowired
 	private PagesCacher pagesCacher;
 
+	@Autowired
+	private IWTaskScheduler scheduler;
+
 	private PagesCacher getPagesCacher() {
 		if (pagesCacher == null) {
 			ELUtil.getInstance().autowire(this);
 		}
 		return pagesCacher;
+	}
+
+	private IWTaskScheduler getIWTaskScheduler() {
+		if (scheduler == null) {
+			ELUtil.getInstance().autowire(this);
+		}
+		return scheduler;
 	}
 
 	@Override
@@ -56,6 +68,9 @@ public class IWBundleStarter implements IWBundleStartable {
 
 			setUniqueIdsForFiles(fileHome);
 			setTokensForFiles(fileHome);
+
+			IWTaskScheduler scheduler = getIWTaskScheduler();
+			scheduler.schedule(0, 3, new FileTokenChanger());
 		} catch (Exception e) {
 			LOGGER.log(Level.WARNING, "Error setting attributes for files", e);
 		}
