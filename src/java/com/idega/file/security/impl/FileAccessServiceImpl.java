@@ -80,15 +80,17 @@ public class FileAccessServiceImpl extends DefaultSpringBean implements FileAcce
 		user = user == null ?
 				iwc != null && iwc.isLoggedOn() ? iwc.getCurrentUser() : null :
 				user;
+		String userId = user == null ? "unknown" : user.getId();
+		String personalId = user == null ? "unknown" : user.getPersonalID();
 		if (repositoryAccessManager.hasPermission(iwc, paths)) {
 			getLogger().info(
 					"Resource (" + paths + ") is available for " + user +
-					" (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ")"
+					" (ID: " + userId + ", personal ID: " + personalId + ")"
 			);
 			return true;
 		} else {
 			getLogger().warning("Resource (" + paths + ") is not available for " + user +
-					" (ID: " + user.getId() + ", personal ID: " + user.getPersonalID() + ")");
+					" (ID: " + userId + ", personal ID: " + personalId + ")");
 		}
 
 		return false;
