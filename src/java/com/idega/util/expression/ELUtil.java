@@ -209,7 +209,10 @@ public class ELUtil implements ApplicationContextAware {
 			strParams[i] = argsList.get(i);
 		}
 
-		Object obj = ELUtil.getInstance().getBean(beanName);
+		Object obj = null;
+		try {
+			obj = ELUtil.getInstance().getBean(beanName);
+		} catch (Exception e) {}
 		if (obj == null) {
 			LOGGER.warning("Failed to get object for bean '" + beanName + "'");
 			return null;
