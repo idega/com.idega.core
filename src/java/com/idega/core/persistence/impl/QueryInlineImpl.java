@@ -68,7 +68,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} finally {
 			if (measure) {
-				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), params == null ? null : Arrays.asList(params));
 			}
 		}
 	}
@@ -88,11 +88,11 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 		try {
 			return getDaoFunctions().getResultListByQuery(getQuery(), expectedReturnType, cachedRegionName, params);
 		} catch (Exception e) {
-			CoreUtil.sendExceptionNotification("Error executing query: " + getQueryExpression() + " with parameters: " + Arrays.asList(params), e);
+			CoreUtil.sendExceptionNotification("Error executing query: " + getQueryExpression() + (params == null ? CoreConstants.EMPTY : " with parameters: " + Arrays.asList(params)), e);
 			throw new RuntimeException(e);
 		} finally {
 			if (measure) {
-				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), params == null ? null : Arrays.asList(params));
 			}
 		}
 	}
@@ -115,7 +115,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return null;
 		} finally {
 			if (measure) {
-				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), params == null ? null : Arrays.asList(params));
 			}
 		}
 	}
@@ -157,7 +157,7 @@ public class QueryInlineImpl extends DefaultSpringBean implements com.idega.core
 			return null;
 		} finally {
 			if (measure) {
-				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), Arrays.asList(params));
+				CoreUtil.doDebugSQL(start, System.currentTimeMillis(), getQueryExpression(), params == null ? null : Arrays.asList(params));
 			}
 		}
 	}
