@@ -188,6 +188,16 @@ public class SendMail {
 		for (String receiver: multipleReceivers) {
 			if (validator.isValid(receiver)) {
 				uniqueReceivers.add(receiver);
+			} else {
+				String fixed = StringUtil.isEmpty(receiver) ?
+						receiver :
+						StringHandler.stripNonRomanCharacters(receiver, new char[] {'.', '_', '-', '@', '0', '1', '2', '3', '4', '5', '6', '7', '8', '9'});
+				if (validator.isValid(fixed)) {
+					LOGGER.info("Fixed email address from '" + receiver + "' to '" + fixed + "'");
+					uniqueReceivers.add(fixed);
+				} else {
+					LOGGER.warning("Email address '" + receiver + "' is invalid");
+				}
 			}
 		}
 		return ListUtil.isEmpty(uniqueReceivers) ? null : new ArrayList<>(uniqueReceivers);
