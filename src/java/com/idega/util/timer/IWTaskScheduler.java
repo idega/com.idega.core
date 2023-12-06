@@ -56,11 +56,16 @@ public class IWTaskScheduler {
 
 	private void schedule(int second, int minute, int hour, boolean everyMinutes, Runnable runnable) {
 		//	second, minute, hour, day of month, month, day(s) of week
-		StringBuilder expression = new StringBuilder()
+		StringBuilder expression = new StringBuilder();
+		if (everyMinutes) {
+			expression.append("0 */").append(minute).append(" * * * ?");
+		} else {
+			expression
 				.append((second < 0 ? 0 : second)).append(CoreConstants.SPACE)
-				.append((minute < 0 ? CoreConstants.STAR : (everyMinutes ? CoreConstants.STAR.concat(CoreConstants.SLASH).concat(String.valueOf(minute)) : minute))).append(CoreConstants.SPACE)
+				.append((minute < 0 ? CoreConstants.STAR : minute)).append(CoreConstants.SPACE)
 				.append((hour < 0 ? CoreConstants.STAR : hour))
 				.append(" * * ?");
+		}
 		CronTrigger trigger = new CronTrigger(expression.toString());
 		taskScheduler().schedule(runnable, trigger);
 		Logger.getLogger(getClass().getName()).info("Scheduled " + runnable.getClass().getName() + " at " + expression);
