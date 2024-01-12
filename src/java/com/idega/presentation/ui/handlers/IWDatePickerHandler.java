@@ -21,7 +21,6 @@ import com.idega.presentation.PresentationObject;
 import com.idega.presentation.ui.IWDatePicker;
 import com.idega.util.CoreConstants;
 import com.idega.util.CoreUtil;
-import com.idega.util.IWTimestamp;
 import com.idega.util.StringHandler;
 import com.idega.util.StringUtil;
 
@@ -123,39 +122,38 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			}
 		}
 
-		IWTimestamp date = null;
+		Date date = null;
 		try {
-			date = new IWTimestamp(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale).parse(source));
+			date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT, locale).parse(source);
 		} catch(Exception e) {}
 		if (date == null) {
 			try {
-				date = new IWTimestamp(DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).parse(source));
+				date = DateFormat.getDateTimeInstance(DateFormat.SHORT, DateFormat.SHORT).parse(source);
 			} catch (Exception e) {}
 		}
 		if (date == null) {
 			try {
-				date = new IWTimestamp(DATE_TIME_FORMATTER.parse(source));
+				date = DATE_TIME_FORMATTER.parse(source);
 			} catch (Exception e) {}
 		}
 		if (date == null) {
 			try {
-				date = new IWTimestamp(DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source));
+				date = DateFormat.getDateInstance(DateFormat.SHORT, locale).parse(source);
 			} catch(Exception e) {}
 		}
 		if (date == null) {
 			try {
-				date = new IWTimestamp(DateFormat.getDateInstance(DateFormat.SHORT).parse(source));
+				date = DateFormat.getDateInstance(DateFormat.SHORT).parse(source);
 			} catch (Exception e) {}
 		}
 		if (date == null) {
 			try {
-				date = new IWTimestamp(DATE_FORMATTER.parse(source));
+				date = DATE_FORMATTER.parse(source);
 			} catch (Exception e) {
-				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string to date: '" + source + "' by locale: " +
-						locale.toString());
+				Logger.getLogger(IWDatePickerHandler.class.getName()).log(Level.WARNING, "Error converting string '" + source + "' to date by locale: " + locale);
 			}
 		}
-		return date == null ? null : date.getDate();
+		return date;
 	}
 
 	public static final Timestamp getParsedTimestampByCurrentLocale(String source) {
