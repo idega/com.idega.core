@@ -95,8 +95,11 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 			return null;
 		}
 
-		if (source.endsWith(".0")) {
-			source = source.substring(0, source.lastIndexOf(".0"));
+		List<String> toDrop = Arrays.asList(".0", "+0000Z");
+		for (String drop: toDrop) {
+			if (source.endsWith(drop)) {
+				source = source.substring(0, source.lastIndexOf(drop));
+			}
 		}
 
 		String t = "T";
