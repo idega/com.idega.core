@@ -137,6 +137,8 @@ public class IWTimestamp implements Comparable<IWTimestamp>, Cloneable, Serializ
 
 	public static final String DATE_TIME_PATTERN = DATE_PATTERN + " " + HOUR + ":" + MINUTE + ":" + SECOND;
 
+	public static final String DATE_T_TIME_PATTERN = DATE_PATTERN + "'T'" + HOUR + ":" + MINUTE + ":" + SECOND;
+
 	/**
 	 * A format setting for use with getDateString. Represents the pattern to display a
 	 * four digit year.
