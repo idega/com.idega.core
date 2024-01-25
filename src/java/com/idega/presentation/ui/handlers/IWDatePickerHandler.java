@@ -37,9 +37,10 @@ public class IWDatePickerHandler implements ICPropertyHandler {
 
 	public static final DateFormat 	DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd"),
 									DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"),
-									JSON_DATE_TIME_FORMATTER = new SimpleDateFormat(IWTimestamp.DATE_T_TIME_PATTERN);
+									JSON_DATE_TIME_FORMATTER = new SimpleDateFormat(IWTimestamp.DATE_T_TIME_PATTERN),
+									MONTH_DAY_YEAR_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
 
-	private static final List<DateFormat> DEFAULT_FORMATTERS = Arrays.asList(DATE_TIME_FORMATTER, JSON_DATE_TIME_FORMATTER, DATE_FORMATTER, new SimpleDateFormat("MM/dd/yyyy"));
+	private static final List<DateFormat> DEFAULT_FORMATTERS = Arrays.asList(DATE_TIME_FORMATTER, JSON_DATE_TIME_FORMATTER, DATE_FORMATTER, MONTH_DAY_YEAR_FORMATTER);
 
 	private String method = null;
 	private String instanceId = null;
