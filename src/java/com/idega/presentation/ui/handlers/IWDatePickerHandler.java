@@ -35,8 +35,8 @@ import com.idega.util.StringUtil;
  */
 public class IWDatePickerHandler implements ICPropertyHandler {
 
-	public static final DateFormat 	DATE_FORMATTER = new SimpleDateFormat("yyyy-MM-dd"),
-									DATE_TIME_FORMATTER = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss"),
+	public static final DateFormat 	DATE_FORMATTER = new SimpleDateFormat(IWTimestamp.DATE_PATTERN),
+									DATE_TIME_FORMATTER = new SimpleDateFormat(IWTimestamp.DATE_TIME_PATTERN),
 									JSON_DATE_TIME_FORMATTER = new SimpleDateFormat(IWTimestamp.DATE_T_TIME_PATTERN),
 									MONTH_DAY_YEAR_FORMATTER = new SimpleDateFormat("MM/dd/yyyy");
 
