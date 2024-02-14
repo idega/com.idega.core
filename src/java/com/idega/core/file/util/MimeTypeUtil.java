@@ -66,6 +66,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_APPLICATION = "application/octet-stream";
 	public static final String MIME_TYPE_CALENDAR = "text/calendar";
 	public static final String MIME_TYPE_ENCODED_URL = "application/x-www-form-urlencoded";
+	public static final String MIME_TYPE_FORM_DATA = "multipart/form-data";
 	public static final String MIME_TYPE_JSON = "application/json";
 	public static final String MIME_TYPE_CSV = "text/csv";
 	public static final String MIME_TYPE_DOCX = "vnd.openxmlformats-officedocument.wordprocessingml.document";
@@ -188,7 +189,7 @@ public class MimeTypeUtil implements Singleton {
 			"application/zip", "multipart/x-gzip" };
 
 
-	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<String, String>();
+	private static Map<String, String> MIME_TYPES_MAPPING = new HashMap<>();
 
 	private static void initializeMimeTypesMap() {
 		if (!MIME_TYPES_MAPPING.isEmpty()) {
