@@ -250,7 +250,7 @@ http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd" id="WebApp_ID" version="2.5">
 				bytes 10k - 10 KB 10m - 10 MB 1g - 1 GB
 			</description>
 			<param-name>uploadMaxFileSize</param-name>
-			<param-value>100m</param-value>
+			<param-value>350m</param-value>
 		</init-param>
 		<init-param>
 			<description>
