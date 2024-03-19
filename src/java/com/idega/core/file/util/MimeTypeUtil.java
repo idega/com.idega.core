@@ -55,6 +55,7 @@ public class MimeTypeUtil implements Singleton {
 	public static final String MIME_TYPE_WORD = "application/msword";
 	public static final String MIME_TYPE_EXCEL = "application/vnd.ms-excel";
 	public static final String MIME_TYPE_EXCEL_2 = "application/x-msexcel";
+	public static final String MIME_TYPE_EXCEL_X ="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet";
 	public static final String MIME_TYPE_POWERPOINT = "application/vnd.ms-powerpoint";
 	public static final String MIME_TYPE_PDF_2 = "application/x-pdf";
 	public static final String MIME_TYPE_PDF_1 = "application/pdf";
@@ -199,7 +200,7 @@ public class MimeTypeUtil implements Singleton {
 		MIME_TYPES_MAPPING.put("doc", MIME_TYPE_WORD);
 		MIME_TYPES_MAPPING.put("docx", "application/vnd.openxmlformats-officedocument.wordprocessingml.document");
 		MIME_TYPES_MAPPING.put("xls", MIME_TYPE_EXCEL);
-		MIME_TYPES_MAPPING.put("xlsx", "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet");
+		MIME_TYPES_MAPPING.put("xlsx", MIME_TYPE_EXCEL_X);
 		MIME_TYPES_MAPPING.put("ppt", MIME_TYPE_POWERPOINT);
 		MIME_TYPES_MAPPING.put("pptx", "application/vnd.openxmlformats-officedocument.presentationml.presentation");
 		MIME_TYPES_MAPPING.put("css", "text/css");
