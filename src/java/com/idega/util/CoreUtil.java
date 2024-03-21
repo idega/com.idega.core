@@ -432,11 +432,11 @@ public class CoreUtil {
 	}
 
 	public static final void doDebug(long start, long end, String method) {
-		doDebug(getIWContext(), start, end, method);
+		doDebug(null, start, end, method);
 	}
 
 	public static final void doDebug(IWContext iwc, long start, long end, String method) {
-		IWMainApplicationSettings settings = IWMainApplication.getDefaultIWMainApplication().getSettings();
+		IWMainApplicationSettings settings = iwc == null ? IWMainApplication.getDefaultIWMainApplication().getSettings() : iwc.getApplicationSettings();
 		long minExecutionTime = Long.valueOf(settings.getProperty("debug_min_exec_time", String.valueOf(100)));
 
 		long executionTime = end - start;
