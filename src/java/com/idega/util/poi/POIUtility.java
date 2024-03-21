@@ -98,6 +98,7 @@ public class POIUtility {
 		try {
 			fileOut = new FileOutputStream(fileName);
 			wb.write(fileOut);
+			wb.close();
 			fileOut.close();
 
 			File file = new File(fileName);
@@ -202,6 +203,7 @@ public class POIUtility {
 		try {
 			fileOut = new FileOutputStream(fileName);
 			wb.write(fileOut);
+			wb.close();
 			fileOut.close();
 
 			File file = new File(fileName);
