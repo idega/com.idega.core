@@ -137,6 +137,7 @@ public interface RepositoryService extends Repository, ApplicationListener<IWMai
 	public void unLock(String path) throws RepositoryException;
 
 	public <T extends RepositoryItem> List<T> getSiblingResources(String path) throws RepositoryException;
+	public <T extends RepositoryItem> List<T> getSiblingResources(User user, String path) throws RepositoryException;
 
 	public void logout(Session session);
 
